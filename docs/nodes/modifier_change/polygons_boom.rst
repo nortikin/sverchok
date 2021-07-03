@@ -14,7 +14,7 @@ Lists of Vertices and Edge/Polygon lists. The type of data in the *edg_pol* outp
 Examples
 --------
 
-The Box on default settings is a Cube with 6 polygons and each vertex is shared by three polygons. Polygon Boom separates the polygons into seperate coordinate lists (vertices).
+The Box on default settings is a Cube with 6 polygons and each vertex is shared by three polygons. Polygon Boom separates the polygons into separate coordinate lists (vertices).
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/4186234/1ef77fb6-375f-11e4-8e45-4ce14df9fd94.PNG
   :alt: PolygonBoomDemo1.PNG

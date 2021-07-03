@@ -23,12 +23,12 @@ def fuzzy_compare(named_seeker, named_current):
         if named_seeker == named_current: return True
         elif named_seeker[3:] == named_current: return True
     except Exception as err:
-        print(f"Refesh Current Script called but encountered error {err}")
+        print(f"Refresh Current Script called but encountered error {err}")
 
 
 class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
-    bl_label = "Refesh Current Script"
+    bl_label = "Refresh Current Script"
     bl_idname = "text.noderefresh_from_texteditor"
 
     def execute(self, context):

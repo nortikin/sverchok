@@ -21,7 +21,7 @@ and processing will stop.
 Most Sverchok Solid nodes always produce valid Solid objects. Nodes that can
 potentially produce non-valid objects, usually have "Validate" checkbox to make
 sure that all produced objects are valid. But scripted nodes can produce
-non-valid objects. Also it can be more convinient in some circumstances to work
+non-valid objects. Also it can be more convenient in some circumstances to work
 with non-valid object, and only then fix it.
 
 **NOTE**: some operations with Solid objects which are not "valid" are known to

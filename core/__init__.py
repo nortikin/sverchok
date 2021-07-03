@@ -74,7 +74,7 @@ def handle_reload_event(nodes, imported_modules):
 
 
 def import_settings(imported_modules, sv_dir_name):
-    # "settings" treated separately incase the sverchok dir not named "sverchok"
+    # "settings" treated separately in case the sverchok dir isn't named "sverchok"
     settings = importlib.import_module(".settings", sv_dir_name)
     imported_modules.append(settings)
 

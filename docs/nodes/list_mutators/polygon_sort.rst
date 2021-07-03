@@ -59,7 +59,7 @@ Note: The output will be generated when the output sockets are connected.
 
 Modes
 -----
-The modes corespond to different sorting criteria and each one has a quanitity by which the polygons are sorted.
+The modes correspond to different sorting criteria and each one has a quanitity by which the polygons are sorted.
 * P : In this mode the polygons are sorted by the distance from the center of each polygon to the given point P.
 * D : In this mode the polygons are sorted by the projection component of polygon center vector along the given direction D.
 * A : In this mode the polygons are sorted by the area of the polygons.
@@ -71,6 +71,6 @@ Presets
 The node provides a set of predefined sort directions: along X, Y and Z. These buttons will set the mode to "D" and the sorting vector (Direction) to one of the X, Y or Z directions: (1,0,0), (0,1,0) and (0,0,1) respectively. The preset buttons are only visible as long as the sorting vector socket is not connected.
 
 References:
-The algorythm to compute the area is based on descriptions found at this address: http://geomalgorithms.com/a01-_area.html#3D%20Polygons
+The algorithm to compute the area is based on descriptions found at this address: http://geomalgorithms.com/a01-_area.html#3D%20Polygons
 
 

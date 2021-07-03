@@ -162,9 +162,9 @@ def match_long_cycle(lsts):
     return list(map(list, zip(*zip(*tmp))))
 
 
-# when you intent to use lenght of first list to control WHILE loop duration
+# when you intent to use length of first list to control WHILE loop duration
 # and you do not want to change the length of the first list, but you want the second list
-# lenght to by not less than the length of the first
+# length to by not less than the length of the first
 def second_as_first_cycle(F, S):
     if len(F) > len(S):
         return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))[1]
@@ -762,7 +762,7 @@ def describe_data_shape(data):
     Returns string.
     Can be used for debugging or for displaying information to user.
     Note: this method inspects only first element of each list/tuple,
-    expecting they are all homogenous (that is usually true in Sverchok).
+    expecting they are all homogeneous (that is usually true in Sverchok).
 
     describe_data_shape(None) == 'Level 0: NoneType'
     describe_data_shape(1) == 'Level 0: int'
@@ -990,7 +990,7 @@ def Matrix_generate(prop):
 
 
 def Matrix_location(prop, to_list=False):
-    """return a list of locations represeting the translation of the matrices"""
+    """return a list of locations representing the translation of the matrices"""
     Vectors = []
     for p in prop:
         if to_list:
@@ -1001,7 +1001,7 @@ def Matrix_location(prop, to_list=False):
 
 
 def Matrix_scale(prop, to_list=False):
-    """return a Vector()/list represeting the scale factor of the matrices"""
+    """return a Vector()/list representing the scale factor of the matrices"""
     Vectors = []
     for p in prop:
         if to_list:

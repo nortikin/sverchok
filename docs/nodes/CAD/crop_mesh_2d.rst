@@ -26,7 +26,7 @@ It available only ind faces mode.
 
 This node is not 100 % robust. Some corner cases can knock it out. If you get an error or unexpected result check:
 
-- did not you try to plug edges instead of faces and vise versa.
+- did not you try to plug edges instead of faces and vice versa.
 - try to change accuracy parameter on N panel.
 
 Blender mode
@@ -65,7 +65,7 @@ Parameters
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Edges                    | bool  | Enable edges mode of input mesh, so edges should be plugged into input socket  |
 +--------------------------+-------+--------------------------------------------------------------------------------+
-| Inner                    | bool  | Enable inner mode fro inserting mesh into crop mesh                            |
+| Inner                    | bool  | Enable inner mode for inserting mesh into crop mesh                            |
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Outer                    | bool  | Enable outer mode for creating holes in base mesh                              |
 +--------------------------+-------+--------------------------------------------------------------------------------+

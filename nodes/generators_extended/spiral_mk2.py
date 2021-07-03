@@ -272,8 +272,8 @@ def make_cornu_spiral(settings):
 
     es = prepareExponentialSettings(2, exponent + 1e-5)  # used for easing
 
-    verts1 = []  # pozitive spiral verts
-    verts2 = []  # nagative spiral verts
+    verts1 = []  # positive spiral verts
+    verts2 = []  # negative spiral verts
     norms = []
     add_vert1 = verts1.append
     add_vert2 = verts2.append

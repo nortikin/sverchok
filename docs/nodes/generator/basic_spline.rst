@@ -16,11 +16,11 @@ Inputs
 +-----------+--------+-------------------------------------------------------------+
 | knot 1    | Vector | These place and adjust the shape of the curve. The knots    |
 +-----------+--------+ are vectors on the curve, the controls are vectors to which |
-| control 1 | Vector | the curve is mathematically attracted                       | 
-+-----------+--------+                                                             | 
+| control 1 | Vector | the curve is mathematically attracted                       |
++-----------+--------+                                                             |
 | control 2 | Vector |                                                             |
 +-----------+--------+                                                             |
-| knot 2    | Vector |                                                             | 
+| knot 2    | Vector |                                                             |
 +-----------+--------+-------------------------------------------------------------+
 
 The node accepts these 

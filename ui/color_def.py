@@ -66,7 +66,7 @@ grey = {
 
 
 
-#  self referes to the preferences, SverchokPreferences
+#  self refers to the preferences, SverchokPreferences
 
 def color_callback(self, context):
     theme = self.sv_theme

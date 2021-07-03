@@ -77,7 +77,7 @@ class Point(Point_template, SortPointsUpDown):
         # during handle of polygon point does not change type
         face = self.monotone_face
         if not self._type:
-            hedge = None  # is hedge wit origin in the point and belonging to current monotone face
+            hedge = None  # is hedge with origin in the point and belonging to current monotone face
             for coin_hedge in self.hedge.ccw_hedges:
                 if coin_hedge.face == face:
                     hedge = coin_hedge
@@ -134,7 +134,7 @@ def make_monotone(face):
     Splits polygon into monotone pieces optionally with holes
     :param face: face of half edge data structure
     :return new half edges
-    Probably approach of implemetation of monotone algorithm should be reconsidered according new DCEL data structure
+    Probably approach of implementation of monotone algorithm should be reconsidered according new DCEL data structure
     """
     face.mesh.Point.monotone_current_face = face
     status = AVLTree()

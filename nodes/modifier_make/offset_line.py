@@ -92,7 +92,7 @@ def offset_edges(verts_in, edges_in, shift_in):
             points.append((vert_edg1 @ mat_r).normalized() * shift/sin(angle) + verts_in[item_point])
         return points
 
-    #Seting points
+    #Setting points
     findex_new_points = [0]
     for i,sh in enumerate(shift_in):
         #avoid zero offset

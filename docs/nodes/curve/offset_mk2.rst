@@ -53,7 +53,7 @@ Inputs
 
 This node has the following inputs:
 
-* **Curve**. The curve to be offseted. This input is mandatory.
+* **Curve**. The curve to be offset. This input is mandatory.
 * **Offset**. Offset amount. This input is available only if **Algorithm**
   parameter is set to **Specified plane**, or the **Direction** parameter is
   set to **X (Normal)** or **Y (Binormal)**. The input is not available when
@@ -132,7 +132,7 @@ Outputs
 
 This node has the following output:
 
-* **Curve**. The offseted curve.
+* **Curve**. The offsetted curve.
 
 Examples of usage
 -----------------

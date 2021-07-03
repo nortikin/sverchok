@@ -10,7 +10,7 @@ The pattern is drawn by the following algorithm (see Wikipedia_):
 
 * First, the selected faces (or vertices) are marked with the number of 1.
 * Then the faces (vertices), that are neighbour to faces marked with 1, which were not marked yet, are marked with the number 2.
-* Faces (vertices), that are neighbour to faces marked with 2, whcih were not marked yet, are marked with the number 3.
+* Faces (vertices), that are neighbour to faces marked with 2, which were not marked yet, are marked with the number 3.
 * This continues until all faces / vertices of the mesh are painted.
 
 .. _Wikipedia: https://en.wikipedia.org/wiki/Lee_algorithm
@@ -35,7 +35,7 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following paramters:
+This node has the following parameters:
 
 - **Mode**. Painting mode. The following modes are available:
 
@@ -66,8 +66,8 @@ This node has the following outputs:
   length of the shortest path from initially selected faces (vertices) to this
   face (vertex). The path is considered to be consisting of single steps from
   one face / vertex to one of it's neighbours. The length of step between
-  neighbour vertices is the Euclidian distance between such vertices. The
-  length of step between neighbour faces is calculated as Euclidian distance
+  neighbour vertices is the Euclidean distance between such vertices. The
+  length of step between neighbour faces is calculated as Euclidean distance
   between the centers of such faces. This input will contain 0 for initially
   selected faces as well as for obstacle faces.
 - **StartIdx**. For each face (or vertex) of the mesh, this contains the index

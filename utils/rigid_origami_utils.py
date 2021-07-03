@@ -168,7 +168,7 @@ class InsideVertex:
                     continue
                 
                 # Choose a edge connected with a vertex outside, 
-                # and next one sould be connected with vertex inside
+                # and next one should be connected with vertex inside
                 bm_vert = obj.bm.verts[target_indices[idx]]
                 is_candidate = [bm_edge.other_vert(bm_vert).index in outer_verts_indices and \
                                 not target_ccw[(i+1)%len(target_ccw)].other_vert(bm_vert).index in outer_verts_indices \

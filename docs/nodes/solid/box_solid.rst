@@ -33,7 +33,7 @@ All inputs are vectorized and the data will be matched to the longest list
 - Origin: Position of the box (Bottom left corner).
 - Direction: Orientation of the box (Z axis of the box). Note that changing
   this input from default `(0,0,1)` will rotate the box around it's corner with
-  smallest values of X,Y,Z coordinate, regardles of the "Origin type"
+  smallest values of X,Y,Z coordinate, regardless of the "Origin type"
   parameter.
 
 Outputs

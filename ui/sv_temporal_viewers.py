@@ -73,7 +73,7 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
     tree.update()
 
 def add_temporal_stethoscope(tree, nodes, links, existing_node):
-    '''Add Temporal Stethoscope and connects it to exisiting node'''
+    '''Add Temporal Stethoscope and connects it to existing node'''
     bl_idname_new_node = 'SvStethoscopeNodeMK2'
     try:
         new_node = nodes['Temporal Stethoscope']
@@ -110,7 +110,7 @@ def add_temporal_stethoscope(tree, nodes, links, existing_node):
     tree.update()
 
 def add_temporal_viewer(context, force_stetoscope, cut_links):
-    '''initial fucntion to determine which viewer to add '''
+    '''initial function to determine which viewer to add '''
     space = context.space_data
     tree = space.node_tree
     nodes = tree.nodes

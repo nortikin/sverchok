@@ -23,7 +23,7 @@ All parameters except for **Mode** can be given by the node or an external input
 This node has the following parameters:
 
 +----------------+---------------+-------------+----------------------------------------------------+
-| Parameter      | Type          | Default     | Description                                        |  
+| Parameter      | Type          | Default     | Description                                        |
 +================+===============+=============+====================================================+
 | **Mode**       | Enum: Log or  | Log         | If Log, then x_n = x0*exp(alpha*n).                |
 |                | Base          |             | If Base, then x_n = x0*base^n.                     |

@@ -147,7 +147,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             return {'CANCELLED'}
 
         indent = None if self.compact else 2
-        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesnt expect sort_keys = True
+        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesn't expect sort_keys = True
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)

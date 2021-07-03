@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, 
 
 class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Trigers: Clip / Truncate Vertices
+    Triggers: Clip / Truncate Vertices
     Tooltip: Clip all vertices of the mesh
     """
     bl_idname = 'SvClipVertsNode'

@@ -90,7 +90,7 @@ def get_quaternions_from_matrices(data):
     return [quaternions]
 
 
-def is_matrix(mat):  # doesnt work with Mathutils.Matrix ?
+def is_matrix(mat):  # doesn't work with Mathutils.Matrix ?
     ''' expensive function call? '''
     if not isinstance(mat, (tuple, list)) or not len(mat) == 4:
         return
@@ -160,14 +160,14 @@ def matrices_to_quaternions(socket, source_data):
     return get_quaternions_from_matrices(source_data)
 
 def string_to_vector(socket, source_data):
-    # it can be so that socket is string but data their are already vectors, performace-wise we check only first item
+    # it can be so that socket is string but data their are already vectors, performance-wise we check only first item
     if isinstance(source_data[0][0], (float, int)):
         return [[(v, v, v) for v in obj] for obj in source_data]
     return source_data
 
 
 def string_to_color(socket, source_data):
-    # it can be so that socket is string but data their are already colors, performace-wise we check only first item
+    # it can be so that socket is string but data their are already colors, performance-wise we check only first item
     if isinstance(source_data[0][0], (float, int)):
         return [[(v, v, v, 1) for v in obj] for obj in source_data]
     if len(source_data[0][0]) == 3:

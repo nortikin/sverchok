@@ -76,7 +76,7 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     offset_modes = [
         ("CENTER", "Center", "Inset is measured as a proportion between the corners and the center of the polygon", 0),
         ("SIDES", "Sides", "Inset is measured as a constant distance to the sides of the polygon", 1),
-        ("MATRIX", "Matrix", "Inset controled by offset matrix", 2)
+        ("MATRIX", "Matrix", "Inset controlled by offset matrix", 2)
         ]
     def update_sockets(self, context):
         self.inputs['Inset'].hide_safe = self.offset_mode == 'MATRIX'

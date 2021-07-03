@@ -45,7 +45,7 @@ class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
-            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
+            ('PERSPECTIVE', "Perspective", "Use perspective projection from given point", 1),
             ('ORTHO', "Orthogonal", "Use orthogonal projection", 2)
         ]
     

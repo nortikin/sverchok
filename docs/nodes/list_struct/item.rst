@@ -32,7 +32,7 @@ A list of indexes of the items to select, allow negative index python indexing s
 Outputs
 -------
 
-Item, the selected items on the specifed level.
+Item, the selected items on the specified level.
 Other, the list with the selected items deleted.
 
 Examples

@@ -69,7 +69,7 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     offset_curve_type : EnumProperty(
             name = "Offset curve usage",
-            description = "How offset curve is evaluated along the curve being offseted",
+            description = "How offset curve is evaluated along the curve being offsetted",
             items = offset_curve_types,
             default = SvCurveOffsetOnSurface.BY_PARAMETER,
             update = updateNode)

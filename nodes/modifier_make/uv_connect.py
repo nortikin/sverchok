@@ -109,8 +109,8 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         edges = []
 
         for ob in vers:
-            ''' prepate standard levels (correcting for default state)
-                and calc everage length of each object'''
+            ''' prepare standard levels (correcting for default state)
+                and calc average length of each object'''
             for o in ob:
                 vers_.append(o)
                 lens.append(len(o))

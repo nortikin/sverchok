@@ -96,7 +96,7 @@ def calc_angle(p1,p2):
     return angle + TWO_PI if angle < 0 else angle
 
 def cycles_list(value,list):
-    #Cyle list as item is equal value gets first position
+    #Cycle list as item is equal value gets first position
     cut_i = lsit.index(value)
     return list[cut_i:] + list[:cut_i]
 
@@ -137,7 +137,7 @@ def gen_neighbours_from_edges(verts, edges):
     return neighbours
 
 def bypass_outer_edges(pre_finish, start_i1, start_i2, neibs):
-    #serching edges for creating polygons, 
+    #searching edges for creating polygons, 
     #if last point have only one neighbours or it equal start point - exit
     #pre_finish point need for understanding is loop closed or is not
     previous = start_i1
@@ -167,7 +167,7 @@ def bypass_outer_edges(pre_finish, start_i1, start_i2, neibs):
     return poly, used_edges
 
 def bypass_edges(start_i1, start_i2, neibs):
-    #serching edges for creating polygons, 
+    #searching edges for creating polygons, 
     #if last point have only one neighbours or it equal start point - exit
     previous = start_i1
     next = start_i2
@@ -190,7 +190,7 @@ def bypass_edges(start_i1, start_i2, neibs):
         used_verts[v]['pos'].append(i)
 
     #clean polygon
-    #this help to know actual postion of points
+    #this help to know actual position of points
     less_pos = 0
     for v in poly:
         if used_verts[v]['times'] > 1:
@@ -228,21 +228,21 @@ def get_outer_poly(verts, edges):
     verts_y = [v.y for v in verts]
 
     #Create sorted hour hand list of neighbours for each vector
-    #Create list of angles between frist neighbour and others
+    #Create list of angles between first neighbour and others
     neighbours = gen_neighbours_from_edges(verts,edges)
     angle_neibs = [[] for _ in verts]
     for i,current_n in enumerate(neighbours):
         neighbours[i],angle_neibs[i] = sort_neib(verts[i], current_n, verts)
     
-    #Serching index of top vector in graph
+    #Searching index of top vector in graph
     max_v_index = verts_y.index(max(verts_y))
     #Angle between X direction and first neighbour of top vector
     angle_x = calc_angle(Vector((1,0)),verts[neighbours[max_v_index][0]] - verts[max_v_index])
     # Angle between X direction and all neighbours of top vector, can be more than 2pi degree
     angles_x = [ang + angle_x for ang in angle_neibs[max_v_index]]
-    #normolize to 360 degree
+    #normalize to 360 degree
     angles_x = [fmod(ang,2 * pi) for ang in angles_x]
-    #niearest neigbour of top vector to X direction 
+    #nearest neighbour of top vector to X direction 
     neib_x = neighbours[max_v_index][angles_x.index(min(angles_x))]
     neib_prex = neighbours[max_v_index][angles_x.index(max(angles_x))]
     outer_poly, used_edges = bypass_outer_edges(neib_prex,max_v_index,neib_x,neighbours)
@@ -256,19 +256,19 @@ def get_outer_poly(verts, edges):
     return outer_poly , used_edges_mask, neighbours
 
 def get_filled_graph(data_in):
-    #Sub_object is also object but divded from start object
+    #Sub_object is also object but divided from start object
     sub_verts = []
     sub_edges = []
     verts_out = []
     polys_out = []
-    #Cleaning snd separating mesh
+    #Cleaning and separating mesh
     for v_obj, e_obj in zip(*data_in):
 
         outer_poly, used_edges_mask, neighbours = get_outer_poly(v_obj, e_obj)
 
-        #Checking bridg edges
+        #Checking bridge edges
         if 2 in used_edges_mask.values():
-            #Del bridg edges
+            #Del bridge edges
             len_edges = len(e_obj)
             for i,edg in enumerate(reversed(e_obj)):
                 if used_edges_mask[tuple(edg)] == 2:
@@ -277,7 +277,7 @@ def get_filled_graph(data_in):
         #Del loose verts
         v_obj, e_obj = del_loose(v_obj, e_obj)
 
-        #Dived loos parts
+        #Divide loose parts
         if v_obj:
             v_obj, e_obj = separate_loos(v_obj,e_obj)
 
@@ -289,7 +289,7 @@ def get_filled_graph(data_in):
 
     for v_obj, e_obj in sub_objects:
     
-        #serch outer poly again
+        #search outer poly again
         outer_poly, used_edges_mask, neighbours = get_outer_poly(v_obj, e_obj)   
         #filling graph
         steck = [[i1,i2] for i1,i2 in zip(outer_poly,outer_poly[1:] + [outer_poly[0]])]
@@ -309,7 +309,7 @@ def get_filled_graph(data_in):
                 if used_edges_mask[tuple(edg)] < 2:
                     steck.append(real_edg)
             
-            #Check useing edges in steck
+            #Check using edges in steck
             len_steck = len(steck)
             for i,edg in enumerate(reversed(steck)):
                 real_edg = edg
@@ -358,7 +358,7 @@ class SvPlanarEdgenetToPolygons(bpy.types.Node, SverchCustomTreeNode):
         polys_out = []
         
         verts_in = [[Vector(v).to_2d() for v in v_obj] for v_obj in verts_in]
-        #This fumction also creat sub_obejects actually
+        #This function also create sub_objects actually
         data_in = [separate_loos(v_obj, e_obj) for v_obj, e_obj in zip(verts_in, edges_in)]
 
         for sub_data in data_in:

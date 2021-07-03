@@ -8,7 +8,7 @@ Generates the transformation **matrix** given a location, a scale and a rotation
 
 The "Track/Up Axes" and the "Track/Up Mapping" settings allow to set any two of the X, Y, Z axes to be the **Track** axis and the **Up** axis and to map them to any of the two input vectors A and B (or to their negatives). The first axis listed in these dropdown lists is the Track axis/vector and the second is the Up axis/vector.
 
-The axis selected to be the Track axis (the first letter in "Track/Up Axes" selection) will be precisely oriented along the Track vector (whichever the Track vector is mapped to, based on the "Track/Up mapping"), while the axis selected to be the Up axis (the second letter the "Track/Up Axes" selection) will be approximately oriented along the Up vector (whichever the Up vector is mapped to, based on the "Track/Up mapping" selection). If the A and B inputs happen to be orthogonal to eachother then the Track and Up axes will be precisely oriented along the selected Track/Up vectors, otherwise the Up axis will only approximately be oriented towards the Up vector, perpendicular to the Track axis, and reside within the AB plane. The third axis (X, Y or Z) is determined via cross product from the other two as to provide an ortho-normal, right handed, XYZ coordinate sytem.
+The axis selected to be the Track axis (the first letter in "Track/Up Axes" selection) will be precisely oriented along the Track vector (whichever the Track vector is mapped to, based on the "Track/Up mapping"), while the axis selected to be the Up axis (the second letter the "Track/Up Axes" selection) will be approximately oriented along the Up vector (whichever the Up vector is mapped to, based on the "Track/Up mapping" selection). If the A and B inputs happen to be orthogonal to eachother then the Track and Up axes will be precisely oriented along the selected Track/Up vectors, otherwise the Up axis will only approximately be oriented towards the Up vector, perpendicular to the Track axis, and reside within the AB plane. The third axis (X, Y or Z) is determined via cross product from the other two as to provide an ortho-normal, right handed, XYZ coordinate system.
 
 Inputs
 ------
@@ -91,8 +91,8 @@ The **Matrix** is the homogeneous 4x4 matrix composed by the given location, rot
 The **X**, **Y**, **Z** are the orthonormal vectors, oriented along the Track and Up axes. [2]
 
 Notes:
-[1] : The rotation component is ortho-normal only if the "Normalize Vectors" option is ON (in the Propety Panel).
-[2] : The axes are ortho-normal only if the "Normalize Vectors" option is ON (in the Propety Panel), otherwise the vectors are only orthogonal.
+[1] : The rotation component is ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel).
+[2] : The axes are ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel), otherwise the vectors are only orthogonal.
 
 
 Example of usage

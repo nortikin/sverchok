@@ -263,7 +263,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     v3_origin: FloatVectorProperty(name='Origin', description='Origin of line', size=3, default=(0, 0, 0),
                                    update=updateNode)
     list_match_global: EnumProperty(
-        name="List Match Gobal",
+        name="List Match Global",
         description="Behavior on different list lengths, multiple objects level",
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)

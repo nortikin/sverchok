@@ -37,14 +37,14 @@ class Agent:
 
 
 def compare_two_lists(agent_list,pattern):
-    """ fitness descision module """
+    """ fitness decision module """
     lenpat = len(pattern)
     Ratio = []
     for i in range(len(agent_list)):
         j = i%lenpat
         subpat = pattern[j]           
         subagl = agent_list[i]
-        # main descision part here, so we assign 
+        # main decision part here, so we assign 
         # coef to all or to separate and summ
         if all_apart == 0:
             # full match

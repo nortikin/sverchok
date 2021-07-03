@@ -6,7 +6,7 @@ Functionality
 
 This node helps with managing time, particularly useful for animations.
 It provides a set of (internal/external) operations that allow to control timing.
-The suppported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.
+The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.
 
 The the node measures time is in seconds and it is based on Blender timeline's time, so the measured time depends on on frame changes in the timeline as well as the frame rate. Because this is tied to Blender's timeline, starting the timer will not measure any time unless the Blender's timeline changes (either via playback, timeline scrubbing or other methods of changing the frame). Scrubbing the timeline back and forth will also affect the timer node's measured time. When scrubbing backwards, the recorded time will also go backwards (assuming the timer is started).
 
@@ -123,7 +123,7 @@ This outputs True if the timer expired, otherwise False.
 
 Note: When the node takes multiple inputs with different duration values (creating multiple timers), each timer could expire at different times based on when each timer is started (note that multiple timers can be operated all at once using the node controls (stop/start/pause/reset/expire) or they can be operated using external operations (0-6), in which case each timer could also be started/stopped at different times.
 
-Note: It's also possible to have mutiple timers start at different times and expire later at the same time.
+Note: It's also possible to have multiple timers start at different times and expire later at the same time.
 
 One useful case for this output is that you can chain timer nodes and have one timer, upon expiration, trigger the starting of another timer.
 

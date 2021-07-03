@@ -202,7 +202,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
         for ob_points, clo in zip(op,clos):
             values += '# Spline %a\n' % (ss)
             ss += 1
-            # handles preperation
+            # handles preparation
             curves_left  = [i.handle_left_type for i in ob_points]
             curves_right = ['v']+[i.handle_right_type for i in ob_points][:-1]
             # first collect C,L values to compile them later per point

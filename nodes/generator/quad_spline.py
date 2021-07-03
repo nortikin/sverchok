@@ -64,7 +64,7 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
             
     list_match_global: EnumProperty(
-        name="List Match Gobal",
+        name="List Match Global",
         description="Behavior on different list lengths, multiple objects level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)

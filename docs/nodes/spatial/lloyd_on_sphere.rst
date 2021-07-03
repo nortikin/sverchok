@@ -28,7 +28,7 @@ This node has the following inputs:
 * **Sites**. The points to be redistributed. This input is mandatory.
 * **Center**. The center of the sphere. The default value is ``(0, 0, 0)``
   (global origin).
-* **Radius**. Radius of the sphere. The default alue is 1.0.
+* **Radius**. Radius of the sphere. The default value is 1.0.
 * **Iterations**. Number of Lloyd's algorithm iterations. The default value is
   3.
 * **Weights**. Scalar Field object used to assign different weights for

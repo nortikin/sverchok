@@ -88,5 +88,5 @@ Example of usage
 
 .. image:: https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png
 
-Note that in this case we set **Method** paramter to **Krylov**.
+Note that in this case we set **Method** parameter to **Krylov**.
 

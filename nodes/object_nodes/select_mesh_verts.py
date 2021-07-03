@@ -65,7 +65,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         objsl = O.sv_get()
         elements = [getattr(ob.data, self.mode) for ob in objsl]
         if self.deselect_all:
-            for ob in objsl:    # unfortunately we cant just deselect verts
+            for ob in objsl:    # unfortunately we can't just deselect verts
                 for p in ob.data.polygons:
                     p.select = False
                 for e in ob.data.edges:

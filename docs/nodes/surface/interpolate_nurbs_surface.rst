@@ -40,10 +40,10 @@ This node has the following inputs:
 * **Degree U**, **Degree V**. Degree of the surface along U and V directions,
   correspondingly. The default value is 3.
 
-Paramters
+Parameters
 ---------
 
-This node has the following paramters:
+This node has the following parameters:
 
 * **Centripetal**. This defines whether the node will use centripetal
   interpolation method. Unchecked by default.

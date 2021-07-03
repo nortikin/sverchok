@@ -55,7 +55,7 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
 
     if len(edges) != len(wire.Edges):
-        raise Exception(f"Cant build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
+        raise Exception(f"Can't build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
 
     #wire.fix(0, 0, 0)
     #wire.fixTolerance(1e-5)

@@ -97,7 +97,7 @@ here with some highlighting of the syntax
     vertex_2 = (x, y, z)
 
 
-- *Note*: We will use parentheses ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
+- *Note*: We will use parentheses ``()`` and brackets ``[]`` interchangeably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
 
 edges
 -----
@@ -164,7 +164,7 @@ This is what the literal data would look like::
     # circle verts
     [(0, 1, 0), (0.866, 0.5, 0), (0.866, -0.5, 0), (0, -1, 0), (-0.866, -0.5, 0), (-0.8660, 0.5, 0)],
     
-    # cube verts, there are all  0.5, but because the zero is not considered significant we can ommit it.
+    # cube verts, there are all  0.5, but because the zero is not considered significant we can omit it.
     [[-.5, -.5, -.5], [-.5, .5, -.5], [.5, .5, -.5], [.5, -.5, -.5], [-.5, -.5, .5], [-.5, .5, .5], [.5, .5, .5], [.5, -.5, .5]]
   ]
 

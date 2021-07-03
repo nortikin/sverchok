@@ -37,7 +37,7 @@ def parse_to_path(p):
     ops are:
     name - global name to use
     attr - attribute to get using getattr(obj,attr)
-    key - key for accesing via obj[key]
+    key - key for accessing via obj[key]
     '''
 
     if isinstance(p, ast.Attribute):

@@ -68,7 +68,7 @@ computations involved. Thus, the node can not handle all cases. Especially,
   "sharp edges" (if any). If you happen to know where such edges should be (in
   terms of surface's U/V coordinates), use the "AddUVPoints" input.
 * When surface curvature values are used, the node may not handle very well
-  so-called "signular points" of the surface (if it happens to have any) -
+  so-called "singular points" of the surface (if it happens to have any) -
   places where different values of U/V coordinates are mapped into one point in
   space. For example, a sphere with usual polar parametrisation has such points
   at the poles.

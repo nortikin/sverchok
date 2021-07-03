@@ -61,7 +61,7 @@ N = identity_matrix
 
 def vectorize(func):
     '''
-    Will create a yeilding vectorized generator of the
+    Will create a yielding vectorized generator of the
     function it is applied to.
     Note: parameters must be passed as kw arguments
     '''
@@ -197,7 +197,7 @@ class CubicSpline(Spline):
                 is not provided
         is_cyclic: whether the spline is cyclic
 
-        creates a cubic spline thorugh the locations given in vertices
+        creates a cubic spline through the locations given in vertices
         """
 
         super().__init__()
@@ -365,7 +365,7 @@ class LinearSpline(Spline):
                 is not provided
         is_cyclic: whether the spline is cyclic
 
-        creates a cubic spline thorugh the locations given in vertices
+        creates a cubic spline through the locations given in vertices
         """
 
         super().__init__()
@@ -1087,7 +1087,7 @@ class PlaneEquation(object):
         # it might be that one of vectors we chose is parallel to plane2
         # (since we are choosing them arbitrarily); but from the way
         # we are choosing v1 and v2, we know they are orthogonal.
-        # So if wee just rotate them by pi/4, they will no longer be
+        # So if we just rotate them by pi/4, they will no longer be
         # parallel to plane2.
         if plane2.is_parallel(line1) or plane2.is_parallel(line2):
             v1_new = v1 + v2

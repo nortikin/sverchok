@@ -31,13 +31,13 @@ This node has the following parameters:
   specified curve points. The available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance)
+   * Centripetal (square root of Euclidean distance)
    * X, Y, Z axis - use distance along one of coordinate axis, ignore others.
 
-The default value is Euclidian.
+The default value is Euclidean.
 
 Outputs
 -------
@@ -57,7 +57,7 @@ The same with **Cyclic** checked:
 
 .. image:: https://user-images.githubusercontent.com/284644/77845088-709c2a00-71c5-11ea-85a9-c090776c6c96.png
 
-These examples had Metric set to Euclidian (default). Since **Eval Curve** node
+These examples had Metric set to Euclidean (default). Since **Eval Curve** node
 generates evenly-distributed values of the T parameter, the number of points at
 each segment is proportional to the distance between points. The next example
 is with Metric set to Points:

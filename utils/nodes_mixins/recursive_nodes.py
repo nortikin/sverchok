@@ -105,11 +105,11 @@ class SvRecursiveNode():
         set self.build_bmesh = True
         define base sockets indices (verts, edges and faces) or (verts, edg_pol) in self.bmesh_inputs
 
-        then process_data will recive a list with bmesh mesh as first item
+        then process_data will receive a list with bmesh mesh as first item
             def process_data(self, params)
                 bmesh_list, other_param1, other_param2 = params
 
-        creating the bmesh_list before matching improves performace a lot, but if
+        creating the bmesh_list before matching improves performance a lot, but if
         you are modifiying the bm in your function do it over a copy  -> bm.copy()
 
 
@@ -135,7 +135,7 @@ class SvRecursiveNode():
 
     def pre_setup(self):
         '''
-        function to be overriden in the node in case something has to change
+        function to be overridden in the node in case something has to change
         before getting input data
         '''
         # pass

@@ -178,7 +178,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     def get_children(self):
         objects = bpy.data.objects
         objs = [obj for obj in objects if obj.type == 'LIGHT']
-        # critera, basename must be in object.keys and the value must be self.basemesh_name
+        # criteria, basename must be in object.keys and the value must be self.basemesh_name
         return [o for o in objs if o.get('basename') == self.lamp_name]
 
     def make_lamp(self, index, object):

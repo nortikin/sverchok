@@ -78,7 +78,7 @@ SOME RULES:
     b. some bmesh functiones
     c. cache -- operates with handles -- we use it to operate with nodes' data, it is dictionary,
        with node'name, node-tree'name and it's data
-    d. list levels definitions - you must yse them:
+    d. list levels definitions - you must use them:
         1. data correct makes list from chaotic to 4th levels list, seems like [[[floats/integers]]]
            and not [[f/i]] or [[[[f/i]]]].
 
@@ -108,7 +108,7 @@ SOME RULES:
            value as tuple (Vector((x,y,z)),angle)
         6. Vector_generate(prop) - makes from simple list real mathutils.Vector(), as Matrix generate def
         7. Vector_degenerate(prop) - as matrix listing, it degenerate Vectors to simple list
-        8. Edg_pol_generate(prop) - define wether it is edges or polygons in list, and terurns tuple as
+        8. Edg_pol_generate(prop) - define whether it is edges or polygons in list, and returns tuple as
            (type,list)
         9. matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]) - defines matrix
 
@@ -120,7 +120,7 @@ SOME RULES:
         2. match_short(lsts) Shortest list decides output length
            [[1,2,3,4,5], [10,11]] -> [[1,2], [10, 11]]
 
-        3. match_cross2(lsts) cross rference
+        3. match_cross2(lsts) cross reference
            [[1,2], [5,6,7]] ->[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
 
         4. match_long_repeat(lsts) repeat last of shorter list
@@ -198,8 +198,8 @@ SOME RULES:
 
 8. Not make many nodes if you can do less multifunctional.
 
-9. Use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
-   We operate with 1,2,3 - standart and additional 4... infinity. make sure, that your levels limited,
+9. Use levels, find out how it works and use level IntProperty in draw to define what level is to operate.
+   We operate with 1,2,3 - standard and additional 4... infinity. make sure, that your levels limited,
    dropped down by levelsOflist as maximum value
 
 10. Keep order in node' update definition as if output: if input. To count input only if you have output socket

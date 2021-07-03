@@ -141,7 +141,7 @@ def mask_vertices(verts, edges, faces, verts_mask):
 
     return verts, edges, faces
 
-# mesh cleaning fucntions
+# mesh cleaning functions
 
 def get_unique_faces(faces):
     return get_unique_topology(faces)[0]
@@ -260,7 +260,7 @@ def clean_meshes(vertices, edges, faces,
                  calc_faces_idx=False):
     '''
     Cleans a group of meshes using different routines.
-    Returs Clened meshes and removed items indexes
+    Returns cleaned meshes and removed items indexes
     '''
     verts_out, edges_out, faces_out = [], [], []
     verts_removed_out, edges_removed_out, faces_removed_out = [], [], []
@@ -379,7 +379,7 @@ def point_inside_mesh(bvh, point):
 
 ################
 # Mesh Normals #
-###############
+################
 def prepare_arrays(vertices, faces):
     if isinstance(vertices, np.ndarray):
         np_verts = vertices

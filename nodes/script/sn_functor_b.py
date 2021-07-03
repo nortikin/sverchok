@@ -128,7 +128,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         if self.loaded:
             self.draw_buttons_script(context, layout)
 
-    ###  delegation funcions
+    ###  delegation functions
 
     def draw_buttons_script(self, context, layout):
         """ This will call the hoisted function:  draw_buttons(self, context, layout) """

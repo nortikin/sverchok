@@ -21,7 +21,7 @@ Parameters
 +-----------------+---------------+--------------------------------------------------------------------------+
 | **sorting**     | Bool, toggle  | Sorting inserted objects by name                                         |
 +-----------------+---------------+--------------------------------------------------------------------------+
-| **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applyed to mesh before importing |
+| **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applied to mesh before importing |
 +-----------------+---------------+--------------------------------------------------------------------------+
 | **vert groups** | Bool, toggle  | Import all vertex groups that in object's data. just import indexes      |
 +-----------------+---------------+--------------------------------------------------------------------------+
@@ -48,7 +48,7 @@ Outputs
 | Vertex Normals   | Vertex Normals                                                           |
 +------------------+--------------------------------------------------------------------------+
 | Material Idx     | Material indexes per object face.                                        |
-+-----------------+--------------------------------------------------------------------------+
++-----------------+---------------------------------------------------------------------------+
 | Polygons Areas   | Polygons of objects.                                                     |
 +------------------+--------------------------------------------------------------------------+
 | Polygons Centers | Polygons Center of objects.                                              |
@@ -66,4 +66,4 @@ Examples
 --------
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4328096/bd8b274e-3f80-11e4-8582-6b2ae9743431.png
 
-Importing cobe and look to indeces.
+Importing cobe and look to indices.

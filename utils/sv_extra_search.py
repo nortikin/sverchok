@@ -49,7 +49,7 @@ def slice_docstring(desc):
     return SvDocstring(desc).get_shorthand()
 
 def ensure_short_description(description):
-    '''  the font is not fixed width, it makes litle sense to calculate chars '''
+    '''  the font is not fixed width, it makes little sense to calculate chars '''
     hardcoded_maxlen = 20
     if description:
         if len(description) > hardcoded_maxlen:

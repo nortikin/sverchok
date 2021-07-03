@@ -28,13 +28,13 @@ def get_preferences():
 
 
 def adjust_position_and_dimensions(node, loc):
-    """ further adjustement is needed, not done yet in the code below Frames, nested 
+    """ further adjustment is needed, not done yet in the code below Frames, nested 
         node param is used for this.
     """
     scale, multiplier = get_preferences()
     x, y = loc
     x, y = [x * multiplier, y * multiplier]
-    # maybe we do something independant of scale.
+    # maybe we do something independent of scale.
     return x, y, scale
 
 

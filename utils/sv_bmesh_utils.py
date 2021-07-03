@@ -389,7 +389,7 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
                 * 'vert_init_index': indexes of the output vertices in the original mesh
                 * 'edge_init_index': indexes of the output edges in the original mesh
                 * 'face_init_index': indexes of the output faces in the original mesh
-                * 'verts': correclty reordered vert_data (if present)
+                * 'verts': correctly reordered vert_data (if present)
                 * 'edges': correctly reordered edge_data (if present)
                 * 'faces': correctly reordered face_data (if present)
     """
@@ -665,7 +665,7 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
     * wave_path_prev_index : int, output; the index of the face, to which you
       should step to follow the shortest path to initial faces. Filled only if
       find_shortest_path is set to True.
-    * wave_path_prev_distance : float, output; the euclidian distance to the
+    * wave_path_prev_distance : float, output; the euclidean distance to the
       face mentioned in wave_path_prev_index. Filled only if find_shortest_path
       is set to True.
     * wave_path_distance: float, output; total length of the shortest to the

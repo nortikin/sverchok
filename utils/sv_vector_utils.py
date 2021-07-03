@@ -20,7 +20,7 @@ import bisect
 import numpy as np
 import math
 
-# spline function modifed from
+# spline function modified from
 # from looptools 4.5.2 done by Bart Crouch
 
 

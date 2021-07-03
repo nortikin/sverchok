@@ -618,7 +618,7 @@ def apply_forces_setup(ps, dicti, forces_composite):
 
 
 def apply_all_forces(ps):
-    '''applying forces and reseting resultant'''
+    '''applying forces and resetting resultant'''
     ps.apply_forces()
 
 

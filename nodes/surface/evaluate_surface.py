@@ -105,7 +105,7 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     output_numpy: BoolProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=False,
         update=updateNode)

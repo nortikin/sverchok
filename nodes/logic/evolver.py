@@ -596,7 +596,7 @@ def get_framenodes(base_node, _):
 class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Genetics algorithm
-    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technic
+    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technique
     """
     bl_idname = 'SvEvolverNode'
     bl_label = 'Evolver'
@@ -634,7 +634,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         ]
     mode: EnumProperty(
         name="Mode",
-        description="Set Fitness as maximun or as minimum",
+        description="Set Fitness as maximum or as minimum",
         items=mode_items,
         update=props_changed
         )
@@ -675,7 +675,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         )
     fitness_booster: IntProperty(
         name="Fitness boost",
-        description="Fittest population will be more probable to be choosen (power)",
+        description="Fittest population will be more probable to be chosen (power)",
         default=3,
         min=1,
         update=props_changed

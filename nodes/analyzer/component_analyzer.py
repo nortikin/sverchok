@@ -116,7 +116,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
         input_names = info[1]
         output_socket_type = info[5]
         output_socket_name = info[6].split(', ')
-        # hide unnecesary inputs only if not connected
+        # hide unnecessary inputs only if not connected
         for input_socket, key_name in zip(self.inputs, 'vep'):
             if not input_socket.is_linked:
                 if not key_name in input_names:
