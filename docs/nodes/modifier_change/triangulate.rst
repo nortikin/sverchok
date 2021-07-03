@@ -50,7 +50,7 @@ Outputs
 
 This node has the following outputs:
 
-- **Vertices**. This is just copy of input vertices for convinience.
+- **Vertices**. This is just a copy of input vertices for convenience.
 - **Edges**.
 - **Polygons**.
 - **FaceData**. List containing data items from the **FaceData** input, which

@@ -5,7 +5,7 @@ Functionality
 -------------
 
 This node tries to approximate the provided set of vertices by a circle (i.e.,
-fit a cirle through given set of vertices). It searches for such a circle, that
+fit a circle through given set of vertices). It searches for such a circle, that
 all provided vertices have minimum distance to it.
 
 The circle is represented by it's center, it's radius, and a normal of a plane

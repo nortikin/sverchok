@@ -1,7 +1,7 @@
 Circle (Curve)
 ==============
 
-Funcitonality
+Functionality
 -------------
 
 This node generates a Curve object, which represents a circle, or an arc of the circle.

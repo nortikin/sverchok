@@ -53,7 +53,7 @@ This node has the following parameters:
   * **Mathutils**. Old implementation. Slower.
   Only available in Surface Mode (in N-Panel)
 
-- **Ouput Numpy**. Output NumPy arrays in stead of regular list (makes node faster)
+- **Output Numpy**. Output NumPy arrays in stead of regular list (makes node faster)
   Only available in Surface and Edges modes (in N-Panel)
 
 

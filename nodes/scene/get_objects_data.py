@@ -122,7 +122,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     active_obj_index: bpy.props.IntProperty()
 
     out_np: bpy.props.BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode)
     output_np_all: BoolProperty(
@@ -216,7 +216,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     def draw_buttons_ext(self, context, layout):
         r = layout.column(align=True)
         row = r.row(align=True)
-        row.label(text="Ouput Numpy:")
+        row.label(text="Output Numpy:")
         row.prop(self, 'output_np_all', text='If possible', toggle=True)
         if not self.output_np_all:
             for i in range(7):
@@ -227,7 +227,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         layout.prop(self, 'output_np_all', text='All', toggle=True)
         if not self.output_np_all:
             for i in range(7):
@@ -282,7 +282,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             if not obj:
                 continue
 
-            # code inside this context can trigger dependancy graph update events,
+            # code inside this context can trigger dependency graph update events,
             # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
             # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():

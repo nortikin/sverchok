@@ -52,7 +52,7 @@ def numpy_check(data, bool_list):
 
 def numpy_cube(params, origin, flags):
     '''
-    based on zeffii inplementation at
+    based on zeffii implementation at
     https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
     '''
     size, divx, divy, divz, matrix = params
@@ -307,7 +307,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=(False, False, False),
         size=3, update=updateNode)
@@ -335,7 +335,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
 
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.row()
         for i in range(3):
             r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
@@ -346,7 +346,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "correct_output", text="Simplify Output")
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
 
         for i in range(3):
             layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)

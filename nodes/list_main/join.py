@@ -226,7 +226,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].replace_socket(new_socket_type)
 
     def draw_label(self):
-        """ this gives quick param display for when the node is minimzed """
+        """ this gives quick param display for when the node is minimized """
         mixing = "M" if self.mix_check else ""
         wrapping = "W" if self.wrap_check and not self.numpy_mode else ""
         numpy_m = "NP " if self.numpy_mode else ""

@@ -65,7 +65,7 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
     except Exception as e:
         print(e)
         print("smoothlines encountered two colinear lines, no arc to generate")
-        # this will be interpretted as a no-op
+        # this will be interpreted as a no-op
         # potentially here you could return something like  [lerp(A,B, "radius"), B, lerp(C, B, "radius")]
         return None
 

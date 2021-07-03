@@ -25,7 +25,7 @@ if there are repeated points. It ignores overlapping edges
 **Np**
 
 This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but can produce double points that can be
-removed with the remove doubles toogle. It ignores overlapping edges
+removed with the remove doubles toggle. It ignores overlapping edges
 
 **Sweep line algorithm**
 

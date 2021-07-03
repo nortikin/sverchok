@@ -49,7 +49,7 @@ class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         precision=3, update=updateNode)
 
     max_vel: FloatProperty(
-        name='Max Velocity', description='Limit maximun speed. 0 = no limit',
+        name='Max Velocity', description='Limit maximum speed. 0 = no limit',
         default=0.01, precision=3, update=updateNode)
 
 

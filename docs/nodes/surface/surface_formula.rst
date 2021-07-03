@@ -1,7 +1,7 @@
 Surface Formula
 ===============
 
-Funcitonality
+Functionality
 -------------
 
 This node generates a Surface, defined by some user-provided formula.
@@ -34,7 +34,7 @@ One difference with Python's syntax is that you can call only restricted number 
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list, dict.
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not guarantee that no one can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
 
 Examples of valid expressions are:
 
@@ -63,7 +63,7 @@ This node has the following parameters:
   defining surface points in the used coordinate system. Default values define
   a torodial surface.
 * **Output**. This defined the coordinate system being used, and thus it
-  defines the exact meaing of formula parameters. The available modes are:
+  defines the exact meaning of formula parameters. The available modes are:
 
    * **Carthesian**. Three formulas will define correspondingly X, Y and Z coordinates.
    * **Cylindrical**. Three formulas will define correspondingly Rho, Phi and Z coordinates.

@@ -47,7 +47,7 @@ it will write placeholder 'your text here'.
 +=====================+=================================================================================================+
 | Get from Clipboard  | Gets and sets in one action, takes text from clipboard and writes to NodeView with GreasePencil |
 +---------------------+-------------------------------------------------------------------------------------------------+
-| Thickness           | sets pixel width of the GreasePencil strokes                                                    | 
+| Thickness           | sets pixel width of the GreasePencil strokes                                                    |
 +---------------------+-------------------------------------------------------------------------------------------------+
 | Font Size           | Scales up text and line-heights                                                                 |
 +---------------------+-------------------------------------------------------------------------------------------------+

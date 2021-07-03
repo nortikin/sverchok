@@ -21,7 +21,7 @@ Properties
 ----------
 
 **level** - manipulation level, 0 - is objects shifting
-**enclose** - close data when shifting, that way ending cutted numbers turns to beginning
+**enclose** - close data when shifting, that way ending cut numbers turns to beginning
 
 Outputs
 -------

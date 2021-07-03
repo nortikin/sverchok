@@ -19,9 +19,9 @@ All parameters need to proceed from an external node.
 
 
 +------------------+---------------+-------------+-----------------------------------------------+
-| Param            | Type          | Default     | Description                                   |  
+| Param            | Type          | Default     | Description                                   |
 +==================+===============+=============+===============================================+
-| **Vertices**     | Vertices      | None        | vertices of the polygons                      | 
+| **Vertices**     | Vertices      | None        | vertices of the polygons                      |
 +------------------+---------------+-------------+-----------------------------------------------+
 | **Polygons**     | Strings       | None        | polygons referenced to vertices               |
 +------------------+---------------+-------------+-----------------------------------------------+

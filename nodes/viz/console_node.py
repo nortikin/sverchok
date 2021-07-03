@@ -313,11 +313,11 @@ def get_last_n_lines(content, last_n_lines):
 
 def text_decompose(content, last_n_lines):
     """
-    input: 
+    input:
         expects to receive a newline separated string, to indicate multiline text
         if anything else is received a "no valid text found..." message is passed.
     return:
-        return_str : a a list of strings, padded with " " to match the longest line
+        return_str : a list of strings, padded with " " to match the longest line
         dims       : 1. number of lines high, 
                      2. length of longest line (its char count)
     """

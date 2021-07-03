@@ -63,7 +63,7 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
         name='Smooth', description="Smooth Factor (value per iteration)", default=0, update=updateNode)
 
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=(False, False, False, False),
         size=4, update=updateNode)
@@ -71,14 +71,14 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'list_match')
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.column(align=True)
         for i in range(4):
             r.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "list_match", text="List Match")
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         for i in range(4):
             layout.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
 

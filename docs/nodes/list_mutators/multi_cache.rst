@@ -20,7 +20,7 @@ Inputs
 ------
 
 - **Data** - data to store
-- **In Bucket** - bucket to store input data. If multiple values are given the Data will be splitted among the defined buckets
+- **In Bucket** - bucket to store input data. If multiple values are given the Data will be split among the defined buckets
 - **Out Bucket** - bucket to output data from
 
 Options

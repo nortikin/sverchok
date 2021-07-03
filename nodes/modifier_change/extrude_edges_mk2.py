@@ -33,7 +33,7 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
     implementation_items = [
-        ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transfered identically)', 0),
+        ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transferred identically)', 0),
         ('NUMPY', 'Numpy', 'Faster', 1)]
     implementation: bpy.props.EnumProperty(
         name='Implementation',

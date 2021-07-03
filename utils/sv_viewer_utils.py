@@ -47,7 +47,7 @@ def natural_plus_one(object_names):
 
 
 def get_children(node, kind='MESH'):
-    # critera, basename must be in object.keys and the value must be self.basemesh_name
+    # criteria, basename must be in object.keys and the value must be self.basemesh_name
     objects = bpy.data.objects
     objs = [obj for obj in objects if obj.type == kind]
     return [o for o in objs if o.get('basename') == node.basemesh_name]

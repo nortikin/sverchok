@@ -58,7 +58,7 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     mode : EnumProperty(
-        items=modes, description="mathutils kdtree metods",
+        items=modes, description="mathutils kdtree methods",
         default="find_n", update=update_mode)
 
     def draw_buttons(self, context, layout):

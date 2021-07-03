@@ -403,7 +403,7 @@ class SvBoolResult(object):
 
 def transform_solid(matrix, solid):
     """
-    Utility funciton to apply mathutils.Matrix to a Solid object.
+    Utility functiton to apply mathutils.Matrix to a Solid object.
     """
     mat = Base.Matrix(*[i for v in matrix for i in v])
     return solid.transformGeometry(mat)

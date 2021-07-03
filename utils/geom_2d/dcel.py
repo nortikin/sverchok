@@ -87,8 +87,8 @@ class HalfEdge:
         self.last = None
 
         self.left = None  # Information about nearest left neighbour for hole detection, intersection algorithm user
-        self.flags = set()  # For any value wich an algorithm would like to keep with object, only add or remove
-        self._slop = None  # Should be recalculated if origin ot origin of twin are changed
+        self.flags = set()  # For any value which an algorithm would like to keep with object, only add or remove
+        self._slop = None  # Should be recalculated if origin to origin of twin are changed
 
     def __str__(self):
         return "Hedge"
@@ -182,7 +182,7 @@ class Face:
         self._inners = []  # hedges of hole loops
 
         self.select = False  # actually should be careful with this parameter, some algorithm can use it or not
-        self.flags = set()  # For any value wich an algorithm would like to keep with object, only add or remove
+        self.flags = set()  # For any value which an algorithm would like to keep with object, only add or remove
         self.sv_data = dict()  # for any data which we would like to keep with face
 
     def __str__(self):
@@ -326,11 +326,11 @@ class DCELMesh:
                     rebuild = True
 
         faces = []  # type: List[Face]
-        min_hedges = set()  # type: Set[HalfEdge]  # all detected leftmost half edges of evry loop, not tails
+        min_hedges = set()  # type: Set[HalfEdge]  # all detected leftmost half edges of every loop, not tails
         inner_hedges = []  # type: List[List[HalfEdge]]  # multiple loops can be produced be desolving tails algorithm
         # relink half edges
         # after this process it will be possible to get from tail to loop but impossible from loop to tail
-        # actually this process lead to loosing information which it could be useful
+        # actually this process lead to losing information which it could be useful
         # dissolving algorithm can create several loops from one but they are related with each other:
         # - if at least one of them is outer loop so the rest are inner components of this one
         # - or if they all are inner so they either belong to boundless face or are inside some another face
@@ -440,7 +440,7 @@ class DCELMesh:
             # Well, we have bad luck and no one loop was already marked in given sequence
             # initialisation of walk to leftward direction should be done
             # choose a hedge for start, does not matter which from the set
-            left_hedges = [start_hedges[0]]  # type: List[HalfEdge] # list of start hedges of evry inner loop detected
+            left_hedges = [start_hedges[0]]  # type: List[HalfEdge] # list of start hedges of every inner loop detected
             count = 0
             while not left_hedges[-1].left or not left_hedges[-1].left.face or not left_hedges[-1].left.face.outer:
                 # At first check can be next jump done
@@ -497,7 +497,7 @@ class DCELMesh:
                     #         break
                     #     count += 1
                     #     if count > len(self.hedges):
-                    #         raise RecursionError('Tail loop can not find the edn of its tail')
+                    #         raise RecursionError('Tail loop can not find the end of its tail')
                     # # We found tail loop it means inner face without twin outer face
                     # min_tail_hedge = min(tail_hedges, key=lambda he: (he.origin.co[x], he.origin.co[y]))
                     # left_hedges.append(min_tail_hedge)  # next left half edge was found
@@ -513,7 +513,7 @@ class DCELMesh:
                             break
                 count += 1
                 if count > len(self.hedges):
-                    raise RecursionError('Hedge of hole cant find outer face')
+                    raise RecursionError('Hedge of hole can not find outer face')
 
             # all left half edges was found and last left half edge keeps information about boundary face
             # interesting thing about left hedges is the list can include tails which are useless in face creating
@@ -529,7 +529,7 @@ class DCELMesh:
                 if start_hedge in used:
                     continue
                 face.inners.append(start_hedge)
-                used.add(start_hedge)  # this should be enuff
+                used.add(start_hedge)  # this should be enough
                 for hedge in start_hedge.loop_hedges:
                     hedge.face = face
             # all sub loops also can be assigned to founded face
@@ -682,7 +682,7 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_flag=None, 
                 break
             count += 1
             if count > len(half_edges_list):
-                raise RecursionError("The hedge ({}) cant find next neighbour".format(outer_edge))
+                raise RecursionError("The hedge ({}) can't find next neighbour".format(outer_edge))
         outer_edge.next = next_edge
         next_edge.last = outer_edge
 
@@ -759,7 +759,7 @@ def generate_sv_faces(dcel_mesh, point_index, only_select=False, del_flag=None):
     sv_faces = []
     for i, face in enumerate(dcel_mesh.faces):
         if face.inners and face.outer:
-            'Face ({}) has inner components! Sverchok cant show polygons with holes.'.format(i)
+            'Face ({}) has inner components! Sverchok can not show polygons with holes.'.format(i)
         if not face.outer or del_flag in face.flags:
             continue
         if only_select and not face.select:

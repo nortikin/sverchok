@@ -230,7 +230,7 @@ def run_all_tests(pattern=None):
 def run_test_from_file(file_name):
     """
     Run test from file given by name. File should be places in tests folder
-    :param file_name: sting like avl_tree_tests.py
+    :param file_name: string like avl_tree_tests.py
     :return: result
     """
     tests_path = get_tests_path()
@@ -917,14 +917,14 @@ def register():
         try:
             bpy.utils.register_class(clazz)
         except Exception as e:
-            exception("Cant register class %s: %s", clazz, e)
+            exception("Can't register class %s: %s", clazz, e)
 
 def unregister():
     for clazz in reversed(classes):
         try:
             bpy.utils.unregister_class(clazz)
         except Exception as e:
-            exception("Cant unregister class %s: %s", clazz, e)
+            exception("Can't unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys

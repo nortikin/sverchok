@@ -35,7 +35,7 @@ Inputs
 This node has the following inputs:
 
 * **Curve**. The curve to search the point on. This input is mandatory.
-* **Point**. The point to search the neares for. The default value is global origin ``(0, 0, 0)``.
+* **Point**. The point to search the nearets for. The default value is global origin ``(0, 0, 0)``.
 
 Parameters
 ----------

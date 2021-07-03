@@ -257,11 +257,11 @@ class SverchokPreferences(AddonPreferences):
         default="default_theme")
 
     auto_apply_theme: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     apply_theme_on_open: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     color_viz: FloatVectorProperty(
@@ -353,7 +353,7 @@ class SverchokPreferences(AddonPreferences):
 
     show_input_menus : EnumProperty(
             name = "Show input menus",
-            description = "Wheter to display buttons near node socket inputs to automatically create parameter nodes",
+            description = "Whether to display buttons near node socket inputs to automatically create parameter nodes",
             items = input_links_options,
             default = 'QUICKLINK'
         )

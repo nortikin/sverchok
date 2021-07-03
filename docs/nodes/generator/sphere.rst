@@ -25,20 +25,20 @@ All parameters except **Separate** and **Caps** can be given by the node or an e
 +--------------+---------------+-------------+------------------------------------------+
 | Param        |  Type         |   Default   |    Description                           |
 +==============+===============+=============+==========================================+
-| **Radius**   |  Float        |   1.00      |    radius of the sphere                  |    
+| **Radius**   |  Float        |   1.00      |    radius of the sphere                  |
 +--------------+---------------+-------------+------------------------------------------+
-| **U**        |  Int          |   24        |    U subdivisions                        |    
+| **U**        |  Int          |   24        |    U subdivisions                        |
 +--------------+---------------+-------------+------------------------------------------+
-| **V**        |  Int          |   24        |    V subdivisions                        |   
+| **V**        |  Int          |   24        |    V subdivisions                        |
 +--------------+---------------+-------------+------------------------------------------+
-| **Separate** |  Bolean       |   False     |    Grouping vertices by V direction      |
+| **Separate** |  Boolean      |   False     |    Grouping vertices by V direction      |
 +--------------+---------------+-------------+------------------------------------------+
 
 Outputs
 -------
 
 **Vertices**, **Edges** and **Polygons**. 
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant spheres.
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent spheres.
 
 
 Example of usage

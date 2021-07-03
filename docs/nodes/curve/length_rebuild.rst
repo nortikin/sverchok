@@ -59,7 +59,7 @@ This node has the following output:
 Examples of usage
 -----------------
 
-Take an Archimedian spiral with a well-known parametrization; in the center,
+Take an Archimedean spiral with a well-known parametrization; in the center,
 small changes of T give very small change of the position of the point on the
 curve, while farther from the center, the same changes of T give a lot bigger
 steps along the curve. This you can see at the left. At the right there is the

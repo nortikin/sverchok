@@ -113,7 +113,7 @@ def view_node(tree):
     it is a list with two items.
     The first item is a list with tuples, every tuple need to have the node bl_idanme and offset to the previous node
     The second item is a list with tuples, every tuple indicates a link.
-    The link is defined by two pairs of numbers, refering to output and input
+    The link is defined by two pairs of numbers, referring to output and input
     The first number of every pair indicates the node being 0 the active node 1 the first needed node and so on
     The second nmber of every pair indicates de socket index.
 
@@ -175,7 +175,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             connect_idx_viewer(tree, existing_node, new_node)
 
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
-            # we can't determin thru cursor location which socket was nearest the rightclick
+            # we can't determine thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
             for socket in outputs:
                 if socket.hide:

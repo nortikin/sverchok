@@ -105,7 +105,7 @@ class NodesUpdater:
 
     @classmethod
     def add_task(cls, group_nodes_path: List[SvGroupTreeNode]):
-        """It can handle ony one tree at a time"""
+        """It can handle only one tree at a time"""
         if not cls.is_running():  # ignoring for now
             cls._group_nodes_path = group_nodes_path
 

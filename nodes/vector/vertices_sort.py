@@ -141,7 +141,7 @@ def sort_vertices_by_connexions(verts_in, edges_in, limit_mode):
     return verts_out, edges_out, index
 
 
-# function taken from poligons_to_edges.py
+# function taken from polygons_to_edges.py
 @deprecated
 def pols_edges(obj, unique_edges=False):
     return polygons_to_edges(obj, unique_edges)

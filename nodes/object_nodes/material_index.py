@@ -58,7 +58,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
 
     matching_modes = [
             ('FACE', "Per Face", "Assign specific material for each face", 0),
-            ('OBJECT', "Per Object", "Assign signle material for the whole object", 1)
+            ('OBJECT', "Per Object", "Assign single material for the whole object", 1)
         ]
 
     matching_mode : EnumProperty(
@@ -112,7 +112,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             elif materials_level == 1:
                 materials = materials_s
             else:
-                raise Exception("Materials input can consume either list of indicies or list of lists of indicies, but got " + describe_data_shape(materials_s))
+                raise Exception("Materials input can consume either list of indices or list of lists of indices, but got " + describe_data_shape(materials_s))
 
             inputs = match_long_repeat([objects, faces_s, materials])
             for obj, faces, material in zip(*inputs):
@@ -123,7 +123,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 obj.data.update()
         else:
             if materials_level != 2:
-                raise Exception("Materials input can consume only list of lists of indicies, but got " + describe_data_shape(materials_s))
+                raise Exception("Materials input can consume only list of lists of indices, but got " + describe_data_shape(materials_s))
 
             inputs = match_long_repeat([objects, faces_s, materials_s])
             for obj, faces, materials in zip(*inputs):

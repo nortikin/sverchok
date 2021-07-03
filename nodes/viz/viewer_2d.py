@@ -539,7 +539,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         update=update_mode)
 
     working_plane: EnumProperty(
-        name='Proyection Plane',
+        name='Projection Plane',
         items=plane,
         default='XY',
         description="2D plane where geometry will be projected",

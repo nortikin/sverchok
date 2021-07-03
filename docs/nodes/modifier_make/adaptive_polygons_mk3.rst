@@ -100,7 +100,7 @@ This node has some number of parameters, and most of them are accessible only in
 - **Remove doubles**. If checked, then "remove doubles" / "merge by distance"
   function will be applied to the resulting mesh; i.e., vertices that have
   (nearly) the same position, will be merged together. Merging threshold is
-  controlled by **Threshold** input / paramter. This parameter is only visible
+  controlled by **Threshold** input / parameter. This parameter is only visible
   if **Join** parameter is checked. Unchecked by default.
 - **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
 
@@ -177,7 +177,7 @@ This node has some number of parameters, and most of them are accessible only in
 - **Coordinates**. This defines the method of calculation of donor object's
   coordinates along two axes orthogonal to recipient's face normal. In any
   case, the location is defined by transforming some area of XOY plane (or
-  other plane, according to **Normal axis** paramter), called *source area*, to
+  other plane, according to **Normal axis** parameter), called *source area*, to
   the recipient object face. The question is what is the source area. The
   available values are:
 
@@ -304,7 +304,7 @@ The following is a "unit rectangular triangle" (it is used for Tris when **Coord
 Outputs
 -------
 
-This node hsa the following outputs:
+This node has the following outputs:
 
 - **Vertices**
 - **Polygons**

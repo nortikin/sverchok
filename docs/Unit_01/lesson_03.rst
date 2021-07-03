@@ -24,7 +24,7 @@ I chose a Grid because it has only a few properties:
 - X num subdivs
 - Y num subdivs
 
-These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.
+These properties can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png
 
@@ -53,7 +53,7 @@ We can generate sequences like that easily. When we look at the second *componen
 
   [0,0,0,0,1,1,1,1,2,2,2,2]
 
-this also is easy to generate. 
+this also is easy to generate.
 
 
 Using `modulo` and `integer division` to get grid coordinates
@@ -69,16 +69,16 @@ The next section will cover two mathematical concepts (operations), which tend t
 We introduced the ``Scalar Math`` node in lesson 01 and 02, the ``Scalar Math`` node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
 
 +----------------------+---------+--------------------------------------------------------+
-| Operand              |  Symbol | Behaviour                                              |  
+| Operand              |  Symbol | Behaviour                                              |
 +======================+=========+========================================================+
-| Modulo (mod)         | %       | ``i % 4`` returns the division remainder of ``i / 4``, | 
+| Modulo (mod)         | %       | ``i % 4`` returns the division remainder of ``i / 4``, |
 |                      |         | rounded down to the nearest whole number               |
 +----------------------+---------+--------------------------------------------------------+
 | Integer Division     | //      | ``i // 4`` returns the result of ``i / 4``,            |
 |                      |         | rounded down to the nearest whole number.              |
 +----------------------+---------+--------------------------------------------------------+
 
-We can use: 
+We can use:
 
 - ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
 - ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
@@ -88,7 +88,7 @@ Here's a table that shows the effect of ``modulo`` and ``int.division`` on a ran
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 | number range (n) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
 +==================+===+===+===+===+===+===+===+===+===+===+====+====+====+====+====+
-| n % 4            | 0 | 1 | 2 | 3 | 0 | 1 | 2 | 3 | 0 | 1 | 2  | 3  | 0  | 1  | 2  | 
+| n % 4            | 0 | 1 | 2 | 3 | 0 | 1 | 2 | 3 | 0 | 1 | 2  | 3  | 0  | 1  | 2  |
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 | n // 4           | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 2 | 2 | 2  | 2  | 3  | 3  | 3  |
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
@@ -111,7 +111,7 @@ the ``for-loop`` version::
     num_verts_x = 4
     num_verts_y = 3
     j = num_verts_x * num_verts_y      # the * symbol means multiplication
-    
+
     final_list = []
     for i in range(j):                 # passes: 0 1 2 3 4 5 6 7 8 9 10 11
        x = i % 4                       #  makes: 0 1 2 3 0 1 2 3 0 1 2 3
@@ -128,8 +128,8 @@ the ``list comprehension`` version::
 
 Both bits of code calculate the same end result::
 
-    [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
-     (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
+    [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0),
+     (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0),
      (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
 
 and those vertices are going to produce this eventually
@@ -205,7 +205,7 @@ The pattern is::
 We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
 .. Note::
-  
+
   You could already think ahead and consider that if we made ``a 4*4 grid`` (so one more row, y becomes also ``4``), and that there will be another jump in the pattern between polygon index 5 and 6::
 
     #    |A   B   C   D|
@@ -217,7 +217,7 @@ We know there are interuptions in the polygon pattern, between polygon index 2 a
     3  = [4,  8,  9,  5]   # row 2  column 1
     4  = [5,  9,  10, 6]   # row 2  column 2
     5  = [6,  10, 11, 7]   # row 2  column 3
-    #  = [7,  11, 12, 8] .. not a valid polygon for x=4, y=4  
+    #  = [7,  11, 12, 8] .. not a valid polygon for x=4, y=4
     6  = [8,  12, 13, 9]   # row 3  column 1
     7  = [9,  13, 14, 10]  # row 3  column 2
     8  = [10, 14, 15, 11]  # row 3  column 3

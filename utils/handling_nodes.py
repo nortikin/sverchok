@@ -169,7 +169,7 @@ class SockTypes(Enum):
 
 
 class NodeProperties(NamedTuple):
-    bpy_props: tuple  # tuple is whet all bpy.props actually returns
+    bpy_props: tuple  # tuple is where all bpy.props actually returns
     name: str = ''  # not mandatory, the name will be overridden by attribute name automatically
 
     def replace_name(self, new_name):

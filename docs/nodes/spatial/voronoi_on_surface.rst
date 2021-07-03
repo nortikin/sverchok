@@ -17,7 +17,7 @@ This node can operate in different modes:
 * In UV space (2D voronoi). Voronoi diagram is generated in the U/V space of
   the surface and then mapped onto the surface. Since mapping defined by the
   curve can be very non-uniform, this can be very different from real Voronoi
-  diagram calculated by Euclidian metric in 3D space. But for not-too-curved
+  diagram calculated by Euclidean metric in 3D space. But for not-too-curved
   surfaces, this can be used as "good enough" approximation.
 * In 3D space. Voronoi diagram is calculated in 3D space for points on the
   surface. 3D Voronoi diagram is volumetric structure, not flat, so in this

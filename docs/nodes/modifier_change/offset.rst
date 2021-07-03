@@ -57,6 +57,6 @@ Parameters' cases, that make different polygons (decomposer list node used to se
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/18608957/8e4a5696-7d07-11e6-8f7f-ccfc6886a781.png
 
-Upper image can be defined by one offset and list (range) of numbers, plugget to offset/radius, wich are vectorised:
+Upper image can be defined by one offset and list (range) of numbers, plugged to offset/radius, which are vectorised:
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/18608958/9194df92-7d07-11e6-9652-457776d42aaa.png

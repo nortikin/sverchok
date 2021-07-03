@@ -8,7 +8,7 @@ Functionality
 
 NGon generator creates regular (or not exactly, see below) polygons of given
 radius with given number of sides. As an example, it can create triangles,
-squares, hexagons and so on. In this sence, it is similar to Circle node.
+squares, hexagons and so on. In this sense, it is similar to Circle node.
 
 Location of vertices can be randomized, with separate control of randomization
 along radius and randomization of angle. See the examples below.
@@ -45,10 +45,10 @@ All parameters can be given by the node or an external input.
 
 
 +----------------+---------------+-------------+-------------------------------------------------------------+
-| Param          | Type          | Default     | Description                                                 |  
+| Param          | Type          | Default     | Description                                                 |
 +================+===============+=============+=============================================================+
 | **Radius**     | Float         | 1.00        | Radius of escribed circle. When ``RandomR`` is zero,        |
-|                |               |             | then all vertices will be at this distance from origin.     | 
+|                |               |             | then all vertices will be at this distance from origin.     |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **N Sides**    | Int           | 5           | Number of sides of polygon to generate. With higher         |
 |                |               |             | values and ``Shift`` = 0, ``RandomR`` = 0, ``RandomPhi``    |
@@ -83,7 +83,7 @@ This node has the following outputs:
 If ``Shift`` input is not zero, then ``Polygons`` output will be empty - this
 node does not create degenerated polygons.
 
-Depending on the type of the inputs, the node will generate only one or multiples independant circles. 
+Depending on the type of the inputs, the node will generate only one or multiples independent circles. 
 
 Examples
 --------

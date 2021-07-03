@@ -19,7 +19,7 @@ Inputs
 - **Objects** - Blender mesh objects
 - **Vert normals** - normals for each input vertices
 - **Faces** - indexes pointing to vertex normals
-- **Matrix** - optional, fro UV transformation
+- **Matrix** - optional, for UV transformation
 
 Outputs
 -------

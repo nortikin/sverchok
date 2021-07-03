@@ -48,7 +48,7 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Radial Sections**    |  Int      |  32       |  Number of sections around the ring center  |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Circular Sections**  |  Int      |  3        |  Number of sections accross the ring band   |
+| **Circular Sections**  |  Int      |  3        |  Number of sections across the ring band    |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Start Angle**        |  Float    |  0        |  Start angle of the ring [3][4]             |
 +------------------------+-----------+-----------+---------------------------------------------+
@@ -56,7 +56,7 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Phase**              |  Float    |  0.00     |  Phase of the radial sections [3]           |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Separate**           |  Bolean   |  False    |  Grouping vertices by V direction           |
+| **Separate**           |  Boolean  |  False    |  Grouping vertices by V direction           |
 +------------------------+-----------+-----------+---------------------------------------------+
 
 Notes:

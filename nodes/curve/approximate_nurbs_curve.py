@@ -75,7 +75,7 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         return implementations
     
     implementation : EnumProperty(name = "Implementation",
-            description = "Approximation algorithm implmenetation",
+            description = "Approximation algorithm implementation",
             items = get_implementations,
             update = update_sockets)
 

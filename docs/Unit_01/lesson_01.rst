@@ -11,7 +11,7 @@ Lesson 01 - A Plane
 
 Nodes covered in this lesson: ``Scalar Math, Vector In, Number, Number Range, Viewer Draw, Stethoschope, Simple Topology, Vector Math``. 
 
-Let's make a Plane, we will need 4 vectors and we'll define them using math. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart.
+Let's make a Plane, we will need 4 vectors and we'll define them using math. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` apart.
 
    *Note*: The perimeter of a circle is C=2*PI*r . In the unit-circle radius=1 so it's perimter is C=2*PI . For the square we need 4 vertexes with equal distance apart so 2*PI/4=0.5*PI. If you consider that a circle represents an angle of 360 degrees then 2πr=360º and this means that 0*π places represents a vertex at 0 degrees of the circle: 0PI=0º ; 0.5PI=90º ; 1PI=180º ; 1.5PI=270º
 
@@ -89,7 +89,7 @@ See the outputs of the ``SINCOS X``, each element of these new ranges represent 
 
 - ``Add -> Vector -> Vector In``
 
-The `Vector In` node takes as input 1 or more numbers per component. Sockets which are not explicitely connected to will be represented by a zero. 
+The `Vector In` node takes as input 1 or more numbers per component. Sockets which are not explicitly connected to will be represented by a zero. 
 
 1) Connect the resulting ``Cos( x )`` to the first component in of *Vector in*: ``X``
 2) Connect the resulting ``Sin( X )`` to the second component in of *Vector in*: ``Y``

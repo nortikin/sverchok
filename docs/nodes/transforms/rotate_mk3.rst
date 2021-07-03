@@ -72,7 +72,7 @@ In this example we use axis rotation to rotate a torus around the X axis 45 degr
 Euler Rotation
 --------------
 
-This mode is used to perform Euler rotations, refered to an Eular gimbal. A gimbal is a set of 3 axis that have a hierarchical relationship between them.
+This mode is used to perform Euler rotations, referred to an Eular gimbal. A gimbal is a set of 3 axis that have a hierarchical relationship between them.
 
 Inputs
 ^^^^^^

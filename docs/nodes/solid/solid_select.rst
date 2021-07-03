@@ -146,7 +146,7 @@ This node has the following parameters:
      this will not affect output. More exactly, this mode selects edge E if
      `Abs(Cos(Angle(E, Direction))) >= max - Percent * (max - min)`, where max
      and min are maximum and minimum values of that cosine. For non-linear
-     edges, the direction is caluclated by taking some number of points of this
+     edges, the direction is calculated by taking some number of points of this
      edge, and then approximating them by a straight line.
    * **By Distance to Solid**. Selects elements, which are within **Radius**
      from the second Solid object, provided in the **Tool** input.

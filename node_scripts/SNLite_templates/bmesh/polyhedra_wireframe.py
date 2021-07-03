@@ -167,7 +167,7 @@ for verts, edges, faces, thickness, subdivisions in zip_long_repeat(verts_in, ed
             verts1 = [v.index for v in f1.verts]
             va1 = verts1.index(e.verts[0].index)
             vb1 = verts1.index(e.verts[1].index)
-            # chech if order of the edge matches the order of the face
+            # check if order of the edge matches the order of the face
             dir1 = va1 == (vb1+1)%len(verts1)
             edge_vec1 = edge_vec if dir1 else -edge_vec
 
@@ -183,7 +183,7 @@ for verts, edges, faces, thickness, subdivisions in zip_long_repeat(verts_in, ed
                 verts2 = [v.index for v in f2.verts]
                 va2 = verts2.index(e.verts[0].index)
                 vb2 = verts2.index(e.verts[1].index)
-                # chech if order of the edge matches the order of the face
+                # check if order of the edge matches the order of the face
                 dir2 = va2 == (vb2+1)%len(verts2)
                 # check for normal consistency
                 if dir1 != dir2:

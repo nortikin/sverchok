@@ -49,7 +49,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Switch among multiple input sets
 
     auto expanding feature:
-        determined by "any_sockets_of_last_input_set_connected" till last visble is max groups
+        determined by "any_sockets_of_last_input_set_connected" till last visible is max groups
 
         if the node looks like:
             alpha 1

@@ -383,7 +383,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     out_np: bpy.props.BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=(False, False),
         size=2, update=updateNode)

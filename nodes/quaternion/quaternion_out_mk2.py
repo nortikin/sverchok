@@ -96,14 +96,14 @@ class SvQuaternionOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper
         # scalar-vector output
         self.outputs.new('SvStringsSocket', "Scalar")
         self.outputs.new('SvVerticesSocket', "Vector")
-        # euler angle ouputs
+        # euler angle outputs
         self.outputs.new('SvStringsSocket', "Angle X")
         self.outputs.new('SvStringsSocket', "Angle Y")
         self.outputs.new('SvStringsSocket', "Angle Z")
         # axis-angle output
         self.outputs.new('SvVerticesSocket', "Axis")
         self.outputs.new('SvStringsSocket', "Angle")
-        # matrix ouptut
+        # matrix output
         self.outputs.new('SvMatrixSocket', "Matrix")
 
         self.update_mode(context)

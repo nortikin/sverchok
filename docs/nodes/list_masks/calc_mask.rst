@@ -47,7 +47,7 @@ This node has the following parameters:
 Outputs
 -------
 
-This node has only one output: **Mask**. Number of items in this outuput is
+This node has only one output: **Mask**. Number of items in this output is
 equal to number of items in the **Set** input.
 
 Example of usage

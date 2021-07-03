@@ -78,7 +78,7 @@ def recurse_fxy(l1, l2, f):
 
 def recurse_f_multipar(params, f, matching_f):
     '''params will spread using the matching function (matching_f)
-        on the lowest level applys f (function)'''
+        on the lowest level applies f (function)'''
     is_list = [isinstance(l, (list, tuple)) for l in params]
     if any(is_list):
         res = []

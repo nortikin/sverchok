@@ -41,8 +41,8 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
 
   - do parametric constructions  
   - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
-  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools  
+  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Polygons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
+  - do cross sections, extrusions, other modifications with height level flexible parametrised and vectorised node tools  
   - calculate areas, volume, and perform other geometric analysis  
   - make or import CSV tables or custom formats  
   - use Vector/Scalar fields, create them, visualize data  
@@ -51,7 +51,7 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
   - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline  
   - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes  
   - upgrade Sverchok with pressing one button  
-  - using genetic algorythm in your workflow  
+  - using genetic algorithm in your workflow  
   - insolation/radiation calculations  
   - SVG drawing export from node tree  
   - brep/NURBS/IFC exchange  
