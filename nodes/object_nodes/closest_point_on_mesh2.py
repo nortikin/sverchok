@@ -43,7 +43,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
         si('SvVerticesSocket', "point").use_prop = True
         si('SvStringsSocket', "max_dist").prop_name = "Mdist"
 
-        so('SvStringsSocket', "succes")
+        so('SvStringsSocket', "success")
         so('SvVerticesSocket', "Point_on_mesh")
         so('SvVerticesSocket', "Normal_on_mesh")
         so('SvStringsSocket', "FaceINDEX")
