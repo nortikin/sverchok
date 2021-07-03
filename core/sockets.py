@@ -343,10 +343,10 @@ class SvSocketCommon(SvSocketProcessing):
         """
         Intended to return name of property related with socket owned by its node
         Name can be replaced by twin property name in draft mode of a tree
-        If does not have 'missing_dependecy' attribute it can return empty list, reasons unknown
+        If does not have 'missing_dependency' attribute it can return empty list, reasons unknown
         """
         node = self.node
-        if hasattr(node, 'missing_dependecy'):
+        if hasattr(node, 'missing_dependency'):
             return []
         if node and hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode() and hasattr(node.id_data, 'sv_draft') and node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
