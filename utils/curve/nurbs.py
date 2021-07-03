@@ -699,7 +699,9 @@ class SvGeomdlCurve(SvNurbsCurve):
     def remove_knot(self, u, count=1):
         curve = self.copy()
         curve = operations.remove_knot(curve.curve, [u], [count])
-        return SvGeomdlCurve(curve)
+        result = SvGeomdlCurve(curve)
+        result.u_bounds = self.u_bounds
+        return result
 
 class SvNativeNurbsCurve(SvNurbsCurve):
     def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
@@ -1001,7 +1003,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             else:
                 j -= 1
         for k in range(i+1, len(ctrlpts)):
-            ctrlpts_new[j] = ctrlpts[k]
+            ctrlpts_new[j] = ctrlpts_new[k]
             j += 1
 
         # Slice to get the new control points

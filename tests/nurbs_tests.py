@@ -494,9 +494,9 @@ class OtherNurbsTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(removed.get_knotvector(), kv)
         #self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts)
 
-        print("CP", removed.get_control_points())
-        print("W", removed.get_weights())
-        #self.assert_numpy_arrays_equal(removed.get_control_points(), points)
+        #print("CP", removed.get_control_points())
+        #print("W", removed.get_weights())
+        self.assert_numpy_arrays_equal(removed.get_control_points(), points)
 
     def test_split_1(self):
         points = np.array([[0, 0, 0], [1, 0, 0]])
