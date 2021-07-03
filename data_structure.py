@@ -423,7 +423,7 @@ iter_list_match_func = {
 # NOTE, these function cannot possibly work in all scenarios, use with care
 
 def dataCorrect(data, nominal_dept=2):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )
     """
     dept = levelsOflist(data)
     output = []
@@ -432,11 +432,11 @@ def dataCorrect(data, nominal_dept=2):
     if dept < 2:
         return data #[dept, data]
     else:
-        output = dataStandart(data, dept, nominal_dept)
+        output = dataStandard(data, dept, nominal_dept)
         return output
 
 def dataCorrect_np(data, nominal_dept=2):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )
     """
     dept = levels_of_list_or_np(data)
     output = []
@@ -445,11 +445,11 @@ def dataCorrect_np(data, nominal_dept=2):
     if dept < 2:
         return data #[dept, data]
     else:
-        output = dataStandart(data, dept, nominal_dept)
+        output = dataStandard(data, dept, nominal_dept)
         return output
 
 def dataSpoil(data, dept):
-    """from standart data to initial levels: to nested lists
+    """from standard data to initial levels: to nested lists
      container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
     """
     __doc__ = 'preparing and making spoil'
@@ -471,13 +471,13 @@ def dataSpoil(data, dept):
     return out
 
 
-def dataStandart(data, dept, nominal_dept):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )"""
+def dataStandard(data, dept, nominal_dept):
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )"""
     deptl = dept - 1
     output = []
     for object in data:
         if deptl >= nominal_dept:
-            output.extend(dataStandart(object, deptl, nominal_dept))
+            output.extend(dataStandard(object, deptl, nominal_dept))
         else:
             output.append(data)
             return output
@@ -961,7 +961,7 @@ def is_ultimately(data, data_types):
 
 # tools that makes easier to convert data
 # from string to matrixes, vertices,
-# lists, other and vise versa
+# lists, other and vice versa
 
 
 def Matrix_listing(prop):
@@ -1291,9 +1291,9 @@ def throttle_and_update_node(func):  # todo deprecated, should be wiped out
 
 ##############################################################
 ##############################################################
-############## changable type of socket magic ################
+############## changeable type of socket magic ###############
 ########### if you have separate socket solution #############
-#################### welcome to provide #####################
+#################### welcome to provide ######################
 ##############################################################
 ##############################################################
 
@@ -1402,7 +1402,7 @@ def get_other_socket(socket):
 
 
 ###########################################
-# Multysocket magic / множественный сокет #
+# Multisocket magic / множественный сокет #
 ###########################################
 
 #     utility function for handling n-inputs, for usage see Test1.py
@@ -1422,7 +1422,7 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
      min - integer, minimal number of sockets, at list 1 needed
      start - integer, starting socket.
      breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
-     output - integer, deal with output, if>0 counts number of outputs multy sockets
+     output - integer, deal with output, if>0 counts number of outputs multi sockets
      base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
      node.multi_socket_type - type of socket, as .bl_idname
 
