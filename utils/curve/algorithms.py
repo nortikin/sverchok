@@ -26,7 +26,7 @@ from sverchok.utils.math import (
 )
 from sverchok.utils.logging import info
 
-def make_euclidian_ts(pts):
+def make_euclidean_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
     tknots = np.insert(tmp, 0, 0).cumsum()
     tknots = tknots / tknots[-1]

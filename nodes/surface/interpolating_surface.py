@@ -10,7 +10,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.surface.algorithms import SvInterpolatingSurface
-from sverchok.utils.curve import SvSplineCurve, make_euclidian_ts
+from sverchok.utils.curve import SvSplineCurve, make_euclidean_ts
 from sverchok.dependencies import geomdl, scipy
 from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurbsCurve
 from sverchok.utils.curve.rbf import SvRbfCurve
@@ -122,7 +122,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             from scipy.interpolate import Rbf
             def make(vertices):
                 vertices = np.array(vertices)
-                ts = make_euclidian_ts(vertices)
+                ts = make_euclidean_ts(vertices)
                 rbf = Rbf(ts, vertices,
                             function=self.function,
                             smooth=smooth,
