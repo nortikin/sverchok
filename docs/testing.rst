@@ -43,7 +43,7 @@ Travis CI builds are configured to trigger automatically on the following events
 * Push to the ``master`` branch.
 * Creation of the pull request against the ``master`` branch, or a push towards the branch of pull request.
 
-The status of build triggered by pull request is displayed directly in the GitHub interface. If your pull request breaks existing tests, it is not going to be merged in such state. You need to either a) fix your code, or b) update the code of tests themeselves, in case the problem is in tests, not in code being tested.
+The status of build triggered by pull request is displayed directly in the GitHub interface. If your pull request breaks existing tests, it is not going to be merged in such state. You need to either a) fix your code, or b) update the code of tests themselves, in case the problem is in tests, not in code being tested.
 
 Moreover, it is a good idea to add some automated tests with each pull request. For example, if you added a new feature, add a test for it (in case it is not too hard to write such a test; otherwise just do manual testing).
 
