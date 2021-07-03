@@ -32,14 +32,11 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
 
-from sverchok.utils.snlite_utils import vectorize, ddir
+from sverchok.utils.snlite_utils import vectorize, ddir, CacheMixin
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, throttled
-
-nodescript_static_caching = {}
-nodescript_responsive_caching = {}
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -110,7 +107,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, CacheMixin):
     ''' snl SN Lite /// a lite version of SN '''
 
     bl_idname = 'SvScriptNodeLite'
@@ -286,88 +283,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.node_dict[hash(self)]['sockets'] = socket_info
 
         return True
-
-
-    def wipe_static_cache(self):
-        try:
-            del nodescript_static_caching[self.node_id]
-        except:
-            msg_1 = f"{self.node_id} not found in nodescript_static_caching.."
-            msg_2 = f"size static cache = {len(nodescript_static_caching)}"
-            self.info(f"{msg_1}\n{msg_2}")
-
-
-
-    def get_static_cache(self, function_to_use=None, variables=None):
-        """
-        This function provides a relatively convenient way to do Static Caching
-
-        - lets you cache one off calculations for this node
-        - reset the cache if your (input) data changes.
-
-        How to make an initial cache for a tested function with known input data:
-
-            # if you need to reset, do it above the caching.
-            self.wipe_static_cache()
-
-            # here you set the cache, and obtain the data.
-            my_data = self.get_static_cache(
-                my_useful_function,    # any kind of function, should return the useful product of calculation
-                my_variables           # must be a tuple of variables (if single variable use (variable,))
-                                       # if no variables use () : f.ex:  self.get_static_cache(some_func, ())
-        
-        """
-      
-        cache = nodescript_static_caching.get(self.node_id)
-        if not cache:
-            cache = function_to_use(*variables)
-            nodescript_static_caching[self.node_id] = cache
-            self.info('static cache created')
-
-        return cache
-
-    def wipe_responsive_cache(self, function_to_use=None):
-        """
-        can wipe the value stored in a key is found where the first two components are (self.node_id, function_str_hash, .......)
-
-        """
-        try:
-            for k in nodescript_responsive_caching.keys():
-                if k[0] == self.node_id and k[1] == hash(inspect.getsource(function_to_use)):
-                    del nodescript_responsive_caching[k]
-                    self.info(f"removed key: {self.nod_id}, function: {function_to_use.__name__}")
-                    # break  maybe 
-
-        except Exception as err:
-            self.info(err)
-
-    def get_responsive_cache(self, function_to_use=None, variables=None):
-        """
-        this functions aims to provide a way to check if a the function or variables that produce your data
-        has changed, before deciding to re-execute the function with your variables.
-        - if the function changes significantly (any non whitespace change)  (no point comparing object references)
-        - or the variables (works best if the number of variables are relatively small, and not f.ex 100k points)
-
-        [x] check the function code as a string
-        [x] check the input variables
-
-
-        """
-        component_function_text = hash(inspect.getsource(function_to_use))
-        component_variables_hash = hash(str(variables))
-        cache_key = (self.node_id, component_function_text, component_variables_hash)
-
-        cache = nodescript_responsive_caching.get(cache_key)
-
-        if not cache:
-            cache = function_to_use(*variables_to_use)
-            nodescript_responsive_caching[cache_key] = cache
-            self.info('responsive cache created')
-
-            # if any other cache_key is similar except variables, then probably..probably.. want to nuke it.
-            ...
-
-        return cache
 
 
     def sv_init(self, context):
