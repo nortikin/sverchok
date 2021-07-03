@@ -35,7 +35,7 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         si('SvVerticesSocket', 'direction').use_prop = True
         so('SvVerticesSocket', "HitP")
         so('SvVerticesSocket', "HitNorm")
-        so('SvStringsSocket', "Success")
+        so('SvStringsSocket', "Succes")
         so('SvStringsSocket', "FaceIndex")
         so("SvObjectSocket", "Objects")
         so("SvMatrixSocket", "hited object matrix")
