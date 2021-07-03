@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import inspect
 
 import bpy
 
@@ -42,6 +43,12 @@ def ddir(content, filter_str=None):
     else:
         vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
     return vals
+
+
+def range_limit(low, high, x):
+    if x < low: return low
+    elif x > high: return high
+    return x
 
 
 
@@ -93,7 +100,9 @@ class CacheMixin():
 
     def wipe_responsive_cache(self, function_to_use=None):
         """
-        can wipe the value stored in a key is found where the first two components are (self.node_id, function_str_hash, .......)
+        can wipe the value stored in a key is found where the first two components are:
+
+             (self.node_id, function_str_hash, .......)
 
         """
         try:
@@ -108,13 +117,14 @@ class CacheMixin():
 
     def get_responsive_cache(self, function_to_use=None, variables=None):
         """
-        this functions aims to provide a way to check if a the function or variables that produce your data
-        has changed, before deciding to re-execute the function with your variables.
+        this functions aims to provide a way to check if a the function or variables that produce 
+        your data has changed, before deciding to re-execute the function with your variables.
         - if the function changes significantly (any non whitespace change)  (no point comparing object references)
         - or the variables (works best if the number of variables are relatively small, and not f.ex 100k points)
 
         [x] check the function code as a string
         [x] check the input variables
+        [ ] testing
 
 
         """

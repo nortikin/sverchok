@@ -31,7 +31,7 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
 
-from sverchok.utils.snlite_utils import vectorize, ddir, CacheMixin
+from sverchok.utils.snlite_utils import vectorize, ddir, range_limit, CacheMixin
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
@@ -46,6 +46,8 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 defaults = [0] * 32
 
 template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
+
+
 
 class SNLITE_EXCEPTION(Exception): pass
 
@@ -422,6 +424,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, C
             'bpy': bpy,
             'np': np,
             'ddir': ddir,
+            'range_limit': range_limit,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
         })
