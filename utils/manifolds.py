@@ -162,7 +162,6 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     else:
         result_ts = init_ts
 
-    print("Rts", result_ts)
     if output_points:
         if precise:
             result_points = curve.evaluate_array(np.array(result_ts))
