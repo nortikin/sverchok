@@ -240,11 +240,22 @@ def nurbs_curve_matrix(curve):
     return matrix
 
 def _check_is_line(curve, eps=0.001):
+    # Check that the provided curve is nearly a straight line segment.
+    # This implementation depends heavily on the fact that this curve is
+    # NURBS. It uses so-called "godograph property". In short, this 
+    # property states that edges of curve's control polygon determine
+    # maximum variation of curve's tangent vector.
+
     cpts = curve.get_control_points()
+    # direction from first to last point of the curve
     direction = cpts[-1] - cpts[0]
     direction /= np.linalg.norm(direction)
 
     for cpt1, cpt2 in zip(cpts, cpts[1:]):
+        # for each edge of control polygon,
+        # check that it constitutes a small enough
+        # angle with `direction`. If not, this is
+        # clearly not a straight line.
         dv = cpt2 - cpt1
         dv /= np.linalg.norm(dv)
         angle = np.arccos(np.dot(dv, direction))
@@ -273,6 +284,9 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
     upper = np.array([t1_max, t2_max])
 
     def linear_intersection():
+        # If both curves look very much like straight line segments,
+        # then we can calculate their intersections by solving simple
+        # linear equations.
         line1 = _check_is_line(curve1)
         line2 = _check_is_line(curve2)
 
@@ -310,7 +324,10 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
 #         logger.debug(f"=> {ts} => {rs}")
 
     #logger.debug(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-    #res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
+
+    # Find minimum distance between two curves with a numeric method.
+    # If this minimum distance is small enough, we will say that curves
+    # do intersect.
     res = scipy.optimize.minimize(goal, x0, method=method,
                 bounds = [(t1_min, t1_max), (t2_min, t2_max)],
                 tol = 0.5 * precision)
@@ -337,6 +354,15 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         logger = getLogger()
 
     bbox_tolerance = 1e-4
+
+    # "Recursive bounding box" algorithm:
+    # * if bounding boxes of two curves do not intersect, then curves do not intersect
+    # * Otherwise, split each curves in half, and check if bounding boxes of these halves intersect.
+    # * When this subdivision gives very small parts of curves, try to find intersections numerically.
+    #
+    # This implementation depends heavily on the fact that curves are NURBS. Because only NURBS curves
+    # give us a simple way to calculate bounding box of the curve: it's a bounding box of curve's
+    # control points.
 
     def _intersect(curve1, curve2, c1_bounds, c2_bounds):
         t1_min, t1_max = c1_bounds
