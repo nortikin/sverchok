@@ -120,3 +120,11 @@ This node has the following output:
 
 * **Surface**. The resulting NURBS surface.
 
+Examples of usage
+-----------------
+
+.. image:: https://user-images.githubusercontent.com/284644/123552408-71888680-d78f-11eb-92b7-904edc5a53bb.png
+
+.. image:: https://user-images.githubusercontent.com/284644/124376217-4e923100-dcbf-11eb-8a50-4c4f2e21442f.png
+
+There are some other examples at github's PR page: https://github.com/nortikin/sverchok/pull/4183
