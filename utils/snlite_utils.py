@@ -100,9 +100,10 @@ class CacheMixin():
 
     def wipe_responsive_cache(self, function_to_use=None):
         """
-        can wipe the value stored in a key is found where the first two components are:
-
-             (self.node_id, function_str_hash, .......)
+        to avoid infinitely growing cache, it's useful to be able to wipe storage of all other reference
+        to this node and this function. Any cached key that starts with these components can be wiped.
+        
+            (self.node_id, function_str_hash, .......)
 
         """
         try:
@@ -110,7 +111,6 @@ class CacheMixin():
                 if k[0] == self.node_id and k[1] == hash(inspect.getsource(function_to_use)):
                     del responsive_caching[k]
                     self.info(f"removed key: {self.nod_id}, function: {function_to_use.__name__}")
-                    # break  maybe 
 
         except Exception as err:
             self.info(err)
@@ -131,7 +131,7 @@ class CacheMixin():
         cache_key = (self.node_id, component_function_text, component_variables_hash)
 
         if auto_wipe:
-            # maybe? this will wipe any references in cache that come from this "node_id" and this "function_to_use.str"
+            # this will wipe any references in cache that come from this "node_id" and this "function_to_use.str"
             self.wipe_responsive_cache(function_to_use)
 
         cache = responsive_caching.get(cache_key)
@@ -142,3 +142,19 @@ class CacheMixin():
             self.info('responsive cache created')
 
         return cache
+
+    def get_size_of_static_cache(self):
+        return len(static_caching)
+
+    def get_size_of_responsive_cache(self, this_node_only=False):
+        if this_node_only:
+            return len([k for k in static_caching.keys() if k[0] == self.node_id])
+        return len(responsive_caching)
+
+    # user should not modify existing cache manually. my guess is very few people will ever use this except me.
+
+    def get_static_cache(self):
+        return static_caching
+
+    def get_responsive_cache(self):
+        return responsive_caching
