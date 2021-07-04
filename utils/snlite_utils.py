@@ -124,8 +124,6 @@ class CacheMixin():
 
         [x] check the function code as a string
         [x] check the input variables
-        [ ] testing
-
 
         """
         component_function_text = hash(inspect.getsource(function_to_use))
@@ -133,7 +131,7 @@ class CacheMixin():
         cache_key = (self.node_id, component_function_text, component_variables_hash)
 
         if auto_wipe:
-            # maybe?
+            # maybe? this will wipe any references in cache that come from this "node_id" and this "function_to_use.str"
             self.wipe_responsive_cache(function_to_use)
 
         cache = responsive_caching.get(cache_key)
