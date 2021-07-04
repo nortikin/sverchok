@@ -86,6 +86,6 @@ class KnotvectorDictTests(SverchokTestCase):
         for k, m in curve2_kv:
             d.update(2, k, m)
 
-        expected_items = [(0, 4), (0.499, 3), (0.5, 3), (0.501, 3), (1, 4)]
+        expected_items = [(0, 4), (0.5, 3), (0.501, 3), (1, 4)]
         self.assertEquals(d.items(), expected_items)
 
