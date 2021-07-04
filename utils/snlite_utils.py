@@ -148,7 +148,7 @@ class CacheMixin():
 
     def get_size_of_responsive_cache(self, this_node_only=False):
         if this_node_only:
-            return len([k for k in static_caching.keys() if k[0] == self.node_id])
+            return len([k for k in responsive_caching.keys() if k[0] == self.node_id])
         return len(responsive_caching)
 
     # user should not modify existing cache manually. my guess is very few people will ever use this except me.
