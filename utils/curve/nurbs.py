@@ -436,7 +436,7 @@ class SvNurbsCurve(SvCurve):
         if new_t_min > t_min:
             _, params = curve._split_at(new_t_min)
             if params is None:
-                print(f"Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
+                raise Exception(f"Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
             knotvector, control_points, weights = params
             curve = SvNurbsCurve.build(implementation,
                         degree, knotvector,
@@ -444,7 +444,7 @@ class SvNurbsCurve(SvCurve):
         if new_t_max < t_max:
             params, _ = curve._split_at(new_t_max)
             if params is None:
-                print(f"Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
+                raise Exception(f"Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
             knotvector, control_points, weights = params
             curve = SvNurbsCurve.build(implementation,
                         degree, knotvector,

@@ -49,7 +49,7 @@ class KnotvectorDict(object):
         for idx, (c, k, m) in enumerate(self.multiplicities):
             if curve_idx != c:
                 if abs(knot - k) < self.tolerance():
-                    print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
+                    #print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
                     if (curve_idx, k) not in self.done_knots:
                         found_idx = idx
                         found_knot = k
@@ -89,7 +89,7 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
         dst_knots = KnotvectorDict(accuracy)
         for i, curve in enumerate(curves):
             m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
-            print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
+            #print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
                 dst_knots.update(i, u, count)
 
@@ -104,22 +104,23 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
             diffs = []
             #kv = np.round(curve.get_knotvector(), accuracy)
             #curve = curve.copy(knotvector = kv)
-            print('next curve', curve.get_knotvector())
+            #print('next curve', curve.get_knotvector())
             ms = dict(sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2))
             for dst_u, dst_multiplicity in dst_knots.items():
                 src_multiplicity = ms.get(dst_u, 0)
                 diff = dst_multiplicity - src_multiplicity
-                print(f"U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
+                #print(f"U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
                 diffs.append((dst_u, diff))
             #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
 
             for u, diff in diffs:
                 if diff > 0:
                     if u in dst_knots.skip_insertions[idx]:
-                        print(f"C: skip insertion T = {u}")
+                        pass
+                        #print(f"C: skip insertion T = {u}")
                     else:
                         #kv = curve.get_knotvector()
-                        print(f"C: Insert T = {u} x {diff}")
+                        #print(f"C: Insert T = {u} x {diff}")
                         curve = curve.insert_knot(u, diff)
             result.append(curve)
             

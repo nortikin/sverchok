@@ -1175,7 +1175,7 @@ def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6
 
             for u, diff in diffs_u:
                 if diff > 0:
-                    print(f"S: Insert U = {u} x {diff}")
+                    #print(f"S: Insert U = {u} x {diff}")
                     surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
 
             diffs_v = []
@@ -1188,7 +1188,7 @@ def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6
 
             for v, diff in diffs_v:
                 if diff > 0:
-                    print(f"S: Insert V = {v} x {diff}")
+                    #print(f"S: Insert V = {v} x {diff}")
                     surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
 
             result.append(surface)
