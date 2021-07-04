@@ -473,7 +473,8 @@ class OtherNurbsTests(SverchokTestCase):
         removed = inserted.remove_knot(knot, 1)
         self.assert_numpy_arrays_equal(removed.get_knotvector(), kv)
 
-    #@unittest.skip
+    @unittest.skip("Until https://github.com/orbingol/NURBS-Python/issues/135 is resolved")
+    @requires(geomdl)
     def test_remove_geomdl_1(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
         degree = 2
