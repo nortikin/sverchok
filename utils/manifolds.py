@@ -5,12 +5,12 @@ from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve
-from sverchok.utils.logging import debug, info
+from sverchok.utils.logging import debug, info, getLogger
 from sverchok.utils.geom import PlaneEquation, LineEquation
 from sverchok.dependencies import scipy
 
 if scipy is not None:
-    from scipy.optimize import root_scalar, root
+    from scipy.optimize import root_scalar, root, minimize_scalar
 
 SKIP = 'skip'
 FAIL = 'fail'
@@ -91,6 +91,86 @@ def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_
             raise Exception("Unsupported on_fail value")
     result = CurveProjectionResult(us, points, src_point)
     return result
+
+def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='Brent', output_points=True, logger=None):
+    if logger is None:
+        logger = getLogger()
+
+    t_min, t_max = curve.get_u_bounds()
+
+    def init_guess(curve, points_from):
+        us = np.linspace(t_min, t_max, num=samples)
+
+        points = curve.evaluate_array(us).tolist()
+        #print("P:", points)
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, nearest_out
+
+    def goal(t):
+        dv = curve.evaluate(t) - np.array(src_point)
+        return np.linalg.norm(dv)
+
+    init_ts, init_points = init_guess(curve, src_points)
+    result_ts = []
+    if precise:
+        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
+            delta_t = (t_max - t_min) / samples
+            logger.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
+            if init_t <= t_min:
+                if init_t - delta_t >= t_min:
+                    bracket = (init_t - delta_t, init_t, t_max)
+                else:
+                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
+            elif init_t >= t_max:
+                if init_t + delta_t <= t_max:
+                    bracket = (t_min, init_t, init_t + delta_t)
+                else:
+                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
+            else:
+                bracket = (t_min, init_t, t_max)
+            result = minimize_scalar(goal,
+                        bounds = (t_min, t_max),
+                        bracket = bracket,
+                        method = method
+                    )
+
+            if not result.success:
+                if hasattr(result, 'message'):
+                    message = result.message
+                else:
+                    message = repr(result)
+                raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
+
+            t0 = result.x
+            if t0 < t_min:
+                t0 = t_min
+            elif t0 > t_max:
+                t0 = t_max
+            result_ts.append(t0)
+    else:
+        result_ts = init_ts
+
+    print("Rts", result_ts)
+    if output_points:
+        if precise:
+            result_points = curve.evaluate_array(np.array(result_ts))
+            return list(zip(result_ts, result_points))
+        else:
+            return list(zip(result_ts, init_points))
+    else:
+        return result_ts
 
 def ortho_project_surface(src_point, surface, init_samples=10, maxiter=30, tolerance=1e-4):
     """

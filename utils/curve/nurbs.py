@@ -694,7 +694,9 @@ class SvGeomdlCurve(SvNurbsCurve):
     def insert_knot(self, u, count=1):
         curve = self.copy()
         curve = operations.insert_knot(curve.curve, [u], [count])
-        return SvGeomdlCurve(curve)
+        r = SvGeomdlCurve(curve)
+        r.u_bounds = self.u_bounds
+        return r
 
     def remove_knot(self, u, count=1):
         curve = self.copy()
