@@ -102,6 +102,7 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
+    SvIntersectNurbsCurvesNode
     SvExNearestPointOnCurveNode
     SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode
@@ -132,6 +133,7 @@
     SvNurbsLoftNode
     SvNurbsSweepNode
     SvNurbsBirailNode
+    SvGordonSurfaceNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode

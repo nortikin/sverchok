@@ -1276,7 +1276,7 @@ class LineEquation(object):
         projections = projection_lengths * unit_direction
         return center + projections
 
-def intersect_segment_segment(v1, v2, v3, v4):
+def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
@@ -1303,7 +1303,8 @@ def intersect_segment_segment(v1, v2, v3, v4):
     u = num1 / denom
     v = num2 / denom
 
-    if not ((0.0 <= u <= 1.0) and (0.0 <= v <= 1.0)):
+    et = endpoint_tolerance
+    if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
         return None
 
     x = u*(x1-x2) + x2
@@ -1707,6 +1708,9 @@ class BoundingBox(object):
         self.min = np.array([min_x, min_y, min_z])
         self.max = np.array([max_x, max_y, max_z])
 
+    def mean(self):
+        return 0.5 * (self.min + self.max)
+
     @property
     def min_x(self):
         return self.min[0]
@@ -1769,6 +1773,14 @@ class BoundingBox(object):
 
     def size(self):
         return (self.max - self.min).max()
+
+    def increase(self, delta):
+        mean = self.mean()
+        d = 0.5*delta
+        box = BoundingBox(self.min_x - d, self.max_x + d,
+                self.min_y - d, self.max_y + d,
+                self.min_z - d, self.max_z + d)
+        return box
 
 #     def is_empty(self):
 #         return (self.min == self.max).all()

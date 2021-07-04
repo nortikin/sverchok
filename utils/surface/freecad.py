@@ -302,6 +302,35 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
         return SvFreeCadNurbsCurve(fc_curve)
 
+    def insert_knot(self, direction, parameter, count=1):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        tolerance = 1e-6
+        if direction == 'U':
+            surface.surface.insertUKnot(parameter, count, tolerance)
+        else:
+            surface.surface.insertVKnot(parameter, count, tolerance)
+        return surface
+    
+    def remove_knot(self, direction, parameter, count=1, tolerance=1e-4):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        if direction == 'U':
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())
+        else:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_v())
+        idx = None
+        M = None
+        for i, (u1, m) in enumerate(ms):
+            if u1 == parameter:
+                idx = i
+                M = m - count
+                break
+        if idx is not None:
+            if direction == 'U':
+                surface.surface.removeUKnot(idx+1, M, tolerance)
+            else:
+                surface.surface.removeVKnot(idx+1, M, tolerance)
+        return surface
+
 #     def to_nurbs(self, **kwargs):
 #         return self
 
