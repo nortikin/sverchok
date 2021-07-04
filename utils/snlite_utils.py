@@ -153,8 +153,8 @@ class CacheMixin():
 
     # user should not modify existing cache manually. my guess is very few people will ever use this except me.
 
-    def get_static_cache(self):
+    def get_static_cache_dict(self):
         return static_caching
 
-    def get_responsive_cache(self):
+    def get_responsive_cache_dict(self):
         return responsive_caching
