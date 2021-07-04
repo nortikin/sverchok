@@ -16,7 +16,7 @@ from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, fro
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.decorators import deprecated
-from sverchok.utils.dictionary import SvApproxDict
+from sverchok.utils.logging import getLogger
 from sverchok.dependencies import scipy
 
 if scipy is not None:
@@ -262,7 +262,10 @@ def intersect_segment_segment_mu(v1, v2, v3, v4):
         return np.array(v)
     return None
 
-def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
+def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, logger=None):
+    if logger is None:
+        logger = getLogger()
+
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
 
@@ -276,10 +279,10 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
         if line1 and line2:
             v1, v2 = line1
             v3, v4 = line2
-            print(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+            logger.debug(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
             r = intersect_segment_segment(v1, v2, v3, v4)
             if not r:
-                print(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
+                logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
                 return None
             else:
                 u, v, pt = r
@@ -304,9 +307,9 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
     x0 = np.array([mid1, mid2])
 
 #     def callback(ts, rs):
-#         print(f"=> {ts} => {rs}")
+#         logger.debug(f"=> {ts} => {rs}")
 
-    #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+    #logger.debug(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
     #res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
     res = scipy.optimize.minimize(goal, x0, method=method,
                 bounds = [(t1_min, t1_max), (t2_min, t2_max)],
@@ -319,17 +322,19 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
         pt2 = curve2.evaluate(t2)
         dist = np.linalg.norm(pt2 - pt1)
         if dist < precision:
-            #print(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
+            #logger.debug(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
             pt = (pt1 + pt2) * 0.5
             return [(t1, t2, pt)]
         else:
-            print(f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}")
+            logger.debug(f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}")
             return []
     else:
-        print(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
+        logger.debug(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
 
-def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.001):
+def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.001, logger=None):
+    if logger is None:
+        logger = getLogger()
 
     bbox_tolerance = 1e-4
 
@@ -337,7 +342,7 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-        #print(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
 
         bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)

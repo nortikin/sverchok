@@ -140,7 +140,8 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     def process_native(self, curve1, curve2):
         res = intersect_nurbs_curves(curve1, curve2,
                     method = self.method,
-                    numeric_precision = self.precision)
+                    numeric_precision = self.precision,
+                    logger = self.get_logger())
         points = [(r[0], r[1], r[2].tolist()) for r in res]
         return self._filter(points)
 
