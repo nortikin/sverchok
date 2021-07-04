@@ -47,7 +47,8 @@ If intersections of your curves are located arbitrarily in parameter spaces of
 curves, the node can try to reparametrize curves in order to make intersections
 located "even" in parameter spaces. Note that reparametrization algorithm is
 somewhat rude, so it can produce unwanted additional control points, and/or
-create "bad" parametrization of resulting surface.
+create "bad" parametrization of resulting surface. In some cases, it is
+possible to get a better parametrization by manually removing excessive knots.
 
 To clear the issue of intersections location in parameter space, let's draw some pictures.
 
