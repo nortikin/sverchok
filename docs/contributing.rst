@@ -84,7 +84,7 @@ SOME RULES:
 
            usage:
                dataCorrect(data, nominal_dept=2), where data - is your list, nominal_depth -
-               optioal, normal for your' case depth of list
+               optional, normal for your' case depth of list
 
         2. data spoil - make list more nasty for value of depth
 
