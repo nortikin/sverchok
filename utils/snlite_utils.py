@@ -115,7 +115,7 @@ class CacheMixin():
         except Exception as err:
             self.info(err)
 
-    def get_responsive_cache(self, function_to_use=None, variables=None):
+    def get_responsive_cache(self, function_to_use=None, variables=None, auto_wipe=True):
         """
         this functions aims to provide a way to check if a the function or variables that produce 
         your data has changed, before deciding to re-execute the function with your variables.
@@ -132,14 +132,15 @@ class CacheMixin():
         component_variables_hash = hash(str(variables))
         cache_key = (self.node_id, component_function_text, component_variables_hash)
 
+        if auto_wipe:
+            # maybe?
+            self.wipe_responsive_cache(function_to_use)
+
         cache = responsive_caching.get(cache_key)
 
         if not cache:
             cache = function_to_use(*variables_to_use)
             responsive_caching[cache_key] = cache
             self.info('responsive cache created')
-
-            # if any other cache_key is similar except variables, then probably..probably.. want to nuke it.
-            ...
 
         return cache
