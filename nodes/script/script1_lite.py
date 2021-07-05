@@ -121,23 +121,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
 
-    def custom_enum_func(self, context):
+    def return_enumeration(self, enum_name=""):
         ND = self.node_dict.get(hash(self))
         if ND:
-            enum_list = ND['sockets']['custom_enum']
+            enum_list = ND['sockets'][enum_name]
             if enum_list:
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+    def custom_enum_func(self, context):
+        return self.return_enumeration(enum_name='custom_enum')
 
     def custom_enum_func_2(self, context):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets']['custom_enum_2']
-            if enum_list:
-                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
-
-        return [("A", "A", '', 0), ("B", "B", '', 1)]
+        return self.return_enumeration(enum_name='custom_enum_2')
 
 
     def custom_callback(self, context, operator):
