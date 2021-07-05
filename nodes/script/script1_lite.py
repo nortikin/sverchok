@@ -107,7 +107,15 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
 
 class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' snl SN Lite /// a lite version of SN '''
+
+    """
+    Triggers: snl
+    Tooltip: Script Node Lite
+    
+    This code represents a conscious weighing of conveniences to the user, vs somewhat harder to understand
+    code under the hood. This code evolved as design specs changed, while providing continued support for
+    previous implementation details.
+    """
 
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
