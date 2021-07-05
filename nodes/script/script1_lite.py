@@ -20,6 +20,7 @@ import os
 import sys
 import ast
 import json
+import textwrap
 import traceback
 import numpy as np
 
@@ -210,15 +211,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for idx, (socket_description) in enumerate(v):
             """
             Socket description at the moment of typing is list of: [
-            socket_type: str, 
-            socket_name: str, 
-            default: int value, float value or None,
-            nested: int]
+                socket_type: str, 
+                socket_name: str, 
+                default: int value, float value or None,
+                nested: int]
             """
             default_value = socket_description[2]
 
             if socket_description is UNPARSABLE:
-                print(socket_description, idx, 'was unparsable')
+                self.info(f"{socket_description}, {idx}, was unparsable")
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
@@ -561,11 +562,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if include_name == new_text.name:
                     continue
 
-                print('| in', self.name, 'the importer encountered')
-                print('| an include called', include_name, '. While trying')
-                print('| to write this file to bpy.data.texts another file')
-                print('| with the same name was encountered. The importer')
-                print('| automatically made a datablock called', new_text.name)
+                multi_string_msg = textwrap.dedent(f"""\
+                | in {self.name} the importer encountered
+                | an include called {include_name}. While trying
+                | to write this file to bpy.data.texts another file
+                | with the same name was encountered. The importer
+                | automatically made a datablock called {new_text.name}.
+                """)
+                self.info(multi_string_msg)
 
     def load_from_json(self, node_data: dict, import_version: float):
 
