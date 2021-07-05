@@ -31,7 +31,7 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
 
-from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit
+from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
@@ -426,6 +426,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             'np': np,
             'ddir': ddir,
             'sv_njit': sv_njit,
+            'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
         })

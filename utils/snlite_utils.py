@@ -20,11 +20,9 @@
 from logging import info
 
 import bpy
-
-import sverchok
 from sverchok.data_structure import match_long_repeat
 
-sverchok.njit_function_storage = {}
+njit_function_storage = {}
 
 
 def vectorize(all_data):
@@ -51,11 +49,18 @@ def ddir(content, filter_str=None):
 
 def sv_njit(function_to_njit, parameters):
     fn_name = function_to_njit.__name__
-    njit_func = sverchok.njit_function_storage.get(fn_name)
+    njit_func = njit_function_storage.get(fn_name)
     if not njit_func:
         result = function_to_njit(*parameters)
-        sverchok.njit_function_storage[fn_name] = function_to_njit
+        njit_function_storage[fn_name] = function_to_njit
         info(f"caching function: {fn_name}")
     else:
         result = njit_func(*parameters)
     return result
+
+def sv_njit_clear(function_to_njit):
+    fn_name = function_to_njit.__name__
+    njit_func = njit_function_storage.get(fn_name)
+    if njit_func:
+        del njit_function_storage[fn_name]
+        info(f"cleared cached function: {fn_name}")
