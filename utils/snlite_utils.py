@@ -17,9 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import bpy
+from logging import info
 
+import bpy
 from sverchok.data_structure import match_long_repeat
+
+njit_function_storage = {}
 
 
 def vectorize(all_data):
@@ -42,3 +45,22 @@ def ddir(content, filter_str=None):
     else:
         vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
     return vals
+
+
+def sv_njit(function_to_njit, parameters):
+    fn_name = function_to_njit.__name__
+    njit_func = njit_function_storage.get(fn_name)
+    if not njit_func:
+        result = function_to_njit(*parameters)
+        njit_function_storage[fn_name] = function_to_njit
+        info(f"caching function: {fn_name}")
+    else:
+        result = njit_func(*parameters)
+    return result
+
+def sv_njit_clear(function_to_njit):
+    fn_name = function_to_njit.__name__
+    njit_func = njit_function_storage.get(fn_name)
+    if njit_func:
+        del njit_function_storage[fn_name]
+        info(f"cleared cached function: {fn_name}")
