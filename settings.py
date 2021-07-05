@@ -162,10 +162,10 @@ class SvSetFreeCadPath(bpy.types.Operator):
                 site_packages = p
                 break
 
-        file_path= open(os.path.join(site_packages, "freecad_path.pth"), "w+")
-
+        file_path = open(os.path.join(site_packages, "freecad_path.pth"), "w+")
         file_path.write(self.FreeCAD_folder)
         file_path.close()
+
         self.report({'INFO'}, "FreeCad path saved successfully. Please restart Blender to see effect.")
         return {'FINISHED'}
 
@@ -602,6 +602,7 @@ dependencies, or install only some of them.""")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
         draw_message(box, "cython")
+        draw_message(box, "numba")
 
         draw_freecad_ops()
 
