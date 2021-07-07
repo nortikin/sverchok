@@ -47,4 +47,4 @@ Examples
 
 Solved problem: Which is the shortest path that cycles through all the points?. Note that this problem with 20 points has over 2 trillions of solutions, the Genetics Algorithm offers the best solution in a defined time
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
+.. image:: https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png
