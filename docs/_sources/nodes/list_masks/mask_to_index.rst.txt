@@ -4,7 +4,7 @@ Mask To Index
 Functionality
 -------------
 
-This node use transforms a mask list ( [0,1,0..] or [False, True, False..]) in to two lists, one with the True (or 1) indexes and the othe with the false (or 0) indexes.
+This node use transforms a mask list ( [0,1,0..] or [False, True, False..]) in to two lists, one with the True (or 1) indexes and the other with the false (or 0) indexes.
 
 
 Inputs

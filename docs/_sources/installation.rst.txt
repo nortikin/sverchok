@@ -13,8 +13,8 @@ an up-to-date version of NumPy on your machine. Normally if you get your Blender
 from official site, precompiled NumPy will be included with Python, however this
 isn't always the case. The windows builds on blender buildbot may contain 
 a cut down version of NumPy due to the licenses under which it can be spread
-in compiled form. In any operation system if you have correct python version 
-installed stand-alone, you may have not proper version of numpy itself.
+in compiled form. In any operating system if you have the correct Python version 
+installed stand-alone, you may not have the proper version of NumPy itself.
 
 If you get an error when enabling Sverchok the last lines of the error
 are important, if it mentions:
@@ -37,7 +37,7 @@ binaries:
 - numpy: http://sourceforge.net/projects/numpy/files/NumPy/
 
 To confirm that NumPy is installed properly on your system, for py3.4,
-launch your python34 interpretter/console and the following NumPy
+launch your python34 interpreter/console and the following NumPy
 import should produce no error.::
 
     Python 3.4.1 (v3.4.1:c0e311e010fc, May 18 2014, 10:38:22) <edited>

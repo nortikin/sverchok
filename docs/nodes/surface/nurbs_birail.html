@@ -33,7 +33,7 @@
         <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="Surface" href="surface_index.html"/>
-        <link rel="next" title="Intersect Curve with Surface" href="intersect_curve_surface.html"/>
+        <link rel="next" title="NURBS Surface from Curves Net" href="gordon_surface.html"/>
         <link rel="prev" title="NURBS Sweep" href="nurbs_sweep.html"/> 
 
   
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -214,7 +214,12 @@ If several profile curves are used, the user can provide specific values of
 path’s curve T parameter, at which profile curves must be placed; otherwise,
 the node will place them automatically evenly along T parameter of the path
 curve.</p>
-<p>It is supposed that initially th eprovided profile curve(s) lie in XOY plane.</p>
+<p>By default it is supposed that initially the provided profile curve(s) lie in
+XOY plane. However, there is an option to instruct the node to try to figure
+out correct rotation of profile curve(s). Note that this option may result in
+precision loss in some cases. Or, in other cases, it can guess desired profile
+rotation incorrectly. In such cases, you will have to place your profile curves
+in XOY plane and disable “Auto rotate” flag.</p>
 <p>The node works by placing several copies of profile curve along the path
 curves, and then lofting (skinning) between them.  If several profile curves
 are used, then the node interpolates between them and places these interpolated
@@ -285,6 +290,30 @@ is available; otherwise, built-in implementation is used.</p>
 axis only, in order to fill the space between two paths. If checked, profile
 curves will be scaled along all axes uniformly. Checked by default.</p>
 </li>
+<li><p class="first"><strong>Auto rotate profiles</strong>. If not checked, the node will assume that all
+profile curves lie in the XOY plane. If checked, the node will work with
+arbitrarily rotated profile curves. Enabled option requires more
+computations, and so, may make the node slower and less precise. Unchecked by
+default.</p>
+</li>
+<li><p class="first"><strong>Profile Rotation</strong>. This defines how profile curves will be placed along
+the path curves. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Path Normal Average</strong>. The node will try to place profile curves so that
+they will lie in normal planes of both path curves. Since normal planes of
+two path curves can differ, the node will calculate average normal plane.</li>
+<li><strong>Path 1 Normal</strong>. The node will place profile curves so that they lie in
+normal plane of the first path curve.</li>
+<li><strong>Path 2 Normal</strong>. The node will place profile curves so that they lie in
+normal plane of the second path curve.</li>
+<li><strong>By profile</strong>. The node will try to place profile curves so that they be
+parallel to initial location of the path curve. This is not always
+possible, but the node will try to keep it as parallel as possible.</li>
+</ul>
+<p>The default option is <strong>Path Normal Average</strong>.</p>
+</div></blockquote>
+</li>
 <li><p class="first"><strong>Explicit V Values</strong>. If checked, then the user has the ability to provide
 values of path curves parameter values, at which the provided path curves
 must be placed; otherwise, the node will calculate these parameters
@@ -313,12 +342,12 @@ used for interpolation along V direction. The available values are:</p>
 <blockquote>
 <div><ul class="simple">
 <li>Manhattan</li>
-<li>Euclidian</li>
+<li>Euclidean</li>
 <li>Points (just number of points from the beginning)</li>
 <li>Chebyshev</li>
-<li>Centripetal (square root of Euclidian distance).</li>
+<li>Centripetal (square root of Euclidean distance).</li>
 </ul>
-<p>The default option is Euclidian.</p>
+<p>The default option is Euclidean.</p>
 </div></blockquote>
 </li>
 </ul>
@@ -343,6 +372,14 @@ calculate surface’s control points during skinning process.</li>
 <p>2:</p>
 <img alt="https://user-images.githubusercontent.com/284644/98482010-32b5b880-2220-11eb-9597-4ae339326748.png" src="https://user-images.githubusercontent.com/284644/98482010-32b5b880-2220-11eb-9597-4ae339326748.png" />
 <img alt="https://user-images.githubusercontent.com/284644/98482009-321d2200-2220-11eb-82a8-21ca366b573c.png" src="https://user-images.githubusercontent.com/284644/98482009-321d2200-2220-11eb-82a8-21ca366b573c.png" />
+<p>Create a circular arc (path 1) and S-shaped curve (path 2); use random profile curve in YOZ plane. Profile rotation = Path Normal Average (default one):</p>
+<img alt="https://user-images.githubusercontent.com/284644/122664399-9347a380-d1ba-11eb-98fc-6ce8c10ad6fe.png" src="https://user-images.githubusercontent.com/284644/122664399-9347a380-d1ba-11eb-98fc-6ce8c10ad6fe.png" />
+<p>Same with Profile rotation = Path 1 Normal (i.e. profiles are perpendicular to the lower curve, circular arc):</p>
+<img alt="https://user-images.githubusercontent.com/284644/122664398-92af0d00-d1ba-11eb-921f-9cf0289b5356.png" src="https://user-images.githubusercontent.com/284644/122664398-92af0d00-d1ba-11eb-921f-9cf0289b5356.png" />
+<p>Same with Profile rotation = Path 2 Normal (i.e. profiles are perpendicular to the upper, S-shaped curve):</p>
+<img alt="https://user-images.githubusercontent.com/284644/122664396-92af0d00-d1ba-11eb-8a40-95fde688941e.png" src="https://user-images.githubusercontent.com/284644/122664396-92af0d00-d1ba-11eb-8a40-95fde688941e.png" />
+<p>Same with Profile rotation = By profile, i.e. try to keep profile curves parallel to the original profile:</p>
+<img alt="https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png" src="https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png" />
 </div>
 </div>
 
@@ -352,7 +389,7 @@ calculate surface’s control points during skinning process.</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="intersect_curve_surface.html" class="btn btn-neutral float-right" title="Intersect Curve with Surface">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="gordon_surface.html" class="btn btn-neutral float-right" title="NURBS Surface from Curves Net">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="nurbs_sweep.html" class="btn btn-neutral" title="NURBS Sweep"><span class="fa fa-arrow-circle-left"></span> Previous</a>

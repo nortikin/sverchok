@@ -33,7 +33,7 @@
         <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="Nodes" href="../../nodes.html"/>
-        <link rel="next" title="multi exec" href="multi_exec.html"/>
+        <link rel="next" title="Formula Node Mk4" href="formula_mk5.html"/>
         <link rel="prev" title="Strings Tools" href="../text/string_tools.html"/> 
 
   
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -197,10 +197,69 @@
 <h1>Script<a class="headerlink" href="#script" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="formula_mk5.html">Formula Node Mk4</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#expression-syntax">Expression syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_mk5.html#usage-examples">Usage examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="formula_interpolate.html">Formula Interpolate</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#expression-syntax">Expression syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formula_interpolate.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="multi_exec.html">multi exec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_exec.html#features">features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="script1_lite.html">Script Node Lite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#syntax">Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#inputs-outputs">Inputs / Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="script1_lite.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="topology_simple.html">topology simple</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_functor_b.html">sn functor b</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profile_mk3.html">Profile Parametric Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#expression-syntax">Expression syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#operators">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#examples-of-usage">Examples of usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#gotchas">Gotchas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profile_mk3.html#keyboard-shortcut-to-refresh-profile-node">Keyboard Shortcut to refresh Profile Node</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_eval.html">Mesh Expression Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#usual-workflow">Usual workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#json-syntax">JSON syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#expression-syntax">Expression syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#operators">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_eval.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="generative_art.html">Generative Art</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generative_art.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_art.html#inputs-parameters">Inputs &amp; Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_art.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_art.html#examples-of-usage">Examples of usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generative_art.html#references">References</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -211,7 +270,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="multi_exec.html" class="btn btn-neutral float-right" title="multi exec">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="formula_mk5.html" class="btn btn-neutral float-right" title="Formula Node Mk4">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../text/string_tools.html" class="btn btn-neutral" title="Strings Tools"><span class="fa fa-arrow-circle-left"></span> Previous</a>

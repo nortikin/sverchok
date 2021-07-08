@@ -31,6 +31,7 @@ This node has the following parameters:
   * **Surface**. Generate points on the surface of the mesh.
   * **Volume**. Generate points inside the volume of the mesh. The mesh is
     expected to represent a closed volume in this case.
+  * **Edges**.  Generate points on the edges of the mesh.
 
   The default option is **Surface**.
 
@@ -40,12 +41,28 @@ This node has the following parameters:
   **Face weight** input). If not checked, then the number of points on each
   face will be only defined by **Face weight** input. Checked by default.
 
+- **All Triangles**. Enable if the input mesh is made only of triangles
+  (makes node faster). Available in Surfaces and Volume modes (in N-Panel)
+
+- **Safe Check**. Disabling it will make node faster but polygon indices
+  referring to unexisting points will crash Blender. Only available in Volume Mode.
+  (in N-Panel)
+
+- **Implementation**. Offers two implementations:
+  * **Numpy**. Faster
+  * **Mathutils**. Old implementation. Slower.
+  Only available in Surface Mode (in N-Panel)
+
+- **Output Numpy**. Output NumPy arrays in stead of regular list (makes node faster)
+  Only available in Surface and Edges modes (in N-Panel)
+
+
 Outputs
 -------
 
 - **Verts** - random vertices on mesh
-- **Face index** - indexes of faces to which random vertices lays. This input
-  is available only when **Mode** parameter is set to **Surface**.
+- **Face / Edges index** - indexes of faces/edges to which random vertices lays. This input
+  is available only when **Mode** parameter is set to **Surface** or **Edges**.
 
 Examples
 --------

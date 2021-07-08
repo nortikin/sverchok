@@ -3,7 +3,7 @@ List Slice
 Functionality
 -------------
 
-Select a slice from a list. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It shoudld accepts any type of data native to Sverchok..
+Select a slice from a list. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It should accepts any type of data native to Sverchok..
 Functionality is a subset of python list slicing, the stride parameter functionality isn't implemented.
 
 Inputs
@@ -12,7 +12,7 @@ Inputs
 +--------+--------------------------------------------------------------------------+
 | Input  | Description                                                              |
 +========+==========================================================================+
-| Data   | The data - can be anything                                               | 
+| Data   | The data - can be anything                                               |
 +--------+--------------------------------------------------------------------------+
 | Start  | Slice start, allows negative python index                                |
 +--------+--------------------------------------------------------------------------+

@@ -64,5 +64,5 @@ Outputs
 **Edges**
 **Polygons**
 The outputs are generated once the sockets are connected.
-The node is vectorized and it will generate multiple outputs based on the lenght of the inputs.
+The node is vectorized and it will generate multiple outputs based on the length of the inputs.
 

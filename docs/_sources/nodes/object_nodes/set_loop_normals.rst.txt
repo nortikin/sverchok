@@ -1,7 +1,7 @@
 Set loop normals
 ================
 
-.. image:: ../../_build/html/_static/images/111056673-62a8ed00-849a-11eb-86b8-faa4bb111f16.png
+.. image:: https://user-images.githubusercontent.com/28003269/111056673-62a8ed00-849a-11eb-86b8-faa4bb111f16.png
 
 Functionality
 -------------
@@ -19,7 +19,7 @@ Inputs
 - **Objects** - Blender mesh objects
 - **Vert normals** - normals for each input vertices
 - **Faces** - indexes pointing to vertex normals
-- **Matrix** - optional, fro UV transformation
+- **Matrix** - optional, for UV transformation
 
 Outputs
 -------
@@ -36,12 +36,12 @@ Usage
 
 Smooth normals
 
-.. image:: ../../_build/html/_static/images/111041776-65342400-8453-11eb-98a7-95b1fcb7eb8e.png
+.. image:: https://user-images.githubusercontent.com/28003269/111041776-65342400-8453-11eb-98a7-95b1fcb7eb8e.png
 
 Flat normals
 
-.. image:: ../../_build/html/_static/images/111041779-66fde780-8453-11eb-8de0-92ac014266b9.png
+.. image:: https://user-images.githubusercontent.com/28003269/111041779-66fde780-8453-11eb-8de0-92ac014266b9.png
 
 Custom normals based on edges angle
 
-.. image:: ../../_build/html/_static/images/111056842-c1229b00-849b-11eb-9257-1080cd43f3b7.png
+.. image:: https://user-images.githubusercontent.com/28003269/111056842-c1229b00-849b-11eb-9257-1080cd43f3b7.png

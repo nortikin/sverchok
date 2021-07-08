@@ -72,7 +72,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#workflow">Workflow</a></li>
@@ -94,7 +94,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -115,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -302,7 +302,6 @@ are going to use the same settings many times.</li>
 <li>Scripted node, or “Mesh Expression” node, or one of other nodes that use
 Blender’s text blocks as settings. Such nodes are stored together with
 corresponding text.</li>
-<li>Group (monad) node. It is saved with all contents.</li>
 <li>Several linked nodes, that do some completed thing, for later usage “as-is”.</li>
 <li>Several linked nodes, that are “sort of going to be needed in this
 combination often”, so that later you can start with this preset and add some
@@ -567,13 +566,6 @@ process will be implemented</td>
 <p><strong>Bug Reporting</strong></p>
 <p>By all means if you like using this feature, file issues in <a class="reference external" href="https://github.com/nortikin/sverchok/issues/422">this thread</a>. The best way to solve issues is to share with us a screenshot of the last few lines of the error if we need more then we will ask for a copy of the <cite>.blend</cite>.</p>
 </div>
-</div>
-<div class="section" id="groups-panel">
-<h2>Groups Panel<a class="headerlink" href="#groups-panel" title="Permalink to this headline">¶</a></h2>
-<p>Crete a node group (Monad) from selection.
-It can have vectorized inputs, adding or removing sockets.
-Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
-<a class="reference external" href="https://github.com/nortikin/sverchok/issues/462">Bug reports</a>.</p>
 </div>
 <div class="section" id="templates-in-menu-panel-of-nodes-area">
 <h2>Templates in menu panel of nodes area<a class="headerlink" href="#templates-in-menu-panel-of-nodes-area" title="Permalink to this headline">¶</a></h2>

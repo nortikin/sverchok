@@ -103,7 +103,7 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 - ``Add -> Numbers -> A Number``
 
 .. Note::
-   Get in the habbit of adding the core nodes via the Node View's ``Right Click`` menu, it is a quick route to most of these nodes.
+   Get in the habit of adding the core nodes via the Node View's ``Right Click`` menu, it is a quick route to most of these nodes.
 
    |right_click_menu|
 

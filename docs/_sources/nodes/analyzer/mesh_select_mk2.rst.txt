@@ -26,7 +26,7 @@ Parameters
 
 This node has the following parameters:
 
-- **Mode**. Criteria type to apply. Supported criterias are:
+- **Mode**. Criteria type to apply. Supported criteria are:
 
   * **By side**. Selects vertices that are located at one side of mesh. The side is specified by **Direction** input. So you can select "rightmost" vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by **Percent** input: 1% means select only "most rightmost" vertices, 99% means select "all but most leftmost". More exactly, this mode selects vertex V if `(Direction, V) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.
   * **By normal direction**. Selects faces, that have normal vectors pointing in specified **Direction**. So you can select "faces looking to right". Number of faces to select is controlled by **Percent** input, similar to **By side** mode. More exactly, this mode selects face F if `(Direction, Normal(F)) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.
@@ -62,37 +62,37 @@ Examples of usage
 
 Select rightmost vertices:
 
-.. image:: ../../_build/html/_static/images/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png
 
 Select faces looking to right:
 
-.. image:: ../../_build/html/_static/images/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png
 
 Select vertices within sphere:
 
-.. image:: ../../_build/html/_static/images/5106db9e-051d-11e7-81e8-2fca30c02b18.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png
 
 Using multiple centers:
 
-.. image:: ../../_build/html/_static/images/b5206da8-172d-11e7-9aa3-2c345712c899.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png
 
 Select vertices near OYZ plane:
 
-.. image:: ../../_build/html/_static/images/7036cf88-050e-11e7-9619-b0d748d03d20.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png
 
 Select vertices near vertical line:
 
-.. image:: ../../_build/html/_static/images/81324d3a-050e-11e7-89c2-e2016557aa47.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png
 
 Bevel only edges that are parallel to Z axis:
 
-.. image:: ../../_build/html/_static/images/fcebffee-074c-11e7-8e15-de759d67588c.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png
 
 Select faces that are looking outside:
 
-.. image:: ../../_build/html/_static/images/62e48816-0748-11e7-887f-b9223dbbf939.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png
 
 Select faces by bounding box:
 
-.. image:: ../../_build/html/_static/images/248a1026-1261-11e7-8886-f7a0f88ecb60.png
+.. image:: https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png
 

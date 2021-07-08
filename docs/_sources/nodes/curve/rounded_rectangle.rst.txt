@@ -15,7 +15,7 @@ This node has the following inputs:
 * **Size Y**. Size of the rectangle along the Y axis (rectangle height). The default value is 10.
 * **Radius**. Corner rounding radius. This input can consume lists of nesting
   level 2 or 3. If the input data have nesting level 3, then it is supposed
-  that the input defines seprate radius for each of 4 corners of each
+  that the input defines separate radius for each of 4 corners of each
   rectangle. If the radius is zero, then there will be no rounding arc
   generated at the corresponding corner of the rectangle. The default value is
   1.0.

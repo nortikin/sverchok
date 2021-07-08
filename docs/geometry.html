@@ -72,7 +72,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#workflow">Workflow</a></li>
@@ -94,7 +94,6 @@
 <li class="toctree-l2"><a class="reference internal" href="panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -115,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -194,7 +194,7 @@
 <h1>Introduction to geometry<a class="headerlink" href="#introduction-to-geometry" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
-<p>If you’ve ever created a mesh and geometry programatically then you can skip this section.
+<p>If you’ve ever created a mesh and geometry programmatically then you can skip this section.
 If you are uncertain what any of the following terms mean then use it as a reference for
 further study:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">List</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Vertex</span><span class="p">,</span> <span class="n">Edge</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Normal</span><span class="p">,</span> <span class="n">Transformation</span><span class="p">,</span> <span class="ow">and</span> <span class="n">Matrix</span><span class="o">.</span>
@@ -280,7 +280,7 @@ to create 2 polygons, each built from 3 vertices, we do:</p>
 </div>
 <p>In Blender you might mix Tris and Quads in one object during the modelling process,
 but for Sverchok geometry you’ll find it more convenient to create separate lists for each and combine them at the end.</p>
-<p>An example that sets us up for the first Sverchok example is the following pyhon code:</p>
+<p>An example that sets us up for the first Sverchok example is the following python code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this code can be run from Blender Text Editor and it will generate a Cube.</span>
 
 <span class="kn">import</span> <span class="nn">bpy</span>

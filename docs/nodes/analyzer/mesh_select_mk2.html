@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -220,7 +219,7 @@
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><strong>Mode</strong>. Criteria type to apply. Supported criterias are:<ul>
+<li><strong>Mode</strong>. Criteria type to apply. Supported criteria are:<ul>
 <li><strong>By side</strong>. Selects vertices that are located at one side of mesh. The side is specified by <strong>Direction</strong> input. So you can select “rightmost” vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by <strong>Percent</strong> input: 1% means select only “most rightmost” vertices, 99% means select “all but most leftmost”. More exactly, this mode selects vertex V if <cite>(Direction, V) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</li>
 <li><strong>By normal direction</strong>. Selects faces, that have normal vectors pointing in specified <strong>Direction</strong>. So you can select “faces looking to right”. Number of faces to select is controlled by <strong>Percent</strong> input, similar to <strong>By side</strong> mode. More exactly, this mode selects face F if <cite>(Direction, Normal(F)) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</li>
 <li><strong>By center and radius</strong>. Selects vertices, which are within <strong>Radius</strong> from specified <strong>Center</strong>; in other words, it selects vertices that are located inside given sphere. More exactly, this mode selects vertex V if <cite>Distance(V, Center) &lt;= Radius</cite>. This mode also supports passing many points to <strong>Center</strong> input; in this case, “Distance” is distance from vertex to the nearest “Center”.</li>
@@ -256,23 +255,23 @@ lists of booleans; and so on.</li>
 <div class="section" id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
 <p>Select rightmost vertices:</p>
-<img alt="../../_images/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" src="../../_images/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" src="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" />
 <p>Select faces looking to right:</p>
-<img alt="../../_images/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" src="../../_images/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" src="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" />
 <p>Select vertices within sphere:</p>
-<img alt="../../_images/5106db9e-051d-11e7-81e8-2fca30c02b18.png" src="../../_images/5106db9e-051d-11e7-81e8-2fca30c02b18.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" src="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" />
 <p>Using multiple centers:</p>
-<img alt="../../_images/b5206da8-172d-11e7-9aa3-2c345712c899.png" src="../../_images/b5206da8-172d-11e7-9aa3-2c345712c899.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" src="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" />
 <p>Select vertices near OYZ plane:</p>
-<img alt="../../_images/7036cf88-050e-11e7-9619-b0d748d03d20.png" src="../../_images/7036cf88-050e-11e7-9619-b0d748d03d20.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" src="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" />
 <p>Select vertices near vertical line:</p>
-<img alt="../../_images/81324d3a-050e-11e7-89c2-e2016557aa47.png" src="../../_images/81324d3a-050e-11e7-89c2-e2016557aa47.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" src="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" />
 <p>Bevel only edges that are parallel to Z axis:</p>
-<img alt="../../_images/fcebffee-074c-11e7-8e15-de759d67588c.png" src="../../_images/fcebffee-074c-11e7-8e15-de759d67588c.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" src="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" />
 <p>Select faces that are looking outside:</p>
-<img alt="../../_images/62e48816-0748-11e7-887f-b9223dbbf939.png" src="../../_images/62e48816-0748-11e7-887f-b9223dbbf939.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" src="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" />
 <p>Select faces by bounding box:</p>
-<img alt="../../_images/248a1026-1261-11e7-8886-f7a0f88ecb60.png" src="../../_images/248a1026-1261-11e7-8886-f7a0f88ecb60.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" src="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" />
 </div>
 </div>
 

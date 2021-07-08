@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -205,31 +205,60 @@
 <h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="16%" />
-<col width="70%" />
+<col width="12%" />
+<col width="15%" />
+<col width="5%" />
+<col width="68%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">socket</th>
-<th class="head">name</th>
-<th class="head">Description</th>
+<th class="head" colspan="3">name         | Description</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>input</td>
-<td>Vertices</td>
+<td colspan="2">Vertices</td>
 <td>Points to interpolate</td>
 </tr>
 <tr class="row-odd"><td>input</td>
-<td>t</td>
+<td colspan="2">t</td>
 <td>Value to interpolate</td>
 </tr>
 <tr class="row-even"><td>output</td>
-<td>Vertices</td>
+<td colspan="2">Vertices</td>
 <td>Interpolated points</td>
+</tr>
+<tr class="row-odd"><td>output</td>
+<td colspan="2">Tangent</td>
+<td>Tangents at outputted vertices</td>
+</tr>
+<tr class="row-even"><td>output</td>
+<td colspan="2">Tangent Norm</td>
+<td>Normalized Tangents at outputted vertices</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><em>Mode</em> : Interpolation method. Can be Linear or Cubic</li>
+<li><em>Cyclic</em>: Treat the input vertices as a cyclic path.</li>
+<li><em>Int Range</em>: When activated the node will expect a Integer Value in the ‘t’ input and will create a range from 0 to 1 with the inputted steps.</li>
+<li><em>End Point</em>: (Only when Int Range is activated) If active the generated range will exclude 1. Useful when the value 0 and 1 of the interpolation is the same</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="extra-parameters">
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><em>Knot Mode</em>: Used for different cubic interpolations. Can be ‘Manhattan’, ‘Euclidan’, ‘Points’ and ‘Chebyshev’</li>
+<li><em>List Match</em>: How List should be matched</li>
+<li><em>Output Numpy</em>: Outputs numpy arrays in stead of regular python lists (makes node faster)</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
@@ -240,8 +269,7 @@
 </div>
 <div class="section" id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<p>The node doesn’t extrapolate. Values outside of <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> are ignored.
-It doesn’t support cyclic interpolation (TODO).</p>
+<p>The node doesn’t extrapolate. Values outside of <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> are ignored.</p>
 </div>
 </div>
 

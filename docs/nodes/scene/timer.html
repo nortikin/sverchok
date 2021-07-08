@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -201,7 +201,7 @@
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>This node helps with managing time, particularly useful for animations.
 It provides a set of (internal/external) operations that allow to control timing.
-The suppported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.</p>
+The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.</p>
 <p>The the node measures time is in seconds and it is based on Blender timeline’s time, so the measured time depends on on frame changes in the timeline as well as the frame rate. Because this is tied to Blender’s timeline, starting the timer will not measure any time unless the Blender’s timeline changes (either via playback, timeline scrubbing or other methods of changing the frame). Scrubbing the timeline back and forth will also affect the timer node’s measured time. When scrubbing backwards, the recorded time will also go backwards (assuming the timer is started).</p>
 <p>Note: The timer node does not record negative times. Going backward in time (either via backward playback or scrubbing the timeline backwards) will decrease the measured time down to zero and the timer will stop.</p>
 </div>
@@ -340,7 +340,7 @@ The remaining time of the timer. If the <strong>Normalize Time</strong> is enabl
 <p><strong>Expired</strong>
 This outputs True if the timer expired, otherwise False.</p>
 <p>Note: When the node takes multiple inputs with different duration values (creating multiple timers), each timer could expire at different times based on when each timer is started (note that multiple timers can be operated all at once using the node controls (stop/start/pause/reset/expire) or they can be operated using external operations (0-6), in which case each timer could also be started/stopped at different times.</p>
-<p>Note: It’s also possible to have mutiple timers start at different times and expire later at the same time.</p>
+<p>Note: It’s also possible to have multiple timers start at different times and expire later at the same time.</p>
 <p>One useful case for this output is that you can chain timer nodes and have one timer, upon expiration, trigger the starting of another timer.</p>
 <p><strong>Loop</strong>
 This outputs how many times the timer has looped since it started (a value in between 0 and <strong>Loops</strong> number).</p>

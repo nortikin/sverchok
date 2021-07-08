@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -213,7 +212,7 @@ Sverchok itself.</p>
 <li>A small amount of boilerplate (called a directive) at the top of your scripts used to define what sockets and ui elements you want. More about this in the Syntax segment below.</li>
 <li>We provide example scripts to get you up an running quickly. These come in the form of templates and they can be imported directly into the node from the N panel. They can be imported directly into <strong>node</strong>, or to a <strong>text block</strong>.</li>
 </ul>
-<img alt="../../_images/ff29eed2-2a5c-11e7-9594-f85295178f57.png" src="../../_images/ff29eed2-2a5c-11e7-9594-f85295178f57.png" />
+<img alt="https://cloud.githubusercontent.com/assets/619340/25421401/ff29eed2-2a5c-11e7-9594-f85295178f57.png" src="https://cloud.githubusercontent.com/assets/619340/25421401/ff29eed2-2a5c-11e7-9594-f85295178f57.png" />
 <ul>
 <li><p class="first">You must declare an input socket, but outputs are optional.</p>
 </li>
@@ -221,7 +220,7 @@ Sverchok itself.</p>
 </li>
 <li><p class="first">You can set the level of nestedness; means you don’t need to unwrap/index stuff via code</p>
 </li>
-<li><p class="first">You can append a UI drawing funcion to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.</p>
+<li><p class="first">You can append a UI drawing function to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.</p>
 </li>
 <li><p class="first">has the option to <strong>auto inject</strong> the list of variable references as <strong>parameters</strong> much like javascript does for <strong>arguments</strong> inside a function. In essence implemented like this</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span>
@@ -319,8 +318,8 @@ Sverchok itself.</p>
 </div>
 <div class="section" id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h2>
-<p>To intialize a scriptnode you must provide a “directive”, it’s where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
-a pair of tripple quote marks: <strong>“”“</strong>, never single quotes like <strong>‘’‘</strong>.</p>
+<p>To initialize a scriptnode you must provide a “directive”, it’s where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
+a pair of triple quote marks: <strong>“”“</strong>, never single quotes like <strong>‘’‘</strong>.</p>
 <p>The syntax looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">in socketname  type  default=x nested=n</span>
@@ -330,7 +329,7 @@ a pair of tripple quote marks: <strong>“”“</strong>, never single quotes l
 <span class="o">&lt;</span> <span class="nb">any</span> <span class="n">python</span> <span class="n">code</span> <span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>This tripple quoted area (a “directive comment”, or <em>header</em>) must be the first thing in the <code class="docutils literal notranslate"><span class="pre">.py</span></code> file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose:</p>
+<p>This triple quoted area (a “directive comment”, or <em>header</em>) must be the first thing in the <code class="docutils literal notranslate"><span class="pre">.py</span></code> file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&quot;&quot;&quot;
 in socketname   type  d=x n=i
 in socketname2  type  d=x n=i
@@ -396,7 +395,7 @@ out socketname  type
 </li>
 </ul>
 <p>Some familiarity with python or the concept of sublists (lists of lists) is needed to understand this. It’s harder to explain than to use.</p>
-<img alt="../../_images/639cdc34-fd9f-11e6-8aa2-0238f2020373.png" src="../../_images/639cdc34-fd9f-11e6-8aa2-0238f2020373.png" />
+<img alt="https://cloud.githubusercontent.com/assets/619340/23399114/639cdc34-fd9f-11e6-8aa2-0238f2020373.png" src="https://cloud.githubusercontent.com/assets/619340/23399114/639cdc34-fd9f-11e6-8aa2-0238f2020373.png" />
 <ul>
 <li><p class="first"><cite>n=2</cite> means <code class="docutils literal notranslate"><span class="pre">named_input.sv_get()[0][0]</span></code> - means you only want a single value.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">named_input</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="o">.....</span><span class="p">]</span>  <span class="c1">#  or  [[20]]</span>
@@ -421,7 +420,7 @@ out socketname  type
 </dl>
 </li>
 </ul>
-<img alt="../../_images/d1c8861e-ae3e-11e6-9de6-501f07a58606.png" src="../../_images/d1c8861e-ae3e-11e6-9de6-501f07a58606.png" />
+<img alt="https://cloud.githubusercontent.com/assets/619340/20454350/d1c8861e-ae3e-11e6-9de6-501f07a58606.png" src="https://cloud.githubusercontent.com/assets/619340/20454350/d1c8861e-ae3e-11e6-9de6-501f07a58606.png" />
 <ul>
 <li><p class="first"><strong>outputs</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">direction</span>    <span class="n">socketname</span>     <span class="n">sockettype</span>

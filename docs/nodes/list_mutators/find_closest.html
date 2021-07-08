@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -197,7 +197,7 @@
             
   <div class="section" id="find-closest-value">
 <h1>Find closest value<a class="headerlink" href="#find-closest-value" title="Permalink to this headline">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/90546931-d05a9800-e19b-11ea-85b6-aaf26e426a15.png" src="https://user-images.githubusercontent.com/28003269/90546931-d05a9800-e19b-11ea-85b6-aaf26e426a15.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/107801210-3ace4880-6d79-11eb-9fe4-440caef9f73f.png" src="https://user-images.githubusercontent.com/28003269/107801210-3ace4880-6d79-11eb-9fe4-440caef9f73f.png" />
 <div class="section" id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>The node takes data where to search and values which should be found in the data.
@@ -212,6 +212,7 @@ The closest value (and index of the value) to given will be return. Input data c
 <ul class="simple">
 <li><strong>Values</strong> - list of figures which should be found</li>
 <li><strong>Data</strong> - list of figures where to search</li>
+<li><strong>Range</strong> - determines how output values can be differ from input one</li>
 </ul>
 </div>
 <div class="section" id="outputs">
@@ -221,10 +222,25 @@ The closest value (and index of the value) to given will be return. Input data c
 <li><strong>Closest indexes</strong> - indexes of closest values in data list</li>
 </ul>
 </div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Mode</strong> - <em>single</em> mode will find closest value to input one, <em>range</em> - will find closest values which will be in given range relatively to input value</li>
+</ul>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>In the range mode the output of the node has one more nested list.
+To each input value there is output list.
+For example to input values like this [[1, 10]] output can look like [[[0,1,2], [9,10,11]]]
+Also keep in mind that output lists can be empty in case if no values feat in range.</p>
+</div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p><strong>Find closest value to 5 in random range from 0 to 10</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/90544116-bae36f00-e197-11ea-9138-90d79dad6176.png" src="https://user-images.githubusercontent.com/28003269/90544116-bae36f00-e197-11ea-9138-90d79dad6176.png" />
+<p><strong>Searching value in input data in range between 3.97 to 5.03</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/107801848-0dce6580-6d7a-11eb-9562-0d09c8c05779.png" src="https://user-images.githubusercontent.com/28003269/107801848-0dce6580-6d7a-11eb-9562-0d09c8c05779.png" />
 </div>
 </div>
 

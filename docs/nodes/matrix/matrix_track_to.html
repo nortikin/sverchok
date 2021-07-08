@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -201,7 +201,7 @@
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>Generates the transformation <strong>matrix</strong> given a location, a scale and a rotation defined by the given set of Track &amp; Up vectors.</p>
 <p>The “Track/Up Axes” and the “Track/Up Mapping” settings allow to set any two of the X, Y, Z axes to be the <strong>Track</strong> axis and the <strong>Up</strong> axis and to map them to any of the two input vectors A and B (or to their negatives). The first axis listed in these dropdown lists is the Track axis/vector and the second is the Up axis/vector.</p>
-<p>The axis selected to be the Track axis (the first letter in “Track/Up Axes” selection) will be precisely oriented along the Track vector (whichever the Track vector is mapped to, based on the “Track/Up mapping”), while the axis selected to be the Up axis (the second letter the “Track/Up Axes” selection) will be approximately oriented along the Up vector (whichever the Up vector is mapped to, based on the “Track/Up mapping” selection). If the A and B inputs happen to be orthogonal to eachother then the Track and Up axes will be precisely oriented along the selected Track/Up vectors, otherwise the Up axis will only approximately be oriented towards the Up vector, perpendicular to the Track axis, and reside within the AB plane. The third axis (X, Y or Z) is determined via cross product from the other two as to provide an ortho-normal, right handed, XYZ coordinate sytem.</p>
+<p>The axis selected to be the Track axis (the first letter in “Track/Up Axes” selection) will be precisely oriented along the Track vector (whichever the Track vector is mapped to, based on the “Track/Up mapping”), while the axis selected to be the Up axis (the second letter the “Track/Up Axes” selection) will be approximately oriented along the Up vector (whichever the Up vector is mapped to, based on the “Track/Up mapping” selection). If the A and B inputs happen to be orthogonal to eachother then the Track and Up axes will be precisely oriented along the selected Track/Up vectors, otherwise the Up axis will only approximately be oriented towards the Up vector, perpendicular to the Track axis, and reside within the AB plane. The third axis (X, Y or Z) is determined via cross product from the other two as to provide an ortho-normal, right handed, XYZ coordinate system.</p>
 </div>
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
@@ -362,8 +362,8 @@ All outputs will be generated when connected.</p>
 <p>The <strong>Matrix</strong> is the homogeneous 4x4 matrix composed by the given location, rotation and scale : m = T * R * S. [1]</p>
 <p>The <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong> are the orthonormal vectors, oriented along the Track and Up axes. [2]</p>
 <p>Notes:
-[1] : The rotation component is ortho-normal only if the “Normalize Vectors” option is ON (in the Propety Panel).
-[2] : The axes are ortho-normal only if the “Normalize Vectors” option is ON (in the Propety Panel), otherwise the vectors are only orthogonal.</p>
+[1] : The rotation component is ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel).
+[2] : The axes are ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel), otherwise the vectors are only orthogonal.</p>
 </div>
 <div class="section" id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>

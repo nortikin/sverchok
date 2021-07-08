@@ -36,6 +36,8 @@ This node has the following parameters:
   the same length (defined by **Steps** input). Otherwise, length of segments
   will be proportional to vector norms. Checked by default.
 * **Join**. If checked, join all lines into single mesh object. Checked by default.
+* **Output NumPy**. Outputs NumPy arrays in stead of regular python lists. Improves performance
+
 
 Outputs
 -------
@@ -43,10 +45,14 @@ Outputs
 * **Vertices**. The vertices of generated lines.
 * **Edges**. The edges of generated lines.
 
+Performance Notes
+-----------------
+
+This node works faster when the vertices list are NumPy Arrays
+
 Example of usage
 ----------------
 
 Visualize some vector field:
 
 .. image:: https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png
-

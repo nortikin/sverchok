@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -222,6 +222,15 @@
 <li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#advanced-parameters">Advanced parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#performance-note">Performance Note</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="unsubdivide.html#functionality">Functionality</a></li>
 <li class="toctree-l2"><a class="reference internal" href="unsubdivide.html#example-of-usage">Example of usage</a></li>
@@ -250,13 +259,12 @@
 <li class="toctree-l2"><a class="reference internal" href="delete_loose.html#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="edges_intersect_mk2.html">Intersect Edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#benchmark-of-2d-algorithms">Benchmark of 2D algorithms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#parameters-n-panel">Parameters N-panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edges_intersect_mk2.html#examples">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_clean.html">Mesh Clean</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#examples">Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="poke.html">Poke Faces</a><ul>
@@ -315,11 +323,11 @@
 <li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_join.html">Mesh Join</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join.html#inputs-outputs">Inputs &amp; Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join.html#notes">Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_join_mk2.html">Mesh Join</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#inputs-outputs">Inputs &amp; Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#notes">Notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a><ul>

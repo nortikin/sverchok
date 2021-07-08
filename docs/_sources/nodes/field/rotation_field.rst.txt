@@ -61,4 +61,4 @@ Outputs
 Examples of usage
 -----------------
 
-.. image:: ../../_build/html/_static/images/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png
+.. image:: https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png

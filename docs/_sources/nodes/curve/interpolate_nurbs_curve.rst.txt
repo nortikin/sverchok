@@ -53,12 +53,12 @@ This node has the following parameters:
   available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance).
+   * Centripetal (square root of Euclidean distance).
 
-The default value is Euclidian.
+The default value is Euclidean.
 
 Outputs
 -------

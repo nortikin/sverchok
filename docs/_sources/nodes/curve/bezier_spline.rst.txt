@@ -37,7 +37,7 @@ This node has the following inputs:
 * **End**. Ending point of the curve. This node is not available if
   **Mode** parameter is set to **Generic**.
 * **ControlPoints**. Control points of the curve. This input is only available
-  when the **Mode** paramter is set to **Generic**. Note that Bezier curve
+  when the **Mode** parameter is set to **Generic**. Note that Bezier curve
   begins at it's first control point and ends at it's last control point, but
   it in general does not pass through all other control points.
 

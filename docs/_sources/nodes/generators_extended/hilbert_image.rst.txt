@@ -30,7 +30,7 @@ All parameters can be given by the node or an external input.
 +-----------------+---------------+-------------------+----------------------------------------------------------+
 | **size**        |  float        |   1.0             |    scale of hilbert mesh                                 |
 +-----------------+---------------+-------------------+----------------------------------------------------------+
-| **sensitivity** |  float        |   1.0             |    define scale of values to react and build image       |                           
+| **sensitivity** |  float        |   1.0             |    define scale of values to react and build image       |
 +-----------------+---------------+-------------------+----------------------------------------------------------+
 
 Outputs

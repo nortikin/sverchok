@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -226,16 +226,16 @@ specified curve points. The available values are:</p>
 <blockquote>
 <div><ul class="simple">
 <li>Manhattan</li>
-<li>Euclidian</li>
+<li>Euclidean</li>
 <li>Points (just number of points from the beginning)</li>
 <li>Chebyshev</li>
-<li>Centripetal (square root of Euclidian distance)</li>
+<li>Centripetal (square root of Euclidean distance)</li>
 <li>X, Y, Z axis - use distance along one of coordinate axis, ignore others.</li>
 </ul>
 </div></blockquote>
 </li>
 </ul>
-<p>The default value is Euclidian.</p>
+<p>The default value is Euclidean.</p>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
@@ -250,7 +250,7 @@ specified curve points. The available values are:</p>
 <img alt="https://user-images.githubusercontent.com/284644/77845087-6f6afd00-71c5-11ea-9062-77c195a512ce.png" src="https://user-images.githubusercontent.com/284644/77845087-6f6afd00-71c5-11ea-9062-77c195a512ce.png" />
 <p>The same with <strong>Cyclic</strong> checked:</p>
 <img alt="https://user-images.githubusercontent.com/284644/77845088-709c2a00-71c5-11ea-85a9-c090776c6c96.png" src="https://user-images.githubusercontent.com/284644/77845088-709c2a00-71c5-11ea-85a9-c090776c6c96.png" />
-<p>These examples had Metric set to Euclidian (default). Since <strong>Eval Curve</strong> node
+<p>These examples had Metric set to Euclidean (default). Since <strong>Eval Curve</strong> node
 generates evenly-distributed values of the T parameter, the number of points at
 each segment is proportional to the distance between points. The next example
 is with Metric set to Points:</p>

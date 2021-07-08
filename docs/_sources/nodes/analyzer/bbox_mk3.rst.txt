@@ -60,17 +60,17 @@ Examples
 
 *Mean: Average of incoming set of Vertices*
 
-.. image:: ../../_build/html/_static/images/def83614-3761-11e4-9cb4-4f7d8a8608bb.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186539/def83614-3761-11e4-9cb4-4f7d8a8608bb.PNG
   :alt: BBox_Mean1.PNG
 
 *Center: Average of the Bounding Box*
 
-.. image:: ../../_build/html/_static/images/def29d62-3761-11e4-8069-b9544e2ad62a.PNG
+.. image:: https://cloud.githubusercontent.com/assets/619340/4186538/def29d62-3761-11e4-8069-b9544e2ad62a.PNG
   :alt: BBox_Center3.PNG
 
 *2D Mode: produces rectangles at z = 0*
 
-.. image:: ../../_build/html/_static/images/66115789-d1a9c300-e5d1-11e9-96d7-27b01db9a78d.png
+.. image:: https://user-images.githubusercontent.com/10011941/66115789-d1a9c300-e5d1-11e9-96d7-27b01db9a78d.png
   :alt: Bounding_Box_2D_Sverchok_Procedural_Blender.PNG
 
 Notes

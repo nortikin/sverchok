@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -225,6 +225,7 @@
 <li><strong>Surface</strong>. Generate points on the surface of the mesh.</li>
 <li><strong>Volume</strong>. Generate points inside the volume of the mesh. The mesh is
 expected to represent a closed volume in this case.</li>
+<li><strong>Edges</strong>.  Generate points on the edges of the mesh.</li>
 </ul>
 <p>The default option is <strong>Surface</strong>.</p>
 </li>
@@ -234,14 +235,29 @@ be proportional to the area of the face (and to the weight provided in the
 <strong>Face weight</strong> input). If not checked, then the number of points on each
 face will be only defined by <strong>Face weight</strong> input. Checked by default.</p>
 </li>
+<li><p class="first"><strong>All Triangles</strong>. Enable if the input mesh is made only of triangles
+(makes node faster). Available in Surfaces and Volume modes (in N-Panel)</p>
+</li>
+<li><p class="first"><strong>Safe Check</strong>. Disabling it will make node faster but polygon indices
+referring to unexisting points will crash Blender. Only available in Volume Mode.
+(in N-Panel)</p>
+</li>
+<li><p class="first"><strong>Implementation</strong>. Offers two implementations:
+* <strong>Numpy</strong>. Faster
+* <strong>Mathutils</strong>. Old implementation. Slower.
+Only available in Surface Mode (in N-Panel)</p>
+</li>
+<li><p class="first"><strong>Output Numpy</strong>. Output NumPy arrays in stead of regular list (makes node faster)
+Only available in Surface and Edges modes (in N-Panel)</p>
+</li>
 </ul>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><strong>Verts</strong> - random vertices on mesh</li>
-<li><strong>Face index</strong> - indexes of faces to which random vertices lays. This input
-is available only when <strong>Mode</strong> parameter is set to <strong>Surface</strong>.</li>
+<li><strong>Face / Edges index</strong> - indexes of faces/edges to which random vertices lays. This input
+is available only when <strong>Mode</strong> parameter is set to <strong>Surface</strong> or <strong>Edges</strong>.</li>
 </ul>
 </div>
 <div class="section" id="examples">

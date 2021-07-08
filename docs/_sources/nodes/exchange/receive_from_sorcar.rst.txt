@@ -16,10 +16,10 @@ All outputs will be generated. The evaluated mesh from "Send to Sverchok" Sorcar
 Example of usage
 ----------------
 
-.. image:: ../../_build/html/_static/images/82822809-07365000-9ec4-11ea-8017-898d8d015318.png
+.. image:: https://user-images.githubusercontent.com/26548023/82822809-07365000-9ec4-11ea-8017-898d8d015318.png
   :alt: SorcarPreview.PNG
 
-.. image:: ../../_build/html/_static/images/82822815-0a314080-9ec4-11ea-8da4-11acad0da800.png
+.. image:: https://user-images.githubusercontent.com/26548023/82822815-0a314080-9ec4-11ea-8da4-11acad0da800.png
   :alt: SverchokPreview.PNG
 
 `Video demo <https://www.youtube.com/watch?v=pTIiMj5GpyI>`_

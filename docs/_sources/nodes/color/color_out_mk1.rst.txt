@@ -56,4 +56,4 @@ In the N-Panel (and on the right-click menu) you can find:
 Examples
 --------
 
-.. image:: ../../_build/html/_static/images/color_out_texture_hsv_sverchok_blender_example.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_out/color_out_texture_hsv_sverchok_blender_example.png

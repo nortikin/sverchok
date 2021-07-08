@@ -33,7 +33,7 @@
         <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="List Main" href="list_main_index.html"/>
-        <link rel="next" title="List Struct" href="../list_struct/list_struct_index.html"/>
+        <link rel="next" title="List index" href="index.html"/>
         <link rel="prev" title="List Zip" href="zip.html"/> 
 
   
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -199,7 +199,7 @@
 <h1>List Statistics<a class="headerlink" href="#list-statistics" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
-<p>List Statistics node computes various statistical quantities for the values in a list.</p>
+<p>List Statistics node computes various statistical quantities for the input values.</p>
 </div>
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
@@ -227,30 +227,42 @@ All inputs are vectorized.</p>
 <tr class="row-even"><td><strong>Function</strong></td>
 <td><dl class="first last docutils">
 <dt>Enum</dt>
-<dd>All Statistics
-Sum
+<dd><p class="first">All Statistics
+Selected Statistics</p>
+<p class="last">Sum
 Sum Of Squares
+Sum Of Inverse
 Product
 Average
 Geometric Mean
 Harmonic Mean
+Variance
 Standard Deviation
+Standard Error
 Root Mean Square
 Skewness
 Kurtosis
 Minimum
 Maximum
+Range
 Median
 Percentile
-Histogram</dd>
+Histogram
+Count</p>
+</dd>
 </dl>
 </td>
 <td>Average</td>
 <td><p class="first">The statistical function applied to
 the input values.</p>
-<p class="last">For “All Statistics” selection the node
+<p>For “All Statistics” selection the node
 computes and outputs the statistical
 quantities for all the statistical
+functions along with their corresponding
+names.</p>
+<p class="last">For “Selected Statistics” selection the
+node computes and outputs the statistical
+quantities for the selected statistical
 functions along with their corresponding
 names.</p>
 </td>
@@ -283,6 +295,11 @@ to the given normalize size. [2]</td>
 [1] : The <strong>Percentage</strong> input socket is available only for the <strong>Percentile</strong> function.
 [2] : The <strong>Normalize</strong> setting and the <strong>Bins</strong> and <strong>Size</strong> input sockets are available only for the <strong>Histogram</strong> function.</p>
 </div>
+<div class="section" id="extra-parameters">
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The Property Panel contains additional settings to configure the statistics drawn in the node editor: font, text color, text scale and floating point precision of the displayed statistics, the x/y offset of the displayed statistics relative to the node and a setting for toggling the statistics names between full names and abbreviations.</p>
+<p>The fonts used for this node are monospace fonts for best text alignment.</p>
+</div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p><strong>Name(s)</strong>
@@ -299,7 +316,7 @@ The statistical quantity of the input values corresponding to the selected funct
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../list_struct/list_struct_index.html" class="btn btn-neutral float-right" title="List Struct">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="index.html" class="btn btn-neutral float-right" title="List index">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="zip.html" class="btn btn-neutral" title="List Zip"><span class="fa fa-arrow-circle-left"></span> Previous</a>

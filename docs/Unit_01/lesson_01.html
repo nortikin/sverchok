@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -200,7 +200,7 @@
 <div class="section" id="lesson-01-a-plane">
 <h2>Lesson 01 - A Plane<a class="headerlink" href="#lesson-01-a-plane" title="Permalink to this headline">¶</a></h2>
 <p>Nodes covered in this lesson: <code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math,</span> <span class="pre">Vector</span> <span class="pre">In,</span> <span class="pre">Number,</span> <span class="pre">Number</span> <span class="pre">Range,</span> <span class="pre">Viewer</span> <span class="pre">Draw,</span> <span class="pre">Stethoschope,</span> <span class="pre">Simple</span> <span class="pre">Topology,</span> <span class="pre">Vector</span> <span class="pre">Math</span></code>.</p>
-<p>Let’s make a Plane, we will need 4 vectors and we’ll define them using math. I’ll use the Trigonometric concept of the <code class="docutils literal notranslate"><span class="pre">unit-circle</span></code> to get coordinates which are <code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">PI</span></code> appart.</p>
+<p>Let’s make a Plane, we will need 4 vectors and we’ll define them using math. I’ll use the Trigonometric concept of the <code class="docutils literal notranslate"><span class="pre">unit-circle</span></code> to get coordinates which are <code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">PI</span></code> apart.</p>
 <blockquote>
 <div><em>Note</em>: The perimeter of a circle is C=2*PI*r . In the unit-circle radius=1 so it’s perimter is C=2*PI . For the square we need 4 vertexes with equal distance apart so 2*PI/4=0.5*PI. If you consider that a circle represents an angle of 360 degrees then 2πr=360º and this means that 0*π places represents a vertex at 0 degrees of the circle: 0PI=0º ; 0.5PI=90º ; 1PI=180º ; 1.5PI=270º</div></blockquote>
 <img alt="https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png" src="https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png" />
@@ -264,7 +264,7 @@
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">In</span></code></li>
 </ul>
-<p>The <cite>Vector In</cite> node takes as input 1 or more numbers per component. Sockets which are not explicitely connected to will be represented by a zero.</p>
+<p>The <cite>Vector In</cite> node takes as input 1 or more numbers per component. Sockets which are not explicitly connected to will be represented by a zero.</p>
 <ol class="arabic simple">
 <li>Connect the resulting <code class="docutils literal notranslate"><span class="pre">Cos(</span> <span class="pre">x</span> <span class="pre">)</span></code> to the first component in of <em>Vector in</em>: <code class="docutils literal notranslate"><span class="pre">X</span></code></li>
 <li>Connect the resulting <code class="docutils literal notranslate"><span class="pre">Sin(</span> <span class="pre">X</span> <span class="pre">)</span></code> to the second component in of <em>Vector in</em>: <code class="docutils literal notranslate"><span class="pre">Y</span></code></li>

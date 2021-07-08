@@ -18,12 +18,12 @@ Features
 - A small amount of boilerplate (called a directive) at the top of your scripts used to define what sockets and ui elements you want. More about this in the Syntax segment below.
 - We provide example scripts to get you up an running quickly. These come in the form of templates and they can be imported directly into the node from the N panel. They can be imported directly into **node**, or to a **text block**.
 
-.. image:: ../../_build/html/_static/images/ff29eed2-2a5c-11e7-9594-f85295178f57.png
+.. image:: https://cloud.githubusercontent.com/assets/619340/25421401/ff29eed2-2a5c-11e7-9594-f85295178f57.png
 
 - You must declare an input socket, but outputs are optional.
 - You can set defaults for input numbers, vectors, and list sockets.
 - You can set the level of nestedness; means you don't need to unwrap/index stuff via code
-- You can append a UI drawing funcion to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
+- You can append a UI drawing function to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
 - has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
     parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
@@ -109,8 +109,8 @@ see a working script that uses two enums here: https://github.com/nortikin/sverc
 Syntax
 ------
 
-To intialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
-a pair of tripple quote marks: **"""**, never single quotes like **'''**.
+To initialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
+a pair of triple quote marks: **"""**, never single quotes like **'''**.
 
 The syntax looks like this::
 
@@ -121,7 +121,7 @@ The syntax looks like this::
     """
     < any python code >
 
-This tripple quoted area (a "directive comment", or *header*) must be the first thing in the ``.py`` file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose::
+This triple quoted area (a "directive comment", or *header*) must be the first thing in the ``.py`` file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose::
 
     """
     in socketname   type  d=x n=i
@@ -161,7 +161,7 @@ A few things to notice:
 
 Some familiarity with python or the concept of sublists (lists of lists) is needed to understand this. It's harder to explain than to use.
 
-.. image:: ../../_build/html/_static/images/639cdc34-fd9f-11e6-8aa2-0238f2020373.png
+.. image:: https://cloud.githubusercontent.com/assets/619340/23399114/639cdc34-fd9f-11e6-8aa2-0238f2020373.png
 
 
 - `n=2` means ``named_input.sv_get()[0][0]`` - means you only want a single value. ::
@@ -174,7 +174,7 @@ Some familiarity with python or the concept of sublists (lists of lists) is need
 - `n=0` means ``named_input.sv_get()``
             - Generally you would use this if you plan to do something with each sublist coming in, for example if the input contains several lists of verts like here:
 
-.. image:: ../../_build/html/_static/images/d1c8861e-ae3e-11e6-9de6-501f07a58606.png
+.. image:: https://cloud.githubusercontent.com/assets/619340/20454350/d1c8861e-ae3e-11e6-9de6-501f07a58606.png
 
 
 - **outputs**::

@@ -21,7 +21,7 @@ Outputs
 -------
 
 - **Verts** - moved vertices of move input.
-- **Move vector** - vector which should be applied ot moving mesh.
+- **Move vector** - vector which should be applied to moving mesh.
 
 Options
 -------

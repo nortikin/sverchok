@@ -8,6 +8,9 @@ Functionality
 
 Similar to ViewerDraw but instead of using OpenGL calls to display geometry this Node *writes* or *updates* Blender Meshes on every geometry update. The bonus is that this geometry is renderable without an extra bake step. We can use Blender's Modifier stack to affect the mesh. The only exception to the modifiers is the Skin Modifier but we aren't entirely sure why, maybe because BMview invalidates the BMesh between updates.
 
+*Note:* The performance of the node can be increased significantly by putting vertices in `numpy.float32` format
+in case if topology of the mesh remains unchanged.
+
 Category
 --------
 

@@ -33,7 +33,7 @@
         <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="Modifier Make" href="modifier_make_index.html"/>
-        <link rel="next" title="Solidify" href="solidify.html"/>
+        <link rel="next" title="Solidify" href="solidify_mk2.html"/>
         <link rel="prev" title="Pipe" href="pipe_tubes.html"/> 
 
   
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -304,7 +304,7 @@ into one mesh. Unchecked by default.</p>
 <li><p class="first"><strong>Remove doubles</strong>. If checked, then “remove doubles” / “merge by distance”
 function will be applied to the resulting mesh; i.e., vertices that have
 (nearly) the same position, will be merged together. Merging threshold is
-controlled by <strong>Threshold</strong> input / paramter. This parameter is only visible
+controlled by <strong>Threshold</strong> input / parameter. This parameter is only visible
 if <strong>Join</strong> parameter is checked. Unchecked by default.</p>
 </li>
 <li><p class="first"><strong>Matching mode</strong>. This defines how the list of donor objects is matched with list of recipient objects. Available values are:</p>
@@ -382,7 +382,7 @@ smooth. Unchecked by default.</p>
 <li><p class="first"><strong>Coordinates</strong>. This defines the method of calculation of donor object’s
 coordinates along two axes orthogonal to recipient’s face normal. In any
 case, the location is defined by transforming some area of XOY plane (or
-other plane, according to <strong>Normal axis</strong> paramter), called <em>source area</em>, to
+other plane, according to <strong>Normal axis</strong> parameter), called <em>source area</em>, to
 the recipient object face. The question is what is the source area. The
 available values are:</p>
 <ul class="simple">
@@ -500,7 +500,7 @@ be different for triangular faces, Quads and Ngons. Available values are:</p>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<p>This node hsa the following outputs:</p>
+<p>This node has the following outputs:</p>
 <ul class="simple">
 <li><strong>Vertices</strong></li>
 <li><strong>Polygons</strong></li>
@@ -549,7 +549,7 @@ and <a class="reference external" href="https://github.com/nortikin/sverchok/pul
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="solidify.html" class="btn btn-neutral float-right" title="Solidify">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="solidify_mk2.html" class="btn btn-neutral float-right" title="Solidify">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pipe_tubes.html" class="btn btn-neutral" title="Pipe"><span class="fa fa-arrow-circle-left"></span> Previous</a>

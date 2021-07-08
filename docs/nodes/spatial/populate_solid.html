@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -210,7 +210,7 @@ object according to the provided Scalar Field. It has two modes:</p>
 field is greater than threshold;</li>
 <li>Generate points according to the value of scalar field: put more points in
 areas where the value of scalar field is greater. More precisely, the
-probability of the vertex appearence at some point is proportional to the
+probability of the vertex appearance at some point is proportional to the
 value of the scalar field at that point.</li>
 </ul>
 <p>This node can make sure that generated points are not too close to one another.
@@ -235,7 +235,7 @@ mandatory.</li>
 this input is not connected, the node will generate evenly distributed
 points. This input is mandatory, if <strong>Proportional</strong> parameter is checked.</li>
 <li><strong>Count</strong>. The number of points to be generated. The default value is 50.</li>
-<li><strong>MinDistance</strong>. This input is avaliable only when <strong>Distance</strong> parameter is
+<li><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
 set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
 points. If set to zero, there will be no restriction on distance between
 points. Default value is 0.</li>
@@ -273,7 +273,7 @@ defined. The available options are:</p>
 <div><ul class="simple">
 <li><strong>Min. Distance</strong>. The user provides minimum distance between any two
 points in the <strong>MinDistance</strong> input.</li>
-<li><strong>RadiusField</strong>. The user defines a radius of a shpere that should be
+<li><strong>RadiusField</strong>. The user defines a radius of a sphere that should be
 empty around each generated point, by providing a scalar field in the
 <strong>RadiusField</strong> input. The node makes sure that these spheres will not
 intersect.</li>

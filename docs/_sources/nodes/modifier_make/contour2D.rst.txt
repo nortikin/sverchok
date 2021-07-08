@@ -8,7 +8,7 @@ Functionality
 
 This node creates one or many contours at specified distance.
 
-- It is feeded by sets of vertices and edges.
+- It is fed by sets of vertices and edges.
 - Every set of vertices needs to share the Z coordinate in order to create a valid contour.
 
 
@@ -47,8 +47,8 @@ Parameters
 +------------------+---------------+-------------+-------------------------------------------------------------+
 |**Mask Tolerance**| Float         | 1.0e-5      | Tolerance on masking (for low Nº Vertices or small values)  |
 +------------------+---------------+-------------+-------------------------------------------------------------+
-|**Inters. Mode**  | Menu          | Circular    |**Circular**: Intersecction based on circles (Slower).       |
-|                  |               |             |**Poligonal**: Intersecction based on poligons (Faster).     |
+|**Inters. Mode**  | Menu          | Circular    |**Circular**: Intersection based on circles (Slower).        |
+|                  |               |             |**Polygonal**: Intersection based on polygons (Faster).      |
 +------------------+---------------+-------------+-------------------------------------------------------------+
 |**List Match**    | Menu          | Long Cycle  |**Long Repeat**: After shortest list repeat last value.      |
 |                  |               |             |**Long Cycle**: After shortest list got to first last value. |
@@ -79,7 +79,7 @@ In Weighted mode will apply each distance to a vertex creating independent conto
 .. image:: https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png
 
 
-- With the intersection mode on "Circular" the intersection points will be placed as if we were using perfect circles. This will change the edges angles, but the distance between the intersection point and the original points will be maintained. On "Poligonal" the edges angles are preserved but the distance to original vertex will depend on the number of vertices.
+- With the intersection mode on "Circular" the intersection points will be placed as if we were using perfect circles. This will change the edges angles, but the distance between the intersection point and the original points will be maintained. On "Polygonal" the edges angles are preserved but the distance to original vertex will depend on the number of vertices.
 
 .. image:: https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png
 

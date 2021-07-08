@@ -12,7 +12,7 @@ Functionality
 Layer 1 neuron network with studying. With Inputs and Outputs.
 You should study network on data. After studying use node on your tree.
 
-.. _`Algorythm description`: https://kpfu.ru/staff_files/F1493580427/NejronGafGal.pdf  
+.. _`Algorithm description`: https://kpfu.ru/staff_files/F1493580427/NejronGafGal.pdf  
 
 
 Tune node before use. Mandatory props first. Additional props can be passed. 
@@ -76,7 +76,7 @@ Parameters
 +--------------------+--------+--------------------------------------------------------------------------------+
 | **lambda**         | float  | weight coefficients changing's step                                            |
 +--------------------+--------+--------------------------------------------------------------------------------+
-| **treshold**       | float  | Threshold preserve retraining                                                  |
+| **threshold**      | float  | Threshold preserve retraining                                                  |
 +--------------------+--------+--------------------------------------------------------------------------------+
 | **Reset**          | Button | reset all coeffitients                                                         |
 +--------------------+--------+--------------------------------------------------------------------------------+

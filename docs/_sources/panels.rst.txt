@@ -134,7 +134,6 @@ It can be good idea to store as a preset (and maybe share) the following things:
 * Scripted node, or "Mesh Expression" node, or one of other nodes that use
   Blender's text blocks as settings. Such nodes are stored together with
   corresponding text.
-* Group (monad) node. It is saved with all contents.
 * Several linked nodes, that do some completed thing, for later usage "as-is".
 * Several linked nodes, that are "sort of going to be needed in this
   combination often", so that later you can start with this preset and add some
@@ -384,14 +383,6 @@ Relax, most of these warnings can be ignored, unless the Tree fails to import, t
 **Bug Reporting**
 
 By all means if you like using this feature, file issues in `this thread <https://github.com/nortikin/sverchok/issues/422>`_. The best way to solve issues is to share with us a screenshot of the last few lines of the error if we need more then we will ask for a copy of the `.blend`.
-
-Groups Panel
-============
-
-Crete a node group (Monad) from selection.
-It can have vectorized inputs, adding or removing sockets.
-Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
-`Bug reports <https://github.com/nortikin/sverchok/issues/462>`_.
 
 Templates in menu panel of nodes area
 =====================================

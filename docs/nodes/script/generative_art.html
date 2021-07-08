@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -222,7 +221,7 @@
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><strong>Vertices, Edges and Faces</strong> - If the Vertices input is connected, these outputs will define the mesh of a tube that skins the structure defined in the xml file.</li>
-<li><strong>Shapes Matrices</strong> - For each <em>shape</em> atribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.</li>
+<li><strong>Shapes Matrices</strong> - For each <em>shape</em> attribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.</li>
 </ul>
 </div>
 <div class="section" id="examples-of-usage">
@@ -251,7 +250,7 @@
 </pre></div>
 </div>
 <p>This specifies the following design with 6 spirals.</p>
-<img alt="6 spiral screen shot with node diagram and text file and structure" src="../../_images/cb79f476-de1b-11e5-90e9-845f3c201228.png" />
+<img alt="6 spiral screen shot with node diagram and text file and structure" src="https://cloud.githubusercontent.com/assets/7930130/13376231/cb79f476-de1b-11e5-90e9-845f3c201228.png" />
 <p>The xml file consists of a list of rules. There must be at least one rule called entry. This is the starting point for the processor. Each rule consists of a list of instructions. These instructions can either be a call to another rule or an instruction to place an instance of an object.</p>
 <p>Calls can be recursive. For the example above the first instruction in rule R1 also calls rule R1. This recursion stops when the max_depth value is reached or the max_mats value set in the node is reached. The max_depth can also be set separately for each rule and is added as an attribute eg <code class="docutils literal notranslate"><span class="pre">&lt;rule</span> <span class="pre">name=&quot;R1&quot;</span> <span class="pre">max_depth=&quot;10&quot;&gt;</span></code>.</p>
 <p>Each of these instructions can be modified with a set of transforms. If the transform is omitted it defaults to the identity transform.</p>
@@ -290,7 +289,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="tree structure image" src="../../_images/25164a80-0162-11e5-9feb-32c4f3908f1e.png" />
+<img alt="tree structure image" src="https://cloud.githubusercontent.com/assets/7930130/7782285/25164a80-0162-11e5-9feb-32c4f3908f1e.png" />
 <p>In the above xml file there are four definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule. Each rule version has a weight attribute. The processor will call each version of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule in a random manner. The weight attribute will determine the probability a particular rule version is called.</p>
 <p>The first three definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule all place an object instance and then call the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule with the same translation along the <code class="docutils literal notranslate"><span class="pre">z</span></code> axis and rotation about the <code class="docutils literal notranslate"><span class="pre">x</span></code> axis but different amounts of rotation about the <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> axis. The fourth definition calls the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. For a larger weight value, the rule gets called more often and there are more branches.</p>
 <p>If the weight attribute is omitted each version will have equal weight. Changing the value of <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">seed</span></code> in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.</p>
@@ -319,13 +318,13 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="nouveau variation structure" src="../../_images/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png" />
+<img alt="nouveau variation structure" src="https://cloud.githubusercontent.com/assets/7930130/7629793/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png" />
 <p>This example needs “max matrices” set to 5000 to get the above result.</p>
 </div>
 <div class="section" id="mesh-mode-example">
 <h3>Mesh Mode Example<a class="headerlink" href="#mesh-mode-example" title="Permalink to this headline">¶</a></h3>
-<p>Using the matrices output allows a separate object to be placed at each location. The vertices input and the mesh (vertices, edges, faces) output “skins” the mesh into a much smaller number of objects. The vertices input should be a list of vertices such as that generated by the “Circle” node or “NGon” node. It could also be a circle type object taking from the scene using the “Objects In” node. The list of vertices should be in order so they can be made into a ring with the last vertex joined to the first. That ring dosen’t have to be planar.</p>
-<img alt="node and result picture for 6 spiral in mesh mode" src="../../_images/d20249ce-de1b-11e5-968d-727f0038305e.png" />
+<p>Using the matrices output allows a separate object to be placed at each location. The vertices input and the mesh (vertices, edges, faces) output “skins” the mesh into a much smaller number of objects. The vertices input should be a list of vertices such as that generated by the “Circle” node or “NGon” node. It could also be a circle type object taking from the scene using the “Objects In” node. The list of vertices should be in order so they can be made into a ring with the last vertex joined to the first. That ring doesn’t have to be planar.</p>
+<img alt="node and result picture for 6 spiral in mesh mode" src="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" />
 <p>The output will not always be one mesh. If the rule set ends one ‘arm’ and goes back to start another ‘arm’ these two sub-parts will be separate meshes. Sometimes the mesh does not turn out how you would like. This can often be fixed by changing the rule set.</p>
 <p>Often a mesh tube will turn out flat rather than being tube like. This can usually be fixed by either rotating the vertex ring in the scene or by adding a rotation transform to the “instance” commands in the rule set.</p>
 <p>For example change <code class="docutils literal notranslate"><span class="pre">&lt;instance</span> <span class="pre">shape=&quot;s1&quot;/&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">&lt;instance</span> <span class="pre">transforms=&quot;ry</span> <span class="pre">90&quot;</span> <span class="pre">shape=&quot;s1&quot;/&gt;</span></code></p>
@@ -351,7 +350,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern wrong" src="../../_images/b6553802-fa83-11e4-8390-aa9ba2a0c44d.png" />
+<img alt="image fern wrong" src="https://cloud.githubusercontent.com/assets/7930130/7629779/b6553802-fa83-11e4-8390-aa9ba2a0c44d.png" />
 <p>Fern 2</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;2000&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="n">rule</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;entry&quot;</span><span class="o">&gt;</span>
@@ -376,7 +375,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern right" src="../../_images/bbe99588-fa83-11e4-8d70-92cc2909675e.png" />
+<img alt="image fern right" src="https://cloud.githubusercontent.com/assets/7930130/7629783/bbe99588-fa83-11e4-8d70-92cc2909675e.png" />
 <p>Again these were both done with max mats set to 5000.</p>
 </div>
 <div class="section" id="constants-and-variables-example">
@@ -421,7 +420,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <span class="o">&lt;/</span><span class="n">rules</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<img alt="image fern animation" src="../../_images/d7303744-de1b-11e5-8c91-1d56f412b27d.png" />
+<img alt="image fern animation" src="https://cloud.githubusercontent.com/assets/7930130/13376233/d7303744-de1b-11e5-8c91-1d56f412b27d.png" />
 <p>For this animation the index number of the current frame in the animation is translated from the range 1 to 250 to the range 16 to 6 via the “Map Range” node and wired into the <code class="docutils literal notranslate"><span class="pre">curl_angle</span></code> input of the “Generative Art” node. This cause the fern to unwind as the animation proceeds.</p>
 <p>Simple maths can also be use in the transforms definition. This has been used above in the <code class="docutils literal notranslate"><span class="pre">curlsmall</span></code> rule. The <code class="docutils literal notranslate"><span class="pre">rx</span></code> rotation of the transform will always be twice that of the <code class="docutils literal notranslate"><span class="pre">rx</span></code> rotation in the <code class="docutils literal notranslate"><span class="pre">curl1</span></code> and <code class="docutils literal notranslate"><span class="pre">curl2</span></code> rules. There cannot be any spaces in any maths expressions for the rotation, translation or scale parameters when using a single transforms attribute string. To allow for more complicated expressions each transform can be separated out into its own attribute.</p>
 <p>transforms as single attribute (no spaces allowed in maths expression)</p>

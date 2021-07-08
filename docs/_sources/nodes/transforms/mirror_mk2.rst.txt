@@ -33,7 +33,7 @@ This node has the following inputs:
   be specified as a parameter.
 * **Plane**. The matrix used to define the mirroring plane. XOY plane of that
   matrix will be used. The default value is identity matrix, which means
-  mirroring around the XOY plane. This input is ony visible when **Mode**
+  mirroring around the XOY plane. This input is only visible when **Mode**
   parameter is set to **Plane by matrix**.
 * **Normal**. Normal vector of the mirroring plane. Used together with **Vert
   A** input. The default value is `(0, 0, 1)`. This input is visible only when

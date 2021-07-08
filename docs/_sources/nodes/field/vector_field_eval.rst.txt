@@ -16,12 +16,22 @@ This node has the following inputs:
 * **Field**. The vector field to be evaluated. This input is mandatory.
 * **Vertices**. The points at which to evaluate the field. The default value is `(0, 0, 0)`.
 
+Parameters
+----------
+
+* **Output NumPy**. Outputs NumPy arrays in stead of regular python lists. Improves performance
+
 Outputs
 -------
 
 This node has the following output:
 
 * **Vectors**. The vectors calculated at the provided points.
+
+Performance Notes
+-----------------
+
+This node works faster when the vertices list are NumPy Arrays
 
 Examples of usage
 -----------------
@@ -33,4 +43,3 @@ Replace each point of straight line segment with the result of noise vector fiel
 Visualize vector field vectors by connecting original points of the line segment and the points obtained by moving the original points by the results of vector field evaluation:
 
 .. image:: https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png
-

@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -210,7 +210,7 @@
 <li>X num subdivs</li>
 <li>Y num subdivs</li>
 </ul>
-<p>These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.</p>
+<p>These properties can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.</p>
 <img alt="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" src="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" />
 <p><strong>Decide which variables you want to expose</strong></p>
 <p>The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I’ll pick what I think is the most convenient, it can always be changed later. Think of names that mean exactly what they’re attempting to describe.</p>
@@ -383,7 +383,7 @@ rounded down to the nearest whole number.</td>
 </tr>
 </tbody>
 </table>
-<p>A table of numbers isn’t going to give you a sense of repetions or progression. I’ve added a few colours intended to make the emerging patterns visible.</p>
+<p>A table of numbers isn’t going to give you a sense of repetitions or progression. I’ve added a few colours intended to make the emerging patterns visible.</p>
 <p><img alt="color_coded" src="https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png" /></p>
 <p>You come here to learn visual programming in Sverchok. You will internalize the underlying math and algorithms more thoroughly by looking at the concept of programming from several angles. I want to show a few lines of code (python) that use <code class="docutils literal notranslate"><span class="pre">%</span></code> and <code class="docutils literal notranslate"><span class="pre">//</span></code> to calculate the Vertices of the grid. This code generates the x and y components of the vertices based purely on how many vertices are needed (<code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">3</span></code>); Which is exactly what we want to do in the node tree shortly.</p>
 <p>Below are two snippets of Python that calculate the same list of vertices. I’m showing both because it’s an analogy to what you’ll experience in any node tree. There is generally more than one way to achieve a result, there is almost never a “best” way. Some ways are faster in terms of processing speed, but they may be more difficult to understand by looking at the tree / code.</p>

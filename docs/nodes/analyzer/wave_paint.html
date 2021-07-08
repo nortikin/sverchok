@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -204,7 +204,7 @@
 <ul class="simple">
 <li>First, the selected faces (or vertices) are marked with the number of 1.</li>
 <li>Then the faces (vertices), that are neighbour to faces marked with 1, which were not marked yet, are marked with the number 2.</li>
-<li>Faces (vertices), that are neighbour to faces marked with 2, whcih were not marked yet, are marked with the number 3.</li>
+<li>Faces (vertices), that are neighbour to faces marked with 2, which were not marked yet, are marked with the number 3.</li>
 <li>This continues until all faces / vertices of the mesh are painted.</li>
 </ul>
 <p>Some faces (vertices) of the mesh can be marked as obstacles, so that the wave can not pass through them.</p>
@@ -226,7 +226,7 @@ passable.</li>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>This node has the following paramters:</p>
+<p>This node has the following parameters:</p>
 <ul>
 <li><p class="first"><strong>Mode</strong>. Painting mode. The following modes are available:</p>
 <ul class="simple">
@@ -266,8 +266,8 @@ output will contain 0 for obstacle faces / vertices.</li>
 length of the shortest path from initially selected faces (vertices) to this
 face (vertex). The path is considered to be consisting of single steps from
 one face / vertex to one of it’s neighbours. The length of step between
-neighbour vertices is the Euclidian distance between such vertices. The
-length of step between neighbour faces is calculated as Euclidian distance
+neighbour vertices is the Euclidean distance between such vertices. The
+length of step between neighbour faces is calculated as Euclidean distance
 between the centers of such faces. This input will contain 0 for initially
 selected faces as well as for obstacle faces.</li>
 <li><strong>StartIdx</strong>. For each face (or vertex) of the mesh, this contains the index

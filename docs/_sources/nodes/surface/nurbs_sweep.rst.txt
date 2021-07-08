@@ -59,7 +59,7 @@ in different cases:
 
 This node is similar to "Extrude Curve along Curve" node; differences are:
 
-* "NURBS Sweep" can work witn NURBS and NURBS-like curves only, while "Extrude
+* "NURBS Sweep" can work with NURBS and NURBS-like curves only, while "Extrude
   Curve along Curve" works with arbitrary (e.g. formula-specified) Curve
   objects.
 * "NURBS Sweep" node always generates a NURBS surface;  for such surface, some
@@ -172,12 +172,12 @@ This node has the following parameters:
   used for interpolation along V direction. The available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance).
+   * Centripetal (square root of Euclidean distance).
 
-   The default option is Euclidian.
+   The default option is Euclidean.
 
 .. _Wikipedia: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 

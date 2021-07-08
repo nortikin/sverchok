@@ -30,22 +30,22 @@ Examples
 
 
 
-.. image:: ../../_build/html/_static/images/texture_evaluate_sverchok_blender_example_1.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png
 
 Mixing 3 textures
 
-.. image:: ../../_build/html/_static/images/texture_evaluate_sverchok_blender_example_2.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_2.png
 
 Masking mesh with texture
 
-.. image:: ../../_build/html/_static/images/texture_evaluate_sverchok_blender_example_3.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png
 
 Blender procedural textures work in 3D space
 
-.. image:: ../../_build/html/_static/images/texture_evaluate_sverchok_blender_example_4.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png
 
 You can input multiple textures, when joined [[texture, texture,..],[..],..] they will be used in a single set of vertices with a single output list
 
-.. image:: ../../_build/html/_static/images/texture_evaluate_sverchok_blender_example_5.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_5.png
 
 Differences between Object Mapping and UV Coordinates mapping

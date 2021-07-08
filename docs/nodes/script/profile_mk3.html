@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -354,7 +353,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p>
 </li>
 </ul>
 <p>This restriction is for security reasons. However, Python’s ecosystem does not
-guarantee that noone can call some unsafe operations by using some sort of
+guarantee that no one can call some unsafe operations by using some sort of
 language-level hacks. So, please be warned that usage of this node with profile
 definition obtained from unknown or untrusted source can potentially harm your
 system or data.</p>
@@ -437,7 +436,7 @@ to use this generated profile. You can adjust the profile by editing created Ble
 <p>If you want to import other type of curve you have to convert one to Bezier type.
 Fortunately it is possible to do in edit mode with button <em>Set Spline Type</em> in the <em>T</em> panel.
 More information about conversion looks <a class="reference external" href="https://docs.blender.org/manual/en/dev/modeling/curves/editing/introduction.html#set-spline-type">here</a>.</p>
-<img alt="../../_images/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" src="../../_images/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" src="https://user-images.githubusercontent.com/28003269/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" />
 <p>One can also load one of examples, which are provided within Sverchok distribution. For that,
 in the <strong>N</strong> panel of Profile node, see “Profile templates” menu.</p>
 </div>
@@ -477,7 +476,7 @@ good idea to always start the profile with a M &lt;pos&gt;,&lt;pos&gt;.</p>
 useful, you can see how it evolved in the <a class="reference external" href="https://github.com/nortikin/sverchok/issues/350">initial github thread</a> ;
 See also <a class="reference external" href="https://github.com/nortikin/sverchok/pull/2450">last github thread</a> and examples provided within Sverchok distribution (N panel of the node).</p>
 <p>Example usage:</p>
-<img alt="../../_images/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png" src="../../_images/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png" />
+<img alt="https://user-images.githubusercontent.com/284644/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png" src="https://user-images.githubusercontent.com/284644/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="mi">3</span><span class="p">,</span><span class="n">H</span> <span class="mi">6</span><span class="p">,</span><span class="mi">0</span>
 <span class="n">t</span> <span class="mi">6</span><span class="p">,</span><span class="mi">0</span>
 <span class="n">t</span> <span class="mi">6</span><span class="p">,</span><span class="mi">0</span>
@@ -488,7 +487,7 @@ See also <a class="reference external" href="https://github.com/nortikin/svercho
 <span class="n">t</span> <span class="mi">0</span><span class="p">,</span><span class="mi">6</span>
 </pre></div>
 </div>
-<img alt="../../_images/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png" src="../../_images/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png" />
+<img alt="https://user-images.githubusercontent.com/284644/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png" src="https://user-images.githubusercontent.com/284644/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span> <span class="mi">2</span><span class="p">,</span><span class="mi">1</span> <span class="mi">3</span><span class="p">,</span><span class="mi">0</span> <span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span> <span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span> <span class="mi">6</span><span class="p">,</span><span class="mi">0</span>
 <span class="n">s</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span> <span class="mi">0</span><span class="p">,</span><span class="mi">3</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span> <span class="mi">0</span><span class="p">,</span><span class="mi">6</span>
 <span class="n">S</span> <span class="mi">1</span><span class="p">,</span><span class="mi">7</span> <span class="mi">0</span><span class="p">,</span><span class="mi">6</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span> <span class="n">n</span><span class="o">=</span><span class="mi">40</span>
@@ -496,7 +495,7 @@ See also <a class="reference external" href="https://github.com/nortikin/svercho
 </pre></div>
 </div>
 <p>An example with use of “default” and “let” statements:</p>
-<img alt="../../_images/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png" src="../../_images/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png" />
+<img alt="https://user-images.githubusercontent.com/284644/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png" src="https://user-images.githubusercontent.com/284644/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">default</span> <span class="n">straight_len</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 <span class="n">default</span> <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">;</span>
 

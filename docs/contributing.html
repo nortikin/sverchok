@@ -72,7 +72,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#workflow">Workflow</a></li>
@@ -94,7 +94,6 @@
 <li class="toctree-l2"><a class="reference internal" href="panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -115,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -254,14 +254,14 @@ new type of socket tell us first), you make it here.</p>
 with node’name, node-tree’name and it’s data</p>
 </li>
 <li><dl class="first docutils">
-<dt>list levels definitions - you must yse them:</dt>
+<dt>list levels definitions - you must use them:</dt>
 <dd><ol class="first last arabic">
 <li><p class="first">data correct makes list from chaotic to 4th levels list, seems like [[[floats/integers]]]
 and not [[f/i]] or [[[[f/i]]]].</p>
 <dl class="docutils">
 <dt>usage:</dt>
 <dd><p class="first last">dataCorrect(data, nominal_dept=2), where data - is your list, nominal_depth -
-optioal, normal for your’ case depth of list</p>
+optional, normal for your’ case depth of list</p>
 </dd>
 </dl>
 </li>
@@ -296,7 +296,7 @@ container is [[[][][][]]]</li>
 value as tuple (Vector((x,y,z)),angle)</li>
 <li>Vector_generate(prop) - makes from simple list real mathutils.Vector(), as Matrix generate def</li>
 <li>Vector_degenerate(prop) - as matrix listing, it degenerate Vectors to simple list</li>
-<li>Edg_pol_generate(prop) - define wether it is edges or polygons in list, and terurns tuple as
+<li>Edg_pol_generate(prop) - define whether it is edges or polygons in list, and returns tuple as
 (type,list)</li>
 <li>matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]) - defines matrix</li>
 </ol>
@@ -309,7 +309,7 @@ value as tuple (Vector((x,y,z)),angle)</li>
 length, ie [1,2,3,4] for count 6 will be [1,2,3,4,4,4]</li>
 <li>match_short(lsts) Shortest list decides output length
 [[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]</li>
-<li>match_cross2(lsts) cross rference
+<li>match_cross2(lsts) cross reference
 [[1,2], [5,6,7]] -&gt;[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]</li>
 <li>match_long_repeat(lsts) repeat last of shorter list
 [[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]</li>
@@ -402,8 +402,8 @@ than just bring new properties here to avoid break old layout</li>
 </li>
 <li><p class="first">Not make many nodes if you can do less multifunctional.</p>
 </li>
-<li><p class="first">Use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
-We operate with 1,2,3 - standart and additional 4… infinity. make sure, that your levels limited,
+<li><p class="first">Use levels, find out how it works and use level IntProperty in draw to define what level is to operate.
+We operate with 1,2,3 - standard and additional 4… infinity. make sure, that your levels limited,
 dropped down by levelsOflist as maximum value</p>
 </li>
 <li><p class="first">Keep order in node’ update definition as if output: if input. To count input only if you have output socket

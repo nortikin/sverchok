@@ -35,7 +35,7 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node hsa the following parameters:
+This node has the following parameters:
 
 * **Orientation**. The axis of the input reference frames, which is supposed to
   point along curve. The available values are **X**, **Y** and **Z**. The

@@ -35,8 +35,8 @@ Parameters
 +-------------+-----------------------------------------------------------------------------------------+
 | N           | for each vertex in *Verts* return the list of N closest vertices found in Check Verts   |
 +-------------+-----------------------------------------------------------------------------------------+
-| Radius      | for each vertex in *Verts* return the *vertices* of *Check Verts* that are found        | 
-|             | within radius-distance of that vertex.                                                  | 
+| Radius      | for each vertex in *Verts* return the *vertices* of *Check Verts* that are found        |
+|             | within radius-distance of that vertex.                                                  |
 +-------------+-----------------------------------------------------------------------------------------+
 
 
@@ -49,7 +49,7 @@ The meaning of each output differs between Modes, but essentially they are:
 - Vertex Indices of related vertex in Check Verts
 - Vertex Distance between Vertex in Verts and Check Verts
 
-The output lists will be nested if the ``Mode`` allows mutiple outputs, as is the case in N and Radius Mode.
+The output lists will be nested if the ``Mode`` allows multiple outputs, as is the case in N and Radius Mode.
 
 
 Examples

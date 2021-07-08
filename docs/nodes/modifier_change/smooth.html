@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -221,7 +221,7 @@
 <ul class="simple">
 <li><strong>X</strong>, <strong>Y</strong>, <strong>Z</strong>. Toggle axes vertices will be smoothed along. By default mesh is smoothed along all axes.</li>
 <li><strong>Laplacian Smooth</strong>. Toggles smoothing algorithm: when checked, Laplacian smoothing is used; otherwise, simple averaging scheme will be used. By default not checked.</li>
-<li><strong>Clip X</strong>, <strong>Clip Y</strong>, <strong>Clip Z</strong>. Toggle axes along which “Mirror Clipping” procedure will be applied. This procedure merges vertices that have X/Y/Z coordinate near zero, withing specified threshold. For example, it can merge vertices <cite>(0.01, 3, 5)</cite> and <cite>(- 0.01, 3, 5)</cite> into one vertex <cite>(0, 3, 5)</cite>. These parameters are available only when <strong>Laplacian Smooth</strong> is off. Not checked by default.</li>
+<li><strong>Clip X</strong>, <strong>Clip Y</strong>, <strong>Clip Z</strong>. Toggle axes along which “Mirror Clipping” procedure will be applied. This procedure merges vertices that have X/Y/Z coordinate near zero, within specified threshold. For example, it can merge vertices <cite>(0.01, 3, 5)</cite> and <cite>(- 0.01, 3, 5)</cite> into one vertex <cite>(0, 3, 5)</cite>. These parameters are available only when <strong>Laplacian Smooth</strong> is off. Not checked by default.</li>
 <li><strong>Preserve volume</strong>. If checked, the mesh will be “blown” a bit after smoothing, to preserve its volume. Available only when <strong>Laplacian Smooth</strong> is on. Checked by default.</li>
 <li><strong>Iterations</strong>. Number of smoothing operation iterations. Default value is 1. This parameter can also be provided as input.</li>
 <li><strong>Clip threshold</strong>. Threshold for “Mirror Clipping” procedure. Available only when <strong>Laplacian Smooth</strong> is off. This parameter can also be provided as input.</li>

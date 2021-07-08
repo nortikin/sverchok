@@ -39,6 +39,8 @@ This node has the following parameters:
 * **Auto scale**. If checked, scale the source space along the vertical axis,
   trying to match the scale coefficient for two other axes. Otherwise, the
   space will not be scaled along the vertical axis. Unchecked by default.
+* **As 2D**. If checked, it will discard the vertical axis. Enable to bend flat objects.
+  Improves performance.
 * **Flip surface**. This parameter is only available in the node's N panel. If
   checked, then the surface will be considered as flipped (turned upside down),
   so the vector field will also turn the space upside down. Unchecked by
@@ -57,4 +59,3 @@ Example of usage
 Generate a rectangular grid of cubes, and bend it along formula-specified surface:
 
 .. image:: https://user-images.githubusercontent.com/284644/79602628-42df3c80-8104-11ea-80c3-09be659d54f8.png
-

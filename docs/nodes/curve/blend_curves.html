@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -214,7 +214,7 @@ only if <strong>Blend</strong> parameter is set to <strong>Two curves</strong>.<
 <li><strong>Curve2</strong>. Second curve to be blended. This input is available and mandatory
 only if <strong>Blend</strong> parameter is set to <strong>Two curves</strong>.</li>
 <li><strong>Curves</strong>. List of curves to be blended. This input is available and
-mandatory only if <strong>Blend</strong> paramter is set to <strong>List of curves</strong>.</li>
+mandatory only if <strong>Blend</strong> parameter is set to <strong>List of curves</strong>.</li>
 <li><strong>Factor1</strong>. This input is available and mandatory only if <strong>Blend</strong>
 parameter is set to <strong>Two curves</strong>, and <strong>Continuity</strong> parameter is set to
 <strong>Tangency</strong>. This defines the strength with which the tangent vector of the
@@ -275,7 +275,7 @@ together with generated blending curves, concatenated into one curve.
 Otherwise, original curves (optionally) and generated curves will be output
 as separate Curve objects. Checked by default.</p>
 </li>
-<li><p class="first"><strong>Cyclic</strong>. This paramter is available only when the <strong>Blend</strong> parameter is set
+<li><p class="first"><strong>Cyclic</strong>. This parameter is available only when the <strong>Blend</strong> parameter is set
 to <strong>List of curves</strong>. If checked, then the node will connect the end of last
 curve to the beginning of the first curve. Unchecked by default.</p>
 </li>

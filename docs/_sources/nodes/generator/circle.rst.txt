@@ -13,7 +13,7 @@ Circle generator creates circles based on the radius and the number of vertices.
     - ...
     - Many vertices =  circle
 
-This node will also create sector or semgent of circles using the **Degrees** option. See the examples below to see it working also with the **mode** option.
+This node will also create sector or segment of circles using the **Degrees** option. See the examples below to see it working also with the **mode** option.
 
 Inputs
 ------
@@ -38,9 +38,9 @@ All parameters except **Mode** can be given by the node or an external input.
 
 
 +----------------+---------------+-------------+----------------------------------------------------+
-| Param          | Type          | Default     | Description                                        |  
+| Param          | Type          | Default     | Description                                        |
 +================+===============+=============+====================================================+
-| **Radius**     | Float         | 1.00        | radius of the circle                               | 
+| **Radius**     | Float         | 1.00        | radius of the circle                               |
 +----------------+---------------+-------------+----------------------------------------------------+
 | **N Vertices** | Int           | 24          | number of vertices to generate the circle          |
 +----------------+---------------+-------------+----------------------------------------------------+
@@ -53,7 +53,7 @@ Outputs
 -------
 
 **Vertices**, **Edges** and **Polygons**. 
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant circles. In example:
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent circles. In example:
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4187227/07366302-3768-11e4-8e9c-4068c9ce6773.png
   :alt: CircleDemo1.PNG

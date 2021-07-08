@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -211,8 +211,8 @@ applications of “Solid Boolean” node. For complex boolean operations on many
 parts, one application of “Solid General Fuse” will give you better performance
 compared to many “Solid Boolean” applications.</p>
 <p>To illustrate what exactly this node does, it’s simpler to draw some 2D
-pictures first. Let’s say we have a circle (object number 0), a square (object
-number 1) and a triangle (object number 2):</p>
+pictures first. Let’s say we have a circle (object number 0), a triangle (object
+number 1) and a square (object number 2):</p>
 <img alt="https://user-images.githubusercontent.com/284644/94195404-65079280-fecc-11ea-8ec7-73b8b357c063.png" src="https://user-images.githubusercontent.com/284644/94195404-65079280-fecc-11ea-8ec7-73b8b357c063.png" />
 <p>(Figure 1)</p>
 <p>If they are overlapping somehow, they constitute several areas (7 in this
@@ -232,8 +232,8 @@ left). Or, we can exclude parts, for which the set of source object includes 0
 and 1, i.e. we remove the intersection of the circle and the triangle:</p>
 <img alt="https://user-images.githubusercontent.com/284644/94196223-7f8e3b80-fecd-11ea-975e-b20b193f4e62.png" src="https://user-images.githubusercontent.com/284644/94196223-7f8e3b80-fecd-11ea-975e-b20b193f4e62.png" />
 <p>(Figure 3)</p>
-<p>Or, let’s leave only parts, for which the set of source objects is <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code>,
-<code class="docutils literal notranslate"><span class="pre">[1,2]</span></code>, or <code class="docutils literal notranslate"><span class="pre">[0,1,2]</span></code>:</p>
+<p>Or, let’s leave only parts, for which the set of source objects is <code class="docutils literal notranslate"><span class="pre">[0,2]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[0,1,2]</span></code>, and <code class="docutils literal notranslate"><span class="pre">[1,2]</span></code>:</p>
 <img alt="https://user-images.githubusercontent.com/284644/94196342-a482ae80-fecd-11ea-91ef-6d564e325491.png" src="https://user-images.githubusercontent.com/284644/94196342-a482ae80-fecd-11ea-91ef-6d564e325491.png" />
 <p>(Figure 4)</p>
 <p>Or, let’s remove those parts and leave all others:</p>

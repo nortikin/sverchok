@@ -28,5 +28,5 @@ This node has only one output: **Color**. It is RGB or RGBA vector, depending on
 Examples
 --------
 
-.. image:: ../../_build/html/_static/images/36633499-b5b7108a-19b8-11e8-8e39-243d9dd42e7e.png
+.. image:: https://user-images.githubusercontent.com/284644/36633499-b5b7108a-19b8-11e8-8e39-243d9dd42e7e.png
 

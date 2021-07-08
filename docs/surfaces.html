@@ -72,7 +72,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nurbs.html#workflow">Workflow</a></li>
@@ -94,7 +94,6 @@
 <li class="toctree-l2"><a class="reference internal" href="panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -115,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
@@ -201,9 +201,9 @@ surface from another side; in such case we say the surface is <strong>closed</st
 <ul class="simple">
 <li>Cylindrical surface (closed in one direction);</li>
 <li>Toroidal surface (closed in two directions);</li>
-<li>Sphereical surface (closed in two directions).</li>
+<li>Spherical surface (closed in two directions).</li>
 </ul>
-<p>The simples example of non-closed (open) surface is a unit square.</p>
+<p>The simplest example of non-closed (open) surface is a unit square.</p>
 <p>You will find that the Surface object has a lot in common with Curve object.
 One may say, that Surface is almost the same as Curve, just it is a 2D object
 rather than 1D.</p>
@@ -216,7 +216,7 @@ point.</p>
 one function (which is called parametrization of surface). We usually use the one
 which is most fitting our goals in specific task.</p>
 <p>We usually use the letters <strong>u</strong> and <strong>v</strong> for surface parameters.</p>
-<p>Excercise for the reader: write down several possible parametrization for the
+<p>Exercise for the reader: write down several possible parametrization for the
 unit square surface, which has corners <cite>(0, 0, 0)</cite>, <cite>(0, 1, 0)</cite>, <cite>(1, 1, 0)</cite>,
 <cite>(1, 0, 0)</cite>.</p>
 <p>The range of the surface parameters corresponding to the whole surface within
@@ -231,8 +231,8 @@ is usually done by use of “Evaluate Surface” node.</p>
 node. This node allows one to tessellate the part of surface, trimmed by some
 curve.</p>
 </div>
-<div class="section" id="implcit-surfaces">
-<h1>Implcit Surfaces<a class="headerlink" href="#implcit-surfaces" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="implicit-surfaces">
+<h1>Implicit Surfaces<a class="headerlink" href="#implicit-surfaces" title="Permalink to this headline">¶</a></h1>
 <p>Another possible way to define a surface is to say that the surface is a set of
 all points (X, Y, Z), which are solutions of equation: <code class="docutils literal notranslate"><span class="pre">F(X,</span> <span class="pre">Y,</span> <span class="pre">Z)</span> <span class="pre">=</span> <span class="pre">C</span></code>. Here
 F is some function, which maps each point in 3D space to a numeric value, and C

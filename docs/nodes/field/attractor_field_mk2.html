@@ -33,7 +33,7 @@
         <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="Field" href="field_index.html"/>
-        <link rel="next" title="Scalar Field Formula" href="scalar_field_formula.html"/>
+        <link rel="next" title="Rotation Field" href="rotation_field.html"/>
         <link rel="prev" title="Coordinate Scalar Field" href="coordinate_scalar_field.html"/> 
 
   
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -296,19 +296,19 @@ by default.</p>
 parameter is set to <strong>Point</strong>. The metric to be used to calculate distances.
 The available options are:</p>
 <ul class="simple">
-<li><strong>Euclidian</strong></li>
+<li><strong>Euclidean</strong></li>
 <li><strong>Manhattan</strong></li>
 <li><strong>Chebyshev</strong></li>
 <li><strong>Custom</strong>. A generic Minkowski metric defined by formula
 <code class="docutils literal notranslate"><span class="pre">sum(abs(dx_i)**P)**(1.0/P)</span></code>, where P is defined in the Exponent
 parameter.</li>
 </ul>
-<p>The default value is <strong>Euclidian</strong>.</p>
+<p>The default value is <strong>Euclidean</strong>.</p>
 </li>
 <li><p class="first"><strong>Exponent</strong>. This parameter is available only when <strong>Attractor</strong> parameter
 is set to <strong>Point</strong>, and <strong>Metric</strong> parameter is set to <strong>Custom</strong>. Exponent
 for generic Minkowski distance. The available values are from 1.0 to
-infinity. The default value is 2.0, which defines Euclidian metric.</p>
+infinity. The default value is 2.0, which defines Euclidean metric.</p>
 </li>
 <li><p class="first"><strong>Falloff type</strong>. The force falloff type to be used. The available values are:</p>
 <blockquote>
@@ -367,7 +367,7 @@ restricted with the distance to attractor object. Unchecked by default.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="scalar_field_formula.html" class="btn btn-neutral float-right" title="Scalar Field Formula">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="rotation_field.html" class="btn btn-neutral float-right" title="Rotation Field">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="coordinate_scalar_field.html" class="btn btn-neutral" title="Coordinate Scalar Field"><span class="fa fa-arrow-circle-left"></span> Previous</a>

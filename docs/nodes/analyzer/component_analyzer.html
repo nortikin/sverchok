@@ -34,7 +34,7 @@
     <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
         <link rel="up" title="Analyzers" href="analyzer_index.html"/>
         <link rel="next" title="Diameter" href="diameter.html"/>
-        <link rel="prev" title="Bounding Box" href="bbox_mk2.html"/> 
+        <link rel="prev" title="Bounding Box" href="bbox_mk3.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -116,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
@@ -217,13 +217,20 @@
 <li><strong>Mode</strong>. This parameter defines what elements are you interested: Vertices, Edges or Faces.</li>
 <li><strong>Operator</strong>. Criteria type to apply. Supported criteria set depends on Mode:<ul>
 <li>For <strong>Vertices</strong> supported criteria are:<ul>
-<li><strong>Normal</strong>. Vertices normal vector.</li>
+<li><dl class="first docutils">
+<dt><strong>Normal</strong>. Vertices normal vector. Offers different calculation methods:</dt>
+<dd>Bmesh (standard Blender),Mean Weighted Equally (Faster), Mean Weighted Based on Triangle Area
+Mean Weighted Edge Length Reciprocal and Mean Weighted by Sine</dd>
+</dl>
+</li>
 <li><strong>Matrix ZY</strong>: Matrix aligned with normal.</li>
 <li><strong>Sharpness</strong>: Curvature of mesh in vertex.</li>
 <li><strong>Adjacent Edges</strong>: Adjacent edges.</li>
 <li><strong>Adjacent Faces</strong>: Adjacent faces.</li>
 <li><strong>Adjacent Edges num</strong>: Number of Adjacent edges.</li>
 <li><strong>Adjacent Faces num</strong>: Number of adjacent faces.</li>
+<li><strong>Adjacent Edges Idx</strong>: Index of Adjacent edges.</li>
+<li><strong>Adjacent Faces Idx</strong>: Index of adjacent faces.</li>
 <li><strong>Is Boundary</strong>: Is Vertex on mesh borders.</li>
 <li><strong>Is Interior</strong>: Is Vertex on mesh interior.</li>
 <li><strong>Is Manifold</strong>: Is Vertex part of the Manifold.</li>
@@ -245,6 +252,10 @@
 <li><strong>Inverted</strong>. Reversed edges.</li>
 <li><strong>Adjacent faces</strong>. Adjacent faces.</li>
 <li><strong>Adjacent faces Num</strong>. Adjacent faces number.</li>
+<li><strong>Adjacent faces Idx</strong>. Adjacent faces Index.</li>
+<li><strong>Connected edges</strong>. Edges connected to each edge.</li>
+<li><strong>Connected edges Num</strong>. Connected edges number.</li>
+<li><strong>Connected edges Idx</strong>. Connected edges Index.</li>
 <li><strong>Is Boundary</strong>.  Is Edge on mesh borders.</li>
 <li><strong>Is Contiguous</strong>. Is Edge contiguous.</li>
 <li><strong>Is Convex</strong>. Is Edge Convex.</li>
@@ -281,13 +292,15 @@
 <li><strong>Area</strong>. Area of faces</li>
 <li><strong>Perimeter</strong>. Perimeter of faces</li>
 <li><strong>Sides</strong>. Sides of faces</li>
+<li><strong>Adjacent Faces</strong>. Faces that share a edge with face.</li>
+<li><strong>Neighbor Faces</strong>. Faces that share a vertex with face.</li>
 <li><strong>Neighbor Faces Num</strong>. Number of Faces that share a edge with face</li>
 <li><strong>Adjacent Faces Num</strong>. Number of Faces that share a vertex with face.</li>
+<li><strong>Neighbor Faces Idx</strong>. Index of Faces that share a edge with face</li>
+<li><strong>Adjacent Faces Idx</strong>. Index of Faces that share a vertex with face.</li>
 <li><strong>Sharpness</strong>. Average of curvature of mesh in faces vertices</li>
 <li><strong>Inverse</strong>. Reversed Polygons (Flipped).</li>
 <li><strong>Edges</strong>. Face Edges.</li>
-<li><strong>Adjacent Faces</strong>. Faces that share a edge with face.</li>
-<li><strong>Neighbor Faces</strong>. Faces that share a vertex with face.</li>
 <li><strong>Is Boundary</strong>. Is the face boundary or interior</li>
 </ul>
 </li>
@@ -300,6 +313,9 @@
 <li><strong>Wrap Output</strong>. Keeps original data shape <em>[Matrix, Matrix, Matrix] –&gt; [[Matrix, Matrix], [Matrix]]</em></li>
 </ul>
 </li>
+</ul>
+<ul class="simple">
+<li>Some routines offer <em>Output Numpy</em> property to output numpy arrays in stead of regular python lists (making the node faster)</li>
 </ul>
 </div>
 <div class="section" id="example-of-usage">
@@ -324,7 +340,7 @@
         <a href="diameter.html" class="btn btn-neutral float-right" title="Diameter">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="bbox_mk2.html" class="btn btn-neutral" title="Bounding Box"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="bbox_mk3.html" class="btn btn-neutral" title="Bounding Box"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

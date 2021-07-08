@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
@@ -95,7 +95,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
 </ul>
 </li>
@@ -212,7 +211,7 @@ It is also possible to generate JSON description from existing mesh.</p>
 <li>Create some mesh object by using usual Blender’s modelling techniques. Select that mesh.</li>
 <li>Press “from selection” button in Mesh Expression node. New text buffer will appear in Blender.</li>
 <li>Switch to Blender’s text editor and select newly created buffer.</li>
-<li>Edit defintion. You can replace any of vertex coordinates with expression
+<li>Edit definition. You can replace any of vertex coordinates with expression
 enclosed in double-quotes, such as <cite>“x+1”</cite>. See also syntax description
 below.</li>
 <li>Optionally, you can add “defaults” key to definition, with default values of variables.</li>
@@ -243,7 +242,7 @@ strings denote vertex groups, to which this vertex belongs.</li>
 <li><p class="first">“edges”. This should be a list, containing 2-item lists of integer numbers,
 which are edges description in Sverchok’s native format.</p>
 </li>
-<li><p class="first">“faces”. This should be a list, containint lists of integer nubmers, which
+<li><p class="first">“faces”. This should be a list, containing lists of integer numbers, which
 are mesh faces description in Sverchok’s native format.</p>
 </li>
 <li><p class="first">“vertexdata”. This key is optional. If present, this should be a list,
@@ -302,7 +301,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p>
 </li>
 </ul>
 <p>This restriction is for security reasons. However, Python’s ecosystem does not
-guarantee that noone can call some unsafe operations by using some sort of
+guarantee that no one can call some unsafe operations by using some sort of
 language-level hacks. So, please be warned that usage of this node with JSON
 definition obtained from unknown or untrusted source can potentially harm your
 system or data.</p>
@@ -391,9 +390,9 @@ group.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<img alt="../../_images/a2757a08-0cb1-11e7-9ef5-155c888b38dd.png" src="../../_images/a2757a08-0cb1-11e7-9ef5-155c888b38dd.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/24079413/a2757a08-0cb1-11e7-9ef5-155c888b38dd.png" src="https://cloud.githubusercontent.com/assets/284644/24079413/a2757a08-0cb1-11e7-9ef5-155c888b38dd.png" />
 <p>More complex example: <a class="reference external" href="https://gist.github.com/portnov/3aae2b0e0f2d21a8da2d61fc28a96790">Example JSON definition</a>:</p>
-<img alt="../../_images/a47553ae-0cb2-11e7-9b25-096cdf88a4a1.png" src="../../_images/a47553ae-0cb2-11e7-9b25-096cdf88a4a1.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/24079457/a47553ae-0cb2-11e7-9b25-096cdf88a4a1.png" src="https://cloud.githubusercontent.com/assets/284644/24079457/a47553ae-0cb2-11e7-9b25-096cdf88a4a1.png" />
 <p>You can find more examples <a class="reference external" href="https://github.com/nortikin/sverchok/issues/1304">in the development thread</a>.</p>
 </div>
 </div>

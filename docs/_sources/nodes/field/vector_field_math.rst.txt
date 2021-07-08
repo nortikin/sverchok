@@ -61,7 +61,7 @@ This node has the following outputs:
 * **SFieldC**. The scalar field result of the calculation.
 * **VFieldD**. The second vector field result of the calculation.
 
-The availability of the oututs is defined by the mathematical operation being
+The availability of the outputs is defined by the mathematical operation being
 used. Output names are adjusted corresponding to the selected operation.
 
 Examples of usage

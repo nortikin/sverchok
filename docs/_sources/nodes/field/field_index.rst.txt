@@ -7,6 +7,7 @@ Field
 
    coordinate_scalar_field
    attractor_field_mk2
+   rotation_field
    scalar_field_formula
    vector_field_formula
    noise_vfield
@@ -32,4 +33,3 @@ Field
    scalar_field_eval
    vector_field_eval
    vector_field_apply
-

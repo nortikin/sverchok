@@ -65,12 +65,12 @@ Examples
 
 Differences between HSV and HSL:
 
-.. image:: ../../_build/html/_static/images/color_in_hsv_hsl_sverchok_blender_example.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png
 
 
 Tuning noise into color data:
 
-.. image:: ../../_build/html/_static/images/color_in_noise_hsv_sverchok_blender_example.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_noise_hsv_sverchok_blender_example.png
 
 
 Gist: https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed

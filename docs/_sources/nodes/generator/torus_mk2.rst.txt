@@ -62,7 +62,7 @@ All parameters except **mode** and **Separate** can be given by the node or an e
 +-------------------------+----------+----------+---------------------------------------------------+
 | **Spin Twist**          |  Int     |  0       |  Twist spin sections by this increment amount [3] |
 +-------------------------+----------+----------+---------------------------------------------------+
-| **Separate**            |  Bolean  |  False   |  Grouping vertices by V direction                 |
+| **Separate**            |  Boolean |  False   |  Grouping vertices by V direction                 |
 +-------------------------+----------+----------+---------------------------------------------------+
 
 Notes:

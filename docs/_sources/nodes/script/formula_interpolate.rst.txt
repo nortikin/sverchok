@@ -35,7 +35,7 @@ One difference with Python's syntax is that you can call only restricted number 
 - Python type conversions: tuple, list, dict.
 
 This restriction is for security reasons. However, Python's ecosystem does not
-guarantee that noone can call some unsafe operations by using some sort of
+guarantee that no one can call some unsafe operations by using some sort of
 language-level hacks. So, please be warned that usage of this node with 
 definition obtained from unknown or untrusted source can potentially harm your
 system or data.
@@ -102,19 +102,19 @@ Examples of usage
 
 Visualize the interpolation curve defined by three control points:
 
-.. image:: ../../_build/html/_static/images/80276909-082d6380-8705-11ea-9fe9-ba546dadd210.png
+.. image:: https://user-images.githubusercontent.com/284644/80276909-082d6380-8705-11ea-9fe9-ba546dadd210.png
 
 Note that here user can move the middle control point along Y axis by adjusting the value in the K input.
 
 Use interpolation between five points to scale some objects:
 
-.. image:: ../../_build/html/_static/images/80276910-095e9080-8705-11ea-82ca-8744bda64aed.png
+.. image:: https://user-images.githubusercontent.com/284644/80276910-095e9080-8705-11ea-82ca-8744bda64aed.png
 
 Similar example with object placed along some curve:
 
-.. image:: ../../_build/html/_static/images/80276912-09f72700-8705-11ea-8096-8252291cd448.png
+.. image:: https://user-images.githubusercontent.com/284644/80276912-09f72700-8705-11ea-8096-8252291cd448.png
 
 An example of sharp control points usage:
 
-.. image:: ../../_build/html/_static/images/81311390-c6a29e00-909e-11ea-926c-7ddefc591ea6.png
+.. image:: https://user-images.githubusercontent.com/284644/81311390-c6a29e00-909e-11ea-926c-7ddefc591ea6.png
 

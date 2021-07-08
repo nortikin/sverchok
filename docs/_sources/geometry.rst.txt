@@ -5,7 +5,7 @@ Introduction to geometry
 Basics
 ======
 
-If you've ever created a mesh and geometry programatically then you can skip this section.
+If you've ever created a mesh and geometry programmatically then you can skip this section.
 If you are uncertain what any of the following terms mean then use it as a reference for 
 further study::
 
@@ -109,7 +109,7 @@ to create 2 polygons, each built from 3 vertices, we do::
 In Blender you might mix Tris and Quads in one object during the modelling process, 
 but for Sverchok geometry you'll find it more convenient to create separate lists for each and combine them at the end.
 
-An example that sets us up for the first Sverchok example is the following pyhon code::
+An example that sets us up for the first Sverchok example is the following python code::
 
     # this code can be run from Blender Text Editor and it will generate a Cube.
     
