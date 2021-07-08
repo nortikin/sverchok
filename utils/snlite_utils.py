@@ -21,6 +21,7 @@ from logging import info
 
 import bpy
 from sverchok.data_structure import match_long_repeat
+from sverchok.dependencies import numba
 
 njit_function_storage = {}
 
@@ -51,6 +52,10 @@ def sv_njit(function_to_njit, parameters):
     fn_name = function_to_njit.__name__
     njit_func = njit_function_storage.get(fn_name)
     if not njit_func:
+
+        if numba:
+            numba.njit(function_to_njit)
+
         result = function_to_njit(*parameters)
         njit_function_storage[fn_name] = function_to_njit
         info(f"caching function: {fn_name}")
