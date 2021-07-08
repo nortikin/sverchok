@@ -1,5 +1,5 @@
-Loop In
-=======
+Loop Out
+========
 
 This node in conjunction with the Loop In node can create loops with nodes
 
