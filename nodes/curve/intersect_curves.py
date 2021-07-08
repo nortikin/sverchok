@@ -5,19 +5,19 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 
 import bpy
 from mathutils import Vector
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count, transpose_list
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import intersect_nurbs_curves
-from sverchok.utils.curve.freecad import curve_to_freecad, SvSolidEdgeCurve
+from sverchok.utils.curve.freecad import curve_to_freecad
 from sverchok.dependencies import FreeCAD, scipy
+from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None and scipy is None:
     add_dummy('SvIntersectNurbsCurvesNode', "Intersect Curves", 'FreeCAD or scipy')
