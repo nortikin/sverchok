@@ -20,7 +20,10 @@
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **Prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.9+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
 
-**Manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
+**Manual**: [In English](http://nortikin.github.io/sverchok/docs/main.html) - This is an introduction to Sverchok and 
+contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please
+ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
+and you can help us! 
 
   
 ### Description
