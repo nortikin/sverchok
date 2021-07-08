@@ -54,7 +54,7 @@ def sv_njit(function_to_njit, parameters):
     if not njit_func:
 
         if numba:
-            function_to_njit = numba.njit(function_to_njit)
+            numba.njit(function_to_njit)
 
         result = function_to_njit(*parameters)
         njit_function_storage[fn_name] = function_to_njit
