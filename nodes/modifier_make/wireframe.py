@@ -99,7 +99,7 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         poly_or_edge_linked = (outputs['edges'].is_linked or outputs['polygons'].is_linked)
         if not (outputs['vertices'].is_linked and poly_or_edge_linked):
             # doesn't make a lot of sense to process or even
-            # output edges/polygons without the assocated vertex locations
+            # output edges/polygons without the associated vertex locations
             return
 
         verts = Vector_generate(inputs['vertices'].sv_get())

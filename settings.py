@@ -161,10 +161,10 @@ class SvSetFreeCadPath(bpy.types.Operator):
                 site_packages = p
                 break
 
-        file_path= open(os.path.join(site_packages, "freecad_path.pth"), "w+")
-
+        file_path = open(os.path.join(site_packages, "freecad_path.pth"), "w+")
         file_path.write(self.FreeCAD_folder)
         file_path.close()
+
         self.report({'INFO'}, "FreeCad path saved successfully. Please restart Blender to see effect.")
         return {'FINISHED'}
 
@@ -236,11 +236,11 @@ class SverchokPreferences(AddonPreferences):
         default="default_theme")
 
     auto_apply_theme: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     apply_theme_on_open: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     color_viz: FloatVectorProperty(
@@ -332,7 +332,7 @@ class SverchokPreferences(AddonPreferences):
 
     show_input_menus : EnumProperty(
             name = "Show input menus",
-            description = "Wheter to display buttons near node socket inputs to automatically create parameter nodes",
+            description = "Whether to display buttons near node socket inputs to automatically create parameter nodes",
             items = input_links_options,
             default = 'QUICKLINK'
         )
@@ -571,6 +571,7 @@ dependencies, or install only some of them.""")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
         draw_message(box, "cython")
+        draw_message(box, "numba")
 
         draw_freecad_ops()
 

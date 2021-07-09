@@ -16,7 +16,7 @@ Usual workflow
 1. Create some mesh object by using usual Blender's modelling techniques. Select that mesh.
 2. Press "from selection" button in Mesh Expression node. New text buffer will appear in Blender.
 3. Switch to Blender's text editor and select newly created buffer.
-4. Edit defintion. You can replace any of vertex coordinates with expression
+4. Edit definition. You can replace any of vertex coordinates with expression
    enclosed in double-quotes, such as `"x+1"`. See also syntax description
    below.
 5. Optionally, you can add "defaults" key to definition, with default values of variables.
@@ -45,7 +45,7 @@ Mesh Expression node uses JSON, which should be a dictionary with following keys
   * `[3, 2, 1, ["Top", "Right"]]`
 * "edges". This should be a list, containing 2-item lists of integer numbers,
   which are edges description in Sverchok's native format.
-* "faces". This should be a list, containint lists of integer nubmers, which
+* "faces". This should be a list, containing lists of integer numbers, which
   are mesh faces description in Sverchok's native format.
 * "vertexdata". This key is optional. If present, this should be a list,
   containing one item per each vertex. Data type of those items can be
@@ -96,7 +96,7 @@ of Python's functions. Allowed are:
 - Python type conversions: tuple, list, dict.
 
 This restriction is for security reasons. However, Python's ecosystem does not
-guarantee that noone can call some unsafe operations by using some sort of
+guarantee that no one can call some unsafe operations by using some sort of
 language-level hacks. So, please be warned that usage of this node with JSON
 definition obtained from unknown or untrusted source can potentially harm your
 system or data.

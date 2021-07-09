@@ -163,7 +163,7 @@ def try_initialize():
                     ("yes" if prefs.log_to_console else "no"))
             initialized = True
 
-# Convinience functions
+# Convenience functions
 
 def with_module_logger(method_name):
     """

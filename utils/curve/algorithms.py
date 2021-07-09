@@ -779,7 +779,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
     * allow_generic: what to do it it is not possible to concatenate curves natively:
         True - use generic SvConcatCurve
-        False - raise an Exeption.
+        False - raise an Exception.
 
     output: SvCurve.
     """
@@ -822,7 +822,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
         if allow_generic:
             # if any of curves were scaled while joining natively (at P.1),
             # then all other were scaled at P.2;
-            # if no successfull joins were made, then we can rescale all curves
+            # if no successful joins were made, then we can rescale all curves
             # at once.
             return SvConcatCurve(result, scale_to_unit and not some_native)
         else:

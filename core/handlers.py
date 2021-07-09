@@ -46,7 +46,7 @@ def has_frame_changed(scene):
 
 #
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
-#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
+#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attach viewer draw"
 #  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
 #  there is never a point where the node can ask "am i connected to anything, do i need
 #  to stop drawing?". When the Undo event causes a node to be removed, its node.free function

@@ -150,7 +150,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def get_dimensions(self, width, height):
         """
-        this could also return scale for a blf notation in the vacinity of the texture
+        this could also return scale for a blf notation in the vicinity of the texture
         """
         scale, multiplier = self.get_preferences()
         self.location_theta = multiplier

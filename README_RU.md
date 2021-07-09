@@ -38,7 +38,7 @@
 
   - делать параметрические конструкции  
   - легко менять параметры слайдерами и формулами  
-  - Супер-узлы: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, и т.д.    
+  - Супер-узлы: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Polygons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, и т.д.    
   - делать сечения, выдавливания, другие изменения с гибким параметризованым и векторизованым набором узловых инструментов   
   - считать площади, объём и прочее  
   - анализировать геометрию  

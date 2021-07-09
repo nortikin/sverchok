@@ -59,7 +59,31 @@ class SvNurbsSurface(SvSurface):
     def get_nurbs_implementation(cls):
         raise Exception("NURBS implementation is not defined")
 
+    def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
+        if implementation is None:
+            implementation = self.get_nurbs_implementation()
+        if degree_u is None:
+            degree_u = self.get_degree_u()
+        if degree_v is None:
+            degree_v = self.get_degree_v()
+        if knotvector_u is None:
+            knotvector_u = self.get_knotvector_u()
+        if knotvector_v is None:
+            knotvector_v = self.get_knotvector_v()
+        if control_points is None:
+            control_points = self.get_control_points()
+        if weights is None:
+            weights = self.get_weights()
+
+        return SvNurbsSurface.build(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+
     def insert_knot(self, direction, parameter, count=1):
+        raise Exception("Not implemented!")
+
+    def remove_knot(self, direction, parameter, count=1):
         raise Exception("Not implemented!")
 
     def swap_uv(self):
@@ -243,6 +267,16 @@ class SvGeomdlSurface(SvNurbsSurface):
             uv = [None, parameter]
             counts = [0, count]
         surface = operations.insert_knot(self.surface, uv, counts)
+        return SvGeomdlSurface(surface)
+
+    def remove_knot(self, direction, parameter, count=1):
+        if direction == SvNurbsSurface.U:
+            uv = [parameter, None]
+            counts = [count, 0]
+        elif direction == SvNurbsSurface.V:
+            uv = [None, parameter]
+            counts = [0, count]
+        surface = operations.remove_knot(self.surface, uv, counts)
         return SvGeomdlSurface(surface)
 
     def get_degree_u(self):
@@ -532,6 +566,59 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         else:
             raise Exception("Unsupported direction")
 
+    def remove_knot(self, direction, parameter, count=1):
+        if direction == SvNurbsSurface.U:
+            new_points = []
+            new_weights = []
+            new_u_degree = None
+            for i in range(self.get_control_points().shape[1]):
+                fixed_v_points = self.get_control_points()[:,i]
+                fixed_v_weights = self.get_weights()[:,i]
+                fixed_v_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
+                                    self.degree_u, self.knotvector_u,
+                                    fixed_v_points, fixed_v_weights)
+                fixed_v_curve = fixed_v_curve.remove_knot(parameter, count)
+                fixed_v_knotvector = fixed_v_curve.get_knotvector()
+                new_u_degree = fixed_v_curve.get_degree()
+                fixed_v_points = fixed_v_curve.get_control_points()
+                fixed_v_weights = fixed_v_curve.get_weights()
+                new_points.append(fixed_v_points)
+                new_weights.append(fixed_v_weights)
+
+            new_points = np.transpose(np.array(new_points), axes=(1,0,2))
+            new_weights = np.array(new_weights).T
+
+            return SvNativeNurbsSurface(new_u_degree, self.degree_v,
+                    fixed_v_knotvector, self.knotvector_v,
+                    new_points, new_weights)
+
+        elif direction == SvNurbsSurface.V:
+            new_points = []
+            new_weights = []
+            new_v_degree = None
+            for i in range(self.get_control_points().shape[0]):
+                fixed_u_points = self.get_control_points()[i,:]
+                fixed_u_weights = self.get_weights()[i,:]
+                fixed_u_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
+                                    self.degree_v, self.knotvector_v,
+                                    fixed_u_points, fixed_u_weights)
+                fixed_u_curve = fixed_u_curve.remove_knot(parameter, count)
+                fixed_u_knotvector = fixed_u_curve.get_knotvector()
+                new_v_degree = fixed_u_curve.get_degree()
+                fixed_u_points = fixed_u_curve.get_control_points()
+                fixed_u_weights = fixed_u_curve.get_weights()
+                new_points.append(fixed_u_points)
+                new_weights.append(fixed_u_weights)
+
+            new_points = np.array(new_points)
+            new_weights = np.array(new_weights)
+
+            return SvNativeNurbsSurface(self.degree_u, new_v_degree,
+                    self.knotvector_u, fixed_u_knotvector,
+                    new_points, new_weights)
+        else:
+            raise Exception("Unsupported direction")
+
     def get_degree_u(self):
         return self.degree_u
 
@@ -700,7 +787,7 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=6, metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
     """
     Loft between given NURBS curves (a.k.a skinning).
 
@@ -722,7 +809,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', t
     curve_class = type(curves[0])
     curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
-        curves = unify_curves(curves)
+        curves = unify_curves(curves, accuracy=knotvector_accuracy)
     else:
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
@@ -737,6 +824,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', t
         raise Exception(f"V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1")
 
     src_points = [curve.get_homogenous_control_points() for curve in curves]
+    #print("P", [p.shape for p in src_points])
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
 #     if max_len != min_len:
@@ -812,6 +900,37 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
         back_vectors.append(back_vector)
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
+
+def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', uknots=None, vknots=None, implementation = SvNurbsSurface.NATIVE):
+    points = np.asarray(points)
+    n = len(points)
+    m = len(points[0])
+
+    if (uknots is None) != (vknots is None):
+        raise Exception("uknots and vknots must be either both provided or both omited")
+
+    if uknots is None:
+        knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n)])
+        uknots = knots.mean(axis=0)
+    if vknots is None:
+        knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(m)])
+        vknots = knots.mean(axis=0)
+
+    knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
+    knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
+
+    u_curves = [interpolate_nurbs_curve(implementation, degree_u, points[i,:], tknots=uknots) for i in range(n)]
+    u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])
+    v_curves = [interpolate_nurbs_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots) for j in range(m)]
+
+    control_points = np.array([curve.get_control_points() for curve in v_curves])
+
+    surface = SvNurbsSurface.build(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights=None)
+
+    return surface
 
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     """

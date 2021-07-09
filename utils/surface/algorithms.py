@@ -1073,7 +1073,52 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
             curve.get_knotvector(), circle_knotvector,
             control_points, weights)
 
-def unify_nurbs_surfaces(surfaces):
+def round_knotvectors(surface, accuracy):
+    knotvector_u = surface.get_knotvector_u()
+    knotvector_v = surface.get_knotvector_v()
+
+    knotvector_u = np.round(knotvector_u, accuracy)
+    knotvector_v = np.round(knotvector_v, accuracy)
+
+    result = surface.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
+    tolerance = 10**(-accuracy)
+
+#     print(f"KV_U: {knotvector_u}")
+#     print(f"KV_V: {knotvector_v}")
+#     degree = surface.get_degree_u()
+#     ms = sv_knotvector.to_multiplicity(knotvector_u, tolerance)
+#     n = len(ms)
+#     for idx, (u, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"U={u}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove U={u} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.U, u, diff)
+# 
+#     degree = surface.get_degree_v()
+#     ms = sv_knotvector.to_multiplicity(knotvector_v, tolerance)
+#     n = len(ms)
+#     for idx, (v, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"V={v}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove V={v} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.V, v, diff)
+
+    return result
+
+def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6):
     # Unify surface degrees
 
     degrees_u = [surface.get_degree_u() for surface in surfaces]
@@ -1081,53 +1126,102 @@ def unify_nurbs_surfaces(surfaces):
 
     degree_u = max(degrees_u)
     degree_v = max(degrees_v)
+    #print(f"Elevate everything to {degree_u}x{degree_v}")
 
     surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
     surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]
 
     # Unify surface knotvectors
 
-    dst_knots_u = defaultdict(int)
-    dst_knots_v = defaultdict(int)
-    for surface in surfaces:
-        m_u = sv_knotvector.to_multiplicity(surface.get_knotvector_u())
-        m_v = sv_knotvector.to_multiplicity(surface.get_knotvector_v())
+    knotvector_tolerance = 10**(-knotvector_accuracy)
 
-        for u, count in m_u:
-            u = round(u, 6)
-            dst_knots_u[u] = max(dst_knots_u[u], count)
+    if knots_method == 'UNIFY':
 
-        for v, count in m_v:
-            v = round(v, 6)
-            dst_knots_v[v] = max(dst_knots_v[v], count)
+        surfaces = [round_knotvectors(s, knotvector_accuracy) for s in surfaces]
+        for i, surface in enumerate(surfaces):
+            #print(f"S #{i} KV_U: {surface.get_knotvector_u()}")
+            #print(f"S #{i} KV_V: {surface.get_knotvector_v()}")
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_u(), surface.get_knotvector_u(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid U knotvector: {kv_err}")
 
-    result = []
-    for surface in surfaces:
-        diffs_u = []
-        kv_u = np.round(surface.get_knotvector_u(), 6)
-        ms_u = dict(sv_knotvector.to_multiplicity(kv_u))
-        for dst_u, dst_multiplicity in dst_knots_u.items():
-            src_multiplicity = ms_u.get(dst_u, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs_u.append((dst_u, diff))
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_v(), surface.get_knotvector_v(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid V knotvector: {kv_err}")
 
-        for u, diff in diffs_u:
-            if diff > 0:
-                surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
+        dst_knots_u = defaultdict(int)
+        dst_knots_v = defaultdict(int)
+        for surface in surfaces:
+            m_u = sv_knotvector.to_multiplicity(surface.get_knotvector_u(), tolerance=knotvector_tolerance)
+            m_v = sv_knotvector.to_multiplicity(surface.get_knotvector_v(), tolerance=knotvector_tolerance)
 
-        diffs_v = []
-        kv_v = np.round(surface.get_knotvector_v(), 6)
-        ms_v = dict(sv_knotvector.to_multiplicity(kv_v))
-        for dst_v, dst_multiplicity in dst_knots_v.items():
-            src_multiplicity = ms_v.get(dst_v, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs_v.append((dst_v, diff))
+            for u, count in m_u:
+                u = round(u, knotvector_accuracy)
+                dst_knots_u[u] = max(dst_knots_u[u], count)
 
-        for v, diff in diffs_v:
-            if diff > 0:
-                surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
+            for v, count in m_v:
+                v = round(v, knotvector_accuracy)
+                dst_knots_v[v] = max(dst_knots_v[v], count)
 
-        result.append(surface)
+        result = []
+        for surface in surfaces:
+            diffs_u = []
+            kv_u = np.round(surface.get_knotvector_u(), knotvector_accuracy)
+            ms_u = dict(sv_knotvector.to_multiplicity(kv_u, tolerance=knotvector_tolerance))
+            for dst_u, dst_multiplicity in dst_knots_u.items():
+                src_multiplicity = ms_u.get(dst_u, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_u.append((dst_u, diff))
 
-    return result
+            for u, diff in diffs_u:
+                if diff > 0:
+                    #print(f"S: Insert U = {u} x {diff}")
+                    surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
+
+            diffs_v = []
+            kv_v = np.round(surface.get_knotvector_v(), knotvector_accuracy)
+            ms_v = dict(sv_knotvector.to_multiplicity(kv_v, tolerance=knotvector_tolerance))
+            for dst_v, dst_multiplicity in dst_knots_v.items():
+                src_multiplicity = ms_v.get(dst_v, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_v.append((dst_v, diff))
+
+            for v, diff in diffs_v:
+                if diff > 0:
+                    #print(f"S: Insert V = {v} x {diff}")
+                    surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
+
+            result.append(surface)
+
+        return result
+
+    elif knots_method == 'AVERAGE':
+        kvs = [len(surface.get_control_points()) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"U knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+        kvs = [len(surface.get_control_points()[0]) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"V knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+
+        knotvectors = np.array([surface.get_knotvector_u() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        knotvectors = np.array([surface.get_knotvector_v() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        result = []
+        for surface in surfaces:
+            surface = SvNurbsSurface.build(surface.get_nurbs_implementation(),
+                    surface.get_degree_u(), surface.get_degree_v(),
+                    knotvector_u, knotvector_v,
+                    surface.get_control_points(),
+                    surface.get_weights())
+            result.append(surface)
+        return result
+    else:
+        raise Exception('Unsupported knotvector unification method')
 

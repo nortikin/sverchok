@@ -110,7 +110,7 @@ def juggle_and_join(node_cats):
     '''
     this step post processes the extended catagorization used
     by ctrl+space dynamic menu, and attempts to merge previously
-    joined catagories. Why? Because the default menu gets very
+    joined categories. Why? Because the default menu gets very
     long if there are too many categories.
 
     The only real alternative to this approach is to write a
@@ -452,7 +452,7 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
 
-    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{strformated_tree(nodes_not_enabled)}")
+    logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
 
     return node_categories, node_count, original_categories
 

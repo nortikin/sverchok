@@ -35,7 +35,7 @@ def create_list(x, y):
 
 
 def preobrazovatel(list_a, levels, level2=1):
-    # level increas or decreas
+    # level increase or decrease
     list_tmp = []
     level = levels[0]
 
@@ -247,7 +247,7 @@ def lists_flat(lists):
     return list_temp
 
 # here defs for list input node to operate IntVectorProperty
-# wich limited to 32 items
+# which limited to 32 items
 def listinput_getI(node,num_length):
     #all slots
     lists = node.int_list, node.int_list1, node.int_list2, node.int_list3

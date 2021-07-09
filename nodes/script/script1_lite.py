@@ -20,6 +20,7 @@ import os
 import sys
 import ast
 import json
+import textwrap
 import traceback
 import numpy as np
 
@@ -30,7 +31,7 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
 
-from sverchok.utils.snlite_utils import vectorize, ddir
+from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
@@ -107,29 +108,34 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
 
 class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' snl SN Lite /// a lite version of SN '''
+
+    """
+    Triggers: snl
+    Tooltip: Script Node Lite
+    
+    This code represents a conscious weighing of conveniences to the user, vs somewhat harder to understand
+    code under the hood. This code evolved as design specs changed, while providing continued support for
+    previous implementation details.
+    """
 
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
 
-    def custom_enum_func(self, context):
+    def return_enumeration(self, enum_name=""):
         ND = self.node_dict.get(hash(self))
         if ND:
-            enum_list = ND['sockets']['custom_enum']
+            enum_list = ND['sockets'][enum_name]
             if enum_list:
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+    def custom_enum_func(self, context):
+        return self.return_enumeration(enum_name='custom_enum')
 
     def custom_enum_func_2(self, context):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets']['custom_enum_2']
-            if enum_list:
-                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
-
-        return [("A", "A", '', 0), ("B", "B", '', 1)]
+        return self.return_enumeration(enum_name='custom_enum_2')
 
 
     def custom_callback(self, context, operator):
@@ -205,15 +211,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for idx, (socket_description) in enumerate(v):
             """
             Socket description at the moment of typing is list of: [
-            socket_type: str, 
-            socket_name: str, 
-            default: int value, float value or None,
-            nested: int]
+                socket_type: str, 
+                socket_name: str, 
+                default: int value, float value or None,
+                nested: int]
             """
             default_value = socket_description[2]
 
             if socket_description is UNPARSABLE:
-                print(socket_description, idx, 'was unparsable')
+                self.info(f"{socket_description}, {idx}, was unparsable")
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
@@ -419,6 +425,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             'bpy': bpy,
             'np': np,
             'ddir': ddir,
+            'sv_njit': sv_njit,
+            'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
         })
@@ -556,11 +564,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if include_name == new_text.name:
                     continue
 
-                print('| in', self.name, 'the importer encountered')
-                print('| an include called', include_name, '. While trying')
-                print('| to write this file to bpy.data.texts another file')
-                print('| with the same name was encountered. The importer')
-                print('| automatically made a datablock called', new_text.name)
+                multi_string_msg = textwrap.dedent(f"""\
+                | in {self.name} the importer encountered
+                | an include called {include_name}. While trying
+                | to write this file to bpy.data.texts another file
+                | with the same name was encountered. The importer
+                | automatically made a datablock called {new_text.name}.
+                """)
+                self.info(multi_string_msg)
 
     def load_from_json(self, node_data: dict, import_version: float):
 

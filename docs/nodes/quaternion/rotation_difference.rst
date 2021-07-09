@@ -8,7 +8,7 @@ Functionality
 
 Creates quaternion which produce rotation from first to second given points.
 It can be alternative of `normal matrix` node. Meanwhile last one can work only with limited number of axis 
-the `rotation difference` node can work with arbitrary axises.
+the `rotation difference` node can work with arbitrary axes.
 
 Category
 --------

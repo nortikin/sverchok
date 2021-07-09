@@ -43,7 +43,7 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
     """
     The function takes mesh and transform it according parameters. It can move, scale and rotate parts of mesh.
     The logic is close how Blender manipulate with mesh itself.
-    Distribution of parameters: with bool mask all parameters are setting to selected elements ony by one.
+    Distribution of parameters: with bool mask all parameters are setting to selected elements only by one.
     With integer mask parameters are setting to a group of elements.
     For example: given indexes - [1, 3], given parameters - [param1, param2].
     To all parts of mesh masked by 1 will be assigned with param1.

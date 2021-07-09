@@ -31,7 +31,7 @@ Parameters
 +===============+=========================================================================================+
 | all triangles | Boolean to work with triangles makes it faster to calculate                             |
 +---------------+-----------------------------------------------------------------------------------------+
-| epsilon       | float threashold for cut weak results                                                   |
+| epsilon       | float threshold for cut weak results                                                    |
 +---------------+-----------------------------------------------------------------------------------------+
 
 

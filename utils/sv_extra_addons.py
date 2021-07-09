@@ -86,7 +86,7 @@ def draw_extra_addons(layout):
             addon_name = addon['name'].replace('_', '-')+'-'+ addon['branch']
         else:
             addon_name = False
-        print(addon_name)
+        # print(addon_name)  # this prints constantly False if extra-addons isn't installed
         if addon_name:
             loaded_default, loaded_state = addon_utils.check(addon_name)
             if loaded_state:

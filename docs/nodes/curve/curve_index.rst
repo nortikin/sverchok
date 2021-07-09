@@ -54,6 +54,7 @@ Curves
    catenary_curve
    bezier_fit
    circlify
+   intersect_curves
    intersect_curve_plane
    extremes
    interpolate_frame

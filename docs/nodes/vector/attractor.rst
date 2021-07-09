@@ -50,7 +50,7 @@ This node has the following parameters:
    The default mode is **Average** (which is more physically correct). This
    parameter is available only if **Attractor type** parameter is set to
    **Point**.
-- **Falloff type**. Used falloff law. Avalable values are:
+- **Falloff type**. Used falloff law. Available values are:
   - **Inverse**. Falloff law is 1/R, where R is distance from vertex to attractor.
   - **Inverse square**. Falloff law is 1/R^2. This law is most common in
     physics (gravity and electromagnetizm), so this is the default value.

@@ -239,7 +239,7 @@ parse_definition = many(parse_statement)
 
 def parse_profile(src):
     # Strip comments
-    # (hope noone uses # in expressions)
+    # (hope no one uses # in expressions)
     cleaned = ""
     for line in src.split("\n"):
         comment_idx = line.find('#')

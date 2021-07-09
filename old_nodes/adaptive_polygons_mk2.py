@@ -132,7 +132,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, max=3.0, min=0.0, update=updateNode)
 
     z_offset: FloatProperty(
-        name = "Z offet",
+        name = "Z offset",
         default = 0.0,
         update = updateNode)
 

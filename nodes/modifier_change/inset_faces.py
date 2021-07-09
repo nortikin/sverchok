@@ -86,7 +86,7 @@ def merge_bmeshes(bm1, verts_number, bm2):
 def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
     # Generate Bmesh from Sverchok data
     # Optionally it can create faces int layers and set given values
-    # Layers should be given in dictionary format where ket is name of layer and value as list of values per given faces
+    # Layers should be given in dictionary format where key is name of layer and value as list of values per given faces
     if face_int_layers is None:
         face_int_layers = dict()
     bm = bmesh.new()

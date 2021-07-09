@@ -90,7 +90,7 @@ This node has the following outputs:
 Example of usage
 ----------------
 
-Build part of curve from points, and then extend it to additional lenght of 1
+Build part of curve from points, and then extend it to additional length of 1
 at the beginning and to additional length of 2 at the end:
 
 .. image:: https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png

@@ -78,7 +78,7 @@ mapper_funcs = {
 
 class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
-    Triggers: Scence Texture In
+    Triggers: Scene Texture In
     Tooltip: Evaluate Scene texture at input coordinates
 
     """

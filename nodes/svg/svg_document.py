@@ -55,7 +55,7 @@ def spawn_server(save_path, file_name):
 
 class SvSvgServer(bpy.types.Operator, SvGenericNodeLocator):
     """
-    Opens in web browser a html file that updates frecuently showing the changes in the SVG file
+    Opens in web browser a html file that updates frequently showing the changes in the SVG file
     """
     bl_idname = "node.sv_svg_server"
     bl_label = "Append"
@@ -172,7 +172,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         ]
     units: EnumProperty(
         name="Mode",
-        description="Set Fitness as maximun or as minimum",
+        description="Set Fitness as maximum or as minimum",
         items=mode_items,
         update=updateNode
         )

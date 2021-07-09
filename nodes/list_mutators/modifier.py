@@ -62,7 +62,7 @@ DIFF = 'Difference'
 SYMDIFF = 'Symmetric Diff'
 SET_OPS = [SET, INTX, UNION, DIFF, SYMDIFF]
 
-# using a purposely broad indexing value range incase other functions get into this..
+# using a purposely broad indexing value range in case other functions get into this..
 node_item_list = [
     (1, 1, SET, set),
     (1, 10, "Ordered Set by input", ordered_set),

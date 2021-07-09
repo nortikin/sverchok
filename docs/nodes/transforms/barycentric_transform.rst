@@ -14,11 +14,11 @@ Inputs / Parameters
 
 
 +----------------------+-------------+----------------------------------------------------------------------+
-| Param                | Type        | Description                                                          |  
+| Param                | Type        | Description                                                          |
 +======================+=============+======================================================================+
-| **Vertices**         | Vertices    | Points to calculate                                                  | 
+| **Vertices**         | Vertices    | Points to calculate                                                  |
 +----------------------+-------------+----------------------------------------------------------------------+
-| **Edg_Pol**          | Int Lists   | Edges or pols of the input Vertices (optional)                       | 
+| **Edg_Pol**          | Int Lists   | Edges or pols of the input Vertices (optional)                       |
 +----------------------+-------------+----------------------------------------------------------------------+
 | **Verts Tri Source** | Vertices    | It will get the first and last vertices's to define the line segment |
 +----------------------+-------------+----------------------------------------------------------------------+
@@ -52,13 +52,13 @@ The node can be used to place geometry over triangular faces.
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_adaptative_tris.png
   :alt: barycentric_transform/barycentric_transform_sverchok_blender_adaptative_tris.png
 
-  
+
 The List Match option can offer different output combinations, in this case Cyclic is used
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_list_match.png
   :alt: barycentric_transform_sverchok_blender_list_match.png
 
-  
+
 Custom triangular Tessellation in this case Cyclic is used to alternate between the input geometry
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_triangle_tesselation.png

@@ -26,7 +26,7 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' takes a list of vertices and a list of matrices
         the vertices are to be joined in a ring, copied and transformed by the 1st matrix
         and this ring joined to the previous ring.
-        The ring dosen't have to be planar.
+        The ring doesn't have to be planar.
         outputs lists of vertices, edges and faces
         ends are capped
     '''

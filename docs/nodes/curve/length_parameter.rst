@@ -78,7 +78,7 @@ This node has the following outputs:
 Example of usage
 ----------------
 
-Two exemplars of Archimedian spiral:
+Two exemplars of Archimedean spiral:
 
 .. image:: https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png
 

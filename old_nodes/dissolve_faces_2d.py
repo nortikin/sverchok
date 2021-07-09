@@ -16,7 +16,7 @@ from sverchok.utils.geom_2d.dissolve_mesh import dissolve_faces
 class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: dissolve selected by mask input faces
-    Tooltip: cant produce disjoint parts
+    Tooltip: can't produce disjoint parts
 
     It has extra outputs on N panel
     """

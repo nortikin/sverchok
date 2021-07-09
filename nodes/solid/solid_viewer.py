@@ -303,7 +303,7 @@ else:
             ('Mefisto', 'Mefisto', '', 2),
         ]
         tesselate_mode: EnumProperty(
-            name="Tesselate mode",
+            name="Tessellate mode",
             description="Algorithm used for conversion",
             items=tesselate_modes, default="Standard",
             )

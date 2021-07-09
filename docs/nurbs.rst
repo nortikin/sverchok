@@ -138,7 +138,7 @@ converted to NURBS, "NURBS-like". Examples of NURBS-like curves are:
 
 Sverchok has "NURBS to JSON" and "JSON to NURBS" nodes, which allow to save
 NURBS objects in JSON format and read NURBS from it; such JSON format can be
-used with rw3dm_ utlity to convert it from / to `3dm` files. Later there can
+used with rw3dm_ utility to convert it from / to `3dm` files. Later there can
 appear nodes that will export NURBS objects to other widely-used formats.
 
 So, with some restrictions, it is possible to prepare complex scenes built from

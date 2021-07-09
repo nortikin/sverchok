@@ -1,7 +1,7 @@
 Curve Frame
 ===========
 
-Functionaltiy
+Functionality
 -------------
 
 This node calculates a reference frame of a curve (also known as Frenet_ frame)

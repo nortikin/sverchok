@@ -48,7 +48,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
-            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
+            ('PERSPECTIVE', "Perspective", "Use perspective projection from given point", 1),
             ('ORTHO', "Orthogonal", "Use orthogonal projection", 2),
             ('UV', "UV Trim", "Trim surface by curve(s) in surface's UV space", 3)
         ]

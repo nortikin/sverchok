@@ -131,7 +131,7 @@ def make_polys(P, M, cap_bottom, cap_top):
 
 class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Sphere Cube Cylinder Octohedron Star
+    Triggers: Sphere Cube Cylinder Octahedron Star
     Tooltip: Generate various Super-Ellipsoid shapes
     """
     bl_idname = 'SvSuperEllipsoidNode'

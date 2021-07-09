@@ -33,10 +33,10 @@ Parameters
 This node has the following parameters:
 
 +-----------------+---------------+-------------+------------------------------------------------------+
-| Parameter       | Type          | Default     | Description                                          |  
+| Parameter       | Type          | Default     | Description                                          |
 +=================+===============+=============+======================================================+
 | **Mode**        | Enumeration   | Normal      | This defines how the transformation of faces being   |
-|                 |               |             | exturded is specified. There are the following       |
+|                 |               |             | extruded is specified. There are the following       |
 |                 |               |             | modes available:                                     |
 |                 |               |             |                                                      |
 |                 |               |             | * **Normal**: the transformation is defined by       |

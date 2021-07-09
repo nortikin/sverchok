@@ -90,7 +90,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
     fn_name: StringProperty(default='')
 
     # The imformation of "which node this button was pressed on"
-    # is not communicated unless you do it explicitely.
+    # is not communicated unless you do it explicitly.
     tree_name: StringProperty(default='')
     node_name: StringProperty(default='')
 
@@ -158,8 +158,8 @@ class SvObjHelper():
 
     def group_state_update_handler(self, context):
         """
-        since this is technically a scene/admin code controlling heirarchy, pressing
-        the button should result in assymetric behaviour depending on the new state of
+        since this is technically a scene/admin code controlling hierarchy, pressing
+        the button should result in asymmetric behaviour depending on the new state of
         "self.grouping".
 
         + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +

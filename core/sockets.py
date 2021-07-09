@@ -396,7 +396,7 @@ class SvSocketCommon(SvSocketProcessing):
         If socket uses custom implicit_conversion it should implements default_conversion_name attribute
         Also a socket can use its default_property
         Order of getting data (if available):
-        1. writen socket data
+        1. written socket data
         2. node default property
         3. socket default property
         4. script default property

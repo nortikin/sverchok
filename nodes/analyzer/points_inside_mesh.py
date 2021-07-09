@@ -180,7 +180,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         default=10.0, update=updateNode)
 
     limit_max_dist: BoolProperty(
-        name='Limit Proyection', description='Limit projection distance',
+        name='Limit Projection', description='Limit projection distance',
         default=False, update=update_sockets)
 
     selected_algo: EnumProperty(

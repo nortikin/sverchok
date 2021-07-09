@@ -44,13 +44,13 @@ NodeView and 3DView
 
    From the NodeView, you can use the following ways to add nodes to tree:
 
-   * Use the **Add** menu from menu bar (Sverchok has little control over how this menu is layed out, protip: use the next method instead)
+   * Use the **Add** menu from menu bar (Sverchok has little control over how this menu is laid out, protip: use the next method instead)
 
      |image6|
 
    * Hit *Shift-A* (standard Blender's shortcut for adding things, we inject our own menu into it, with icons!):
 
-     - don't be alarmed if what you see in your menu is not 100% identical to this image, new features are continously added/changed.
+     - don't be alarmed if what you see in your menu is not 100% identical to this image, new features are continuously added/changed.
 
      |image7|
 

@@ -78,7 +78,7 @@ supported_metrics = [
         ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
         ('POINTS', 'Points', "Points based", 2),
         ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3),
-        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
+        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidean distance", 4)
     ]
 
 xyz_metrics = [

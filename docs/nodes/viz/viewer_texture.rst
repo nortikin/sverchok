@@ -46,7 +46,7 @@ Outputs
 -------
 
 Directly into node tree view in a blue bordered square or if you choose the ``Pass`` option the texture
-may be transfered to the internal image viewer/editor.
+may be transferred to the internal image viewer/editor.
 
 Properties panel
 ----------------

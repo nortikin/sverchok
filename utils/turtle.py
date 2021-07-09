@@ -165,7 +165,7 @@ class Turtle(object):
 
     def click(self):
         """
-        Jump to the face which is beyound the edge
+        Jump to the face which is beyond the edge
         at which the turtle is looking currently.
         This turtle is a bit strange, because when it jumps it
         turns around, to look at the same edge it was looking, but
@@ -251,7 +251,7 @@ class Turtle(object):
         +----+       +----+
 
         If the current face has odd count of edges, then the term
-        "around" is ambigous:
+        "around" is ambiguous:
 
                     +----+      
                     |   > \
@@ -280,7 +280,7 @@ class Turtle(object):
 
     def get_next_face(self, count=1, bias=None):
         """
-        Get the face (BMFace) which is beyound that edge at which turtle is
+        Get the face (BMFace) which is beyond that edge at which turtle is
         currently looking. If count is greater than 1, then look for the next
         face in the same direction.
         Bias can be provided for cases of odd count of edges in the face.
@@ -499,7 +499,7 @@ class Turtle(object):
     def start_selecting(self, mode = None, mask=None):
         """
         Start selecting faces which the turtle passes.
-        This mode can be stoppped by calling stop_selecting().
+        This mode can be stopped by calling stop_selecting().
 
         mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
         mask: selection mask. Used with mode == Turtle.MASK. The mask is used with

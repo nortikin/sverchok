@@ -207,7 +207,7 @@ class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             for i in range(max_len):
                 seed = seeds[min(i, len(seeds)-1)]
                 obj_id = min(i, len(verts)-1)
-                # 0 unsets the seed and generates unreproducable output based on system time
+                # 0 unsets the seed and generates unreproducible output based on system time
                 seed_val = int(round(seed)) or 140230
                 noise.seed_set(seed_val)
                 mathulis_noise(verts[obj_id], out, out_mode, noise_type, noise_function, output_numpy)

@@ -68,6 +68,13 @@ def generate(degree, num_ctrlpts, clamped=True):
     # Return auto-generated knot vector
     return np.array(knot_vector)
 
+def find_span(knot_vector, num_ctrlpts, knot):
+    span = 0  # Knot span index starts from zero
+    while span < num_ctrlpts and knot_vector[span] <= knot:
+        span += 1
+
+    return span - 1
+
 def from_tknots(degree, tknots):
     n = len(tknots)
     #m = degree + n + 1
@@ -181,8 +188,12 @@ def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
     #print(f"kv {knot_vector} => {pairs}")
     for k, count in pairs:
-        if abs(k - u) < tolerance:
-            return count
+        if tolerance is None:
+            if k == u:
+                return count
+        else:
+            if abs(k - u) < tolerance:
+                return count
     return 0
 
 def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6):
@@ -264,5 +275,17 @@ def check(degree, knot_vector, num_ctrlpts):
             return "Knot vector items are not all non-decreasing"
         prev_knot = knot
 
+    return None
+
+def check_multiplicity(degree, knot_vector, tolerance=1e-6):
+    ms = to_multiplicity(knot_vector, tolerance)
+    n = len(ms)
+    for idx, (u, count) in enumerate(ms):
+        if idx == 0 or idx == n-1:
+            if count > degree+1:
+                return f"First/Last knot u={u} multiplicity {count} is more than degree+1 {degree+1}"
+        else:
+            if count > degree:
+                return f"Inner knot u={u} multiplicity {count} is more than degree {degree}"
     return None
 

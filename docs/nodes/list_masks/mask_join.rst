@@ -30,7 +30,7 @@ Parameters
 
 **Level:** Set the level at which the items to be masked.
 
-**Choise:** Make length of out list the same as length of input list
+**Choice:** Make length of out list the same as length of input list
 
 
 Outputs

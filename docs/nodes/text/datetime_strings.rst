@@ -72,9 +72,9 @@ Python Docs: https://docs.python.org/3.6/library/datetime.html#strftime-and-strp
 | %-j | - 273                    | - Day of the year as a decimal number. (Platform specific)                                    |
 +-----+--------------------------+-----------------------------------------------------------------------------------------------+
 | %U  | 39                       | Week number of the year (Sunday as the first day of the week) as a zero padded decimal number.|
-|     |                          | All days in a new year preceding the first Sunday are considered to be in week 0.             | 
+|     |                          | All days in a new year preceding the first Sunday are considered to be in week 0.             |
 +-----+--------------------------+-----------------------------------------------------------------------------------------------+
-| %W  | 39                       | Week number of the year (Monday as the first day of the week) as a decimal number.            | 
+| %W  | 39                       | Week number of the year (Monday as the first day of the week) as a decimal number.            |
 |     |                          | All days in a new year preceding the first Monday are considered to be in week 0.             |
 +-----+--------------------------+-----------------------------------------------------------------------------------------------+
 | %c  | Mon Sep 30 07:06:05 2013 | Locale’s appropriate date and time representation.                                            |

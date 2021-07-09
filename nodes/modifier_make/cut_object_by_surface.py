@@ -240,7 +240,7 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 for old_face in faces_to_remove:
                     bm_obj.faces.remove(old_face)
                 for old_v1, old_v2 in edges_to_remove:
-                    # we can't just remember BMEdge instances themselve,
+                    # we can't just remember BMEdge instances themselves,
                     # since they will be invalidated when we remove faces.
                     old_edge = bm_obj.edges.get((old_v1, old_v2))
                     if old_edge:

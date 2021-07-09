@@ -31,7 +31,7 @@ class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
 class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Store List
-    Tooltip: Stores a Numerical List in mutiple memory buckets
+    Tooltip: Stores a Numerical List in multiple memory buckets
     """
     bl_idname = 'SvMultiCacheNode'
     bl_label = 'Multi Cache'
@@ -39,7 +39,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_MULTI_CACHE'
 
     in_bucket: IntProperty(
-        name='In Bucket', description="Identifier of the bucket where data will be strored",
+        name='In Bucket', description="Identifier of the bucket where data will be stored",
         default=0,
         update=updateNode)
     out_bucket: IntProperty(

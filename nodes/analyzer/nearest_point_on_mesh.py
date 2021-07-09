@@ -111,12 +111,12 @@ class SvNearestPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode, SvRecursive
 
     safe_check: BoolProperty(
         name='Safe Check',
-        description='When disabled polygon indices refering to unexisting points will crash Blender but makes node faster',
+        description='When disabled polygon indices referring to unexisting points will crash Blender but makes node faster',
         default=True)
 
     flat_output: BoolProperty(
         name='Flat Output',
-        description='Ouput a single list for every list in stead of a list of lists',
+        description='Output a single list for every list in stead of a list of lists',
         default=True,
         update=updateNode)
 

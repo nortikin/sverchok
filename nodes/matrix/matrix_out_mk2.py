@@ -91,7 +91,7 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper, Sv
         self.outputs.new('SvVerticesSocket', "Scale")
         # quaternion output
         self.outputs.new('SvQuaternionSocket', "Quaternion")
-        # euler angles ouputs
+        # euler angles outputs
         self.outputs.new('SvStringsSocket', "Angle X")
         self.outputs.new('SvStringsSocket', "Angle Y")
         self.outputs.new('SvStringsSocket', "Angle Z")

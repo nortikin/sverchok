@@ -43,7 +43,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
     safe_check: bpy.props.BoolProperty(
         name='Safe Check',
-        description='When disabled polygon indices refering to unexisting points will crash Blender but makes node faster',
+        description='When disabled polygon indices referring to unexisting points will crash Blender but makes node faster',
         default=True)
 
     def draw_buttons_ext(self, context, layout):

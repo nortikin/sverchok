@@ -13,9 +13,9 @@ Inputs / Parameters
 
 
 +------------------+-------------+----------------------------------------------------------------------+
-| Param            | Type        | Description                                                          |  
+| Param            | Type        | Description                                                          |
 +==================+=============+======================================================================+
-| **Define Plane** | Enum.       | Determine method: input the plane's normal or a third point in plane | 
+| **Define Plane** | Enum.       | Determine method: input the plane's normal or a third point in plane |
 +------------------+-------------+----------------------------------------------------------------------+
 | **Center A**     | Vertices    | Center of the first circle                                           |
 +------------------+-------------+----------------------------------------------------------------------+

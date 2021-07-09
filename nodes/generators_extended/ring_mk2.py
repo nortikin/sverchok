@@ -112,7 +112,7 @@ def ring_polygons(N1, N2, a1, a2, u):
     a2 : ending angle
     u  : circular section subdivisions
 
-    Note: the vertex order is consistent with face normal along pozitive Z
+    Note: the vertex order is consistent with face normal along positive Z
     """
 
     # use an extra section if the ring is open (start & end angles differ)
