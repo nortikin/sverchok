@@ -65,6 +65,7 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
