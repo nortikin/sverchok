@@ -64,4 +64,4 @@ Example of usage
 ----------------
 
 See the progress of how this node came to life `here <https://github.com/nortikin/sverchok/pull/2864>`_ (gifs, screenshots)
-and a discussion about other techniques for producing similar results: `here <https://github.com/nortikin/sverchok/issues/2863>`_ (gifs, screenshots)
+and a discussion about other techniques for producing similar results: `here2 <https://github.com/nortikin/sverchok/issues/2863>`_ (gifs, screenshots)
