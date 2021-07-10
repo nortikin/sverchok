@@ -1,5 +1,5 @@
 Polygonal Grid
-=========
+==============
 
 Functionality
 -------------

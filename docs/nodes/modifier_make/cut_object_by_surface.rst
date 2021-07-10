@@ -39,7 +39,7 @@ This node has the following inputs:
 * **SurfFaces**. Faces of the "surface" mesh.
 * **FillSides**. Maximum number of sides of polygons that the node makes to
   fill the cuts. This input can also be provided as a parameter. This input is
-  only available when **Make cut pieces" parameter is checked. The default
+  only available when **Make cut pieces** parameter is checked. The default
   value is 12.
 
 Parameters

@@ -41,7 +41,7 @@ This node has the following inputs:
   correspondingly. The default value is 3.
 
 Parameters
----------
+----------
 
 This node has the following parameters:
 

@@ -69,8 +69,8 @@ Examples of usage
 -----------------
 
 - When you input different distances:
-In constant mode independent contours will be created (one per distance)
-In Weighted mode will apply each distance to a vertex creating independent contours when there are more distances than vertices
+  In constant mode independent contours will be created (one per distance)
+  In Weighted mode will apply each distance to a vertex creating independent contours when there are more distances than vertices
 
 .. image:: https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png
 

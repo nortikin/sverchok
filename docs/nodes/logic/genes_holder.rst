@@ -14,7 +14,7 @@ Parameters
 
 **Min**: Minimum value a gene can have. Only in "Range" mode
 
-**Maximum: Maximum value a gene can have. Note that with the Integers this number will never be reached so to get a "Boolean" genes the maximum should be 2 to get values from 0 to 1. Only in "Range" mode
+**Maximum**: Maximum value a gene can have. Note that with the Integers this number will never be reached so to get a "Boolean" genes the maximum should be 2 to get values from 0 to 1. Only in "Range" mode
 
 **Population amount**: Number of members of the population.
 

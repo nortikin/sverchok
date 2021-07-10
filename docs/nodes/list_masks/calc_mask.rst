@@ -20,9 +20,9 @@ The node can work on different levels of data trees. For example, given Subset
 
 Given Subset = `[[1], [5,6]]` and Set = `[[1, 2, 3], [7, 8, 9]]`:
 
-*   with level = 0 it will output `[False, False]` (because, for example, there
+* with level = 0 it will output `[False, False]` (because, for example, there
   is no `[1, 2, 3]` in the `[[1], [5,6]]`)
-*   with level = 1, it will output `[[True, False, False], [False, False, False]]`
+* with level = 1, it will output `[[True, False, False], [False, False, False]]`
 
 Inputs
 ------

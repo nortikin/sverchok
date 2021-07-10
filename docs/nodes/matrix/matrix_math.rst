@@ -13,7 +13,7 @@ All inputs are vectorized and they will accept single or multiple values.
 
 - **A**
 - **B**  [1]
-...
+- ...
 - **Z**  [2]
 
 Notes:

@@ -25,7 +25,7 @@ This node has the following inputs:
   * for **Plane**, this is the normal direction of the plane;
   * for **Cyinder**, this is the directing vector of cylinder's axis line.
 
-* **Radius**. This parameter is available only when **Target form** parameter is set to **Sphere** or **Cylinder. It's meaning depends on target form:
+* **Radius**. This parameter is available only when **Target form** parameter is set to **Sphere** or **Cylinder**. It's meaning depends on target form:
 
   * for **Sphere**, this is the radius of the sphere;
   * for **Cylinder**, this is the radius of the cylinder.

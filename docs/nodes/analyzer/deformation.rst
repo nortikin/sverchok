@@ -37,7 +37,7 @@ Outputs
 
 
 Examples of usage
-----------------
+-----------------
 Different kinds of tension maps can be created using this node, from any of its outputs, here some basic examples:
 
 .. image:: https://user-images.githubusercontent.com/10011941/50576192-a7da2a80-0e0c-11e9-9be5-e490081822bb.png

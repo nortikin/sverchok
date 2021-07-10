@@ -8,7 +8,7 @@ This node processes dates formatted as text, and lets you convert them into an o
 If you intend to use this node it is important that you absorb the documentation that accompanies the Python datetime module. Especially of interest should be *strptime* and *strftime* and the examples that demonstrate how to interact with string representations of dates.
 
 Features:
---------
+---------
 
 - *Ordinal* is an integer representing a day, this is the kind of precision that is useful if you are working on the scale of months, years or decades.
 

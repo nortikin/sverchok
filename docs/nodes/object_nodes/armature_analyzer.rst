@@ -1,5 +1,5 @@
 Armature Props
-==========
+==============
 
 Functionality
 -------------

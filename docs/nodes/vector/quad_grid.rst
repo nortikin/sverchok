@@ -52,7 +52,7 @@ This node has the following parameters:
   row. Unchecked by default.
 
 Outputs
-------
+-------
 
 This node has the following outputs:
 

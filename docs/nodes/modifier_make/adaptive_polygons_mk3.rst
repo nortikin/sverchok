@@ -149,9 +149,9 @@ This node has some number of parameters, and most of them are accessible only in
 
   - **None**: Use recipient normals
   - **Normal per Vertex**: Overwrite Vertex Normals. It will affect to the faces
-    where **Normal Mode**  is set to **Map* (or 1)
+    where **Normal Mode**  is set to **Map** (or 1)
   - **Normal per Faces**: Overwrite Faces Normals. It will affect to the faces
-    where **Normal Mode**  is set to **Face* (or 0)
+    where **Normal Mode**  is set to **Face** (or 0)
 
   The default value is **None**.
 
@@ -233,18 +233,19 @@ This node has some number of parameters, and most of them are accessible only in
     output for each recipient face.
   - **Transform Control**. In this mode the **PolyMask** input will be used to
     control the transformation method per face:
-      0 = Skip
-      1 = As Is
-      2 = Tris
-      3 = Quads
-      4 = Fan
-      5 = SubQuads
-      6 = Frame
-      7 = Auto Frame Fan
-      8 = Auto Frame Sub Quads
-      9 = Fan (Quad)
-      10 = Frame (Tri)
-      11 = Sub Quads (Tri)
+
+    - 0 = Skip
+    - 1 = As Is
+    - 2 = Tris
+    - 3 = Quads
+    - 4 = Fan
+    - 5 = SubQuads
+    - 6 = Frame
+    - 7 = Auto Frame Fan
+    - 8 = Auto Frame Sub Quads
+    - 9 = Fan (Quad)
+    - 10 = Frame (Tri)
+    - 11 = Sub Quads (Tri)
 
   The default value is **Skip**.
 

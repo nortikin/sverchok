@@ -52,7 +52,7 @@ node. This node allows one to tessellate the part of surface, trimmed by some
 curve.
 
 Implicit Surfaces
-----------------
+-----------------
 
 Another possible way to define a surface is to say that the surface is a set of
 all points (X, Y, Z), which are solutions of equation: ``F(X, Y, Z) = C``. Here

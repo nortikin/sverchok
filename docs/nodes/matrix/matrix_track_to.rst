@@ -30,22 +30,36 @@ Parameters
 | Param                | Type    | Default   | Description                                    |
 +======================+=========+===========+================================================+
 | **Track/Up Axes**    | Enum:   | X Y       | Selects which of the X,Y,Z axes are the Track  |
-|                      |  X Y    |           | axis and the Up axis.                          |
-|                      |  X Z    |           |                                                |
-|                      |  Y X    |           |                                                |
-|                      |  Y Z    |           |                                                |
-|                      |  Z X    |           |                                                |
-|                      |  Z Y    |           |                                                |
+|                      |         |           | axis and the Up axis.                          |
+|                      | X Y     |           |                                                |
+|                      |         |           |                                                |
+|                      | X Z     |           |                                                |
+|                      |         |           |                                                |
+|                      | Y X     |           |                                                |
+|                      |         |           |                                                |
+|                      | Y Z     |           |                                                |
+|                      |         |           |                                                |
+|                      | Z X     |           |                                                |
+|                      |         |           |                                                |
+|                      | Z Y     |           |                                                |
 +----------------------+---------+-----------+------------------------------------------------+
 | **Track/Up Mapping** | Enum:   | A B       | Maps the Track and Up vectors to one of the    |
-|                      |   A  B  |           | A, B inputs or to their negatives.             |
-|                      |   A -B  |           |                                                |
-|                      |  -A  B  |           |                                                |
-|                      |  -A -B  |           |                                                |
-|                      |   B  A  |           |                                                |
-|                      |   B -A  |           |                                                |
-|                      |  -B  A  |           |                                                |
-|                      |  -B -A  |           |                                                |
+|                      |         |           |                                                |
+|                      | A  B    |           | A, B inputs or to their negatives.             |
+|                      |         |           |                                                |
+|                      | A -B    |           |                                                |
+|                      |         |           |                                                |
+|                      | -A  B   |           |                                                |
+|                      |         |           |                                                |
+|                      | -A -B   |           |                                                |
+|                      |         |           |                                                |
+|                      | B  A    |           |                                                |
+|                      |         |           |                                                |
+|                      | B -A    |           |                                                |
+|                      |         |           |                                                |
+|                      | -B  A   |           |                                                |
+|                      |         |           |                                                |
+|                      | -B -A   |           |                                                |
 +----------------------+---------+-----------+------------------------------------------------+
 | **Location**         | Vector  | (0, 0, 0) | Location component of the output matrix.       |
 +----------------------+---------+-----------+------------------------------------------------+
@@ -77,7 +91,7 @@ A set of extra parameters are available on the property panel. These parameters 
 |                         |            |            |  can be plugged  to any other node.           |
 |                         |            |            |  If it is disabled the node will keep the     |
 |                         |            |            |  original structure outputting a list of      |
-|                         |            |            |   matrix lists ([[M,M,..],[M,M,..],..]).      |
+|                         |            |            |  matrix lists ([[M,M,..],[M,M,..],..]).       |
 +-------------------------+------------+------------+-----------------------------------------------+
 
 Outputs

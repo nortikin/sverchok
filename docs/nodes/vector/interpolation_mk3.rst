@@ -25,7 +25,7 @@ Input & Output
 +--------+--------------+--------------------------------------------+
 
 Parameters
----------
+----------
 
   - *Mode* : Interpolation method. Can be Linear or Cubic
   - *Cyclic*: Treat the input vertices as a cyclic path.

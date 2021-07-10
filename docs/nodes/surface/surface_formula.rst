@@ -23,12 +23,13 @@ In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` fo
 One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs, sign;
 - From mathutlis module: Vector, Matrix;

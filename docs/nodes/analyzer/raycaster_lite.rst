@@ -42,7 +42,7 @@ Output sockets
 +------------------------+----------------------------------------------------------------------------------------+
 
 Advanced parameters (N-Panel)
-----------------------------
+-----------------------------
 
 **Safe Check**: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)
 

@@ -122,12 +122,13 @@ One difference with Python's syntax is that you can call only restricted number
 of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs;
 - From mathutlis module: Vector, Matrix;
@@ -173,13 +174,13 @@ This node has the following parameters:
   doubles" functionality of the X command: if the distance between last and
   first points is less than this threshold, X command will remove the last
   point and connect pre-last point to the first instead.
-* **NURBS output**. This parameter is available in the N panel only. If
+- **NURBS output**. This parameter is available in the N panel only. If
   checked, then the node will output all curve objects as NURBS curves.
   Otherwise, it will output specific types of curves (lines, circles, Bezier
   curves). In many cases, there is no difference; NURBS curves can be usable to
   apply specific API methods, or to output the result to formats that
   understand NURBS only. Unchecked by default.
-* **Concatenate**. This parameter is available in the N panel only. If checked,
+- **Concatenate**. This parameter is available in the N panel only. If checked,
   then the node will concatenate curve objects it generates. The curves can be
   automatically split into groups before concatenation, according to which of
   their endpoints coincide. For example, if you defined several separate
@@ -188,7 +189,7 @@ This node has the following parameters:
   will output single NURBS curve for each contour. If not checked, the node
   will output separate Curve object for each segment (command). Unchecked by
   default.
-* **Concat tolerance**. This parameter is available in the N panel only, and
+- **Concat tolerance**. This parameter is available in the N panel only, and
   only if **Concatenate** parameter is checked. This defines distance between
   end point of one curve and starting point of another curve, which the node
   will use to decide whether it is required to concatenate them. The default
