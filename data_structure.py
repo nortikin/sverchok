@@ -15,12 +15,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+
 from contextlib import contextmanager
 from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
 import itertools
-import ast
 import copy
 from itertools import zip_longest, chain, cycle, islice
 import bpy
@@ -36,12 +36,11 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
-from sverchok.utils.logging import info, debug
+from sverchok.utils.logging import debug
 import numpy as np
 
 
 DEBUG_MODE = False
-HEAT_MAP = False
 RELOAD_EVENT = False
 
 # this is set correctly later.
@@ -1219,47 +1218,15 @@ def setup_init():
     setup variables needed for sverchok to function
     """
     global DEBUG_MODE
-    global HEAT_MAP
     global SVERCHOK_NAME
     import sverchok
     SVERCHOK_NAME = sverchok.__name__
     addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
-        HEAT_MAP = addon.preferences.heat_map
     else:
         print("Setup of preferences failed")
 
-
-#####################################################
-###############  heat map system     ################
-#####################################################
-
-
-def heat_map_state(state):
-    """
-    colors the nodes based on execution time
-    """
-    global HEAT_MAP
-    HEAT_MAP = state
-    sv_ng = [ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchCustomTreeType']
-    if state:
-        for ng in sv_ng:
-            color_data = {node.name: (node.color[:], node.use_custom_color) for node in ng.nodes}
-            if not ng.sv_user_colors:
-                ng.sv_user_colors = str(color_data)
-    else:
-        for ng in sv_ng:
-            if not ng.sv_user_colors:
-                print("{0} has no colors".format(ng.name))
-                continue
-            color_data = ast.literal_eval(ng.sv_user_colors)
-            for name, node in ng.nodes.items():
-                if name in color_data:
-                    color, use = color_data[name]
-                    setattr(node, 'color', color)
-                    setattr(node, 'use_custom_color', use)
-            ng.sv_user_colors = ""
 
 #####################################################
 ############### update system magic! ################
@@ -1297,32 +1264,12 @@ def update_with_kwargs(update_function, **kwargs):
 
 
 @contextmanager
-def throttle_tree_update(node):
-    """ usage
-    from sverchok.data_structure import throttle_tree_update
-
-    inside your node, f.ex inside a wrapped_update that creates a socket
-
-    def wrapped_update(self, context):
-        with throttle_tree_update(self):
-            self.inputs.new(...)
-            self.outputs.new(...)
-
-    that's it.
-
-    """
+def throttle_tree_update(node):  # todo deprecated, should be wiped out
     with node.id_data.throttle_update():
         yield node
 
 
-def throttled(func):
-    """
-    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
-    inside nodes init methods and property changes methods
-
-    @throttled
-    def your_method(tree or node or socket, *args, **kwargs):
-    """
+def throttled(func):  # todo deprecated, should be wiped out
     @wraps(func)
     def wrapper_update(with_id_data, *args, **kwargs):
         tree = with_id_data.id_data
@@ -1331,23 +1278,7 @@ def throttled(func):
     return wrapper_update
 
 
-def throttle_and_update_node(func):
-    """
-    use as a decorator
-
-        class YourNode
-
-            @throttle_and_update_node
-            def mode_update(self, context):
-                ...
-
-    When a node has changed, like a mode-change leading to a socket change (remove, new)
-    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system.
-    - then We execute the code that makes changes to the node/node_tree
-    - then we end the throttle-state
-    - we are then ready to process
-    """
+def throttle_and_update_node(func):  # todo deprecated, should be wiped out
     @wraps(func)
     def wrapper_update(self, context):
         tree = self.id_data

@@ -162,8 +162,7 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'socket_number', text="in/out number")
 
     def sv_update(self):
-        if not self.id_data.skip_tree_update:
-            self.rebuild_out_sockets()
+        self.rebuild_out_sockets()
 
     def process(self):
         for sock_a, sock_b, sock_out in zip(list(self.inputs)[1::2], list(self.inputs)[2::2], self.outputs):

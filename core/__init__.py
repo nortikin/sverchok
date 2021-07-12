@@ -12,8 +12,8 @@ root_modules = [
 
 core_modules = [
     "sv_custom_exceptions",
-    "node_id_dict", "links", "sockets",
-    "handlers", "update_system",
+    "sockets",
+    "handlers", "update_system", "main_tree_handler",
     "events", "node_group", "group_handlers"
 ]
 

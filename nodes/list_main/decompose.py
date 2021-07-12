@@ -17,13 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (levelsOflist, multi_socket, changable_sockets,
                                      updateNode, get_other_socket)
 
-from sverchok.core import update_system
 
 OLD_OP = "node.sverchok_generic_callback_old"
 
@@ -39,12 +38,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type: StringProperty(default='SvStringsSocket')
 
     def auto_count(self):
-        data = self.inputs['data'].sv_get(default="not found")
-        other = get_other_socket(self.inputs['data'])
-        if other and data == "not found":
-            update_system.process_to_node(other.node)
-            data = self.inputs['data'].sv_get()
-
+        data = self.inputs['data'].sv_get(default=[])
         leve = levelsOflist(data)
         if leve+1 < self.level:
             self.level = leve+1

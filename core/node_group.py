@@ -8,23 +8,25 @@
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
 from collections import namedtuple
-from contextlib import contextmanager
 from functools import reduce
-from itertools import chain
+from itertools import cycle
 from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
 
 import bpy
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.main_tree_handler import empty_updater
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler, DEBUGGER_NODES, cut_mk_suffix
+from sverchok.core.group_handlers import MainHandler, NodeIdManager
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.utils.handle_blender_data import BlNode, BlTree, BlTrees
+from sverchok.utils.logging import catch_log_error
+from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon, SverchCustomTreeNode
 
 
-class SvGroupTree(bpy.types.NodeTree):
+class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     """Separate tree class for sub trees"""
     bl_idname = 'SvGroupTree'
     bl_icon = 'NODETREE'
@@ -35,21 +37,8 @@ class SvGroupTree(bpy.types.NodeTree):
     # should be updated by "Go to edit group tree" operator
     group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
-    # identifier of the tree, should be used via `tree_id`
-    tree_id_memory: bpy.props.StringProperty(default="", options={'SKIP_SAVE'})
-
-    # useless for API consistency # todo should be removed later
-    skip_tree_update: bpy.props.BoolProperty(options={'SKIP_SAVE'})
-
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
-
-    @property
-    def tree_id(self):
-        """Identifier of the tree"""
-        if not self.tree_id_memory:
-            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
-        return self.tree_id_memory
 
     @classmethod
     def poll(cls, context):
@@ -98,7 +87,8 @@ class SvGroupTree(bpy.types.NodeTree):
         return not shared_trees
 
     def update(self):
-        """trigger on links or nodes collections changes, on assigning tree to a group node"""
+        """trigger on links or nodes collections changes, on assigning tree to a group node
+        also it is triggered when a tree, next in the path, was changed (even if this tree was not effected)"""
         # When group input or output nodes are connected some extra work should be done
         if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
             return
@@ -225,58 +215,48 @@ class SvGroupTree(bpy.types.NodeTree):
         self.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
 
         nodes_errors = self.handler.get_error_nodes(group_nodes_path)
-        exception_color = (0.8, 0.0, 0)
-        no_data_color = (1, 0.3, 0)
-        for error, node in zip(nodes_errors, self.nodes):
-
-            # update error colors
-            if error is not None:
-                node.use_custom_color = True
-                node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
-            else:
-                node.use_custom_color = False
-                node.set_color()
-
-            # update object numbers
-            [s.update_objects_number() for s in chain(node.inputs, node.outputs)
-             if hasattr(s, 'update_objects_number')]
+        to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
+        time_mode = group_nodes_path[0].id_data.show_time_mode
+        if to_show_update_time:
+            update_time = (self.handler.get_cum_time(group_nodes_path) if time_mode == "Cumulative"
+                           else self.handler.get_nodes_update_time(group_nodes_path))
+        else:
+            update_time = cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update, NodeIdManager.extract_node_id(node))
 
             # update debug nodes
-            try:
-                if cut_mk_suffix(node.bl_idname) in DEBUGGER_NODES:  # todo should be replaced by isinstance
+            if BlNode(node).is_debug_node:
+                with catch_log_error():
                     node.process()
-            except:
-                pass
-
-    @contextmanager
-    def throttle_update(self):
-        """useless, for API consistency here"""
-        yield self
-
-    @contextmanager
-    def init_tree(self):
-        """It suppresses calling the update method of nodes,
-        main usage of it is during generating tree with python (JSON import)"""
-        is_already_initializing = 'init_tree' in self
-        if is_already_initializing:
-            yield self
-        else:
-            self['init_tree'] = ''
-            try:
-                yield self
-            finally:
-                del self['init_tree']
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
-        Should be called only during tree or node update events
+        Should be called only when the tree is opened in one of tree editors
         returns list of group nodes in path of current screen
         """
-        group_nodes = []
-        paths = bpy.context.space_data.path
-        for path, next_path in zip(paths[:-1], paths[1:]):
-            group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
-        return group_nodes
+        for area in bpy.context.screen.areas:
+            # this is not Sverchok editor
+            if area.ui_type != BlTrees.MAIN_TREE_ID:
+                continue
+
+            # editor does not have any active tree
+            if not area.spaces[0].node_tree:
+                continue
+
+            # this editor edits another tree, What!?
+            if self not in (p.node_tree for p in area.spaces[0].path):
+                continue
+
+            group_nodes = []
+            paths = area.spaces[0].path
+            for path, next_path in zip(paths[:-1], paths[1:]):
+                group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
+                if next_path.node_tree == self:
+                    break  # the tree is no last in the path
+            return group_nodes
+        raise LookupError(f'Path the group tree: {self} was not found')
 
 
 class BaseNode:
@@ -296,8 +276,9 @@ class BaseNode:
     def copy(self, original):
         self.n_id = ''
 
-    def set_color(self):
-        self.use_custom_color = False
+    sv_default_color = SverchCustomTreeNode.sv_default_color
+
+    set_temp_color = SverchCustomTreeNode.set_temp_color
 
     @property
     def absolute_location(self):
@@ -388,7 +369,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
-    def process(self):
+    def process(self):  # todo to remove
         """
         This method is going to be called only by update system of main tree
         Calling this method means that input group node should fetch data from group node
@@ -418,11 +399,16 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 raise error
 
     def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
-                is_input_changed: bool = True) -> Iterator[Node]:
+                is_input_changed: bool = True) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
         """
         This method should be called by group tree handler
         is_input_changed should be False if update is called just for inspection of inner changes
         """
+        # todo what if the node is disabled?
+        # there is nothing to update, return empty iterator
+        if self.node_tree is None:
+            return empty_updater(is_output_changed=False, error=None)
+
         if group_nodes_path is None:
             group_nodes_path = []
         else:
@@ -455,21 +441,12 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
 
-    def copy(self, original):
-        super().copy(original)
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
+    update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
     def free(self):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.forget_node(self)
-
-    def init(self, context):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
+        # This is inevitable evil cause of flexible nature of node_ids inside group trees
+        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
+        self.update_ui()
 
 
 class PlacingNodeOperator:
@@ -616,7 +593,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        with base_tree.throttle_update():
+        with base_tree.init_tree(), sub_tree.init_tree():
             # copy and past nodes into group tree
             bpy.ops.node.clipboard_copy()
             context.space_data.path.append(sub_tree)
@@ -684,7 +661,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             [base_tree.nodes.remove(n) for n in base_tree.nodes
              if n.name in frame_names and n.name not in with_children_frames]
 
-        base_tree.update_nodes([group_node])
+        # todo one ui update (useless) will be done by the operator and another with update system of main handler
         bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}

@@ -3,13 +3,12 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.update_system import (
-    set_first_run, clear_system_cache, reset_timing_graphs, build_update_list, process_tree)
+from sverchok.core.update_system import clear_system_cache, reset_timing_graphs
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
-from sverchok.utils.logging import catch_log_error
+from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
 
@@ -39,10 +38,6 @@ def sverchok_trees():
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
 
-def get_all_sverchok_affiliated_trees():
-    sv_types = {'SverchCustomTreeType', 'SvGroupTree'}
-    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
-
 
 def has_frame_changed(scene):
     last_frame = _state['frame']
@@ -70,33 +65,33 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
-    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.sv_links.create_new_links(ng)
-        links_changed = ng.sv_links.links_have_changed(ng)
-        if links_changed:
-            break
 
-    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
-        print('looks like a node was removed, cleaning')
+    if undo_handler_node_count['sv_groups'] != num_to_test_against:
+        debug('looks like a node was removed, cleaning')
         sv_clean(scene)
-        for ng in sverchok_trees():
-            ng.nodes_dict.load_nodes(ng)
-            ng.has_changed = True
         sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
 
     import sverchok.core.group_handlers as gh
-    gh.ContextTrees.reset_data()
+    gh.GroupContextTrees.reset_data()  # todo repeat the logic from main tree?
 
+    # ideally we would like to recalculate all from scratch
+    # but with heavy trees user can be scared of pressing undo button
+    # I consider changes in tree topology as most common case
+    # but if properties or work of some viewer node (removing generated objects) was effected by undo
+    # only recalculating of all can restore the adequate state of a tree
+    for tree in BlTrees().sv_main_trees:
+        tree.update()  # the tree could changed by undo event
 
 
 @persistent
@@ -106,8 +101,6 @@ def sv_update_handler(scene):
     """
     if not has_frame_changed(scene):
         return
-
-    reset_timing_graphs()
 
     for ng in sverchok_trees():
         try:
@@ -157,17 +150,17 @@ def sv_pre_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
-    Because Sverchok does not fully initialize itself during its initialization
-    it requires throttling of update method of loaded trees
+    4. evaluate trees from main tree handler
     """
     clear_system_cache()
     sv_clean(scene)
 
     import sverchok.core.group_handlers as gh
     gh.NodesStatuses.reset_data()
-    gh.ContextTrees.reset_data()
-
-    set_first_run(True)
+    gh.GroupContextTrees.reset_data()
+    import sverchok.core.main_tree_handler as mh
+    mh.NodesStatuses.reset_data()
+    mh.ContextTrees.reset_data()
 
 
 @persistent
@@ -178,10 +171,9 @@ def sv_post_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
+    4. evaluate trees from main tree handler
     post_load handler is also called when Blender is first ran
-    The method should remove throttling trees made in pre_load event,
-    initialize Sverchok parts which are required by loaded tree
-    and update all Sverchok trees
+    The method should initialize Sverchok parts which are required by loaded tree
     """
     from sverchok import node_tree, settings
 
@@ -199,10 +191,9 @@ def sv_post_load(scene):
     with catch_log_error():
         settings.apply_theme_if_necessary()
 
-    # release all trees and update them
-    set_first_run(False)
-    build_update_list()
-    process_tree()
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()
 
 
 def set_frame_change(mode):
