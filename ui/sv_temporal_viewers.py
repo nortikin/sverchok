@@ -24,13 +24,10 @@ from sverchok.utils.sv_node_utils import frame_adjust
 
 
 def offset_node_location(existing_node, new_node, offset):
-    new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
+    new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y + offset[1]
 
 
-def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
-    tree = nodes[0].id_data
-    previous_state = tree.sv_process
-    tree.sv_process = False
+def add_temporal_viewer_draw(nodes, links, existing_node, cut_links):
     bl_idname_new_node = 'SvViewerDrawMk4'
     output_map = get_output_sockets_map(existing_node)
     try:
@@ -69,11 +66,10 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
             if socket.bl_idname == "SvMatrixSocket":
                 links.new(socket, inputs[3])
                 break
-    tree.sv_process = previous_state
-    tree.update()
 
-def add_temporal_stethoscope(tree, nodes, links, existing_node):
-    '''Add Temporal Stethoscope and connects it to existing node'''
+
+def add_temporal_stethoscope(nodes, links, existing_node):
+    """Add Temporal Stethoscope and connects it to existing node"""
     bl_idname_new_node = 'SvStethoscopeNodeMK2'
     try:
         new_node = nodes['Temporal Stethoscope']
@@ -107,30 +103,24 @@ def add_temporal_stethoscope(tree, nodes, links, existing_node):
         links.new(socket, inputs[0])
         break
 
-    tree.update()
 
-def add_temporal_viewer(context, force_stetoscope, cut_links):
-    '''initial function to determine which viewer to add '''
-    space = context.space_data
-    tree = space.node_tree
-    nodes = tree.nodes
-    links = tree.links
+def add_temporal_viewer(context, force_stetoscope: bool, cut_links: bool):
+    """initial function to determine which viewer to add"""
+    tree = context.space_data.path[-1].node_tree  # in case if the node in a node group
+    existing_node = tree.nodes.active
 
-    existing_node = nodes.active
-
-    if not hasattr(existing_node,'outputs') or len(existing_node.outputs) == 0:
+    if not hasattr(existing_node, 'outputs') or len(existing_node.outputs) == 0:
         return
 
     is_drawable = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])
+    nodes = tree.nodes
+    links = tree.links
 
-    if  not force_stetoscope and is_drawable:
+    if not force_stetoscope and is_drawable:
+        add_temporal_viewer_draw(nodes, links, existing_node, cut_links)
+    else:
+        add_temporal_stethoscope(nodes, links, existing_node)
 
-        add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links)
-        return
-
-    add_temporal_stethoscope(tree, nodes, links, existing_node)
-
-    return
 
 class SvTemporalViewerOperator(Operator):
     """Connect to temporal Viewer"""

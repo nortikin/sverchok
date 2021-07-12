@@ -30,10 +30,9 @@ class Node(tw.Node):
         self._index = index
         self._tree = tree
 
-        # statistics
+        self.is_input_changed = False
         self.is_updated = False
-        self.link_changed = False
-        self.error = None
+        self.is_output_changed = False
 
         # cash
         self.bl_tween = bl_node
@@ -111,14 +110,20 @@ class Tree(tw.Tree[NodeType]):
     so it is immutable (topologically) data structure
     """
     def __init__(self, bl_tree: SvGroupTree):
+
+        # it means that the tree has correct topology (during a tree initialization it's always true)
+        self.is_updated = True
+
         self._tree_id = bl_tree.tree_id
         self._nodes = NodesCollection(bl_tree, self)
         self._links = LinksCollection(bl_tree, self)
 
-        for i, tree in enumerate(bpy.data.node_groups):
-            if tree.name == bl_tree.name:
-                self._index = i
-                break
+        # if the tree is created in the same time with the class initialization (loading file)
+        # the index of the tree in node_groups collection will be not found (-1)
+        self._index = bpy.data.node_groups.find(bl_tree.name)
+
+        # add links between wifi nodes
+        self._handle_wifi_nodes()
 
     @property
     def id(self) -> str:
@@ -135,6 +140,32 @@ class Tree(tw.Tree[NodeType]):
     @property
     def links(self) -> LinksCollection:
         return self._links
+
+    def _handle_wifi_nodes(self):
+        """The idea is to convert wifi nodes into regular nodes with sockets and links between them"""
+        # todo the code is very bad and should be removed later wifi node refactoring
+        # the method knows too match about wifi nodes
+        var_name_wifi_in = dict()
+
+        # add sockets to wifi "from nodes" if it has variable
+        for node in self._nodes:
+            if node.bl_tween.bl_idname == 'WifiInNode' and node.bl_tween.var_name:
+                socket = Socket(node, True, "Virtual wifi socket")
+                node.outputs.append(socket)
+                var_name_wifi_in[node.bl_tween.var_name] = node
+
+        # add sockets to wifi "to nodes" and connect them to wifi "from nodes" if there is wifi node with such variable
+        if var_name_wifi_in:
+            for to_node in self._nodes:
+                if to_node.bl_tween.bl_idname == 'WifiOutNode' and to_node.bl_tween.var_name in var_name_wifi_in:
+                    socket = Socket(to_node, False, "Virtual wifi socket")
+                    to_node.inputs.append(socket)
+                    from_node = var_name_wifi_in[to_node.bl_tween.var_name]
+                    from_socket = from_node.outputs[0]
+                    to_socket = to_node.inputs[0]
+                    self.links._dict[
+                        (from_node.name, from_socket.identifier,
+                         to_node.name, to_socket.identifier)] = Link(from_socket, to_socket, len(self.links))
 
 
 Element = TypeVar('Element')
@@ -201,6 +232,12 @@ class LinksCollection(TreeCollections):
     def __init__(self, bl_tree: SvGroupTree, tree: Tree):
         super().__init__()
         for i, bl_link in enumerate(bl_tree.links):
+
+            # new in 2.93, it is the same as if there was no the link (is_hidden was added before 2.93)
+            if hasattr(bl_link, 'is_muted') and bl_link.is_muted:
+                # or bl_link.is_hidden:  # it does not call update method of a tree https://developer.blender.org/T89109
+                continue
+
             from_node = tree.nodes[bl_link.from_node.name]
             from_socket = from_node.get_output_socket(bl_link.from_socket.identifier)
             to_node = tree.nodes[bl_link.to_node.name]

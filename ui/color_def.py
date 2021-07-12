@@ -23,6 +23,7 @@ from bpy.props import StringProperty
 from sverchok.menu import make_node_cats
 from sverchok.utils.logging import debug
 import sverchok
+from sverchok.utils.handle_blender_data import BlTrees
 
 colors_cache = {}
 
@@ -90,7 +91,6 @@ def color_callback(self, context):
 def sv_colors_definition():
     addon_name = sverchok.__name__
     addon = bpy.context.preferences.addons.get(addon_name)
-    debug("got addon")
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
@@ -125,23 +125,19 @@ def get_color(bl_id):
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 
-def sverchok_trees():
-    for ng in bpy.data.node_groups:
-        if ng.bl_idname == "SverchCustomTreeType":
-            yield ng
 
 def apply_theme(ng=None):
     """
     Apply theme colors
     """
-    global update_cache
-    global partial_update_cache
-    if not ng:
-        for ng in sverchok_trees():
+    if ng is None:
+        for ng in BlTrees().sv_trees:
             apply_theme(ng)
     else:
-        for n in filter(lambda n: hasattr(n, "set_color"), ng.nodes):
-            n.set_color()
+        for node in ng.nodes:
+            if node.sv_default_color:
+                node.use_custom_color = True
+                node.color = node.sv_default_color
 
 
 class SverchokApplyTheme(bpy.types.Operator):

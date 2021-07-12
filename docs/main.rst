@@ -14,6 +14,7 @@ Contents:
    :maxdepth: 2
 
    installation
+   tree_evaluation_system
    geometry
    curves
    surfaces

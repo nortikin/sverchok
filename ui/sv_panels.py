@@ -19,26 +19,11 @@
 import bpy
 
 import sverchok
-from sverchok import data_structure
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.nodeview_time_graph_drawing import timer_config
-
-class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
-    """This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"""
-    bl_idname = "node.remove_stale_draw_callbacks"
-    bl_label = "Remove Stale drawing"
-
-    def execute(self, context):
-
-        from sverchok.core.handlers import sv_clean, sv_scene_handler
-        scene = context.scene
-        sv_clean(scene)
-        sv_scene_handler(scene)
-        return {'FINISHED'}
+from sverchok.utils.handle_blender_data import BlTrees
 
 
 class SverchokPanels:
@@ -54,6 +39,7 @@ class SverchokPanels:
 class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ToolsMenu"
     bl_label = f"Tree properties ({version_and_sha})"
+    bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 
     def draw(self, context):
@@ -66,47 +52,62 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ActiveTreePanel"
     bl_label = "Active tree"
-    bl_parent_id = 'SV_PT_ToolsMenu'
 
     @classmethod
     def poll(cls, context):
-        return bool(context.space_data.node_tree)
+        return bool(context.space_data.node_tree) if super().poll(context) else False
 
     def draw(self, context):
         ng = context.space_data.node_tree
         col = self.layout.column()
 
-        col.operator("node.sverchok_update_current", text=f'Update "{ng.name}"').node_group = ng.name
-        col.operator('node.remove_stale_draw_callbacks')
+        col.operator('node.sverchok_update_current', text=f'Re-update all nodes').node_group = ng.name
+        col.operator('node.sverchok_bake_all', text="Bake Viewer Draw nodes").node_tree_name = ng.name
 
         col.use_property_split = True
-        row = col.row(align=True)
-        row.prop(ng, "sv_subtree_evaluation_order", text="Eval order", expand=True)
-        col.prop(ng, "sv_show_error_in_tree", text="Show error")
-        if ng.sv_show_error_in_tree:
-            col.prop(ng, "sv_show_error_details")
-        col.prop(ng, "sv_show_socket_menus")
+        col.prop(ng, 'sv_show', text="Viewers", icon=f"RESTRICT_VIEW_{'OFF' if ng.sv_show else 'ON'}")
+        col.prop(ng, 'sv_animate', text="Animation", icon='ANIM')
+        col.prop(ng, 'sv_process', text="Live update", toggle=True)
+        col.prop(ng, "sv_draft", text="Draft mode", toggle=True)
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        if addon.preferences.show_debug:
-            col.label(text="Time graph update controls")
 
-            row = col.row()
-            cb = "node.nodeview_timeinfo_callback"
+class SV_PT_TreeTimingsPanel(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_TreeTimingsPanel"
+    bl_label = "Node timings"
+    bl_parent_id = 'SV_PT_ActiveTreePanel'
+    bl_options = {'DEFAULT_CLOSED'}
 
-            if timer_config.get_drawing_state(ng):
-                op_end = row.operator(cb, text="end", icon="CANCEL")
-                op_end.fn_name = "end"
-                op_end.tree_name = ng.name            
-            else:
-                op_start = row.operator(cb, text="start", icon="PREVIEW_RANGE")
-                op_start.fn_name = "start"
-                op_start.tree_name = ng.name
+    def draw_header(self, context):
+        tree = context.space_data.node_tree
+        row = self.layout.row()
+        row.prop(tree, 'sv_show_time_nodes', text='')
 
-            col.prop(ng, "sv_show_time_nodes")
-            col.prop(ng, "sv_show_time_graph")
-            if data_structure.DEBUG_MODE:
-                col.prop(ng, "sv_show_debug_time_prints")
+    def draw(self, context):
+        tree = context.space_data.node_tree
+        row = self.layout.row()
+        row.use_property_split = True
+        row.prop(tree, 'show_time_mode', text="Update time", expand=True)
+
+
+class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_ExtrTreeUserInterfaceOptions"
+    bl_label = "Tree UI options"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.space_data.node_tree) if super().poll(context) else False
+
+    def draw(self, context):
+        ng = context.space_data.node_tree
+        col = self.layout.column(heading="Show")
+        col.use_property_split = True
+        col.prop(ng, 'sv_show_socket_menus', text="Socket menu")
+
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        col.prop(sv_settings, 'over_sized_buttons', text="Big buttons")
+        col.prop(sv_settings, 'show_icons', text="Menu icons")
+        col.prop(sv_settings, 'show_input_menus', text="Quick link")
 
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
@@ -213,9 +214,8 @@ class SverchokUpdateAll(bpy.types.Operator):
     def execute(self, context):
         try:
             bpy.context.window.cursor_set("WAIT")
-            sv_ngs = filter(lambda ng: ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
-            build_update_list()
-            process_tree()
+            for tree in BlTrees().sv_main_trees:
+                tree.force_update()
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
@@ -256,10 +256,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     def execute(self, context):
         try:
             bpy.context.window.cursor_set("WAIT")
-            ng = bpy.data.node_groups.get(self.node_group)
-            if ng:
-                build_update_list(ng)
-                process_tree(ng)
+            bpy.data.node_groups.get(self.node_group).force_update()
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
@@ -319,8 +316,9 @@ def view3d_show_live_mode(self, context):
 
 sv_tools_classes = [
     SV_PT_ToolsMenu,
-    SvRemoveStaleDrawCallbacks,
     SV_PT_ActiveTreePanel,
+    SV_PT_TreeTimingsPanel,
+    SV_PT_ExtrTreeUserInterfaceOptions,
     SV_PT_ProfilingPanel,
     SV_PT_SverchokUtilsPanel,
     SV_UL_TreePropertyList,

@@ -385,7 +385,6 @@ class SvSocketCommon(SvSocketProcessing):
         # handles both input and output.
         if self.is_linked and value:
             for link in self.links:
-                self.id_data.sv_links.remove(self.id_data, link)
                 self.id_data.links.remove(link)
 
         self.hide = value

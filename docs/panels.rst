@@ -1,27 +1,31 @@
-***********************
-Panels of Sverchok
-***********************
+******
+Panels
+******
 
 
 Node Tree Panel
 ===============
 
-.. image:: https://user-images.githubusercontent.com/28003269/93044130-f709d280-f664-11ea-80ff-cc8b559def0b.png
-  :alt: nodetreepanel.ng
+The panel is located in the Property panel under Sverchok tab in Sverchok tree editor. To open the panel pres :kbd:`N`
+and select Sverchok tab.
 
-This panel allows to manage Sverchok layouts as easy as you press buttons on an elevator.
 
-Update
-------
-
-In case if automatic tree update is turned off it is possible to make update manually. 
-`Update all` will update all trees and `Update "Current tree name"` button on active tree panel
-will update only current tree.
+.. _layout_manager:
 
 Layout manager
 --------------
 
-.. image:: https://user-images.githubusercontent.com/28003269/93044391-c1b1b480-f665-11ea-8b5c-5d2dbb2dc9c9.png
+.. figure:: https://user-images.githubusercontent.com/28003269/125042372-cccd4980-e0aa-11eb-89c8-45f739e05463.png
+    :align: right
+
+    Layout manager
+
+This panel allows to manage Sverchok layouts as easy as you press buttons on an elevator.
+
+Update all
+    In case if automatic tree update is turned off it is possible to make update manually. 
+    `Update all` will update all trees and `Update "Current tree name"` button on active tree panel
+    will update only current tree.
 
 List to quickly pick layout, switch between them with buttons instead of popup list. Also have settings:
 
@@ -40,30 +44,87 @@ List to quickly pick layout, switch between them with buttons instead of popup l
 +--------------------+----------------------------------------------------------------------------------------+
 | **Draft Mode**     | Switch tree to Draft mode (F7)                                                         |
 +--------------------+----------------------------------------------------------------------------------------+
-| **Fake User**      | Sets fake user so layout isn't deleted on save                                         |
-+--------------------+----------------------------------------------------------------------------------------+
 
 *Note: It is possible to filter trees by its names via standard blender interface right below the list.*
+
+
+.. _active_tree_panel:
 
 Active Tree Properties
 ----------------------
 
-.. image:: https://user-images.githubusercontent.com/28003269/93044536-308f0d80-f666-11ea-87a9-5b8f6d111585.png
-  :alt: tree_properties.png
+.. figure:: https://user-images.githubusercontent.com/28003269/125042613-19188980-e0ab-11eb-98ff-42e512ed9747.png
+    :align: right
+    :alt: tree_properties.png
 
-**Update "Current tree name"**: update tree manually
+    Active tree panel
 
-**Remove Stale Drawing**: This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own
+Re-update all nodes operator
+    It reevaluates a whole tree regardless to updated state of its nodes and the live update option.
 
-**Eval order**: This will give you control over the order in which subset graphs are evaluated
+Bake Viewer Draw nodes operator
+    All Viewer Draw nodes will generate generate Blender meshes from their input data in current scene.
 
-**Show error**: Display the errors in the node-tree right beside the Node
+Show viewers
+    It controls showing state of all Viewer nodes in the tree.
+
+Animate
+    If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
+    which have property to_animate enabled.
+
+Live update
+    If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
+    made by user. This property does not effect evaluation upon frame changes or by **Re-update all nodes** operator.
+    Enabling the property will call the tree topology changes :ref:`trigger <sv_triggers>`.
+
+Draft mode
+    It switches to draft property in :doc:`A number node <nodes/number/numbers>` and some others.
+    Its usage is to add set of draft properties to the node tree to improve performance.
+
+
+Node timings
+~~~~~~~~~~~~
+
+Enabling
+    Show last execution time for each nodes in the tree.
+
+Update time mode
+    - Per node
+        Showed time of a node includes only its execution period.
+    - Cumulative time
+        Showed time of a node includes time of its execution and execution time of all previous nodes.
+
+
+Tree UI options
+---------------
+
+.. figure:: https://user-images.githubusercontent.com/28003269/125053220-e88a1d00-e0b5-11eb-8b8f-b0709a7c7bc5.png
+    :align: right
+
+Socket menu
+    It adds a menu to all output sockets. With functionality of the menu you can add post processing steps which
+    can change shape of output data of a socket.
+
+Big buttons
+    Some buttons become big.
+
+Menu icons
+    To show icons in :kbd:`Shift+A` (Add node) menu.
+
+Quick link modes
+    - Do not show
+    - Show single option only
+        Show the button only for cases when there is only one node to be created can be suggested; do not show the menu
+    - Show *Create parameter* options
+        Show the button with a menu with options to create parameter nodes
+
 
 General utils panel
 -------------------
 
-.. image:: https://user-images.githubusercontent.com/28003269/93044715-7ea41100-f666-11ea-92e0-45b88145d914.png
-  :alt: general utils panel
+.. figure:: https://user-images.githubusercontent.com/28003269/93044715-7ea41100-f666-11ea-92e0-45b88145d914.png
+    :align: right
+    :alt: general utils panel
 
 **Check for updates** - finds if master branch on github has new version of Sverchok. In future there will be releases, but now dangerous update.
 
@@ -264,6 +325,9 @@ The "Item" tab of the N panel contains the following parts:
   that can be found in the node interface itself. Some types of nodes have
   additional parameters here - usually ones you do not have to change in most
   cases, or some kind of "advanced parameters".
+
+
+.. _3d_panel:
 
 3D Panel
 ========

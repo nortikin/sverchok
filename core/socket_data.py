@@ -109,7 +109,10 @@ def SvGetSocket(socket, other=None, deepcopy=True):
 
     except Exception as e:
         if data_structure.DEBUG_MODE:
-            debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
+            if socket.node is not None or other.node is not None:
+                debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
+            else:
+                debug(f"Cache miss. A socket was recently created, it is not bound with a node yet")
         raise SvNoDataError(socket)
 
 

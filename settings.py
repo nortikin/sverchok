@@ -8,7 +8,6 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProper
 from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
 from sverchok import data_structure
 from sverchok.core import handlers
-from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.utils.sv_extra_addons import draw_extra_addons
@@ -176,9 +175,6 @@ class SverchokPreferences(AddonPreferences):
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
 
-    def update_heat_map(self, context):
-        data_structure.heat_map_state(self.heat_map)
-
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
 
@@ -197,8 +193,8 @@ class SverchokPreferences(AddonPreferences):
 
     #  debugish...
     show_debug: BoolProperty(
-        name="Print update timings",
-        description="Print update timings in console",
+        name="Debug mode",  # todo to remove, there is logging level for this
+        description="Deprecated",
         default=False, subtype='NONE',
         update=update_debug_mode)
 
@@ -206,30 +202,13 @@ class SverchokPreferences(AddonPreferences):
         name="No data", description='When a node can not get data',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
+    )
 
     exception_color: FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
-
-    #  heat map settings
-    heat_map: BoolProperty(
-        name="Heat map",
-        description="Color nodes according to time",
-        default=False, subtype='NONE',
-        update=update_heat_map)
-
-    heat_map_hot: FloatVectorProperty(
-        name="Heat map hot", description='',
-        size=3, min=0.0, max=1.0,
-        default=(.8, 0, 0), subtype='COLOR')
-
-    heat_map_cold: FloatVectorProperty(
-        name="Heat map cold", description='',
-        size=3, min=0.0, max=1.0,
-        default=(1, 1, 1), subtype='COLOR')
+    )
 
     # Profiling settings
     profiling_sections = [
@@ -442,9 +421,6 @@ class SverchokPreferences(AddonPreferences):
         col = layout.row().column()
         col_split = col.split(factor=0.5)
         col1 = col_split.column()
-        col1.label(text="UI:")
-        col1.prop(self, "show_icons")
-        col1.prop(self, "over_sized_buttons")
 
         toolbar_box = col1.box()
         toolbar_box.label(text="Node toolbars")
@@ -454,7 +430,6 @@ class SverchokPreferences(AddonPreferences):
             if self.node_panels_icons_only:
                 toolbar_box.prop(self, "node_panels_columns")
 
-        col1.prop(self, 'show_input_menus')
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
 
@@ -473,7 +448,6 @@ class SverchokPreferences(AddonPreferences):
         col2box = col2.box()
         col2box.label(text="Debug:")
         col2box.prop(self, "show_debug")
-        col2box.prop(self, "heat_map")
         col2box.prop(self, "developer_mode")
 
         log_box = col2.box()
@@ -547,11 +521,6 @@ class SverchokPreferences(AddonPreferences):
         row_x1.prop(self, "no_data_color", text='')
 
         col_x2 = split_extra_colors.split().column()
-        col_x2.label(text="Heat map colors: ( hot / cold )")
-        row_x2 = col_x2.row()
-        row_x2.active = self.heat_map
-        row_x2.prop(self, "heat_map_hot", text='')
-        row_x2.prop(self, "heat_map_cold", text='')
 
         col3 = right_split.column()
         col3.label(text='Theme:')
