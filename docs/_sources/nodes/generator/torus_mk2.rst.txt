@@ -82,9 +82,9 @@ These parameters do not receive external input.
 +==================+==========+=========+======================================+
 | **Angle Units**  | Enum     | DEGREES | Interprets the angle values based on |
 |                  |  RADIANS |         | the selected angle units:            |
-|                  |  DEGREES |         |   Radians = 0 - 2pi                  |
-|                  |  UNITIES |         |   Degrees = 0 - 360                  |
-|                  |          |         |   Unities = 0 - 1                    |
+|                  |  DEGREES |         | Radians = 0 - 2pi                    |
+|                  |  UNITIES |         | Degrees = 0 - 360                    |
+|                  |          |         | Unities = 0 - 1                      |
 +------------------+----------+---------+--------------------------------------+
 
 Outputs

@@ -37,6 +37,6 @@ verts and edges, representing the modified polyline with newly curved corners.
 
 
 Examples and Notes
---------
+------------------
 
 see the thread:  https://github.com/nortikin/sverchok/pull/2290

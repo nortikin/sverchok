@@ -1,5 +1,5 @@
 Component Analyzer
-=================
+==================
 
 Functionality
 -------------

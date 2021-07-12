@@ -1,103 +1,109 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Turbulence &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="Vector" href="vector_index.html"/>
-        <link rel="next" title="Matrix" href="../matrix/matrix_index.html"/>
-        <link rel="prev" title="Variable Lacunarity" href="variable_lacunarity.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Matrix" href="../matrix/matrix_index.html" />
+    <link rel="prev" title="Variable Lacunarity" href="variable_lacunarity.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -112,7 +118,36 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Attraction Vectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Turbulence</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#range-table">Range table</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#links">Links</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
@@ -134,66 +169,80 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="vector_index.html">Vector</a> &raquo;</li>
-      
-    <li>Turbulence</li>
+        
+      <li>Turbulence</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/vector/turbulence.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/vector/turbulence.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="turbulence">
 <h1>Turbulence<a class="headerlink" href="#turbulence" title="Permalink to this headline">¶</a></h1>
@@ -203,51 +252,51 @@ For some noise types, if your output goes to the texture viewer you need to rema
 will be supersaturated or undersaturated. See below ‘range table’ for a detailed description.</p>
 <div class="section" id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="18%" />
-<col width="82%" />
+<col style="width: 18%" />
+<col style="width: 82%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameters</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameters</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Noise Function</td>
-<td>Pick between Scalar and Vector output</td>
+<tbody>
+<tr class="row-even"><td><p>Noise Function</p></td>
+<td><p>Pick between Scalar and Vector output</p></td>
 </tr>
-<tr class="row-odd"><td>Noise Type</td>
-<td><p class="first">Pick between several noise types</p>
+<tr class="row-odd"><td><p>Noise Type</p></td>
+<td><p>Pick between several noise types</p>
 <ul class="simple">
-<li>Blender</li>
-<li>Cell Noise</li>
-<li>New Perlin</li>
-<li>Standard Perlin</li>
-<li>Voronoi Crackle</li>
-<li>Voronoi F1</li>
-<li>Voronoi F2</li>
-<li>Voronoi F2F1</li>
-<li>Voronoi F3</li>
-<li>Voronoi F4</li>
+<li><p>Blender</p></li>
+<li><p>Cell Noise</p></li>
+<li><p>New Perlin</p></li>
+<li><p>Standard Perlin</p></li>
+<li><p>Voronoi Crackle</p></li>
+<li><p>Voronoi F1</p></li>
+<li><p>Voronoi F2</p></li>
+<li><p>Voronoi F2F1</p></li>
+<li><p>Voronoi F3</p></li>
+<li><p>Voronoi F4</p></li>
 </ul>
-<p class="last">See mathutils.noise docs ( <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html">Noise</a> )</p>
+<p>See mathutils.noise docs ( <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html">Noise</a> )</p>
 </td>
 </tr>
-<tr class="row-even"><td>Octaves</td>
-<td>Accepts integers values
-The number of different noise frequencies used.</td>
+<tr class="row-even"><td><p>Octaves</p></td>
+<td><p>Accepts integers values
+The number of different noise frequencies used.</p></td>
 </tr>
-<tr class="row-odd"><td>Hard</td>
-<td>Accepts bool values: Hard( True ) or Soft( False )
+<tr class="row-odd"><td><p>Hard</p></td>
+<td><p>Accepts bool values: Hard( True ) or Soft( False )
 Specifies whether returned turbulence
-is hard (sharp transitions) or soft (smooth transitions).</td>
+is hard (sharp transitions) or soft (smooth transitions).</p></td>
 </tr>
-<tr class="row-even"><td>Amplitude</td>
-<td>Accepts float values. The amplitude scaling factor.</td>
+<tr class="row-even"><td><p>Amplitude</p></td>
+<td><p>Accepts float values. The amplitude scaling factor.</p></td>
 </tr>
-<tr class="row-odd"><td>Frequency</td>
-<td>Accepts float values. The frequency scaling factor.</td>
+<tr class="row-odd"><td><p>Frequency</p></td>
+<td><p>Accepts float values. The frequency scaling factor.</p></td>
 </tr>
 </tbody>
 </table>
@@ -256,70 +305,70 @@ is hard (sharp transitions) or soft (smooth transitions).</td>
 <h2>Range table<a class="headerlink" href="#range-table" title="Permalink to this headline">¶</a></h2>
 <p>Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=3, amplitude=0.5, frequency=2.0, random seed=0.
 Plug a map range node in the scalar output and map it to the desired range (min=0, max=1) as in the image below.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="27%" />
-<col width="26%" />
-<col width="27%" />
+<col style="width: 20%" />
+<col style="width: 27%" />
+<col style="width: 26%" />
+<col style="width: 27%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Noise Type</th>
-<th class="head">median</th>
-<th class="head">maximum</th>
-<th class="head">minimum</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Noise Type</p></th>
+<th class="head"><p>median</p></th>
+<th class="head"><p>maximum</p></th>
+<th class="head"><p>minimum</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Blender</td>
-<td>0.4574402868747711</td>
-<td>1.2575798034667969</td>
-<td>0.0</td>
+<tbody>
+<tr class="row-even"><td><p>Blender</p></td>
+<td><p>0.4574402868747711</p></td>
+<td><p>1.2575798034667969</p></td>
+<td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td>Stdperlin</td>
-<td>0.37063807249069214</td>
-<td>0.972740530967712</td>
-<td>0.0</td>
+<tr class="row-odd"><td><p>Stdperlin</p></td>
+<td><p>0.37063807249069214</p></td>
+<td><p>0.972740530967712</p></td>
+<td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td>Newperlin</td>
-<td>0.2982039898633957</td>
-<td>0.7674642205238342</td>
-<td>0.0</td>
+<tr class="row-even"><td><p>Newperlin</p></td>
+<td><p>0.2982039898633957</p></td>
+<td><p>0.7674642205238342</p></td>
+<td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td>Voronoi_F1</td>
-<td>0.5178706049919128</td>
-<td>1.184566617012024</td>
-<td>0.016996487975120544</td>
+<tr class="row-odd"><td><p>Voronoi_F1</p></td>
+<td><p>0.5178706049919128</p></td>
+<td><p>1.184566617012024</p></td>
+<td><p>0.016996487975120544</p></td>
 </tr>
-<tr class="row-even"><td>Voronoi_F2</td>
-<td>0.9441720247268677</td>
-<td>1.696974754333496</td>
-<td>0.07561451196670532</td>
+<tr class="row-even"><td><p>Voronoi_F2</p></td>
+<td><p>0.9441720247268677</p></td>
+<td><p>1.696974754333496</p></td>
+<td><p>0.07561451196670532</p></td>
 </tr>
-<tr class="row-odd"><td>Voronoi_F3</td>
-<td>1.3248268961906433</td>
-<td>2.267115831375122</td>
-<td>0.24465730786323547</td>
+<tr class="row-odd"><td><p>Voronoi_F3</p></td>
+<td><p>1.3248268961906433</p></td>
+<td><p>2.267115831375122</p></td>
+<td><p>0.24465730786323547</p></td>
 </tr>
-<tr class="row-even"><td>Voronoi_F4</td>
-<td>1.6119314432144165</td>
-<td>2.4261345863342285</td>
-<td>0.7868537306785583</td>
+<tr class="row-even"><td><p>Voronoi_F4</p></td>
+<td><p>1.6119314432144165</p></td>
+<td><p>2.4261345863342285</p></td>
+<td><p>0.7868537306785583</p></td>
 </tr>
-<tr class="row-odd"><td>Voronoi_F1F2</td>
-<td>1.0320665836334229</td>
-<td>1.7262239456176758</td>
-<td>0.06919857859611511</td>
+<tr class="row-odd"><td><p>Voronoi_F1F2</p></td>
+<td><p>1.0320665836334229</p></td>
+<td><p>1.7262239456176758</p></td>
+<td><p>0.06919857859611511</p></td>
 </tr>
-<tr class="row-even"><td>Voronoi_Crackle</td>
-<td>1.5918831825256348</td>
-<td>1.75</td>
-<td>0.12337762117385864</td>
+<tr class="row-even"><td><p>Voronoi_Crackle</p></td>
+<td><p>1.5918831825256348</p></td>
+<td><p>1.75</p></td>
+<td><p>0.12337762117385864</p></td>
 </tr>
-<tr class="row-odd"><td>Cellnoise</td>
-<td>0.9668738842010498</td>
-<td>1.5000858306884766</td>
-<td>0.1691771298646927</td>
+<tr class="row-odd"><td><p>Cellnoise</p></td>
+<td><p>0.9668738842010498</p></td>
+<td><p>1.5000858306884766</p></td>
+<td><p>0.1691771298646927</p></td>
 </tr>
 </tbody>
 </table>
@@ -345,28 +394,32 @@ Plug a map range node in the scalar output and map it to the desired range (min=
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../matrix/matrix_index.html" class="btn btn-neutral float-right" title="Matrix">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="variable_lacunarity.html" class="btn btn-neutral" title="Variable Lacunarity"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../matrix/matrix_index.html" class="btn btn-neutral float-right" title="Matrix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="variable_lacunarity.html" class="btn btn-neutral float-left" title="Variable Lacunarity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -376,37 +429,15 @@ Plug a map range node in the scalar output and map it to the desired range (min=
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

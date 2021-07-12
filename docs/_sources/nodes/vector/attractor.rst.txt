@@ -33,6 +33,7 @@ Parameters
 This node has the following parameters:
 
 - **Attractor type**. Selects form of used attractor. Available values are:
+
   - **Point**. Default value. In simple case, attractor is just one point
     specified in **Center** input. Several points can be passed in that input;
     the method of attraction vector calculation in this case is controlled by
@@ -43,14 +44,17 @@ This node has the following parameters:
     (**Center** input) and normal vector (**Direction** input).
 - **Points mode**. This defines how attraction vectors are calculated in case
   several points are provided as attraction centers. The available modes are:
+
   - **Average**. Attracting force for each vertex will be calculated as
     average of attracting forces towards each attractor point.
   - **Nearest**. Attracting force for each vertex will be calculated as the
      attracting force towards the nearest of attractor points.
+
    The default mode is **Average** (which is more physically correct). This
    parameter is available only if **Attractor type** parameter is set to
    **Point**.
 - **Falloff type**. Used falloff law. Available values are:
+
   - **Inverse**. Falloff law is 1/R, where R is distance from vertex to attractor.
   - **Inverse square**. Falloff law is 1/R^2. This law is most common in
     physics (gravity and electromagnetizm), so this is the default value.

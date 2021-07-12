@@ -1,5 +1,5 @@
 Rigid Origami
-===========
+=============
 
 Functionality
 -------------

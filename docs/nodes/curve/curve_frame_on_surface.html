@@ -1,107 +1,183 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Curve Frame on Surface &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="Curves" href="curve_index.html"/>
-        <link rel="next" title="Curve Zero-Twist Frame" href="zero_twist_frame.html"/>
-        <link rel="prev" title="Curve Frame" href="curve_frame.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Curve Zero-Twist Frame" href="zero_twist_frame.html" />
+    <link rel="prev" title="Curve Frame" href="curve_frame.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="curve_index.html">Curves</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="curve_index.html">Curves</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="line.html">Line (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rounded_rectangle.html">Rounded Rectangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="arc_3pt.html">Arc 3pt (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="arc_sed.html">Arc Start / End / Tangent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biarc.html">Bi Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cubic_spline.html">Cubic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fillet_polyline.html">Fillet Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bezier_spline.html">Bezier Spline (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tangent_curve.html">Tangents Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kinky_curve.html">Kinked Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_formula.html">Curve Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_field_to_curve.html">Apply Field to Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_mk2.html">Offset Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sort_curves.html">Sort Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="concat_curves.html">Concatenate Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="blend_curves.html">Blend Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_length.html">Curve Length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="length_parameter.html">Curve Length Parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="length_rebuild.html">Naturally Parametrized Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curvature.html">Curve Curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torsion.html">Curve Torsion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_frame.html">Curve Frame</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Curve Frame on Surface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="zero_twist_frame.html">Curve Zero-Twist Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iso_uv_curve.html">Iso U/V Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_boundary.html">Surface’s Boundary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_on_surface.html">Curve on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_lerp.html">Curve Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast_curve.html">Cast Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_range.html">Curve Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip_curve.html">Flip Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reparametrize.html">Reparametrize Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split_curve.html">Split Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_curve.html">Approximate NURBS Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="catenary_curve.html">Catenary Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bezier_fit.html">Approximate Bezier Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circlify.html">Circlify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curves.html">Intersect NURBS Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_plane.html">Intersect Curve with Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extremes.html">Curve Extremes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marching_squares.html">Marching Squares</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marching_squares_on_surface.html">Marching Squares on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Ortho Project on Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="adaptive_plot.html">Adaptive Plot Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
@@ -134,66 +210,80 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="curve_index.html">Curves</a> &raquo;</li>
-      
-    <li>Curve Frame on Surface</li>
+        
+      <li>Curve Frame on Surface</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/curve/curve_frame_on_surface.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/curve/curve_frame_on_surface.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="curve-frame-on-surface">
 <h1>Curve Frame on Surface<a class="headerlink" href="#curve-frame-on-surface" title="Permalink to this headline">¶</a></h1>
@@ -201,9 +291,9 @@
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>Given a surface and a curve in the surface’s U/V space, this node calculates a reference frame of a curve for the given value of curve’s T parameter. The frame is calculated so that:</p>
 <ul class="simple">
-<li>it’s X axis is pointing along surface’s normal;</li>
-<li>it’s Z axis is pointing along curve’s tangent (in 3D space);</li>
-<li>it’s Y axis is perpendicular to both X and Z.</li>
+<li><p>it’s X axis is pointing along surface’s normal;</p></li>
+<li><p>it’s Z axis is pointing along curve’s tangent (in 3D space);</p></li>
+<li><p>it’s Y axis is perpendicular to both X and Z.</p></li>
 </ul>
 <p>This node allows one to place some object at the curve on the surface, while
 aligning it both with curve’s tangent and surface’s normal.</p>
@@ -212,32 +302,32 @@ aligning it both with curve’s tangent and surface’s normal.</p>
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><strong>Surface</strong>. The surface to put the curve into. This input is mandatory.</li>
-<li><strong>UVCurve</strong>. The curve to calculate frame for. The curve is supposed to lie
+<li><p><strong>Surface</strong>. The surface to put the curve into. This input is mandatory.</p></li>
+<li><p><strong>UVCurve</strong>. The curve to calculate frame for. The curve is supposed to lie
 in XOY plane; X coordinate means U parameter of the surface, and Y coordinate
-means V parameter. This input is mandatory.</li>
-<li><strong>T</strong>. The value of curve’s T parameter. The default value is 0.5.</li>
+means V parameter. This input is mandatory.</p></li>
+<li><p><strong>T</strong>. The value of curve’s T parameter. The default value is 0.5.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
-<li><strong>Join</strong>. If checked, then the node will output single (concatenated) list of
+<li><p><strong>Join</strong>. If checked, then the node will output single (concatenated) list of
 matrices for all input curves. Otherwise, it will output separate list of
-matrices per each input curve. Checked by default.</li>
+matrices per each input curve. Checked by default.</p></li>
 </ul>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><strong>Matrix</strong>. The matrix defining the frame for the curve at the specified
+<li><p><strong>Matrix</strong>. The matrix defining the frame for the curve at the specified
 value of T parameter. The location component of the matrix is the point of
-the curve.</li>
-<li><strong>Tangent</strong>. The direction of curve’s tangent vector at the specified value of T parameter.</li>
-<li><strong>Normal</strong>. The direction of curve’s main normal at the specified value of T parameter.</li>
-<li><strong>Binormal</strong>. The direction of curve’s binormal at the specified value of T parameter.</li>
+the curve.</p></li>
+<li><p><strong>Tangent</strong>. The direction of curve’s tangent vector at the specified value of T parameter.</p></li>
+<li><p><strong>Normal</strong>. The direction of curve’s main normal at the specified value of T parameter.</p></li>
+<li><p><strong>Binormal</strong>. The direction of curve’s binormal at the specified value of T parameter.</p></li>
 </ul>
 </div>
 <div class="section" id="examples-of-usage">
@@ -252,28 +342,32 @@ they are not aligned with the cylinder surface. Now let’s use “Curve frame o
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="zero_twist_frame.html" class="btn btn-neutral float-right" title="Curve Zero-Twist Frame">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="curve_frame.html" class="btn btn-neutral" title="Curve Frame"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="zero_twist_frame.html" class="btn btn-neutral float-right" title="Curve Zero-Twist Frame" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="curve_frame.html" class="btn btn-neutral float-left" title="Curve Frame" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -283,37 +377,15 @@ they are not aligned with the cylinder surface. Now let’s use “Curve frame o
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

@@ -64,7 +64,7 @@ This node has the following parameters:
   scaled by the same amount as is required to fit the space between **Src T
   Min** and **Src T Max** to the curve length. Otherwise, only orientation axis
   will be scaled. Checked by default.
-- **Algorithm**. Rotation calculation algorithm. Available values are:
+* **Algorithm**. Rotation calculation algorithm. Available values are:
 
   * Householder: calculate rotation by using Householder's reflection matrix
     (see Wikipedia_ article).                   

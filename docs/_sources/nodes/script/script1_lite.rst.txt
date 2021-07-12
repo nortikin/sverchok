@@ -52,6 +52,7 @@ The include directive ensures the dependency is also stored in the gist when exp
     enum = word1 word2 word3
     enum2 = raw clean
     """
+
 you make them visible on the ui by doing::
 
     def ui(self, context, layout):

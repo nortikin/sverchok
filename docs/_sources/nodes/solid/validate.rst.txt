@@ -40,7 +40,7 @@ Parameters
 
 This node has the following parameter:
 
-* **Precision*. The precision for automatic fix procedure (applied if the
+* **Precision**. The precision for automatic fix procedure (applied if the
   object is not valid in the input). The default value is 0.001.
 
 Outputs

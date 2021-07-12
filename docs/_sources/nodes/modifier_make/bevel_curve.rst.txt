@@ -146,6 +146,7 @@ This node has the following parameters:
   This parameter is available only in the N panel. 
 - **Taper Metric**. Defines the metric to use to calculate the spline for taper
   object. Available values are:
+
   * **Same as Curve** - use the same metric as for main curve. In many cases,
     this algorithm may be very imprecise.
   * **Orientation Axis** - use coordinates of taper object's vertices along the

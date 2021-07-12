@@ -1,5 +1,5 @@
 Planar edgenet to polygons
-==========
+==========================
 
 Functionality
 -------------

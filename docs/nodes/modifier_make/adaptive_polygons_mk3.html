@@ -1,103 +1,109 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Adaptive Polygons Mk2 &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="Modifier Make" href="modifier_make_index.html"/>
-        <link rel="next" title="Solidify" href="solidify_mk2.html"/>
-        <link rel="prev" title="Pipe" href="pipe_tubes.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Solidify" href="solidify_mk2.html" />
+    <link rel="prev" title="Pipe" href="pipe_tubes.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -109,7 +115,40 @@
 <li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="modifier_make_index.html">Modifier Make</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="bisect.html">Bisect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_section.html">Cross Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cut_object_by_surface.html">Cut Object by Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lathe.html">Lathe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_tube.html">Matrix Tube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Adaptive Polygons Mk2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#base-area-illustrations">Base area illustrations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="join_tris.html">join tris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="framework.html">Framework node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contour2D.html">Contour 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal_curve.html">Fractal curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dual_mesh.html">Dual Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diamond_mesh.html">Diamond Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clip_verts.html">Clip Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="csg_booleanMK2.html">csg boolean mk2</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -134,66 +173,80 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="modifier_make_index.html">Modifier Make</a> &raquo;</li>
-      
-    <li>Adaptive Polygons Mk2</li>
+        
+      <li>Adaptive Polygons Mk2</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/modifier_make/adaptive_polygons_mk3.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/modifier_make/adaptive_polygons_mk3.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="adaptive-polygons-mk2">
 <h1>Adaptive Polygons Mk2<a class="headerlink" href="#adaptive-polygons-mk2" title="Permalink to this headline">¶</a></h1>
@@ -221,186 +274,168 @@ Alessandro.</p>
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
-<li><p class="first"><strong>Vertices Recipient</strong>. Vertices of the recipient object. This input is mandatory.</p>
-</li>
-<li><p class="first"><strong>Polygons Recipient</strong>. Faces of the recipient object. Please have in mind that order of
+<li><p><strong>Vertices Recipient</strong>. Vertices of the recipient object. This input is mandatory.</p></li>
+<li><p><strong>Polygons Recipient</strong>. Faces of the recipient object. Please have in mind that order of
 indices in each face affect donor object rotation; for example, <cite>[0, 1, 2,
 3]</cite> is one rotation, <cite>[3, 0, 1, 2]</cite> is the same turned by 90 degrees. This
-input is mandatory.</p>
-</li>
-<li><p class="first"><strong>Vertices Donor</strong>. Vertices of the donor object. This input is mandatory.</p>
-</li>
-<li><p class="first"><strong>Edges Donor</strong>. Vertices of the donor object. This input is mandatory.</p>
-</li>
-<li><p class="first"><strong>Pols Donor</strong>. Faces of the donor object.</p>
-</li>
-<li><p class="first"><strong>FaceData Donor</strong>. List containing an arbitrary data item for each face of donor
+input is mandatory.</p></li>
+<li><p><strong>Vertices Donor</strong>. Vertices of the donor object. This input is mandatory.</p></li>
+<li><p><strong>Edges Donor</strong>. Vertices of the donor object. This input is mandatory.</p></li>
+<li><p><strong>Pols Donor</strong>. Faces of the donor object.</p></li>
+<li><p><strong>FaceData Donor</strong>. List containing an arbitrary data item for each face of donor
 object. For example, this may be used to provide material indexes of donor
-object faces. Optional input.</p>
-</li>
-<li><p class="first"><strong>Width coeff</strong>. Coefficient for donor object width (size along X,Y axis,
+object faces. Optional input.</p></li>
+<li><p><strong>Width coeff</strong>. Coefficient for donor object width (size along X,Y axis,
 usually). Default value is 1.0. The input expects one number per each
-recipient object face.</p>
-</li>
-<li><p class="first"><strong>Frame width</strong>. Width of frame for “Frame / Fan” mode. Maximum value of 1.0
+recipient object face.</p></li>
+<li><p><strong>Frame width</strong>. Width of frame for “Frame / Fan” mode. Maximum value of 1.0
 means that there will be no gap in the center of face, so this will be “Fan”
 mode. Default value is 0.5. This input is available only if <strong>Frame mode</strong>
-parameter is set to value other than <strong>Do not use</strong>.</p>
-</li>
-<li><p class="first"><strong>Z coeff</strong>. Coefficient for donor object size along recipient object face
+parameter is set to value other than <strong>Do not use</strong>.</p></li>
+<li><p><strong>Z coeff</strong>. Coefficient for donor object size along recipient object face
 normal. Exact meaning depends on <strong>Z Scale</strong> parameter (see below). The
-default value is 1.0. The input expects one number per each recipient object face.</p>
-</li>
-<li><p class="first"><strong>Z offset</strong>. Offset of donor objects along the normal of recipient object
+default value is 1.0. The input expects one number per each recipient object face.</p></li>
+<li><p><strong>Z offset</strong>. Offset of donor objects along the normal of recipient object
 face. Default value is 0.0. The input expects one number per each recipient
-object face.</p>
-</li>
-<li><p class="first"><strong>Z Rotation</strong>. Rotation of donor objects along the normal of recipient
+object face.</p></li>
+<li><p><strong>Z Rotation</strong>. Rotation of donor objects along the normal of recipient
 object face, in radians. Default value is 0.0. The input expects one number
-per each recipient object face.</p>
-</li>
-<li><p class="first"><strong>Polygon Rotation</strong>. Rotation of each recipient object face indexes. The default
+per each recipient object face.</p></li>
+<li><p><strong>Polygon Rotation</strong>. Rotation of each recipient object face indexes. The default
 value is 0. For example, if recipient face definition is <cite>[3, 4, 5, 6]</cite>, and
 <em>Polygon Rotation</em> is set to 1, then the face will be interpreted as <cite>[4, 5, 6,
-3]</cite>. This will affect the orientation of donor object.</p>
-</li>
-<li><p class="first"><strong>Polygon Mask</strong>. Mask for recipient object faces processing. What exactly will
+3]</cite>. This will affect the orientation of donor object.</p></li>
+<li><p><strong>Polygon Mask</strong>. Mask for recipient object faces processing. What exactly will
 be done with faces which are masked out is defined by <strong>Mask Mode</strong> parameter
-(see below).</p>
-</li>
-<li><p class="first"><strong>Threshold</strong>. Merging threshold for “remove doubles” / “merge by distance”
+(see below).</p></li>
+<li><p><strong>Threshold</strong>. Merging threshold for “remove doubles” / “merge by distance”
 function. The default value is 0.0001. This input is only visible if <strong>Remove
-doubles</strong> parameter is checked.</p>
-</li>
-<li><p class="first"><strong>Donor Index</strong>. Determine which donor to use for each face. This input is
+doubles</strong> parameter is checked.</p></li>
+<li><p><strong>Donor Index</strong>. Determine which donor to use for each face. This input is
 only visible if <strong>Matching Mode</strong> is set to <strong>Donor per face</strong> and <strong>Donor
-Matching</strong> is set to <strong>By Index</strong> (see below).</p>
-</li>
-<li><p class="first"><strong>Use normals</strong>. This defines how recipient object normals will be used to
+Matching</strong> is set to <strong>By Index</strong> (see below).</p></li>
+<li><p><strong>Use normals</strong>. This defines how recipient object normals will be used to
 transform the donor objects. Available values are:</p>
 <ul class="simple">
-<li><strong>Map</strong>. Interpolation between recipient object’s vertex normals will be
+<li><p><strong>Map</strong>. Interpolation between recipient object’s vertex normals will be
 used to deform the donor object. While this procuces smoother results, this
-gives more deformation of donor object.</li>
-<li><strong>Face</strong>. Recipient object’s face normal will be used to orient the donor
+gives more deformation of donor object.</p></li>
+<li><p><strong>Face</strong>. Recipient object’s face normal will be used to orient the donor
 object. While this gives less deformation of donor object, it can give gaps
-between copies.</li>
+between copies.</p></li>
 </ul>
 <p>The default value is <strong>Map</strong>.</p>
 </li>
-<li><p class="first"><strong>Custom Normal</strong>. This vector input will replace the normals of the recipient
+<li><p><strong>Custom Normal</strong>. This vector input will replace the normals of the recipient
 meshes. It will only work if <strong>Custom Normals</strong> is set to <strong>Normal per Vertex</strong> or
-<strong>Normal per Face</strong> (see below)</p>
-</li>
+<strong>Normal per Face</strong> (see below)</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has some number of parameters, and most of them are accessible only in the N panel:</p>
 <ul>
-<li><p class="first"><strong>Join</strong>. If checked, then all procuced copies of donor object will be merged
-into one mesh. Unchecked by default.</p>
-</li>
-<li><p class="first"><strong>Remove doubles</strong>. If checked, then “remove doubles” / “merge by distance”
+<li><p><strong>Join</strong>. If checked, then all procuced copies of donor object will be merged
+into one mesh. Unchecked by default.</p></li>
+<li><p><strong>Remove doubles</strong>. If checked, then “remove doubles” / “merge by distance”
 function will be applied to the resulting mesh; i.e., vertices that have
 (nearly) the same position, will be merged together. Merging threshold is
 controlled by <strong>Threshold</strong> input / parameter. This parameter is only visible
-if <strong>Join</strong> parameter is checked. Unchecked by default.</p>
-</li>
-<li><p class="first"><strong>Matching mode</strong>. This defines how the list of donor objects is matched with list of recipient objects. Available values are:</p>
+if <strong>Join</strong> parameter is checked. Unchecked by default.</p></li>
+<li><p><strong>Matching mode</strong>. This defines how the list of donor objects is matched with list of recipient objects. Available values are:</p>
 <ul class="simple">
-<li><strong>Match longest</strong>. Each pair of recipient and donor objects will be
+<li><p><strong>Match longest</strong>. Each pair of recipient and donor objects will be
 processed. For example, if there are 2 recipient objects and 2 donor
 objects, you will have two outputs: <cite>recipient[1] + donor[1]</cite> and
 <cite>recipient[2] + donor[2]</cite>. If one of lists is shorter than another, the
 last object will be repeated as many times as necessary. For example, if
 there is 1 recipient object and 2 donor objects, you will have two
-outputs: <cite>recipient[1] + donor[1]</cite> and <cite>recipient[1] + donor[2]</cite>.</li>
-<li><strong>Donor per face</strong>. The list of donor objects will be treated as “one
+outputs: <cite>recipient[1] + donor[1]</cite> and <cite>recipient[1] + donor[2]</cite>.</p></li>
+<li><p><strong>Donor per face</strong>. The list of donor objects will be treated as “one
 donor object per recipient object face”. Number of outputs will be defined
-by number of recipient objects.</li>
+by number of recipient objects.</p></li>
 </ul>
 <p>The default value is <strong>Match longest</strong>.</p>
 </li>
-<li><p class="first"><strong>Donor Matching</strong>. This defines how the list of donor objects is matched with
+<li><p><strong>Donor Matching</strong>. This defines how the list of donor objects is matched with
 list of recipient faces Is only available when <em>Matching Mode</em> is set to <strong>Donor per face</strong>.
 Available values are:</p>
 <ul class="simple">
-<li><strong>Repeat Last</strong>. The last donor object will be repeated if there are more
-faces than donors. [1,2] –&gt; [1,2,2,2,..]</li>
-<li><strong>Cycle</strong>.  Cycle the donors list if there are more faces than donors. [1,2] –&gt; [1,2,1,2,..]</li>
-<li><strong>By Index</strong>. Use a supplied list to define the donor that will be used for each face.</li>
+<li><p><strong>Repeat Last</strong>. The last donor object will be repeated if there are more
+faces than donors. [1,2] –&gt; [1,2,2,2,..]</p></li>
+<li><p><strong>Cycle</strong>.  Cycle the donors list if there are more faces than donors. [1,2] –&gt; [1,2,1,2,..]</p></li>
+<li><p><strong>By Index</strong>. Use a supplied list to define the donor that will be used for each face.</p></li>
 </ul>
 <p>The default value is <strong>Repeat Last</strong>.</p>
 </li>
-<li><p class="first"><strong>Normal axis</strong>. Axis of the donor object to be aligned with recipient object
-face normal. Available values are X, Y, and Z. Default value is Z.</p>
-</li>
-<li><p class="first"><strong>Z Scale</strong>. This defines how donor object size along recipient face normal
+<li><p><strong>Normal axis</strong>. Axis of the donor object to be aligned with recipient object
+face normal. Available values are X, Y, and Z. Default value is Z.</p></li>
+<li><p><strong>Z Scale</strong>. This defines how donor object size along recipient face normal
 is calculated. Available values are:</p>
 <ul class="simple">
-<li><strong>Proportional</strong>. Donor object size along recipient face normal is
+<li><p><strong>Proportional</strong>. Donor object size along recipient face normal is
 calculated by it’s size along Z axis (or other one, defined by <strong>Normal
-axis</strong> parameter) multiplied by value from <strong>Z coeff</strong> input.</li>
-<li><strong>Constant</strong>. Donor object size along recipient face normal is taken from
-<strong>Z Coeff</strong> input.</li>
-<li><strong>Auto</strong>. Calculate donor object scale along normal automatically, based on
+axis</strong> parameter) multiplied by value from <strong>Z coeff</strong> input.</p></li>
+<li><p><strong>Constant</strong>. Donor object size along recipient face normal is taken from
+<strong>Z Coeff</strong> input.</p></li>
+<li><p><strong>Auto</strong>. Calculate donor object scale along normal automatically, based on
 it’s scale along two other axes. Multiply that automatically calculated
-value to the value taken from <strong>Z Coeff</strong> input.</li>
+value to the value taken from <strong>Z Coeff</strong> input.</p></li>
 </ul>
 <p>The default value is <strong>Proportional</strong>.</p>
 </li>
-<li><p class="first"><strong>Custom Normals</strong>: This options allows to rewrite recipient normals before
+<li><p><strong>Custom Normals</strong>: This options allows to rewrite recipient normals before
 processing them. Available values are:</p>
 <ul class="simple">
-<li><strong>None</strong>: Use recipient normals</li>
-<li><strong>Normal per Vertex</strong>: Overwrite Vertex Normals. It will affect to the faces
-where <strong>Normal Mode</strong>  is set to <a href="#id1"><span class="problematic" id="id2">**</span></a>Map* (or 1)</li>
-<li><strong>Normal per Faces</strong>: Overwrite Faces Normals. It will affect to the faces
-where <strong>Normal Mode</strong>  is set to <a href="#id3"><span class="problematic" id="id4">**</span></a>Face* (or 0)</li>
+<li><p><strong>None</strong>: Use recipient normals</p></li>
+<li><p><strong>Normal per Vertex</strong>: Overwrite Vertex Normals. It will affect to the faces
+where <strong>Normal Mode</strong>  is set to <strong>Map</strong> (or 1)</p></li>
+<li><p><strong>Normal per Faces</strong>: Overwrite Faces Normals. It will affect to the faces
+where <strong>Normal Mode</strong>  is set to <strong>Face</strong> (or 0)</p></li>
 </ul>
 <p>The default value is <strong>None</strong>.</p>
 </li>
-<li><p class="first"><strong>Interpolate normals</strong>. This parameter will only work in the faces Where
+<li><p><strong>Interpolate normals</strong>. This parameter will only work in the faces Where
 <strong>Normal Mode</strong>  is set to <strong>Map</strong> (or 1). This defines the method of interpolation
 between recipient object’s vertex normals. Available values are:</p>
 <ul class="simple">
-<li><strong>Linear</strong>. Linear interpolation will be used.</li>
-<li><strong>Unit length</strong>. Linear interpolation will be used, but the resulting
+<li><p><strong>Linear</strong>. Linear interpolation will be used.</p></li>
+<li><p><strong>Unit length</strong>. Linear interpolation will be used, but the resulting
 normal will be resized to length of 1.0. This can give more smooth results
-in some cases.</li>
+in some cases.</p></li>
 </ul>
 <p>The default value is <strong>Linear</strong>.</p>
 </li>
-<li><p class="first"><strong>Use shell factor</strong>. If checked, each vertex normal will be multiplied by
+<li><p><strong>Use shell factor</strong>. If checked, each vertex normal will be multiplied by
 so-called “shell factor” - a multiplier calculated based on the sharpness of
 the vertex. Where a flat surface gives 1.0, and higher values sharper edges.
 When this parameter is checked, you will have more constant “thickness” of
 the resulting shape; when it is unchecked, the shape will tend to be more
-smooth. Unchecked by default.</p>
-</li>
-<li><p class="first"><strong>Coordinates</strong>. This defines the method of calculation of donor object’s
+smooth. Unchecked by default.</p></li>
+<li><p><strong>Coordinates</strong>. This defines the method of calculation of donor object’s
 coordinates along two axes orthogonal to recipient’s face normal. In any
 case, the location is defined by transforming some area of XOY plane (or
 other plane, according to <strong>Normal axis</strong> parameter), called <em>source area</em>, to
 the recipient object face. The question is what is the source area. The
 available values are:</p>
 <ul class="simple">
-<li><strong>Bounds</strong>. The source area is defined as follows:<ul>
-<li>For Quad recipient object faces, the bounding rectangle of donor object is taken.</li>
-<li>For Tris recipient object faces, the bounding triangle of donor object is
+<li><p><strong>Bounds</strong>. The source area is defined as follows:</p>
+<ul>
+<li><p>For Quad recipient object faces, the bounding rectangle of donor object is taken.</p></li>
+<li><p>For Tris recipient object faces, the bounding triangle of donor object is
 taken. The “bounding triangle” is defined as the smallest triangle, which
 covers all donor vertices while having bottom side parallel to X axis (or
 other axis according to <strong>Normal axis</strong> parameter). The triangle can be
 defined as either equilateral or rectangular, depending on <strong>Bounding
-triangle</strong> parameter.</li>
+triangle</strong> parameter.</p></li>
 </ul>
 </li>
-<li><strong>As Is</strong>. The source area is defined as follows:<ul>
-<li>For Quad faces, the <cite>[-1/2; 1/2] x [-1/2; 1/2]</cite> unit square is taken.</li>
-<li>For Tris faces, the unit triangle is taken. The triangle can be defined
+<li><p><strong>As Is</strong>. The source area is defined as follows:</p>
+<ul>
+<li><p>For Quad faces, the <cite>[-1/2; 1/2] x [-1/2; 1/2]</cite> unit square is taken.</p></li>
+<li><p>For Tris faces, the unit triangle is taken. The triangle can be defined
 as equilateral or rectangular, depending on <strong>Bounding triangle</strong>
-parameter.</li>
+parameter.</p></li>
 </ul>
 </li>
 </ul>
@@ -412,73 +447,71 @@ donor object smaller than <em>source area</em>, or bigger than it, or even outsi
 of it.</p>
 <p>The default value is <strong>Bounds</strong>.</p>
 </li>
-<li><p class="first"><strong>Bounding triangle</strong>. This defines the form of triangle to be used as base area (for tris faces). The available values are:</p>
+<li><p><strong>Bounding triangle</strong>. This defines the form of triangle to be used as base area (for tris faces). The available values are:</p>
 <ul class="simple">
-<li><strong>Equilateral</strong>. The base triangle will be defined as a triangle with all
+<li><p><strong>Equilateral</strong>. The base triangle will be defined as a triangle with all
 sides equal. When <strong>Coordinates</strong> parameter is set to <strong>As Is</strong>, this will
 be a triangle with center at <cite>(0, 0, 0)</cite> and a side of 1. In <strong>Bounds</strong>
-mode, this will be the bounding triangle.</li>
-<li><strong>Rectangular</strong>. The base triangle will be defined as a triangle with one
+mode, this will be the bounding triangle.</p></li>
+<li><p><strong>Rectangular</strong>. The base triangle will be defined as a triangle with one
 angle equal to 90 degrees. When <strong>Coordinates</strong> parameter is set to <strong>As
 Is</strong>, this will be a triangle with center of it’s hypotenuse at <cite>(0, 0, 0)</cite>
 and length of hypotenuse equal to 2. In <strong>Bounds</strong> mode, this will be the
-bounding triangle.</li>
+bounding triangle.</p></li>
 </ul>
 <p>Please see below for the illustrations of bounding triangles.
 The default value is <strong>Equilateral</strong>.</p>
 </li>
-<li><p class="first"><strong>Mask mode</strong>. This defines what to do with recipient objectfaces excluded by the
+<li><p><strong>Mask mode</strong>. This defines what to do with recipient objectfaces excluded by the
 <strong>PolyMask</strong> input. Available values are:</p>
-<ul>
-<li><p class="first"><strong>Skip</strong>. Such faces will be skipped completely, i.e. will not produce any
-vertices and faces.</p>
-</li>
-<li><p class="first"><strong>As Is</strong>. Such faces will be output as they were, i.e. one face will be
-output for each recipient face.</p>
-</li>
-<li><p class="first"><strong>Transform Control</strong>. In this mode the <strong>PolyMask</strong> input will be used to
+<ul class="simple">
+<li><p><strong>Skip</strong>. Such faces will be skipped completely, i.e. will not produce any
+vertices and faces.</p></li>
+<li><p><strong>As Is</strong>. Such faces will be output as they were, i.e. one face will be
+output for each recipient face.</p></li>
+<li><p><strong>Transform Control</strong>. In this mode the <strong>PolyMask</strong> input will be used to
 control the transformation method per face:</p>
-<blockquote>
-<div><p>0 = Skip
-1 = As Is
-2 = Tris
-3 = Quads
-4 = Fan
-5 = SubQuads
-6 = Frame
-7 = Auto Frame Fan
-8 = Auto Frame Sub Quads
-9 = Fan (Quad)
-10 = Frame (Tri)
-11 = Sub Quads (Tri)</p>
-</div></blockquote>
+<ul>
+<li><p>0 = Skip</p></li>
+<li><p>1 = As Is</p></li>
+<li><p>2 = Tris</p></li>
+<li><p>3 = Quads</p></li>
+<li><p>4 = Fan</p></li>
+<li><p>5 = SubQuads</p></li>
+<li><p>6 = Frame</p></li>
+<li><p>7 = Auto Frame Fan</p></li>
+<li><p>8 = Auto Frame Sub Quads</p></li>
+<li><p>9 = Fan (Quad)</p></li>
+<li><p>10 = Frame (Tri)</p></li>
+<li><p>11 = Sub Quads (Tri)</p></li>
+</ul>
 </li>
 </ul>
 <p>The default value is <strong>Skip</strong>.</p>
 </li>
-<li><p class="first"><strong>Transform</strong>. This defines what method to use in the transformation. In can
+<li><p><strong>Transform</strong>. This defines what method to use in the transformation. In can
 be different for triangular faces, Quads and Ngons. Available values are:</p>
 <ul class="simple">
-<li><strong>Skip</strong>: Don’t Output Anything</li>
-<li><strong>As Is</strong>: Output the receiver face</li>
-<li><strong>Tris</strong>: Perform Tris Transform. Barycentric transformation with the first 3 vertices of the face</li>
-<li><strong>Quads</strong>: Perform Quad Transform. Uses first 4 vertices, if the face has less vertices the last one will be repeated</li>
-<li><strong>Fan</strong>: Perform Fan Transform. Subdivides the face in triangles (Poke) and performs a barycentric transformation to each</li>
-<li><strong>SubQuads</strong>: Divides the face in 4 + Quad Transform</li>
-<li><strong>Frame</strong>: Perform Frame Transform</li>
-<li><strong>Auto Frame Fan</strong>: Perform Frame transform if Frame With is lower than 1 otherwise perform Fan</li>
-<li><strong>Auto Frame Sub Quads</strong>: Frame transform if Frame With is lower than 1 otherwise perform Sub Quads transform</li>
-<li><strong>Fan (Quad)</strong>: Fan Subdivision + Quad Transform (produces weird but interesting results)</li>
-<li><strong>Frame (Tri)</strong>: Frame Subdivision + Tri Transform (produces weird but interesting results)</li>
-<li><strong>Sub Quads (Tri)</strong>: Quads Subdivision + Tri Transform (produces weird but interesting results)</li>
+<li><p><strong>Skip</strong>: Don’t Output Anything</p></li>
+<li><p><strong>As Is</strong>: Output the receiver face</p></li>
+<li><p><strong>Tris</strong>: Perform Tris Transform. Barycentric transformation with the first 3 vertices of the face</p></li>
+<li><p><strong>Quads</strong>: Perform Quad Transform. Uses first 4 vertices, if the face has less vertices the last one will be repeated</p></li>
+<li><p><strong>Fan</strong>: Perform Fan Transform. Subdivides the face in triangles (Poke) and performs a barycentric transformation to each</p></li>
+<li><p><strong>SubQuads</strong>: Divides the face in 4 + Quad Transform</p></li>
+<li><p><strong>Frame</strong>: Perform Frame Transform</p></li>
+<li><p><strong>Auto Frame Fan</strong>: Perform Frame transform if Frame With is lower than 1 otherwise perform Fan</p></li>
+<li><p><strong>Auto Frame Sub Quads</strong>: Frame transform if Frame With is lower than 1 otherwise perform Sub Quads transform</p></li>
+<li><p><strong>Fan (Quad)</strong>: Fan Subdivision + Quad Transform (produces weird but interesting results)</p></li>
+<li><p><strong>Frame (Tri)</strong>: Frame Subdivision + Tri Transform (produces weird but interesting results)</p></li>
+<li><p><strong>Sub Quads (Tri)</strong>: Quads Subdivision + Tri Transform (produces weird but interesting results)</p></li>
 </ul>
 <p>The default value is Tris for Triangular faces, Quads for Quad faces and Frame for NGons.</p>
 </li>
-<li><p class="first"><strong>Implementation</strong>. This defines which algorithm should be used.</p>
+<li><p><strong>Implementation</strong>. This defines which algorithm should be used.</p>
 <ul class="simple">
-<li><strong>NumPy</strong>: Faster when donor has more than 50 vertices for tris or 12 verts for quads.</li>
-<li><strong>Mathutils</strong>: Faster when donor has less than 50 vertices for tris or 12 verts for quads.</li>
-<li><strong>Auto</strong>: Switched between Mathutils and NumPy implementation depending on donor vert count.</li>
+<li><p><strong>NumPy</strong>: Faster when donor has more than 50 vertices for tris or 12 verts for quads.</p></li>
+<li><p><strong>Mathutils</strong>: Faster when donor has less than 50 vertices for tris or 12 verts for quads.</p></li>
+<li><p><strong>Auto</strong>: Switched between Mathutils and NumPy implementation depending on donor vert count.</p></li>
 </ul>
 </li>
 </ul>
@@ -502,14 +535,14 @@ be different for triangular faces, Quads and Ngons. Available values are:</p>
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><strong>Vertices</strong></li>
-<li><strong>Polygons</strong></li>
-<li><strong>FaceData</strong>. List of data items, which were provided in the <strong>FaceDataD</strong>
-input, containing one data item for each face of output mesh.</li>
-<li><strong>VertRecptIdx</strong>. For each output vertex, this output contains an index of
-recipient object face, which was used to construct this output vertex.</li>
-<li><strong>FaceRecptIdx</strong>. Foreach output face, this output contains an index of
-recipient object face, which was used to construct this output face.</li>
+<li><p><strong>Vertices</strong></p></li>
+<li><p><strong>Polygons</strong></p></li>
+<li><p><strong>FaceData</strong>. List of data items, which were provided in the <strong>FaceDataD</strong>
+input, containing one data item for each face of output mesh.</p></li>
+<li><p><strong>VertRecptIdx</strong>. For each output vertex, this output contains an index of
+recipient object face, which was used to construct this output vertex.</p></li>
+<li><p><strong>FaceRecptIdx</strong>. Foreach output face, this output contains an index of
+recipient object face, which was used to construct this output face.</p></li>
 </ul>
 <p>The outputs will contain one object, if <strong>Join</strong> flag is checked, or one object
 per recipient object face, otherwise.</p>
@@ -544,28 +577,32 @@ and <a class="reference external" href="https://github.com/nortikin/sverchok/pul
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="solidify_mk2.html" class="btn btn-neutral float-right" title="Solidify">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="pipe_tubes.html" class="btn btn-neutral" title="Pipe"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="solidify_mk2.html" class="btn btn-neutral float-right" title="Solidify" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pipe_tubes.html" class="btn btn-neutral float-left" title="Pipe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -575,37 +612,15 @@ and <a class="reference external" href="https://github.com/nortikin/sverchok/pul
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

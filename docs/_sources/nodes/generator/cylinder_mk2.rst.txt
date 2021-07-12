@@ -74,7 +74,7 @@ Notes:
 
 
 Extended Parameters
-----------
+-------------------
 The Property Panel provides additional parameters.
 
 **Cyclic**

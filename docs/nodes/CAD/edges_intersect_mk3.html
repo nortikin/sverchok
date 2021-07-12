@@ -1,103 +1,109 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Intersect Edges &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="CAD" href="CAD_index.html"/>
-        <link rel="next" title="Edges to faces 2D" href="edges_to_faces_2d.html"/>
-        <link rel="prev" title="Crop mesh 2D" href="crop_mesh_2d.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Edges to faces 2D" href="edges_to_faces_2d.html" />
+    <link rel="prev" title="Crop mesh 2D" href="crop_mesh_2d.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -110,7 +116,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop mesh 2D</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Intersect Edges</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#benchmark-of-2d-algorithms">Benchmark of 2D algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters-n-panel">Parameters N-panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to faces 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge mesh 2d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -134,66 +157,80 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="CAD_index.html">CAD</a> &raquo;</li>
-      
-    <li>Intersect Edges</li>
+        
+      <li>Intersect Edges</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/CAD/edges_intersect_mk3.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/CAD/edges_intersect_mk3.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="intersect-edges">
 <h1>Intersect Edges<a class="headerlink" href="#intersect-edges" title="Permalink to this headline">¶</a></h1>
@@ -217,9 +254,9 @@ removed with the remove doubles toggle. It ignores overlapping edges</p>
 <p>It can handle big number of edges but if there are too much intersection the performance can slow down dramatically.
 For example if each input edge intersect with every others. In this case only few edges can be handled by this node.</p>
 <ul class="simple">
-<li>The algorithm does not produce double points.</li>
-<li>It is less robust and can give an error.</li>
-<li>For this algorithm epsilon parameter on N panel is more important. If you get an error you can try to change the parameter to fix.</li>
+<li><p>The algorithm does not produce double points.</p></li>
+<li><p>It is less robust and can give an error.</p></li>
+<li><p>For this algorithm epsilon parameter on N panel is more important. If you get an error you can try to change the parameter to fix.</p></li>
 </ul>
 <p>Prefix 2D means that the node expects from input any kind of flatten mesh
 but it does not mean that the mesh should only lay on XY surface.
@@ -243,125 +280,125 @@ It’s available only with Blender 2.81+</p>
 - Star Segments: Rotated segments from a center point (every segments intersects with the rest of segments in the center)
 - Spine Segments: Parallel Segments intersected with a middle segment that cuts them in the center.</p>
 <img alt="https://user-images.githubusercontent.com/10011941/120835106-30bc9980-c564-11eb-93c5-bdbabd1a63fe.png" src="https://user-images.githubusercontent.com/10011941/120835106-30bc9980-c564-11eb-93c5-bdbabd1a63fe.png" />
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="8%" />
-<col width="10%" />
-<col width="15%" />
-<col width="8%" />
-<col width="9%" />
-<col width="10%" />
-<col width="8%" />
-<col width="9%" />
-<col width="10%" />
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 15%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Test</td>
-<td colspan="3">Random Segments</td>
-<td colspan="3">Star segments</td>
-<td colspan="3">Spine Segments</td>
+<tbody>
+<tr class="row-odd"><td><p>Test</p></td>
+<td colspan="3"><p>Random Segments</p></td>
+<td colspan="3"><p>Star segments</p></td>
+<td colspan="3"><p>Spine Segments</p></td>
 </tr>
-<tr class="row-even"><td>Edges In
-Intersec.</td>
-<td>100
-1299</td>
-<td>1000
-127892</td>
-<td>10000
-12355630</td>
-<td><dl class="first last docutils">
-<dt>100</dt>
-<dd>1</dd>
+<tr class="row-even"><td><p>Edges In
+Intersec.</p></td>
+<td><p>100
+1299</p></td>
+<td><p>1000
+127892</p></td>
+<td><p>10000
+12355630</p></td>
+<td><dl class="simple">
+<dt>100</dt><dd><p>1</p>
+</dd>
 </dl>
 </td>
-<td><dl class="first last docutils">
-<dt>1000</dt>
-<dd>1</dd>
+<td><dl class="simple">
+<dt>1000</dt><dd><p>1</p>
+</dd>
 </dl>
 </td>
-<td><dl class="first last docutils">
-<dt>10000</dt>
-<dd>1</dd>
+<td><dl class="simple">
+<dt>10000</dt><dd><p>1</p>
+</dd>
 </dl>
 </td>
-<td>100
-100</td>
-<td>1000
-1000</td>
-<td>10000
-10000</td>
+<td><p>100
+100</p></td>
+<td><p>1000
+1000</p></td>
+<td><p>10000
+10000</p></td>
 </tr>
-<tr class="row-odd"><td>Alg_1</td>
-<td>6 ms</td>
-<td>694 ms</td>
-<td>74872 ms</td>
-<td>15 ms</td>
-<td>2125 ms</td>
-<td>SC*</td>
-<td>3 ms</td>
-<td>226 ms</td>
-<td>22618 ms</td>
+<tr class="row-odd"><td><p>Alg_1</p></td>
+<td><p>6 ms</p></td>
+<td><p>694 ms</p></td>
+<td><p>74872 ms</p></td>
+<td><p>15 ms</p></td>
+<td><p>2125 ms</p></td>
+<td><p>SC*</p></td>
+<td><p>3 ms</p></td>
+<td><p>226 ms</p></td>
+<td><p>22618 ms</p></td>
 </tr>
-<tr class="row-even"><td>Alg_1 + RD*</td>
-<td>10 ms</td>
-<td>1477 ms</td>
-<td>226240 ms</td>
-<td>25 ms</td>
-<td>3300 ms</td>
-<td>SC*</td>
-<td>4 ms</td>
-<td>246 ms</td>
-<td>22626 ms</td>
+<tr class="row-even"><td><p>Alg_1 + RD*</p></td>
+<td><p>10 ms</p></td>
+<td><p>1477 ms</p></td>
+<td><p>226240 ms</p></td>
+<td><p>25 ms</p></td>
+<td><p>3300 ms</p></td>
+<td><p>SC*</p></td>
+<td><p>4 ms</p></td>
+<td><p>246 ms</p></td>
+<td><p>22626 ms</p></td>
 </tr>
-<tr class="row-odd"><td>Sweep Line</td>
-<td>900 ms</td>
-<td>76700 ms</td>
-<td>SC*</td>
-<td>53 ms</td>
-<td>778ms</td>
-<td>2000 ms</td>
-<td>81 ms</td>
-<td>1200 ms</td>
-<td>15500 ms</td>
+<tr class="row-odd"><td><p>Sweep Line</p></td>
+<td><p>900 ms</p></td>
+<td><p>76700 ms</p></td>
+<td><p>SC*</p></td>
+<td><p>53 ms</p></td>
+<td><p>778ms</p></td>
+<td><p>2000 ms</p></td>
+<td><p>81 ms</p></td>
+<td><p>1200 ms</p></td>
+<td><p>15500 ms</p></td>
 </tr>
-<tr class="row-even"><td>Blender</td>
-<td>3 ms</td>
-<td>650 ms</td>
-<td>112240 ms/BC*</td>
-<td>0.6 ms</td>
-<td>20ms</td>
-<td>10643 ms</td>
-<td>0.8 ms</td>
-<td>12 ms</td>
-<td>1100 ms</td>
+<tr class="row-even"><td><p>Blender</p></td>
+<td><p>3 ms</p></td>
+<td><p>650 ms</p></td>
+<td><p>112240 ms/BC*</p></td>
+<td><p>0.6 ms</p></td>
+<td><p>20ms</p></td>
+<td><p>10643 ms</p></td>
+<td><p>0.8 ms</p></td>
+<td><p>12 ms</p></td>
+<td><p>1100 ms</p></td>
 </tr>
-<tr class="row-odd"><td>Np</td>
-<td>4 ms</td>
-<td>635 ms</td>
-<td>316970 ms</td>
-<td>6 ms</td>
-<td>1760ms</td>
-<td>SC*</td>
-<td>3 ms</td>
-<td>160 ms</td>
-<td>6466 ms</td>
+<tr class="row-odd"><td><p>Np</p></td>
+<td><p>4 ms</p></td>
+<td><p>635 ms</p></td>
+<td><p>316970 ms</p></td>
+<td><p>6 ms</p></td>
+<td><p>1760ms</p></td>
+<td><p>SC*</p></td>
+<td><p>3 ms</p></td>
+<td><p>160 ms</p></td>
+<td><p>6466 ms</p></td>
 </tr>
-<tr class="row-even"><td>Np + RD*</td>
-<td>9 ms</td>
-<td>1281 ms</td>
-<td>419789 ms/BC*</td>
-<td>18 ms</td>
-<td>3052 ms</td>
-<td>SC*</td>
-<td>5 ms</td>
-<td>168 ms</td>
-<td>6580 ms</td>
+<tr class="row-even"><td><p>Np + RD*</p></td>
+<td><p>9 ms</p></td>
+<td><p>1281 ms</p></td>
+<td><p>419789 ms/BC*</p></td>
+<td><p>18 ms</p></td>
+<td><p>3052 ms</p></td>
+<td><p>SC*</p></td>
+<td><p>5 ms</p></td>
+<td><p>168 ms</p></td>
+<td><p>6580 ms</p></td>
 </tr>
 </tbody>
 </table>
-<p><a href="#id1"><span class="problematic" id="id2">*</span></a>BC = Blender Crash
-<a href="#id3"><span class="problematic" id="id4">*</span></a>SC = Blender Crash + Partial System Crash</p>
+<p><em>BC = Blender Crash</em>
+<em>SC = Blender Crash + Partial System Crash</em></p>
 </div>
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
@@ -369,9 +406,9 @@ Intersec.</td>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt><strong>Include ‘On touch’</strong> <span class="classifier-delimiter">:</span> <span class="classifier">consider a valid intersection when one end of the edge lays on another edge.</span></dt>
-<dd>Generates double points so if active “remove doubles” switch is recommended. Only for Np and 3d mode</dd>
+<dl class="simple">
+<dt><strong>Include ‘On touch’</strong><span class="classifier">consider a valid intersection when one end of the edge lays on another edge.</span></dt><dd><p>Generates double points so if active “remove doubles” switch is recommended. Only for Np and 3d mode</p>
+</dd>
 </dl>
 <p><strong>Doubles</strong>: Merges points that are closer than the defined distance. Only for Alg_1, Np and 3d mode</p>
 </div>
@@ -392,28 +429,32 @@ Intersec.</td>
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="edges_to_faces_2d.html" class="btn btn-neutral float-right" title="Edges to faces 2D">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="crop_mesh_2d.html" class="btn btn-neutral" title="Crop mesh 2D"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="edges_to_faces_2d.html" class="btn btn-neutral float-right" title="Edges to faces 2D" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="crop_mesh_2d.html" class="btn btn-neutral float-left" title="Crop mesh 2D" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -423,37 +464,15 @@ Intersec.</td>
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

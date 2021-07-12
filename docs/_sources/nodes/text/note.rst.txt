@@ -49,4 +49,5 @@ Outputs
 Examples
 --------
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4328133/5968227a-3f81-11e4-8caa-9291cff8e3ff.png
+
 Using hidden power of note node - output socket to name indices in INDX viewer for any part. Vertices called as strings, can be any text.

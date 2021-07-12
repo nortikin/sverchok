@@ -55,9 +55,9 @@ Notes
 
 .. note::
   
-Always make matrices rotations not orthogonal, it will not work 100%. Making something like (1.0,0.001,0) will work for matrix sections.     
+    Always make matrices rotations not orthogonal, it will not work 100%. Making something like (1.0,0.001,0) will work for matrix sections.
 
-Always use Cross section nodes, not bisect, it will not work.      
+    Always use Cross section nodes, not bisect, it will not work.
 
   
 Examples  

@@ -26,7 +26,7 @@ Outputs
 - Start Frame, 
 - End Frame
 - Evaluate , this generates a value in the range (0.0 .... 1.0), and represents the position of the 'player head' in relation to the total amount of frames to play.
-all wrapped to standard level.
+  all wrapped to standard level.
 
 Example of usage
 ----------------

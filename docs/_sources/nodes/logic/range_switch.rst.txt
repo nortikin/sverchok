@@ -33,16 +33,16 @@ The **Mode** parameter allows to select one of the three switch modes: **Inside 
 
     INSIDE ON mode:
 
-    OFF ---> |b1| <-- ON --> |b2| <--- OFF   # inside ON,  outside OFF
+    OFF ---> [b1] <-- ON --> [b2] <--- OFF   # inside ON,  outside OFF
 
     INSIDE OFF mode:
 
-    ON  ---> |b1| <-- OFF --> |b2| <--- ON   # inside OFF, outside ON
+    ON  ---> [b1] <-- OFF --> [b2] <--- ON   # inside OFF, outside ON
 
     PASS THROUGH mode:
 
-    ON  ---> |b1| -- ON --> |b2| ---> OFF    # passing through range switches state
-    ON  <--- |b1| <- OFF -- |b2| <--- OFF    #
+    ON  ---> [b1] -- ON --> [b2] ---> OFF    # passing through range switches state
+    ON  <--- [b1] <- OFF -- [b2] <--- OFF    #
 
 +------------------+---------------+--------------+----------------------------------+
 | Param            | Type          | Default      | Description                      |

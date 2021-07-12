@@ -1,75 +1,100 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>NURBS: Curves and Surfaces &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="index.html"/>
-        <link rel="next" title="Scalar Fields" href="fields.html"/>
-        <link rel="prev" title="Surface" href="surfaces.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scalar Fields" href="fields.html" />
+    <link rel="prev" title="Surface" href="surfaces.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
@@ -82,113 +107,79 @@
 <li class="toctree-l1"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/curve/curve_index.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/surface/surface_index.html">Surfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/field/field_index.html">Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/solid/solid_index.html">Solids</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/spatial/spatial_index.html">Spatial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/CAD/CAD_index.html">CAD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/script/script_index.html">Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/exchange/exchange_index.html">Exchange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/svg/svg_index.html">SVG</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="main.html">Docs</a> &raquo;</li>
-      
-    <li>NURBS: Curves and Surfaces</li>
+    
+      <li><a href="main.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>NURBS: Curves and Surfaces</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/nurbs.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="_sources/nurbs.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="nurbs-curves-and-surfaces">
 <h1>NURBS: Curves and Surfaces<a class="headerlink" href="#nurbs-curves-and-surfaces" title="Permalink to this headline">¶</a></h1>
@@ -199,20 +190,20 @@ graphics, and, especially, in CAD software.</p>
 NURBS support in Sverchok is wider.</p>
 <p>At the moment, Sverchok supports two implementations of NURBS mathematics:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a>, a.k.a. NURBS-Python, library. It is relatively widely known and
+<li><p><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a>, a.k.a. NURBS-Python, library. It is relatively widely known and
 used, so we consider it as better tested. However, to use this
 implementation, you have to install Geomdl library into your Blender
 installation. Please refer to <a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies</a> wiki page for installation
-instructions.</li>
-<li>Built-in (native) implementation in Sverchok itself. In many cases, it is
+instructions.</p></li>
+<li><p>Built-in (native) implementation in Sverchok itself. In many cases, it is
 faster than Geomdl implementation, and it does not require any additional
-dependencies.</li>
-<li><a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries. FreeCAD uses OpenCASCADE kernel, which is implemented in
+dependencies.</p></li>
+<li><p><a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries. FreeCAD uses OpenCASCADE kernel, which is implemented in
 C++, so it is faster than Geomdl implementation; it is also considered to be
 more widely tested compared to Sverchok built-in implementation. However, it
 is in general slower comparing to built-in implementation, when you want to
 evaluate a lot of points on one curve or surface. Please refer to
-<a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies</a> wiki page for installation instructions.</li>
+<a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies</a> wiki page for installation instructions.</p></li>
 </ul>
 <div class="section" id="terminology">
 <h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
@@ -222,61 +213,61 @@ same things. Sverchok tries to not invent a 15th standard, and to follow the
 terminology used in “The NURBS <a class="reference external" href="https://www.springer.com/gp/book/9783642973857">Book</a>”. Here we are listing some common terms
 for reference.</p>
 <ul class="simple">
-<li><strong>Control Point</strong>: a point in 3D space, one of several points that define
+<li><p><strong>Control Point</strong>: a point in 3D space, one of several points that define
 common shape of the curve or surface. In general, NURBS curve / surface does
 not go through it’s control points, apart of some special cases. NURBS
-surfaces always have a rectangular grid of control points (m x n).</li>
-<li><strong>Control Polygon</strong> (for a curve): a polygon composed from control points of
-a curve, connected with edges.</li>
-<li><strong>Control Net</strong> (for a surface): a grid-like mesh, composed from control
-points of a surface, connected with edges.</li>
-<li><strong>Weight</strong>: a number, usually positive, which defines how strong a given
+surfaces always have a rectangular grid of control points (m x n).</p></li>
+<li><p><strong>Control Polygon</strong> (for a curve): a polygon composed from control points of
+a curve, connected with edges.</p></li>
+<li><p><strong>Control Net</strong> (for a surface): a grid-like mesh, composed from control
+points of a surface, connected with edges.</p></li>
+<li><p><strong>Weight</strong>: a number, usually positive, which defines how strong a given
 control point “attracts” the curve or surface. Sverchok can work with
 negative weights usually, but there is a lot of software that can’t, so
-usually you want to avoid use of negative weights.</li>
-<li><strong>Degree</strong>: an integer number, from 1 to however you want, which is the
+usually you want to avoid use of negative weights.</p></li>
+<li><p><strong>Degree</strong>: an integer number, from 1 to however you want, which is the
 degree of polynomials used in mathematical definition of NURBS curves. NURBS
 surfaces have two degrees: one along U direction, and another along V
-direction.</li>
-<li><strong>Non-rational B-Spline</strong>, or simply <strong>B-Spline</strong>: a special kind of NURBS
+direction.</p></li>
+<li><p><strong>Non-rational B-Spline</strong>, or simply <strong>B-Spline</strong>: a special kind of NURBS
 objects, that does not allow to specify weights; it is the same as a NURBS
-object with all weights set to 1.</li>
-<li><strong>Rational B-Spline</strong>, or <strong>NURBS</strong>: a general kind of objects, that allows
+object with all weights set to 1.</p></li>
+<li><p><strong>Rational B-Spline</strong>, or <strong>NURBS</strong>: a general kind of objects, that allows
 to specify different weights for different control points. Mathematically,
 such objects are defined as a relation of two polynomial expressions, hence
-the name “rational”.</li>
-<li><strong>Knot vector</strong>: a non-descending sequence of numbers, which define ranges of
+the name “rational”.</p></li>
+<li><p><strong>Knot vector</strong>: a non-descending sequence of numbers, which define ranges of
 curve/surface parameters, to which different control points have some
 relation. It is hard to explain in a few words how exactly the knot vector
 affects the shape of curve of surface, so for details please refer to the
 literature. Each number in the knot vector is called <strong>knot</strong>. Knot vector of
 a NURBS curve with degree <strong>p</strong> and <strong>n</strong> control points always must contain
 exactly <strong>p + n + 1</strong> knots. NURBS surfaces have two knot vectors: one for U
-parameter and one for V.</li>
-<li><strong>Knot multiplicity</strong>. A number of times one knot is repeated in the knot
+parameter and one for V.</p></li>
+<li><p><strong>Knot multiplicity</strong>. A number of times one knot is repeated in the knot
 vector. For example, if we have a knot vector <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">5</span></code>, then we
-say that knot 2 has multiplicity of 3.</li>
-<li><strong>Uniform knot vector</strong>: a knot vectors, values in which increase always by
+say that knot 2 has multiplicity of 3.</p></li>
+<li><p><strong>Uniform knot vector</strong>: a knot vectors, values in which increase always by
 the same amount (uniformly). For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">5</span></code>. Sometimes this
 kind of knot vectors is called “periodic” (for reasons that we have no place
 to explain here). Uniform knot vectors are not very often used, because
 curves with such knot vectors do not pass through their first and last
-control points (in general).</li>
-<li><strong>Clamped knot vector</strong>. A special kind of knot vector, which has
+control points (in general).</p></li>
+<li><p><strong>Clamped knot vector</strong>. A special kind of knot vector, which has
 multiplicity of it’s first and last knots equal to <strong>p +1</strong>, where <strong>p</strong> is
 the degree of the curve (or surface, along one of directions). For example,
 if we are talking about a curve with degree equal to 2, then <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span>
 <span class="pre">5</span> <span class="pre">5</span> <span class="pre">5</span></code> is a clamped knot vector. Curves with such knot vectors have a good
 property: they always pass through their first and last control points. This
-is a reason why clamped knot vectors are widely used.</li>
-<li><strong>Clamped Uniform knot vector</strong>. Knot vector which is “almost uniform”, but
+is a reason why clamped knot vectors are widely used.</p></li>
+<li><p><strong>Clamped Uniform knot vector</strong>. Knot vector which is “almost uniform”, but
 clamped; i.e. it has multiplicity of first and last knots equal to <code class="docutils literal notranslate"><span class="pre">p+1</span></code>,
 but all other knots are ascending evenly. For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">4</span></code> is a
-clamped uniform knot vector.</li>
-<li><strong>Non-Uniform knot vector</strong>. Most general form of knot vectors. Knot vector,
+clamped uniform knot vector.</p></li>
+<li><p><strong>Non-Uniform knot vector</strong>. Most general form of knot vectors. Knot vector,
 in which distance between neighbour knots is different in different places.
 For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0.5</span> <span class="pre">0.6</span> <span class="pre">1.5</span> <span class="pre">1.7</span> <span class="pre">1.9</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">2</span></code> is a non-uniform (and clamped)
-knot vector.</li>
+knot vector.</p></li>
 </ul>
 </div>
 <div class="section" id="workflow">
@@ -306,11 +297,11 @@ curves into NURBS, when such curves are passed to inputs of such nodes. We call
 types of curves, that can be automatically (and exactly, not approximately)
 converted to NURBS, “NURBS-like”. Examples of NURBS-like curves are:</p>
 <ul class="simple">
-<li>Bezier curves</li>
-<li>Cubic splines</li>
-<li>Polylines</li>
-<li>Circular arcs</li>
-<li>Line segments</li>
+<li><p>Bezier curves</p></li>
+<li><p>Cubic splines</p></li>
+<li><p>Polylines</p></li>
+<li><p>Circular arcs</p></li>
+<li><p>Line segments</p></li>
 </ul>
 <p>Sverchok has “NURBS to JSON” and “JSON to NURBS” nodes, which allow to save
 NURBS objects in JSON format and read NURBS from it; such JSON format can be
@@ -324,45 +315,49 @@ or manufacturing. This is, however, not a primary workflow at the moment.</p>
 <h2>Blender NURBS compatibility<a class="headerlink" href="#blender-nurbs-compatibility" title="Permalink to this headline">¶</a></h2>
 <p>Blender’s internal NURBS support is currently limited in two aspects:</p>
 <ul class="simple">
-<li>It’s Python API for manipulating NURBS objects is very poor;</li>
-<li>It does not allow to specify an arbitrary knot vector for curve or surface;
+<li><p>It’s Python API for manipulating NURBS objects is very poor;</p></li>
+<li><p>It does not allow to specify an arbitrary knot vector for curve or surface;
 only two special kinds of knot vectors are supported: “clamped uniform knot
-vectors” and “uniform knot vectors”.</li>
+vectors” and “uniform knot vectors”.</p></li>
 </ul>
 <p>So, Sverchok has limited features in interacting with Blender’s native NURBS objects:</p>
 <ul class="simple">
-<li><strong>NURBS In</strong> node can bring arbitrary Blender’s NURBS curves or surfaces
-from scene to Sverchok space;</li>
-<li><strong>NURBS Curve Out</strong> and <strong>NURBS Surface Out</strong> nodes allow to generate
+<li><p><strong>NURBS In</strong> node can bring arbitrary Blender’s NURBS curves or surfaces
+from scene to Sverchok space;</p></li>
+<li><p><strong>NURBS Curve Out</strong> and <strong>NURBS Surface Out</strong> nodes allow to generate
 Blender’s NURBS objects in scene, but without possibility to specify
-arbitrary knot vectors.</li>
+arbitrary knot vectors.</p></li>
 </ul>
 </div>
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="fields.html" class="btn btn-neutral float-right" title="Scalar Fields">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="surfaces.html" class="btn btn-neutral" title="Surface"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="fields.html" class="btn btn-neutral float-right" title="Scalar Fields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="surfaces.html" class="btn btn-neutral float-left" title="Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -372,37 +367,15 @@ arbitrary knot vectors.</li>
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

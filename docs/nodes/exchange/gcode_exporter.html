@@ -1,103 +1,109 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>G-code exporter &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="Exchange" href="exchange_index.html"/>
-        <link rel="next" title="SVG" href="../svg/svg_index.html"/>
-        <link rel="prev" title="Receive From Sorcar" href="receive_from_sorcar.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SVG" href="../svg/svg_index.html" />
+    <link rel="prev" title="Receive From Sorcar" href="receive_from_sorcar.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -130,70 +136,101 @@
 <li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="exchange_index.html">Exchange</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="exchange_index.html">Exchange</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="export_rw3dm_json.html">NURBS to JSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="import_rw3dm_json.html">JSON to NURBS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bezier_in.html">Bezier In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_in.html">NURBS In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="receive_from_sorcar.html">Receive From Sorcar</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">G-code exporter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#properties">Properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#continuous">Continuous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retraction">Retraction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="exchange_index.html">Exchange</a> &raquo;</li>
-      
-    <li>G-code exporter</li>
+        
+      <li>G-code exporter</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/exchange/gcode_exporter.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/exchange/gcode_exporter.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="g-code-exporter">
 <h1>G-code exporter<a class="headerlink" href="#g-code-exporter" title="Permalink to this headline">¶</a></h1>
@@ -204,63 +241,63 @@
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>Layer Height</strong> - List of coefficients for layer height</li>
-<li><strong>Flow Mult</strong> - List of coefficients for Print speed</li>
-<li><strong>Vertices</strong> - Main thing The Geometry (can be one or several paths)</li>
+<li><p><strong>Layer Height</strong> - List of coefficients for layer height</p></li>
+<li><p><strong>Flow Mult</strong> - List of coefficients for Print speed</p></li>
+<li><p><strong>Vertices</strong> - Main thing The Geometry (can be one or several paths)</p></li>
 </ul>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>Info</strong> - Information for sthetoscope of properties of Gcode - path length, filament extrusion and Extruded Volume</li>
-<li><strong>Vertices</strong> - Vertices that will be exported</li>
-<li><strong>Printed Edges</strong> - Edges will be printed</li>
-<li><strong>Travel Edges</strong> - Edges not will be printed</li>
+<li><p><strong>Info</strong> - Information for sthetoscope of properties of Gcode - path length, filament extrusion and Extruded Volume</p></li>
+<li><p><strong>Vertices</strong> - Vertices that will be exported</p></li>
+<li><p><strong>Printed Edges</strong> - Edges will be printed</p></li>
+<li><p><strong>Travel Edges</strong> - Edges not will be printed</p></li>
 </ul>
 </div>
 <div class="section" id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>File</strong> - Define file in directory, that will be written</li>
-<li><strong>Continuous / Retraction</strong> - Define would be filament retracted back in to nozzle (some kind of effect)</li>
-<li><strong>Start</strong> - Starting Gcode before it starts printing</li>
+<li><p><strong>File</strong> - Define file in directory, that will be written</p></li>
+<li><p><strong>Continuous / Retraction</strong> - Define would be filament retracted back in to nozzle (some kind of effect)</p></li>
+<li><p><strong>Start</strong> - Starting Gcode before it starts printing</p></li>
 </ul>
 <hr class="docutils" />
 <ul class="simple">
-<li><strong>End</strong> - Finishing Gcode after all geometry done (turn back nozzle to home position for example)</li>
-<li><strong>Export Gcode</strong> - Button to export when all ready</li>
+<li><p><strong>End</strong> - Finishing Gcode after all geometry done (turn back nozzle to home position for example)</p></li>
+<li><p><strong>Export Gcode</strong> - Button to export when all ready</p></li>
 </ul>
 </div>
 <div class="section" id="continuous">
 <h2>Continuous<a class="headerlink" href="#continuous" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>Filament (Ф)</strong> - Thickness of fliament</li>
-<li><strong>Nozzle</strong> - Coeffitient of nozzle diameter</li>
-<li><strong>Print</strong> - Printing Speed general</li>
+<li><p><strong>Filament (Ф)</strong> - Thickness of fliament</p></li>
+<li><p><strong>Nozzle</strong> - Coeffitient of nozzle diameter</p></li>
+<li><p><strong>Print</strong> - Printing Speed general</p></li>
 </ul>
 </div>
 <div class="section" id="retraction">
 <h2>Retraction<a class="headerlink" href="#retraction" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><strong>Filament (Ф)</strong> - Thickness of fliament</li>
-<li><strong>Nozzle</strong> - Coeffitient of nozzle diameter</li>
+<li><p><strong>Filament (Ф)</strong> - Thickness of fliament</p></li>
+<li><p><strong>Nozzle</strong> - Coeffitient of nozzle diameter</p></li>
 </ul>
 <hr class="docutils" />
 <ul class="simple">
-<li><strong>Print</strong> - Printing Speed general</li>
-<li><strong>Zlift</strong> - Lift when retract</li>
-<li><strong>Travel</strong> - Travel when retract</li>
+<li><p><strong>Print</strong> - Printing Speed general</p></li>
+<li><p><strong>Zlift</strong> - Lift when retract</p></li>
+<li><p><strong>Travel</strong> - Travel when retract</p></li>
 </ul>
 <hr class="docutils" />
 <ul class="simple">
-<li><strong>Retraction</strong> - Itself parameter</li>
-<li><strong>Z Hop</strong> - Hop after retract</li>
-<li><strong>Preload</strong> - Load after retract action done</li>
+<li><p><strong>Retraction</strong> - Itself parameter</p></li>
+<li><p><strong>Z Hop</strong> - Hop after retract</p></li>
+<li><p><strong>Preload</strong> - Load after retract action done</p></li>
 </ul>
 <hr class="docutils" />
 <ul class="simple">
-<li><strong>Sort Layers (z)</strong> - Sorting if input geometry have some disorder</li>
-<li><strong>Close Shapes</strong> - Close all layers</li>
+<li><p><strong>Sort Layers (z)</strong> - Sorting if input geometry have some disorder</p></li>
+<li><p><strong>Close Shapes</strong> - Close all layers</p></li>
 </ul>
 </div>
 <div class="section" id="example-of-usage">
@@ -270,28 +307,32 @@
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../svg/svg_index.html" class="btn btn-neutral float-right" title="SVG">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="receive_from_sorcar.html" class="btn btn-neutral" title="Receive From Sorcar"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../svg/svg_index.html" class="btn btn-neutral float-right" title="SVG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="receive_from_sorcar.html" class="btn btn-neutral float-left" title="Receive From Sorcar" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -301,37 +342,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

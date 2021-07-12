@@ -1,110 +1,170 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Solid General Fuse &mdash; Sverchok 0.5 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
-        <link rel="up" title="Solid" href="solid_index.html"/>
-        <link rel="next" title="Mirror Solid" href="mirror_solid.html"/>
-        <link rel="prev" title="Solid Boolean" href="solid_boolean.html"/> 
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Mirror Solid" href="mirror_solid.html" />
+    <link rel="prev" title="Solid Boolean" href="solid_boolean.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+        </div>
+
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="solid_index.html">Solids</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="solid_index.html">Solids</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="box_solid.html">Box (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cone_solid.html">Cone (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cylinder_solid.html">Cylinder (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere_solid.html">Sphere (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_solid.html">Torus (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_face.html">Polygon Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wire_face.html">Face from Curves (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="projection_trim_face.html">Face from Surface (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_solid.html">Transform Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chamfer_solid.html">Chamfer Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fillet_solid.html">Fillet Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_boolean.html">Solid Boolean</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Solid General Fuse</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_solid.html">Mirror Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_solid.html">Offset Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_from_faces.html">Solid from Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ruled_solid.html">Solid from two Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_face.html">Extrude Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solidify_face.html">Solidify Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="revolve_face.html">Revolve Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweep_face.html">Sweep Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split_solid.html">Split Solid by Face</a></li>
+<li class="toctree-l3"><a class="reference internal" href="points_inside_solid.html">Points inside Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_distance.html">Solid Distance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slice_solid.html">Solid Distance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hollow_solid.html">Hollow Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_to_solid.html">Mesh to Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_to_mesh_mk2.html">Solid to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_faces.html">Solid Faces (Curves)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_edges.html">Solid Edges (Curves)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_vertices.html">Solid Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_select.html">Select Solid Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="import_solid.html">Import Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="export_solid.html">Export Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="face_area.html">Solid Face Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="area.html">Solid Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="volume.html">Solid Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="center_of_mass.html">Center of Mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="is_closed.html">Is Solid Closed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="refine.html">Refine Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="validate.html">Validate &amp; Fix Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bound_box.html">Solid Bounding Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="make_compound.html">Compound Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_viewer.html">Solid Viewer</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -134,66 +194,80 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
 </ul>
 
+            
+          
+        </div>
         
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../main.html">Sverchok</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../main.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      
+        
           <li><a href="solid_index.html">Solid</a> &raquo;</li>
-      
-    <li>Solid General Fuse</li>
+        
+      <li>Solid General Fuse</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../../_sources/nodes/solid/general_fuse.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../../_sources/nodes/solid/general_fuse.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="solid-general-fuse">
 <h1>Solid General Fuse<a class="headerlink" href="#solid-general-fuse" title="Permalink to this headline">¶</a></h1>
@@ -247,15 +321,15 @@ of integers - indexes of source Solid objects each part came from (sets of
 source objects). The node supports two modes of how sets of source objects can
 be specified:</p>
 <ul class="simple">
-<li>By exact match. If you specify set of source objects like <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, then
+<li><p>By exact match. If you specify set of source objects like <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, then
 only parts which came from source solids number 0 and number 1 (at the same
 time, i.e. from intersection of these objects) will be identified. For
 example, a part with set of source objects <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code> will not be
-identified.</li>
-<li>By subset. If you specify set of source objects like <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, then all
+identified.</p></li>
+<li><p>By subset. If you specify set of source objects like <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, then all
 parts, for which the set of source objects includes 0 and 1, will be
 identified. For example, parts with sets of source objects <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, <code class="docutils literal notranslate"><span class="pre">[0,</span>
-<span class="pre">1,</span> <span class="pre">2]</span></code>, <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">3]</span></code> will be identified.</li>
+<span class="pre">1,</span> <span class="pre">2]</span></code>, <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">3]</span></code> will be identified.</p></li>
 </ul>
 <p>For each of inputs (Include and Exclude), the node can process a list of sets
 of source objects; they are joined by OR. For example, if for Include input you
@@ -273,69 +347,69 @@ Solid object came from which source object.</p>
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><strong>Solids</strong>. The Solid objects to operate on. This input can consume list of
-Solids or list of lists of Solids. This input is mandatory.</li>
-<li><strong>Include</strong>. List of sets of source objects, which identify which parts are
+<li><p><strong>Solids</strong>. The Solid objects to operate on. This input can consume list of
+Solids or list of lists of Solids. This input is mandatory.</p></li>
+<li><p><strong>Include</strong>. List of sets of source objects, which identify which parts are
 to be included in the resulting body (see Functionality section above). If
-not connected, this means “Include all what is not excluded”.</li>
-<li><strong>Exclude</strong>. List of sets of source objects, which identify which parts are
+not connected, this means “Include all what is not excluded”.</p></li>
+<li><p><strong>Exclude</strong>. List of sets of source objects, which identify which parts are
 to be excluded from the resulting body (see Functionality section above). If
-not connected, this means “do not exclude anything”.</li>
+not connected, this means “do not exclude anything”.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><strong>Merge Result</strong>. If checked, the node will fuse all parts that are selected
+<li><p><strong>Merge Result</strong>. If checked, the node will fuse all parts that are selected
 by Include and Exclude inputs, into one Solid object. Otherwise, the node
-will output each part as a separate Solid object. Checked by default.</li>
-<li><strong>Refine Solid</strong>. This parameter is available only when <strong>Merge Solid</strong>
+will output each part as a separate Solid object. Checked by default.</p></li>
+<li><p><strong>Refine Solid</strong>. This parameter is available only when <strong>Merge Solid</strong>
 parameter is checked. If checked, the node will refine the generated object,
 by removing unnecessary edges. The result will be more clean; but in this
 case the node will not be able to correctly calculate data for <strong>EdgesMask</strong>,
 <strong>EdgeSources</strong>, <strong>FacesMask</strong>, <strong>FaceSources</strong> outputs, so these outputs
-will be hidden. Checked by default.</li>
-<li><strong>Include mode</strong> (located near <strong>Include</strong> input). This defines how the parts
+will be hidden. Checked by default.</p></li>
+<li><p><strong>Include mode</strong> (located near <strong>Include</strong> input). This defines how the parts
 to be taken are identified. The available options are <strong>Exact</strong> and
 <strong>Subset</strong>. The default option is <strong>Exact</strong>. See Functionality section above
-for description.</li>
-<li><strong>Exclude mode</strong> (located near <strong>Exclude</strong> input). This defines how the parts
+for description.</p></li>
+<li><p><strong>Exclude mode</strong> (located near <strong>Exclude</strong> input). This defines how the parts
 to be removed are identified. The available options are <strong>Exact</strong> and
 <strong>Subset</strong>. The default option is <strong>Exact</strong>. See Functionality section above
-for description.</li>
+for description.</p></li>
 </ul>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><strong>Solid</strong>. The generated Solid objects. If <strong>Merge Result</strong> parameter is
+<li><p><strong>Solid</strong>. The generated Solid objects. If <strong>Merge Result</strong> parameter is
 checked, this node will contain one Solid object for each list of Solid
 objects in the <strong>Solids</strong> input. Otherwise, it will contain a list of Solid
-objects for each list of Solid objects in the <strong>Solids</strong> input.</li>
-<li><strong>SolidSources</strong>. For each Solid object in the <strong>Solid</strong> output, this output
+objects for each list of Solid objects in the <strong>Solids</strong> input.</p></li>
+<li><p><strong>SolidSources</strong>. For each Solid object in the <strong>Solid</strong> output, this output
 contains a list of indexes of source Solid object, from where these resulting
-Solid parts came from.</li>
-<li><strong>EdgesMask</strong>. Mask for Edges of generated Solid object, which is True for
+Solid parts came from.</p></li>
+<li><p><strong>EdgesMask</strong>. Mask for Edges of generated Solid object, which is True for
 edges that come from more than one source object. For <strong>Intersect</strong>
 operation, this mask will always contain all True. This output is only
 available when <strong>Merge Result</strong> parameter is not checked, or when <strong>Refine
-Solid</strong> parameter is not checked.</li>
-<li><strong>EdgeSources</strong>. For each Edge of generated Solid object, this output
+Solid</strong> parameter is not checked.</p></li>
+<li><p><strong>EdgeSources</strong>. For each Edge of generated Solid object, this output
 contains a list of indexes of source objects, from which this edge came. See
 more detailed explanation below. This output is only available when
 <strong>Merge Result</strong> parameter is not checked, or when <strong>Refine Solid</strong> parameter
-is not checked.</li>
-<li><strong>FacesMask</strong>. Mask for Faces of generated Solid object, which is True for
+is not checked.</p></li>
+<li><p><strong>FacesMask</strong>. Mask for Faces of generated Solid object, which is True for
 faces that come from more than one source object. For Union operation, this
 output contains all False, because all “common” faces are always inside the
 body. This output is only available when <strong>Merge Result</strong> parameter is not
-checked, or when <strong>Refine Solid</strong> parameter is not checked.</li>
-<li><strong>FaceSources</strong>. For each Face of generated Solid object, this output
+checked, or when <strong>Refine Solid</strong> parameter is not checked.</p></li>
+<li><p><strong>FaceSources</strong>. For each Face of generated Solid object, this output
 contains a list of indexes of source objects, from which this face came.
 This output is only available when <strong>Merge Result</strong> parameter is not checked,
-or when <strong>Refine Solid</strong> parameter is not checked.</li>
+or when <strong>Refine Solid</strong> parameter is not checked.</p></li>
 </ul>
 <p>The following illustrates how <strong>EdgeSources</strong> output is calculated (here Solid
 Boolean node is used, but General Fuse node works the same way):</p>
@@ -361,28 +435,32 @@ intersection of objects #0 and #2, or objects #1 and #2:</p>
 </div>
 
 
+           </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="mirror_solid.html" class="btn btn-neutral float-right" title="Mirror Solid">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="solid_boolean.html" class="btn btn-neutral" title="Solid Boolean"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="mirror_solid.html" class="btn btn-neutral float-right" title="Mirror Solid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="solid_boolean.html" class="btn btn-neutral float-left" title="Solid Boolean" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2020, sverchok team.
+
     </p>
   </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
         </div>
       </div>
@@ -392,37 +470,15 @@ intersection of objects #0 and #2, or objects #1 and #2:</p>
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

@@ -1,5 +1,5 @@
 Lattice Props
-==========
+=============
 
 Functionality
 -------------

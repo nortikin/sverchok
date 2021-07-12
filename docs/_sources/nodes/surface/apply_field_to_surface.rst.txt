@@ -7,7 +7,7 @@ Functionality
 This node generates a Surface by applying some vector field to another Surface.
 More precisely, it generates the surface, points of which are calculated as `X
 + K * VF(X)`, where X is the point of initial surface, VF is the vector field,
-  and K is some coefficient.
+and K is some coefficient.
 
 Optionally, for NURBS and NURBS-like surfaces, this node can apply a Vector
 Fields to control points of NURBS surface, instead of applying to all points of
