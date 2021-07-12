@@ -5,7 +5,8 @@
 </p>
 <h1 align="center">Sverchok</h1>
 
-[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+[![Sverchok CI](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml/badge.svg?event=push)](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml)
+[![Building documentation](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml/badge.svg)](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml)
 <a href="https://discord.gg/pjHHhjJz8Z"><img alt="Discord" src="https://img.shields.io/discord/745273148018262158"></a>
 [![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok)](https://blender.stackexchange.com/questions/tagged/sverchok)
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/Proposal)
