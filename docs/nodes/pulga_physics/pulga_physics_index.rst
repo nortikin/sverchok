@@ -3,7 +3,7 @@ Pulga Physics
 *************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    pulga_physics_solver
    pulga_vector_force

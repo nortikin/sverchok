@@ -13,26 +13,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   introduction
    installation
+   user_interface
    tree_evaluation_system
-   geometry
-   curves
-   surfaces
-   nurbs
-   fields
-   solids
-   induction
-   panels
+   data_structure_index
    nodes
-   contributing
-   contribute_small_things
-   testing
-   shortcuts
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   tutorials
+   contributing_to_sverchok

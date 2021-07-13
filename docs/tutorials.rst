@@ -1,6 +1,6 @@
-************************
-Introduction to Sverchok
-************************
+*********
+Tutorials
+*********
 
 > Dealga McArdle | December | 2014
 
@@ -35,7 +35,3 @@ The following Units will introduce no more than 10 node types per lesson. Take y
    Notes for Lesson 02 (Nesting) <nesting>
    Lesson 02 - A Circle <Unit_01/lesson_02>
    Lesson 03 - A Grid <Unit_01/lesson_03>
-   
-   Simplifying parameter node creation with input socket menus <input_menus>
-   Data structure manipulation with output socket menus <socket_menus>
-

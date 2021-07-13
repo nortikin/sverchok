@@ -3,7 +3,7 @@ List Struct
 ***********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    flip
    item
