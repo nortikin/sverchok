@@ -62,4 +62,5 @@ Everything. We tend to be more lenient/rapid if your code proposal fixes a real 
 General guidelines
 ==================
 
-The document you should be reading to get a sense of how we'd like contributed code to look and behave is here ( contribute.rst ).
+The document you should be reading to get a sense of how we'd like contributed code to look and
+behave is :doc:`here <contributing>`.
