@@ -162,6 +162,16 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
+        # F5 | Trigger update of context node tree
+        kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS')
+        kmi.properties.force_mode = False
+        nodeview_keymaps.append((km, kmi))
+
+        # Ctrl-F5 | Trigger update of context node tree
+        kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS', ctrl=True)
+        kmi.properties.force_mode = True
+        nodeview_keymaps.append((km, kmi))
+
         # F6 | Toggle processing mode of the active node tree
         kmi = km.keymap_items.new('node.sv_toggle_process', 'F6', 'PRESS')
         nodeview_keymaps.append((km, kmi))

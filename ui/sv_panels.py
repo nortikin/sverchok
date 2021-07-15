@@ -261,6 +261,28 @@ class SverchokUpdateCurrent(bpy.types.Operator):
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
 
+class SverchokUpdateContext(bpy.types.Operator):
+    """Update current Sverchok node tree"""
+    bl_idname = "node.sverchok_update_context"
+    bl_label = "Update current node tree"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    force_mode: bpy.props.BoolProperty(default=False)
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        node_tree = context.space_data.node_tree
+        if node_tree:
+            if self.force_mode or node_tree.sv_process:
+                try:
+                    bpy.context.window.cursor_set("WAIT")
+                    node_tree.force_update()
+                finally:
+                    bpy.context.window.cursor_set("DEFAULT")
+        return {'FINISHED'}
 
 class SvSwitchToLayout(bpy.types.Operator):
     """Switch to exact layout, user friendly way"""
@@ -325,6 +347,7 @@ sv_tools_classes = [
     SverchokUpdateAll,
     SverchokBakeAll,
     SverchokUpdateCurrent,
+    SverchokUpdateContext,
     SvSwitchToLayout
 ]
 

@@ -124,7 +124,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
-    sv_show_time_nodes: BoolProperty(name="Node times", default=True, options=set(), update=lambda s, c: s.update_ui())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
     show_time_mode: EnumProperty(
         items=[(n, n, '') for n in ["Per node", "Cumulative"]],
         options=set(),
