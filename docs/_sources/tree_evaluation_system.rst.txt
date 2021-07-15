@@ -24,30 +24,30 @@ before all previous nodes are executed. However it does not make execution proce
     Simple tree
 
 Possible order of execution is A -> B -> C -> D -> E -> F. However D -> B -> A -> C -> E -> F is also possible.
-And there are another variants. If there are two ore more disjoint nets of nodes their execution, 
+And there are another variants. If there are two or more disjoint nets of nodes their execution,
 relatively to each other, also is unordered.
 
 .. note::
-    In the future Sverchok may get execution system which would be able to evaluate some parts of a tree concurrently.
-    In this case A, B, D nodes can be executed concurrently if more than two processors are available.
+    In the future Sverchok may get a execution system which would be able to evaluate some parts of a tree concurrently.
+    In this case A, B, D nodes could be executed concurrently if more than two processors were available.
     But now Sverchok can use only one processor.
 
-There are nodes which can change control flor in some way.
+There are nodes which can change control flow in some way.
 
 
 Group nodes
 -----------
 
-If there is a patter of nodes which is repeated several times in a tree it can be converted into a group node.
+If there is a pattern of nodes which is repeated several times in a tree it can be converted into a group node.
 Group node encapsulates bunch of nodes inside a subtree. Evaluation system of main tree evaluate group nodes
 in the same way as regular nodes except that their work can be cancelled. Cancelling of group nodes happen between
-execution of tis nodes.
+execution of its nodes.
 
 
 :doc:`Loop nodes <nodes/logic/loop_out>`
 ----------------------------------------
 
-Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flor and
+Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flow and
 return it to evaluation system after their part is done.
 
 
@@ -60,7 +60,7 @@ return it to evaluation system after their part is done.
 
     Connection between ``A number`` and ``Stethoscope`` nodes via wifi nodes
 
-In case if you have links which go through all your tree and spoil the tree readability it's possible 
+In case if you have links which go through all your tree and spoil the tree readability it's possible
 to hide the links by using wifi nodes. ``Wifi in`` and ``Wifi out`` nodes act as if they had a link between each other.
 ``Wifi in`` can be connected to multiple ``Wifi out`` nodes.
 
@@ -76,7 +76,7 @@ This is |reroute| `standard Blender nodes`_ which are used for links organizatio
 Other nodes
 -----------
 
-Also there are other nodes which can evaluate nodes on their own accord. Here is at least one of them 
+Also there are other nodes which can evaluate nodes on their own accord. Here is at least one of them
 :doc:`Evolver node <nodes/logic/evolver>`.
 
 
@@ -94,7 +94,7 @@ exist. Muting links connected to reroute nodes mutes also the link from opposite
 
 .. warning::
     Muting nodes is not supported neither by Blender (Blender does not support muting nodes UI for custom trees) or
-    Sverchok. However Sverchok is moving slowly in the direction to make it possible. 
+    Sverchok. However Sverchok is moving slowly in the direction to make it possible.
 
 
 .. _sv_triggers:
@@ -103,24 +103,24 @@ Triggers
 ========
 
 Each evaluation starts with update event (trigger). Each event has information about what was previously changed.
-Evaluation system use this information to evaluate only those nodes which was effected by the change.
+Evaluation system use this information to evaluate only those nodes which have been effected by the change.
 Evaluation process is next. The evaluation system scans nodes from left to right. If it finds outdated nodes 
 it updates them. Also it checks whether current node has previous nodes updated in current session and if so it also
 goes to update.
 
 Update events can be cancelable or not. Events, which are cancelable, can be canceled either by user by pressing Escape
-button or by another event. For example if to change property of a node too rapidly in a heavy tree 
+button or by another event. For example if to change property of a node too rapidly in a heavy tree
 it causes stopping update in the middle of the tree and starting update from the node again.
 
-For now execution system can cancel execution only between nodes. 
+For now execution system can cancel execution only between nodes.
 It means if there is very slow node you won't be able to cancel the update until the node will do its work.
 All events are cancelable except events triggered by frame change
 otherwise heavy trees will never be able to be evaluated entirely.
 
 Tree topology changes
     Any changes in tree topology (add/remove nodes, add/remove/relink links) trigger its revaluation. The update
-    can be suppress by disabled live update option of a tree. If new link was added 
-    then node, from which the link is going, is marked as outdated by the event 
+    can be suppress by disabled live update option of a tree. If new link was added
+    then node, from which the link is going, is marked as outdated by the event
     (actual rules are a bit more complicated in this case).
     If a link was removed then node, to which the link was going, is marked as outdated.
     If new node is added it's going to be evaluated. If a node is removed nothing happens.
@@ -175,19 +175,19 @@ Animation
 .. figure:: https://user-images.githubusercontent.com/28003269/124884635-83fe8d80-dfe3-11eb-903d-e6c2922e41ca.gif
     :align: right
     :figwidth: 300px
-    
+
     Example of how a tree can be recalculated after editing base object by changing current frame pressing the arrow
     button on keyboard.
 
-With Sverchok it's possible to create animations. Some nodes have `Animate node` option |option|. If the option is 
+With Sverchok it's possible to create animations. Some nodes have `Animate node` option |option|. If the option is
 enabled the node will be update each frame change. This can serve two purposes.
 
 .. |option| image:: https://user-images.githubusercontent.com/28003269/124885639-87464900-dfe4-11eb-8796-a54ff5f84e58.png
 
-- Firstly this can be used for generating animations. In this case 
+- Firstly this can be used for generating animations. In this case
   :doc:`Frame info node <nodes/scene/frame_info_mk2>` will be most useful.
-- Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks. 
-  For frame change the left/right arrow buttons can be used. Alternative way is to use 
+- Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks.
+  For frame change the left/right arrow buttons can be used. Alternative way is to use
   :ref:`Live update operator <live_update_operator>`
 
 
@@ -207,7 +207,7 @@ Handling errors
 
 It can happen that during execution of a tree some nodes won't be able to be evaluated properly.
 In this case the node will be marked by a color and it will got an error massage nearby itself.
-An error can have two parts - a name of the error and optionally some message.  
+An error can have two parts - a name of the error and optionally some message.
 
 There are 3 basic exceptions:
     - Node error (actually it can be any Python error like ``IndexError``, ``LookUpError`` etc.) Sometimes the error

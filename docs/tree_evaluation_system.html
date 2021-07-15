@@ -213,25 +213,25 @@ before all previous nodes are executed. However it does not make execution proce
 <p class="caption"><span class="caption-text">Simple tree</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>Possible order of execution is A -&gt; B -&gt; C -&gt; D -&gt; E -&gt; F. However D -&gt; B -&gt; A -&gt; C -&gt; E -&gt; F is also possible.
-And there are another variants. If there are two ore more disjoint nets of nodes their execution,
+And there are another variants. If there are two or more disjoint nets of nodes their execution,
 relatively to each other, also is unordered.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In the future Sverchok may get execution system which would be able to evaluate some parts of a tree concurrently.
-In this case A, B, D nodes can be executed concurrently if more than two processors are available.
+<p>In the future Sverchok may get a execution system which would be able to evaluate some parts of a tree concurrently.
+In this case A, B, D nodes could be executed concurrently if more than two processors were available.
 But now Sverchok can use only one processor.</p>
 </div>
-<p>There are nodes which can change control flor in some way.</p>
+<p>There are nodes which can change control flow in some way.</p>
 <div class="section" id="group-nodes">
 <h3>Group nodes<a class="headerlink" href="#group-nodes" title="Permalink to this headline">¶</a></h3>
-<p>If there is a patter of nodes which is repeated several times in a tree it can be converted into a group node.
+<p>If there is a pattern of nodes which is repeated several times in a tree it can be converted into a group node.
 Group node encapsulates bunch of nodes inside a subtree. Evaluation system of main tree evaluate group nodes
 in the same way as regular nodes except that their work can be cancelled. Cancelling of group nodes happen between
-execution of tis nodes.</p>
+execution of its nodes.</p>
 </div>
 <div class="section" id="loop-nodes">
 <h3><a class="reference internal" href="nodes/logic/loop_out.html"><span class="doc">Loop nodes</span></a><a class="headerlink" href="#loop-nodes" title="Permalink to this headline">¶</a></h3>
-<p>Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flor and
+<p>Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flow and
 return it to evaluation system after their part is done.</p>
 </div>
 <div class="section" id="wifi-nodes">
@@ -270,7 +270,7 @@ Sverchok. However Sverchok is moving slowly in the direction to make it possible
 <div class="section" id="triggers">
 <span id="sv-triggers"></span><h2>Triggers<a class="headerlink" href="#triggers" title="Permalink to this headline">¶</a></h2>
 <p>Each evaluation starts with update event (trigger). Each event has information about what was previously changed.
-Evaluation system use this information to evaluate only those nodes which was effected by the change.
+Evaluation system use this information to evaluate only those nodes which have been effected by the change.
 Evaluation process is next. The evaluation system scans nodes from left to right. If it finds outdated nodes
 it updates them. Also it checks whether current node has previous nodes updated in current session and if so it also
 goes to update.</p>
