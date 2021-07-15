@@ -44,6 +44,9 @@ class SvNurbsCurve(SvCurve):
     NATIVE = SvNurbsMaths.NATIVE
     GEOMDL = SvNurbsMaths.GEOMDL
 
+    ALL = 'ALL'
+    ALL_BUT_ONE = 'ALL_BUT_ONE'
+
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNurbsMaths.build_curve(implementation, degree, knotvector, control_points, weights, normalize_knots)
@@ -186,7 +189,7 @@ class SvNurbsCurve(SvCurve):
             if remove_knots == True:
                 remove_knots = p-1
             join_point = kv1[-1]
-            result = result.remove_knot(join_point, remove_knots)
+            result = result.remove_knot(join_point, count=remove_knots, if_possible=True)
         return result
 
     def lerp_to(self, curve2, coefficient):
@@ -498,9 +501,6 @@ class SvNurbsCurve(SvCurve):
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
 
-    ALL = 'ALL'
-    ALL_BUT_ONE = 'ALL_BUT_ONE'
-
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
         raise Exception("Not implemented!")
 
@@ -704,19 +704,18 @@ class SvGeomdlCurve(SvNurbsCurve):
         r.u_bounds = self.u_bounds
         return r
 
-    def remove_knot(self, u, count=1, target=None):
+    def remove_knot(self, u, count=1, target=None, if_possible=False):
         if (count is None) == (target is None):
             raise Exception("Either count or target must be specified")
 
         knotvector = self.get_knotvector()
         orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
-        if count is None:
-            if target == SvNurbsCurve.ALL:
-                count = orig_multiplicity
-            elif target == SvNurbsCurve.ALL_BUT_ONE:
-                count = orig_multiplicity - 1
-            else:
-                count = orig_multiplicity - target
+        if count == SvNurbsCurve.ALL:
+            count = orig_multiplicity
+        elif count == SvNurbsCurve.ALL_BUT_ONE:
+            count = orig_multiplicity - 1
+        elif count is None:
+            count = orig_multiplicity - target
 
         curve = self.copy()
         curve = operations.remove_knot(curve.curve, [u], [count])
@@ -725,7 +724,7 @@ class SvGeomdlCurve(SvNurbsCurve):
 
         new_kv = result.get_knotvector()
         new_multiplicity = sv_knotvector.find_multiplicity(new_kv, u)
-        if orig_multiplicity - count < new_multiplicity:
+        if not if_possible and (orig_multiplicity - count < new_multiplicity):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {orig_multiplicity - count} times")
 
         return result
@@ -932,7 +931,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     control_points, weights)
         return curve
 
-    def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
+    def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False):
         # Implementation adapted from Geomdl
 
         if (count is None) == (target is None):
@@ -957,19 +956,18 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)  # multiplicity
         knot_span = sv_knotvector.find_span(self.knotvector, N, u)
 
-        if count is None:
-            if target == SvNurbsCurve.ALL:
-                count = orig_multiplicity
-            elif target == SvNurbsCurve.ALL_BUT_ONE:
-                count = orig_multiplicity - 1
-            else:
-                count = orig_multiplicity - target
+        if count == SvNurbsCurve.ALL:
+            count = orig_multiplicity
+        elif count == SvNurbsCurve.ALL_BUT_ONE:
+            count = orig_multiplicity - 1
+        elif count is None:
+            count = orig_multiplicity - target
 
         # Edge case
         if count < 1:
             return self
 
-        if count > orig_multiplicity:
+        if not if_possible and (count > orig_multiplicity):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but it's multiplicity is only {orig_multiplicity}")
 
         # Initialize variables
@@ -1036,7 +1034,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             else:
                 break
 
-        if removed_count < count:
+        if not if_possible and (removed_count < count):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {removed_count} times")
 
         new_kv = np.copy(self.get_knotvector())
