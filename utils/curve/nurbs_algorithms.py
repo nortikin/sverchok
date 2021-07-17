@@ -396,3 +396,9 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
     
     return _intersect(curve1, curve2, curve1.get_u_bounds(), curve2.get_u_bounds())
 
+def remove_excessive_knots(curve, tolerance=1e-6):
+    kv = curve.get_knotvector()
+    for u in sv_knotvector.get_internal_knots(kv):
+        curve = curve.remove_knot(u, count='ALL', if_possible=True, tolerance=tolerance)
+    return curve
+
