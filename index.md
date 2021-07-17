@@ -68,6 +68,9 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    ---
+    SvCurveInsertKnotNode
+    SvCurveRemoveKnotNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
