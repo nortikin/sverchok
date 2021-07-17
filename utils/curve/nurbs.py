@@ -997,13 +997,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             while j - i > t:
                 alpha_i = knot_removal_alpha_i(u, knotvector, t, i)
                 alpha_j = knot_removal_alpha_j(u, knotvector, t, j)
-                print(f"A[i] = {alpha_i}, A[j] = {alpha_j}")
-                print(f"C[i] = {ctrlpts[i]}, C[j] = {ctrlpts[j]}, temp[ii-1] = {temp_i[ii-1]}, temp[jj+1] = {temp_j[jj+1]}")
                 
                 temp_i[ii] = (ctrlpts[i] - (1.0 - alpha_i)*temp_i[ii - 1]) / alpha_i
-                print(f"temp[ii={ii}] := {temp_i[ii]}")
                 temp_j[jj] = (ctrlpts[j] - alpha_j*temp_j[jj + 1]) / (1.0 - alpha_j)
-                print(f"temp[jj={jj}] := {temp_j[jj]}")
                 
                 i += 1
                 j -= 1
@@ -1013,20 +1009,17 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             # Check if the knot is removable
             if j - i < t:
                 dist = point_distance(temp_i[ii - 1], temp_j[jj + 1]) 
-                print(f"F.1: first={first}, last={last}, i={i}, j={j}, ii-1={ii-1}, jj+1={jj+1}, dist={dist}")
                 if dist <= tolerance:
                     can_remove = True
             else:
                 alpha_i = knot_removal_alpha_i(u, knotvector, t, i)
                 ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
                 dist = point_distance(ctrlpts[i], ptn) 
-                print(f"F.2: first={first}, last={last}, i={i}, j={j}, ii-1={ii-1}, temp[ii+t+1]={temp_j[ii+t+1]}, temp[ii-1]={temp_i[ii-1]}, ctrlpts[i]={ctrlpts[i]}, ptn={ptn}, dist={dist}")
                 if dist <= tolerance:
                     can_remove = True
 
             # Check if we can remove the knot and update new control points array
             if can_remove:
-                print(f"T={t}, remove")
                 i = first
                 j = last
                 while j - i > t:
