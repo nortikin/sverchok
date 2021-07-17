@@ -30,6 +30,12 @@ class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
             min = 0,
             update = updateNode)
 
+    if_possible: BoolProperty(
+            name = "Only if possible",
+            description = "Don't fail when trying to remove the knot too many times, just remove it as many times as possible",
+            default = False,
+            update = updateNode)
+
     accuracy : IntProperty(
             name = "Accuracy",
             default = 6,
@@ -42,7 +48,11 @@ class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.outputs.new('SvCurveSocket', "Curve")
 
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'if_possible')
+
     def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, 'accuracy')
 
     def process(self):
@@ -69,7 +79,7 @@ class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
                 if curve is None:
                     raise Exception("One of curves is not NURBS")
                 for knot, count in zip_long_repeat(knots, counts):
-                    curve = curve.remove_knot(knot, count=count, tolerance=tolerance)
+                    curve = curve.remove_knot(knot, count=count, tolerance=tolerance, if_possible=self.if_possible)
                 new_curves.append(curve)
             if flat_output:
                 curves_out.extend(new_curves)
