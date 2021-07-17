@@ -978,14 +978,15 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         ctrlpts_new = deepcopy(ctrlpts)
 
         # Initialize temp array for storing new control points
-        temp = np.zeros((2*degree+1, 4))
+        temp_i = np.zeros((2*degree+1, 4))
+        temp_j = np.zeros((2*degree+1, 4))
 
-        removed_count = 1
+        removed_count = 0
         # Loop for Eqs 5.28 & 5.29
         for t in range(0, count):
             offset = first - 1 # difference in index between `temp` and ctrlpts
-            temp[0] = ctrlpts[offset]
-            temp[last + 1 - offset] = ctrlpts[last + 1]
+            temp_i[0] = ctrlpts[offset]
+            temp_j[last + 1 - offset] = ctrlpts[last + 1]
             i = first
             j = last
             ii = 1
@@ -993,12 +994,16 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             can_remove = False
 
             # Compute control points for one removal step
-            while j - i >= t:
+            while j - i > t:
                 alpha_i = knot_removal_alpha_i(u, knotvector, t, i)
                 alpha_j = knot_removal_alpha_j(u, knotvector, t, j)
+                print(f"A[i] = {alpha_i}, A[j] = {alpha_j}")
+                print(f"C[i] = {ctrlpts[i]}, C[j] = {ctrlpts[j]}, temp[ii-1] = {temp_i[ii-1]}, temp[jj+1] = {temp_j[jj+1]}")
                 
-                temp[ii] = (ctrlpts[i] - (1.0 - alpha_i)*temp[ii - 1]) / alpha_i
-                temp[jj] = (ctrlpts[j] - alpha_j*temp[ii + 1]) / (1.0 - alpha_j)
+                temp_i[ii] = (ctrlpts[i] - (1.0 - alpha_i)*temp_i[ii - 1]) / alpha_i
+                print(f"temp[ii={ii}] := {temp_i[ii]}")
+                temp_j[jj] = (ctrlpts[j] - alpha_j*temp_j[jj + 1]) / (1.0 - alpha_j)
+                print(f"temp[jj={jj}] := {temp_j[jj]}")
                 
                 i += 1
                 j -= 1
@@ -1007,23 +1012,26 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
             # Check if the knot is removable
             if j - i < t:
-                dist = point_distance(temp[ii - 1], temp[jj + 1]) 
+                dist = point_distance(temp_i[ii - 1], temp_j[jj + 1]) 
+                print(f"F.1: first={first}, last={last}, i={i}, j={j}, ii-1={ii-1}, jj+1={jj+1}, dist={dist}")
                 if dist <= tolerance:
                     can_remove = True
             else:
                 alpha_i = knot_removal_alpha_i(u, knotvector, t, i)
-                ptn = alpha_i * temp[ii + t + 1] + (1.0 - alpha_i)*temp[ii - 1]
+                ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
                 dist = point_distance(ctrlpts[i], ptn) 
+                print(f"F.2: first={first}, last={last}, i={i}, j={j}, ii-1={ii-1}, temp[ii+t+1]={temp_j[ii+t+1]}, temp[ii-1]={temp_i[ii-1]}, ctrlpts[i]={ctrlpts[i]}, ptn={ptn}, dist={dist}")
                 if dist <= tolerance:
                     can_remove = True
 
             # Check if we can remove the knot and update new control points array
             if can_remove:
+                print(f"T={t}, remove")
                 i = first
                 j = last
                 while j - i > t:
-                    ctrlpts_new[i] = temp[i - offset]
-                    ctrlpts_new[j] = temp[j - offset]
+                    ctrlpts_new[i] = temp_i[i - offset]
+                    ctrlpts_new[j] = temp_j[j - offset]
                     i += 1
                     j -= 1
                 # Update indices
@@ -1039,17 +1047,17 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         new_kv = np.copy(self.get_knotvector())
 
-        if t > 0:
+        if removed_count > 0:
             m = N + degree + 1
             for k in range(knot_span+1, m):
-                new_kv[k-t] = new_kv[k]
-            new_kv = new_kv[:m-t]
+                new_kv[k-removed_count] = new_kv[k]
+            new_kv = new_kv[:m-removed_count]
             #new_kv = np.delete(self.get_knotvector(), np.s_[(r-t+1):(r+1)])
 
             # Shift control points (refer to p.183 of The NURBS Book, 2nd Edition)
             j = int((2*knot_span - orig_multiplicity - degree) / 2)  # first control point out
             i = j
-            for k in range(1, t):
+            for k in range(1, removed_count):
                 if k % 2 == 1:
                     i += 1
                 else:
@@ -1059,7 +1067,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 j += 1
 
             # Slice to get the new control points
-            ctrlpts_new = ctrlpts_new[0:-t]
+            ctrlpts_new = ctrlpts_new[0:-removed_count]
         
         ctrlpts_new = np.array(ctrlpts_new)
         control_points, weights = from_homogenous(ctrlpts_new)
