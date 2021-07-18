@@ -21,7 +21,7 @@ class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCurveInsertKnotNode'
     bl_label = 'Insert Knot (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_CURVE_INSERT_KNOT'
 
     knot : FloatProperty(
             name = "Knot",

@@ -21,7 +21,7 @@ class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCurveRemoveKnotNode'
     bl_label = 'Remove Knot (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_CURVE_REMOVE_KNOT'
 
     knot : FloatProperty(
             name = "Knot",
