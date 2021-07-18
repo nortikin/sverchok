@@ -365,6 +365,9 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
     # control points.
 
     def _intersect(curve1, curve2, c1_bounds, c2_bounds):
+        if curve1 is None or curve2 is None:
+            return []
+
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 

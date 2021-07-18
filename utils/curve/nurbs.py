@@ -420,15 +420,23 @@ class SvNurbsCurve(SvCurve):
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
 
-        knotvector1, control_points_1, weights_1 = c1
-        knotvector2, control_points_2, weights_2 = c2
+        if c1 is not None:
+            knotvector1, control_points_1, weights_1 = c1
+            curve1 = SvNurbsCurve.build(implementation,
+                        degree, knotvector1,
+                        control_points_1, weights_1)
+        else:
+            curve1 = None
 
-        curve1 = SvNurbsCurve.build(implementation,
-                    degree, knotvector1,
-                    control_points_1, weights_1)
-        curve2 = SvNurbsCurve.build(implementation,
-                    degree, knotvector2,
-                    control_points_2, weights_2)
+        if c2 is not None:
+            knotvector2, control_points_2, weights_2 = c2
+
+            curve2 = SvNurbsCurve.build(implementation,
+                        degree, knotvector2,
+                        control_points_2, weights_2)
+        else:
+            curve2 = None
+
         return curve1, curve2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
