@@ -84,7 +84,7 @@ class SvNurbsSurface(SvSurface):
     def insert_knot(self, direction, parameter, count=1):
         raise Exception("Not implemented!")
 
-    def remove_knot(self, direction, parameter, count=1):
+    def remove_knot(self, direction, parameter, count=1, tolerance=None, if_possible=False):
         raise Exception("Not implemented!")
 
     def swap_uv(self):

@@ -141,6 +141,9 @@
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
+    ---
+    SvSurfaceInsertKnotNode
+    SvSurfaceRemoveKnotNode
 
 ## Surfaces
     SvExPlaneSurfaceNode
