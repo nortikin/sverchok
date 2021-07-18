@@ -24,6 +24,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.geom import bounding_box
+from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -939,6 +940,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False):
         # Implementation adapted from Geomdl
+        logger = getLogger()
 
         if (count is None) == (target is None):
             raise Exception("Either count or target must be specified")
@@ -1021,7 +1023,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 if dist <= tolerance:
                     can_remove = True
                 else:
-                    print(f"F.1 Dist={dist}")
+                    logger.debug(f"remove_knot: stop, distance={dist}")
             else:
                 alpha_i = knot_removal_alpha_i(u, knotvector, i)
                 ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
@@ -1029,7 +1031,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 if dist <= tolerance:
                     can_remove = True
                 else:
-                    print(f"F.2 T={t} i={i} j={j}, ii={ii}, jj={jj}, A={alpha_i}, temp[ii+t+1]={temp_j[ii+t+1]}, temp[ii-1]={temp_i[ii-1]}, ptn={ptn}, ctrlpts[i]={ctrlpts[i]} Dist={dist}")
+                    logger.debug(f"remove_knot: stop, distance={dist}")
 
             # Check if we can remove the knot and update new control points array
             if can_remove:
