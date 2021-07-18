@@ -144,6 +144,7 @@
     ---
     SvSurfaceInsertKnotNode
     SvSurfaceRemoveKnotNode
+    SvSurfaceRemoveExcessiveKnotsNode
 
 ## Surfaces
     SvExPlaneSurfaceNode

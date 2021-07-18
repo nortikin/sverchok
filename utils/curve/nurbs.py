@@ -1080,6 +1080,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         if not if_possible and (removed_count < count):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {removed_count} times")
+        #print(f"Removed knot t={u} for {removed_count} times")
         return curve
 
 
