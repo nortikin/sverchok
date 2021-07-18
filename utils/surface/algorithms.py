@@ -1225,3 +1225,19 @@ def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6
     else:
         raise Exception('Unsupported knotvector unification method')
 
+def remove_excessive_knots(surface, direction, tolerance=1e-6):
+    if direction not in {'U', 'V', 'UV'}:
+        raise Exception("Unsupported direction")
+
+    if direction in {'U', 'UV'}:
+        kv = surface.get_knotvector_u()
+        for u in sv_knotvector.get_internal_knots(kv):
+            surface = surface.remove_knot('U', u, count='ALL', tolerance=tolerance, if_possible=True)
+
+    if direction in {'V', 'UV'}:
+        kv = surface.get_knotvector_v()
+        for v in sv_knotvector.get_internal_knots(kv):
+            surface = surface.remove_knot('V', v, count='ALL', tolerance=tolerance, if_possible=True)
+
+    return surface
+

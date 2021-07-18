@@ -311,7 +311,7 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
             surface.surface.insertVKnot(parameter, count, tolerance)
         return surface
     
-    def remove_knot(self, direction, parameter, count=1, tolerance=1e-4):
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
         surface = SvFreeCadNurbsSurface(self.surface.copy())
         if direction == 'U':
             ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())

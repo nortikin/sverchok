@@ -51,6 +51,9 @@ Curves
    nurbs_curve
    approximate_nurbs_curve
    interpolate_nurbs_curve
+   insert_knot
+   remove_knot
+   remove_excessive_knots
    catenary_curve
    bezier_fit
    circlify

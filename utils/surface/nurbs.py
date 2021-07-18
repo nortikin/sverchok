@@ -5,7 +5,8 @@ from collections import defaultdict
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions,
-        nurbs_divide, from_homogenous
+        nurbs_divide, from_homogenous,
+        CantRemoveKnotException
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
@@ -83,7 +84,7 @@ class SvNurbsSurface(SvSurface):
     def insert_knot(self, direction, parameter, count=1):
         raise Exception("Not implemented!")
 
-    def remove_knot(self, direction, parameter, count=1):
+    def remove_knot(self, direction, parameter, count=1, tolerance=None, if_possible=False):
         raise Exception("Not implemented!")
 
     def swap_uv(self):
@@ -269,14 +270,29 @@ class SvGeomdlSurface(SvNurbsSurface):
         surface = operations.insert_knot(self.surface, uv, counts)
         return SvGeomdlSurface(surface)
 
-    def remove_knot(self, direction, parameter, count=1):
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=None):
         if direction == SvNurbsSurface.U:
+            orig_kv = self.get_knotvector_u()
             uv = [parameter, None]
             counts = [count, 0]
         elif direction == SvNurbsSurface.V:
+            orig_kv = self.get_knotvector_v()
             uv = [None, parameter]
             counts = [0, count]
+        orig_multiplicity = sv_knotvector.find_multiplicity(orig_kv, parameter)
+
         surface = operations.remove_knot(self.surface, uv, counts)
+
+        if direction == SvNurbsSurface.U:
+            new_kv = self.get_knotvector_u()
+        elif direction == SvNurbsSurface.V:
+            new_kv = self.get_knotvector_v()
+
+        new_multiplicity = sv_knotvector.find_multiplicity(new_kv, parameter)
+
+        if not if_possible and (orig_multiplicity - new_multiplicity < count):
+            raise CantRemoveKnotException(f"Asked to remove knot {direction}={parameter} {count} times, but could remove it only {orig_multiplicity-new_multiplicity} times")
+
         return SvGeomdlSurface(surface)
 
     def get_degree_u(self):
@@ -566,18 +582,43 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         else:
             raise Exception("Unsupported direction")
 
-    def remove_knot(self, direction, parameter, count=1):
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
+        def get_common_count(curves):
+            if not if_possible:
+                # in this case the first curve.remove_knot() call which can't remove the knot
+                # requested number of times will raise an exception, so we do not have to bother
+                return count
+            else:
+                # curve.remove_knot() calls will not raise exceptions, so we have to
+                # select the minimum number of possible knot removals among all curves
+                min_count = curves[0].get_degree()+1
+                for curve in curves:
+                    orig_kv = curve.get_knotvector()
+                    orig_multiplicity = sv_knotvector.find_multiplicity(orig_kv, parameter)
+                    tmp = curve.remove_knot(parameter, count, if_possible=True, tolerance=tolerance)
+                    new_kv = tmp.get_knotvector()
+                    new_multiplicity = sv_knotvector.find_multiplicity(new_kv, parameter)
+                    delta = orig_multiplicity - new_multiplicity
+                    min_count = min(min_count, delta)
+                return min_count
+
         if direction == SvNurbsSurface.U:
             new_points = []
             new_weights = []
             new_u_degree = None
+            fixed_v_curves = []
             for i in range(self.get_control_points().shape[1]):
                 fixed_v_points = self.get_control_points()[:,i]
                 fixed_v_weights = self.get_weights()[:,i]
                 fixed_v_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_u, self.knotvector_u,
                                     fixed_v_points, fixed_v_weights)
-                fixed_v_curve = fixed_v_curve.remove_knot(parameter, count)
+                fixed_v_curves.append(fixed_v_curve)
+            
+            common_count = get_common_count(fixed_v_curves)
+
+            for fixed_v_curve in fixed_v_curves:
+                fixed_v_curve = fixed_v_curve.remove_knot(parameter, common_count, if_possible=if_possible, tolerance=tolerance)
                 fixed_v_knotvector = fixed_v_curve.get_knotvector()
                 new_u_degree = fixed_v_curve.get_degree()
                 fixed_v_points = fixed_v_curve.get_control_points()
@@ -596,13 +637,19 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             new_points = []
             new_weights = []
             new_v_degree = None
+            fixed_u_curves = []
             for i in range(self.get_control_points().shape[0]):
                 fixed_u_points = self.get_control_points()[i,:]
                 fixed_u_weights = self.get_weights()[i,:]
                 fixed_u_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_v, self.knotvector_v,
                                     fixed_u_points, fixed_u_weights)
-                fixed_u_curve = fixed_u_curve.remove_knot(parameter, count)
+                fixed_u_curves.append(fixed_u_curve)
+
+            common_count = get_common_count(fixed_u_curves)
+
+            for fixed_u_curve in fixed_u_curves:
+                fixed_u_curve = fixed_u_curve.remove_knot(parameter, common_count, if_possible=if_possible, tolerance=tolerance)
                 fixed_u_knotvector = fixed_u_curve.get_knotvector()
                 new_v_degree = fixed_u_curve.get_degree()
                 fixed_u_points = fixed_u_curve.get_control_points()

@@ -18,11 +18,13 @@ from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
-        nurbs_divide, elevate_bezier_degree, from_homogenous
+        nurbs_divide, elevate_bezier_degree, from_homogenous,
+        CantRemoveKnotException
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.geom import bounding_box
+from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -40,6 +42,9 @@ class SvNurbsCurve(SvCurve):
     """
     NATIVE = SvNurbsMaths.NATIVE
     GEOMDL = SvNurbsMaths.GEOMDL
+
+    ALL = 'ALL'
+    ALL_BUT_ONE = 'ALL_BUT_ONE'
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
@@ -183,7 +188,7 @@ class SvNurbsCurve(SvCurve):
             if remove_knots == True:
                 remove_knots = p-1
             join_point = kv1[-1]
-            result = result.remove_knot(join_point, remove_knots)
+            result = result.remove_knot(join_point, count=remove_knots, if_possible=True)
         return result
 
     def lerp_to(self, curve2, coefficient):
@@ -416,15 +421,23 @@ class SvNurbsCurve(SvCurve):
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
 
-        knotvector1, control_points_1, weights_1 = c1
-        knotvector2, control_points_2, weights_2 = c2
+        if c1 is not None:
+            knotvector1, control_points_1, weights_1 = c1
+            curve1 = SvNurbsCurve.build(implementation,
+                        degree, knotvector1,
+                        control_points_1, weights_1)
+        else:
+            curve1 = None
 
-        curve1 = SvNurbsCurve.build(implementation,
-                    degree, knotvector1,
-                    control_points_1, weights_1)
-        curve2 = SvNurbsCurve.build(implementation,
-                    degree, knotvector2,
-                    control_points_2, weights_2)
+        if c2 is not None:
+            knotvector2, control_points_2, weights_2 = c2
+
+            curve2 = SvNurbsCurve.build(implementation,
+                        degree, knotvector2,
+                        control_points_2, weights_2)
+        else:
+            curve2 = None
+
         return curve1, curve2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
@@ -495,7 +508,7 @@ class SvNurbsCurve(SvCurve):
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
 
-    def remove_knot(self, u, count=1):
+    def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
         raise Exception("Not implemented!")
 
     def get_min_continuity(self):
@@ -698,11 +711,29 @@ class SvGeomdlCurve(SvNurbsCurve):
         r.u_bounds = self.u_bounds
         return r
 
-    def remove_knot(self, u, count=1):
+    def remove_knot(self, u, count=1, target=None, if_possible=False):
+        if (count is None) == (target is None):
+            raise Exception("Either count or target must be specified")
+
+        knotvector = self.get_knotvector()
+        orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
+        if count == SvNurbsCurve.ALL:
+            count = orig_multiplicity
+        elif count == SvNurbsCurve.ALL_BUT_ONE:
+            count = orig_multiplicity - 1
+        elif count is None:
+            count = orig_multiplicity - target
+
         curve = self.copy()
         curve = operations.remove_knot(curve.curve, [u], [count])
         result = SvGeomdlCurve(curve)
         result.u_bounds = self.u_bounds
+
+        new_kv = result.get_knotvector()
+        new_multiplicity = sv_knotvector.find_multiplicity(new_kv, u)
+        if not if_possible and (orig_multiplicity - count < new_multiplicity):
+            raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {orig_multiplicity - count} times")
+
         return result
 
 class SvNativeNurbsCurve(SvNurbsCurve):
@@ -907,59 +938,79 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     control_points, weights)
         return curve
 
-    def remove_knot(self, u, count=1, tol=1e-4):
+    def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False):
         # Implementation adapted from Geomdl
+        logger = getLogger()
 
-        def knot_removal_alpha_i(u, degree, knotvector, count, idx):
-            return (u - knotvector[idx]) / (knotvector[idx + degree + 1 + count] - knotvector[idx])
+        if (count is None) == (target is None):
+            raise Exception("Either count or target must be specified")
 
-        def knot_removal_alpha_j(u, degree, knotvector, count, idx):
-            return (u - knotvector[idx - count]) / (knotvector[idx + degree + 1] - knotvector[idx - count])
+        orig_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), u)
 
-        def point_distance(p1, p2):
-            return np.linalg.norm(np.array(p1) - np.array(p2))
+        if count == SvNurbsCurve.ALL:
+            count = orig_multiplicity
+        elif count == SvNurbsCurve.ALL_BUT_ONE:
+            count = orig_multiplicity - 1
+        elif count is None:
+            count = orig_multiplicity - target
 
         degree = self.get_degree()
-        knotvector = self.get_knotvector()
-        ctrlpts = self.get_homogenous_control_points().tolist()
-        N = len(ctrlpts)
-        
-        s = sv_knotvector.find_multiplicity(knotvector, u)#-1  # multiplicity
-        r = knotvector.searchsorted(u, side='right')- 1 # knot span
-        #r = sv_knotvector.find_span(self.knotvector, N, u)
+        order = degree+1
+
+        if not if_possible and (count > orig_multiplicity):
+            raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but it's multiplicity is only {orig_multiplicity}")
 
         # Edge case
         if count < 1:
             return self
 
-        # Initialize variables
-        first = r - degree
-        last = r - s
+        def knot_removal_alpha_i(u, knotvector, idx):
+            return (u - knotvector[idx]) / (knotvector[idx + order] - knotvector[idx])
 
-        # Don't change input variables, prepare new ones for updating
-        ctrlpts_new = deepcopy(ctrlpts)
+        def knot_removal_alpha_j(u, knotvector, idx):
+            return (u - knotvector[idx]) / (knotvector[idx + order] - knotvector[idx])
 
-        # Initialize temp array for storing new control points
-        temp = [[] for _ in range((2 * degree) + 1)]
+        def point_distance(p1, p2):
+            return np.linalg.norm(p1 - p2)
+            #return np.linalg.norm(np.array(p1) - np.array(p2))
 
-        # Loop for Eqs 5.28 & 5.29
-        for t in range(0, count):
-            #print(f"T: {t} / {count}, first = {first}, last = {last}; N = {len(ctrlpts)}, degree = {degree}, r = {r}, s = {s}")
-            temp[0] = ctrlpts[first - 1]
-            temp[last - first + 2] = ctrlpts[last + 1]
+        def remove_one_knot(curve):
+            ctrlpts = curve.get_homogenous_control_points()
+            N = len(ctrlpts)
+            knotvector = curve.get_knotvector()
+            orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
+            knot_span = sv_knotvector.find_span(knotvector, N, u)
+
+            # Initialize variables
+            first = knot_span - degree
+            last = knot_span - orig_multiplicity
+
+            # Don't change input variables, prepare new ones for updating
+            ctrlpts_new = deepcopy(ctrlpts)
+
+            # Initialize temp array for storing new control points
+            temp_i = np.zeros((2*degree+1, 4))
+            temp_j = np.zeros((2*degree+1, 4))
+
+            removed_count = 0
+            # Loop for Eqs 5.28 & 5.29
+            t = 0
+            offset = first - 1 # difference in index between `temp` and ctrlpts
+            temp_i[0] = ctrlpts[offset]
+            temp_j[last + 1 - offset] = ctrlpts[last + 1]
             i = first
             j = last
             ii = 1
-            jj = last - first + 1
-            remflag = False
+            jj = last - offset
+            can_remove = False
 
             # Compute control points for one removal step
-            while j - i >= t:
-                alpha_i = knot_removal_alpha_i(u, degree, knotvector, t, i)
-                alpha_j = knot_removal_alpha_j(u, degree, knotvector, t, j)
+            while j - i > t:
+                alpha_i = knot_removal_alpha_i(u, knotvector, i)
+                alpha_j = knot_removal_alpha_j(u, knotvector, j)
                 
-                temp[ii] = [(cpt - (1.0 - alpha_i) * ti) / alpha_i for cpt, ti in zip(ctrlpts[i], temp[ii - 1])]
-                temp[jj] = [(cpt - alpha_j * tj) / (1.0 - alpha_j) for cpt, tj in zip(ctrlpts[j], temp[jj + 1])]
+                temp_i[ii] = (ctrlpts[i] - (1.0 - alpha_i)*temp_i[ii - 1]) / alpha_i
+                temp_j[jj] = (ctrlpts[j] - alpha_j*temp_j[jj + 1]) / (1.0 - alpha_j)
                 
                 i += 1
                 j -= 1
@@ -968,57 +1019,79 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
             # Check if the knot is removable
             if j - i < t:
-                if point_distance(temp[ii - 1], temp[jj + 1]) <= tol:
-                    remflag = True
+                dist = point_distance(temp_i[ii - 1], temp_j[jj + 1]) 
+                if dist <= tolerance:
+                    can_remove = True
+                else:
+                    logger.debug(f"remove_knot: stop, distance={dist}")
             else:
-                alpha_i = knot_removal_alpha_i(u, degree, knotvector, t, i)
-                ptn = [(alpha_i * t1) + ((1.0 - alpha_i) * t2) for t1, t2 in zip(temp[ii + t + 1], temp[ii - 1])]
-                if point_distance(ctrlpts[i], ptn) <= tol:
-                    remflag = True
+                alpha_i = knot_removal_alpha_i(u, knotvector, i)
+                ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
+                dist = point_distance(ctrlpts[i], ptn) 
+                if dist <= tolerance:
+                    can_remove = True
+                else:
+                    logger.debug(f"remove_knot: stop, distance={dist}")
 
             # Check if we can remove the knot and update new control points array
-            if remflag:
+            if can_remove:
                 i = first
                 j = last
                 while j - i > t:
-                    ctrlpts_new[i] = temp[i - first + 1]
-                    ctrlpts_new[j] = temp[j - first + 1]
+                    ctrlpts_new[i] = temp_i[i - offset]
+                    ctrlpts_new[j] = temp_j[j - offset]
                     i += 1
                     j -= 1
+                # Update indices
+                first -= 1
+                last += 1
+                removed_count += 1
+
             else:
+                raise CantRemoveKnotException()
+
+            new_kv = np.copy(curve.get_knotvector())
+
+            if removed_count > 0:
+                m = N + degree + 1
+                for k in range(knot_span+1, m):
+                    new_kv[k-removed_count] = new_kv[k]
+                new_kv = new_kv[:m-removed_count]
+                #new_kv = np.delete(curve.get_knotvector(), np.s_[(r-t+1):(r+1)])
+
+                # Shift control points (refer to p.183 of The NURBS Book, 2nd Edition)
+                j = int((2*knot_span - orig_multiplicity - degree) / 2)  # first control point out
+                i = j
+                for k in range(1, removed_count):
+                    if k % 2 == 1:
+                        i += 1
+                    else:
+                        j -= 1
+                for k in range(i+1, N):
+                    ctrlpts_new[j] = ctrlpts_new[k]
+                    j += 1
+
+                # Slice to get the new control points
+                ctrlpts_new = ctrlpts_new[0:-removed_count]
+            
+            ctrlpts_new = np.array(ctrlpts_new)
+            control_points, weights = from_homogenous(ctrlpts_new)
+
+            return curve.copy(knotvector = new_kv, control_points = control_points, weights = weights)
+
+        curve = self
+        removed_count = 0
+        for i in range(count):
+            try:
+                curve = remove_one_knot(curve)
+                removed_count += 1
+            except CantRemoveKnotException as e:
                 break
-                #raise Exception(f"Knot {u} can not be removed {count} times")
 
-            # Update indices
-            first -= 1
-            last += 1
-
-        # Fix indexing
-        t += 1
-
-        # Shift control points (refer to p.183 of The NURBS Book, 2nd Edition)
-        j = int((2*r - s - degree) / 2)  # first control point out
-        i = j
-        for k in range(1, t):
-            if k % 2 == 1:
-                i += 1
-            else:
-                j -= 1
-        for k in range(i+1, len(ctrlpts)):
-            ctrlpts_new[j] = ctrlpts_new[k]
-            j += 1
-
-        # Slice to get the new control points
-        ctrlpts_new = ctrlpts_new[0:-t]
-        
-        ctrlpts_new = np.array(ctrlpts_new)
-        control_points, weights = from_homogenous(ctrlpts_new)
-
-        new_kv = np.delete(self.get_knotvector(), np.s_[(r-t+1):(r+1)])
-        #print(f"R: r = {r}, t = {t}, N ctrlpts {len(ctrlpts_new)}")
-        #print(f"  {self.get_knotvector()} => {new_kv}")
-        
-        return self.copy(knotvector = new_kv, control_points = control_points, weights = weights)
+        if not if_possible and (removed_count < count):
+            raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {removed_count} times")
+        #print(f"Removed knot t={u} for {removed_count} times")
+        return curve
 
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
