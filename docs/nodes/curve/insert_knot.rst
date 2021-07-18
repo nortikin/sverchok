@@ -31,3 +31,10 @@ This node has the following output:
 
 * **Curve**. The resulting Curve object.
 
+Example of Usage
+----------------
+
+Insert a knot twice into a circle curve, and move the new control point:
+
+.. image:: https://user-images.githubusercontent.com/284644/126066221-95589c16-c04d-4b9c-add7-19c6ad4ab906.png
+
