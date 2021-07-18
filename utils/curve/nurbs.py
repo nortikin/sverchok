@@ -18,7 +18,8 @@ from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
-        nurbs_divide, elevate_bezier_degree, from_homogenous
+        nurbs_divide, elevate_bezier_degree, from_homogenous,
+        CantRemoveKnotException
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
@@ -27,9 +28,6 @@ from sverchok.dependencies import geomdl
 
 if geomdl is not None:
     from geomdl import NURBS, BSpline, operations, fitting
-
-class CantRemoveKnotException(Exception):
-    pass
 
 ##################
 #                #

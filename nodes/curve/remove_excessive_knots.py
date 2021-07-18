@@ -18,10 +18,11 @@ class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLIP_CURVE'
 
-    accuracy : IntProperty(
-            name = "Accuracy",
-            default = 6,
-            min=1,
+    tolerance : FloatProperty(
+            name = "Tolerance",
+            default = 1e-6,
+            precision = 8,
+            min = 0,
             update = updateNode)
         
     def sv_init(self, context):
@@ -29,7 +30,7 @@ class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvCurveSocket', "Curve")
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'accuracy')
+        layout.prop(self, 'tolerance')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -41,7 +42,7 @@ class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
         flat_output = input_level < 2
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
 
-        tolerance = 10**(-self.accuracy)
+        tolerance = self.tolerance
 
         curves_out = []
         for curves in curve_s:

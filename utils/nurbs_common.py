@@ -216,3 +216,6 @@ class SvNurbsBasisFunctions(object):
         
         return calc
 
+class CantRemoveKnotException(Exception):
+    pass
+
