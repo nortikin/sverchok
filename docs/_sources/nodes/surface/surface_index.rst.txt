@@ -38,6 +38,9 @@ Surface
    nurbs_sweep
    nurbs_birail
    gordon_surface
+   insert_knot
+   remove_knot
+   remove_excessive_knots
    intersect_curve_surface
    nearest_point
    ortho_project
