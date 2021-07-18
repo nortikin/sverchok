@@ -20,7 +20,7 @@ class SvSurfaceRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Remove a knot from a NURBS surface
     """
     bl_idname = 'SvSurfaceRemoveExcessiveKnotsNode'
-    bl_label = 'NURBS Surface - Remove Excessive Knots'
+    bl_label = 'Remove Excessive Knots (NURBS Surface)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_CLEAN_KNOTS'
 

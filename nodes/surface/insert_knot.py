@@ -19,7 +19,7 @@ class SvSurfaceInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Insert a knot in a NURBS surface
     """
     bl_idname = 'SvSurfaceInsertKnotNode'
-    bl_label = 'NURBS Surface - Insert Knot'
+    bl_label = 'Insert Knot (NURBS Surface)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_INSERT_KNOT'
 

@@ -20,7 +20,7 @@ class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Remove all excessive knots from a NURBS curve
     """
     bl_idname = 'SvCurveRemoveExcessiveKnotsNode'
-    bl_label = 'NURBS Curve - Remove Excessive Knots'
+    bl_label = 'Remove Excessive Knots (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLIP_CURVE'
 

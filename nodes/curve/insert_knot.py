@@ -19,7 +19,7 @@ class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Inset knot in a NURBS curve
     """
     bl_idname = 'SvCurveInsertKnotNode'
-    bl_label = 'NURBS Curve - Insert Knot'
+    bl_label = 'Insert Knot (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLIP_CURVE'
 

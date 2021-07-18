@@ -19,7 +19,7 @@ class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Remove a knot from a NURBS curve
     """
     bl_idname = 'SvCurveRemoveKnotNode'
-    bl_label = 'NURBS Curve - Remove Knot'
+    bl_label = 'Remove Knot (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLIP_CURVE'
 
