@@ -21,7 +21,7 @@ class SvSurfaceRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceRemoveKnotNode'
     bl_label = 'NURBS Surface - Remove Knot'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_SURFACE_REMOVE_KNOT'
 
     directions = [
             ('U', "U", "U direction", 0),

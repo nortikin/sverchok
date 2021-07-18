@@ -21,7 +21,7 @@ class SvSurfaceInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceInsertKnotNode'
     bl_label = 'NURBS Surface - Insert Knot'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_SURFACE_INSERT_KNOT'
 
     directions = [
             ('U', "U", "U direction", 0),

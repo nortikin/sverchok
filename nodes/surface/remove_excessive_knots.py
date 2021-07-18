@@ -22,7 +22,7 @@ class SvSurfaceRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceRemoveExcessiveKnotsNode'
     bl_label = 'NURBS Surface - Remove Excessive Knots'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_SURFACE_CLEAN_KNOTS'
 
     directions = [
             ('UV', "U+V", "Both U and V directions", 0),
