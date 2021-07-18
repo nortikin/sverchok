@@ -19,7 +19,7 @@ from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
         nurbs_divide, elevate_bezier_degree, from_homogenous,
-        CantRemoveKnotException
+        CantInsertKnotException, CantRemoveKnotException
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
@@ -905,14 +905,21 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def insert_knot(self, u_bar, count=1):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
-        s = sv_knotvector.find_multiplicity(self.get_knotvector(), u_bar)
-        #print(f"I: kv {len(self.knotvector)}{self.knotvector}, u_bar {u_bar} => s {s}")
-        #k = np.searchsorted(self.knotvector, u_bar, side='right')-1
-        k = sv_knotvector.find_span(self.knotvector, N, u_bar)
-        p = self.degree
-        u = self.knotvector
-        new_knotvector = sv_knotvector.insert(self.knotvector, u_bar, count)
+        u = self.get_knotvector()
+        s = sv_knotvector.find_multiplicity(u, u_bar)
+        #print(f"I: kv {len(u)}{u}, u_bar {u_bar} => s {s}")
+        #k = np.searchsorted(u, u_bar, side='right')-1
+        k = sv_knotvector.find_span(u, N, u_bar)
+        p = self.get_degree()
+        new_knotvector = sv_knotvector.insert(u, u_bar, count)
         control_points = self.get_homogenous_control_points()
+
+        if (u_bar == u[0] or u_bar == u[-1]):
+            if s+count > p+1:
+                raise CantInsertKnotException(f"Can't insert first/last knot t={u_bar} for {count} times")
+        else:
+            if s+count > p:
+                raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
 
         for r in range(1, count+1):
             prev_control_points = control_points

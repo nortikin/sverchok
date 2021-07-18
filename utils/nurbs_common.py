@@ -216,6 +216,9 @@ class SvNurbsBasisFunctions(object):
         
         return calc
 
+class CantInsertKnotException(Exception):
+    pass
+
 class CantRemoveKnotException(Exception):
     pass
 

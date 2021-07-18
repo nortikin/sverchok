@@ -12,7 +12,7 @@ from mathutils import Vector
 import mathutils.geometry
 
 from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.decorators import deprecated
@@ -403,5 +403,15 @@ def remove_excessive_knots(curve, tolerance=1e-6):
     kv = curve.get_knotvector()
     for u in sv_knotvector.get_internal_knots(kv):
         curve = curve.remove_knot(u, count='ALL', if_possible=True, tolerance=tolerance)
+    return curve
+
+def refine_curve(curve, samples):
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
+    for t in ts:
+        try:
+            curve = curve.insert_knot(t, count=1)
+        except CantInsertKnotException:
+            break
     return curve
 
