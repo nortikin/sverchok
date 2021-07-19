@@ -1,6 +1,6 @@
-**********
-Contribute
-**********
+******************
+General guidelines
+******************
 
 Our workflow:
 =============
@@ -20,42 +20,6 @@ Our workflow:
 
 #. Test your code, Test your proposed changes. Write automated tests for your code whenever it makes sense.
    Please refer to `this document <testing.html>`_ for details.
-
-
-What not to do:
-===============
-
-Doing these things will break old layouts or have other unintended consequences.
-
-1. Change ``bl_idname`` of a node
-
-2. Remove or rename sockets (use labels for socket renaming)
-
-3. Adding new socket inbetween existing sockets. We prefer that you add sockets behind the last
-   existing socket for either ``self.inputs`` or ``self.outputs``. This is the rule only if access
-   to sockets is made by their indexes.
-
-4. There are other reserved property names see the bpy.types.Node baseclass in Blender docs and
-   Sverchok's custom node mixin class.
-
-
-To create a node:
-=================
-
-1. Make a scripted node to test the idea.
-
-2. Show your node to us in an issue or create branch or fork of master in github. If it
-   is a huge complex job we can make you collaborator. 
-
-3. Copy an existing node that is similar, as a basis to start from.
-
-4. Change class name, class bl_idname, docstring, and class registration section in your file (at the bottom)
-
-5. Add node's ``bl_idname`` to *sverchok/index.md* file in an appropriate category.
-
-6. Add file to matching category: ``..sverchok/nodes/whatever_existing_category/your_file.py``
-
-7. Make a pull request.
 
 
 Code structure:
@@ -90,3 +54,6 @@ Code structure:
 
    a. Copy node file to ../old_nodes;
    b. Change ``bl_idname`` to old_bl_idname + MK2.
+
+.. note::
+    The overview of Sverchok code is really poor.
