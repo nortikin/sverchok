@@ -14,6 +14,10 @@ if FreeCAD is None:
 else:
 
     from FreeCAD import Part
+    try:
+        import Part as PartModule
+    except ImportError:
+        PartModule = Part
 
     from sverchok.utils.solid import to_solid
 
@@ -65,7 +69,7 @@ else:
             for solids, curves, surfaces in zip_long_repeat(solids_s, curves_s, surfaces_s):
                 shapes = solids + curves + surfaces
                 shapes = [to_solid(s) for s in shapes if s is not None]
-                compound = Part.Compound(shapes)
+                compound = PartModule.Compound(shapes)
                 compounds_out.append(compound)
 
             self.outputs['Compound'].sv_set(compounds_out)
