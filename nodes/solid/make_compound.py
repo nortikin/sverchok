@@ -49,8 +49,8 @@ else:
 
 
             if self.inputs['Solids'].is_linked:
-                solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
-                solids_level = get_data_nesting_level(solids_s, data_types=(Part.Shape,))
+                solids_s = ensure_nesting_level(solids_s, 2, data_types=(PartModule.Shape,))
+                solids_level = get_data_nesting_level(solids_s, data_types=(PartModule.Shape,))
             else:
                 solids_level = 2
             if self.inputs['Curves'].is_linked:
