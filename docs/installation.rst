@@ -2,47 +2,38 @@
 Installation
 ************
 
-Troubleshooting Installation Errors
-===================================
+.. figure:: https://user-images.githubusercontent.com/5783432/118532321-82d18280-b74f-11eb-8a04-f1205deda82d.jpg
+    :width: 250
+    :align: right
 
-NumPy
------
+There are two options from where to install Sverchok. If you want to get most stable version than it's recommended
+to download zip archive from the `last stable release page <https://github.com/nortikin/sverchok/releases/latest>`_.
+Also you can download zip archive with latest changes from `main GitHub page <https://github.com/nortikin/sverchok>`_.
 
-We now include NumPy code in Sverchok nodes, this means that you should have
-an up-to-date version of NumPy on your machine. Normally if you get your Blender
-from official site, precompiled NumPy will be included with Python, however this
-isn't always the case. The windows builds on blender buildbot may contain 
-a cut down version of NumPy due to the licenses under which it can be spread
-in compiled form. In any operating system if you have the correct Python version 
-installed stand-alone, you may not have the proper version of NumPy itself.
+After the Sverchok archive is downloaded open property window in Blender (:kbd:`Ctrl+Alt+U`):
 
-If you get an error when enabling Sverchok the last lines of the error
-are important, if it mentions:
+.. image:: https://user-images.githubusercontent.com/5783432/118532329-849b4600-b74f-11eb-9751-5a12446cf6b2.jpg
 
--  ImportError: No module named 'numpy'
--  multiarray
--  DLL failure
--  Module use of python33.dll conflicts with this version of Python
+Choose add-on tab, push *install from file* button and choose downloaded ZIP archive file:
 
-then here are steps to fix that [#]_:
+.. image:: https://user-images.githubusercontent.com/28003269/125616217-76604b16-fddc-4d51-b144-127e1443104f.png
 
-- download and install Python 3.4.(1) for your os
-- download and install NumPy 1.8 (for python 3.4) for your os.
-- in the Blender directory rename the `python` folder to `_python` so
-  Blender uses your local Python 3.4 install.
+And activate Sverchok with flag:
 
-binaries:
+.. image:: https://user-images.githubusercontent.com/28003269/125616257-1c5af6b8-9bae-486b-8bed-cff1210987d9.png
 
-- python: https://www.python.org/downloads/release/python-341/
-- numpy: http://sourceforge.net/projects/numpy/files/NumPy/
+If the add-on was enabled successfully open Sverchok editor and crate new node tree. Now you can add new nodes.
+If the add-on was not enabled open system console ``Window -> Toggle system console`` and create 
+`new issue <https://github.com/nortikin/sverchok/issues/new>`_ with the error message.
 
-To confirm that NumPy is installed properly on your system, for py3.4,
-launch your python34 interpreter/console and the following NumPy
-import should produce no error.::
+.. image:: https://user-images.githubusercontent.com/28003269/125616829-f0462efa-39ad-4b25-b417-3cb9dca00014.png
 
-    Python 3.4.1 (v3.4.1:c0e311e010fc, May 18 2014, 10:38:22) <edited>
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> import numpy
-    >>>
+Though the add-on is installed you can't use its full power now. There are nodes which you won't be able to see
+in the menu until extra libraries will be installed. The list of unavailable nodes is printed in the system
+console during add-on initialization. Read more about installing the libraries in the next section.
 
-.. [#] If you get an error, this means NumPy failed to install. We can't really troubleshoot that
+.. toctree::
+   :maxdepth: 1
+
+   installing_dependencies
+
