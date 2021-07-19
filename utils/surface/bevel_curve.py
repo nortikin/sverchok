@@ -80,7 +80,7 @@ def bevel_curve(path, profile, taper, taper_samples=10, taper_refine=20, profile
     profiles = [place_profile(profile, z, scale) for z, scale in zip(taper_zs, taper_rhos / profile_start_rho)]
     profiles = [bend_curve(field, profile) for profile in profiles]
 
-    profile_ts = np.linspace(profile_t_min, profile_t_max, num=profile_samples, endpoint=False)
+    profile_ts = np.linspace(profile_t_min, profile_t_max, num=profile_samples, endpoint=True)
     profile_pts = profile.evaluate_array(profile_ts)
     profile_pts = profile_pts[:,0], profile_pts[:,1], profile_pts[:,2]
     profile_rhos, profile_angles, _ = to_cylindrical_np(profile_pts, mode='radians')
