@@ -471,7 +471,7 @@ def dataSpoil(data, dept):
     return out
 
 
-def dataStandard(data, dept, nominal_dept):
+def data_standard(data, dept, nominal_dept):
     """data from nesting to standard: TO container( objects( lists( floats, ), ), )"""
     deptl = dept - 1
     output = []
