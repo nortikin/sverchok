@@ -75,7 +75,7 @@ def bevel_curve(path, profile, taper, taper_samples=10, taper_refine=20, profile
     taper_pts = taper_pts[:,0], taper_pts[:,1], taper_pts[:,2]
     taper_rhos, _, taper_zs = to_cylindrical_np(taper_pts)
     profile_start_rho = to_cylindrical(profile.evaluate(profile_t_min))[0]
-    taper_start_rho = to_cylindrical(taper.evaluate(taper_t_min))[0]
+    taper_start_rho, taper_start_angle, _ = to_cylindrical(taper.evaluate(taper_t_min))
 
     profiles = [place_profile(profile, z, scale) for z, scale in zip(taper_zs, taper_rhos / profile_start_rho)]
     profiles = [bend_curve(field, profile) for profile in profiles]
@@ -87,7 +87,7 @@ def bevel_curve(path, profile, taper, taper_samples=10, taper_refine=20, profile
 
     taper = refine_curve(taper, taper_refine)
 
-    tapers = [rotate_curve(taper, angle-pi, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
+    tapers = [rotate_curve(taper, angle-taper_start_angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
     tapers = [bend_curve(field, taper) for taper in tapers]
 
     #intersections = [[taper.evaluate(t) for t in taper_ts] for taper in tapers]
