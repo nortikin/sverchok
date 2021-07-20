@@ -432,7 +432,7 @@ def dataCorrect(data, nominal_dept=2):
     if dept < 2:
         return data #[dept, data]
     else:
-        output = dataStandard(data, dept, nominal_dept)
+        output = data_standard(data, dept, nominal_dept)
         return output
 
 def dataCorrect_np(data, nominal_dept=2):
