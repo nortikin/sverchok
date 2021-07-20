@@ -201,12 +201,12 @@ class SvNurbsBasisFunctions(object):
             denom2 = u[i+p+1] - u[i+1]
 
             if denom1 == 0:
-                s1 = 0
+                s1 = np.zeros_like(us)
             else:
                 s1 = n1 / denom1
 
             if denom2 == 0:
-                s2 = 0
+                s2 = np.zeros_like(us)
             else:
                 s2 = n2 / denom2
 
