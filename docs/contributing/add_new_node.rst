@@ -184,7 +184,7 @@ def process
          [[x, y, z],   <- object 2, vector 1
           [x, y, z]]]  <- object 2, vector 2
     
-    To understand the Sverchok data structure read :doc:`this tutorial <nesting>`.
+    To understand the Sverchok data structure read :doc:`this tutorial <../tutorials/nesting>`.
 
     Next step is unroll the vertices data structure, perform operation on single
     vertices and wrap the result back. Last string assign the result to output socket.

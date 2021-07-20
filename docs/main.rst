@@ -16,11 +16,11 @@ It's available on `the GitHub page <https://github.com/nortikin/sverchok>`_.
 .. toctree::
    :maxdepth: 1
 
-   introduction
-   installation
-   user_interface
+   introduction/introduction
+   installation/installation
+   user_interface/user_interface
    tree_evaluation_system
-   data_structure_index
+   data_structure/data_structure_index
    nodes
-   tutorials
-   contributing_to_sverchok
+   tutorials/tutorials
+   contributing/contributing_to_sverchok

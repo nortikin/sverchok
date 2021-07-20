@@ -76,7 +76,7 @@ Live update
     Enabling the property will call the tree topology changes :ref:`trigger <sv_triggers>`.
 
 Draft mode
-    It switches to draft property in :doc:`A number node <nodes/number/numbers>` and some others.
+    It switches to draft property in :doc:`A number node <../nodes/number/numbers>` and some others.
     Its usage is to add set of draft properties to the node tree to improve performance.
 
 
