@@ -6,12 +6,15 @@
 Welcome to Sverchok's documentation!
 ====================================
 
-.. image:: https://user-images.githubusercontent.com/619340/65963856-ee23ef00-e45b-11e9-98aa-32b218cde934.png
+.. figure:: https://user-images.githubusercontent.com/28003269/125777370-a7b7907a-92a2-4ad3-91b1-875520a95e71.jpg
+   :width: 800
 
-Contents:
+Sverchok is a `Blender <https://www.blender.org/>`_ add-on for creating parametric
+3D models based on visual programming. 
+It's available on `the GitHub page <https://github.com/nortikin/sverchok>`_.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    introduction
    installation
