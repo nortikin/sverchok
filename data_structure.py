@@ -477,7 +477,7 @@ def data_standard(data, dept, nominal_dept):
     output = []
     for object in data:
         if deptl >= nominal_dept:
-            output.extend(dataStandard(object, deptl, nominal_dept))
+            output.extend(data_standard(object, deptl, nominal_dept))
         else:
             output.append(data)
             return output
