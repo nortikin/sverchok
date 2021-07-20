@@ -2,12 +2,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
-from mathutils import Vector, Matrix
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.marching_squares import make_contours
 from sverchok.utils.dummy_nodes import add_dummy
@@ -50,9 +48,9 @@ else:
             default = True,
             update = updateNode)
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.outputs['Faces'].hide_safe = not self.make_faces
+            updateNode()
 
         make_faces : BoolProperty(
                 name = "Make faces",

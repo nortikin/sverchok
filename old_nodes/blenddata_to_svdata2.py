@@ -77,34 +77,32 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE', 'META']
         for obj in objs:
 
-            with self.sv_throttle_tree_update():
+            if o8.is_linked:
+                ms.append(obj.matrix_world)
 
-                if o8.is_linked:
-                    ms.append(obj.matrix_world)
+            if ot:
+                if self.modifiers:
+                    obj = sv_depsgraph.objects[obj.name]
+                    obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                else:
+                    obj_data = obj.to_mesh()
 
-                if ot:
-                    if self.modifiers:
-                        obj = sv_depsgraph.objects[obj.name]
-                        obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                    else:
-                        obj_data = obj.to_mesh()
+                if o1.is_linked:
+                    vs.append([v.co[:] for v in obj_data.vertices])
+                if o2.is_linked:
+                    vn.append([v.normal[:] for v in obj_data.vertices])
+                if o3.is_linked:
+                    es.append(obj_data.edge_keys)
+                if o4.is_linked:
+                    ps.append([p.vertices[:] for p in obj_data.polygons])
+                if o5.is_linked:
+                    pa.append([p.area for p in obj_data.polygons])
+                if o6.is_linked:
+                    pc.append([p.center[:] for p in obj_data.polygons])
+                if o7.is_linked:
+                    pn.append([p.normal[:] for p in obj_data.polygons])
 
-                    if o1.is_linked:
-                        vs.append([v.co[:] for v in obj_data.vertices])
-                    if o2.is_linked:
-                        vn.append([v.normal[:] for v in obj_data.vertices])
-                    if o3.is_linked:
-                        es.append(obj_data.edge_keys)
-                    if o4.is_linked:
-                        ps.append([p.vertices[:] for p in obj_data.polygons])
-                    if o5.is_linked:
-                        pa.append([p.area for p in obj_data.polygons])
-                    if o6.is_linked:
-                        pc.append([p.center[:] for p in obj_data.polygons])
-                    if o7.is_linked:
-                        pn.append([p.normal[:] for p in obj_data.polygons])
-
-                    obj.to_mesh_clear()
+                obj.to_mesh_clear()
 
         for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):
             if i.is_linked:

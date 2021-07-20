@@ -15,18 +15,17 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from colorsys import rgb_to_hls
-from itertools import repeat
+
 import bpy
-from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty, BoolProperty
-from mathutils import Vector, Matrix, Color
+from bpy.props import EnumProperty, BoolProperty
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
+from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
-                                     iter_list_match_func, no_space, throttle_and_update_node)
+                                     iter_list_match_func, no_space)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.color_utils import color_channels
 
@@ -93,13 +92,13 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
 
     ]
 
-    @throttle_and_update_node
     def change_mode(self, context):
         outputs = self.outputs
         if self.color_channel not in ['Color', 'RGBA']:
             outputs[0].replace_socket('SvStringsSocket', 'Value')
         else:
             outputs[0].replace_socket('SvColorSocket', 'Color')
+        updateNode(self, context)
 
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,

@@ -66,25 +66,23 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             obj = bpy.data.objects.get(obj_name)
 
         if obj:
-            with self.sv_throttle_tree_update():
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            deps_obj = depsgraph.objects[obj.name]
 
-                depsgraph = bpy.context.evaluated_depsgraph_get()
-                deps_obj = depsgraph.objects[obj.name]
+            if self.modifiers:
+                obj_data = deps_obj.to_mesh(depsgraph=depsgraph)
+            else:
+                obj_data = deps_obj.original.to_mesh()
 
-                if self.modifiers:
-                    obj_data = deps_obj.to_mesh(depsgraph=depsgraph)
-                else:
-                    obj_data = deps_obj.original.to_mesh()
-
-                self.node_dict[hash(self)] = {
-                    'Vertices': list([v.co[:] for v in obj_data.vertices]),
-                    'Edges': obj_data.edge_keys,
-                    'Polygons': [list(p.vertices) for p in obj_data.polygons],
-                    'MaterialIdx': [p.material_index for p in obj_data.polygons],
-                    'Matrix': deps_obj.matrix_world
-                }
-                deps_obj.to_mesh_clear()
-                self.currently_storing = True
+            self.node_dict[hash(self)] = {
+                'Vertices': list([v.co[:] for v in obj_data.vertices]),
+                'Edges': obj_data.edge_keys,
+                'Polygons': [list(p.vertices) for p in obj_data.polygons],
+                'MaterialIdx': [p.material_index for p in obj_data.polygons],
+                'Matrix': deps_obj.matrix_world
+            }
+            deps_obj.to_mesh_clear()
+            self.currently_storing = True
 
         else:
             self.error("No object selected")
@@ -162,19 +160,18 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             self.obj_name = name
             return
 
-        with self.sv_throttle_tree_update():
-            bm = bmesh_from_pydata(verts, edges, polygons)
-            if materials:
-                for face, material in zip(bm.faces, materials):
-                    face.material_index = material
-            obj = generate_object(name, bm)
-            obj.matrix_world = matrix
+        bm = bmesh_from_pydata(verts, edges, polygons)
+        if materials:
+            for face, material in zip(bm.faces, materials):
+                face.material_index = material
+        obj = generate_object(name, bm)
+        obj.matrix_world = matrix
 
-            # rename if obj existed
-            if not obj.name == name:
-                self.obj_name = obj.name
-                if import_version < 1.0:
-                    node_data['params']["obj_name"] = obj.name  # I guess the name was used for further importing
+        # rename if obj existed
+        if not obj.name == name:
+            self.obj_name = obj.name
+            if import_version < 1.0:
+                node_data['params']["obj_name"] = obj.name  # I guess the name was used for further importing
 
     def save_to_json(self, node_data: dict):
         # generate flat data, and inject into incoming storage variable

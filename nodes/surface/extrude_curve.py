@@ -1,12 +1,9 @@
 
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import (
@@ -38,10 +35,10 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         (NORMAL_DIR, "Specified plane", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
     ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, 'NORMALTRACK'}
         self.inputs['Normal'].hide_safe = self.algorithm != NORMAL_DIR
+        updateNode(self, context)
 
     algorithm : EnumProperty(
             name = "Algorithm",

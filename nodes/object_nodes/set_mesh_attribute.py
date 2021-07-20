@@ -9,7 +9,7 @@ from itertools import chain, cycle
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fixed_iter, throttle_and_update_node, flat_iter
+from sverchok.data_structure import updateNode, fixed_iter, flat_iter
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
@@ -82,12 +82,12 @@ class SvSetMeshAttributeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Set mesh attribute'
     bl_icon = 'SORTALPHA'
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Value'].hide_safe = self.value_type not in ['FLOAT', 'INT', 'BOOLEAN']
         self.inputs['Value'].default_property_type = 'float' if self.value_type == 'FLOAT' else 'int'
         self.inputs['Vector'].hide_safe = self.value_type not in ['FLOAT_VECTOR', 'FLOAT2']
         self.inputs['Color'].hide_safe = self.value_type != 'FLOAT_COLOR'
+        updateNode(self, context)
 
     domains = ['POINT', 'EDGE', 'CORNER', 'FACE']
     value_types = ['FLOAT', 'INT', 'FLOAT_VECTOR', 'FLOAT_COLOR', 'BOOLEAN', 'FLOAT2']

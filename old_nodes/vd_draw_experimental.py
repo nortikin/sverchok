@@ -412,10 +412,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             layout.row().prop(self, "u_resolution")
 
     def bake(self):
-        with self.sv_throttle_tree_update():
-            bpy.ops.node.sverchok_mesh_baker_mk3(
-                node_name=self.name, tree_name=self.id_data.name
-            )
+        bpy.ops.node.sverchok_mesh_baker_mk3(
+            node_name=self.name, tree_name=self.id_data.name
+        )
 
     def rclick_menu(self, context, layout):
         self.node_replacement_menu(context, layout)
@@ -522,13 +521,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
             if socket_acquired_attrs:
-                with self.id_data.throttle_update():  # avoiding recursion
-                    try:
-                        for k, new_value in socket_acquired_attrs[0].items():
-                            print(f"setattr(node, {k}, {new_value})")
-                            setattr(self, k, new_value)  # it will trigger process method again
-                    except Exception as err:
-                        print('error inside socket_acquired_attrs: ', err)
+                try:
+                    for k, new_value in socket_acquired_attrs[0].items():
+                        print(f"setattr(node, {k}, {new_value})")
+                        setattr(self, k, new_value)  # it will trigger process method again
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
 
     def format_draw_data(self, func=None, args=None):
         return {

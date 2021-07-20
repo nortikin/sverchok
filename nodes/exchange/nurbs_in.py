@@ -268,23 +268,23 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
             obj = bpy.data.objects.get(object_name)
             if not obj:
                 continue
-            with self.sv_throttle_tree_update():
-                matrix = obj.matrix_world
-                if obj.type not in {'SURFACE', 'CURVE'}:
-                    self.warning("%s: not supported object type: %s", object_name, obj.type)
+
+            matrix = obj.matrix_world
+            if obj.type not in {'SURFACE', 'CURVE'}:
+                self.warning("%s: not supported object type: %s", object_name, obj.type)
+                continue
+            for spline in obj.data.splines:
+                if spline.type != 'NURBS':
+                    self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
-                for spline in obj.data.splines:
-                    if spline.type != 'NURBS':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
-                        continue
-                    if obj.type == 'SURFACE':
-                        surface = self.get_surface(spline, matrix)
-                        surfaces_out.append(surface)
-                        matrices_out.append(matrix)
-                    elif obj.type == 'CURVE':
-                        curve = self.get_curve(spline, matrix)
-                        curves_out.append(curve)
-                        matrices_out.append(matrix)
+                if obj.type == 'SURFACE':
+                    surface = self.get_surface(spline, matrix)
+                    surfaces_out.append(surface)
+                    matrices_out.append(matrix)
+                elif obj.type == 'CURVE':
+                    curve = self.get_curve(spline, matrix)
+                    curves_out.append(curve)
+                    matrices_out.append(matrix)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['Surfaces'].sv_set(surfaces_out)

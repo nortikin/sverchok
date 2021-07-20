@@ -35,7 +35,7 @@ from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode, throttled
+from sverchok.data_structure import updateNode
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -201,7 +201,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             return self.bl_label
 
-    @throttled
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -595,21 +594,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             script_content = self.script_str
 
         if script_name:
-            with self.sv_throttle_tree_update():
-                texts = bpy.data.texts
-                if script_name and not (script_name in texts):
+            texts = bpy.data.texts
+            if script_name and not (script_name in texts):
+                new_text = texts.new(script_name)
+                new_text.from_string(script_content)
+            elif script_name and (script_name in texts):
+                # This was added to fix existing texts with the same name but no / different content.
+                if texts[script_name].as_string() == script_content:
+                    self.debug(f'SN skipping text named "{script_name}" - their content are the same')
+                else:
+                    self.info(f'SN text named "{script_name}" already found, but content differs')
                     new_text = texts.new(script_name)
                     new_text.from_string(script_content)
-                elif script_name and (script_name in texts):
-                    # This was added to fix existing texts with the same name but no / different content.
-                    if texts[script_name].as_string() == script_content:
-                        self.debug(f'SN skipping text named "{script_name}" - their content are the same')
-                    else:
-                        self.info(f'SN text named "{script_name}" already found, but content differs')
-                        new_text = texts.new(script_name)
-                        new_text.from_string(script_content)
-                        script_name = new_text.name
-                        self.info(f'SN text named replaced with "{script_name}"')
+                    script_name = new_text.name
+                    self.info(f'SN text named replaced with "{script_name}"')
 
             self.script_name = script_name
             self.script_str = script_content

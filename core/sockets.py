@@ -135,13 +135,12 @@ class SvSocketProcessing():
         if self.skip_wrap_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_wrap_mode_update = True
-                if self.use_unwrap:
-                    self.use_wrap = False
-            finally:
-                self.skip_wrap_mode_update = False
+        try:
+            self.skip_wrap_mode_update = True
+            if self.use_unwrap:
+                self.use_wrap = False
+        finally:
+            self.skip_wrap_mode_update = False
 
         process_from_socket(self, context)
 
@@ -149,13 +148,12 @@ class SvSocketProcessing():
         if self.skip_wrap_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_wrap_mode_update = True
-                if self.use_wrap:
-                    self.use_unwrap = False
-            finally:
-                self.skip_wrap_mode_update = False
+        try:
+            self.skip_wrap_mode_update = True
+            if self.use_wrap:
+                self.use_unwrap = False
+        finally:
+            self.skip_wrap_mode_update = False
 
         process_from_socket(self, context)
 
@@ -173,13 +171,12 @@ class SvSocketProcessing():
         if self.skip_simplify_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_simplify_mode_update = True
-                if self.use_flatten:
-                    self.use_simplify = False
-            finally:
-                self.skip_simplify_mode_update = False
+        try:
+            self.skip_simplify_mode_update = True
+            if self.use_flatten:
+                self.use_simplify = False
+        finally:
+            self.skip_simplify_mode_update = False
 
         process_from_socket(self, context)
 
@@ -187,13 +184,12 @@ class SvSocketProcessing():
         if self.skip_simplify_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_simplify_mode_update = True
-                if self.use_simplify:
-                    self.use_flatten = False
-            finally:
-                self.skip_simplify_mode_update = False
+        try:
+            self.skip_simplify_mode_update = True
+            if self.use_simplify:
+                self.use_flatten = False
+        finally:
+            self.skip_simplify_mode_update = False
 
         process_from_socket(self, context)
 
@@ -1366,43 +1362,41 @@ class SvInputLinkMenuOp(bpy.types.Operator):
             return False
 
         if self.option == '__SV_PARAM_CREATE__':
-            with node.sv_throttle_tree_update():
-                new_node = tree.nodes.new(socket.get_link_parameter_node())
-                new_node.label = socket.label or socket.name
-                socket.setup_parameter_node(new_node)
-                links_number = len([s for s in node.inputs if s.is_linked])
-                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
-                tree.links.new(new_node.outputs[0], socket)
+            new_node = tree.nodes.new(socket.get_link_parameter_node())
+            new_node.label = socket.label or socket.name
+            socket.setup_parameter_node(new_node)
+            links_number = len([s for s in node.inputs if s.is_linked])
+            new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+            tree.links.new(new_node.outputs[0], socket)
 
-                if node.parent:
-                    new_node.parent = node.parent
-                    new_node.location = new_node.absolute_location
+            if node.parent:
+                new_node.parent = node.parent
+                new_node.location = new_node.absolute_location
 
             new_node.process_node(context)
 
         elif self.option == '__SV_WIFI_CREATE__':
-            with node.sv_throttle_tree_update():
-                label = socket.label or socket.name
-                param_node = tree.nodes.new(socket.get_link_parameter_node())
-                param_node.label = label
+            label = socket.label or socket.name
+            param_node = tree.nodes.new(socket.get_link_parameter_node())
+            param_node.label = label
 
-                wifi_in_node = tree.nodes.new('WifiInNode')
-                wifi_in_node.label = f"WiFi In - {label}"
-                wifi_in_node.gen_var_name()
-                wifi_var = wifi_in_node.var_name
+            wifi_in_node = tree.nodes.new('WifiInNode')
+            wifi_in_node.label = f"WiFi In - {label}"
+            wifi_in_node.gen_var_name()
+            wifi_var = wifi_in_node.var_name
 
-                wifi_out_node = tree.nodes.new('WifiOutNode')
-                wifi_out_node.label = f"WiFi Out - {label}"
-                wifi_out_node.var_name = wifi_var
+            wifi_out_node = tree.nodes.new('WifiOutNode')
+            wifi_out_node.label = f"WiFi Out - {label}"
+            wifi_out_node.var_name = wifi_var
 
-                socket.setup_parameter_node(param_node)
+            socket.setup_parameter_node(param_node)
 
-                tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
-                tree.links.new(wifi_out_node.outputs[0], socket)
+            tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
+            tree.links.new(wifi_out_node.outputs[0], socket)
 
-                setup_new_node_location(wifi_out_node, node)
-                setup_new_node_location(wifi_in_node, wifi_out_node)
-                setup_new_node_location(param_node, wifi_in_node)
+            setup_new_node_location(wifi_out_node, node)
+            setup_new_node_location(wifi_in_node, wifi_out_node)
+            setup_new_node_location(param_node, wifi_in_node)
 
             param_node.process_node(context)
 

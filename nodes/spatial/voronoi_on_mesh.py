@@ -16,15 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level,\
+    ensure_min_nesting
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
@@ -62,9 +59,9 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Spacing'].hide_safe = self.mode not in {'VOLUME', 'SURFACE'}
+        updateNode(self, context)
 
     mode : EnumProperty(
         name = "Mode",

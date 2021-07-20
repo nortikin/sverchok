@@ -354,46 +354,43 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        # we need to suppress depsgraph updates emminating from this part of the process/
-        with self.sv_throttle_tree_update():
+        if self.merge:
+            obj_index = 0
 
-            if self.merge:
-                obj_index = 0
-
-                def keep_yielding():
-                    # this will yield all in one go.
-                    for idx, Verts in enumerate(mverts):
-                        if not Verts:
-                            continue
-
-                        data = get_edges_faces_matrices(idx)
-                        yield (Verts, data)
-
-                yielder_object = keep_yielding()
-                make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
-
-            else:
-                for obj_index, Verts in enumerate(mverts):
-                    if not len(Verts) > 0:
+            def keep_yielding():
+                # this will yield all in one go.
+                for idx, Verts in enumerate(mverts):
+                    if not Verts:
                         continue
 
-                    data = get_edges_faces_matrices(obj_index)
-                    make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
+                    data = get_edges_faces_matrices(idx)
+                    yield (Verts, data)
 
-            last_index = (len(mverts) - 1) if not self.merge else 0
-            self.remove_non_updated_objects(last_index)
+            yielder_object = keep_yielding()
+            make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
 
-            objs = self.get_children()
+        else:
+            for obj_index, Verts in enumerate(mverts):
+                if not len(Verts) > 0:
+                    continue
 
-            if self.grouping:
-                self.to_collection(objs)
+                data = get_edges_faces_matrices(obj_index)
+                make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
 
-            self.set_corresponding_materials()
-            self.set_autosmooth(objs)
-            self.set_wireframe_visibility(objs)
+        last_index = (len(mverts) - 1) if not self.merge else 0
+        self.remove_non_updated_objects(last_index)
 
-            if self.outputs[0].is_linked:
-                self.outputs[0].sv_set(objs)
+        objs = self.get_children()
+
+        if self.grouping:
+            self.to_collection(objs)
+
+        self.set_corresponding_materials()
+        self.set_autosmooth(objs)
+        self.set_wireframe_visibility(objs)
+
+        if self.outputs[0].is_linked:
+            self.outputs[0].sv_set(objs)
 
 
     def set_autosmooth(self, objs):
@@ -432,10 +429,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             links.new(attr_node.outputs[0], diffuse_node.inputs[0])
 
     def sv_copy(self, other):
-        with self.sv_throttle_tree_update():
-            print('copying bmesh node')
-            dname = get_random_init_v3()
-            self.basedata_name = dname
+        dname = get_random_init_v3()
+        self.basedata_name = dname
 
 def register():
     bpy.utils.register_class(SvBmeshViewerNodeV28)

@@ -1,10 +1,9 @@
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level, ensure_nesting_level
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.dependencies import geomdl
 from sverchok.utils.dummy_nodes import add_dummy
@@ -36,9 +35,9 @@ else:
                 default = False,
                 update = updateNode)
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['PointsCnt'].hide_safe = not self.has_points_cnt
+            updateNode(self, context)
 
         has_points_cnt : BoolProperty(
                 name = "Specify points count",

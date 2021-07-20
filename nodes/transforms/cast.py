@@ -21,7 +21,7 @@ import numpy as np
 from numpy import pi
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
-                                     numpy_list_match_func, throttle_and_update_node)
+                                     numpy_list_match_func)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.vector_math_utils import angle_between
 
@@ -140,7 +140,6 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     cast_modes = [(t, t.replace('_', ' '), 'Cast to ' + t.replace('_', ' '), '', id) for id, t in enumerate(CAST_FORMULAS)]
 
-    @throttle_and_update_node
     def handle_size_socket(self, context):
         input_socket = self.inputs['Size']
         if self.size_mode == 'AVERAGE':
@@ -149,8 +148,8 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             if input_socket.hide_safe:
                 input_socket.hide_safe = False
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def handle_origin_socket(self, context):
         input_socket = self.inputs['Origin']
         if self.origin_mode == 'AVERAGE':
@@ -159,8 +158,8 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             if input_socket.hide_safe:
                 input_socket.hide_safe = False
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def handle_uv_sockets(self, context):
         u_socket = self.inputs['U']
         v_socket = self.inputs['V']
@@ -176,6 +175,7 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
                 u_socket.hide_safe = False
             if v_socket.hide_safe:
                 v_socket.hide_safe = False
+        updateNode(self, context)
 
     cast_mode: EnumProperty(
         name='Cast Type',

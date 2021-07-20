@@ -9,7 +9,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, no_space, throttle_and_update_node
+from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
 
@@ -45,7 +45,6 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Merge mesh 2D lite'
     bl_icon = 'AUTOMERGE_ON'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         [self.outputs.remove(sock) for sock in self.outputs[2:]]
@@ -56,6 +55,7 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
             new_socks.append(self.outputs.new('SvStringsSocket', 'Overlap number'))
         [[self.id_data.links.new(sock, link) for link in links[sock.name]]
                                              for sock in new_socks if sock.name in links]
+        updateNode(self, context)
 
     alg_mode_items = [(no_space(k), k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
 

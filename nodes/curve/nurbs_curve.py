@@ -1,13 +1,12 @@
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
@@ -20,10 +19,10 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Build NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
         self.inputs['Knots'].hide_safe = self.knot_mode == 'AUTO'
+        updateNode(self, context)
 
     def get_implementations(self, context):
         items = []

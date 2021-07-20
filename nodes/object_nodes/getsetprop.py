@@ -176,17 +176,16 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         self.bad_prop = False
-        with self.sv_throttle_tree_update():
-            s_type = types.get(type(self.obj))
-            
-            if not s_type:
-                s_type = secondary_type_assesment(self.obj)
+        s_type = types.get(type(self.obj))
+        
+        if not s_type:
+            s_type = secondary_type_assesment(self.obj)
 
-            outputs = self.outputs
-            if s_type and outputs:
-                outputs[0].replace_socket(s_type)
-            elif s_type:
-                outputs.new(s_type, "Data")
+        outputs = self.outputs
+        if s_type and outputs:
+            outputs[0].replace_socket(s_type)
+        elif s_type:
+            outputs.new(s_type, "Data")
       
         updateNode(self, context)
 
@@ -240,27 +239,26 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
 
         # execute second
         self.bad_prop = False
-        with self.sv_throttle_tree_update():
 
-            s_type = types.get(type(self.obj))
-            if not s_type:
-                s_type = secondary_type_assesment(self.obj)
+        s_type = types.get(type(self.obj))
+        if not s_type:
+            s_type = secondary_type_assesment(self.obj)
 
-            p_name = {
-                float: "float_prop", 
-                int: "int_prop",
-                bpy_prop_array: "color_prop"
-            }.get(type(self.obj),"")
-            
-            inputs = self.inputs
+        p_name = {
+            float: "float_prop", 
+            int: "int_prop",
+            bpy_prop_array: "color_prop"
+        }.get(type(self.obj),"")
+        
+        inputs = self.inputs
 
-            if inputs and s_type: 
-                socket = inputs[0].replace_socket(s_type)
-                socket.prop_name = p_name
-            elif s_type:
-                inputs.new(s_type, "Data").prop_name = p_name
-            if s_type == "SvVerticesSocket":
-                inputs[0].use_prop = True
+        if inputs and s_type: 
+            socket = inputs[0].replace_socket(s_type)
+            socket.prop_name = p_name
+        elif s_type:
+            inputs.new(s_type, "Data").prop_name = p_name
+        if s_type == "SvVerticesSocket":
+            inputs[0].use_prop = True
 
         updateNode(self, context)
 
@@ -286,9 +284,6 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
-
-        #with self.sv_throttle_tree_update():
-            # changes here should not reflect back into the nodetree?
 
         if isinstance(obj, (int, float, bpy_prop_array)):
             obj = get_object(path[:-1])

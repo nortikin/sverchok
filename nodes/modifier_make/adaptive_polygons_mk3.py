@@ -36,7 +36,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import barycentric_transform
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, throttle_and_update_node,
+from sverchok.data_structure import (updateNode,
                                      match_long_repeat,
                                      numpy_list_match_modes,
                                      cycle_for_length, make_repeaters, make_cyclers,
@@ -418,7 +418,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     transform_description = ''.join([f'{p[3]} = {p[1]} ({p[2]})\n' for p in transform_modes])
     transform_dict = {p[0]: p[3] for p in transform_modes}
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         show_width = self.mask_mode == 'TRANSFORM' or 'FRAME' in self.quads_as or 'FRAME'in self.tris_as or 'FRAME'in self.ngons_as
         self.inputs['FrameWidth'].hide_safe = not show_width
@@ -431,6 +430,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.inputs['PolyMask'].prop_name = ''
             self.inputs['PolyMask'].label = 'Polygon Mask'
+        updateNode(self, context)
 
     skip_modes = [
         ("SKIP", "Skip", "Do not output anything", 0),

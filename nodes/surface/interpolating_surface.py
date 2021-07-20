@@ -3,11 +3,9 @@ import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils import Matrix
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.surface.algorithms import SvInterpolatingSurface
 from sverchok.utils.curve import SvSplineCurve, make_euclidian_ts
@@ -36,11 +34,11 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             modes.append(('RBF', "RBF", "RBF interpolation", 3))
         return modes
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Degree'].hide_safe = self.interp_mode != 'BSPLINE'
         self.inputs['Smooth'].hide_safe = self.interp_mode != 'RBF'
         self.inputs['Epsilon'].hide_safe = self.interp_mode != 'RBF'
+        updateNode(self, context)
 
     def get_implementations(self, context):
         items = []

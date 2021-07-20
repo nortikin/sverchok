@@ -1,11 +1,10 @@
 import numpy as np
 
-from mathutils import Matrix
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurveLengthSolver, SvCurve
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
@@ -43,10 +42,10 @@ class SvCurveLengthParameterNode(DraftMode, bpy.types.Node, SverchCustomTreeNode
 
     mode: EnumProperty(name='Interpolation mode', default="SPL", items=modes, update=updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Length'].hide_safe = self.eval_mode != 'MANUAL'
         self.inputs['Samples'].hide_safe = self.eval_mode != 'AUTO'
+        updateNode(self, context)
 
     eval_modes = [
         ('AUTO', "Automatic", "Evaluate the curve at evenly spaced points", 0),

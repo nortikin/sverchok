@@ -2,10 +2,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.curve import SvCurve, SvCastCurveToPlane, SvCastCurveToSphere, SvCastCurveToCylinder
 
@@ -35,10 +35,10 @@ class SvCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             ('CYLINDER', "Cylinder", "Cylinder defined by center, direction and radius", 2)
         ]
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Direction'].hide_safe = self.form == 'SPHERE'
             self.inputs['Radius'].hide_safe = self.form == 'PLANE'
+            updateNode(self, context)
 
         form : EnumProperty(
             name = "Target form",

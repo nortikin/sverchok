@@ -1,16 +1,14 @@
 
-from itertools import zip_longest
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, zip_long_repeat, throttle_and_update_node, fullList_deep_copy,
+from sverchok.data_structure import (updateNode, zip_long_repeat, fullList_deep_copy,
                                      repeat_last_for_length, ensure_nesting_level, split_by_count)
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
@@ -28,12 +26,12 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
         self.inputs['KnotsU'].hide_safe = self.knot_mode == 'AUTO'
         self.inputs['KnotsV'].hide_safe = self.knot_mode == 'AUTO'
+        updateNode(self, context)
 
     def get_implementations(self, context):
         items = []

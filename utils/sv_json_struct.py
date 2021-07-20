@@ -270,36 +270,34 @@ class FileStruct(Struct):
         # with tree data blocks it can be a beat trickier,
         # all trees should be created and only after that field with content
 
-        with tree.throttle_update():  # todo it is required only for current update system can be deleted later??
+        factories = StructFactory.grab_from_module()
+        imported_structs: OldNewNames = dict()
+        data_blocks = self._data_blocks_reader()
 
-            factories = StructFactory.grab_from_module()
-            imported_structs: OldNewNames = dict()
-            data_blocks = self._data_blocks_reader()
+        # initialize trees and build other data block types
+        trees_to_build = []
+        for struct_type, block_name, raw_struct in data_blocks:
+            with self.logger.add_fail("Initialize data block", f"Type: {struct_type.name}, Name: {block_name}"):
+                if struct_type == StrTypes.TREE:
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    # interface should be created before building all trees
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, '', block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
 
-            # initialize trees and build other data block types
-            trees_to_build = []
-            for struct_type, block_name, raw_struct in data_blocks:
-                with self.logger.add_fail("Initialize data block", f"Type: {struct_type.name}, Name: {block_name}"):
-                    if struct_type == StrTypes.TREE:
-                        tree_struct = factories.tree(block_name, self.logger, raw_struct)
-                        data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
-                        # interface should be created before building all trees
-                        tree_struct.build_interface(data_block, factories, imported_structs)
-                        imported_structs[(struct_type, '', block_name)] = data_block.name
-                        trees_to_build.append(tree_struct)
-                    else:
-                        block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
-                        block_struct.build(factories, imported_structs)
+        # build main tree nodes
+        self._build_nodes(tree, factories, imported_structs)
 
-            # build main tree nodes
-            self._build_nodes(tree, factories, imported_structs)
-
-            # build group trees
-            for tree_struct in trees_to_build:
-                with self.logger.add_fail("Build node group", f"Name: {tree_struct.name}"):
-                    new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
-                    data_block = bpy.data.node_groups[new_name]
-                    tree_struct.build(data_block, factories, imported_structs)
+        # build group trees
+        for tree_struct in trees_to_build:
+            with self.logger.add_fail("Build node group", f"Name: {tree_struct.name}"):
+                new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
 
     def _build_nodes(self, tree, factories, imported_structs):
         """Build nodes of the main tree, other dependencies should be already initialized"""
@@ -374,7 +372,7 @@ class NodePresetFileStruct(Struct):
 
     def build(self, node):
         tree = node.id_data
-        with tree.throttle_update(), tree.init_tree():  # todo throttle can be deleted later
+        with tree.init_tree():
 
             factories = StructFactory.grab_from_module()
             imported_structs: OldNewNames = dict()
