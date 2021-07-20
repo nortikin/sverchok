@@ -33,10 +33,10 @@ Supporting curves, solids and other data types
 Except standard mesh objects Sverchok supports such type of objects as |curves|, |surfaces|, |nurbs|, |solids|.
 This is mathematical objects which using has its own advantages.
 
-.. |curves| replace:: :doc:`Curves <../curves>`
-.. |surfaces| replace:: :doc:`Surfaces <../surfaces>`
-.. |nurbs| replace:: :doc:`Nurbs <../nurbs>`
-.. |solids| replace:: :doc:`Solids <../solids>`
+.. |curves| replace:: :doc:`Curves <../data_structure/curves>`
+.. |surfaces| replace:: :doc:`Surfaces <../data_structure/surfaces>`
+.. |nurbs| replace:: :doc:`Nurbs <../data_structure/nurbs>`
+.. |solids| replace:: :doc:`Solids <../data_structure/solids>`
 
 .. figure:: https://user-images.githubusercontent.com/28003269/126273173-8b43b005-ea48-4bdb-9f5b-812bdf778c64.gif
     :width: 800
