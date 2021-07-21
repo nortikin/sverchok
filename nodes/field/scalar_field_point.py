@@ -39,7 +39,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
         name="Clamp", description="Restrict coefficient with R", default=False, update=updateNode)
 
     metrics = [
-        ('EUCLIDEAN', "Euclidian", "Standard euclidian distance - sqrt(dx*dx + dy*dy + dz*dz)", 0),
+        ('EUCLIDEAN', "Euclidean", "Standard euclidean distance - sqrt(dx*dx + dy*dy + dz*dz)", 0),
         ('CHEBYSHEV', "Chebyshev", "Chebyshev distance - abs(dx, dy, dz)", 1),
         ('MANHATTAN', "Manhattan", "Manhattan distance - abs(dx) + abs(dy) + abs(dz)", 2),
         ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)

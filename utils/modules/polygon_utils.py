@@ -282,12 +282,12 @@ def pols_shell_factor(vertices, faces):
 
 def np_faces_perimeters(v_pols):
 
-    return np.sum(edges_lenghts(v_pols), axis=1)
+    return np.sum(edges_lengths(v_pols), axis=1)
 
 def vertex_weight_factor(v_pols):
-    ed_lenghts = edges_lenghts(v_pols)
-    perimeters = np.sum(ed_lenghts, axis=1)
-    edges_prop = ed_lenghts/perimeters[:, np.newaxis]
+    ed_lengths = edges_lengths(v_pols)
+    perimeters = np.sum(ed_lengths, axis=1)
+    edges_prop = ed_lengths/perimeters[:, np.newaxis]
     return (edges_prop + np.roll(edges_prop, 1, axis=1))/2
 
 def np_center_median(v_pols):
@@ -303,7 +303,7 @@ def np_center_weighted(v_pols):
 
     return np.sum(v_pols * v_factor[:, :, np.newaxis], axis=1)
 
-def edges_lenghts(v_pols):
+def edges_lengths(v_pols):
     return np.linalg.norm(v_pols-np.roll(v_pols, 1, axis=1), axis=2)
 
 def np_tangent_longest_edge(v_pols):

@@ -15,7 +15,7 @@ imported_dummys = {}  # dummy node classes
 dummy_nodes_dict = {}  # bl_idnames of nodes which was not registered due some dependencies missing
 
 
-def add_dummy(bl_id, name, dependecy):
+def add_dummy(bl_id, name, dependency):
     """
     Usage example:
 
@@ -23,7 +23,7 @@ def add_dummy(bl_id, name, dependecy):
     from sverchok.utils.dummy_nodes import add_dummy
 
     if FreeCAD is None:
-                     bl_idname        bl_label     dependecy
+                     bl_idname        bl_label     dependency
         add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
     else:
         class SvBoxSolidNode(...):
@@ -31,7 +31,7 @@ def add_dummy(bl_id, name, dependecy):
 
     this will create a dummy node if needed
     """
-    dummy_nodes_dict[bl_id] = [name, dependecy]
+    dummy_nodes_dict[bl_id] = [name, dependency]
 
 
 class SvDummyNode:
@@ -41,7 +41,7 @@ class SvDummyNode:
 
     def draw_buttons(self, context, layout):
         box = layout.box()
-        box.label(text=self.missing_dependecy + " module")
+        box.label(text=self.missing_dependency + " module")
         box.label(text="not found. Check ")
         box.label(text="extra-nodes in preferences")
 
@@ -76,7 +76,7 @@ def create_dummy_class(bl_id):
         {
             'bl_idname': bl_id,
             'bl_label': label,
-            "missing_dependecy": dependency_name,
+            "missing_dependency": dependency_name,
         }
     )
 
