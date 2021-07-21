@@ -50,7 +50,7 @@ else:
 
         def update_sockets(self, context):
             self.outputs['Faces'].hide_safe = not self.make_faces
-            updateNode()
+            updateNode(self, context)
 
         make_faces : BoolProperty(
                 name = "Make faces",
