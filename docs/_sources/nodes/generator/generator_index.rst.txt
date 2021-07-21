@@ -3,7 +3,7 @@ Generators
 **********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    basic_3pt_arc
    basic_spline

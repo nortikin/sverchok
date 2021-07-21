@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Introduction to modular components &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Nesting" href="../nesting.html" />
+    <link rel="prev" title="Unit 00. Introduction to Blender 2.8+, the NodeView and 3DView" href="../Unit_00/soft_intro_01.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lesson 01 - A Plane</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-01-a-plane">Lesson 01 - A Plane</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../nesting.html">Notes for Lesson 02 (Nesting)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_02.html">Lesson 02 - A Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_03.html">Lesson 03 - A Grid</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+        
+      <li>Introduction to modular components</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/tutorials/Unit_01/lesson_01.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction-to-modular-components">
+<h1>Introduction to modular components<a class="headerlink" href="#introduction-to-modular-components" title="Permalink to this headline">¶</a></h1>
+<p><strong>prerequisites</strong></p>
+<p>You should have a general understanding of Vectors and Trigonometry, if not then soon enough parts of these lessons might be confusing. If you want to get the most of out Sverchok but don’t have a strong Math background then work your way through related KhanAcademy content, it’s a great resource and mind bogglingly comprehensive.</p>
+<div class="section" id="lesson-01-a-plane">
+<h2>Lesson 01 - A Plane<a class="headerlink" href="#lesson-01-a-plane" title="Permalink to this headline">¶</a></h2>
+<p>Nodes covered in this lesson: <code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math,</span> <span class="pre">Vector</span> <span class="pre">In,</span> <span class="pre">Number,</span> <span class="pre">Number</span> <span class="pre">Range,</span> <span class="pre">Viewer</span> <span class="pre">Draw,</span> <span class="pre">Stethoschope,</span> <span class="pre">Simple</span> <span class="pre">Topology,</span> <span class="pre">Vector</span> <span class="pre">Math</span></code>.</p>
+<p>Let’s make a Plane, we will need 4 vectors and we’ll define them using math. I’ll use the Trigonometric concept of the <code class="docutils literal notranslate"><span class="pre">unit-circle</span></code> to get coordinates which are <code class="docutils literal notranslate"><span class="pre">0.5</span> <span class="pre">PI</span></code> apart.</p>
+<blockquote>
+<div><p><em>Note</em>: The perimeter of a circle is C=2*PI*r . In the unit-circle radius=1 so it’s perimter is C=2*PI . For the square we need 4 vertexes with equal distance apart so 2*PI/4=0.5*PI. If you consider that a circle represents an angle of 360 degrees then 2πr=360º and this means that 0*π places represents a vertex at 0 degrees of the circle: 0PI=0º ; 0.5PI=90º ; 1PI=180º ; 1.5PI=270º</p>
+</div></blockquote>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png" src="https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png" />
+<p>We will rotate the square 45º to match the Blender’s Plane. So the starting vertex will not be at 0*PI=0º but at 0.25PI=45º</p>
+<p>We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is <code class="docutils literal notranslate"><span class="pre">[0.25</span> <span class="pre">pi,</span> <span class="pre">0.75</span> <span class="pre">pi,</span> <span class="pre">1.25</span> <span class="pre">pi,</span> <span class="pre">1.75</span> <span class="pre">pi]</span></code>. Because these aren’t whole numbers (<code class="docutils literal notranslate"><span class="pre">Integers</span></code>), but so called <code class="docutils literal notranslate"><span class="pre">Floats</span></code>, we use a <code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> Node configured to output <code class="docutils literal notranslate"><span class="pre">Floats</span></code>.</p>
+<p><strong>Making a series of numbers</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">Range</span></code></p></li>
+</ul>
+<p><img alt="number_range" src="https://user-images.githubusercontent.com/619340/81541992-40bf7500-9374-11ea-82ce-4e5b1bbffb7a.png" /></p>
+<p>By default this node will generate a standard range: <code class="docutils literal notranslate"><span class="pre">[0.0,</span> <span class="pre">1.0,</span> <span class="pre">2.0,</span> <span class="pre">3.0.....9.0]</span></code>,</p>
+<p><strong>Seeing the output of the Range Float node</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Text</span> <span class="pre">-&gt;</span> <span class="pre">Stethoscope</span></code></p></li>
+</ul>
+<p>Hook up the <cite>Stethoscope</cite> input into the <cite>Number Range</cite> output, you’ll see numbers printed onto the NodeView. You can change the color of the Stethoscope output using the color property if the background color is too similar to the text color.</p>
+<blockquote>
+<div><p><em>Note</em>: With any node selected there’s a faster way to add a Stethoschope: <cite>Ctrl+Right Click</cite> , it even automatically connects the stethoscope.</p>
+</div></blockquote>
+<p><img alt="num_range_and_stethoscope_default" src="https://user-images.githubusercontent.com/619340/81544402-c5f85900-9377-11ea-8a88-d13b3a9d00ce.png" /></p>
+<blockquote>
+<div><p><em>Note</em>: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.</p>
+<p><em>Note</em>: When you move the Stethoscope around it is possible that the drawing of the text beside it does not move with the node, whenever you update a value in a node upstream from the Stethoscope the drawing <em>will</em> be updated.</p>
+</div></blockquote>
+<p><strong>Setting up the input values of Number Range to generate the 4 multipliers</strong></p>
+<p>Type these numbers into the number fields instead of adjusting the slider, it’s fast and accurate. Especially useful for entering <em>Floats</em>.</p>
+<ul class="simple">
+<li><p>Set the Number Range mode to <code class="docutils literal notranslate"><span class="pre">Step</span></code> and</p></li>
+<li><p>make sure the <em>Start</em> value is <code class="docutils literal notranslate"><span class="pre">0.25</span></code> and</p></li>
+<li><p><em>Step</em> value is <code class="docutils literal notranslate"><span class="pre">0.50</span></code></p></li>
+<li><p>Set the <em>Count</em> slider to <code class="docutils literal notranslate"><span class="pre">4</span></code></p></li>
+</ul>
+<p><img alt="num_range_and_stethoscope" src="https://user-images.githubusercontent.com/619340/81544544-f93ae800-9377-11ea-8789-fda3e2fb2500.png" /></p>
+<p><strong>Multiplying the Range by PI</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Scalar</span> <span class="pre">Math</span></code></p></li>
+</ul>
+<p>We know the output of the <em>Number Range</em> now, what we will do is multiply the range by a constant PI. This is like doing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">]</span> <span class="o">*</span> <span class="n">pi</span>
+</pre></div>
+</div>
+<p>which is what we wanted from the beginning, namely;:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mf">0.25</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">1.25</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">1.75</span> <span class="o">*</span> <span class="n">pi</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Set the <em>Scalar Math</em> node to the function <code class="docutils literal notranslate"><span class="pre">PI</span> <span class="pre">*</span> <span class="pre">X</span></code></p></li>
+<li><p>Connect the output of the <em>Number Range</em> into the input of the <code class="docutils literal notranslate"><span class="pre">PI</span> <span class="pre">*</span> <span class="pre">X</span></code> node.</p></li>
+</ul>
+<p>The result should look something like this, hook up the Stethoscope to see the outputs.</p>
+<p><img alt="pi_times_xrange" src="https://user-images.githubusercontent.com/619340/81560341-850d3e00-9391-11ea-87f9-6f3b551ebeb9.png" /></p>
+<p><strong>Getting the Sine and Cosine of this range</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Scalar</span> <span class="pre">Math</span></code></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math</span></code> node will do the Trigonometry for us. From the dropdown you can pick the <code class="docutils literal notranslate"><span class="pre">Sin</span> <span class="pre">&amp;</span> <span class="pre">Cos</span></code> function. This node will now output the <em>cos</em> and <em>sin</em> of whatever is routed into it, in this case the range of Floats.</p>
+<p><img alt="sincos_img1" src="https://user-images.githubusercontent.com/619340/81560667-2a281680-9392-11ea-8223-29b9e09d01f7.png" /></p>
+<p>See the outputs of the <code class="docutils literal notranslate"><span class="pre">SINCOS</span> <span class="pre">X</span></code>, each element of these new ranges represent a component (x or y) of the set of Vectors we want. <strong>Sine</strong> will represent <code class="docutils literal notranslate"><span class="pre">Y</span></code> and <strong>Cosine</strong> will be <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p>
+<blockquote>
+<div><p><em>Note</em>: I minimized the stethoschope node for visual readability (click the little triangle), stethoschope has many features that are not not useful to us right now.</p>
+</div></blockquote>
+<p><strong>Making Vectors from a range of numbers</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">In</span></code></p></li>
+</ul>
+<p>The <cite>Vector In</cite> node takes as input 1 or more numbers per component. Sockets which are not explicitly connected to will be represented by a zero.</p>
+<ol class="arabic simple">
+<li><p>Connect the resulting <code class="docutils literal notranslate"><span class="pre">Cos(</span> <span class="pre">x</span> <span class="pre">)</span></code> to the first component in of <em>Vector in</em>: <code class="docutils literal notranslate"><span class="pre">X</span></code></p></li>
+<li><p>Connect the resulting <code class="docutils literal notranslate"><span class="pre">Sin(</span> <span class="pre">X</span> <span class="pre">)</span></code> to the second component in of <em>Vector in</em>: <code class="docutils literal notranslate"><span class="pre">Y</span></code></p></li>
+<li><p>Leaving Vector In’s 3rd socket (<code class="docutils literal notranslate"><span class="pre">z</span></code>) empty puts a <code class="docutils literal notranslate"><span class="pre">0.0</span></code> as the <code class="docutils literal notranslate"><span class="pre">z</span></code> component for all vectors generated by that node.</p></li>
+</ol>
+<blockquote>
+<div><p><em>Note</em>: Alert readers will have noticed that we connected a <code class="docutils literal notranslate"><span class="pre">Vector</span> <span class="pre">socket</span></code> (orange) to a <code class="docutils literal notranslate"><span class="pre">&quot;Numbers&quot;</span> <span class="pre">socket</span></code> (green). We allow any connection between socket types that can be made to work, Sverchok does various automatic conversions in the background. We call them implicit conversions.</p>
+</div></blockquote>
+<p><img alt="sincos_img2" src="https://user-images.githubusercontent.com/619340/81565850-4def5a80-939a-11ea-9bc9-62c59414027c.png" /></p>
+<p><strong>Display Geometry</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Viz</span> <span class="pre">-&gt;</span> <span class="pre">Viewer</span> <span class="pre">Draw</span></code></p></li>
+</ul>
+<p>Sverchok draws geometry using the Viewer Nodes. You might have noticed that the list of <code class="docutils literal notranslate"><span class="pre">Viz</span></code> nodes is extensive, this is because there are a variety of different ways to represent geometry; either just drawing to the view using openGL or making Blender’s <code class="docutils literal notranslate"><span class="pre">Objects</span></code> directly. For now we’ll focus on <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code>. Stethoscope is useful for showing the values of any socket, but when we’re dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding, <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> is our lightweight drawing function.</p>
+<p>Connect the output of <code class="docutils literal notranslate"><span class="pre">Vectors</span> <span class="pre">In</span></code> into the <code class="docutils literal notranslate"><span class="pre">Verts</span></code> on the Viewer Draw node. You should see 4 vertices appear on your <code class="docutils literal notranslate"><span class="pre">3d</span> <span class="pre">view</span></code> (but don’t worry if you don’t immediately spot them, by default they will be drawn in white):</p>
+<p><img alt="first_vdmk3" src="https://user-images.githubusercontent.com/619340/81577343-95c9ae00-93a9-11ea-98a4-565d18cddb73.png" /></p>
+<p>Notice the 3 color fields on the Viewer Draw node, they represent the color that this node gives to its Vertices, Edges, and Faces. If (after connecting Vector In to ViewerDraw) you don’t see the Vertices in 3dview, it is probably because your background 3dview color is similar to the Vertex color. Adjust the color field to make them visible.</p>
+<p><strong>Increasing the Size of the Vertex</strong></p>
+<p>Sometimes, especially while introducing Sverchok, it’s preferred to display Vertices a little bigger than the default values of <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">pixels</span></code>. If you had difficulty spotting the vertices initially you will understand why. The N-panel (<cite>side panel</cite>, or <cite>properties panel</cite>) for the Node View will have extra panels when viewing a <code class="docutils literal notranslate"><span class="pre">Sverchok</span> <span class="pre">NodeTree</span></code>. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node’s UI.</p>
+<p><img alt="vdmk3_npanel" src="https://user-images.githubusercontent.com/619340/81578234-ccec8f00-93aa-11ea-986a-b42949019e79.png" /></p>
+<p>In the case of the <cite>Viewer Draw</cite>, there’s quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the <code class="docutils literal notranslate"><span class="pre">Point</span> <span class="pre">Size</span></code> property. This slider has a range between 1 and 15, set it to whatever is most comfortable to view. Here a close up:</p>
+<p><img alt="closeup" src="https://user-images.githubusercontent.com/619340/81578680-6ddb4a00-93ab-11ea-99b4-2512585adb35.png" /></p>
+<p>I think you’ll agree that the Vertices are much easier to see now:</p>
+<p><img alt="second_vdmk3" src="https://user-images.githubusercontent.com/619340/81568926-c48e5700-939e-11ea-84c0-72a884369054.png" /></p>
+<p><strong>Make some edges</strong></p>
+<p>We’ve created vertices, now we’re going to generate edges. We have 4 vertices and thus 4 indices: <code class="docutils literal notranslate"><span class="pre">[0,1,2,3]</span></code>, the edges will be connected as <code class="docutils literal notranslate"><span class="pre">[[0,1],[1,2],[2,3],[3,0]]</span></code>.</p>
+<p>Vertices Indexed:</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png" src="https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png" />
+<p>We’re going to add a simple topology node. Instead of using the menu to add a node, this time we’ll use <code class="docutils literal notranslate"><span class="pre">alt+space</span></code> search field.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">alt+space</span> <span class="pre">-&gt;</span> <span class="pre">type</span> <span class="pre">in:</span>&#160; <span class="pre">top</span></code>  ( you should see something like the following )</p></li>
+</ul>
+<p><img alt="alt_search" src="https://user-images.githubusercontent.com/619340/81579054-f1953680-93ab-11ea-86b3-a1ca585d511d.png" /></p>
+<p>navigate down to the node named “Simple Topology” and hit enter to add it to the nodeview.</p>
+<p>There are numerous ways to generate the <em>index list</em> for <code class="docutils literal notranslate"><span class="pre">edges</span></code>. For our basic example we’ll input them manually. Eventually you will be making hundreds of Vertices and at that point it won’t be viable to write them out manually. For this lesson we’ll not touch that subject.</p>
+<p>The <em>Simple Topology Node</em> evaluates what you write into the two topology fields, and then outputs the results. Type into the <code class="docutils literal notranslate"><span class="pre">Edges</span></code> field (top one) the following sequence <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1,</span> <span class="pre">1</span> <span class="pre">2,</span> <span class="pre">2</span> <span class="pre">3,</span> <span class="pre">3</span> <span class="pre">0</span></code>. Internally the Simple Topology node converts this shorthand to a python list of indices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#input</span>
+<span class="mi">0</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span> <span class="mi">0</span>          <span class="o">&lt;---</span> <span class="n">easy</span> <span class="n">to</span> <span class="nb">input</span> <span class="k">as</span> <span class="n">a</span> <span class="n">human</span>
+
+<span class="c1">#produces</span>
+<span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span>   <span class="o">&lt;---</span> <span class="n">let</span> <span class="n">python</span> <span class="n">worry</span> <span class="n">about</span> <span class="n">the</span> <span class="nb">list</span> <span class="n">syntax</span>
+</pre></div>
+</div>
+<p>Now hook the <code class="docutils literal notranslate"><span class="pre">Edges</span></code> output socket of <em>Simple Topology</em> node into the <code class="docutils literal notranslate"><span class="pre">Edges</span></code> input of <em>Viewer Draw</em>. You should see the following:</p>
+<p><img alt="edges_first" src="https://user-images.githubusercontent.com/619340/81580514-d5929480-93ad-11ea-9ecf-9a7d5abf4be3.png" /></p>
+<blockquote>
+<div><p><em>Note 1</em>: I adjusted the Edge Width, if you’re on a Mac this may not work. sorry.
+<em>Note 2</em>: The <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> button on Simple Topology node will enclose the output in an extra set of square brackets. This is appropriate see the documentation on <code class="docutils literal notranslate"><span class="pre">Geometry</span></code>.</p>
+</div></blockquote>
+<p><strong>Make a first Polygon</strong></p>
+<p>Using the same Simple Topology Node we will instead pass a polygon to the Viewer Draw, the Viewer Draw is able to infer how to draw edges from the Polygon information.</p>
+<ul class="simple">
+<li><p>Disconnect the <code class="docutils literal notranslate"><span class="pre">Edges</span></code> socket from the <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> (you don’t have to clear the Edges field)</p></li>
+<li><p>In <em>Simple Topology</em> node fill the Faces field with the shorthand: <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span></code>.  This means “i want a face described by these vertex indices”.</p></li>
+<li><p>Connect the output of the <code class="docutils literal notranslate"><span class="pre">Faces</span></code> socket to the <code class="docutils literal notranslate"><span class="pre">Faces</span></code> input on Viewer Draw. You should now see the following:</p></li>
+</ul>
+<p><img alt="first_face" src="https://user-images.githubusercontent.com/619340/81581935-b3017b00-93af-11ea-850e-55207de956f7.png" /></p>
+<p><strong>Controlling the size of the Polygon</strong></p>
+<p>There are many ways to scale up a set of vectors, we’ll use the <em>Vector Math</em> node.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rightclick</span> <span class="pre">nodeview</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">Math</span></code></p></li>
+</ul>
+<p>Change the <cite>Vector Math</cite> node’s <code class="docutils literal notranslate"><span class="pre">mode</span></code> to <cite>Multiply Scalar</cite>. This will let you feed a number to the Vectors to act as a multiplier. We’ll add a <em>Number</em> node to generate the multiplier.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rightclick</span> <span class="pre">nodeview</span> <span class="pre">-&gt;</span> <span class="pre">A</span> <span class="pre">Number</span></code></p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Hook up the <em>Number</em> node to the Scalar (green) input of the <cite>Vector Math (Multiply Scalar)</cite> node</p></li>
+<li><p>Connect the output of the <cite>Vector In</cite> node into the top input of the Vector Math node.</p></li>
+<li><p>Now connect the output of the <cite>Vector Math</cite> node into the <code class="docutils literal notranslate"><span class="pre">Verts</span></code> socket of the Viewer Draw node.</p></li>
+</ol>
+<p>You should have something like this.</p>
+<p><img alt="final_image" src="https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png" /></p>
+<p>Now if you change the slider on the <em>Number</em> node, you’ll notice that the Polygon will start to increase and decrease in size because you are multiplying the <code class="docutils literal notranslate"><span class="pre">x,</span> <span class="pre">y,</span> <span class="pre">and</span> <span class="pre">z</span></code> components of the Vectors by that amount.</p>
+<p><strong>End of lesson 01</strong></p>
+<p>Save this .blend you’ve been working in now, somewhere where you will find it easily, as <cite>Sverchok_Unit_01_Lesson_01</cite>. We will use it as a starting point for the next lesson.</p>
+<p>We’ll stop here for lesson 01, if you’ve followed most of this you’ll be making crazy shapes in a matter of hours. Please continue on to <cite>Lesson 02 - A Circle</cite>, but take a break first. Look outside, stare at a tree – do something else for 10 minutes.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../nesting.html" class="btn btn-neutral float-right" title="Nesting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../Unit_00/soft_intro_01.html" class="btn btn-neutral float-left" title="Unit 00. Introduction to Blender 2.8+, the NodeView and 3DView" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to Sverchok’s documentation! &mdash; Sverchok 0.5 documentation</title>
+  <title>Welcome to Sverchok’s documentation! &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="_static/sverchock_icon_b.ico"/>
   
 
   
@@ -41,7 +43,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Introduction" href="introduction/introduction.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -59,13 +61,16 @@
           
 
           
+            
+            <img src="_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -91,23 +96,14 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -177,123 +173,24 @@
             
   <div class="section" id="welcome-to-sverchok-s-documentation">
 <h1>Welcome to Sverchok’s documentation!<a class="headerlink" href="#welcome-to-sverchok-s-documentation" title="Permalink to this headline">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/619340/65963856-ee23ef00-e45b-11e9-98aa-32b218cde934.png" src="https://user-images.githubusercontent.com/619340/65963856-ee23ef00-e45b-11e9-98aa-32b218cde934.png" />
-<p>Contents:</p>
+<div class="figure align-default">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/125777370-a7b7907a-92a2-4ad3-91b1-875520a95e71.jpg"><img alt="https://user-images.githubusercontent.com/28003269/125777370-a7b7907a-92a2-4ad3-91b1-875520a95e71.jpg" src="https://user-images.githubusercontent.com/28003269/125777370-a7b7907a-92a2-4ad3-91b1-875520a95e71.jpg" style="width: 800px;" /></a>
+</div>
+<p>Sverchok is a <a class="reference external" href="https://www.blender.org/">Blender</a> add-on for creating parametric
+3D models based on visual programming.
+It’s available on <a class="reference external" href="https://github.com/nortikin/sverchok">the GitHub page</a>.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tree_evaluation_system.html">Node tree evaluation system</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tree_evaluation_system.html#control-flow">Control flow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_evaluation_system.html#triggers">Triggers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_evaluation_system.html#animation">Animation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_evaluation_system.html#handling-errors">Handling errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tree_evaluation_system.html#progress-message">Progress message</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="geometry.html#basics">Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="geometry.html#d-geometry">3D Geometry</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nurbs.html#terminology">Terminology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs.html#workflow">Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
-<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#node-tree-panel">Node Tree Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#nodes-toolbar">Nodes Toolbar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#presets-panel">Presets Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#node-s-n-panel">Node’s N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/curve/curve_index.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/surface/surface_index.html">Surfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/field/field_index.html">Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/solid/solid_index.html">Solids</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/spatial/spatial_index.html">Spatial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/CAD/CAD_index.html">CAD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/color/color_index.html">Color</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/script/script_index.html">Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/exchange/exchange_index.html">Exchange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nodes/svg/svg_index.html">SVG</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#our-workflow">Our workflow:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#what-not-to-do">What not to do:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#helpful-hints">Helpful hints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#to-create-a-node">To create a node:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#some-rules">SOME RULES:</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#pull-requests">Pull Requests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#non-one-liners">Non one-liners</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#general-guidelines">General guidelines</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
 </div>
 
 
@@ -302,14 +199,14 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="introduction/introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

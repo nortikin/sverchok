@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Analyzers &mdash; Sverchok 0.5 documentation</title>
+  <title>Analyzers &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
   
 
   
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,18 +97,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -181,10 +179,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -258,315 +254,45 @@
 <h1>Analyzers<a class="headerlink" href="#analyzers" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="area.html">Area</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="area.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="area.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="area.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="area.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="area.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="bbox_mk3.html">Bounding Box</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bbox_mk3.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="component_analyzer.html">Component Analyzer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="component_analyzer.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="component_analyzer.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="component_analyzer.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="component_analyzer.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="diameter.html">Diameter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="diameter.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="diameter.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="diameter.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="diameter.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="distance_pp.html">Distance</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="distance_pp.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_pp.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_pp.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_pp.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_pp.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="distance_point_line.html">Distance Point Line</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_line.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_line.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_line.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_line.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_line.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="distance_point_plane.html">Distance Point Plane</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_plane.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_plane.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_plane.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_plane.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_point_plane.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="distance_line_line.html">Distance Line Line</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="distance_line_line.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_line_line.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_line_line.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_line_line.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="distance_line_line.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="deformation.html">Deformation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="deformation.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deformation.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deformation.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deformation.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="edge_angles.html">Angles at the Edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="edge_angles.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_angles.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_angles.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_angles.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_angles.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intersect_line_sphere.html">Compass 3D</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intersect_line_sphere.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_line_sphere.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_line_sphere.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_line_sphere.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_line_sphere.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intersect_circle_circle.html">Circle Intersection</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intersect_circle_circle.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_circle_circle.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_circle_circle.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_circle_circle.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_circle_circle.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intersect_plane_plane.html">Plane Intersection</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intersect_plane_plane.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_plane_plane.html#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_plane_plane.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_plane_plane.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_plane_plane.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="kd_tree_MK2.html">KDT Closest Verts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_MK2.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="kd_tree_edges_mk2.html">KDT Closest Edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#fast-mode">Fast Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#max-queries-mode">Max Queries Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#no-skip-mode">No Skip Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_edges_mk2.html#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="kd_tree_path.html">KDT Closest Path</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_path.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_path.html#inputs-parameter">Inputs / Parameter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_path.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_path.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kd_tree_path.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="linked_verts.html">Linked Verts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="linked_verts.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linked_verts.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linked_verts.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linked_verts.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linked_verts.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_filter.html">Mesh Filter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#modes">Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_filter.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_select_mk2.html">Select mesh elements by location</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_select_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_select_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_select_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_select_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_select_mk2.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="select_similar.html">Select similar</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="select_similar.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_similar.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_similar.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_similar.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_similar.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="proportional.html">Proportional Edit Falloff</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="proportional.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proportional.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proportional.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proportional.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proportional.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="normals_mk2.html">Calculate Normals</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="normals_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normals_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normals_mk2.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normals_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normals_mk2.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nearest_point_on_mesh.html">Nearest Point on Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nearest_point_on_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nearest_point_on_mesh.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nearest_point_on_mesh.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nearest_point_on_mesh.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nearest_point_on_mesh.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="bvh_overlap_polys.html">Overlap Polygons</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bvh_overlap_polys.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="object_insolation.html">Insolation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="object_insolation.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_insolation.html#input-sockets">Input sockets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_insolation.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_insolation.html#output-sockets">Output sockets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_insolation.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="path_length_2.html">Path Length</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="path_length_2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_length_2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_length_2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_length_2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_length_2.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="points_inside_mesh.html">Points Inside Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="points_inside_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="points_inside_mesh.html#examples-of-use">Examples of use</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="project_point_to_line.html">Project points to line</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="project_point_to_line.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_point_to_line.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_point_to_line.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="project_point_to_line.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="volume.html">Volume</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="volume.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volume.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volume.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="volume.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="raycaster_lite.html">Raycast</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="raycaster_lite.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raycaster_lite.html#input-sockets">Input sockets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raycaster_lite.html#output-sockets">Output sockets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raycaster_lite.html#advanced-parameters-n-panel">Advanced parameters (N-Panel)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raycaster_lite.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="image_components.html">Image Decomposer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="image_components.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image_components.html#inputs-parameters">Inputs &amp; Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image_components.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image_components.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image_components.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="chess_selection.html">Chess selection</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="chess_selection.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chess_selection.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chess_selection.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chess_selection.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="chess_selection.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="wave_paint.html">Wave Painter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="wave_paint.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wave_paint.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wave_paint.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wave_paint.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wave_paint.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="origins.html">Origins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="origins.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="linear_approx.html">Linear Approximation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="linear_approx.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear_approx.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear_approx.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear_approx.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear_approx.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="circle_approx.html">Circle Fit</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="circle_approx.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="circle_approx.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="circle_approx.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="circle_approx.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sphere_approx.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sphere_approx.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sphere_approx.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sphere_approx.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="inscribed_circle.html">Inscribed Circle</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="inscribed_circle.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inscribed_circle.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inscribed_circle.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inscribed_circle.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inscribed_circle.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="steiner_ellipse.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="steiner_ellipse.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="steiner_ellipse.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="steiner_ellipse.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="steiner_ellipse.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="area.html">Area</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bbox_mk3.html">Bounding Box</a></li>
+<li class="toctree-l1"><a class="reference internal" href="component_analyzer.html">Component Analyzer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diameter.html">Diameter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_pp.html">Distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_point_line.html">Distance Point Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_point_plane.html">Distance Point Plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distance_line_line.html">Distance Line Line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deformation.html">Deformation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="edge_angles.html">Angles at the Edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intersect_line_sphere.html">Compass 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intersect_circle_circle.html">Circle Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intersect_plane_plane.html">Plane Intersection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kd_tree_MK2.html">KDT Closest Verts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kd_tree_edges_mk2.html">KDT Closest Edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kd_tree_path.html">KDT Closest Path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linked_verts.html">Linked Verts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_filter.html">Mesh Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_select_mk2.html">Select mesh elements by location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="select_similar.html">Select similar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proportional.html">Proportional Edit Falloff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="normals_mk2.html">Calculate Normals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nearest_point_on_mesh.html">Nearest Point on Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bvh_overlap_polys.html">Overlap Polygons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="object_insolation.html">Insolation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_length_2.html">Path Length</a></li>
+<li class="toctree-l1"><a class="reference internal" href="points_inside_mesh.html">Points Inside Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="project_point_to_line.html">Project points to line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="volume.html">Volume</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raycaster_lite.html">Raycast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_components.html">Image Decomposer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chess_selection.html">Chess selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wave_paint.html">Wave Painter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="origins.html">Origins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_approx.html">Linear Approximation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="circle_approx.html">Circle Fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inscribed_circle.html">Inscribed Circle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a></li>
 </ul>
 </div>
 </div>
@@ -585,7 +311,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

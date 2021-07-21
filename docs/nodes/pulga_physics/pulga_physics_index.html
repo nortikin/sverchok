@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Pulga Physics &mdash; Sverchok 0.5 documentation</title>
+  <title>Pulga Physics &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
   
 
   
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,18 +97,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -160,10 +158,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -237,128 +233,24 @@
 <h1>Pulga Physics<a class="headerlink" href="#pulga-physics" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pulga_physics_solver.html">Pulga Physics Solver</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_solver.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_solver.html#input-output">Input &amp; Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_solver.html#accumulative">Accumulative:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_solver.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_vector_force.html">Pulga Vector Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vector_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vector_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vector_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vector_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_springs_force.html">Pulga Springs Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_springs_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_springs_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_springs_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_drag_force.html">Pulga Drag Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_drag_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_drag_force.html#input">Input</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_pin_force.html">Pulga Pin Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_pin_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_pin_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_pin_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_timed_force.html">Pulga Timed Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_timed_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_timed_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_timed_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_collision_force.html">Pulga Collision Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_collision_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_collision_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_collision_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_collision_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_attraction_force.html">Pulga Attraction Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attraction_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attraction_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attraction_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attraction_force.html#example">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_align_force.html">Pulga Align Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_align_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_align_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_align_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_align_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_fit_force.html">Pulga Fit Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_fit_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_fit_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_fit_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_fit_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_obstacle_force.html">Pulga Obstacle Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_obstacle_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_obstacle_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_obstacle_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_random_force.html">Pulga Random Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_random_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_random_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_random_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_boundaries_force.html">Pulga Boundaries Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_boundaries_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_boundaries_force.html#options-inputs">Options &amp; Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_boundaries_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_inflate_force.html">Pulga Inflate Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_inflate_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_inflate_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_inflate_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_attractors_force_mk2.html">Pulga Attractors Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#mode">Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#point">Point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#point-inputs">Point Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#line">Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#line-inputs">Line Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#plane">Plane</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#plane-inputs">Plane Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_attractors_force_mk2.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_angle_force.html">Pulga Angle Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_angle_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_angle_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_angle_force.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_angle_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_vortex_force.html">Pulga Vortex Force</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vortex_force.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vortex_force.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_vortex_force.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pulga_physics_lite.html">Pulga Physics Lite</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_lite.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_lite.html#input-output">Input &amp; Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_lite.html#accumulative">Accumulative:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_lite.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pulga_physics_lite.html#notes">Notes</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_physics_solver.html">Pulga Physics Solver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_vector_force.html">Pulga Vector Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_springs_force.html">Pulga Springs Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_drag_force.html">Pulga Drag Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_pin_force.html">Pulga Pin Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_timed_force.html">Pulga Timed Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_collision_force.html">Pulga Collision Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_attraction_force.html">Pulga Attraction Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_align_force.html">Pulga Align Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_fit_force.html">Pulga Fit Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_obstacle_force.html">Pulga Obstacle Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_random_force.html">Pulga Random Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_boundaries_force.html">Pulga Boundaries Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_inflate_force.html">Pulga Inflate Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_attractors_force_mk2.html">Pulga Attractors Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_angle_force.html">Pulga Angle Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_vortex_force.html">Pulga Vortex Force</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pulga_physics_lite.html">Pulga Physics Lite</a></li>
 </ul>
 </div>
 </div>
@@ -377,7 +269,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

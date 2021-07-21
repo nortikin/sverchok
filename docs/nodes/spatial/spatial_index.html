@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Spatial &mdash; Sverchok 0.5 documentation</title>
+  <title>Spatial &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
   
 
   
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,18 +97,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -164,10 +162,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -241,181 +237,28 @@
 <h1>Spatial<a class="headerlink" href="#spatial" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="homogenous_vector_field.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="homogenous_vector_field.html#advanced-parameters">Advanced Parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="random_points_on_mesh.html">Random points on mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="random_points_on_mesh.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="field_random_probe.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="field_random_probe.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="field_random_probe.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="field_random_probe.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="field_random_probe.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="populate_solid.html">Populate Solid</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_solid.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="populate_surface.html">Populate Surface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="populate_surface.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_surface.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_surface.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_surface.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="populate_surface.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random_points_on_mesh.html">Random points on mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a></li>
 <li class="toctree-l1"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi3d.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="delaunay3d.html">Delaunay 3D</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay3d.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="delaunay_2d_cdt.html">Random points on mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#modes">Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#n-panel">N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delaunay_2d_cdt.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_sphere.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_sphere.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_sphere.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_sphere.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_sphere.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_surface.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_surface.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_surface.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_surface.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_surface.html#examples-of-usage">Examples of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_mesh.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="voronoi_on_solid.html">Voronoi on Solid</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="voronoi_on_solid.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd2d.html">Lloyd 2D</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd2d.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd2d.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd2d.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd2d.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd2d.html#examples-of-usage">Examples of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd3d.html">Lloyd 3D</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd3d.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_sphere.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_sphere.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_sphere.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_sphere.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_sphere.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd_on_mesh.html">Lloyd on Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_mesh.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_mesh.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_mesh.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_on_mesh.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd_solid.html">Lloyd in Solid</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid.html#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid_face.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid_face.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid_face.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lloyd_solid_face.html#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="concave_hull.html">Concave Hull</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="concave_hull.html#examples-of-usage">Examples of Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="delaunay3d.html">Delaunay 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="delaunay_2d_cdt.html">Random points on mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_on_solid.html">Voronoi on Solid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd2d.html">Lloyd 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd3d.html">Lloyd 3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd_on_mesh.html">Lloyd on Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd_solid.html">Lloyd in Solid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concave_hull.html">Concave Hull</a></li>
 </ul>
 </div>
 </div>
@@ -434,7 +277,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

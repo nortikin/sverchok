@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Node tree evaluation system &mdash; Sverchok 0.5 documentation</title>
+  <title>Node tree evaluation system &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="_static/sverchock_icon_b.ico"/>
   
 
   
@@ -41,8 +43,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Introduction to geometry" href="geometry.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Data structure" href="data_structure/data_structure_index.html" />
+    <link rel="prev" title="Shortcuts" href="user_interface/shortcuts.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,7 +97,9 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Node tree evaluation system</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#control-flow">Control flow</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#group-nodes">Group nodes</a></li>
@@ -112,21 +119,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#progress-message">Progress message</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -292,14 +288,14 @@ If new node is added it’s going to be evaluated. If a node is removed nothing 
 <dt>Node property / socket property changes</dt><dd><p>Node property changes or changes in a property of one of its sockets make the node outdated
 and trigger its reevaluation. The update can be suppress by disabled live update option of a tree.</p>
 </dd>
-<dt><cite>Re-update all nodes</cite> operator (<a class="reference internal" href="panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)</dt><dd><p>It reevaluates a whole tree regardless to updated state of its nodes and the
+<dt><cite>Re-update all nodes</cite> operator (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)</dt><dd><p>It reevaluates a whole tree regardless to updated state of its nodes and the
 <cite>live update</cite> option.</p>
 </dd>
-<dt><cite>Update all</cite> operator (<a class="reference internal" href="panels.html#layout-manager"><span class="std std-ref">Layout manager</span></a>)</dt><dd><p>It is the same as <cite>re-update all nodes</cite> operator but effect all trees in a file.</p>
+<dt><cite>Update all</cite> operator (<a class="reference internal" href="user_interface/panels.html#layout-manager"><span class="std std-ref">Layout manager</span></a>)</dt><dd><p>It is the same as <cite>re-update all nodes</cite> operator but effect all trees in a file.</p>
 </dd>
 </dl>
 <dl class="simple" id="live-update-operator">
-<dt>Live update modal operator (<a class="reference internal" href="panels.html#d-panel"><span class="std std-ref">3D Panel</span></a>)</dt><dd><p>It makes update some nodes, which read information from Blender objects, via timer with update period
+<dt>Live update modal operator (<a class="reference internal" href="user_interface/panels.html#d-panel"><span class="std std-ref">3D Panel</span></a>)</dt><dd><p>It makes update some nodes, which read information from Blender objects, via timer with update period
 about 1/10 second.</p>
 </dd>
 </dl>
@@ -320,7 +316,7 @@ Also you can add shortcut for the operator by pressing <kbd class="kbd docutils 
 Another way to update is enabling <cite>Live update</cite> mode. In this case only changed put of the tree will be updated.</p>
 </div>
 <div class="section" id="modes-active-tree-panel">
-<h3>Modes (<a class="reference internal" href="panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this headline">¶</a></h3>
+<h3>Modes (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
 made by user. This property does not effect evaluation upon frame changes or by <cite>re-update all nodes</cite> operator.
@@ -402,15 +398,15 @@ name of a node which is currently executed. Not all nodes get into the message.<
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="geometry.html" class="btn btn-neutral float-right" title="Introduction to geometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_structure/data_structure_index.html" class="btn btn-neutral float-right" title="Data structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="user_interface/shortcuts.html" class="btn btn-neutral float-left" title="Shortcuts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

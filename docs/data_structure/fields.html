@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Scalar Fields &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Solid" href="solids.html" />
+    <link rel="prev" title="NURBS: Curves and Surfaces" href="nurbs.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="data_structure_index.html">Data structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="curves.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html">Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Scalar Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector-fields">Vector Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solids.html">Solid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="data_structure_index.html">Data structure</a> &raquo;</li>
+        
+      <li>Scalar Fields</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/data_structure/fields.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="scalar-fields">
+<h1>Scalar Fields<a class="headerlink" href="#scalar-fields" title="Permalink to this headline">¶</a></h1>
+<p>A scalar field is a mathematical object, which is defined as a function from R^3 to R, i.e. a mapping which maps each point in a 3D space to some number. Such objects are quite common in mathematics and in physics too; for example, you can take a field of temperatures (which maps each point to the temperature in that point).</p>
+<p>Technically, scalar field is defined as Python class, which can calculate some number for a provided point in space. Note that the definition of the field function can be quite complex, but it does not mean that that complex definition will be executed for all points in 3D space — only for points for which it is actually required to know the value.</p>
+<p>Sverchok can generate such fields by several ways, including user-provided formulas; it can execute some mathematical operations on them (such as addition or multiplication).</p>
+</div>
+<div class="section" id="vector-fields">
+<h1>Vector Fields<a class="headerlink" href="#vector-fields" title="Permalink to this headline">¶</a></h1>
+<p>A vector field is a mathematical object, which is defined as a function from R^3 to R^3, i.e. a mapping which maps each point in 3D space into a 3D vector. Such objects are very common in mathematics and in physics; for example, consider the field of some force, for example the gravitation field, which defines the gravitation force vector for each point in space.</p>
+<p>Note that when we are talking about vector fields, there are two possible ways to interpret their values:</p>
+<ol class="arabic simple">
+<li><p>to think that the vector, which is defined by vector field in point P, starts in point P and ends in some point P’;</p></li>
+<li><p>to think that the vector which is defined by vector field in point P, starts in the origin and ends in some point Q.</p></li>
+</ol>
+<p>In physics, the first approach is the most common, and it is mostly used by Sverchok.</p>
+<p>One can note, that both approaches are easily convertible: if you have a field, which maps point P to a vector from 0 to Q, then you can say that you have a field which maps point P to a vector from P to (P+Q). Or the other way around, if you have a field which maps point P to a vector from P to P’, then you can say that you have a field which maps point P to a vector from 0 to (P’ - P).</p>
+<p>“Apply vector field” node follows the first approach, i.e. for each provided point P it returns the point to which P would be mapped if we understand that the vector VectorField(P) starts at P. Mathematically, it returns <cite>P + VectorField(P)</cite>. In most cases, you will want to use this node instead of “evaluate vector field”.</p>
+<p>“Evaluate vector field” node, on the other hand, follows the second approach, i.e. for each point P it returns VectorField(P).</p>
+<p>We will call fields that are “designed” to work with “Apply vector field” - “Relative vector fields”, or “Bound vector fields”. Fields “designed” to work with “Evaluate vector field” we will call “Absolute vector fields”, or “Free vector fields”.</p>
+<p>Technically, vector field is a Python class that can be asked to return a vector for any 3D point. Note that the definition of the field function can be quite complex, but it does not mean that that complex definition will be executed for all points in 3D space — only for points for which it is actually required to know the value.</p>
+<p>Sverchok can generate such fields by several ways, including user-provided formulas; it can execute some mathematical operations on them (such as addition or multiplication). Vector field can be applied to some set of vertices to receive another one — i.e., deform some mesh by field. There are also several ways to convert vector fields to scalar fields (for example, you can take a norm of the vector field, or use divergence differential operator).</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="solids.html" class="btn btn-neutral float-right" title="Solid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nurbs.html" class="btn btn-neutral float-left" title="NURBS: Curves and Surfaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

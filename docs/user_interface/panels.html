@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Panels &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Input Socket Menus" href="input_menus.html" />
+    <link rel="prev" title="User interface" href="user_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="user_interface.html">User interface</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">All panels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#property-panel">Property Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#layout-manager">Layout manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#active-tree-properties">Active Tree Properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tree-ui-options">Tree UI options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#general-utils-panel">General utils panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#node-s-n-panel">Node’s N panel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tool-panel">Tool Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#presets-panel">Presets Panel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#d-panel">3D Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#node-properties-list">Node properties list</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="input_menus.html">Input socket menus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="socket_menus.html">Output socket menus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="user_interface.html">User interface</a> &raquo;</li>
+        
+      <li>Panels</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/user_interface/panels.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="panels">
+<h1>Panels<a class="headerlink" href="#panels" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="property-panel">
+<h2>Property Panel<a class="headerlink" href="#property-panel" title="Permalink to this headline">¶</a></h2>
+<p>The panel is located in the Property panel under Sverchok tab in Sverchok tree editor. To open the panel pres <kbd class="kbd docutils literal notranslate">N</kbd>
+and select Sverchok tab.</p>
+<div class="section" id="layout-manager">
+<span id="id1"></span><h3>Layout manager<a class="headerlink" href="#layout-manager" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right" id="id3">
+<img alt="https://user-images.githubusercontent.com/28003269/125042372-cccd4980-e0aa-11eb-89c8-45f739e05463.png" src="https://user-images.githubusercontent.com/28003269/125042372-cccd4980-e0aa-11eb-89c8-45f739e05463.png" />
+<p class="caption"><span class="caption-text">Layout manager</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>This panel allows to manage Sverchok layouts as easy as you press buttons on an elevator.</p>
+<dl class="simple">
+<dt>Update all</dt><dd><p>In case if automatic tree update is turned off it is possible to make update manually.
+<cite>Update all</cite> will update all trees and <cite>Update “Current tree name”</cite> button on active tree panel
+will update only current tree.</p>
+</dd>
+</dl>
+<p>List to quickly pick layout, switch between them with buttons instead of popup list. Also have settings:</p>
+<dl class="simple">
+<dt>Tree item buttons:</dt><dd><dl class="simple">
+<dt>B</dt><dd><p>bake this layout - will gather all layout’s viewer draw and viewer text to bake them.
+Bake only if bakeable button is active on node, else ignore.</p>
+</dd>
+<dt>Show layout</dt><dd><p>Controls all OpenGL viewer of this layout. Viewer, Stethoscope and Viewer Indices</p>
+</dd>
+<dt>Animate layout</dt><dd><p>to animate the layout (or not) - may preserve you time.</p>
+</dd>
+<dt>Process layout</dt><dd><p>Automatically evaluate layout while editing, disable for large or complex layouts (F6)</p>
+</dd>
+<dt>Draft Mode</dt><dd><p>Switch tree to Draft mode (F7)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is possible to filter trees by its names via standard blender interface right below the list.</p>
+</div>
+</div>
+<div class="section" id="active-tree-properties">
+<span id="active-tree-panel"></span><h3>Active Tree Properties<a class="headerlink" href="#active-tree-properties" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right" id="id4">
+<img alt="tree_properties.png" src="https://user-images.githubusercontent.com/28003269/125042613-19188980-e0ab-11eb-98ff-42e512ed9747.png" />
+<p class="caption"><span class="caption-text">Active tree panel</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<dl class="simple">
+<dt>Re-update all nodes operator</dt><dd><p>It reevaluates a whole tree regardless to updated state of its nodes and the live update option.</p>
+</dd>
+<dt>Bake Viewer Draw nodes operator</dt><dd><p>All Viewer Draw nodes will generate generate Blender meshes from their input data in current scene.</p>
+</dd>
+<dt>Show viewers</dt><dd><p>It controls showing state of all Viewer nodes in the tree.</p>
+</dd>
+<dt>Animate</dt><dd><p>If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
+which have property to_animate enabled.</p>
+</dd>
+<dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
+made by user. This property does not effect evaluation upon frame changes or by <strong>Re-update all nodes</strong> operator.
+Enabling the property will call the tree topology changes <a class="reference internal" href="../tree_evaluation_system.html#sv-triggers"><span class="std std-ref">trigger</span></a>.</p>
+</dd>
+<dt>Draft mode</dt><dd><p>It switches to draft property in <a class="reference internal" href="../nodes/number/numbers.html"><span class="doc">A number node</span></a> and some others.
+Its usage is to add set of draft properties to the node tree to improve performance.</p>
+</dd>
+</dl>
+<div class="section" id="node-timings">
+<h4>Node timings<a class="headerlink" href="#node-timings" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Enabling</dt><dd><p>Show last execution time for each nodes in the tree.</p>
+</dd>
+<dt>Update time mode</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>Per node</dt><dd><p>Showed time of a node includes only its execution period.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Cumulative time</dt><dd><p>Showed time of a node includes time of its execution and execution time of all previous nodes.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="tree-ui-options">
+<h3>Tree UI options<a class="headerlink" href="#tree-ui-options" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/28003269/125053220-e88a1d00-e0b5-11eb-8b8f-b0709a7c7bc5.png" src="https://user-images.githubusercontent.com/28003269/125053220-e88a1d00-e0b5-11eb-8b8f-b0709a7c7bc5.png" />
+</div>
+<dl class="simple">
+<dt>Socket menu</dt><dd><p>It adds a menu to all output sockets. With functionality of the menu you can add post processing steps which
+can change shape of output data of a socket.</p>
+</dd>
+<dt>Big buttons</dt><dd><p>Some buttons become big.</p>
+</dd>
+<dt>Menu icons</dt><dd><p>To show icons in <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Shift</kbd>+<kbd class="kbd docutils literal notranslate">A</kbd></kbd> (Add node) menu.</p>
+</dd>
+<dt>Quick link modes</dt><dd><ul class="simple">
+<li><p>Do not show</p></li>
+<li><dl class="simple">
+<dt>Show single option only</dt><dd><p>Show the button only for cases when there is only one node to be created can be suggested; do not show the menu</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Show <em>Create parameter</em> options</dt><dd><p>Show the button with a menu with options to create parameter nodes</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="import-export-panel">
+<h3>Import Export Panel<a class="headerlink" href="#import-export-panel" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right">
+<img alt="panelio.png" src="https://user-images.githubusercontent.com/28003269/93055868-a30ae800-f67c-11ea-9df8-cd27b13ef716.png" />
+</div>
+<p>location: N panel.</p>
+<div class="section" id="export">
+<h4>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Export to JSON</dt><dd><p>To save node tree in JSON format, see note what information are putted into a file</p>
+</dd>
+<dt>Export to GIST</dt><dd><p>It creates JSON file from current tree and upload it into your github account.
+It will let you quickly share your trees with other users
+For using the button you have generate token and put it in the addon preferences.</p>
+</dd>
+<dt>Archive .blend</dt><dd><p>It will let to put current file into zip or gz archive. Current file should be saved.
+Archive will be created in the same directory.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>JSON file stores</dt><dd><ul class="simple">
+<li><p>Node state: location, hidden, frame parent</p></li>
+<li><p>Node parameters: (internal state) like booleans, enum toggles and strings</p></li>
+<li><p>connections and connection order (order is important for dynamic-socket nodes)</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="import">
+<h4>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h4>
+<div class="figure align-right" id="id5">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/93057890-ab185700-f67f-11ea-8274-41edeb490758.png"><img alt="https://user-images.githubusercontent.com/28003269/93057890-ab185700-f67f-11ea-8274-41edeb490758.png" src="https://user-images.githubusercontent.com/28003269/93057890-ab185700-f67f-11ea-8274-41edeb490758.png" style="width: 400px;" /></a>
+<p class="caption"><span class="caption-text">Choosing tree where to put importing tree</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<dl class="simple">
+<dt>Import JSON file</dt><dd><p>Download tree from json file. It is possible to choose existing layout where new tree should be added.</p>
+</dd>
+<dt>Import GIST link</dt><dd><p>It will let to import tree into current layout. Clipboard should contain GIST link.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The json currently doesn’t store geometry but an empty shell without object references instead.
+The same is true for other Blender data blocks like materials etc.</p>
+</div>
+<p><strong>Why make it if it’s so limited?</strong></p>
+<p>Primarily this is for sharing quick setups, for showing people how to achieve a general result.
+The decision to not include geometry in the Object In references may change, until then consider
+it a challenge to avoid it. The way to exchange large complex setups will always be the <code class="docutils literal notranslate"><span class="pre">.blend</span></code>,
+this loads faster and stores anything your Tree may reference.</p>
+</div>
+</div>
+<div class="section" id="general-utils-panel">
+<h3>General utils panel<a class="headerlink" href="#general-utils-panel" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right">
+<img alt="general utils panel" src="https://user-images.githubusercontent.com/28003269/93044715-7ea41100-f666-11ea-92e0-45b88145d914.png" />
+</div>
+<p><strong>Check for updates</strong> - finds if master branch on github has new version of Sverchok. In future there will be releases, but now dangerous update.</p>
+<p><strong>Show Last Commits</strong> - Show lastests commits in info panel and terminal</p>
+<p><strong>Upgrade Sverchok</strong> - upgrades Sverchok from github with new version - button appears only if ‘check for updates’ finds a new version.</p>
+</div>
+<div class="section" id="node-s-n-panel">
+<h3>Node’s N panel<a class="headerlink" href="#node-s-n-panel" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/284644/81494064-31322480-92bf-11ea-82eb-910a71ccc78a.png" src="https://user-images.githubusercontent.com/284644/81494064-31322480-92bf-11ea-82eb-910a71ccc78a.png" />
+</div>
+<p>The panel in the right part of node editor window is toggled by the <cite>N</cite>
+keyboard shortcut, so it is called the N panel. Here we will consider the first
+tab of this panel, named “Item”. This tab contains some information and
+parameters concerning the currently active node. It is not shown if there is no
+active node in the tree.</p>
+<p>The “Item” tab of the N panel contains the following parts:</p>
+<ul>
+<li><p><strong>Node</strong> rolldown:</p>
+<ul class="simple">
+<li><p><strong>Name</strong>: node name. This is an identifier of the node within the tree. If you
+try to give the node a name, which is already taken by another node,
+Blender will automatically add something like <code class="docutils literal notranslate"><span class="pre">.001</span></code> to the name.</p></li>
+<li><p><strong>Label</strong>: node label to be displayed in the node editor. If not specified,
+then the node name will be used.</p></li>
+<li><p>Below that, there is a text box displaying the identifier of the type of
+active node (so-called <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code>). It may be useful for scripting or
+for searching information about the node. The button next to the text box
+copies that identifier into the clipboard.</p></li>
+<li><p>Following is the <strong>Presets</strong> section. It contains:</p>
+<ul>
+<li><p><strong>Load Preset</strong> menu. This dropdown menu contains all presets that were
+created for this type of node. Select a preset from the menu to apply it.
+Settings loaded from the preset will overwrite current settings of the
+node. <strong>Note</strong>: the same menu is available in the node editor, when a
+node is active, by <strong>Shift-P</strong> shortcut.</p></li>
+<li><p><strong>Save Preset</strong> button. Save current settings of the node as a new
+preset. You will be asked for a name for the new preset.</p></li>
+</ul>
+</li>
+</ul>
+<p>You can edit and remove your presets in the <strong>Presets</strong> section of the node
+editor’s T panel, if you enable the <strong>Manage Presets</strong> mode (see description
+above).</p>
+<ul class="simple">
+<li><p><strong>Help &amp; Docs</strong> section. This contains buttons for accessing the
+documentation of currently active node.</p></li>
+<li><p><strong>Edit Source</strong> section allows you to edit the source code of the node:</p>
+<ul>
+<li><p><strong>Externally</strong>. Open an external text editor application to edit the file.</p></li>
+<li><p><strong>Internally</strong>. Load the source code of the node into Blender’s text block.</p></li>
+</ul>
+</li>
+<li><p><strong>Re-Create Node</strong> button. This removes the node and replaces it with a new
+instance of the same node, trying to save all node’s settings and
+connections. This button is mostly useful in the development stage of the
+node, if you for some reason have to re-initialize the node.</p></li>
+</ul>
+</li>
+<li><p><strong>Properties</strong> rolldown. This contains all specific settings of the active
+node type. For most types of nodes, this contains all the same parameters
+that can be found in the node interface itself. Some types of nodes have
+additional parameters here - usually ones you do not have to change in most
+cases, or some kind of “advanced parameters”.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="tool-panel">
+<h2>Tool Panel<a class="headerlink" href="#tool-panel" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-right">
+<img alt="nodes_panel.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_nodes_panel_only_icons.png" />
+</div>
+<p>To see this panel it has to be enabled in the Sverchok properties inside the Blender Preferences Panel -&gt; Add-ons -&gt; Sverchok.
+There you can choose if to display it on the “N panel” or the “T panel”.
+Also you can choose if you want to display only the icons</p>
+<p>The panel presents all nodes available, organized in categories with a search menu.</p>
+<p>You can add node to the tree by clicking corresponding button and dragging placing the node in the node-tree.</p>
+<div class="section" id="presets-panel">
+<h3>Presets Panel<a class="headerlink" href="#presets-panel" title="Permalink to this headline">¶</a></h3>
+<p>This is a second tab under the <em>T</em> panel. This is how it looks by default:</p>
+<div class="section" id="introduction-to-presets">
+<h4>Introduction to Presets<a class="headerlink" href="#introduction-to-presets" title="Permalink to this headline">¶</a></h4>
+<p>Preset is a named set of stored settings of one of several nodes. You can:</p>
+<ul class="simple">
+<li><p>Save settings of one or several selected nodes (links between nodes are saved
+too) under specific name.</p></li>
+<li><p>Use saved preset in another node tree later.</p></li>
+<li><p>Import and export presets as <cite>.json</cite> files.</p></li>
+<li><p>Share presets with other users via gist.github.com service, or import presets
+made by other users.</p></li>
+</ul>
+<div class="figure align-right">
+<img alt="empty-presets.png" src="https://user-images.githubusercontent.com/284644/34566374-19623d6e-f180-11e7-840a-ec5bb8972e64.png" />
+</div>
+<p>Each preset belongs to some preset category. By default, all presets are in
+special category named “General”.</p>
+<p>There are special categories for presets of settings of nodes of specific
+types; such categories can store only settings of nodes of this type. Such
+categories are distinguished with a prefix “/Node/” in their titles. For
+example, a category with name “/Node/ Box” can contain only settings of the
+“Box” node. Such categories are created automatically.</p>
+<p>Among per-node presets, you can define a preset with special name <code class="docutils literal notranslate"><span class="pre">Default</span></code>.
+Such preset will be automatically applied to the node of this type when you
+create it by selecting from Shift-A menu, from Search menu or from T panel (but
+not when it is created as a part of another preset being used).</p>
+<p>Presets are saved as <cite>.json</cite> files under Blender configuration directory, in
+<cite>datafiles/sverchok/presets</cite>. Preset categories are represented as directories
+under that one.</p>
+<p>It can be good idea to store as a preset (and maybe share) the following things:</p>
+<ul class="simple">
+<li><p>One node with a lot of settings, if you think this is “good” settings and you
+are going to use the same settings many times.</p></li>
+<li><p>Scripted node, or “Mesh Expression” node, or one of other nodes that use
+Blender’s text blocks as settings. Such nodes are stored together with
+corresponding text.</p></li>
+<li><p>Several linked nodes, that do some completed thing, for later usage “as-is”.</p></li>
+<li><p>Several linked nodes, that are “sort of going to be needed in this
+combination often”, so that later you can start with this preset and add some
+nodes to it or tweak it somehow.</p></li>
+</ul>
+<p>There are some presets distributed with Sverchok itself. You can not edit or
+remove such presets from Blender’s UI. Such presets are marked with a word
+<code class="docutils literal notranslate"><span class="pre">[standard]</span></code> in tooltips of corresponding buttons in the Presets panel.</p>
+</div>
+<div class="section" id="panel-buttons">
+<h4>Panel Buttons<a class="headerlink" href="#panel-buttons" title="Permalink to this headline">¶</a></h4>
+<p>At the top of the Presets panel, there is a drop-down menu, which allows you to
+select the category of presets to work with. By default, there is only one
+category named “General”.
+All buttons placed below this menu work inside the selected category.</p>
+<p>The Presets panel has the following buttons:</p>
+<ul>
+<li><p><strong>Save Preset</strong>. This button is only shown when there are some nodes selected
+in the tree. When you press this button, it asks you for the name under which
+this preset should be known. You need to enter some descriptive name and
+press Ok. After that, the preset will become available in the lower part of
+the panel.</p>
+<blockquote>
+<div><p>When there is a presets category of specific node type selected, the “Save
+Preset” button is only available when a single node of corresponding type is
+selected.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Manage Presets</strong>. This is a toggle button. It switches you between “presets
+usage mode” (which is the default, when button is not pressed) and “presets
+management mode” (when the button is pressed).</p></li>
+</ul>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/284644/71767705-aa47f680-2f30-11ea-9611-1b7fee9a6f61.png" src="https://user-images.githubusercontent.com/284644/71767705-aa47f680-2f30-11ea-9611-1b7fee9a6f61.png" />
+</div>
+<p>Contents of lower part of the panel depend on whether the <strong>Manage Presets</strong> button is pressed.</p>
+<p>When management mode is disabled, there is a button shown for each preset that you already have:</p>
+<p>By pressing such button, you add nodes saved in corresponding preset into
+current tree. New nodes are automatically selected, so that you can move them
+to another part of the node view.</p>
+<p>When management mode is enabled, there are more buttons:</p>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/284644/71767749-3fe38600-2f31-11ea-9630-3239b903dc07.png" src="https://user-images.githubusercontent.com/284644/71767749-3fe38600-2f31-11ea-9630-3239b903dc07.png" />
+</div>
+<ul class="simple">
+<li><p><strong>Import preset from Gist</strong>. You will be asked for Gist ID or full URL of the
+gist, and preset name. If you have gist URL in the clibpoard, it will be
+pasted automatically.</p></li>
+<li><p><strong>Import preset from file</strong>. File browser will appear to allow you to select
+a <cite>.json</cite> file to import. In the left bottom part of this file browser, there
+is mandatory text field asking you to enter preset name.</p></li>
+<li><p><strong>Create new category</strong>. You will be asked for the name of the category.
+Category name must be correct directory name (for example, it can not contain
+<cite>/</cite> character). Category name must be unique.</p></li>
+<li><p><strong>Delete category {NAME}</strong>. You will be asked for confirmation. Only empty
+category can be deleted.</p></li>
+</ul>
+<p>The following buttons (in this order) are shown for each preset you have:</p>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png" src="https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png" />
+</div>
+<ul class="simple">
+<li><p><strong>Export preset to Gist</strong>. Preset will be exported to gist service. Gist URL
+will be automatically copied into clipboard.</p></li>
+<li><p><strong>Export preset to outer file</strong>. File browser will appear asking you to
+select where to save the preset.</p></li>
+<li><p><strong>Edit preset properties</strong>. A dialog will appear allowing you to change the
+following properties of preset: Name, Description, Author, License. The
+Description attribute will be used as a tooltip for preset button.</p></li>
+<li><p><strong>Delete preset</strong>. You will be asked for confirmation.</p></li>
+</ul>
+<p>It is not possible to edit or remove presets that are distributed with Sverchok.</p>
+</div>
+</div>
+</div>
+<div class="section" id="d-panel">
+<span id="id2"></span><h2>3D Panel<a class="headerlink" href="#d-panel" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/28003269/93045091-5bc62c80-f667-11ea-8a8b-e4652a553afd.png" src="https://user-images.githubusercontent.com/28003269/93045091-5bc62c80-f667-11ea-8a8b-e4652a553afd.png" />
+</div>
+<p>With this panel your layout becomes addon itself. So, you making your life easy.
+Since Blender 2.8 this panel has two instances. One instance located on <cite>N</cite> panel in <cite>Tool</cite> category of <cite>3D</cite> editor.
+Another located in <cite>Active tool and workspace settings</cite> shelf of <cite>Properties</cite> editor.</p>
+<p><strong>Start live update</strong> - will start update layouts by a timer (several times in second)</p>
+<p><strong>Update all trees</strong> - manual update of all layouts</p>
+<div class="section" id="node-properties-list">
+<h3>Node properties list<a class="headerlink" href="#node-properties-list" title="Permalink to this headline">¶</a></h3>
+<p>Some nodes can display their properties on the 3D panel.
+For this you have to turn on an appropriate property on N panel of selected node in a node tree.</p>
+<dl class="simple">
+<dt>Some nodes which can displayed its properties on th 3D panel:</dt><dd><ul class="simple">
+<li><p>A number</p></li>
+<li><p>Color input</p></li>
+<li><p>List Input</p></li>
+<li><p>Objects in</p></li>
+<li><p>Viewer BMesh</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Scan for props</strong> - Nodes which should display their properties on the panel will be added
+and which should not will be removed from the panel. Order of existing items will be unchanged.</p>
+<div class="figure align-right">
+<img alt="https://user-images.githubusercontent.com/28003269/93045886-6d103880-f669-11ea-95a6-eb385295ce42.png" src="https://user-images.githubusercontent.com/28003269/93045886-6d103880-f669-11ea-95a6-eb385295ce42.png" />
+</div>
+<p><strong>Edit properties</strong> - turn property list into edit mode it will add extra buttons form  managing the list</p>
+<p><em>Note: in edit mode it is possible to change order of items, rename items, remove displaying node properties in list,
+torn on/off displaying node tree in list. It is recommended to rename nodes and trees via list interface
+otherwise for properly displaying items `scan for props` button should be pressed after each renaming.
+Changes node labels can be renamed from other UI in case if filtering properties are not going to be used.</em></p>
+<p><strong>filter</strong> (below list) - can be used for filtering properties</p>
+<p>In normal mode tree items display the same properties as layout manager</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="input_menus.html" class="btn btn-neutral float-right" title="Input Socket Menus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="user_interface.html" class="btn btn-neutral float-left" title="User interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

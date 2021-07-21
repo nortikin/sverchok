@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Adding new Node &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="General guidelines" href="contribute_general.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="contributing_to_sverchok.html">Contributing to sverchok</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_general.html">General guidelines</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Adding new Node</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#to-create-a-node">To create a node:</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#license">License</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#imports">Imports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#node-class">Node Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#register-node-class">Register node class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="contributing_to_sverchok.html">Contributing to sverchok</a> &raquo;</li>
+        
+      <li>Adding new Node</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/contributing/add_new_node.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="adding-new-node">
+<h1>Adding new Node<a class="headerlink" href="#adding-new-node" title="Permalink to this headline">¶</a></h1>
+<p>This page documents the essentials to make your own node for sverchok. We make several assumptions
+about your Python knowledge - an affinity for Python is a prerequisite. If you suck at Python, you
+will have a bad time trying to write nodes for sverchok (– a hard truth).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you don’t know Python my advice to you is to read first all the shorter nodes, and take notes
+about parts you don’t understand.
+As you read more, the notes you took on previous nodes will be about techniques that re-occur in other nodes.
+Once you notice some repetition of the techniques you can class them, and start to associate the code with a
+procedure. Humans learn by extracting patterns from the chaos, but you have to see enough new material to let
+your brain do the pattern matching.</p>
+<p>Also do any of the free python courses, and quit and move on from easy ones to harder ones.</p>
+</div>
+<div class="section" id="to-create-a-node">
+<h2>To create a node:<a class="headerlink" href="#to-create-a-node" title="Permalink to this headline">¶</a></h2>
+<p>Creation of new node can be split into next steps.</p>
+<ol class="arabic simple">
+<li><p>Make a scripted node to test the idea.</p></li>
+<li><p>Show your node to us in an issue or create branch or fork of master in github. If it
+is a huge complex job we can make you collaborator.</p></li>
+<li><p>Create a file with the node code according this page in appropriate
+folder <code class="docutils literal notranslate"><span class="pre">..sverchok/nodes/whatever_existing_category/your_file.py</span></code></p></li>
+<li><p>Add node’s <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> to <code class="docutils literal notranslate"><span class="pre">sverchok/index.md</span></code> file in an appropriate category.</p></li>
+<li><p>Make a pull request.</p></li>
+</ol>
+<p>This page will describe from which pats the code of a new node should consist using simple example of a node.
+The whole code of the node can be downloaded from the link below.</p>
+<p><a class="reference download internal" download="" href="../_downloads/ef14050c7a5ce3af978c16213bda51ed/simple_node_template.py"><code class="xref download docutils literal notranslate"><span class="pre">Simple</span> <span class="pre">node</span> <span class="pre">code</span> <span class="pre">template</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This documentation describe node structure which is used in most nodes in Sverchok.
+However there are other experimental approaches too. In the future more advanced approach
+may be born because current approach has
+<a class="reference external" href="https://github.com/nortikin/sverchok/issues/3955">certain disadvantages</a>.</p>
+</div>
+<div class="section" id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
+<p>Use next strings in the top of the node file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors</span>
+<span class="c1"># recorded in the version control history of the file, available from</span>
+<span class="c1"># its original location https://github.com/nortikin/sverchok/commit/master</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: GPL3</span>
+<span class="c1"># License-Filename: LICENSE</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bpy</span>
+<span class="kn">from</span> <span class="nn">mathutils</span> <span class="kn">import</span> <span class="n">Vector</span>
+<span class="kn">from</span> <span class="nn">bpy.props</span> <span class="kn">import</span> <span class="n">FloatProperty</span>
+<span class="kn">from</span> <span class="nn">sverchok.node_tree</span> <span class="kn">import</span> <span class="n">SverchCustomTreeNode</span>
+<span class="kn">from</span> <span class="nn">sverchok.data_structure</span> <span class="kn">import</span> <span class="n">updateNode</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>You need to import <code class="docutils literal notranslate"><span class="pre">bpy</span></code> because we use always use <code class="docutils literal notranslate"><span class="pre">bpy.types.Node</span></code> and often use <code class="docutils literal notranslate"><span class="pre">bpy.props</span></code></p></li>
+<li><p>The Sverchok imports are needed for the availability of common Sverchok functions.</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">updateNode</span></code> is the function we add to a property to trigger updates when a slider is adjusted.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SverchCustomTreeNode</span></code>’s definition can be found in
+<a class="reference external" href="https://github.com/nortikin/sverchok/blob/master/node_tree.py">node_tree.py</a>,
+it adds a <code class="docutils literal notranslate"><span class="pre">poll</span></code> and several utility functions to the node class.</p></li>
+</ul>
+</li>
+<li><p>You are free to import any other useful module in that section.</p></li>
+</ul>
+</div>
+<div class="section" id="node-class">
+<h3>Node Class<a class="headerlink" href="#node-class" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SvScaleVectorNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Triggers: vector multiple scale</span>
+<span class="sd">    Tooltip: This node multiply vector and some value</span>
+
+<span class="sd">    Merely for illustration of node creation workflow</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bl_idname</span> <span class="o">=</span> <span class="s1">&#39;SvScaleVectorNode&#39;</span>  <span class="c1"># should be add to `sverchok/index.md` file</span>
+    <span class="n">bl_label</span> <span class="o">=</span> <span class="s1">&#39;Name shown in menu&#39;</span>
+    <span class="n">bl_icon</span> <span class="o">=</span> <span class="s1">&#39;GREASEPENCIL&#39;</span>
+</pre></div>
+</div>
+<dl>
+<dt>Class name</dt><dd><p>A small (but significant) implementation detail of Sverchok is that name of the Node class should
+be identical to the <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> of the node class. This simplified a few things for development. This
+class name should start with a prefix <code class="docutils literal notranslate"><span class="pre">Sv</span></code> and contain only alphanumeric characters. Something like
+<code class="docutils literal notranslate"><span class="pre">SvMyFirstNode</span></code> would be fine. If you want to automatically make the node available upon startup then
+this classname must be added to the <code class="docutils literal notranslate"><span class="pre">index.md</span></code> file in the correct category.</p>
+</dd>
+<dt>Docstring</dt><dd><p><strong>Triggers:</strong> This should be very short (two or three words, not much more)
+to be used in <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">Ctrl</kbd>-<kbd class="kbd docutils literal notranslate">Space</kbd></kbd> search menu.</p>
+<p><strong>Tooltip:</strong> Longer description to be present as a tooltip in UI.</p>
+<p>More detailed description with technical information or historical notes goes after empty line.
+This is not shown anywhere in the UI.</p>
+</dd>
+<dt>bl_idname</dt><dd><p>This is the unique identifier for a node type, like a post code for a home.</p>
+</dd>
+<dt>bl_label</dt><dd><p>This is the name as it will appear in menus and on the node’s header when it’s first added to a
+node tree. Keep this short.</p>
+</dd>
+<dt>bl_icon</dt><dd><p>This is used to display a node icon in the shift+A menu. There’s also a <code class="docutils literal notranslate"><span class="pre">sv_icon</span></code> implemented
+for custom icons (but for a different topic)</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">value</span><span class="p">:</span> <span class="n">FloatProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;My value&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="n">updateNode</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">draw_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+    <span class="n">layout</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Properties</dt><dd><p>Each node can have properties which can be displayed in the its UI and used in its code.
+<a class="reference external" href="https://docs.blender.org/api/current/bpy.props.html">Read more about properties</a>.</p>
+</dd>
+<dt>def draw_buttons</dt><dd><p>This is where we add any custom UI (sliders/buttons/enumerators), this is like the <code class="docutils literal notranslate"><span class="pre">draw</span></code> function of a panel.
+This function can be called many times a second so avoid doing intense computation inside it.
+This function is for nothing other than drawing the current state of the node,
+it isn’t for updating node properties.
+More information in the
+<a class="reference external" href="https://docs.blender.org/api/current/bpy.types.UILayout.html">Blender documentation</a>.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sv_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvVerticesSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Vertices&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;SvVerticesSocket&#39;</span><span class="p">,</span> <span class="s2">&quot;Vertices&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>def sv_init</dt><dd><p>This function is used to setup the initial state of a node. This is where you add the default sockets
+and their properties. This is where we tell a socket to appear as a slider. To better get an idea of what
+it’s used for do a search for this function in the Sverchok repository.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># read input value</span>
+    <span class="n">input_vertices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;Vertices&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_get</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+
+    <span class="c1"># vectorization code</span>
+    <span class="n">output_vertices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">in_vert_list</span> <span class="ow">in</span> <span class="n">input_vertices</span><span class="p">:</span>  <span class="c1"># object level</span>
+        <span class="n">out_vert_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">in_vert_list</span><span class="p">:</span>  <span class="c1"># value level</span>
+
+            <span class="c1"># perform the node function</span>
+            <span class="n">out_vert_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">Vector</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)[:])</span>
+
+        <span class="n">output_vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_vert_list</span><span class="p">)</span>
+
+    <span class="c1"># wright output value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;Vertices&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sv_set</span><span class="p">(</span><span class="n">output_vertices</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>def process</dt><dd><p>This function is called whenever the node is told to update. It’s where we get the content of the
+input sockets, and set the output of the output sockets. This function is sometimes big..and sometimes
+merely a few lines - you should look at existing nodes to get a feel for what to put in there.</p>
+<p>First line of the process method read data from the input socket with name <em>Vertices</em>.
+If the socket is not connected the input data will be an empty list.
+Expecting format of vertices is next:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>   <span class="o">&lt;-</span> <span class="nb">object</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector</span> <span class="mi">1</span>
+  <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]],</span>  <span class="o">&lt;-</span> <span class="nb">object</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector</span> <span class="mi">2</span>
+
+ <span class="p">[[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>   <span class="o">&lt;-</span> <span class="nb">object</span> <span class="mi">2</span><span class="p">,</span> <span class="n">vector</span> <span class="mi">1</span>
+  <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]]]</span>  <span class="o">&lt;-</span> <span class="nb">object</span> <span class="mi">2</span><span class="p">,</span> <span class="n">vector</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>To understand the Sverchok data structure read <a class="reference internal" href="../tutorials/nesting.html"><span class="doc">this tutorial</span></a>.</p>
+<p>Next step is unroll the vertices data structure, perform operation on single
+vertices and wrap the result back. Last string assign the result to output socket.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="register-node-class">
+<h3>Register node class<a class="headerlink" href="#register-node-class" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="n">SvScaleVectorNode</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">unregister</span><span class="p">():</span>
+    <span class="n">bpy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">unregister_class</span><span class="p">(</span><span class="n">SvScaleVectorNode</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All node classes should be registered so Blender could be able to use them.
+<code class="docutils literal notranslate"><span class="pre">register</span></code> function is called when the add-on is enabled,
+<code class="docutils literal notranslate"><span class="pre">unregister</span></code> when you hit <kbd class="kbd docutils literal notranslate">f8</kbd> (or execute <cite>script.reload</cite> in Python
+console editor) or disable Sverchok.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Fixing existing nodes is not the same as create new ones. Existing node can be used in some layouts
+and new changes should not break them. It’s possible to add new logic to an existing node
+but don’t do next:</p>
+<ol class="arabic simple">
+<li><p>Change <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> of a node</p></li>
+<li><p>Remove or rename sockets (use labels for socket renaming)</p></li>
+<li><p>Adding new socket inbetween existing sockets. We prefer that you add sockets behind the last
+existing socket for either <code class="docutils literal notranslate"><span class="pre">self.inputs</span></code> or <code class="docutils literal notranslate"><span class="pre">self.outputs</span></code>. This is the rule only if access
+to sockets is made by their indexes.</p></li>
+<li><p>There are other reserved property names see the bpy.types.Node baseclass in Blender docs and
+Sverchok’s custom node mixin class. (this is true and when new node is created)</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="contribute_general.html" class="btn btn-neutral float-left" title="General guidelines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

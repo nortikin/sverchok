@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Introduction to modular components &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Contributing to sverchok" href="../../contributing/contributing_to_sverchok.html" />
+    <link rel="prev" title="Introduction to modular components" href="lesson_02.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="lesson_01.html">Lesson 01 - A Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../nesting.html">Notes for Lesson 02 (Nesting)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_02.html">Lesson 02 - A Circle</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lesson 03 - A Grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-03-a-grid">Lesson 03 - A Grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-modulo-and-integer-division-to-get-grid-coordinates">Using <cite>modulo</cite> and <cite>integer division</cite> to get grid coordinates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-polygon-algorithm">A polygon Algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+        
+      <li>Introduction to modular components</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/tutorials/Unit_01/lesson_03.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction-to-modular-components">
+<h1>Introduction to modular components<a class="headerlink" href="#introduction-to-modular-components" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lesson-03-a-grid">
+<h2>Lesson 03 - A Grid<a class="headerlink" href="#lesson-03-a-grid" title="Permalink to this headline">¶</a></h2>
+<p>Grids are another common geometric primitive. A Grid can be thought of as a Plane subdivided over its <em>x</em> and <em>y</em> axes. Sverchok’s <code class="docutils literal notranslate"><span class="pre">Plane</span></code> generator makes grids, and includes the associated edges and polygons. Instead of using the <code class="docutils literal notranslate"><span class="pre">Plane</span></code> node we’re going to build a node tree to make a grid procedurally from scratch. Once you grasp how this works then you have understood the essentials, and they will hold true even in much more complex projects. We will cover several important concepts of parametric design, and dynamic topology.</p>
+<p><strong>What do we know about Grids?</strong></p>
+<p>For simplicity let’s take a subdivided <code class="docutils literal notranslate"><span class="pre">Plane</span></code> as our template. We know it’s flat and therefore the 3rd dimension (<code class="docutils literal notranslate"><span class="pre">z</span></code>) will be constant. We will allow for <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> to be divided separately, this is a little bit more interesting.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png" src="https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png" />
+<p><strong>Where to start?</strong></p>
+<p>Starting out we often use a notepad (yes, actual paper – or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance of writing code or adding nodes to the node tree.</p>
+<p>I chose a Grid because it has only a few properties:</p>
+<ul class="simple">
+<li><p>X Side Length</p></li>
+<li><p>Y Side Length</p></li>
+<li><p>X num subdivs</p></li>
+<li><p>Y num subdivs</p></li>
+</ul>
+<p>These properties can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" src="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" />
+<p><strong>Decide which variables you want to expose</strong></p>
+<p>The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I’ll pick what I think is the most convenient, it can always be changed later. Think of names that mean exactly what they’re attempting to describe.</p>
+<ul class="simple">
+<li><p>Side X total length</p></li>
+<li><p>Side Y total length</p></li>
+<li><p>Number Vertices on side X</p></li>
+<li><p>Number Vertices on side Y</p></li>
+</ul>
+<p><strong>Think in Whole numbers (integers, ints) if you can</strong></p>
+<p>Reduce the problem to something that is mathematically uncomplicated. Here’s a grid drawn on an <code class="docutils literal notranslate"><span class="pre">xy</span></code> graph to illustrate the coordinates. The <code class="docutils literal notranslate"><span class="pre">z-dimension</span></code> could be ignored but it’s included for completeness.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png" src="https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png" />
+<p>The reason I pick <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">3</span></code> verts, is because that’s one of the smallest forms of this problem, and only minor tweaks will be needed to turn it into grids of arbitrary dimensions. The reason i’m not picking <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">3</span></code> or <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">4</span></code> is because using different vertex counts for <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> makes it clearer that the <code class="docutils literal notranslate"><span class="pre">X</span></code> axis might have some relation to 4 and <code class="docutils literal notranslate"><span class="pre">Y</span></code> to 3.</p>
+<p>If you consider the sequence just by looking at the first <em>component</em> of each vertex, it goes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We can generate sequences like that easily. When we look at the second <em>component</em> of these vertices that sequence is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>this also is easy to generate.</p>
+</div>
+<div class="section" id="using-modulo-and-integer-division-to-get-grid-coordinates">
+<h2>Using <cite>modulo</cite> and <cite>integer division</cite> to get grid coordinates<a class="headerlink" href="#using-modulo-and-integer-division-to-get-grid-coordinates" title="Permalink to this headline">¶</a></h2>
+<p>The next section will cover two mathematical concepts (operations), which tend to always join the party when we talk about periodic functions and stepwise increases.</p>
+<ul class="simple">
+<li><p>modulo, or the symbol <code class="docutils literal notranslate"><span class="pre">%</span></code></p></li>
+<li><p>integer division, or the symbol <code class="docutils literal notranslate"><span class="pre">//</span></code></p></li>
+</ul>
+<p><strong>Operands</strong></p>
+<p>We introduced the <code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math</span></code> node in lesson 01 and 02, the <code class="docutils literal notranslate"><span class="pre">Scalar</span> <span class="pre">Math</span></code> node (from the Number menu) has many operations called operands. We’ll focus on these to get the vertex components.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 10%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operand</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Behaviour</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modulo (mod)</p></td>
+<td><p>%</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">%</span> <span class="pre">4</span></code> returns the division remainder of <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">/</span> <span class="pre">4</span></code>,
+rounded down to the nearest whole number</p></td>
+</tr>
+<tr class="row-odd"><td><p>Integer Division</p></td>
+<td><p>//</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">//</span> <span class="pre">4</span></code> returns the result of <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">/</span> <span class="pre">4</span></code>,
+rounded down to the nearest whole number.</p></td>
+</tr>
+</tbody>
+</table>
+<p>We can use:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">%</span> <span class="pre">4</span></code> to turn <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,4,5,6,7,8,9,10,11]</span></code> into <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,0,1,2,3,0,1,2,3]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">//</span> <span class="pre">4</span></code> to turn <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,4,5,6,7,8,9,10,11]</span></code> into <code class="docutils literal notranslate"><span class="pre">[0,0,0,0,1,1,1,1,2,2,2,2]</span></code></p></li>
+</ul>
+<p>Here’s a table that shows the effect of <code class="docutils literal notranslate"><span class="pre">modulo</span></code> and <code class="docutils literal notranslate"><span class="pre">int.division</span></code> on a range of numbers.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>number range (n)</p></th>
+<th class="head"><p>0</p></th>
+<th class="head"><p>1</p></th>
+<th class="head"><p>2</p></th>
+<th class="head"><p>3</p></th>
+<th class="head"><p>4</p></th>
+<th class="head"><p>5</p></th>
+<th class="head"><p>6</p></th>
+<th class="head"><p>7</p></th>
+<th class="head"><p>8</p></th>
+<th class="head"><p>9</p></th>
+<th class="head"><p>10</p></th>
+<th class="head"><p>11</p></th>
+<th class="head"><p>12</p></th>
+<th class="head"><p>13</p></th>
+<th class="head"><p>14</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>n % 4</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>n // 4</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>3</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>n % 6</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>n // 6</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>A table of numbers isn’t going to give you a sense of repetitions or progression. I’ve added a few colours intended to make the emerging patterns visible.</p>
+<p><img alt="color_coded" src="https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png" /></p>
+<p>You come here to learn visual programming in Sverchok. You will internalize the underlying math and algorithms more thoroughly by looking at the concept of programming from several angles. I want to show a few lines of code (python) that use <code class="docutils literal notranslate"><span class="pre">%</span></code> and <code class="docutils literal notranslate"><span class="pre">//</span></code> to calculate the Vertices of the grid. This code generates the x and y components of the vertices based purely on how many vertices are needed (<code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">3</span></code>); Which is exactly what we want to do in the node tree shortly.</p>
+<p>Below are two snippets of Python that calculate the same list of vertices. I’m showing both because it’s an analogy to what you’ll experience in any node tree. There is generally more than one way to achieve a result, there is almost never a “best” way. Some ways are faster in terms of processing speed, but they may be more difficult to understand by looking at the tree / code.</p>
+<p>the <code class="docutils literal notranslate"><span class="pre">for-loop</span></code> version:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_verts_x</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">num_verts_y</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">num_verts_x</span> <span class="o">*</span> <span class="n">num_verts_y</span>      <span class="c1"># the * symbol means multiplication</span>
+
+<span class="n">final_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">):</span>                 <span class="c1"># passes: 0 1 2 3 4 5 6 7 8 9 10 11</span>
+   <span class="n">x</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">4</span>                       <span class="c1">#  makes: 0 1 2 3 0 1 2 3 0 1 2 3</span>
+   <span class="n">y</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">4</span>                      <span class="c1">#  makes: 0 0 0 0 1 1 1 1 2 2 2 2</span>
+   <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>the <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">comprehension</span></code> version:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_verts_x</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">num_verts_y</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">num_verts_x</span> <span class="o">*</span> <span class="n">num_verts_y</span>      <span class="c1"># the * symbol means multiplication</span>
+
+<span class="n">final_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">4</span><span class="p">,</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Both bits of code calculate the same end result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+ <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>and those vertices are going to produce this eventually</p>
+<p><img alt="grid_only_test" src="https://user-images.githubusercontent.com/619340/82651867-0760f200-9c1d-11ea-967c-cf297559561b.png" /></p>
+<p>With any luck you are still smiling through this code detour, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.</p>
+<p><strong>Making vertices</strong></p>
+<p>A recipe which you should be able to hook up yourself by seeing the example image.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Vector</span> <span class="pre">In</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Sclar</span> <span class="pre">Math</span></code> (3x) notice I minimized the Multiplication Node.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">Number</span></code> (2x)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> (int)</p></li>
+</ul>
+<p>We multiply <code class="docutils literal notranslate"><span class="pre">y=3</span></code> by <code class="docutils literal notranslate"><span class="pre">x=4</span></code> to get <code class="docutils literal notranslate"><span class="pre">12</span></code> this is the number of vertices. This parameter determines the length of the range <code class="docutils literal notranslate"><span class="pre">[0,1..11]</span></code> (12 vertices, remember we start counting indices at 0).</p>
+<p><img alt="first_plane_image" src="https://user-images.githubusercontent.com/619340/82651212-257a2280-9c1c-11ea-85f4-f33477fcff3f.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>i’ve added an Index Viewer node ( use alt+space to search for it) to display the indices of the vertices.</p>
+</div>
+<p>With all nodes hooked up correctly you can hook <code class="docutils literal notranslate"><span class="pre">Vector</span> <span class="pre">In</span></code>’s output to the <cite>vertices</cite> socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.</p>
+<p><strong>Making Polygons</strong></p>
+<p>This might be obvious to some, so this is directed at those who’ve never done this kind of thing before. Polygons are described using the indices of the vertices that they use. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, the result of a <code class="docutils literal notranslate"><span class="pre">x=4</span> <span class="pre">*</span> <span class="pre">y=3</span></code> grid). The order in which you populate the list of polygon is determined by what you find more convenient.</p>
+<p>For my example, I think of the X axis as the Columns, and I go from left to right and then upwards.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png" src="https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png" />
+<p>There are a few patterns to notice here.</p>
+<ul>
+<li><p>between polygon with index <code class="docutils literal notranslate"><span class="pre">2</span></code> and <code class="docutils literal notranslate"><span class="pre">3</span></code> there is a break in the pattern. For a grid of <code class="docutils literal notranslate"><span class="pre">x=4,</span> <span class="pre">y=3</span></code> like ours, the polygon with vertex indices <code class="docutils literal notranslate"><span class="pre">[3,7,8,4]</span></code> doesn’t exist, if we did make that polygon it would connect one Row to the next like so:</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png" src="https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png" />
+</li>
+</ul>
+<p>There’s a relationship in these sequences:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#    |A   B   C   D|</span>
+<span class="c1">#    ---------------</span>
+<span class="mi">0</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]</span>
+<span class="mi">1</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">]</span>
+<span class="mi">2</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">3</span><span class="p">]</span>
+<span class="c1">#  = [3,  7,  8,  4] .. not a valid polygon for x=4, y=3</span>
+<span class="mi">3</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">5</span><span class="p">]</span>
+<span class="mi">4</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="mi">5</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Given A we can calculate <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, and <code class="docutils literal notranslate"><span class="pre">D</span></code>. The relationship is namely:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>B is 4 more than A, why the offset <code class="docutils literal notranslate"><span class="pre">4</span></code>? what’s special about <code class="docutils literal notranslate"><span class="pre">4</span></code>?</p></li>
+<li><p>C is 1 more than B</p></li>
+<li><p>D is 1 more than A</p></li>
+</ul>
+</div>
+<p>the magical <code class="docutils literal notranslate"><span class="pre">offset</span></code> number here is <code class="docutils literal notranslate"><span class="pre">4</span></code>, and this is because we set the <code class="docutils literal notranslate"><span class="pre">x-dimension</span></code> to <strong>4</strong> for the time being. The formula pattern for valid polygons can all be calculated from A if you know what the offset is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span>
+<span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The pattern is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">offset</span><span class="p">),</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>We know how many polygons we need (let’s call this number <code class="docutils literal notranslate"><span class="pre">j</span></code>)</p></li>
+</ul>
+<p>We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">thru</span> <span class="pre">j-1</span></code> or <code class="docutils literal notranslate"><span class="pre">[0,1,2,3,4,5]</span></code>. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You could already think ahead and consider that if we made <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">4*4</span> <span class="pre">grid</span></code> (so one more row, y becomes also <code class="docutils literal notranslate"><span class="pre">4</span></code>), and that there will be another jump in the pattern between polygon index 5 and 6:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#    |A   B   C   D|</span>
+<span class="c1">#    ---------------</span>
+<span class="mi">0</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]</span>   <span class="c1"># row 1  column 1</span>
+<span class="mi">1</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">]</span>   <span class="c1"># row 1  column 2</span>
+<span class="mi">2</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">3</span><span class="p">]</span>   <span class="c1"># row 1  column 3</span>
+<span class="c1">#  = [3,  7,  8,  4] .. not a valid polygon for x=4, y=4</span>
+<span class="mi">3</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">5</span><span class="p">]</span>   <span class="c1"># row 2  column 1</span>
+<span class="mi">4</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>   <span class="c1"># row 2  column 2</span>
+<span class="mi">5</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>   <span class="c1"># row 2  column 3</span>
+<span class="c1">#  = [7,  11, 12, 8] .. not a valid polygon for x=4, y=4</span>
+<span class="mi">6</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span>  <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>   <span class="c1"># row 3  column 1</span>
+<span class="mi">7</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span>  <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>  <span class="c1"># row 3  column 2</span>
+<span class="mi">8</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>  <span class="c1"># row 3  column 3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="a-polygon-algorithm">
+<h2>A polygon Algorithm<a class="headerlink" href="#a-polygon-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>Sverchok lets you create complex geometry without writing a single line of code. Sverchok’s power comes from being able to mix code and nodes where it makes sense. You will get the most out of Sverchok when you embracing the occasional snippet of code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination. Future lessons will cover the multitude of ways that we provide to mix code in your node tree.</p>
+<p>The simplest way to approach this is probably the formula node, using the pattern we found earlier.</p>
+<p><img alt="using_formula_node" src="https://user-images.githubusercontent.com/619340/82671086-8adf0b00-9c3e-11ea-920f-b11546046817.png" /></p>
+<p>Here’s the full node tree, which lets you set the X and Y arbitrarily.</p>
+<p><img alt="fully_automatic" src="https://user-images.githubusercontent.com/619340/82674818-2a52cc80-9c44-11ea-9e33-eea2e3857b6e.png" /></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../../contributing/contributing_to_sverchok.html" class="btn btn-neutral float-right" title="Contributing to sverchok" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="lesson_02.html" class="btn btn-neutral float-left" title="Introduction to modular components" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -3,7 +3,7 @@ Objects
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    get_asset_properties_mk2
    lattice_analyzer

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Objects &mdash; Sverchok 0.5 documentation</title>
+  <title>Objects &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
   
 
   
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,18 +97,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -156,10 +154,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -233,114 +229,20 @@
 <h1>Objects<a class="headerlink" href="#objects" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="get_asset_properties_mk2.html">Object ID Selector</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="get_asset_properties_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="get_asset_properties_mk2.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lattice_analyzer.html">Lattice Props</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lattice_analyzer.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lattice_analyzer.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="armature_analyzer.html">Armature Props</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="armature_analyzer.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="armature_analyzer.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sample_uv_color.html">Sample UV texture color on Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sample_uv_color.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sample_uv_color.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sample_uv_color.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sample_uv_color.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="select_mesh_verts.html">Select vertices of mesh Node</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="select_mesh_verts.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_mesh_verts.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_mesh_verts.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_mesh_verts.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="select_mesh_verts.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="weightsmk2.html">Weights</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="weightsmk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="weightsmk2.html#input-sockets">Input sockets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="weightsmk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="weightsmk2.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="getsetprop.html">Get Property / Set Property</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#output">Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#limitations">Limitations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="getsetprop_mk2.html">Get Property / Set Property</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#alias-nodes">Alias <code class="docutils literal notranslate"><span class="pre">nodes</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#alias-ng">Alias <code class="docutils literal notranslate"><span class="pre">ng</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#input">Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#output">Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#limitations">Limitations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getsetprop_mk2.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="assign_materials.html">Assign Materials List</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="assign_materials.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="assign_materials.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="assign_materials.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="assign_materials.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="assign_materials.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="material_index.html">Set Material Index</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="material_index.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="material_index.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="material_index.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="material_index.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="material_index.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="set_custom_uv_map.html">Set custom UV map</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_custom_uv_map.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="set_loop_normals.html">Set loop normals</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_loop_normals.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="set_mesh_attribute.html">Set mesh attribute</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_mesh_attribute.html#usage">Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="set_collection.html">Set collection</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="set_collection.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_collection.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_collection.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_collection.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="set_collection.html#usage">Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="get_asset_properties_mk2.html">Object ID Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lattice_analyzer.html">Lattice Props</a></li>
+<li class="toctree-l1"><a class="reference internal" href="armature_analyzer.html">Armature Props</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sample_uv_color.html">Sample UV texture color on Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="select_mesh_verts.html">Select vertices of mesh Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weightsmk2.html">Weights</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getsetprop.html">Get Property / Set Property</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getsetprop_mk2.html">Get Property / Set Property</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assign_materials.html">Assign Materials List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="material_index.html">Set Material Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set_custom_uv_map.html">Set custom UV map</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set_loop_normals.html">Set loop normals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set_mesh_attribute.html">Set mesh attribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set_collection.html">Set collection</a></li>
 </ul>
 </div>
 </div>
@@ -359,7 +261,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

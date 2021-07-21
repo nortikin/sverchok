@@ -3,7 +3,7 @@ Modifier Change
 ***************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    bevel
    subdivide_mk2

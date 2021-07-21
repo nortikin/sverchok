@@ -3,7 +3,7 @@ CAD
 ***
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    crop_mesh_2d
    edges_intersect_mk3

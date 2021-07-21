@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Modifier Change &mdash; Sverchok 0.5 documentation</title>
+  <title>Modifier Change &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
   
 
   
@@ -60,13 +62,16 @@
           
 
           
+            
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
             
             
               <div class="version">
-                0.5
+                1, 0, 0
               </div>
             
           
@@ -92,18 +97,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -183,10 +181,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
             
@@ -260,311 +256,47 @@
 <h1>Modifier Change<a class="headerlink" href="#modifier-change" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="bevel.html">Bevel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bevel.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bevel.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bevel.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bevel.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bevel.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="subdivide_mk2.html">Subdivide Node</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#advanced-parameters">Advanced parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_mk2.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_lite.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#advanced-parameters">Advanced parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#performance-note">Performance Note</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdivide_to_quads.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="unsubdivide.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="unsubdivide.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="smooth.html">Smooth Vertices</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="smooth.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smooth.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smooth.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smooth.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="smooth.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="relax_mesh.html">Relax Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="relax_mesh.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="relax_mesh.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="relax_mesh.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="relax_mesh.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="relax_mesh.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="delete_loose.html">Delete Loose</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="delete_loose.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delete_loose.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delete_loose.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="delete_loose.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_clean.html">Mesh Clean</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_clean.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="poke.html">Poke Faces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="poke.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="poke.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="poke.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="poke.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="poke.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extrude_edges_mk2.html">Extrude edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extrude_edges_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_edges_mk2.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_edges_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_edges_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_edges_mk2.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extrude_separate.html">Extrude Separate Faces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extrude_separate_lite.html">Extrude separate faces lite</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate_lite.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate_lite.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate_lite.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_separate_lite.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extrude_region.html">Extrude Region</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extrude_region.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_region.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_region.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_region.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_region.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="holes_fill.html">Fill Holes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="holes_fill.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="holes_fill.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="holes_fill.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="holes_fill.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="holes_fill.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="bevel.html">Bevel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subdivide_mk2.html">Subdivide Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relax_mesh.html">Relax Mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="delete_loose.html">Delete Loose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_clean.html">Mesh Clean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="poke.html">Poke Faces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extrude_edges_mk2.html">Extrude edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extrude_separate.html">Extrude Separate Faces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extrude_separate_lite.html">Extrude separate faces lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extrude_region.html">Extrude Region</a></li>
+<li class="toctree-l1"><a class="reference internal" href="holes_fill.html">Fill Holes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="flip_normals.html">flip normals</a></li>
-<li class="toctree-l1"><a class="reference internal" href="merge_by_distance.html">Merge by Distance</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="merge_by_distance.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_join_mk2.html">Mesh Join</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#inputs-outputs">Inputs &amp; Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_join_mk2.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="mesh_separate.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_separate.html#input-output">Input &amp; Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_separate.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mesh_separate.html#notes">Notes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="objects_along_edge.html">Duplicate along Edge</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="objects_along_edge.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="objects_along_edge.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="objects_along_edge.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="objects_along_edge.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="objects_along_edge.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="offset.html">Offset</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="offset.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="offset.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="offset.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="offset.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="offset.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="polygons_boom.html">Polygon Boom</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="polygons_boom.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_boom.html#inputs-outputs">Inputs &amp; Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_boom.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="edge_boom.html">Edge Boom</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="edge_boom.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_boom.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_boom.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_boom.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_boom.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="polygons_to_edges_mk2.html">Polygons to Edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="polygons_to_edges_mk2.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_to_edges_mk2.html#input-output">Input &amp; Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_to_edges_mk2.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_to_edges_mk2.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="polygons_to_edges_mk2.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="recalc_normals.html">Recalculate Normals</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="recalc_normals.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recalc_normals.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recalc_normals.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recalc_normals.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recalc_normals.html#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="triangulate.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triangulate.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triangulate.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triangulate.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triangulate.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="merge_by_distance.html">Merge by Distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_join_mk2.html">Mesh Join</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects_along_edge.html">Duplicate along Edge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offset.html">Offset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygons_boom.html">Polygon Boom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="edge_boom.html">Edge Boom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polygons_to_edges_mk2.html">Polygons to Edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recalc_normals.html">Recalculate Normals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="triangulate_heavy.html">Triangulate Heavy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="planar_faces.html">Make Faces Planar</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="planar_faces.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_faces.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_faces.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_faces.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_faces.html#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="edge_split.html">Split Edges</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="edge_split.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_split.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_split.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edge_split.html#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="split_faces.html">Split Faces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="split_faces.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="split_faces.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="split_faces.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="split_faces.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="split_faces.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="vertices_mask.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vertices_mask.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vertices_mask.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vertices_mask.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vertices_mask.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="make_monotone.html">Make monotone</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#n-panel">N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="make_monotone.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="planar_edgenet_to_polygons.html">Planar edgenet to polygons</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="planar_edgenet_to_polygons.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_edgenet_to_polygons.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_edgenet_to_polygons.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="planar_edgenet_to_polygons.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="inset_faces.html">Inset faces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#n-panel">N panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#usage">Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="inset_faces.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="follow_active_quads.html">Follow active quads</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#active-index">Active index</a></li>
-<li class="toctree-l2"><a class="reference internal" href="follow_active_quads.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="separate_parts_to_indexes.html">Separate parts to indexes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="separate_parts_to_indexes.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="separate_parts_to_indexes.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="separate_parts_to_indexes.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="separate_parts_to_indexes.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="separate_parts_to_indexes.html#examples">Examples</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="planar_faces.html">Make Faces Planar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="edge_split.html">Split Edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="make_monotone.html">Make monotone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="planar_edgenet_to_polygons.html">Planar edgenet to polygons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inset_faces.html">Inset faces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="follow_active_quads.html">Follow active quads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="separate_parts_to_indexes.html">Separate parts to indexes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extrude_multi_alt.html">extrude multi alt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dissolve_mesh_elements.html">Dissolve mesh elements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#category">Category</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dissolve_mesh_elements.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="rigid_origami.html">Rigid Origami</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="rigid_origami.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rigid_origami.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rigid_origami.html#parameters">Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rigid_origami.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rigid_origami.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="flat_geometry.html">Flat Geometry</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="flat_geometry.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flat_geometry.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flat_geometry.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flat_geometry.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flat_geometry.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="edgenet_to_paths.html">Edgenet to Paths</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="edgenet_to_paths.html#functionality">Functionality</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edgenet_to_paths.html#inputs">Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edgenet_to_paths.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edgenet_to_paths.html#options">Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="edgenet_to_paths.html#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="dissolve_mesh_elements.html">Dissolve mesh elements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rigid_origami.html">Rigid Origami</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flat_geometry.html">Flat Geometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="edgenet_to_paths.html">Edgenet to Paths</a></li>
 </ul>
 </div>
 </div>
@@ -583,7 +315,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2014...2020, sverchok team.
+        &#169; Copyright 2014...2021, sverchok team.
 
     </p>
   </div>

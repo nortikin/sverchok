@@ -3,7 +3,7 @@ Solid
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    box_solid
    cone_solid

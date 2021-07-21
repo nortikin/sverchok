@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Curve &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Surface" href="surfaces.html" />
+    <link rel="prev" title="Introduction to geometry" href="geometry.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="data_structure_index.html">Data structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html">Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nurbs.html">NURBS: Curves and Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solids.html">Solid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="data_structure_index.html">Data structure</a> &raquo;</li>
+        
+      <li>Curve</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/data_structure/curves.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="curve">
+<h1>Curve<a class="headerlink" href="#curve" title="Permalink to this headline">¶</a></h1>
+<p>Sverchok uses the term <strong>Curve</strong> mostly in the same way as it is used in mathematics.</p>
+<p>From the user perspective, a Curve object is just a (more or less smooth) curve
+laying in 3D space, which goes from one point (start) to another point (end).
+The start and the end point of the curve may coincide, in this case we say the
+curve is <strong>closed</strong>, or <strong>cyclic</strong>.</p>
+<p>Let’s state some properties of the Curve object, which will define our
+understanding of this term in context of Sverchok:</p>
+<ul class="simple">
+<li><p>A curve is a finite, one-dimensional object, existing in 3D space.</p></li>
+<li><p>Every curve must have exactly two endpoints. No more, no less.</p></li>
+<li><p>If the endpoints coincide, the curve is considered to be closed.</p></li>
+<li><p>There may be no gaps on the interior of a curve, as that would result in more
+than two endpoints.</p></li>
+<li><p>There may be no branching points on the curve, except where an endpoint is
+coincident with some interior point of the curve.</p></li>
+</ul>
+<p>Mathematically, a Curve is a set of points in 3D space, which can be defined as
+a codomain of some function from R to R^3; i.e. the function, which maps some
+real number to a vector in 3D space. We will be considering only “good enough”
+functions; more exactly, such function must be continuous, and have at least 3
+derivatives at (mostly) each point.</p>
+<p>It is important to understand, that each curve can be defined by more than one
+function (which is called parameterization of the curve). We usually use the
+one which is most fitting our goals in specific task.</p>
+<p>Usually we use the letter <strong>t</strong> for curve parameter; in some case the letter <strong>u</strong> is used.</p>
+<p>For example, let’s consider a straight line segment, which is beginning at <cite>(0,
+0, 0)</cite> and ending at <cite>(1, 1, 1)</cite>. The following parameterizations all define
+the same line:</p>
+<ol class="upperalpha">
+<li><p>x(t) = t</p>
+<p>y(t) = t</p>
+<p>z(t) = t</p>
+</li>
+<li><p>x(t) = t^2</p>
+<p>y(t) = t^2</p>
+<p>z(t) = t^2</p>
+</li>
+<li><p>x(t) = t^3</p>
+<p>y(t) = t^3</p>
+<p>z(t) = t^3</p>
+</li>
+</ol>
+<p>As you understand, we can write down as many equations for it as we want.</p>
+<p>Different parametrizations of the same curve can have different values of <strong>t</strong>
+parameter corresponding to the beginning and the end of the curve. For example,</p>
+<ol class="upperalpha" start="4">
+<li><p>x(t) = t - 1</p>
+<p>y(t) = t - 1</p>
+<p>z(t) = t - 1</p>
+</li>
+</ol>
+<p>defines the parametrization, for which <cite>t = 1</cite> corresponds to the beginning of
+the segment, and <cite>t = 2</cite> corresponds to the end of the segment. The range of
+the curve parameter which corresponds to the curve from it’s beginning to the
+end is called <strong>curve domain</strong>.</p>
+<p>Another important thing to understand is that the value of curve parameter at
+some point has nothing to do with the length of the curve. With our straight
+line example, if we consider A) parametrization at the point of <cite>t = 0.5</cite>, it
+will be <cite>(0.5, 0.5, 0.5)</cite>, i.e. the middle of the segment. But, if we take the
+same segment with B) parametrization, <cite>t = 0.5</cite> will give us <cite>(0.25, 0.25,
+0.25)</cite>, which is not the middle of the segment at all.</p>
+<p>Among all possible parametrizations of a curve, one is distinguished. It is
+called <strong>natural parametrization</strong>. The natural parametrization of the curve
+has the property: certain change in <strong>t</strong> parameter corresponds to exactly the
+same change in curve length. Each curve has exactly one natural
+parametrization.</p>
+<p>Since Blender has mostly mesh-based approach to modelling, as well as Sverchok,
+to “visualize” the Curve object, you have to convert it to mesh. It is usually
+done by use of “Evaluate Curve” node, or “Curve Length Parameter” node.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="surfaces.html" class="btn btn-neutral float-right" title="Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geometry.html" class="btn btn-neutral float-left" title="Introduction to geometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

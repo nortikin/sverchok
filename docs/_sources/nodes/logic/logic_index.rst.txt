@@ -3,7 +3,7 @@ Logic
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    logic_node
    neuro_elman

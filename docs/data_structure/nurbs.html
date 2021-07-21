@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>NURBS: Curves and Surfaces &mdash; Sverchok 1, 0, 0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scalar Fields" href="fields.html" />
+    <link rel="prev" title="Surface" href="surfaces.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../main.html" class="icon icon-home"> Sverchok
+          
+
+          
+            
+            <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1, 0, 0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="data_structure_index.html">Data structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="geometry.html">Introduction to geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="curves.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html">Surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="surfaces.html#implicit-surfaces">Implicit Surfaces</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">NURBS: Curves and Surfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#terminology">Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workflow">Workflow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html">Scalar Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html#vector-fields">Vector Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solids.html">Solid</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../main.html">Sverchok</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="data_structure_index.html">Data structure</a> &raquo;</li>
+        
+      <li>NURBS: Curves and Surfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/data_structure/nurbs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nurbs-curves-and-surfaces">
+<h1>NURBS: Curves and Surfaces<a class="headerlink" href="#nurbs-curves-and-surfaces" title="Permalink to this headline">¶</a></h1>
+<p>Among others, Sverchok supports a special kind of curves and surfaces, called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> (Non-Uniform Rational B-Splines). NURBS objects are widely used in 3D
+graphics, and, especially, in CAD software.</p>
+<p>Blender itself has support of NURBS objects, but it is limited at the moment;
+NURBS support in Sverchok is wider.</p>
+<p>At the moment, Sverchok supports two implementations of NURBS mathematics:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a>, a.k.a. NURBS-Python, library. It is relatively widely known and
+used, so we consider it as better tested. However, to use this
+implementation, you have to install Geomdl library into your Blender
+installation. Please refer to <a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies</a> wiki page for installation
+instructions.</p></li>
+<li><p>Built-in (native) implementation in Sverchok itself. In many cases, it is
+faster than Geomdl implementation, and it does not require any additional
+dependencies.</p></li>
+<li><p><a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries. FreeCAD uses OpenCASCADE kernel, which is implemented in
+C++, so it is faster than Geomdl implementation; it is also considered to be
+more widely tested compared to Sverchok built-in implementation. However, it
+is in general slower comparing to built-in implementation, when you want to
+evaluate a lot of points on one curve or surface. Please refer to
+<a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies</a> wiki page for installation instructions.</p></li>
+</ul>
+<div class="section" id="terminology">
+<h2>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
+<p>While widely used, for some reason, NURBS do not seem to have a “standard”
+terminology: different software and different books use different terms for the
+same things. Sverchok tries to not invent a 15th standard, and to follow the
+terminology used in “The NURBS <a class="reference external" href="https://www.springer.com/gp/book/9783642973857">Book</a>”. Here we are listing some common terms
+for reference.</p>
+<ul class="simple">
+<li><p><strong>Control Point</strong>: a point in 3D space, one of several points that define
+common shape of the curve or surface. In general, NURBS curve / surface does
+not go through it’s control points, apart of some special cases. NURBS
+surfaces always have a rectangular grid of control points (m x n).</p></li>
+<li><p><strong>Control Polygon</strong> (for a curve): a polygon composed from control points of
+a curve, connected with edges.</p></li>
+<li><p><strong>Control Net</strong> (for a surface): a grid-like mesh, composed from control
+points of a surface, connected with edges.</p></li>
+<li><p><strong>Weight</strong>: a number, usually positive, which defines how strong a given
+control point “attracts” the curve or surface. Sverchok can work with
+negative weights usually, but there is a lot of software that can’t, so
+usually you want to avoid use of negative weights.</p></li>
+<li><p><strong>Degree</strong>: an integer number, from 1 to however you want, which is the
+degree of polynomials used in mathematical definition of NURBS curves. NURBS
+surfaces have two degrees: one along U direction, and another along V
+direction.</p></li>
+<li><p><strong>Non-rational B-Spline</strong>, or simply <strong>B-Spline</strong>: a special kind of NURBS
+objects, that does not allow to specify weights; it is the same as a NURBS
+object with all weights set to 1.</p></li>
+<li><p><strong>Rational B-Spline</strong>, or <strong>NURBS</strong>: a general kind of objects, that allows
+to specify different weights for different control points. Mathematically,
+such objects are defined as a relation of two polynomial expressions, hence
+the name “rational”.</p></li>
+<li><p><strong>Knot vector</strong>: a non-descending sequence of numbers, which define ranges of
+curve/surface parameters, to which different control points have some
+relation. It is hard to explain in a few words how exactly the knot vector
+affects the shape of curve of surface, so for details please refer to the
+literature. Each number in the knot vector is called <strong>knot</strong>. Knot vector of
+a NURBS curve with degree <strong>p</strong> and <strong>n</strong> control points always must contain
+exactly <strong>p + n + 1</strong> knots. NURBS surfaces have two knot vectors: one for U
+parameter and one for V.</p></li>
+<li><p><strong>Knot multiplicity</strong>. A number of times one knot is repeated in the knot
+vector. For example, if we have a knot vector <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">5</span></code>, then we
+say that knot 2 has multiplicity of 3.</p></li>
+<li><p><strong>Uniform knot vector</strong>: a knot vectors, values in which increase always by
+the same amount (uniformly). For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">5</span></code>. Sometimes this
+kind of knot vectors is called “periodic” (for reasons that we have no place
+to explain here). Uniform knot vectors are not very often used, because
+curves with such knot vectors do not pass through their first and last
+control points (in general).</p></li>
+<li><p><strong>Clamped knot vector</strong>. A special kind of knot vector, which has
+multiplicity of it’s first and last knots equal to <strong>p +1</strong>, where <strong>p</strong> is
+the degree of the curve (or surface, along one of directions). For example,
+if we are talking about a curve with degree equal to 2, then <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span>
+<span class="pre">5</span> <span class="pre">5</span> <span class="pre">5</span></code> is a clamped knot vector. Curves with such knot vectors have a good
+property: they always pass through their first and last control points. This
+is a reason why clamped knot vectors are widely used.</p></li>
+<li><p><strong>Clamped Uniform knot vector</strong>. Knot vector which is “almost uniform”, but
+clamped; i.e. it has multiplicity of first and last knots equal to <code class="docutils literal notranslate"><span class="pre">p+1</span></code>,
+but all other knots are ascending evenly. For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4</span> <span class="pre">4</span></code> is a
+clamped uniform knot vector.</p></li>
+<li><p><strong>Non-Uniform knot vector</strong>. Most general form of knot vectors. Knot vector,
+in which distance between neighbour knots is different in different places.
+For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0.5</span> <span class="pre">0.6</span> <span class="pre">1.5</span> <span class="pre">1.7</span> <span class="pre">1.9</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">2</span></code> is a non-uniform (and clamped)
+knot vector.</p></li>
+</ul>
+</div>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<p>Some software products have a “full NURBS workflow”, which means that all curves /
+surfaces it is operating with is always NURBS, and whatever complex things you
+do with those objects you will always have NURBS again.
+Sverchok does not have a goal to have “full NURBS workflow”, at least at the
+moment. Blender is, first of all, a mesh editing software, so, it is very
+probable, that the most widely used workflow always will be to manipulate with
+NURBS curves / objects for some time, together with other types of curves /
+objects, but then convert them to mesh and apply some nodes that manipulate
+with mesh, to receive a mesh in the end.</p>
+<p>Some nodes have “NURBS output” parameter in their settings; when this parameter
+is enabled, they output NURBS objects, otherwise a generic curve or surface is
+generated.</p>
+<p>There are some number of nodes, that can be called <strong>NURBS-transparent</strong>;
+such nodes have a property: when they receive NURBS on the input, they will
+always output NURBS. Examples of NURBS-transparent nodes are “Ruled Surface”
+and “Surface of Revolution”. Some nodes are NURBS-transparent only when you
+enable some setting in them (see documentation of specific nodes). Number of
+NURBS-transparent nodes will probably grow, but there is no guarantee that some
+time all curve / surface processing nodes will become NURBS-transparent (and
+there is no such goal at the moment).</p>
+<p>“NURBS-transparent” nodes also automatically convert several special kinds of
+curves into NURBS, when such curves are passed to inputs of such nodes. We call
+types of curves, that can be automatically (and exactly, not approximately)
+converted to NURBS, “NURBS-like”. Examples of NURBS-like curves are:</p>
+<ul class="simple">
+<li><p>Bezier curves</p></li>
+<li><p>Cubic splines</p></li>
+<li><p>Polylines</p></li>
+<li><p>Circular arcs</p></li>
+<li><p>Line segments</p></li>
+</ul>
+<p>Sverchok has “NURBS to JSON” and “JSON to NURBS” nodes, which allow to save
+NURBS objects in JSON format and read NURBS from it; such JSON format can be
+used with <a class="reference external" href="https://github.com/orbingol/rw3dm">rw3dm</a> utility to convert it from / to <cite>3dm</cite> files. Later there can
+appear nodes that will export NURBS objects to other widely-used formats.</p>
+<p>So, with some restrictions, it is possible to prepare complex scenes built from
+NURBS objects only, to export them to other CAD software for further processing
+or manufacturing. This is, however, not a primary workflow at the moment.</p>
+</div>
+<div class="section" id="blender-nurbs-compatibility">
+<h2>Blender NURBS compatibility<a class="headerlink" href="#blender-nurbs-compatibility" title="Permalink to this headline">¶</a></h2>
+<p>Blender’s internal NURBS support is currently limited in two aspects:</p>
+<ul class="simple">
+<li><p>It’s Python API for manipulating NURBS objects is very poor;</p></li>
+<li><p>It does not allow to specify an arbitrary knot vector for curve or surface;
+only two special kinds of knot vectors are supported: “clamped uniform knot
+vectors” and “uniform knot vectors”.</p></li>
+</ul>
+<p>So, Sverchok has limited features in interacting with Blender’s native NURBS objects:</p>
+<ul class="simple">
+<li><p><strong>NURBS In</strong> node can bring arbitrary Blender’s NURBS curves or surfaces
+from scene to Sverchok space;</p></li>
+<li><p><strong>NURBS Curve Out</strong> and <strong>NURBS Surface Out</strong> nodes allow to generate
+Blender’s NURBS objects in scene, but without possibility to specify
+arbitrary knot vectors.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="fields.html" class="btn btn-neutral float-right" title="Scalar Fields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="surfaces.html" class="btn btn-neutral float-left" title="Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2014...2021, sverchok team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

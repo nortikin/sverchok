@@ -3,7 +3,7 @@ Color
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    color_input
    color_in_mk1
