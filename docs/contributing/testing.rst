@@ -37,8 +37,9 @@ Please do run the tests at least before making a pull request.
 Continuous Integration
 ======================
 
-There is Travis CI integration configured for our GitHub project. You can see current status of Sverchok tests `here <https://travis-ci.org/nortikin/sverchok>`_. 
-Travis CI builds are configured to trigger automatically on the following events:
+GitHub actions are used for executing tests. You can see current status of Sverchok tests 
+`here <https://github.com/nortikin/sverchok/actions>`_. 
+GitHub action is configured to trigger automatically on the following events:
 
 * Push to the ``master`` branch.
 * Creation of the pull request against the ``master`` branch, or a push towards the branch of pull request.
@@ -47,3 +48,20 @@ The status of build triggered by pull request is displayed directly in the GitHu
 
 Moreover, it is a good idea to add some automated tests with each pull request. For example, if you added a new feature, add a test for it (in case it is not too hard to write such a test; otherwise just do manual testing).
 
+
+Testing Documentation
+=====================
+
+For building Sverchok docs `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_ documentation generator is used.
+If in a pul request there are changed files located in ``sverchok/docs`` folder it will trigger testing of building
+the documentation. Before pushing changes you can build docs on your computer. 
+``sphinx-build -b html "path to sverchok/docs" "path to where to build docs"`` command can be used in console.
+But before building `Read the Docs <https://sphinx-rtd-theme.readthedocs.io/en/stable/>`_ theme also should be
+installed.
+
+In case if the tests were failed on Github you can check the details in the *Files changed* tab of the pul request.
+
+.. image:: https://user-images.githubusercontent.com/28003269/125597392-c3598def-f5d2-4bb5-94ae-ff802820c4a8.png
+
+If there is nothing in the tab then you have to go to the test details and read the log but most likely
+you will not face with such fail unless there was changes in the configuration file.

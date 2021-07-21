@@ -3,7 +3,7 @@ Field
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    coordinate_scalar_field
    attractor_field_mk2

@@ -3,7 +3,7 @@ Viz
 ***
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    mesh_viewer
    viewer_metaball

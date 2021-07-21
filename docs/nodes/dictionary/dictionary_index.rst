@@ -3,7 +3,7 @@ Dictionary
 **********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    dictionary_in
    dictionary_out

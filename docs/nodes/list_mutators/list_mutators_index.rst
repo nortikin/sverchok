@@ -3,7 +3,7 @@ List Mutators
 *************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    modifier
    unique_items

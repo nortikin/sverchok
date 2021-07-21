@@ -3,7 +3,7 @@ Matrix
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    apply_and_join
    deform

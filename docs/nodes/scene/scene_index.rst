@@ -3,7 +3,7 @@ Scene
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    frame_info_mk2
    cache

@@ -57,9 +57,3 @@ What gets our attention
 =======================
 
 Everything. We tend to be more lenient/rapid if your code proposal fixes a real flaw in existing code, and doesn't involve changing too much outside of the area in question.
-
-
-General guidelines
-==================
-
-The document you should be reading to get a sense of how we'd like contributed code to look and behave is here ( contribute.rst ).

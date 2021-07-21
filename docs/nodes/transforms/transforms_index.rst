@@ -3,7 +3,7 @@ Transforms
 **********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    move_mk3
    scale_mk3
