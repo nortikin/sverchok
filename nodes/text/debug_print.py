@@ -59,14 +59,16 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         icon = ("HIDE_ON", "HIDE_OFF", )[self.print_socket[socket.index]]
         layout.prop(self, "print_socket", icon=icon, index=socket.index, text="")
 
-    def sv_update(self):
-        multi_socket(self, min=1)
-
+    def attach_draw_function_if_needed(self):
         for socket in self.inputs:
             if not socket.custom_draw:
                 socket.custom_draw = "draw_socket_boolean"
 
+    def sv_update(self):
+        multi_socket(self, min=1)
+
     def process(self):
+        self.attach_draw_function_if_needed()
         if not self.print_data:
             return
 
