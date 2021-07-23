@@ -35,9 +35,6 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     base_name = 'Data '
     multi_socket_type = 'SvStringsSocket'
 
-    # I wanted to show the bool so you could turn off and on individual sockets
-    # but needs changes in node_s, want to think a bit more before adding an index option to
-    # stringsockets, for now draw_button_ext
     print_socket: BoolVectorProperty(
         name='Print', default=defaults, size=32, update=updateNode)
 
