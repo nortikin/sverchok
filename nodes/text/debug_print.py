@@ -60,7 +60,7 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         text = f"{socket.name}. {SvGetSocketInfo(socket)}"
         layout.label(text=text)
         icon = ("HIDE_ON", "HIDE_OFF", )[self.print_socket[socket.index]]
-        layout.prop(self, "print_socket", icon=icon, index=socket.index, text=socket.name)
+        layout.prop(self, "print_socket", icon=icon, index=socket.index, text="")
 
     def sv_update(self):
         multi_socket(self, min=1)
