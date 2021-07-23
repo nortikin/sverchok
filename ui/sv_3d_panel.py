@@ -443,12 +443,9 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         elif not (event.type == 'TIMER'):
             return {'PASS_THROUGH'}
 
-        objects_nodes_set = {
-            'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode', 'SvGetObjectsData'
-        }
-
         ''' reaches here only if event is TIMER and self.active '''
-        objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
+        objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode',
+                             'SvGetObjectsData', 'SvObjectsNodeMK3'}
         for ng in BlTrees().sv_main_trees:
             ng.update_nodes(n for n in ng.nodes if n.bl_idname in objects_nodes_set)
 
