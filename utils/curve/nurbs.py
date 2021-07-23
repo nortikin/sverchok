@@ -157,9 +157,9 @@ class SvNurbsCurve(SvCurve):
             raise UnsupportedCurveTypeException("End control points do not match")
 
         w1 = curve1.get_weights()[-1]
-        w2 = curve1.get_weights()[0]
-        if w1 != w2:
-            raise UnsupportedCurveTypeException("Weights at endpoints do not match")
+        w2 = curve2.get_weights()[0]
+        if abs(w1 - w2) > tolerance:
+            raise UnsupportedCurveTypeException(f"Weights at endpoints do not match: {w1} != {w2}")
 
         p1, p2 = curve1.get_degree(), curve2.get_degree()
         if p1 > p2:
@@ -347,8 +347,8 @@ class SvNurbsCurve(SvCurve):
                     degree+delta, knotvector, control_points, weights)
         else:
             src_t_min, src_t_max = self.get_u_bounds()
-            segments = self.to_bezier_segments()
-            segments = [segment.to_nurbs().elevate_degree(orig_delta, orig_target) for segment in segments]
+            segments = self.to_bezier_segments(to_bezier_class=False)
+            segments = [segment.elevate_degree(orig_delta, orig_target) for segment in segments]
             result = segments[0]
             for segment in segments[1:]:
                 result = result.concatenate(segment)
@@ -475,17 +475,27 @@ class SvNurbsCurve(SvCurve):
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
         return SvBezierCurve(points)
 
-    def to_bezier_segments(self):
-        if self.is_rational():
+    def to_bezier_segments(self, to_bezier_class=True):
+        if to_bezier_class and self.is_rational():
             raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
-            return [self.to_bezier()]
+            if to_bezier_class:
+                return [self.to_bezier()]
+            else:
+                return [self]
+
         segments = []
         rest = self
         for u in sv_knotvector.get_internal_knots(self.get_knotvector()):
             segment, rest = rest.split_at(u)
-            segments.append(segment.to_bezier())
-        segments.append(rest.to_bezier())
+            if to_bezier_class:
+                segments.append(segment.to_bezier())
+            else:
+                segments.append(segment)
+        if to_bezier_class:
+            segments.append(rest.to_bezier())
+        else:
+            segments.append(rest)
         return segments
 
     def make_revolution_surface(self, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
@@ -931,6 +941,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
                 elif k - p + r <= i <= k - s:
                     denominator = u[i+p-r+1] - u[i]
+                    if abs(denominator) < 1e-6:
+                        raise Exception(f"Can't insert the knot t={u_bar} for {i}th time: u[i+p-r+1]={u[i+p-r+1]}, u[i]={u[i]}, denom={denominator}")
                     alpha = (u_bar - u[i]) / denominator
                     point = alpha * prev_control_points[i] + (1.0 - alpha) * prev_control_points[i-1]
                     #print(f"P[{r},{i}]: alpha {alpha}, pts {i}{prev_control_points[i]}, {i-1}{prev_control_points[i-1]} => {point}")
