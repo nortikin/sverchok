@@ -21,6 +21,7 @@ from bpy.props import BoolProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import multi_socket, updateNode
+from sverchok.core.socket_data import SvGetSocketInfo
 
 defaults = [True for i in range(32)]
 
@@ -55,8 +56,18 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         for i, socket in enumerate(self.inputs):
             layout.prop(self, "print_socket", index=i, text=socket.name)
 
+    def draw_socket_boolean(self, socket, context, layout):
+        text = f"{socket.name}. {SvGetSocketInfo(socket)}"
+        layout.label(text=text)
+        icon = ("HIDE_ON", "HIDE_OFF", )[self.print_socket[socket.index]]
+        layout.prop(self, "print_socket", icon=icon, index=socket.index, text=socket.name)
+
     def sv_update(self):
         multi_socket(self, min=1)
+
+        for socket in self.inputs:
+            if not socket.custom_draw:
+                socket.custom_draw = "draw_socket_boolean"
 
     def process(self):
         if not self.print_data:
