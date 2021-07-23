@@ -46,6 +46,7 @@ class TreeHandler:
         # force update
         elif event.type == TreeEvent.FORCE_UPDATE:
             ContextTrees.reset_data(event.tree)
+            event.tree['FORCE_UPDATE'] = True
 
         # Unknown event
         else:
@@ -218,7 +219,8 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
                 was_changed = yield from tree_updater(bl_tree)
 
         # tree should be updated any way
-        elif event_type == TreeEvent.FORCE_UPDATE:
+        elif event_type == TreeEvent.FORCE_UPDATE and 'FORCE_UPDATE' in bl_tree:
+            del bl_tree['FORCE_UPDATE']
             was_changed = yield from tree_updater(bl_tree)
 
         # this seems the event upon some changes in the tree, skip tree if the property is switched off
