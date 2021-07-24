@@ -81,7 +81,7 @@ class SvNurbsSurface(SvSurface):
                 knotvector_u, knotvector_v,
                 control_points, weights)
 
-    def insert_knot(self, direction, parameter, count=1):
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
         raise Exception("Not implemented!")
 
     def remove_knot(self, direction, parameter, count=1, tolerance=None, if_possible=False):
@@ -260,7 +260,7 @@ class SvGeomdlSurface(SvNurbsSurface):
     def get_nurbs_implementation(cls):
         return SvNurbsSurface.GEOMDL
 
-    def insert_knot(self, direction, parameter, count=1):
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
         if direction == SvNurbsSurface.U:
             uv = [parameter, None]
             counts = [count, 0]
@@ -529,18 +529,47 @@ class SvNativeNurbsSurface(SvNurbsSurface):
     def get_nurbs_implementation(cls):
         return SvNurbsSurface.NATIVE
 
-    def insert_knot(self, direction, parameter, count=1):
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
+        def get_common_count(curves):
+            if not if_possible:
+                # in this case the first curve.rinsert() call which can't insert the knot
+                # requested number of times will raise an exception, so we do not have to bother
+                return count
+            else:
+                # curve.insert_knot() calls will not raise exceptions, so we have to
+                # select the minimum number of possible knot insertions among all curves
+                min_count = count
+                for curve in curves:
+                    orig_kv = curve.get_knotvector()
+                    orig_multiplicity = sv_knotvector.find_multiplicity(orig_kv, parameter)
+                    if (parameter == orig_kv[0]) or (parameter == orig_kv[-1]):
+                        max_multiplicity = curve.get_degree()+1
+                    else:
+                        max_multiplicity = curve.get_degree()
+                    max_delta = max_multiplicity - orig_multiplicity
+                    print(f"U={parameter}, orig={orig_multiplicity}, max={max_multiplicity}, count={count} Delta = {max_delta}")
+                    min_count = min(min_count, max_delta)
+                print(f"U={parameter}, Min = {min_count}")
+                return min_count
+
         if direction == SvNurbsSurface.U:
             new_points = []
             new_weights = []
             new_u_degree = None
+            fixed_v_curves = []
+
             for i in range(self.get_control_points().shape[1]):
                 fixed_v_points = self.get_control_points()[:,i]
                 fixed_v_weights = self.get_weights()[:,i]
                 fixed_v_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_u, self.knotvector_u,
                                     fixed_v_points, fixed_v_weights)
-                fixed_v_curve = fixed_v_curve.insert_knot(parameter, count)
+                fixed_v_curves.append(fixed_v_curve)
+
+            common_count = get_common_count(fixed_v_curves)
+
+            for fixed_v_curve in fixed_v_curves:
+                fixed_v_curve = fixed_v_curve.insert_knot(parameter, common_count, if_possible)
                 fixed_v_knotvector = fixed_v_curve.get_knotvector()
                 new_u_degree = fixed_v_curve.get_degree()
                 fixed_v_points = fixed_v_curve.get_control_points()
@@ -559,13 +588,20 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             new_points = []
             new_weights = []
             new_v_degree = None
+            fixed_u_curves = []
+
             for i in range(self.get_control_points().shape[0]):
                 fixed_u_points = self.get_control_points()[i,:]
                 fixed_u_weights = self.get_weights()[i,:]
                 fixed_u_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_v, self.knotvector_v,
                                     fixed_u_points, fixed_u_weights)
-                fixed_u_curve = fixed_u_curve.insert_knot(parameter, count)
+                fixed_u_curves.append(fixed_u_curve)
+
+            common_count = get_common_count(fixed_u_curves)
+
+            for fixed_u_curve in fixed_u_curves:
+                fixed_u_curve = fixed_u_curve.insert_knot(parameter, common_count, if_possible)
                 fixed_u_knotvector = fixed_u_curve.get_knotvector()
                 new_v_degree = fixed_u_curve.get_degree()
                 fixed_u_points = fixed_u_curve.get_control_points()

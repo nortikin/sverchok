@@ -515,7 +515,7 @@ class SvNurbsCurve(SvCurve):
             curve = curve.insert_knot(u, count)
         return curve
 
-    def insert_knot(self, u, count=1):
+    def insert_knot(self, u, count=1, if_possible=False):
         raise Exception("Not implemented!")
 
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
@@ -714,7 +714,7 @@ class SvGeomdlCurve(SvNurbsCurve):
                         weights = weights)
         return surface
 
-    def insert_knot(self, u, count=1):
+    def insert_knot(self, u, count=1, if_possible=False):
         curve = self.copy()
         curve = operations.insert_knot(curve.curve, [u], [count])
         r = SvGeomdlCurve(curve)
@@ -912,7 +912,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def get_nurbs_implementation(cls):
         return SvNurbsCurve.NATIVE
 
-    def insert_knot(self, u_bar, count=1):
+    def insert_knot(self, u_bar, count=1, if_possible=False):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
         u = self.get_knotvector()
@@ -926,10 +926,16 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count > p+1:
-                raise CantInsertKnotException(f"Can't insert first/last knot t={u_bar} for {count} times")
+                if if_possible:
+                    count = (p+1) - s
+                else:
+                    raise CantInsertKnotException(f"Can't insert first/last knot t={u_bar} for {count} times")
         else:
             if s+count > p:
-                raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
+                if if_possible:
+                    count = p - s
+                else:
+                    raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
 
         for r in range(1, count+1):
             prev_control_points = control_points

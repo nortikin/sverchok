@@ -35,6 +35,15 @@ class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
             default = 1,
             min = 0,
             update = updateNode)
+
+    if_possible : BoolProperty(
+            name = "Only if possible",
+            description = "Do not fail if knot multiplicity is already too hight, just insert the knot as many times as it is possible",
+            default = False,
+            update = updateNode)
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'if_possible')
         
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -64,7 +73,7 @@ class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
                 if curve is None:
                     raise Exception("One of curves is not NURBS")
                 for knot, count in zip_long_repeat(knots, counts):
-                    curve = curve.insert_knot(knot, count)
+                    curve = curve.insert_knot(knot, count, if_possible=self.if_possible)
                 new_curves.append(curve)
             if flat_output:
                 curves_out.extend(new_curves)
