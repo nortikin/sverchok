@@ -1468,17 +1468,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 #####################################
 
 
-def SvGetSocketAnyType(self, socket, default=None, deepcopy=True):
-    """Old interface, don't use"""
-    return socket.sv_get(default, deepcopy)
-
-
-def SvSetSocketAnyType(self, socket_name, out):
-    """Old interface, don't use"""
-
-    self.outputs[socket_name].sv_set(out)
-
-
 def socket_id(socket):
     """return an usable and semi stable hash"""
     return socket.socket_id
