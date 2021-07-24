@@ -15,7 +15,7 @@ from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolat
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.data_structure import repeat_last_for_length
 
-def reparametrize_by_segments(curve, t_values):
+def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     # Reparametrize given curve so that parameter values from t_values parameter
     # would map to 1.0, 2.0, 3.0...
 
@@ -26,6 +26,22 @@ def reparametrize_by_segments(curve, t_values):
     t_min, t_max = curve.get_u_bounds()
     #print(f"Reparametrize: {t_min} - {t_max}: {t_values}")
     #t_values = [t_min] + t_values + [t_max]
+
+    kv = curve.get_knotvector()
+
+    def adjust(t):
+        i = kv.searchsorted(t)
+        if i > 0:
+            smaller = kv[i-1]
+            if (t - smaller) < tolerance:
+                return smaller
+        if i < len(kv):
+            greater = kv[i]
+            if (greater - t) < tolerance:
+                return greater
+        return t
+
+    t_values = [adjust(t) for t in t_values]
 
     segments = []
     for t1, t2 in zip(t_values, t_values[1:]):
@@ -38,7 +54,7 @@ def reparametrize_by_segments(curve, t_values):
     
     return result
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6):
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
@@ -71,8 +87,8 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     if u_knots is not None:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
 
-        u_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
         #print("U", u_curves)
         #print("V", v_curves)
 

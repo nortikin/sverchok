@@ -109,19 +109,20 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
             for dst_u, dst_multiplicity in dst_knots.items():
                 src_multiplicity = ms.get(dst_u, 0)
                 diff = dst_multiplicity - src_multiplicity
-                #print(f"U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
+                #print(f"C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
                 diffs.append((dst_u, diff))
             #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
 
             for u, diff in diffs:
                 if diff > 0:
-                    if u in dst_knots.skip_insertions[idx]:
-                        pass
-                        #print(f"C: skip insertion T = {u}")
-                    else:
-                        #kv = curve.get_knotvector()
-                        #print(f"C: Insert T = {u} x {diff}")
-                        curve = curve.insert_knot(u, diff)
+                    curve = curve.insert_knot(u, diff)
+#                     if u in dst_knots.skip_insertions[idx]:
+#                         pass
+#                         print(f"C: skip insertion T = {u}")
+#                     else:
+#                         #kv = curve.get_knotvector()
+#                         print(f"C: Insert T = {u} x {diff}")
+#                         curve = curve.insert_knot(u, diff)
             result.append(curve)
             
         return result
