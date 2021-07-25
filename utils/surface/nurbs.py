@@ -321,6 +321,109 @@ class SvNurbsSurface(SvSurface):
         result, _ = rest.split_at(direction, p_max)
         return result
 
+    def _concat_u(self, surface2, tolerance=1e-6):
+        surface1 = self
+        surface2 = SvNurbsSurface.get(surface2)
+        if surface2 is None:
+            raise UnsupportedSurfaceTypeException("second surface is not NURBS")
+
+        if surface1.get_control_points().shape[1] != surface2.get_control_points().shape[1]:
+            # TODO: try to unify knots first?
+            raise UnsupportedSurfaceTypeException("number of control poins along V direction does not match")
+
+        p1, p2 = surface1.get_degree_u(), surface2.get_degree_u()
+        if p1 > p2:
+            surface2 = surface2.elevate_degree('U', delta = p1 - p2)
+        elif p2 > p1:
+            surface1 = surface1.elevate_degree('U', delta = p2 - p1)
+
+        cps1 = surface1.get_control_points()[-1,:]
+        cps2 = surface2.get_control_points()[0,:]
+        dpts = np.linalg.norm(cps1 - cps2, axis=0)
+        if (dpts > tolerance).any():
+            raise UnsupportedSurfaceTypeException("Boundary control points do not match")
+
+        ws1 = surface1.get_weights()[-1,:]
+        ws2 = surface2.get_weights()[0,:]
+        if (np.abs(ws1 - ws2) > tolerance).any():
+            raise UnsupportedSurfaceTypeException("Weights at bounds do not match")
+
+        p = surface1.get_degree_u()
+
+        kv1 = surface1.get_knotvector_u()
+        kv2 = surface2.get_knotvector_u()
+        kv1_end_multiplicity = sv_knotvector.to_multiplicity(kv1)[-1][1]
+        kv2_start_multiplicity = sv_knotvector.to_multiplicity(kv2)[0][1]
+        if kv1_end_multiplicity != p+1:
+            raise UnsupportedSurfaceTypeException(f"End knot multiplicity of the first surface ({kv1_end_multiplicity}) is not equal to degree+1 ({p+1})")
+        if kv2_start_multiplicity != p+1:
+            raise UnsupportedSurfaceTypeException(f"Start knot multiplicity of the second surface ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
+
+        knotvector = sv_knotvector.concatenate(kv1, kv2, join_multiplicity=p)
+
+        weights = np.concatenate((surface1.get_weights(), surface2.get_weights()[1:]))
+        control_points = np.concatenate((surface1.get_control_points(), surface2.get_control_points()[1:]))
+
+        result = surface1.copy(knotvector_u = knotvector,
+                    control_points = control_points,
+                    weights = weights)
+        return result
+
+    def _concat_v(self, surface2, tolerance=1e-6):
+        surface1 = self
+        surface2 = SvNurbsSurface.get(surface2)
+        if surface2 is None:
+            raise UnsupportedSurfaceTypeException("second surface is not NURBS")
+
+        if surface1.get_control_points().shape[0] != surface2.get_control_points().shape[0]:
+            # TODO: try to unify knots first?
+            raise UnsupportedSurfaceTypeException("number of control poins along U direction does not match")
+
+        p1, p2 = surface1.get_degree_v(), surface2.get_degree_v()
+        if p1 > p2:
+            surface2 = surface2.elevate_degree('V', delta = p1 - p2)
+        elif p2 > p1:
+            surface1 = surface1.elevate_degree('V', delta = p2 - p1)
+        cps1 = surface1.get_control_points()[:,-1]
+        cps2 = surface2.get_control_points()[:,0]
+        dpts = np.linalg.norm(cps1 - cps2, axis=0)
+        if (dpts > tolerance).any():
+            raise UnsupportedSurfaceTypeException("Boundary control points do not match")
+
+        ws1 = surface1.get_weights()[:,-1]
+        ws2 = surface2.get_weights()[:,0]
+        if (np.abs(ws1 - ws2) > tolerance).any():
+            raise UnsupportedSurfaceTypeException("Weights at bounds do not match")
+
+        p = surface1.get_degree_v()
+
+        kv1 = surface1.get_knotvector_v()
+        kv2 = surface2.get_knotvector_v()
+        kv1_end_multiplicity = sv_knotvector.to_multiplicity(kv1)[-1][1]
+        kv2_start_multiplicity = sv_knotvector.to_multiplicity(kv2)[0][1]
+        if kv1_end_multiplicity != p+1:
+            raise UnsupportedSurfaceTypeException(f"End knot multiplicity of the first surface ({kv1_end_multiplicity}) is not equal to degree+1 ({p+1})")
+        if kv2_start_multiplicity != p+1:
+            raise UnsupportedSurfaceTypeException(f"Start knot multiplicity of the second surface ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
+
+        knotvector = sv_knotvector.concatenate(kv1, kv2, join_multiplicity=p)
+
+        weights = np.concatenate((surface1.get_weights(), surface2.get_weights()[:,1:]), axis=1)
+        control_points = np.concatenate((surface1.get_control_points(), surface2.get_control_points()[:,1:]), axis=1)
+
+        result = surface1.copy(knotvector_v = knotvector,
+                    control_points = control_points,
+                    weights = weights)
+        return result
+
+    def concatenate(self, direction, surface2, tolerance=1e-6):
+        if direction == SvNurbsSurface.U:
+            return self._concat_u(surface2, tolerance)
+        elif direction == SvNurbsSurface.V:
+            return self._concat_v(surface2, tolerance)
+        else:
+            raise Exception("Unsupported direction")
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface

@@ -27,7 +27,7 @@ from sverchok.utils.curve.algorithms import (
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve
         )
-from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.logging import info, debug
@@ -1029,6 +1029,111 @@ class SvBlendSurface(SvSurface):
         c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
 
         return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+
+class SvConcatSurface(SvSurface):
+    def __init__(self, direction, surfaces):
+        self.direction = direction
+        self.surfaces = self._unify(surfaces)
+
+        p1 = self._get_p_min(surfaces[0])
+        boundaries = [p1]
+        boundaries.extend([self._get_p_delta(s) for s in surfaces])
+        self.boundaries = np.array(boundaries).cumsum()
+
+    def _unify(self, surfaces):
+        if self.direction == 'U':
+            min_vs = [s.get_v_min() for s in surfaces]
+            max_vs = [s.get_v_max() for s in surfaces]
+
+            if min(min_vs) != max(min_vs) or min(max_vs) != max(max_vs):
+                surfaces = [SvReparametrizedSurface.build(s, s.get_u_min(), s.get_u_max(), 0.0, 1.0) for s in surfaces]
+            return surfaces
+        
+        else:
+            min_us = [s.get_u_min() for s in surfaces]
+            max_us = [s.get_u_max() for s in surfaces]
+
+            if min(min_us) != max(min_us) or min(max_us) != max(max_us):
+                surfaces = [SvReparametrizedSurface.build(s, 0.0, 1.0, s.get_v_min(), s.get_v_max()) for s in surfaces]
+            return surfaces
+
+    def _get_p_max(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_max()
+        else:
+            return surface.get_v_max()
+
+    def _get_p_delta(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_max() - surface.get_u_min()
+        else:
+            return surface.get_v_max() - surface.get_v_min()
+
+    def _get_p_min(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_min()
+        else:
+            return surface.get_v_min()
+
+    def get_u_min(self):
+        if self.direction == 'U':
+            return self.boundaries[0]
+        else:
+            return self.surfaces[0].get_u_min()
+
+    def get_u_max(self):
+        if self.direction == 'U':
+            return self.boundaries[-1]
+        else:
+            return self.surfaces[0].get_u_max()
+
+    def get_v_min(self):
+        if self.direction == 'U':
+            return self.surfaces[0].get_v_min()
+        else:
+            return self.boundaries[0]
+
+    def get_v_max(self):
+        if self.direction == 'U':
+            return self.surfaces[0].get_v_max()
+        else:
+            return self.boundaries[-1]
+
+    def evaluate(self, u, v):
+        if self.direction == 'U':
+            u_idx = self.boundaries.searchsorted(u, side='right')-1
+            if u_idx >= len(self.surfaces):
+                v_idx = len(self.surfaces)-1
+                du = self._get_p_delta(self.surfaces[-1])
+            else:
+                du = u - self.boundaries[u_idx]
+            subsurf = self.surfaces[u_idx]
+            return subsurf.evaluate(subsurf.get_u_min()+du, v)
+        else:
+            v_idx = self.boundaries.searchsorted(v, side='right')-1
+            if v_idx >= len(self.surfaces):
+                v_idx = len(self.surfaces)-1
+                dv = self._get_p_delta(self.surfaces[-1])
+            else:
+                dv = v - self.boundaries[v_idx]
+            subsurf = self.surfaces[v_idx]
+            return subsurf.evaluate(u, subsurf.get_v_min()+dv)
+
+    def evaluate_array(self, us, vs):
+        # TODO: numpy implementation
+        return np.vectorize(self.evaluate, signature='(),()->(3)')(us, vs)
+
+def concatenate_surfaces(direction, surfaces):
+    if all(hasattr(s, 'concatenate') for s in surfaces):
+        try:
+            result = surfaces[0]
+            for s in surfaces[1:]:
+                result = result.concatenate(direction, s)
+            return result
+        except UnsupportedSurfaceTypeException as e:
+            debug("Can't concatenate surfaces natively: %s", e)
+    
+    return SvConcatSurface(direction, surfaces)
 
 def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
     my_control_points = curve.get_control_points()

@@ -294,6 +294,13 @@ class SvReparametrizedSurface(SvSurface):
         else:
             self.normal_delta = 0.001
 
+    @classmethod
+    def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        if hasattr(surface, 'reparametrize'):
+            return surface.reparametrize(new_u_min, new_u_max, new_v_min, new_v_max)
+
+        return SvReparametrizedSurface(surface, new_u_min, new_u_max, new_v_min, new_v_max)
+
     def get_u_min(self):
         return self.new_u_min
 
