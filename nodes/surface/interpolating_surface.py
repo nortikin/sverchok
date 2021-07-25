@@ -25,6 +25,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Surface from Curves'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_FROM_CURVES'
+    items = []
 
     def get_interp_modes(self, context):
         modes = [
@@ -43,7 +44,6 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Epsilon'].hide_safe = self.interp_mode != 'RBF'
 
     def get_implementations(self, context):
-        items = []
         i = 0
         if geomdl is not None:
             item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
