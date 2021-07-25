@@ -205,6 +205,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.knot_mode == 'AUTO':
                 if self.is_cyclic_u:
                     knots_u = list(range(n_u_total + degree_u + 1))
+                    knots_u = [float(u) for u in knots_u]
                 else:
                     knots_u = sv_knotvector.generate(degree_u, n_u_total)
                 self.debug("Auto knots U: %s", knots_u)
@@ -212,6 +213,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if self.is_cyclic_v:
                     knots_v = list(range(n_v_total + degree_v + 1))
+                    knots_v = [float(v) for v in knots_v]
                 else:
                     knots_v = sv_knotvector.generate(degree_v, n_v_total)
                 self.debug("Auto knots V: %s", knots_v)
@@ -226,7 +228,8 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.is_cyclic_u:
                 u_min = surf_knotvector_u[degree_u]
                 u_max = surf_knotvector_u[-degree_u-2]
-                new_surf.u_bounds = u_min, u_max
+                #new_surf.u_bounds = u_min, u_max
+                new_surf = new_surf.cut_slice('U', u_min, u_max)
                 #print("U:",new_surf.u_bounds)
             else:
                 u_min = min(surf_knotvector_u)
@@ -235,7 +238,8 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.is_cyclic_v:
                 v_min = surf_knotvector_v[degree_v]
                 v_max = surf_knotvector_v[-degree_v-2]
-                new_surf.v_bounds = v_min, v_max
+                #new_surf.v_bounds = v_min, v_max
+                new_surf = new_surf.cut_slice('V', v_min, v_max)
                 #print("V:",new_surf.v_bounds)
             else:
                 v_min = min(surf_knotvector_v)
