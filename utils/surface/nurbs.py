@@ -246,8 +246,82 @@ class SvNurbsSurface(SvSurface):
         c_v = self.get_min_v_continuity()
         return min(c_u, c_v)
 
-    def iso_curve(sefl, fixed_direction, param):
+    def iso_curve(self, fixed_direction, param):
         raise Exception("Not implemented")
+
+    def cut_u(self, u):
+        u_min, u_max = self.get_u_min(), self.get_u_max()
+
+        if u <= u_min:
+            return None, self
+        if u >= u_max:
+            return self, None
+
+        knotvector = self.get_knotvector_u()
+        current_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
+        to_add = self.get_degree_u() - current_multiplicity
+        surface = self.insert_knot('U', u, count=to_add)
+        knot_span = np.searchsorted(knotvector, u)
+
+        us = np.full((self.get_degree_u()+1,), u)
+        knotvector1 = np.concatenate((surface.get_knotvector_u()[:knot_span], us))
+        knotvector2 = np.insert(surface.get_knotvector_u()[knot_span:], 0, u)
+
+        control_points_1 = surface.get_control_points()[:knot_span, :]
+        control_points_2 = surface.get_control_points()[knot_span-1:, :]
+        weights_1 = surface.get_weights()[:knot_span, :]
+        weights_2 = surface.get_weights()[knot_span-1:, :]
+
+        surface1 = self.copy(knotvector_u=knotvector1, weights=weights_1, control_points=control_points_1)
+        surface2 = self.copy(knotvector_u=knotvector2, weights=weights_2, control_points=control_points_2)
+
+        return surface1, surface2
+
+    def cut_v(self, v):
+        v_min, v_max = self.get_v_min(), self.get_v_max()
+
+        if v <= v_min:
+            return None, self
+        if v >= v_max:
+            return self, None
+
+        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector_v(), v)
+        to_add = self.get_degree_v() - current_multiplicity
+        surface = self.insert_knot('V', v, count=to_add)
+        m,n,_ = surface.get_control_points().shape
+        knot_span = sv_knotvector.find_span(surface.get_knotvector_v(), n, v) - 1
+        #knot_span = np.searchsorted(surface.get_knotvector_v(), v)#, side='right')-1
+
+        vs = np.full((self.get_degree_v()+1,), v)
+        print(f"Kv: {surface.get_knotvector_v()}, v={v}, span={knot_span}, kv1: {surface.get_knotvector_v()[:knot_span]}, kv2: {surface.get_knotvector_v()[knot_span:]}")
+        knotvector1 = np.concatenate((surface.get_knotvector_v()[:knot_span], vs))
+        knotvector2 = np.insert(surface.get_knotvector_v()[knot_span:], 0, v)
+
+        control_points_1 = surface.get_control_points()[:, :knot_span]
+        control_points_2 = surface.get_control_points()[:, knot_span-1:]
+        print(f"Cp: {surface.get_control_points().shape} => {control_points_1.shape}, {control_points_2.shape}")
+        weights_1 = surface.get_weights()[:, :knot_span]
+        weights_2 = surface.get_weights()[:, knot_span-1:]
+
+        surface1 = self.copy(knotvector_v=knotvector1, weights=weights_1, control_points=control_points_1)
+        surface2 = self.copy(knotvector_v=knotvector2, weights=weights_2, control_points=control_points_2)
+
+        return surface1, surface2
+
+    def split_at(self, direction, parameter):
+        if direction == SvNurbsSurface.U:
+            return self.cut_u(parameter)
+        elif direction == SvNurbsSurface.V:
+            return self.cut_v(parameter)
+        else:
+            raise Exception("Unsupported direction")
+
+    def cut_slice(self, direction, p_min, p_max):
+        _, rest = self.split_at(direction, p_min)
+        if rest is None:
+            return None
+        result, _ = rest.split_at(direction, p_max)
+        return result
 
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
