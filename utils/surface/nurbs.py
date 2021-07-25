@@ -293,13 +293,11 @@ class SvNurbsSurface(SvSurface):
         #knot_span = np.searchsorted(surface.get_knotvector_v(), v)#, side='right')-1
 
         vs = np.full((self.get_degree_v()+1,), v)
-        print(f"Kv: {surface.get_knotvector_v()}, v={v}, span={knot_span}, kv1: {surface.get_knotvector_v()[:knot_span]}, kv2: {surface.get_knotvector_v()[knot_span:]}")
         knotvector1 = np.concatenate((surface.get_knotvector_v()[:knot_span], vs))
         knotvector2 = np.insert(surface.get_knotvector_v()[knot_span:], 0, v)
 
         control_points_1 = surface.get_control_points()[:, :knot_span]
         control_points_2 = surface.get_control_points()[:, knot_span-1:]
-        print(f"Cp: {surface.get_control_points().shape} => {control_points_1.shape}, {control_points_2.shape}")
         weights_1 = surface.get_weights()[:, :knot_span]
         weights_2 = surface.get_weights()[:, knot_span-1:]
 
@@ -621,9 +619,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
                     else:
                         max_multiplicity = curve.get_degree()
                     max_delta = max_multiplicity - orig_multiplicity
-                    print(f"U={parameter}, orig={orig_multiplicity}, max={max_multiplicity}, count={count} Delta = {max_delta}")
                     min_count = min(min_count, max_delta)
-                print(f"U={parameter}, Min = {min_count}")
                 return min_count
 
         if direction == SvNurbsSurface.U:
