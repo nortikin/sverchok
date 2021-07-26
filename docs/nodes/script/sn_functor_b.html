@@ -262,12 +262,7 @@
 sverchok nodes.</p>
 <p>the <strong>draw_buttons</strong> is optional, and is called by the baseclass.</p>
 <p>the <strong>process</strong> function is performed whenever the node is told to update, to understand when this happens you should
-read up on how Sverchok implements the update mechanism. If you want to do stuff inside this function that would cause the nodetree to update then you will want to wrap that code in:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">sv_throttle_tree_update</span><span class="p">():</span>
-    <span class="c1"># the code you execute here will have no side effect of triggering another call up nodetree.process</span>
-    <span class="c1"># this avoids infinite recursions.</span>
-</pre></div>
-</div>
+read up on how Sverchok implements the update mechanism.</p>
 <p><a class="reference external" href="https://github.com/nortikin/sverchok/issues/2312">https://github.com/nortikin/sverchok/issues/2312</a></p>
 </div>
 
