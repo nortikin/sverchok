@@ -240,11 +240,26 @@
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
-<p>Takes object from scene to Sverchok node tree. Support meshed, empties, curves, NURBS, but all converting to mesh. Empties has only matrix data. Than sorting by name. If you write group of objects to group field, all object in signed group will be imported. It understands also vertes groups, when activated, showing additional socket representing indexes, that you can use to sort or mask edges/polygons. or do any you want with vertex groups. All groups cached in one list, but without weight.</p>
+<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.</p>
+<p>A few points worth stating explicitely.</p>
+<ul class="simple">
+<li><p>Empties, Cameras, and Lamps produce only matrix data.</p></li>
+<li><p>The order of the selected Objects can be sorted by name.</p></li>
+<li><p>It supports Object collections.</p></li>
+<li><p>It understands also <code class="docutils literal notranslate"><span class="pre">vertex</span> <span class="pre">groups</span></code>, when activated, showing additional socket representing indices, that you can use for further processing. All groups are cached in one list _without_weights_.</p></li>
+<li><p>When you <code class="docutils literal notranslate"><span class="pre">Get</span></code> objects from the Scene that have modifiers on them, you can import the final mesh by enableing the <code class="docutils literal notranslate"><span class="pre">Post</span></code> button.</p></li>
+<li><p>Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)</p></li>
+<li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitely transform the vertex data.</p></li>
+</ul>
+<p>limitations:</p>
+<ul class="simple">
+<li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
+<li><p>We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh.</p></li>
+</ul>
 </div>
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
-<p>None</p>
+<p>Objects Socket</p>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
@@ -290,42 +305,43 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 19%" />
-<col style="width: 0%" />
-<col style="width: 81%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head" colspan="2"><p>Output</p></th>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td colspan="2"><p>Vertices</p></td>
+<tr class="row-even"><td><p>Vertices</p></td>
 <td><p>Vertices of objects</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>Edges</p></td>
+<tr class="row-odd"><td><p>Edges</p></td>
 <td><p>Edges of objects</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>Polygons</p></td>
+<tr class="row-even"><td><p>Polygons</p></td>
 <td><p>Polygons of objects</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>Vertex Normals</p></td>
+<tr class="row-odd"><td><p>Vertex Normals</p></td>
 <td><p>Vertex Normals</p></td>
 </tr>
-<tr class="row-even"><td colspan="3"><p>Material Idx     | Material indexes per object face.</p></td>
+<tr class="row-even"><td><p>Material Idx</p></td>
+<td><p>Material indexes per object face.</p></td>
 </tr>
-<tr class="row-odd"><td colspan="3"><p>Polygons Areas   | Polygons of objects.</p></td>
+<tr class="row-odd"><td><p>Polygons Areas</p></td>
+<td><p>Polygons of objects.</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>Polygons Centers</p></td>
+<tr class="row-even"><td><p>Polygons Centers</p></td>
 <td><p>Polygons Center of objects.</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>Polygons Normal</p></td>
+<tr class="row-odd"><td><p>Polygons Normal</p></td>
 <td><p>Polygons Normal of objects.</p></td>
 </tr>
-<tr class="row-even"><td colspan="2"><p>Matrix</p></td>
+<tr class="row-even"><td><p>Matrix</p></td>
 <td><p>Matrices of objects</p></td>
 </tr>
-<tr class="row-odd"><td colspan="2"><p>_Vers_grouped_</p></td>
+<tr class="row-odd"><td><p>Vers grouped</p></td>
 <td><p>Vertex groups’ indices from all vertex groups</p></td>
 </tr>
 </tbody>
@@ -334,8 +350,8 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/4328096/bd8b274e-3f80-11e4-8582-6b2ae9743431.png" src="https://cloud.githubusercontent.com/assets/5783432/4328096/bd8b274e-3f80-11e4-8582-6b2ae9743431.png" />
-<p>Importing cobe and look to indices.</p>
+<img alt="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" src="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" />
+<p>Importing an object with two array modifiers applied and showing indices.</p>
 </div>
 </div>
 
