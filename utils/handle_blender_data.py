@@ -228,7 +228,7 @@ class BPYProperty:
 
     @property
     def type(self) -> str:
-        """Type of property: STRING, FLOAT, INT, POINTER, COLLECTION"""
+        """Type of property: STRING, FLOAT, INT, POINTER, COLLECTION, ENUM, BOOLEAN"""
         if not self.is_valid:
             raise TypeError(f'Can not read "type" of invalid property "{self.name}"')
         return self._data.bl_rna.properties[self.name].type
@@ -262,6 +262,13 @@ class BPYProperty:
         if self.type != 'POINTER':
             raise TypeError(f'Only POINTER property type has `pointer_type` attribute, "{self.type}" given')
         return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)
+
+    @property
+    def enum_items(self):
+        """Return all possible values of the ENUM"""
+        if self.type != 'ENUM':
+            raise TypeError(f'This property is only valid for "ENUM" types, {self.type} type is given')
+        return [i.name for i in self._data.bl_rna.properties[self.name].enum_items]
 
     @property
     def data_collection(self):
