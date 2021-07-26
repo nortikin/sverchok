@@ -2,14 +2,13 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node, split_by_count
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
 from sverchok.utils.math import supported_metrics
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -29,9 +28,9 @@ class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
+        updateNode(self, context)
 
     input_mode : EnumProperty(
             name = "Input mode",

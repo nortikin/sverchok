@@ -278,14 +278,13 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([origins, sizes_sq, sizes_x, sizes_y, strengths, spot_sizes, spot_blends, colors])
 
-        with self.sv_throttle_tree_update():
-            for index, object in enumerate(zip(*objects)):
-                self.make_lamp(index, object)
+        for index, object in enumerate(zip(*objects)):
+            self.make_lamp(index, object)
 
-            self.remove_non_updated_objects(index)
+        self.remove_non_updated_objects(index)
 
-            objs = self.get_children()
-            self.outputs['Objects'].sv_set(objs)
+        objs = self.get_children()
+        self.outputs['Objects'].sv_set(objs)
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()

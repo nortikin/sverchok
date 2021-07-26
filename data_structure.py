@@ -1263,32 +1263,6 @@ def update_with_kwargs(update_function, **kwargs):
     return handel_update_call
 
 
-@contextmanager
-def throttle_tree_update(node):  # todo deprecated, should be wiped out
-    with node.id_data.throttle_update():
-        yield node
-
-
-def throttled(func):  # todo deprecated, should be wiped out
-    @wraps(func)
-    def wrapper_update(with_id_data, *args, **kwargs):
-        tree = with_id_data.id_data
-        with tree.throttle_update():
-            return func(with_id_data, *args, **kwargs)
-    return wrapper_update
-
-
-def throttle_and_update_node(func):  # todo deprecated, should be wiped out
-    @wraps(func)
-    def wrapper_update(self, context):
-        tree = self.id_data
-        with tree.throttle_update():
-            func(self, context)
-        self.process_node(context)
-
-    return wrapper_update
-
-
 ##############################################################
 ##############################################################
 ############## changeable type of socket magic ###############
@@ -1297,7 +1271,7 @@ def throttle_and_update_node(func):  # todo deprecated, should be wiped out
 ##############################################################
 ##############################################################
 
-@throttled
+
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -1338,7 +1312,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                     ng.links.new(to_socket, new_out_socket)
 
 
-@throttled
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     Replace a socket with a socket of new_type and keep links
@@ -1416,7 +1389,7 @@ def get_other_socket(socket):
 
 # the named argument min will be replaced soonish.
 
-@throttled
+
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed

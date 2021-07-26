@@ -6,10 +6,10 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty, BoolVectorProperty
+from bpy.props import BoolProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive, unzip_dict_recursive, throttle_and_update_node
+from sverchok.data_structure import updateNode, map_recursive, unzip_dict_recursive
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
@@ -33,12 +33,12 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
     def _get_socket(self, axis, key):
         return self.outputs[axis + key]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         for axis_idx, axis in enumerate(['X', 'Y', 'Z']):
             self._get_socket(axis, 'Min').hide_safe = not self.min_list[axis_idx]
             self._get_socket(axis, 'Max').hide_safe = not self.max_list[axis_idx]
             self._get_socket(axis, 'Size').hide_safe = not self.size_list[axis_idx]
+        updateNode(self, context)
 
     min_list: BoolVectorProperty(
         name='Min', description="Show Minimum values sockets", size=3, update=update_sockets)

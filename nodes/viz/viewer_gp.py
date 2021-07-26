@@ -215,57 +215,55 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         colors = self.inputs["stroke color"]
         fills = self.inputs["fill color"]
 
-        with self.sv_throttle_tree_update():
+        self.ensure_collection()  # the collection name will be that of self.gp_object_name
 
-            self.ensure_collection() # the collection name will be that of self.gp_object_name
+        gp_object = ensure_gp_object(self.gp_object_name)
+        layer = ensure_layer_availability(gp_object)
+        frame = ensure_frame_availability(layer, frame_number)
 
-            gp_object = ensure_gp_object(self.gp_object_name)
-            layer = ensure_layer_availability(gp_object)
-            frame = ensure_frame_availability(layer, frame_number)
+        gp_materials = gp_object.data.materials
+        strokes = frame.strokes
+        GP_DATA = strokes.id_data
 
-            gp_materials = gp_object.data.materials
-            strokes = frame.strokes
-            GP_DATA = strokes.id_data
+        coords = coordinates_socket.sv_get()
+        self.num_strokes = len(coords)
+        set_correct_stroke_count(strokes, coords)
 
-            coords = coordinates_socket.sv_get()
-            self.num_strokes = len(coords)
-            set_correct_stroke_count(strokes, coords)
+        cols = colors.sv_get()[0]
+        fill_cols = fills.sv_get()[0]
+        cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
+        fullList(cyclic_socket_value, self.num_strokes)
+        fullList(cols, self.num_strokes)
+        fullList(fill_cols, self.num_strokes)
+        pressures = self.get_pressures()
 
-            cols = colors.sv_get()[0]
-            fill_cols = fills.sv_get()[0]
-            cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
-            fullList(cyclic_socket_value, self.num_strokes)
-            fullList(cols, self.num_strokes)
-            fullList(fill_cols, self.num_strokes)
-            pressures = self.get_pressures()
+        for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
 
-            for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
+            color_name = f"{idx}_color_{self.gp_object_name}" 
+            if color_name not in gp_materials:
+                mat = bpy.data.materials.new(color_name)
+                bpy.data.materials.create_gpencil_data(mat)
+                gp_materials.append(mat)
+            
+            material = gp_materials.get(color_name)
+            material.grease_pencil.color = color
+            material.grease_pencil.fill_color = fill
+            material.grease_pencil.show_fill = True
+            material.grease_pencil.show_stroke = True
 
-                color_name = f"{idx}_color_{self.gp_object_name}" 
-                if color_name not in gp_materials:
-                    mat = bpy.data.materials.new(color_name)
-                    bpy.data.materials.create_gpencil_data(mat)
-                    gp_materials.append(mat)
-                
-                material = gp_materials.get(color_name)
-                material.grease_pencil.color = color
-                material.grease_pencil.fill_color = fill
-                material.grease_pencil.show_fill = True
-                material.grease_pencil.show_stroke = True
+            stroke.material_index = idx
+            stroke.draw_cyclic = cyclic_socket_value[idx]
 
-                stroke.material_index = idx
-                stroke.draw_cyclic = cyclic_socket_value[idx]
+            num_points = len(coord_set)
+            pass_data_to_stroke(stroke, coord_set)
 
-                num_points = len(coord_set)
-                pass_data_to_stroke(stroke, coord_set)
+            flat_pressures = match_points_and_pressures(pressures[idx], num_points)
+            # print(flat_pressures)
+            pass_pressures_to_stroke(stroke, flat_pressures)
+            stroke.line_width = 4
 
-                flat_pressures = match_points_and_pressures(pressures[idx], num_points)
-                # print(flat_pressures)
-                pass_pressures_to_stroke(stroke, flat_pressures)
-                stroke.line_width = 4
-
-            # remove_unused_colors(PALETTE, strokes)
-            self.outputs[0].sv_set([gp_object])
+        # remove_unused_colors(PALETTE, strokes)
+        self.outputs[0].sv_set([gp_object])
 
     def ensure_collection(self):
         collections = bpy.data.collections

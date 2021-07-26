@@ -89,9 +89,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     n.reload()
 
                 elif n.bl_idname == 'SvViewerDrawMk4' and n.selected_draw_mode == "fragment":
-                    with n.sv_throttle_tree_update():
-                        if n.custom_shader_location == text_file_name:
-                            n.custom_shader_location = n.custom_shader_location
+                    if n.custom_shader_location == text_file_name:
+                        n.custom_shader_location = n.custom_shader_location
 
                 elif n.bl_idname == 'SvProfileNodeMK3':
                     print('should trigger!')

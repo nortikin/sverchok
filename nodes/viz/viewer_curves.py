@@ -304,52 +304,50 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
         has_matrices = self.inputs['matrix'].is_linked
 
-        with self.sv_throttle_tree_update():
+        if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
+            obj_index = 0
+            self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
 
-            if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
-                obj_index = 0
-                self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
+            if mode == "Duplicate":
+                obj_index = len(mrest[1]) - 1
 
-                if mode == "Duplicate":
-                    obj_index = len(mrest[1]) - 1
+        else:
+
+            def get_edges_matrices(obj_index):
+                for geom in mrest:
+                    yield self.get_structure(geom, obj_index)
+
+            # extend all non empty lists to longest of mverts or *mrest
+            maxlen = max(len(mverts), *(map(len, mrest)))
+            fullList(mverts, maxlen)
+            for idx in range(2):
+                if mrest[idx]:
+                    fullList(mrest[idx], maxlen)
+
+            if self.curve_dimensions == '3D':
+
+                for obj_index, Verts in enumerate(mverts):
+                    if len(Verts) == 0:
+                        continue
+
+                    data = get_edges_matrices(obj_index)
+                    make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
+
+                # we must be explicit
+                obj_index = len(mverts) - 1
 
             else:
+                obj_index = 0
+                make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
 
-                def get_edges_matrices(obj_index):
-                    for geom in mrest:
-                        yield self.get_structure(geom, obj_index)
+        self.remove_non_updated_objects(obj_index)
+        objs = self.get_children()
 
-                # extend all non empty lists to longest of mverts or *mrest
-                maxlen = max(len(mverts), *(map(len, mrest)))
-                fullList(mverts, maxlen)
-                for idx in range(2):
-                    if mrest[idx]:
-                        fullList(mrest[idx], maxlen)
+        if self.grouping:
+            self.to_collection(objs)
 
-                if self.curve_dimensions == '3D':
-
-                    for obj_index, Verts in enumerate(mverts):
-                        if len(Verts) == 0:
-                            continue
-
-                        data = get_edges_matrices(obj_index)
-                        make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
-
-                    # we must be explicit
-                    obj_index = len(mverts) - 1
-
-                else:
-                    obj_index = 0
-                    make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
-
-            self.remove_non_updated_objects(obj_index)
-            objs = self.get_children()
-
-            if self.grouping:
-                self.to_collection(objs)
-
-            self.set_corresponding_materials()
-            self.remove_cloner_curve(obj_index)
+        self.set_corresponding_materials()
+        self.remove_cloner_curve(obj_index)
 
 
 def register():

@@ -22,8 +22,8 @@ import bpy
 from bpy.props import StringProperty, IntProperty, CollectionProperty, FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, debug
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.utils.logging import debug
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.geom import CubicSpline, LinearSpline
 from sverchok.utils.curve import SvSplineCurve, SvConcatCurve
@@ -268,9 +268,9 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('SvStringsSocket', v)
 
-    @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
+        updateNode(self, context)
 
     def sv_update(self):
         if not any(len(formula) for formula in self.formulas()):

@@ -16,21 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-from collections import defaultdict
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting, repeat_last_for_length
-from sverchok.utils.sv_bmesh_utils import recalc_normals
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level,\
+    ensure_min_nesting, repeat_last_for_length
 from sverchok.utils.voronoi3d import voronoi_on_solid
 from sverchok.utils.geom import scale_relative, center, diameter
-from sverchok.utils.solid import BMESH, svmesh_to_solid, SvSolidTopology, SvGeneralFuse
-from sverchok.utils.surface.freecad import SvSolidFaceSurface
+from sverchok.utils.solid import BMESH, svmesh_to_solid
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
 

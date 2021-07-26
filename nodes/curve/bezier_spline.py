@@ -2,11 +2,11 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvBezierCurve, SvCubicBezierCurve
 
 CUBIC = '3_2pt_2cp'
@@ -27,7 +27,6 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bezier Spline (Curve)'
     bl_icon = 'IPO_BEZIER'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Start'].hide_safe = self.mode == GENERIC
         self.inputs['End'].hide_safe = self.mode == GENERIC
@@ -36,6 +35,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs[CONTROL1_SOCKET].name = "Tangent1" if self.mode == CUBIC_TANGENT else "Control1"
         self.inputs[CONTROL2_SOCKET].name = "Tangent2" if self.mode == CUBIC_TANGENT else "Control2"
         self.inputs['ControlPoints'].hide_safe = self.mode != GENERIC
+        updateNode(self, context)
 
     modes = [
         (CUBIC, "Cubic 2pts + 2 controls", "Cubic spline by two end points and two additional control points", 0),

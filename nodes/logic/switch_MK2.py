@@ -99,26 +99,24 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     py_items = {"True": [[True]], "False": [[False]], "None": [None]}
 
     def update_node(self, context):
-        with self.sv_throttle_tree_update():
-            self.rebuild_out_sockets()
+        self.rebuild_out_sockets()
         updateNode(self, context)
 
     def change_sockets(self, context):
-        with self.sv_throttle_tree_update():
-            pre_num = len(self.inputs) // 2
-            diff = self.socket_number - pre_num
-            if diff > 0:
-                for i in range(diff):
-                    num = pre_num + i
-                    self.inputs.new("SvStringsSocket", f'A_{num}').prop_name = f'A_{num}'
-                    self.inputs.new("SvStringsSocket", f'B_{num}').prop_name = f'B_{num}'
-                    self.outputs.new("SvStringsSocket", f"Out_{num}")
+        pre_num = len(self.inputs) // 2
+        diff = self.socket_number - pre_num
+        if diff > 0:
+            for i in range(diff):
+                num = pre_num + i
+                self.inputs.new("SvStringsSocket", f'A_{num}').prop_name = f'A_{num}'
+                self.inputs.new("SvStringsSocket", f'B_{num}').prop_name = f'B_{num}'
+                self.outputs.new("SvStringsSocket", f"Out_{num}")
 
-            elif diff < 0:
-                for i in range(abs(diff)):
-                    self.inputs.remove(self.inputs[-1])
-                    self.inputs.remove(self.inputs[-1])
-                    self.outputs.remove(self.outputs[-1])
+        elif diff < 0:
+            for i in range(abs(diff)):
+                self.inputs.remove(self.inputs[-1])
+                self.inputs.remove(self.inputs[-1])
+                self.outputs.remove(self.outputs[-1])
 
     def rebuild_out_sockets(self):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}

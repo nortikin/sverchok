@@ -49,9 +49,8 @@ class Vertices(object):
 
     @staticmethod
     def on_update_submode(node):
-        with node.sv_throttle_tree_update():
-            node.outputs['YesFaces'].hide = node.submode == "Wire"
-            node.outputs['NoFaces'].hide = node.submode == "Wire"
+        node.outputs['YesFaces'].hide = node.submode == "Wire"
+        node.outputs['NoFaces'].hide = node.submode == "Wire"
 
     @staticmethod
     def process(bm, submode, orig_edges):
@@ -228,17 +227,16 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
 
     def set_mode(self, context):
         cls = globals()[self.mode]
-        with self.sv_throttle_tree_update():
         
-            while len(self.outputs) > 0:
-                self.outputs.remove(self.outputs[0])
-            for ocls, oname in cls.outputs:
-                self.outputs.new(ocls, oname)
+        while len(self.outputs) > 0:
+            self.outputs.remove(self.outputs[0])
+        for ocls, oname in cls.outputs:
+            self.outputs.new(ocls, oname)
 
-            if hasattr(cls, "default_submode"):
-                self.submode = cls.default_submode
-            #else:   # setting subnode to None seems to throw an error.
-            #    self.submode = None
+        if hasattr(cls, "default_submode"):
+            self.submode = cls.default_submode
+        #else:   # setting subnode to None seems to throw an error.
+        #    self.submode = None
 
     def set_submode(self, context):
         cls = globals()[self.mode]

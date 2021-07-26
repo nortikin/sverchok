@@ -173,8 +173,7 @@ class SvObjHelper():
         if self.grouping:
             updateNode(self, context)
         else:
-            with self.sv_throttle_tree_update():
-                self.clear_collection()
+            self.clear_collection()
 
     def to_collection(self, objs):
         collections = bpy.data.collections

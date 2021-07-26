@@ -21,23 +21,21 @@ from functools import reduce
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
 from mathutils import Vector, Matrix
 from mathutils.geometry import barycentric_transform
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, throttle_and_update_node,
+from sverchok.data_structure import (updateNode,
                                      Vector_degenerate, match_long_repeat,
-                                     zip_long_repeat,
                                      fullList, cycle_for_length,
-                                     describe_data_shape, get_data_nesting_level,
+                                     get_data_nesting_level,
                                      rotate_list)
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
-from sverchok.utils.logging import info, debug
+
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)
@@ -247,13 +245,13 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = ngon_modes, default = "QUADS",
         update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         show_width = self.frame_mode != 'NEVER'
         if 'FrameWidth' in self.inputs:
             self.inputs['FrameWidth'].hide_safe = not show_width
         if 'Threshold' in self.inputs:
             self.inputs['Threshold'].hide_safe = not self.join or not self.remove_doubles
+        updateNode(self, context)
 
     frame_modes = [
             ("NEVER", "Do not use", "Do not use Frame / Fan mode", 0),

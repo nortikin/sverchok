@@ -228,11 +228,10 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', 'out')
 
         # add default strings
-        with self.sv_throttle_tree_update():
-            self.dynamic_strings.add().line = lines[0]
-            self.dynamic_strings.add().line = lines[1]
-            self.dynamic_strings.add().line = ""
-            self.width = 289
+        self.dynamic_strings.add().line = lines[0]
+        self.dynamic_strings.add().line = lines[1]
+        self.dynamic_strings.add().line = ""
+        self.width = 289
 
     def process(self):
         v1, v2, v3 = self.inputs

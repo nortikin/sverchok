@@ -30,14 +30,13 @@ class DraftMode:
         """
         if self.does_support_draft_mode():
             if new_draft_mode == True:
-                with self.sv_throttle_tree_update():
-                    if not self.was_in_draft_mode():
-                        # Copy values from standard properties
-                        # to draft mode ones, when the node enters the
-                        # draft mode first time.
-                        for prop_name, draft_prop_name in self.draft_properties_mapping.items():
-                            setattr(self, draft_prop_name, getattr(self, prop_name))
-                    self['_was_in_draft_mode'] = True
+                if not self.was_in_draft_mode():
+                    # Copy values from standard properties
+                    # to draft mode ones, when the node enters the
+                    # draft mode first time.
+                    for prop_name, draft_prop_name in self.draft_properties_mapping.items():
+                        setattr(self, draft_prop_name, getattr(self, prop_name))
+                self['_was_in_draft_mode'] = True
         self.sv_draft_mode_changed(new_draft_mode)
 
     def sv_draft_mode_changed(self, new_draft_mode):

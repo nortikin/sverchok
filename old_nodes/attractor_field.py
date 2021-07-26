@@ -2,13 +2,12 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from mathutils import kdtree
 from mathutils import bvhtree
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
             SvMergedScalarField, SvKdtScalarField,
@@ -32,13 +31,13 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     replacement_nodes = [('SvAttractorFieldNodeMk2', None, None)]
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type in ['Point', 'Mesh'])
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')
         coeff_types = ['inverse_exp', 'gauss', 'smooth', 'sphere', 'root', 'invsquare', 'sharp', 'linear', 'const']
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in coeff_types)
         self.inputs['Faces'].hide_safe = (self.attractor_type != 'Mesh')
+        updateNode(self, context)
 
     falloff_type: EnumProperty(
         name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)

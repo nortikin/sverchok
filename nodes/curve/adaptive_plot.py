@@ -1,11 +1,8 @@
-
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.adaptive_curve import populate_curve, MinMaxPerSegment, TotalCount
 
@@ -24,12 +21,12 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
             min = 3,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Seed'].hide_safe = not self.random
         self.inputs['Count'].hide_safe = self.gen_mode != 'TOTAL'
         self.inputs['MinPpe'].hide_safe = self.gen_mode == 'TOTAL'
         self.inputs['MaxPpe'].hide_safe = self.gen_mode == 'TOTAL'
+        updateNode(self, context)
 
     modes = [
             ('TOTAL', "Total count", "Specify total number of points to generate", 0),

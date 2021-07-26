@@ -8,13 +8,10 @@
 import itertools
 
 import bpy
-import bmesh
-import mathutils
-from mathutils import Vector, Matrix
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, updateNode, throttle_and_update_node
+from sverchok.data_structure import dataCorrect, updateNode
 
 
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
@@ -68,12 +65,12 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def replacement_nodes(self):
         return [('SvInstancerNodeMK3', None, None)]
 
-    @throttle_and_update_node
     def updateNode_copy(self, context):
         # this means we should empty the collection, and let process repopulate
         objects = bpy.data.collections[self.basedata_name].objects
         for obj in objects:
             bpy.data.objects.remove(obj)
+        updateNode(self, context)
 
     activate: BoolProperty(
         default=True,
@@ -129,21 +126,20 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
 
         new_objects = []
-        with self.sv_throttle_tree_update():
 
-            self.ensure_collection()
-            combinations = zip(itertools.cycle(objects), matrices)
-            for obj_index, (obj, matrix) in enumerate(combinations):
-                obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                new_objects.append(make_or_update_instance(self, obj_name, matrix, obj))
+        self.ensure_collection()
+        combinations = zip(itertools.cycle(objects), matrices)
+        for obj_index, (obj, matrix) in enumerate(combinations):
+            obj_name = f'{self.basedata_name}.{obj_index:04d}'
+            new_objects.append(make_or_update_instance(self, obj_name, matrix, obj))
 
-            num_objects = len(matrices)
+        num_objects = len(matrices)
 
-            if self.delete_source:
-                for obj in objects:
-                    bpy.data.objects.remove(obj)
+        if self.delete_source:
+            for obj in objects:
+                bpy.data.objects.remove(obj)
 
-            self.remove_non_updated_objects(num_objects)
+        self.remove_non_updated_objects(num_objects)
 
         self.outputs['objects'].sv_set(new_objects)
 

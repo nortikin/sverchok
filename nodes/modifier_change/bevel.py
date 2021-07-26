@@ -22,7 +22,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, repeat_last_for_length
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -58,11 +58,11 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
-    @throttle_and_update_node
     def mode_change(self, context):
         self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
         if 'Spread' in self.inputs:
             self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
+        updateNode(self, context)
 
     offset_: FloatProperty(
         name='Amount', description='Amount to offset beveled edge',

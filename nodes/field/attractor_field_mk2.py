@@ -2,12 +2,11 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
-from mathutils import kdtree
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from mathutils import bvhtree
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
             SvMergedScalarField, SvKdtScalarField,
@@ -35,7 +34,6 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_ATTRACT'
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type in ['Point', 'Mesh', 'Edge'])
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')
@@ -44,6 +42,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Faces'].hide_safe = (self.attractor_type != 'Mesh')
         self.inputs['Edges'].hide_safe = (self.attractor_type != 'Edge')
         self.inputs['Radius'].hide_safe = (self.attractor_type != 'Circle')
+        updateNode(self, context)
 
     falloff_type: EnumProperty(
         name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)

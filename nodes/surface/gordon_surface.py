@@ -7,12 +7,11 @@
 
 import numpy as np
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node, repeat_last_for_length
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics
-from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.gordon import gordon_surface
@@ -32,10 +31,10 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default="POINTS", items=supported_metrics,
         update=updateNode)
     
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['T1'].hide_safe = self.explicit_t_values != True
         self.inputs['T2'].hide_safe = self.explicit_t_values != True
+        updateNode(self, context)
 
     explicit_t_values : BoolProperty(
         name = "Explicit T values",

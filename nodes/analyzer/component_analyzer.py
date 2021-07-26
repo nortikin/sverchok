@@ -19,8 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat,throttle_and_update_node
-from sverchok.utils.listutils import lists_flat
+from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.modules.polygon_utils import faces_modes_dict, pols_origin_modes_dict, tangent_modes_dict
 
@@ -108,7 +107,6 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
         ('MWS', 'Mean Weighted by Sine', '', 4)
     ]
 
-    @throttle_and_update_node
     def update_mode(self, context):
         # for mode in self.modes:
         info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
@@ -130,6 +128,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
         if len(output_socket_type) < len(self.outputs):
             for s in self.outputs[len(output_socket_type):]:
                 s.hide_safe = True
+        updateNode(self, context)
 
     mode: EnumProperty(
         name="Component",

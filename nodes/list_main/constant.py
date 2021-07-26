@@ -17,10 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty
+from bpy.props import FloatProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, updateNode, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import zip_long_repeat, updateNode, ensure_nesting_level
 
 
 class SvConstantListNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,10 +38,10 @@ class SvConstantListNode(bpy.types.Node, SverchCustomTreeNode):
         ('FLOAT', "Float", "Floating-point number", 1)
     ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['IntValue'].hide_safe = self.mode != 'INT'
         self.inputs['FloatValue'].hide_safe = self.mode != 'FLOAT'
+        updateNode(self, context)
 
     mode : EnumProperty(
         name = "Type",

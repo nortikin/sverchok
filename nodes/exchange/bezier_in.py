@@ -157,19 +157,19 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
             obj = bpy.data.objects.get(object_name)
             if not obj:
                 continue
-            with self.sv_throttle_tree_update():
-                matrix = obj.matrix_world
-                if obj.type != 'CURVE':
-                    self.warning("%s: not supported object type: %s", object_name, obj.type)
+
+            matrix = obj.matrix_world
+            if obj.type != 'CURVE':
+                self.warning("%s: not supported object type: %s", object_name, obj.type)
+                continue
+            for spline in obj.data.splines:
+                if spline.type != 'BEZIER':
+                    self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
-                for spline in obj.data.splines:
-                    if spline.type != 'BEZIER':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
-                        continue
-                    controls, curve = self.get_curve(spline, matrix)
-                    curves_out.append(curve)
-                    controls_out.append(controls)
-                    matrices_out.append(matrix)
+                controls, curve = self.get_curve(spline, matrix)
+                curves_out.append(curve)
+                controls_out.append(controls)
+                matrices_out.append(matrix)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)

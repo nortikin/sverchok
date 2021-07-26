@@ -3,12 +3,11 @@ import numpy as np
 import math
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, BoolProperty, IntProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 class SvVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
@@ -50,9 +49,8 @@ class SvVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
-        pass
+        updateNode(self, context)
         #self.inputs['Scale'].hide_safe = self.auto_scale
 
     auto_scale : BoolProperty(

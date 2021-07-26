@@ -17,7 +17,6 @@ from sverchok.core.socket_data import SvNoDataError
 from sverchok.core.events import TreeEvent
 from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.core.group_handlers import NodeIdManager
-from sverchok import data_structure
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -41,10 +40,6 @@ class SvNodeTreeCommon:
         if not self.tree_id_memory:
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
-
-    @contextmanager
-    def throttle_update(self):  # todo deprecated, should be wiped out
-        yield None
 
     def update_gl_scale_info(self, origin=None):
         """
@@ -225,9 +220,6 @@ class UpdateNodes:
         Override this method to do anything node-specific upon node removal
         """
         pass
-
-    def sv_throttle_tree_update(self):  # todo deprecated, should be wiped out
-        return data_structure.throttle_tree_update(self)
 
     def init(self, context):
         """
@@ -413,13 +405,12 @@ class NodeUtils:
         return None
 
     def safe_socket_remove(self, kind, key, failure_message=None):
-        with self.sv_throttle_tree_update():
-            sockets = getattr(self, kind)
-            if key in sockets:
-                sockets.remove(sockets[key])
-            else:
-                canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
-                self.debug(failure_message or canned_msg)
+        sockets = getattr(self, kind)
+        if key in sockets:
+            sockets.remove(sockets[key])
+        else:
+            canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
+            self.debug(failure_message or canned_msg)
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):

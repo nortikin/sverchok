@@ -20,14 +20,12 @@
 from itertools import cycle
 import bpy
 from bpy.props import (IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty)
-import bmesh
 from mathutils import Vector
-from mathutils.kdtree import KDTree
 from mathutils.bvhtree import BVHTree
 from mathutils.noise import seed_set, random_unit_vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes, throttle_and_update_node
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -153,7 +151,6 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo_1", "Regular"), ("algo_2", "Multisample")])]
     dimension_options = [(k, k, '', i) for i, k in enumerate(["2D", "3D"])]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if self.dimensions_mode == '2D' and len(self.inputs) < 4:
             self.inputs.new('SvVerticesSocket', 'Plane Normal').prop_name = 'normal'
@@ -164,6 +161,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         elif self.dimensions_mode == '3D' or not self.limit_max_dist:
             if 'Max Dist' in self.inputs:
                 self.inputs.remove(self.inputs['Max Dist'])
+        updateNode(self, context)
 
     dimensions_mode: EnumProperty(
         items=dimension_options,

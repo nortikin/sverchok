@@ -20,8 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop, throttle_and_update_node)
-from sverchok.ui.sv_icons import custom_icon
+from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 
 from math import sin, cos, pi, sqrt
@@ -44,7 +43,6 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
-    @throttle_and_update_node
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
 
@@ -85,6 +83,7 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
         self.last_mode = self.mode
         self.update_sockets()
+        updateNode(self, context)
 
     def update_ellipse(self, context):
         if self.updating:

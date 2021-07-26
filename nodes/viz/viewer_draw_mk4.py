@@ -701,10 +701,9 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         self.draw_additional_props(context, layout)
 
     def bake(self):
-        with self.sv_throttle_tree_update():
-            bpy.ops.node.sverchok_mesh_baker_mk3(
-                node_name=self.name, tree_name=self.id_data.name
-            )
+        bpy.ops.node.sverchok_mesh_baker_mk3(
+            node_name=self.name, tree_name=self.id_data.name
+        )
 
     def sv_init(self, context):
         new_input = self.sv_new_input
@@ -821,13 +820,12 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
             if socket_acquired_attrs:
-                with self.id_data.throttle_update():  # avoiding recursion
-                    try:
-                        for k, new_value in socket_acquired_attrs[0].items():
-                            print(f"setattr(node, {k}, {new_value})")
-                            setattr(self, k, new_value)  # it will trigger process method again
-                    except Exception as err:
-                        print('error inside socket_acquired_attrs: ', err)
+                try:
+                    for k, new_value in socket_acquired_attrs[0].items():
+                        print(f"setattr(node, {k}, {new_value})")
+                        setattr(self, k, new_value)  # it will trigger process method again
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
 
     def get_data(self):
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
