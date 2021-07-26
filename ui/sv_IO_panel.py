@@ -167,7 +167,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
             with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
                 myzip.write(destination_path, arcname=base)
-                info('wrote:', final_archivename)
+                info('wrote: %s', final_archivename)
 
         return {'FINISHED'}
 
