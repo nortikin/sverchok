@@ -40,7 +40,9 @@ class ExamplesImportTest(SverchokTestCase):
 
     def test_persistence_node_out_data(self):
         for paths in self.get_paths():
-            with self.temporary_node_tree("ImportedTree") as new_tree:
+            with self.temporary_node_tree("ImportedTree") as new_tree, self.subTest(tree=paths.example_path.name):
+                if paths.example_path.name in DEPENDENCIES and DEPENDENCIES[paths.example_path.name] is None:
+                    self.skipTest(f"{paths.example_path.name} is skipped - some library is not available")
                 importer = JSONImporter.init_from_path(str(paths.example_path))
                 importer.import_into_tree(new_tree, print_log=False)
                 if importer.has_fails and paths.example_path.name not in UNITTEST_SKIPLIST:
@@ -87,15 +89,16 @@ class ExamplesImportTest(SverchokTestCase):
     def get_paths(self) -> Generator[DataPaths]:
         expected_data_path = Path(sverchok.__file__).parent / 'tests/expected_tree_data'
         expected_names = {p.name.rsplit('.', 1)[0] for p in expected_data_path.iterdir()}
+        unused_names = expected_names.copy()
         for examples_path, category_name in example_categories_names():
             for json_path in (examples_path / category_name).iterdir():
                 file_name = json_path.name.rsplit('.', 1)[0]
                 if file_name in expected_names:
-                    if json_path.name in DEPENDENCIES and DEPENDENCIES[json_path.name] is None:
-                        self.skipTest("Some library is not available")
-                    else:
-                        with self.subTest(tree=file_name):
-                            yield DataPaths(json_path, expected_data_path / (file_name + '.zip'))
+                    if file_name in unused_names:
+                        unused_names.remove(file_name)
+                    yield DataPaths(json_path, expected_data_path / (file_name + '.zip'))
+        self.assertSetEqual(unused_names, set(),
+                            "There are unused expected tree data files - should be removed or used")
 
 
 class Coverage:
@@ -119,7 +122,7 @@ class Coverage:
         self._struct['nodes_tested'] = len(self._struct['nodes'])
 
     def save(self):
-        with open(Path(sverchok.__file__).parent / 'tests/expected_tree_data/last_coverage.json', 'w') as file:
+        with open(Path(sverchok.__file__).parent / 'tests/last_coverage.json', 'w') as file:
             json.dump(self._struct, file, indent=2)
 
     @staticmethod
