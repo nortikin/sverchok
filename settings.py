@@ -96,10 +96,13 @@ class SvExPipInstall(bpy.types.Operator):
     package : bpy.props.StringProperty(name = "Package names")
 
     def execute(self, context):
-        first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
+        # https://github.com/robertguetzkow/blender-python-examples/tree/master/add_ons/install_dependencies
+        environ_copy = dict(os.environ)
+        environ_copy["PYTHONNOUSERSITE"] = "1"  # is set to disallow pip from checking the user site-packages
         cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
-        ok = subprocess.call(cmd) == 0
+        ok = subprocess.call(cmd, env=environ_copy) == 0
         if ok:
+            first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
             if first_install:
                 self.report({'INFO'}, "%s installed successfully. Please restart Blender to see effect." % self.package)
             else:
