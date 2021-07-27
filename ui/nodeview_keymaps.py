@@ -127,6 +127,10 @@ def add_keymap():
     if kc:
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
 
+        # ctrl+G        | make node group from selected
+        kmi = km.keymap_items.new("node.add_group_tree_from_selected", 'G', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
         # TAB           | enter or exit node groups depending on selection and edit_tree type
         kmi = km.keymap_items.new('node.enter_exit_group_nodes', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
