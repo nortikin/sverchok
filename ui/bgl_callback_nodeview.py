@@ -225,9 +225,13 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     else:
         (x, y), z = text_coordinates, 0
 
+    # https://github.com/nortikin/sverchok/issues/4247
+    ui_scale = bpy.context.preferences.system.ui_scale
+    x, y = x * ui_scale, y * ui_scale
+
     # todo add scale from the preferences
-    text_height = int(15 * scale)
-    line_height = int(18 * scale)
+    text_height = int(15 * scale * ui_scale)
+    line_height = int(18 * scale * ui_scale)
     font_id = 0
     dpi = 72
 
