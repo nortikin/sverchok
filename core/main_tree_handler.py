@@ -6,8 +6,6 @@
 # License-Filename: LICENSE
 
 import gc
-import logging
-import traceback
 from collections import defaultdict
 from functools import partial
 from time import time
@@ -16,7 +14,7 @@ from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple, Union
 import bpy
 from sverchok.data_structure import post_load_call
 from sverchok.core.events import TreeEvent, GroupEvent
-from sverchok.utils.logging import debug, catch_log_error, error, getLogger
+from sverchok.utils.logging import debug, catch_log_error, log_error
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlTree
 from sverchok.utils.profile import profile
@@ -453,10 +451,7 @@ def node_updater(node: Node, *args) -> Generator[Node, None, Optional[Exception]
             node_error = e
         except Exception as e:
             node.is_updated = False
-            error(e)
-            logger = getLogger()
-            if logger.isEnabledFor(logging.DEBUG):
-                traceback.print_exc()
+            log_error(e)
             node_error = e
     return node_error
 

@@ -12,8 +12,6 @@ and keeping `updating` statistics.
 
 from __future__ import annotations
 
-import logging
-import traceback
 from collections import defaultdict
 from time import time
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
@@ -21,7 +19,7 @@ from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Opti
 from sverchok.core.events import GroupEvent
 from sverchok.core.main_tree_handler import empty_updater, NodesUpdater, CancelError, ContextTrees
 from sverchok.utils.tree_structure import Tree, Node
-from sverchok.utils.logging import error, getLogger
+from sverchok.utils.logging import log_error
 from sverchok.utils.handle_blender_data import BlNode
 
 if TYPE_CHECKING:
@@ -383,8 +381,5 @@ def node_updater(node: Node, group_node: SvGroupTreeNode):
         node_error = e
     except Exception as e:
         node_error = e
-        error(e)
-        logger = getLogger()
-        if logger.isEnabledFor(logging.DEBUG):
-            traceback.print_exc()
+        log_error(e)
     return not node_error, node_error

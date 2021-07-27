@@ -38,6 +38,18 @@ def catch_log_error():
             traceback.print_exc()
 
 
+def log_error(err):
+    """Should be used in except statement"""
+    frame, _, line, *_ = inspect.trace()[-1]
+    module = inspect.getmodule(frame)
+    name = module.__name__ or "<Unknown Module>"
+    try_initialize()
+    _logger = logging.getLogger(f'{name}:{line} ')
+    _logger.error(err)
+    if _logger.isEnabledFor(logging.DEBUG):
+        traceback.print_exc()
+
+
 def get_log_buffer(log_buffer_name):
     """
     Get internal blender text buffer for logging.
