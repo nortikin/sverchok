@@ -1,3 +1,4 @@
+from typing import Type, Dict
 
 import bpy
 
@@ -48,6 +49,17 @@ def log_error(err):
     _logger.error(err)
     if _logger.isEnabledFor(logging.DEBUG):
         traceback.print_exc()
+
+
+@contextmanager
+def fix_error_msg(msgs: Dict[Type[Exception], str]):
+    try:
+        yield
+    except Exception as e:
+        err_class = type(e)
+        if err_class in msgs:
+            e.args = (msgs[err_class], )
+        raise
 
 
 def get_log_buffer(log_buffer_name):
