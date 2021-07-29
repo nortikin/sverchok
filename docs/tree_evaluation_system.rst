@@ -140,11 +140,8 @@ Node property / socket property changes
 
 Live update modal operator (:ref:`3d_panel`)
     It makes update some nodes, which read information from Blender objects, via timer with update period
-    about 1/10 second.
-
-.. warning::
-    The operator won't update whole tree if it has too low performance. Next timer event will cancel tree update and
-    cause to start update from the beginning.
+    about 1/10 second. If the tree did not manage to update while this period next event will be ignored.
+    In this case there can be a visible lag between user action and tree response.
 
 Frame changes
     Update upon frame changes. Extra information `Animation`_.
