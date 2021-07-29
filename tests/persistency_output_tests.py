@@ -14,6 +14,7 @@ from pathlib import Path
 from statistics import mean
 import json
 from zipfile import ZipFile
+from contextlib import contextmanager
 
 from bpy.types import Node
 
@@ -21,7 +22,7 @@ import sverchok
 from sverchok.core.main_tree_handler import tree_updater
 from sverchok.utils.testing import SverchokTestCase
 from sverchok.utils.sv_json_import import JSONImporter
-from sverchok.utils.sv_data_to_json import save_to_json
+from sverchok.utils.sv_data_to_json import save_to_json, convert_to_text_node_format
 from sverchok.utils.modules_inspection import iter_classes_from_module
 from sverchok import nodes
 from sverchok.utils.handle_blender_data import BlNode
@@ -36,6 +37,7 @@ DEPENDENCIES = {'Concave_sverchok.json': scipy}
 class ExamplesImportTest(SverchokTestCase):
 
     def setUp(self):
+        self.failed_results = dict()
         self.coverage = Coverage()
 
     def test_persistence_node_out_data(self):
@@ -53,11 +55,18 @@ class ExamplesImportTest(SverchokTestCase):
                 with ZipFile(paths.data_path) as zip_file:
                     with zip_file.open(paths.example_path.name.rsplit('.', 1)[0] + '.json') as file:
                         standard = json.load(file)
-                self.compare_data(standard, struct, f'\n{paths.example_path.name}')
-                self.coverage.update(new_tree)
+                with self.catch_failed_results(paths.example_path.name, struct):
+                    self.compare_data(standard, struct, f'\n{paths.example_path.name}')
+                    self.coverage.update(new_tree)
 
     def tearDown(self):
         self.coverage.save()
+        log_files_path = Path(sverchok.__file__).parent / 'tests/log_files'
+        for example_name, failed_result in self.failed_results.items():
+            json.dump(failed_result, open(log_files_path / example_name, 'w'), indent=2)
+            # text_node_format = convert_to_text_node_format(failed_result)
+            # formatted_name = example_name.rsplit('.', 1)[0] + "_text_in.json"
+            # json.dump(text_node_format, open(log_files_path / formatted_name, 'w'), indent=2)
 
     def compare_data(self, expected, res, msg=''):
         """It assumes that data in sequences has persistent type"""
@@ -100,6 +109,12 @@ class ExamplesImportTest(SverchokTestCase):
         self.assertSetEqual(unused_names, set(),
                             "There are unused expected tree data files - should be removed or used")
 
+    @contextmanager
+    def catch_failed_results(self, examle_name, example_result):
+        self.failed_results[examle_name] = example_result
+        yield
+        del self.failed_results[examle_name]
+
 
 class Coverage:
     def __init__(self):
@@ -122,7 +137,7 @@ class Coverage:
         self._struct['nodes_tested'] = len(self._struct['nodes'])
 
     def save(self):
-        with open(Path(sverchok.__file__).parent / 'tests/last_coverage.json', 'w') as file:
+        with open(Path(sverchok.__file__).parent / 'tests/log_files/last_coverage.json', 'w') as file:
             json.dump(self._struct, file, indent=2)
 
     @staticmethod

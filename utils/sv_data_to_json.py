@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import json
+from collections import defaultdict
 from pathlib import Path
 import zipfile
 
@@ -55,6 +56,32 @@ def save_to_file(json_data, file_name, path: Path = Path(sverchok.__file__).pare
     with zipfile.ZipFile(path / (file_name + '.zip'), 'w', zipfile.ZIP_DEFLATED) as zip_file:
         with zip_file.open(file_name + '.json', 'w') as file:
             file.write(json.dumps(json_data, indent=2).encode('utf-8'))
+
+
+def convert_to_text_node_format(struct):
+    """
+    Format:
+    { "Socket name": [
+        "Socket type" [  # <= ("v", "s", ...)
+            data
+            ]
+        ]
+    }
+    """
+    sock_types = {'vertices': 'v', 'verts': 'v'}
+    out_struct = dict()
+    for node_name, node_struct in struct.items():
+        for sock_identifiers, data in node_struct.items():
+            if isinstance(data[0], dict):
+                sockets = defaultdict(list)
+                for data_struct in data:
+                    for elem_name, struct_data in data_struct.items():
+                        sockets[elem_name].append(struct_data)
+                for elem_name, sock_data in sockets.items():
+                    out_struct[f"{node_name} - {elem_name}"] = [sock_types.get(elem_name, 's'), sock_data]
+            else:
+                out_struct[f"{node_name} - {sock_identifiers}"] = [sock_types.get(sock_identifiers, 's'), [data]]
+    return out_struct
 
 
 # bl id names of nodes which data does not have too much sense to save
