@@ -296,15 +296,9 @@ and trigger its reevaluation. The update can be suppress by disabled live update
 </dl>
 <dl class="simple" id="live-update-operator">
 <dt>Live update modal operator (<a class="reference internal" href="user_interface/panels.html#d-panel"><span class="std std-ref">3D Panel</span></a>)</dt><dd><p>It makes update some nodes, which read information from Blender objects, via timer with update period
-about 1/10 second.</p>
+about 1/10 second. If the tree did not manage to update while this period next event will be ignored.
+In this case there can be a visible lag between user action and tree response.</p>
 </dd>
-</dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The operator won’t update whole tree if it has too low performance. Next timer event will cancel tree update and
-cause to start update from the beginning.</p>
-</div>
-<dl class="simple">
 <dt>Frame changes</dt><dd><p>Update upon frame changes. Extra information <a class="reference internal" href="#animation">Animation</a>.</p>
 </dd>
 </dl>
