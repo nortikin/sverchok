@@ -392,6 +392,36 @@ class SvCircle(SvCurve):
             #curve = curve_segment(curve, t_min, t_max)
         return curve
 
+    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
+        idxs = np.array(range(2*n+1), dtype=np.float64)
+        ts = pi * idxs / n
+        alpha = pi / n
+        rs = np.where(idxs % 2 == 0, 1.0, 1.0 / cos(alpha))
+
+        xs = rs * np.cos(ts)
+        ys = rs * np.sin(ts)
+        zs = np.zeros((2*n+1,))
+
+        control_points = np.stack((xs, ys, zs)).T
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        weights = np.where(idxs % 2 == 0, 1.0, cos(alpha))
+
+        knots = [0.0]
+        for i in range(n+1):
+            t = i * 2*pi / n
+            knots.extend([t, t])
+        knots.append(2*pi)
+        knots = np.array(knots)
+
+        degree = 2
+        curve = SvNurbsMaths.build_curve(implementation,
+                    degree, knots,
+                    control_points, weights)
+        return curve
+
     def reverse(self):
         circle = self.copy()
         u1, u2 = self.u_bounds
