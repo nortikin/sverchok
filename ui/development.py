@@ -148,7 +148,7 @@ class SvViewHelpForNode(bpy.types.Operator):
         # valid doc link!
         help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
-            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
+            destination = 'http://nortikin.github.io/sverchok/docs/nodes/' + help_url + '.html'
         elif self.kind == 'offline':
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
