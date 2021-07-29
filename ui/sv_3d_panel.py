@@ -447,7 +447,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode',
                              'SvGetObjectsData', 'SvObjectsNodeMK3'}
         for ng in BlTrees().sv_main_trees:
-            ng.update_nodes(n for n in ng.nodes if n.bl_idname in objects_nodes_set)
+            ng.update_nodes((n for n in ng.nodes if n.bl_idname in objects_nodes_set), cancel=False)
 
         return {'PASS_THROUGH'}
 

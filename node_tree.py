@@ -151,9 +151,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # ideally we would never like to use this method but we live in the real world
         TreeHandler.send(TreeEvent(TreeEvent.FORCE_UPDATE, self))
 
-    def update_nodes(self, nodes):
+    def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes))
+        return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes, cancel))
 
     def process_ani(self):
         """
