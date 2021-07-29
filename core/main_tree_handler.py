@@ -27,7 +27,10 @@ class TreeHandler:
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
         if NodesUpdater.is_running():
-            NodesUpdater.cancel_task()
+            if event.cancel:
+                NodesUpdater.cancel_task()
+            else:
+                return  # ignore the event
 
         # frame update
         if event.type == TreeEvent.FRAME_CHANGE:
