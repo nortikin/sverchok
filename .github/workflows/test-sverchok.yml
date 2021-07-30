@@ -73,3 +73,13 @@ jobs:
       env:
         BLENDER: |
           ./installation/blender/blender-softwaregl
+
+    - name: Save logs
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: log_files
+        retention-days: 5
+        path: |
+          ./tests/sverchok_tests.log
+          ./tests/log_files/
