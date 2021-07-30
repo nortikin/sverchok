@@ -12,7 +12,7 @@ Also good place for questions is Blender stack exchange site.
 Before asking questions have a look at the Sverchok documentation
 and use search because it's possible that the question was already answered.
 
-- `Discord chat help <https://discord.gg/nHwaeETY>`_
+- `Discord chat help <https://discord.gg/r5s3sHFws4>`_
 - `GitHub issues <https://github.com/nortikin/sverchok/issues>`_
 - `Blender stack exchange <https://blender.stackexchange.com/questions/tagged/sverchok>`_
 
@@ -35,7 +35,7 @@ share your work.
 
 - `Twitter #Sverchok <https://twitter.com/hashtag/sverchok>`_
 - `GitHub gelleries <https://github.com/nortikin/sverchok/issues?q=label%3AGallery+sort%3Acreated-asc>`_
-- `Discord chat arts <https://discord.gg/GFXXVCzn>`_
+- `Discord chat arts <https://discord.gg/aRjvxDgcxs>`_
 
 
 Tutorials
