@@ -8,8 +8,9 @@ Viz
    mesh_viewer
    viewer_2d
    viewer_draw_mk4
-   polyline_viewer
    vd_matrix
+   polyline_viewer
+   viewer_curves
    viewer_nurbs_curve
    viewer_nurbs_surface
    viewer_metaball
@@ -20,7 +21,6 @@ Viz
    dupli_instances_lite
    empty_out
    light_viewer
-
    viewer_texture
    viewer_texture_lite
    viewer_waveform_output
