@@ -24,5 +24,6 @@ Viz
    light_viewer
    viewer_texture
    viewer_texture_lite
+   viewer_gp
    viewer_waveform_output
    console_node
