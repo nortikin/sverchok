@@ -14,6 +14,7 @@ Viz
    viewer_nurbs_surface
    viewer_metaball
    viewer_skin
+   viewer_typography
    instancer
    dupli_instances_mk5
    dupli_instances_lite
