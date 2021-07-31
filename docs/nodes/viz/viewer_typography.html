@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Viz &mdash; Sverchok 1, 0, 0 documentation</title>
+  <title>Typography Viewer &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -43,8 +43,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Mesh viewer" href="mesh_viewer.html" />
-    <link rel="prev" title="Dictionary out" href="../dictionary/dictionary_out.html" /> 
+    <link rel="next" title="Obj instancer" href="instancer.html" />
+    <link rel="prev" title="Skin Mesher" href="viewer_skin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -126,7 +126,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Viz</a><ul>
+<li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
@@ -138,7 +138,15 @@
 <li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Typography Viewer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#basic-properties">Basic properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#caution">Caution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#further-reading">Further reading</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
@@ -214,13 +222,15 @@
         
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
         
-      <li>Viz</li>
+          <li><a href="viz_index.html">Viz</a> &raquo;</li>
+        
+      <li>Typography Viewer</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/nodes/viz/viz_index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/viz/viewer_typography.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -233,33 +243,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="viz">
-<h1>Viz<a class="headerlink" href="#viz" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="mesh_viewer.html">Mesh viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vd_matrix.html">vd matrix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_idx28.html">Index Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="polyline_viewer.html">Polyline viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="empty_out.html">Empty out</a></li>
-<li class="toctree-l1"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="console_node.html">console node</a></li>
-</ul>
+  <div class="section" id="typography-viewer">
+<h1>Typography Viewer<a class="headerlink" href="#typography-viewer" title="Permalink to this headline">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/619340/127733727-0d8299e7-ab20-4a33-b3ff-923276f09f5c.png" src="https://user-images.githubusercontent.com/619340/127733727-0d8299e7-ab20-4a33-b3ff-923276f09f5c.png" />
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>The Blender Font (Text) object has many features, this node hopes to allow the user to create renderable Text. Convenience is paid for by only making a subset of features available. This might change in the future.</p>
+<p>Each element of Text can be positioned using a Matrix. If you want to place individual Glyphs/letters arbitrarily in 3d/2d space then you must split the incoming text by letter. The String Tools node is very useful for this, and the List Item node is also commonly used.</p>
+</div>
+<div class="section" id="basic-properties">
+<h2>Basic properties<a class="headerlink" href="#basic-properties" title="Permalink to this headline">¶</a></h2>
+<p>Some configuration features are in the options dropdown (the precise arrangement of these UI elements will likely change):</p>
+<img alt="https://user-images.githubusercontent.com/619340/127733963-9ba1da4e-e3ac-4b6d-838e-3ef5315d3c8e.png" src="https://user-images.githubusercontent.com/619340/127733963-9ba1da4e-e3ac-4b6d-838e-3ef5315d3c8e.png" />
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>a <code class="docutils literal notranslate"><span class="pre">Text</span></code> socket and a <code class="docutils literal notranslate"><span class="pre">Matrix</span></code> socket</p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>A Blender Text object directly into the scene.</p>
+</div>
+<div class="section" id="caution">
+<h2>Caution<a class="headerlink" href="#caution" title="Permalink to this headline">¶</a></h2>
+<p>You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok node tree again by moving upstream sliders etc.</p>
+</div>
+<div class="section" id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h2>
+<p>it might be useful to search the Sverchok issue tracker for mentions and examples of of Typography Viewer.</p>
 </div>
 </div>
 
@@ -269,8 +280,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="mesh_viewer.html" class="btn btn-neutral float-right" title="Mesh viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="../dictionary/dictionary_out.html" class="btn btn-neutral float-left" title="Dictionary out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="instancer.html" class="btn btn-neutral float-right" title="Obj instancer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viewer_skin.html" class="btn btn-neutral float-left" title="Skin Mesher" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

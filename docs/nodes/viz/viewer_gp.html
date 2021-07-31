@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Viz &mdash; Sverchok 1, 0, 0 documentation</title>
+  <title>GreasePencil Viewer &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -43,8 +43,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Mesh viewer" href="mesh_viewer.html" />
-    <link rel="prev" title="Dictionary out" href="../dictionary/dictionary_out.html" /> 
+    <link rel="next" title="Viewer Waveform" href="viewer_waveform_output.html" />
+    <link rel="prev" title="Texture Viewer Lite" href="viewer_texture_lite.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -126,7 +126,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Viz</a><ul>
+<li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
@@ -146,7 +146,10 @@
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">GreasePencil Viewer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">functionality</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
 <li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
 </ul>
@@ -214,13 +217,15 @@
         
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
         
-      <li>Viz</li>
+          <li><a href="viz_index.html">Viz</a> &raquo;</li>
+        
+      <li>GreasePencil Viewer</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/nodes/viz/viz_index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/viz/viewer_gp.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -233,33 +238,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="viz">
-<h1>Viz<a class="headerlink" href="#viz" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="mesh_viewer.html">Mesh viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vd_matrix.html">vd matrix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_idx28.html">Index Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="polyline_viewer.html">Polyline viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="empty_out.html">Empty out</a></li>
-<li class="toctree-l1"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="console_node.html">console node</a></li>
-</ul>
+  <div class="section" id="greasepencil-viewer">
+<h1>GreasePencil Viewer<a class="headerlink" href="#greasepencil-viewer" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node attempts to allow procedural access to the GreasePencil system. It accepts geometry and colours. The node is not extensively tested against the most recent API changes, the GreasePencil subsystem has many more features than could possible be sanely exposed inside one Node. Here again is a node that offers convenience at the cost of customizablity.</p>
+<p>current state of node:  seems slightly broken due to Blender API updates.</p>
 </div>
 </div>
 
@@ -269,8 +253,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="mesh_viewer.html" class="btn btn-neutral float-right" title="Mesh viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="../dictionary/dictionary_out.html" class="btn btn-neutral float-left" title="Dictionary out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_waveform_output.html" class="btn btn-neutral float-right" title="Viewer Waveform" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viewer_texture_lite.html" class="btn btn-neutral float-left" title="Texture Viewer Lite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
