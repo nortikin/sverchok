@@ -117,13 +117,6 @@ class DocumentationTests(SverchokTestCase):
         docs_dir = self.get_nodes_docs_directory()
 
         known_problems = """
-viewer_typography.py
-viewer_skin.py
-viewer_idx28.py
-viewer_curves.py
-viewer_gp.py
-vd_draw_experimental.py
-viewer_polyline.py
 obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py
