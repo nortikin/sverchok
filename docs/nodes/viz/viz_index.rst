@@ -9,6 +9,7 @@ Viz
    viewer_2d
    viewer_draw_mk4
    vd_matrix
+   viewer_idx28
    polyline_viewer
    viewer_curves
    viewer_nurbs_curve
