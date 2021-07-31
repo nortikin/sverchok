@@ -12,7 +12,7 @@ Functionality
 
 This node is an interpretation of the current features of the Skin Modifier. During manual editing you would use
 alt+s to scale up the size of individual vertices, this node offers the ability to scale vertices by accepting two 
-lists of scalar values, one for x scale and one for y scale. If you supply only one socket, then both x and y are scaled evenly.
+lists of scalar values, one for x scale and one for y scale.
 
 settings roots: Depending on how complicated and disjoint your mesh is you may find the result of the modifier can be made more natural by adjusting the way the node sets the roots. This option is placed in the N Panel. 
 
