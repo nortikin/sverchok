@@ -6,19 +6,21 @@ Viz
    :maxdepth: 1
 
    mesh_viewer
-   viewer_metaball
-   viewer_waveform_output
-   viewer_draw_mk4
    viewer_2d
-   empty_out
+   viewer_draw_mk4
+   polyline_viewer
+   vd_matrix
    viewer_nurbs_curve
    viewer_nurbs_surface
-   console_node
-   viewer_texture
-   viewer_texture_lite
-   light_viewer
-   vd_matrix
+   viewer_metaball
+   viewer_skin
    instancer
    dupli_instances_mk5
    dupli_instances_lite
-   polyline_viewer
+   empty_out
+   light_viewer
+
+   viewer_texture
+   viewer_texture_lite
+   viewer_waveform_output
+   console_node
