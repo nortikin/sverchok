@@ -75,7 +75,7 @@ safe_names = make_functions_dict(
         isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
         pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
         # Additional functions
-        abs, sign, max, min, len, sum,
+        abs, sign, max, min, len, sum, zip,
         # From mathutlis module
         Vector, Matrix,
         # Python type conversions
