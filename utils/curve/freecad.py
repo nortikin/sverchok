@@ -329,7 +329,7 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         curve.curve.insertKnot(u, count)
         return curve
 
-    def remove_knot(self, u, count=1, tolerance=1e-4):
+    def remove_knot(self, u, count=1, tolerance=1e-4, if_possible=False):
         curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
         ms = sv_knotvector.to_multiplicity(self.get_knotvector())
         idx = None
@@ -337,7 +337,12 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         for i, (u1, m) in enumerate(ms):
             if u1 == u:
                 idx = i
-                M = m - count
+                if count == 'ALL':
+                    M = 0
+                elif count == 'ALL_BUT_ONE':
+                    M = 1
+                else:
+                    M = m - count
                 break
         if idx is not None:
             curve.curve.removeKnot(idx+1, M, tolerance)
