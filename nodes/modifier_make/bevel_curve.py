@@ -25,11 +25,11 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bevel Curve
-    Tooltip: Bevel a Curve (a.k.a. Extrude along Path)
+    Tooltip: Bevel a Curve (a.k.a. Extrude along Path) - mesh
     """
 
     bl_idname = 'SvBevelCurveNode'
-    bl_label = 'Bevel a Curve'
+    bl_label = 'Bevel a Curve (Mesh)'
     bl_icon = 'MOD_CURVE'
 
     algorithms = [

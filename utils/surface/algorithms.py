@@ -997,7 +997,6 @@ class SvTaperSweepSurface(SvSurface):
 
         if self.scale_base == SvTaperSweepSurface.TAPER:
             dp = self._get_profile_scale()
-            print("Dp", dp)
             scale /= dp
         elif self.scale_base == SvTaperSweepSurface.PROFILE:
             scale0 = scale[0]

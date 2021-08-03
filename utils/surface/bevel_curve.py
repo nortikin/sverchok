@@ -30,6 +30,7 @@ from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.surface.gordon import gordon_surface
+from sverchok.utils.surface.algorithms import SvDeformedByFieldSurface, SvTaperSweepSurface
 from sverchok.utils.field.vector import SvBendAlongCurveField
 
 def bend_curve(field, curve):
@@ -85,6 +86,7 @@ def nurbs_bevel_curve(path, profile, taper,
 
     profiles = [place_profile(profile, z, scale) for z, scale in zip(taper_zs, taper_rhos / profile_start_rho)]
     profiles = [bend_curve(field, profile) for profile in profiles]
+    profiles = [profile.reverse() for profile in profiles]
 
     profile_ts = np.linspace(profile_t_min, profile_t_max, num=profile_samples, endpoint=True)
     profile_pts = profile.evaluate_array(profile_ts)
@@ -99,5 +101,31 @@ def nurbs_bevel_curve(path, profile, taper,
     #intersections = [[taper.evaluate(t) for t in taper_ts] for taper in tapers]
     intersections = [[taper.evaluate(t) for taper in tapers] for t in taper_ts]
 
-    return tapers, profiles, gordon_surface(tapers, profiles, intersections)[-1]
+    return gordon_surface(tapers, profiles, intersections)[-1]
+
+def generic_bevel_curve(path, profile, taper,
+        algorithm=SvBendAlongCurveField.HOUSEHOLDER,
+        scale_all=False, path_axis=2,
+        path_length_mode = 'T',
+        path_length_resolution = 50,
+        up_axis=None,
+        scale_base = SvTaperSweepSurface.PROFILE):
+
+    taper_t_min, taper_t_max = taper.get_u_bounds()
+    profile_t_min, profile_t_max = profile.get_u_bounds()
+    taper_start = taper.evaluate(taper_t_min)
+    taper_end = taper.evaluate(taper_t_max)
+    z_min = taper_start[path_axis]
+    z_max = taper_end[path_axis]
+
+    origin = np.array([0.0, 0.0, 0.0])
+    direction = np.eye(3)[path_axis]
+
+    sweep_surface = SvTaperSweepSurface(profile, taper,
+                        origin, direction,
+                        scale_base = scale_base)
+
+    bend_field = SvBendAlongCurveField(path, algorithm, scale_all=scale_all, axis=path_axis, t_min=z_min, t_max=z_max, length_mode=path_length_mode, resolution=path_length_resolution, up_axis=up_axis)
+
+    return SvDeformedByFieldSurface(sweep_surface, bend_field, 1.0)
 
