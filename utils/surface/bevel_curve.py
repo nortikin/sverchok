@@ -60,15 +60,21 @@ def rotate_curve(curve, angle, scale):
     control_points = np.stack((xs, ys, zs)).T
     return curve.copy(control_points = control_points)
 
-def bevel_curve(path, profile, taper, taper_samples=10, taper_refine=20, profile_samples=10):
+def nurbs_bevel_curve(path, profile, taper,
+        algorithm=SvBendAlongCurveField.HOUSEHOLDER,
+        scale_all=False, path_axis=2,
+        path_length_mode = 'T',
+        path_length_resolution = 50,
+        up_axis=None,
+        taper_samples=10, taper_refine=20, profile_samples=10):
     taper_t_min, taper_t_max = taper.get_u_bounds()
     profile_t_min, profile_t_max = profile.get_u_bounds()
     taper_start = taper.evaluate(taper_t_min)
     taper_end = taper.evaluate(taper_t_max)
-    z_min = taper_start[2]
-    z_max = taper_end[2]
+    z_min = taper_start[path_axis]
+    z_max = taper_end[path_axis]
 
-    field = SvBendAlongCurveField(path, SvBendAlongCurveField.HOUSEHOLDER, scale_all=False, axis=2, t_min=z_min, t_max=z_max, length_mode='L')
+    field = SvBendAlongCurveField(path, algorithm, scale_all=scale_all, axis=path_axis, t_min=z_min, t_max=z_max, length_mode=path_length_mode, resolution=path_length_resolution, up_axis=up_axis)
 
     taper_ts = np.linspace(taper_t_min, taper_t_max, num=taper_samples)
     taper_pts = taper.evaluate_array(taper_ts)

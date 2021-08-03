@@ -944,12 +944,17 @@ class SvSurfaceLerpSurface(SvSurface):
 class SvTaperSweepSurface(SvSurface):
     __description__ = "Taper & Sweep"
 
-    def __init__(self, profile, taper, point, direction):
+    UNIT = 'UNIT'
+    PROFILE = 'PROFILE'
+    TAPER = 'TAPER'
+
+    def __init__(self, profile, taper, point, direction, scale_base=UNIT):
         self.profile = profile
         self.taper = taper
         self.direction = direction
         self.point = point
         self.line = LineEquation.from_direction_and_point(direction, point)
+        self.scale_base = scale_base
         self.normal_delta = 0.001
 
     def get_u_min(self):
@@ -964,10 +969,24 @@ class SvTaperSweepSurface(SvSurface):
     def get_v_max(self):
         return self.taper.get_u_bounds()[1]
 
+    def _get_profile_scale(self):
+        profile_u_min = self.profile.get_u_bounds()[0]
+        profile_start = self.profile.evaluate(profile_u_min)
+        profile_start_projection = self.line.projection_of_point(profile_start)
+        dp = np.linalg.norm(profile_start - profile_start_projection)
+        return dp
+
     def evaluate(self, u, v):
         taper_point = self.taper.evaluate(v)
         taper_projection = np.array( self.line.projection_of_point(taper_point) )
         scale = np.linalg.norm(taper_projection - taper_point)
+        if self.scale_base == SvTaperSweepSurface.TAPER:
+            dp = self._get_profile_scale()
+            scale /= dp
+        elif self.scale_base == SvTaperSweepSurface.PROFILE:
+            scale0 = scale[0]
+            scale /= scale0
+
         profile_point = self.profile.evaluate(u)
         return profile_point * scale + taper_projection
 
@@ -975,6 +994,15 @@ class SvTaperSweepSurface(SvSurface):
         taper_points = self.taper.evaluate_array(vs)
         taper_projections = self.line.projection_of_points(taper_points)
         scale = np.linalg.norm(taper_projections - taper_points, axis=1, keepdims=True)
+
+        if self.scale_base == SvTaperSweepSurface.TAPER:
+            dp = self._get_profile_scale()
+            print("Dp", dp)
+            scale /= dp
+        elif self.scale_base == SvTaperSweepSurface.PROFILE:
+            scale0 = scale[0]
+            scale /= scale0
+
         profile_points = self.profile.evaluate_array(us)
         return profile_points * scale + taper_projections
 

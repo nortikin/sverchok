@@ -20,6 +20,21 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_TAPER_SWEEP'
 
+    scale_options = [
+            ('UNIT', "Unit", "Unit", 0),
+            ('PROFILE', "Profile", "Profile", 1),
+            ('TAPER', "Taper", "Taper", 2)
+        ]
+    
+    scale_mode : EnumProperty(
+            name = "Scale",
+            items = scale_options,
+            default = 'UNIT',
+            update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'scale_mode')
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Profile")
         self.inputs.new('SvCurveSocket', "Taper")
@@ -51,7 +66,8 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for profiles, tapers, points, directions in zip_long_repeat(profile_s, taper_s, point_s, direction_s):
             for profile, taper, point, direction in zip_long_repeat(profiles, tapers, points, directions):
-                surface = SvTaperSweepSurface(profile, taper, np.array(point), np.array(direction))
+                surface = SvTaperSweepSurface(profile, taper, np.array(point), np.array(direction),
+                                scale_base = self.scale_mode)
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)
