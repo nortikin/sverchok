@@ -102,8 +102,8 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
     select_mode_items = [(n.upper(), n, '', ic, i) for i, (n, ic) in enumerate(zip(
         ('By_Vertex', 'By_Edge', 'By_Face'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
 
-    mask_mode = bpy.props.EnumProperty(items=select_mode_items, update=updateNode)
-    split_type = bpy.props.EnumProperty(items=[(i.upper(), i, '') for i in ['verts', 'edges']], update=updateNode)
+    mask_mode: bpy.props.EnumProperty(items=select_mode_items, update=updateNode)
+    split_type: bpy.props.EnumProperty(items=[(i.upper(), i, '') for i in ['verts', 'edges']], update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'split_type', expand=True)
