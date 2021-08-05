@@ -17,7 +17,7 @@ from mathutils import Matrix
 
 from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, bmesh_from_edit_mesh
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -68,7 +68,11 @@ class SvObjectData(bpy.types.PropertyGroup):
                 except RuntimeError:
                     pass
             else:
-                self.collection.objects.unlink(self.obj)
+                try:
+                    self.collection.objects.unlink(self.obj)
+                except RuntimeError:
+                    # collection was already unliked by user or another node
+                    pass
 
             self.collection = collection
 
@@ -187,16 +191,36 @@ class SvMeshData(bpy.types.PropertyGroup):
         if not self.mesh:
             # new mesh should be created
             self.mesh = bpy.data.meshes.new(name=mesh_name)
+
         if not make_changes_test or self.is_topology_changed(verts, edges, faces):
-            with empty_bmesh(False) as bm:
-                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
-                if matrix:
-                    bm.transform(matrix)
-                bm.to_mesh(self.mesh)
+
+            if self.mesh.is_editmode:
+                with bmesh_from_edit_mesh(self.mesh) as bm:
+                    bm.clear()
+                    add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                    bm.normal_update()
+                    if matrix:
+                        bm.transform(matrix)
+            else:
+                with empty_bmesh(False) as bm:
+                    add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                    if matrix:
+                        bm.transform(matrix)
+                    bm.to_mesh(self.mesh)
+
         else:
-            self.update_vertices(verts)
-            if matrix:
-                self.mesh.transform(matrix)
+
+            if self.mesh.is_editmode:
+                with bmesh_from_edit_mesh(self.mesh) as bm:
+                    for bv, v in zip(bm.verts, verts):
+                        bv.co = v
+                    if matrix:
+                        bm.transform(matrix)
+            else:
+                self.update_vertices(verts)
+                if matrix:
+                    self.mesh.transform(matrix)
+
         self.mesh.update()
 
     def set_smooth(self, is_smooth_mesh):
@@ -370,10 +394,9 @@ class SvViewerNode(BlenderObjects):
         Regenerate object names, and clean data
         Use super().sv_copy(other) to override this method
         """
-        with self.sv_throttle_tree_update():
-            self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
-            # object and mesh lists should be clear other wise two nodes would have links to the same objects
-            self.object_data.clear()
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        # object and mesh lists should be clear other wise two nodes would have links to the same objects
+        self.object_data.clear()
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""

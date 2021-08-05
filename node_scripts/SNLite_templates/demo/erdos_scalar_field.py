@@ -12,7 +12,7 @@ import numpy as np
 
 from sverchok.utils.field.scalar import SvScalarField
 
-# You can implement some auxiliary funcitons
+# You can implement some auxiliary functions
 # to be used in your scalar field definition.
 def erdos(z, n):
     return abs(z**n - 1)**2 - 1

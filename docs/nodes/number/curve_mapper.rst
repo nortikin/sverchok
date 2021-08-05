@@ -30,6 +30,8 @@ This node has the following outputs:
   always lying in XOY plane along the OX axis. The domain of the curve is
   defined by **Min X** and **Max X** parameters, which are defined in the curve
   editor widget.
+* **Control Points**: Location over the XOY Plane of the control points of the widget.
+  It can be used as a 2D slider.
 
 Examples
 --------
@@ -40,9 +42,8 @@ Basic range remapping:
 
 Using the node to define the column profile:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Curve%20Mapper/curve_mapper_sverchok__blender_example_2.png 
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Curve%20Mapper/curve_mapper_sverchok__blender_example_2.png
 
 Example of the Curve output usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/80520701-4051d200-89a3-11ea-92fd-2f2f2004e4e7.png
-

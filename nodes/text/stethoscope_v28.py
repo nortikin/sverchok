@@ -145,7 +145,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Data')
         self.get_theme_colors_for_contrast()
-        self.get_and_set_gl_scale_info()
+        if hasattr(self.id_data, 'update_gl_scale_info'):  # node groups does not have the method
+            self.id_data.update_gl_scale_info()
 
     def sv_copy(self, node):
         # reset n_id on copy
@@ -180,11 +181,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'font_id')
 
     def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'stethoscope_view_scale': 1.0, 
-            'render_location_xy_multiplier': 1.0})
-        return props.stethoscope_view_scale, props.render_location_xy_multiplier
+        return get_params({
+            'stethoscope_view_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def process(self):
         inputs = self.inputs

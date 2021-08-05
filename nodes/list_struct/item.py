@@ -126,7 +126,7 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
             return None
 
     def get(self, data, level, indexes, func):
-        '''iterative fucntion to get down to the requested level'''
+        '''iterative function to get down to the requested level'''
         if level == 1:
             index_iter = repeat_last(indexes)
             return [self.get(obj, level-1, next(index_iter), func) for obj in data]

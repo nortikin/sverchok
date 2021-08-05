@@ -22,7 +22,7 @@ import bpy
 from bpy.props import StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, SvSetSocketAnyType, SvGetSocketAnyType
+from sverchok.data_structure import updateNode
 from math import cos, sin, pi, tan
 
 
@@ -98,9 +98,9 @@ class SvFormulaNode(bpy.types.Node, SverchCustomTreeNode):
                 lres.append(ltmp)
 
             r = self.inte(vecs, code_formula, lres)
-
             result.extend(r)
-            SvSetSocketAnyType(self, 'Result', result)
+
+            self.outputs['Result'].sv_set(result)
 
     def inte(self, l, formula, list_n, indx=0):
         if type(l) in [int, float]:

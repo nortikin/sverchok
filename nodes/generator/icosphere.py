@@ -18,14 +18,16 @@
 
 from math import pi, sqrt
 import bpy
+from bpy.props import IntProperty, FloatProperty, BoolVectorProperty
 import bmesh
-from bpy.props import IntProperty, FloatProperty, EnumProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_modes, list_match_func
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.data_structure import updateNode
+from sverchok.utils.sv_bmesh_utils import numpy_data_from_bmesh
 from sverchok.utils.math import from_cylindrical
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+
 
 def icosahedron_cylindrical(r):
 
@@ -78,7 +80,7 @@ def icosahedron(r):
     vertices = [from_cylindrical(rho, phi, z, 'radians') for rho, phi, z in vertices]
     return vertices, edges, faces
 
-class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     "IcoSphere primitive"
 
     bl_idname = 'SvIcosphereNode'
@@ -113,13 +115,18 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         name = "Radius",
         default=1.0, min=0.0,
         update=updateNode)
-        
-    list_match: EnumProperty(
-        name="List Match",
-        description="Behavior on different list lengths, object level",
-        items=list_match_modes, default="REPEAT",
-        update=updateNode)
-        
+
+    # list_match: EnumProperty(
+    #     name="List Match",
+    #     description="Behavior on different list lengths, object level",
+    #     items=list_match_modes, default="REPEAT",
+    #     update=updateNode)
+    out_np: BoolVectorProperty(
+        name="Output Numpy",
+        description="Output NumPy arrays slows this node but may improve performance of nodes it is connected to",
+        default=(False, False, False),
+        size=3, update=updateNode)
+
     def sv_init(self, context):
         self['subdivisions'] = 2
 
@@ -133,22 +140,23 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "subdivisions_max")
         layout.prop(self, "list_match")
+        layout.label(text="Output Numpy:")
+        r = layout.row(align=True)
+        for i in range(3):
+            r.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
 
-    def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
-            return
+    def pre_setup(self):
+        for s in self.inputs:
+            s.nesting_level = 1
+            s.pre_processing = 'ONE_ITEM'
 
-        subdivisions_s = self.inputs['Subdivisions'].sv_get()[0]
-        radius_s = self.inputs['Radius'].sv_get()[0]
-
+    def process_data(self, params):
         out_verts = []
         out_edges = []
         out_faces = []
 
-        objects = list_match_func[self.list_match]([subdivisions_s, radius_s])
 
-        for subdivisions, radius in zip(*objects):
+        for subdivisions, radius in zip(*params):
             if subdivisions == 0:
                 # In this case we just return the icosahedron
                 verts, edges, faces = icosahedron(radius)
@@ -161,19 +169,20 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
                 subdivisions = self.subdivisions_max
 
             bm = bmesh.new()
-            bmesh.ops.create_icosphere(bm,
-                    subdivisions = subdivisions,
-                    diameter = radius)
-            verts, edges, faces = pydata_from_bmesh(bm)
+            bmesh.ops.create_icosphere(
+                bm,
+                subdivisions=subdivisions,
+                diameter=radius)
+
+            verts, edges, faces, _ = numpy_data_from_bmesh(bm, self.out_np)
             bm.free()
 
             out_verts.append(verts)
             out_edges.append(edges)
             out_faces.append(faces)
 
-        self.outputs['Vertices'].sv_set(out_verts)
-        self.outputs['Edges'].sv_set(out_edges)
-        self.outputs['Faces'].sv_set(out_faces)
+        return out_verts, out_edges, out_faces
+
 
 def register():
     bpy.utils.register_class(SvIcosphereNode)

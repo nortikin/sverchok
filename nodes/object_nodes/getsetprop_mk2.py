@@ -43,18 +43,26 @@ def parse_to_path(p):
     ops are:
     name - global name to use
     attr - attribute to get using getattr(obj,attr)
-    key - key for accesing via obj[key]
+    key - key for accessing via obj[key]
     '''
 
     if isinstance(p, ast.Attribute):
-        return parse_to_path(p.value)+[("attr", p.attr)] 
+        return parse_to_path(p.value) + [("attr", p.attr)]
+
     elif isinstance(p, ast.Subscript):
+ 
         if isinstance(p.slice.value, ast.Num):
-            return  parse_to_path(p.value) + [("key", p.slice.value.n)]
+            return parse_to_path(p.value) + [("key", p.slice.value.n)]
+        elif isinstance(p.slice.value, (float, int)):
+            return parse_to_path(p.value) + [("key", p.slice.value)]
         elif isinstance(p.slice.value, ast.Str):
             return parse_to_path(p.value) + [("key", p.slice.value.s)]
+        elif isinstance(p.slice.value, str):
+            return parse_to_path(p.value) + [("key", p.slice.value)]
+
     elif isinstance(p, ast.Name):
         return [("name", p.id)]
+
     else:
         raise NameError
 
@@ -71,16 +79,25 @@ def get_object(path):
             curr_object = curr_object[value]
     return curr_object
 
-def apply_alias(eval_str):
+def apply_alias(eval_str, nodetree=None):
     '''
     - apply standard aliases
     - will raise error if it isn't an bpy path
     '''
     if not eval_str.startswith("bpy."):
+
+        # special case for the nodes alias, end early
+        if eval_str.startswith("nodes") and nodetree:
+            string_path_to_current_tree = f'bpy.data.node_groups["{nodetree.name}"].nodes'
+            eval_str = eval_str.replace("nodes", string_path_to_current_tree, 1)
+            return eval_str
+
+        # all other aliases
         for alias, expanded in aliases.items():
             if eval_str.startswith(alias):
                 eval_str = eval_str.replace(alias, expanded, 1)
                 break
+
         if not eval_str.startswith("bpy."):
             raise NameError
     return eval_str
@@ -141,7 +158,9 @@ aliases = {
     "mats": "bpy.data.materials",
     "M": "bpy.data.materials",
     "meshes": "bpy.data.meshes",
-    "texts": "bpy.data.texts"
+    "texts": "bpy.data.texts",
+    "ng": "bpy.data.node_groups"
+    # "nodes": None , this is directly handled in the apply_alias function
 }
 
 types = {
@@ -159,7 +178,7 @@ class SvPropNodeMixin():
 
     @property
     def obj(self):
-        eval_str = apply_alias(self.prop_name)
+        eval_str = apply_alias(self.prop_name, nodetree=self.id_data)
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         return get_object(path)
@@ -173,8 +192,7 @@ class SvPropNodeMixin():
             return
 
         self.bad_prop = False
-        with self.sv_throttle_tree_update():
-            self.execute_inside_throttle()
+        self.execute_inside_throttle()
         updateNode(self, context)
     
     def type_assesment(self):
@@ -210,7 +228,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
-    def execute_inside_throttle(self):    
+    def execute_inside_throttle(self):  # the name of the method does not have any meaning now
         s_type = self.type_assesment()
 
         outputs = self.outputs
@@ -270,17 +288,18 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 
     def process(self):
 
+        if len(self.inputs) == 0:
+            return
+
         data = self.inputs[0].sv_get()
-        eval_str = apply_alias(self.prop_name)
+        eval_str = apply_alias(self.prop_name, nodetree=self.id_data)
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
 
-        #with self.sv_throttle_tree_update():
-            # changes here should not reflect back into the nodetree?
-
         try:
             if isinstance(obj, (int, float, bpy_prop_array)):
+
                 obj = get_object(path[:-1])
                 p_type, value = path[-1]
                 if p_type == "attr":

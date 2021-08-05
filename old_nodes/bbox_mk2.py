@@ -53,7 +53,7 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     min_list: BoolVectorProperty(
         name='Min', description="Show Minimum values sockets", size=3, update=update_sockets)
     max_list: BoolVectorProperty(
-        name='Max', description="Show Maximun values sockets", size=3, update=update_sockets)
+        name='Max', description="Show Maximum values sockets", size=3, update=update_sockets)
     size_list: BoolVectorProperty(
         name='Size', description="Show Size values sockets", size=3, update=update_sockets)
     implentation_modes = [

@@ -15,17 +15,16 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from colorsys import rgb_to_hls
-from itertools import repeat
+
 import bpy
-from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty
+from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, throttle_and_update_node
-from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
+from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.color_utils import color_channels
 from sverchok.utils.modules.texture_displace_utils import displace_funcs, meshes_texture_diplace
@@ -69,7 +68,6 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         ('Texture_Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
         ]
 
-    @throttle_and_update_node
     def change_mode(self, context):
         inputs = self.inputs
         if self.tex_coord_type == 'Texture Matrix':
@@ -88,10 +86,11 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if 'UV Coordinates' not in inputs:
                 inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvVerticesSocket', 'UV Coordinates')
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def change_direction_sockets(self, context):
         self.inputs['Custom Axis'].hide_safe = self.out_mode != 'Custom_Axis'
+        updateNode(self, context)
 
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,

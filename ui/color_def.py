@@ -23,11 +23,14 @@ from bpy.props import StringProperty
 from sverchok.menu import make_node_cats
 from sverchok.utils.logging import debug
 import sverchok
+from sverchok.utils.handle_blender_data import BlTrees
 
 colors_cache = {}
 
 themes = [("default_theme", "Default", "Default"),
-          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom")]
+          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
+          ("grey", "Grey", "Grey"),
+          ("darker", "Darker", "Darker")]
 
 
 default_theme = {
@@ -46,8 +49,25 @@ nipon_blossom = {
     "Generator": (0.92, 0.92, 0.92),
 }
 
+darker = {
+    "Viz": (0.05, 0.21, 0.61),
+    "Text": (0.15, 1.00, 0.86),
+    "Scene": (1.00, 0.29, 0.46),
+    "Layout": (0.29, 0.91, 0.48),
+    "Generator": (0.92, 0.32, 0.18),
+}
 
-#  self referes to the preferences, SverchokPreferences
+grey = {
+    "Viz": (0.0, 0.0, 0.0),
+    "Text": (0.3, 0.3, 0.3),
+    "Scene": (0.50, 0.50, 0.50),
+    "Layout": (0.7, 0.7, 0.7),
+    "Generator": (0.1, 0.1, 0.1),
+}
+
+
+
+#  self refers to the preferences, SverchokPreferences
 
 def color_callback(self, context):
     theme = self.sv_theme
@@ -71,7 +91,6 @@ def color_callback(self, context):
 def sv_colors_definition():
     addon_name = sverchok.__name__
     addon = bpy.context.preferences.addons.get(addon_name)
-    debug("got addon")
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
@@ -106,23 +125,19 @@ def get_color(bl_id):
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 
-def sverchok_trees():
-    for ng in bpy.data.node_groups:
-        if ng.bl_idname == "SverchCustomTreeType":
-            yield ng
 
 def apply_theme(ng=None):
     """
     Apply theme colors
     """
-    global update_cache
-    global partial_update_cache
-    if not ng:
-        for ng in sverchok_trees():
+    if ng is None:
+        for ng in BlTrees().sv_trees:
             apply_theme(ng)
     else:
-        for n in filter(lambda n: hasattr(n, "set_color"), ng.nodes):
-            n.set_color()
+        for node in ng.nodes:
+            if node.sv_default_color:
+                node.use_custom_color = True
+                node.color = node.sv_default_color
 
 
 class SverchokApplyTheme(bpy.types.Operator):

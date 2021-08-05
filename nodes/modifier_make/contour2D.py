@@ -27,8 +27,7 @@ from sverchok.data_structure import (match_long_repeat, updateNode, match_long_c
 from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
-
+from sverchok.utils.intersect_edges import (remove_doubles_from_edgenet, intersect_edges_2d)
 mode_items = [
     ("Constant", "Constant", "Many contours on many distances", 0),
     ("Weighted", "Weighted", "One distance per each vertex  ", 1)]
@@ -42,27 +41,25 @@ intersec_mode_items = [
     ("Poligonal", "Poligonal", "Intersecction dependent from num. of vertices (Faster)", 1)]
 
 
-def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t):
+def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, poly_ang_cos_list, mask_t):
     d = 0
     min_dist = 2.0e-5
-    for j in range(modulo):
-        rad = or_radius[j]
+    for rad, vo, polig_ang, polig_ang_cos, v_net in zip(or_radius, or_verts, poli_ang_list, poly_ang_cos_list, net):
         if rad < min_dist:
             continue
-        vo = or_verts[j]
+
         vfx = v[0]-vo[0]
         vfy = v[1]-vo[1]
-        # dist_to_point = Vector((vfx, vfy)).length
+
         dist_to_point = length_v2((vfx, vfy))
         if dist_to_point > rad:
             continue
 
-        polig_ang = poli_ang_list[j]
-        offset = net[j][1][0]
-        if len(net[j][0]) == 3:
-            offset += net[j][0][0] - net[j][0][1]
+        offset = v_net[1][0]
+        if len(v_net[0]) == 3:
+            offset += v_net[0][0] - v_net[0][1]
         v_vo_ang = (normal_angle(atan2(vfy, vfx) - offset) % (2 * polig_ang)) - polig_ang
-        rad_r = rad * cos(polig_ang)
+        rad_r = rad * polig_ang_cos
         dist_lim = (rad_r / cos(v_vo_ang)) * (1 - mask_t)
 
         if dist_to_point < dist_lim:
@@ -70,30 +67,33 @@ def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask
             break
     return d
 
+def out_of_bbox(v, bbox):
+    return v[0] > bbox[0][0] or v[0] < bbox[0][1] or v[1] > bbox[1][0] or v[1] < bbox[1][1]
 
-def check_dist_to_edges(v, or_verts, or_radius, edges, sides_space):
+def check_dist_to_edges(v, or_verts, or_radius, edges, sides_space, sides_space_bbox):
     d = 0
     min_dist = 2.0e-5
-    for ed, s in zip(edges, sides_space):
+    for ed, s, sb in zip(edges, sides_space, sides_space_bbox):
         v1 = or_verts[ed[0]]
         v2 = or_verts[ed[1]]
         r1 = or_radius[ed[0]]
         r2 = or_radius[ed[1]]
         if v1 == v and r1 < min_dist or v2 == v and r2 < min_dist or r1 < min_dist and r2 < min_dist:
             continue
+        if out_of_bbox(v, sb):
+            continue
 
-        in_tirangle_a = pt_in_triangle(v, s[2], s[0], s[1])
-        in_tirangle_b = pt_in_triangle(v, s[2], s[1], s[3])
-
-        if in_tirangle_a or in_tirangle_b:
+        if pt_in_triangle(v, s[2], s[0], s[1]) or pt_in_triangle(v, s[2], s[1], s[3]):
             d = 1
             break
+
     return d
 
 
 def sides_space_limits(or_verts, or_radius, net, edges, mask_t, modulo):
     net_offset_count = [0 for i in range(modulo)]
     sides_space = []
+    sides_space_bbox = []
     for ed in edges:
         v1 = or_verts[ed[0]]
         v2 = or_verts[ed[1]]
@@ -111,8 +111,10 @@ def sides_space_limits(or_verts, or_radius, net, edges, mask_t, modulo):
         vect_lim1b = [v1[0] + dist_lim1 * cos(beta[2 + net_offset]), v1[1] + dist_lim1 * sin(beta[2 + net_offset]), v1[2]]
         vect_lim2a = [v2[0] + dist_lim2 * cos(beta[1 + net_offset]), v2[1] + dist_lim2 * sin(beta[1 + net_offset]), v2[2]]
         vect_lim2b = [v2[0] + dist_lim2 * cos(beta[2 + net_offset]), v2[1] + dist_lim2 * sin(beta[2 + net_offset]), v2[2]]
-        sides_space.append([vect_lim1a, vect_lim1b, vect_lim2a, vect_lim2b])
-    return sides_space
+        vs = [vect_lim1a, vect_lim1b, vect_lim2a, vect_lim2b]
+        sides_space.append(vs)
+        sides_space_bbox.append(list(zip(map(max, *vs), map(min, *vs))))
+    return sides_space, sides_space_bbox
 
 
 def mask_by_distance(verts, parameters, modulo, edges, mask_t):
@@ -122,14 +124,14 @@ def mask_by_distance(verts, parameters, modulo, edges, mask_t):
     net = parameters[3]
     mask = []
 
-    sides_space = sides_space_limits(or_verts, or_radius, net, edges, mask_t, modulo)
+    sides_space, sides_space_bbox = sides_space_limits(or_verts, or_radius, net, edges, mask_t, modulo)
     poli_ang_list = [pi/v for v in or_vert_num]
-
+    poli_ang_cos_list = [cos(ang) for ang in poli_ang_list]
     for i in range(len(verts)):
         v = verts[i]
-        d = check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t)
+        d = check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, poli_ang_cos_list, mask_t)
         if d == 0:
-            d = check_dist_to_edges(v, or_verts, or_radius, edges, sides_space)
+            d = check_dist_to_edges(v, or_verts, or_radius, edges, sides_space, sides_space_bbox)
 
         mask.append(0 if d > 0 else 1)
 

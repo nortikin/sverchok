@@ -17,14 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
-from mathutils import Vector, Matrix
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
+from mathutils import Vector
 from mathutils.kdtree import KDTree
-import math
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
-from sverchok.utils.math import inverse, inverse_square, inverse_cubic, inverse_exp, gauss
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
+
 
 def get_avg_vector(vectors):
     result = Vector((0,0,0))
@@ -53,10 +52,10 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             ("gauss", "Gauss - Exp(-R^2/2)", "", 4)
         ]
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
+        updateNode(self, context)
 
     attractor_type: EnumProperty(
         name="Attractor type", items=types, default='Point', update=update_type)

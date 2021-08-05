@@ -37,8 +37,13 @@ def map_range(params, constant, matching_f):
             old_max = np.max(val)
         old_difference = old_max - old_min
         res = new_min + (val - old_min) * ((new_max - new_min)/(old_difference))
-        nan_mask = old_difference == 0
-        res[nan_mask] = old_min[nan_mask]
+
+        if res.shape == old_min.shape:
+            nan_mask = old_difference == 0
+            res[nan_mask] = old_min[nan_mask]
+        else:
+            res[old_difference == 0] = old_min
+
         if clamp and not auto_limits:
             mask = new_min < new_max
             invert_mask = np.invert(mask)

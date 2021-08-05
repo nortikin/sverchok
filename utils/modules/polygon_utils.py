@@ -5,13 +5,15 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import numpy as np
 from mathutils import Vector
 from mathutils.geometry import area_tri as area
 from mathutils.geometry import tessellate_polygon as tessellate
+from sverchok.data_structure import has_element
+from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import vectors_center_axis_to_matrix
-from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_idx
 from sverchok.nodes.analyzer.mesh_filter import Faces
 
 
@@ -48,24 +50,23 @@ def areas_from_polygons(verts, polygons, sum_faces=False):
     return areas
 
 
-def pols_perimeters(verts, polygons, sum_perimeters=False):
+def pols_perimeters(verts, polygons, sum_perimeters=False, output_numpy=False):
     '''
     returns pols perimeter as [float, float,...]
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     sum_perimeters if True it will return the sum of the perimenters as [float]
     '''
-    perimeters = []
-    concat_perimeters = perimeters.append
+    vals = np_process_polygons(verts, polygons, func=np_faces_perimeters, dims=1, output_numpy=True)
 
-    for polygon in polygons:
-        perimeter = 0
-        for v_id, v_id2 in zip(polygon, polygon[1:]+[polygon[0]]):
-            perimeter += (Vector(verts[v_id]) - Vector(verts[v_id2])).magnitude
-        concat_perimeters(perimeter)
     if sum_perimeters:
-        perimeters = [sum(perimeters)]
-    return perimeters
+        if output_numpy:
+            return [np.sum(vals)]
+
+        return [np.sum(vals).tolist()]
+    if output_numpy:
+        return vals
+    return vals.tolist()
 
 def pols_vertices(vertices, faces):
     '''
@@ -144,6 +145,39 @@ def pols_adjacent(pols):
 
     return vals
 
+def pols_adjacent_idx(pols):
+    '''
+    returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    '''
+    vals = []
+    edges = []
+    pols_eds = []
+    for pol in pols:
+        pol_edgs = []
+        for edge in zip(pol, pol[1:] + [pol[0]]):
+            e_s = tuple(sorted(edge))
+            pol_edgs.append(e_s)
+            edges.append(e_s)
+        pols_eds.append(pol_edgs)
+    edges = list(set(edges))
+
+    ad_faces = [[] for e in edges]
+    for pol_idx, eds in zip(range(len(pols)), pols_eds):
+        for edge in eds:
+            idx = edges.index(edge)
+            ad_faces[idx] += [pol_idx]
+
+    for pol_idx, edgs in zip(range(len(pols)), pols_eds):
+        col_pol = []
+        for edge in edgs:
+            idx = edges.index(edge)
+            col_pol.extend(ad_faces[idx])
+            col_pol.remove(pol_idx)
+        vals.append(col_pol)
+
+    return vals
+
 def pols_adjacent_num(pols):
     '''
     returns the number polygons that share a vertex with each polygon [int, int,..]]
@@ -169,6 +203,24 @@ def pols_neighbor(verts, pols):
         vals.append(pol_adj)
 
     return vals
+def pols_neighbor_idx(verts, pols):
+    '''
+    returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    '''
+    v_adj = adjacent_edg_pol_idx(verts, pols)
+    vals = []
+    for idx, pol in enumerate(pols):
+        pol_adj = []
+        for v_id in pol:
+            for related_pol in v_adj[v_id]:
+                if not related_pol in pol_adj:
+                    pol_adj.append(related_pol)
+
+        pol_adj.remove(idx)
+        vals.append(pol_adj)
+
+    return vals
 
 def pols_neighbor_num(verts, pols):
     '''
@@ -177,27 +229,38 @@ def pols_neighbor_num(verts, pols):
     '''
     return [len(p) for p in pols_neighbor(verts, pols)]
 
-def pols_normals(vertices, faces):
+def pols_normals(vertices, faces, output_numpy):
     '''
     Returns Faces normals as [vector, vector,...]
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     '''
-    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
-    vals = [tuple(face.normal) for face in bm.faces]
-    bm.free()
+    vals = np_process_polygons(vertices, faces, func=np_faces_normals, output_numpy=output_numpy)
     return vals
 
-def pols_absolute_normals(vertices, faces):
+def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides > 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals
+
+def np_faces_absolute_normals(v_pols):
+    return np_center_median(v_pols) + np_faces_normals(v_pols)
+
+def pols_absolute_normals(vertices, faces, output_numpy):
     '''
     Returns Faces center + faces normals as [vector, vector,...]
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     '''
-    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
-    vals = [tuple(face.normal + face.calc_center_median()) for face in bm.faces]
-    bm.free()
-    return vals
+    return np_process_polygons(vertices, faces, func=np_faces_absolute_normals, output_numpy=output_numpy)
+
 
 def pols_shell_factor(vertices, faces):
     '''
@@ -217,7 +280,84 @@ def pols_shell_factor(vertices, faces):
 
     return vals
 
-def pols_center(vertices, faces, origin):
+def np_faces_perimeters(v_pols):
+
+    return np.sum(edges_lengths(v_pols), axis=1)
+
+def vertex_weight_factor(v_pols):
+    ed_lengths = edges_lengths(v_pols)
+    perimeters = np.sum(ed_lengths, axis=1)
+    edges_prop = ed_lengths/perimeters[:, np.newaxis]
+    return (edges_prop + np.roll(edges_prop, 1, axis=1))/2
+
+def np_center_median(v_pols):
+    return np.sum(v_pols, axis=1) / v_pols.shape[1]
+
+def np_center_bbox(v_pols):
+
+    return (np.amin(v_pols, axis=1) + np.amax(v_pols, axis=1))/2
+
+def np_center_weighted(v_pols):
+
+    v_factor = vertex_weight_factor(v_pols)
+
+    return np.sum(v_pols * v_factor[:, :, np.newaxis], axis=1)
+
+def edges_lengths(v_pols):
+    return np.linalg.norm(v_pols-np.roll(v_pols, 1, axis=1), axis=2)
+
+def np_tangent_longest_edge(v_pols):
+    edges_dir = v_pols-np.roll(v_pols, 1, axis=1)
+    ed_length = np.linalg.norm(edges_dir, axis=2)
+    ed_idx = np.argmax(ed_length, axis=1)
+
+    return np_normalize_vectors(edges_dir[np.arange(len(v_pols)), ed_idx, :])
+
+def np_tangent_center_orig(v_pols):
+    return np_normalize_vectors(np_center_median(v_pols) - v_pols[:, 0, :])
+
+
+
+def np_process_polygons(verts, faces, func=None, dims=3, output_numpy=False):
+    if not func:
+        return
+    if not (has_element(verts) and has_element(faces)):
+        return
+    if isinstance(verts, np.ndarray):
+        np_verts = verts
+    else:
+        np_verts = np.array(verts)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        if dims == 1:
+            vals = np.zeros(np_faces.shape[0], dtype=float)
+        else:
+            vals = np.zeros((np_faces.shape[0], dims), dtype=float)
+        for p in pol_types:
+            mask = lens == p
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            if dims == 1:
+                vals[mask] = func(v_pols)
+            else:
+                vals[mask, :] = func(v_pols)
+    else:
+        v_pols = np_verts[np_faces] #num pols, num sides
+        vals = func(v_pols)
+
+    if output_numpy:
+        return vals
+    return vals.tolist()
+
+def pols_center(vertices, faces, origin, output_numpy):
     '''
     Cemter of faces
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -226,9 +366,16 @@ def pols_center(vertices, faces, origin):
     origin: String  that can be any key of pols_origin_modes_dict
     returns vals as [float, float,...]
     '''
-    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
-    vals = pols_origin_modes_dict[origin][1](bm.faces)
-    bm.free()
+
+    if origin == 'Median Center':
+        centers_func = np_center_median
+    elif origin == 'Bounds Center':
+        centers_func = np_center_bbox
+    else:
+        centers_func = np_center_weighted
+
+    vals = np_process_polygons(vertices, faces, func=centers_func, output_numpy=output_numpy)
+
     return vals
 
 def pols_center_bounds(bm_faces):
@@ -265,10 +412,19 @@ def pols_tangent(vertices, faces, direction):
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     direction: String  that can be  any key of tangent_modes_dict
     '''
-    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
-    vals = tangent_modes_dict[direction][1](bm.faces)
-    bm.free()
-    return vals
+    if direction == 'Edge':
+        return np_process_polygons(vertices, faces,
+                                   func=np_tangent_longest_edge,
+                                   output_numpy=False)
+    if direction == 'Center - Origin':
+        return np_process_polygons(vertices, faces,
+                                   func=np_tangent_center_orig,
+                                   output_numpy=False)
+    else:
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+        vals = tangent_modes_dict[direction][1](bm.faces)
+        bm.free()
+        return vals
 
 def pols_tangent_edge(bm_faces):
     return [tuple(bm_face.calc_tangent_edge()) for bm_face in bm_faces]
@@ -315,7 +471,7 @@ def pols_inverted(faces):
     vals = [list(reversed(f)) for f in faces]
     return vals
 
-def pols_matrix(vertices, faces, orientation):
+def pols_matrix(vertices, faces, origin, direc):
     '''
     Matrix aligned with faces
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -325,7 +481,7 @@ def pols_matrix(vertices, faces, orientation):
     direction: String  that can be  any key of tangent_modes_dict
     outputs each polygon matrix [matrix, matrix, matrix]
     '''
-    origin, direc = orientation
+
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     normals = [Vector(face.normal) for face in bm.faces]
     centers = pols_origin_modes_dict[origin][1](bm.faces)
@@ -354,13 +510,13 @@ pols_origin_modes_dict = {
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 faces_modes_dict = {
     'Geometry':           (0,  'vp', '',   'u', pols_vertices,         'vs',  'Vertices, Faces', "Geometry of each face. (explode)"),
-    'Center':             (10, 'vp', 'c',  '',  pols_center,           'v',   'Center', 'Center faces'),
-    'Normal':             (20, 'vp', '',   '',  pols_normals,          'v',   'Normal', 'Normal of faces'),
-    'Normal Absolute':    (21, 'vp', '',   '',  pols_absolute_normals, 'v',   'Normal_Abs', 'Median Center + Normal'),
+    'Center':             (10, 'vp', 'ca', '',  pols_center,           'v',   'Center', 'Center faces'),
+    'Normal':             (20, 'vp', 'a',  '',  pols_normals,          'v',   'Normal', 'Normal of faces'),
+    'Normal Absolute':    (21, 'vp', 'a',  '',  pols_absolute_normals, 'v',   'Normal_Abs', 'Median Center + Normal'),
     'Tangent':            (30, 'vp', 't',  '',  pols_tangent,          'v',   'Tangent', 'Face tangent.'),
     'Matrix':             (40, 'vp', 'qt', 'u', pols_matrix,           'm',   'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
     'Area':               (50, 'vp', 's',  '',  areas_from_polygons,   's',   'Area', "Area of faces"),
-    'Perimeter':          (51, 'vp', 's',  '',  pols_perimeters,       's',   'Perimeter', 'Perimeter of faces'),
+    'Perimeter':          (51, 'vp', 'sa', '',  pols_perimeters,       's',   'Perimeter', 'Perimeter of faces'),
     'Sides Number':       (52, 'p',  's',  '',  pols_sides,            's',   'Sides', "Number of sides of faces"),
     'Adjacent Faces Num': (53, 'p',  '',   '',  pols_adjacent_num,     's',   'Number', "Number of Faces that share a edge with face"),
     'Neighbor Faces Num': (54, 'vp', '',   '',  pols_neighbor_num,     's',   'Number', "Number of Faces that share a vertex with face"),
@@ -369,5 +525,7 @@ faces_modes_dict = {
     'Edges':              (61, 'p',  '',   'u', pols_edges,            's',   'Edges', 'Face Edges'),
     'Adjacent Faces':     (62, 'p',  '',   'u', pols_adjacent,         's',   'Faces', 'Faces that share a edge with face'),
     'Neighbor Faces':     (63, 'vp', '',   'u', pols_neighbor,         's',   'Faces', 'Faces that share a vertex with face'),
+    'Adjacent Faces Idx': (64, 'p',  '',   'u', pols_adjacent_idx,     's',   'Faces Idx', 'Index of faces that share a edge with face'),
+    'Neighbor Faces Idx': (65, 'vp', '',   'u', pols_neighbor_idx,     's',   'Faces Idx', 'Index of faces that share a vertex with face'),
     'Is Boundary':        (70, 'vp', '',   '',  pols_is_boundary,      'sss', 'Mask, Boundary, Interior', 'Is the face boundary'),
     }

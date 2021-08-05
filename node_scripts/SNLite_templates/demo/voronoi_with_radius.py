@@ -66,10 +66,10 @@ def sort_neib(current_v, neibs, all_v):
     return neibs, angles
 
 def get_point_by_angle(vector1, vector2, angle, len_new_v, mode='left and right'):
-    #return cords of points in triangle with nown two sides and one angle
+    #return cords of points in triangle with known two sides and one angle
     #vector1 is base point, vector2 means only direction
     #angle is measured in vector1 node
-    #len_new_v is distanse between vector1 and retrun point
+    #len_new_v is distance between vector1 and return point
     mat_left  = Matrix.Rotation(angle,2,'X') #hope it left turn
     mat_right = Matrix.Rotation(angle * -1,2,'X')
     v = vector1 - vector2
@@ -87,13 +87,13 @@ def get_point_by_angle(vector1, vector2, angle, len_new_v, mode='left and right'
         return new_v_right
     
 def get_distance(vector1, vector2):
-    #retrun distance between two points
+    #return distance between two points
     return (vector1 - vector2).length
 
 def get_chord(height,radius,center_v,direction_chord_v):
-    #return cords of chord with nown radius and height of chord
+    #return cords of chord with known radius and height of chord
     #center is vector of center of circle, direction is direction of normal to chord
-    # chord dosen't exist for given parameters so return 0
+    # chord doesn't exist for given parameters so return 0
     if height >= radius:
         return 0
     else:
@@ -103,7 +103,7 @@ def get_chord(height,radius,center_v,direction_chord_v):
         return points, angle
     
 def is_chord_intersect(angle_ch1, angle_ch2, angle_both):
-    #retrun True or False
+    #return True or False
     #angle_ch1 and ch2 is half angle of visibility chord
     #angle_both is angle between normals of chords
     return True if angle_ch1 + angle_ch2 > angle_both else False
@@ -114,14 +114,14 @@ def get_len_arc(radius,angle):
 
 def get_arc(start_v, end_v, center_v, resolution, mode='clockwise'):
     #return points of arc by two points and center of circle
-    #resolution determines distanse between points of arc
+    #resolution determines distance between points of arc
     start_v, end_v = start_v - center_v, end_v - center_v
     start_angle = calc_angle(Vector((0,1)), start_v)
     #angle between start and end vectors
     angle = calc_angle(start_v, end_v)
     radius = get_distance(start_v, Vector((0,0)))
     len_arc = get_len_arc(radius, angle)
-    count = len_arc / resolution #this place can be calculate once for current radius!!!
+    count = len_arc / resolution #this place can be calculated once for current radius!!!
     count = count if count > 3 else 3
     end_angle = start_angle + angle if mode == 'clockwise' else start_angle + angle - TWO_PI
     steps_angle = list(np.linspace(start_angle,end_angle,count))
@@ -307,7 +307,7 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
                 dict['intersect_chords'].append(None)
                 dict['is_intersect'].append([None,None])
  
-    #generation new geometry
+    #generating new geometry
     count_v = 0
     for i,dict in enumerate(verts_data):
         poly = []
@@ -322,7 +322,7 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
             continue
     
         len_neibs = len(dict['neibs'])
-        #We chould start from chord wich have the list hight chord
+        #We could start from chord which has the list height chord
         min_hight = min(dict['height_chords'])
         i_min_chord = dict['height_chords'].index(min_hight)
         iterator = list(range(len_neibs))[i_min_chord:] + list(range(len_neibs))[:i_min_chord]
@@ -338,7 +338,7 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
                 vis_angle_cur = dict['vis_angles'][i_cur]
                 angle_cur = dict['ang_neibs'][i_cur]
             
-                #Chowsing next chord
+                #Choosing next chord
                 for i_next in (iterator[cycle_item(i_iter + 1, len_neibs):] + 
                                iterator[:cycle_item(i_iter + 1, len_neibs)]):
                     chord_next = dict['intersect_chords'][i_next]
@@ -354,7 +354,7 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
                     if edges_data[tuple(edg_next)]['hiden_chord']:
                         continue
                     
-                    #Chercking is next chord in shadow of the previous
+                    #Checking is next chord in shadow of the previous
                     if (dict['height_chords'][i_next] > dict['height_chords'][i_cur] or
                         dict['height_chords'][i_next] > dict['height_chords'][i_next2]):
                 
@@ -368,7 +368,7 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
                             edges_data[tuple(edg_next)]['hiden_chord'] = True
                             continue
                 
-                    #Cherching is next chord in shadow of the tvice next chord
+                    #Checking is next chord in shadow of the tvice next chord
                     if dict['height_chords'][i_next] > dict['height_chords'][i_next2]:
                 
                         edg_next2 = check_key([i,dict['sorted_neibs'][i_next2]],edges_data)
@@ -445,7 +445,7 @@ data = verts_in, radius, resolution
 data = match_long_repeat(data)
 
 for v_obj,rad,res in zip(*data):
-    #protection zero deviding
+    #protection zero dividing
     res = res if res > 0.02 else 0.02
 
     verts, polys = get_voronoi_with_radius(v_obj,rad,res)

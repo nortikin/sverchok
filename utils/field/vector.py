@@ -658,8 +658,8 @@ class SvRotationVectorField(SvVectorField):
         direction2 = np.dot(direction, direction)
         points = np.stack((xs, ys, zs)).T
         to_center = self.center[np.newaxis, :] - points
-        proyection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
-        vectors = np.cross(to_center - proyection, direction)
+        projection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
+        vectors = np.cross(to_center - projection, direction)
 
         if self.falloff is not None:
             norms = np.linalg.norm(vectors, axis=1, keepdims=True)
@@ -969,13 +969,14 @@ class SvBendAlongCurveField(SvVectorField):
         return R[0], R[1], R[2]
 
 class SvBendAlongSurfaceField(SvVectorField):
-    def __init__(self, surface, axis, autoscale=False, flip=False):
+    def __init__(self, surface, axis, autoscale=False, flip=False, only_2D=False):
         self.surface = surface
         self.orient_axis = axis
         self.autoscale = autoscale
         self.flip = flip
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
+        self.only_2D = only_2D
         self.__description__ = "Bend along {}".format(surface)
 
     def get_other_axes(self):
@@ -1027,6 +1028,9 @@ class SvBendAlongSurfaceField(SvVectorField):
                 scale_z = 1.0
         if self.flip:
             scale_z = - scale_z
+
+        if self.only_2D:
+            return self.surface.evaluate_array(us, vs)
 
         surf_vertices = self.surface.evaluate_array(us, vs)
         spline_normals = self.surface.normal_array(us, vs)

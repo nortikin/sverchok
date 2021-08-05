@@ -2,13 +2,10 @@
 import json
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
+from bpy.props import EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node
-from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvSurface
+from sverchok.data_structure import updateNode
 from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface, SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -79,10 +76,10 @@ else:
             ('SURFACE', "Surfaces", "Export set of surfaces", 1)
         ]
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Curves'].hide_safe = self.mode != 'CURVE'
             self.inputs['Surfaces'].hide_safe = self.mode != 'SURFACE'
+            updateNode(self, context)
 
         mode : EnumProperty(
                 name = "Export",

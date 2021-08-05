@@ -242,7 +242,7 @@ class Debugger:
         cls.init_dcel_classes()
         empty_mesh = [[[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]]]
         if not cls.half_edges:
-            print("DCEL DEBUGER: You should record your half edges into the class before"
+            print("DCEL DEBUGGER: You should record your half edges into the class before"
                   " calling the method ({})".format(cls.hedges_to_sv_mesh.__name__))
             return empty_mesh
         out = []
@@ -277,7 +277,7 @@ class Debugger:
         msg = 'print {:~^50} - {}'.format(item.__class__.__name__, cls.msg[index]) if is_index else ''
         if not is_index:
             if not cls.data:
-                print("DCEL DEBUGER: You should record your data into the class before"
+                print("DCEL DEBUGGER: You should record your data into the class before"
                       " calling the method ({}) or switch on printing".format(cls.printed_to_sv_mesh.__name__))
             else:
                 print('{:~^50}'.format('Nothing to print. Try to lessen the index'))

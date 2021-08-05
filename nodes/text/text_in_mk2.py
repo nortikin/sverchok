@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 # made by: Linus Yng, haxed by zeffii to mk2
 # pylint: disable=c0326
@@ -183,9 +172,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def draw_buttons(self, context, layout):
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        over_sized_buttons = addon.preferences.over_sized_buttons
-
         col = layout.column(align=True)
         col.prop(self, 'autoreload', toggle=True)  # reload() not work properly somehow 2016.10.07 | really? 2017.12.21
         if self.current_text:
@@ -193,7 +179,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row = col.row(align=True)
 
             if not self.autoreload:
-                row.scale_y = 4.0 if over_sized_buttons else 1
+                row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
                 row.operator(TEXT_IO_CALLBACK, text='R E L O A D').fn_name = 'reload'
             col.operator(TEXT_IO_CALLBACK, text='R E S E T').fn_name = 'reset'
 
@@ -259,12 +245,16 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         # if we turn on reload on update we need a safety check for this to work.
         updateNode(self, None)
 
-
     def process(self):  # dispatch based on mode
-        print(self.textmode, self.current_text, 5)
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.text and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
+
         if not self.current_text:
             return
-        print(self.textmode)
         if self.textmode == 'CSV':
             self.update_csv()
         elif self.textmode == 'SV':
@@ -619,15 +609,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         # load data into selected socket
-        print(self.list_data[n_id])
         self.outputs[0].sv_set(self.list_data[n_id])
-
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "file_pointer") and not self.file_pointer:
-            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
-            if text:
-                self.file_pointer = text
 
     def save_to_json(self, node_data: dict):
         if not self.text:
@@ -650,19 +632,22 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         as it's a beta service, old IO json may not be compatible - in this interest
         of neat code we assume it finds everything.
         '''
+        if import_version < 1.0:
+            params = node_data.get('params')
+
+            # original textin used 'current_text', textin+ uses 'text'
+            current_text = params.get('current_text', params.get('text'))
+
+            # it's not clear from the exporter code why textmode parameter isn't stored
+            # in params.. for now this lets us look in both places. ugly but whatever.
+            textmode = params.get('textmode')
+            if not textmode:
+                textmode = node_data.get('textmode')
+            self.textmode = textmode
+        else:
+            current_text = self.current_text
+
         texts = bpy.data.texts
-        params = node_data.get('params')
-
-        # original textin used 'current_text', textin+ uses 'text'
-        current_text = params.get('current_text', params.get('text'))
-
-        # it's not clear from the exporter code why textmode parameter isn't stored
-        # in params.. for now this lets us look in both places. ugly but whatever.
-        textmode = params.get('textmode')
-        if not textmode:
-            textmode = node_data.get('textmode')
-        self.textmode = textmode
-
         if not current_text:
             self.info("`%s' doesn't store a current_text in params", self.name)
 

@@ -61,7 +61,7 @@ N = identity_matrix
 
 def vectorize(func):
     '''
-    Will create a yeilding vectorized generator of the
+    Will create a yielding vectorized generator of the
     function it is applied to.
     Note: parameters must be passed as kw arguments
     '''
@@ -197,7 +197,7 @@ class CubicSpline(Spline):
                 is not provided
         is_cyclic: whether the spline is cyclic
 
-        creates a cubic spline thorugh the locations given in vertices
+        creates a cubic spline through the locations given in vertices
         """
 
         super().__init__()
@@ -365,7 +365,7 @@ class LinearSpline(Spline):
                 is not provided
         is_cyclic: whether the spline is cyclic
 
-        creates a cubic spline thorugh the locations given in vertices
+        creates a cubic spline through the locations given in vertices
         """
 
         super().__init__()
@@ -825,7 +825,7 @@ class PlaneEquation(object):
     def get_matrix(self, invert_y=False):
         x = self.second_vector().normalized()
         z = self.normal.normalized()
-        y = z.cross(x)
+        y = z.cross(x).normalized()
         if invert_y:
             y = - y
         return Matrix([x, y, z]).transposed()
@@ -1087,7 +1087,7 @@ class PlaneEquation(object):
         # it might be that one of vectors we chose is parallel to plane2
         # (since we are choosing them arbitrarily); but from the way
         # we are choosing v1 and v2, we know they are orthogonal.
-        # So if wee just rotate them by pi/4, they will no longer be
+        # So if we just rotate them by pi/4, they will no longer be
         # parallel to plane2.
         if plane2.is_parallel(line1) or plane2.is_parallel(line2):
             v1_new = v1 + v2
@@ -1275,6 +1275,44 @@ class LineEquation(object):
         projection_lengths = projection_lengths[np.newaxis].T
         projections = projection_lengths * unit_direction
         return center + projections
+
+def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
+    x1,y1,z1 = v1
+    x2,y2,z2 = v2
+    x3,y3,z3 = v3
+    x4,y4,z4 = v4
+
+    m = np.array([v2-v1, v3-v1, v4-v1])
+    if abs(np.linalg.det(m)) > 1e-6:
+        return None
+
+    denom = np.linalg.det(np.array([
+            [x1-x2, x4-x3],
+            [y1-y2, y4-y3]
+        ]))
+
+    num1 = np.linalg.det(np.array([
+            [x4-x2, x4-x3],
+            [y4-y2, y4-y3]
+        ]))
+    num2 = np.linalg.det(np.array([
+            [x1-x2, x4-x2],
+            [y1-y2, y4-y2]
+        ]))
+
+    u = num1 / denom
+    v = num2 / denom
+
+    et = endpoint_tolerance
+    if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
+        return None
+
+    x = u*(x1-x2) + x2
+    y = u*(y1-y2) + y2
+    z = u*(z1-z2) + z2
+    pt = np.array([x,y,z])
+
+    return u, v, pt
 
 class LineEquation2D(object):
     def __init__(self, a, b, c):
@@ -1501,6 +1539,8 @@ class Ellipse3D(object):
         """
         a = self.a
         b = self.b
+        if a < b:
+            raise Exception("Major semi-axis of the ellipse can not be smaller than minor semi-axis")
         return sqrt(a*a - b*b)
 
     @property
@@ -1662,6 +1702,112 @@ class Triangle(object):
         """
         ellipse = self.steiner_circumellipse()
         return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
+
+class BoundingBox(object):
+    def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
+        self.min = np.array([min_x, min_y, min_z])
+        self.max = np.array([max_x, max_y, max_z])
+
+    def mean(self):
+        return 0.5 * (self.min + self.max)
+
+    @property
+    def min_x(self):
+        return self.min[0]
+
+    @property
+    def min_y(self):
+        return self.min[1]
+
+    @property
+    def min_z(self):
+        return self.min[2]
+
+    @min_x.setter
+    def min_x(self, value):
+        self.min[0] = value
+
+    @min_y.setter
+    def min_y(self, value):
+        self.min[1] = value
+
+    @min_z.setter
+    def min_z(self, value):
+        self.min[2] = value
+
+    @property
+    def max_x(self):
+        return self.max[0]
+
+    @property
+    def max_y(self):
+        return self.max[1]
+
+    @property
+    def max_z(self):
+        return self.max[2]
+
+    @max_x.setter
+    def max_x(self, value):
+        self.max[0] = value
+
+    @max_y.setter
+    def max_y(self, value):
+        self.max[1] = value
+
+    @max_z.setter
+    def max_z(self, value):
+        self.max[2] = value
+
+    @property
+    def size_x(self):
+        return self.max[0] - self.min[0]
+
+    @property
+    def size_y(self):
+        return self.max[1] - self.min[1]
+
+    @property
+    def size_z(self):
+        return self.max[2] - self.min[2]
+
+    def size(self):
+        return (self.max - self.min).max()
+
+    def increase(self, delta):
+        mean = self.mean()
+        d = 0.5*delta
+        box = BoundingBox(self.min_x - d, self.max_x + d,
+                self.min_y - d, self.max_y + d,
+                self.min_z - d, self.max_z + d)
+        return box
+
+#     def is_empty(self):
+#         return (self.min == self.max).all()
+
+#     def intersect(self, box):
+#         r = BoundingBox()
+#         box.min = np.maximum(self.min, box.min)
+#         box.max = np.minimum(self.max, box.max)
+#         return r
+
+    def intersects(self, box):
+        x = (box.min_x > self.max_x) or (box.max_x < self.min_x)
+        y = (box.min_y > self.max_y) or (box.max_y < self.min_y)
+        z = (box.min_z > self.max_z) or (box.max_z < self.min_z)
+        result = not (x or y or z)
+        #print(f"{self} x {box} => {result}")
+        return result
+
+    def __repr__(self):
+        return f"<BBox: {self.min} .. {self.max}>"
+
+def bounding_box(vectors):
+    vectors = np.asarray(vectors)
+    r = BoundingBox()
+    r.min = vectors.min(axis=0)
+    r.max = vectors.max(axis=0)
+    return r
 
 class LinearApproximationData(object):
     """

@@ -3,7 +3,7 @@ Generators Extended
 *******************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    box_rounded
    hilbert

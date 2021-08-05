@@ -23,29 +23,23 @@ from bpy.types import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules import sv_bmesh
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-class SvFilePathFinder(bpy.types.Operator):
+
+class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
     '''Select Files from browser window'''
     bl_idname = "node.sv_file_path"
     bl_label = "Select Files/Folder"
 
-    idtree: StringProperty(default='')
-    idname: StringProperty(default='')
-    files: CollectionProperty(
-            name="File Path",
-            type=OperatorFileListElement,
-            )
-    directory: StringProperty(
-            subtype='DIR_PATH',
-            )
+    files: CollectionProperty(name="File Path", type=OperatorFileListElement)
+    directory: StringProperty(subtype='DIR_PATH')
+
     filepath: bpy.props.StringProperty(
         name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+    def sv_execute(self, context, node):
         node.set_data(self.directory, self.files)
-        return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
@@ -57,22 +51,15 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: OS file path
     Tooltip:  get path file from OS
-
     """
 
     bl_idname = "SvFilePathNode"
     bl_label = "File Path"
     bl_icon = "FILE"
 
-    files_num: bpy.props.IntProperty(name='files number ', default=0)
-
-    files: CollectionProperty(
-        name="File Path",
-        type=OperatorFileListElement,
-        )
-    directory: StringProperty(
-        subtype='DIR_PATH',
-        update=updateNode)
+    files_num: IntProperty(name='files number ', default=0)
+    files: CollectionProperty(name="File Path", type=OperatorFileListElement)
+    directory: StringProperty(subtype='DIR_PATH', update=updateNode)
 
     def sv_init(self, context):
 

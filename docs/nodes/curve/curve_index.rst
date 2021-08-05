@@ -3,7 +3,7 @@ Curves
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    line
    circle
@@ -51,9 +51,13 @@ Curves
    nurbs_curve
    approximate_nurbs_curve
    interpolate_nurbs_curve
+   insert_knot
+   remove_knot
+   remove_excessive_knots
    catenary_curve
    bezier_fit
    circlify
+   intersect_curves
    intersect_curve_plane
    extremes
    interpolate_frame

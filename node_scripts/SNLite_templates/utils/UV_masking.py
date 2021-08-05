@@ -10,7 +10,7 @@ out  mask         s
 """
 # it makes filter ranges of 0 and 1 chains.
 # input U is i.e. [[2,10,40,4]]
-# will make mask of two 1, ten 0, fourty 1, four 0
+# will make mask of two 1, ten 0, forty 1, four 0
 # input V is [[3,3]]
 # two masks will U or V make third mask
 # output will divide UV masked polygons

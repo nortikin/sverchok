@@ -3,7 +3,7 @@ Matrix
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    apply_and_join
    deform
@@ -11,7 +11,7 @@ Matrix
    input
    interpolation
    matrix_in_mk4
-   matrix_out
+   matrix_out_mk2
    matrix_math
    matrix_track_to
    shear

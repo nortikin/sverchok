@@ -98,6 +98,10 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
         if Oo.is_linked:
             Oo.sv_set(objs)
 
+    def draw_label(self):
+        if self.hide and self.formula:
+            return self.formula
+        return self.label or self.name
 
 def register():
     bpy.utils.register_class(SvSetDataObjectNodeMK2)

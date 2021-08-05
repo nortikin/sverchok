@@ -1,13 +1,12 @@
 
-import numpy as np
-from math import pi, sqrt
+from math import sqrt
 
 from mathutils import Matrix
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.curve import SvEllipse
 
@@ -28,7 +27,6 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
                        (SvEllipse.CENTER, "C", "Ellipse center point", 2),
                        (SvEllipse.F2, "F2", "Ellipse focal point 2", 3)]
 
-    @throttle_and_update_node
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
 
@@ -69,6 +67,7 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.last_mode = self.mode
         self.update_sockets()
+        updateNode(self, context)
 
     def update_ellipse(self, context):
         if self.updating:

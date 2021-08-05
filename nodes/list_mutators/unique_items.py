@@ -18,6 +18,7 @@
 
 import bpy
 import numpy as np
+from mathutils import Matrix, Quaternion
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
 
@@ -31,7 +32,7 @@ def recursive_unique_items(data, level, linked_outputs, output_numpy):
     iterable = isinstance(data[0], (list, tuple, np.ndarray))
     if not level or not iterable:
         np_data = np.array(data)
-        if np_data.dtype == object:
+        if np_data.dtype == object or isinstance(data[0], (Matrix, Quaternion)):
             unique, unique_indices, unique_inverse, unique_count = python_unique(data)
         else:
             unique, unique_indices, unique_inverse, unique_count = numpy_unique(data, linked_outputs, output_numpy)
@@ -106,7 +107,7 @@ class SvUniqueItemsNode(bpy.types.Node, SverchCustomTreeNode):
     
     level: bpy.props.IntProperty(
         name='Level',
-        description="Level where seach should be performed",
+        description="Level where search should be performed",
         default=2, min=0,
         update=updateNode)
     output_numpy: bpy.props.BoolProperty(

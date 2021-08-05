@@ -23,7 +23,7 @@ Features
 - You must declare an input socket, but outputs are optional.
 - You can set defaults for input numbers, vectors, and list sockets.
 - You can set the level of nestedness; means you don't need to unwrap/index stuff via code
-- You can append a UI drawing funcion to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
+- You can append a UI drawing function to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
 - has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
     parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
@@ -52,6 +52,7 @@ The include directive ensures the dependency is also stored in the gist when exp
     enum = word1 word2 word3
     enum2 = raw clean
     """
+
 you make them visible on the ui by doing::
 
     def ui(self, context, layout):
@@ -109,8 +110,8 @@ see a working script that uses two enums here: https://github.com/nortikin/sverc
 Syntax
 ------
 
-To intialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
-a pair of tripple quote marks: **"""**, never single quotes like **'''**.
+To initialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
+a pair of triple quote marks: **"""**, never single quotes like **'''**.
 
 The syntax looks like this::
 
@@ -121,7 +122,7 @@ The syntax looks like this::
     """
     < any python code >
 
-This tripple quoted area (a "directive comment", or *header*) must be the first thing in the ``.py`` file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose::
+This triple quoted area (a "directive comment", or *header*) must be the first thing in the ``.py`` file.  It helps declare sockets and defaults and is a space to enable certain options (more about this later). The above example header can be written slightly less verbose::
 
     """
     in socketname   type  d=x n=i

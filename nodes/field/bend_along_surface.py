@@ -45,6 +45,10 @@ class SvBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         name="Auto scale", description="Scale object along orientation axis automatically",
         default=False, update=updateNode)
 
+    only_2D: BoolProperty(
+        name="As 2D", description="It will discard the vertical axis. Enable to bend flat objects (improves performance)",
+        default=False, update=updateNode)
+
     flip: BoolProperty(
         name="Flip surface",
         description="Flip the surface orientation",
@@ -82,10 +86,13 @@ class SvBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Object vertical axis:")
         layout.prop(self, "orient_axis_", expand=True)
         layout.prop(self, "autoscale", toggle=True)
+        layout.prop(self, 'only_2D')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'flip')
+
+
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -109,7 +116,7 @@ class SvBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
                 v_max = v_max[0]
 
             field = SvBendAlongSurfaceField(surface, self.orient_axis,
-                        self.autoscale, self.flip)
+                        self.autoscale, self.flip, self.only_2D)
             field.u_bounds = (u_min, u_max)
             field.v_bounds = (v_min, v_max)
             fields_out.append(field)
@@ -121,4 +128,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBendAlongSurfaceFieldNode)
-

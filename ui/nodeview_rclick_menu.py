@@ -12,8 +12,8 @@ from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
-supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
+
+supported_mesh_viewers = {'SvMeshViewer', 'SvViewerDrawMk4'}
 
 # for rclick i want convenience..
 common_nodes = [
@@ -100,6 +100,52 @@ def get_output_sockets_map(node):
 def offset_node_location(existing_node, new_node, offset):
     new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
 
+
+def conect_to_3d_viewer(tree):
+    if hasattr(tree.nodes.active, 'viewer_map'):
+        view_node(tree)
+    else:
+        add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+
+def view_node(tree):
+    '''viewer map is a node attribute to inform to the operator how to visualize
+    the node data
+    it is a list with two items.
+    The first item is a list with tuples, every tuple need to have the node bl_idanme and offset to the previous node
+    The second item is a list with tuples, every tuple indicates a link.
+    The link is defined by two pairs of numbers, referring to output and input
+    The first number of every pair indicates the node being 0 the active node 1 the first needed node and so on
+    The second nmber of every pair indicates de socket index.
+
+    So to say: create a Viewer Draw with a offset of 60,0 and connect the first output to the vertices input
+    the node would need to have this:
+
+        viewer_map = [
+            ("SvViewerDrawMk4", [60, 0])
+            ], [
+            ([0, 0], [1, 0])
+            ]
+
+    '''
+    nodes = tree.nodes
+    links = tree.links
+    existing_node = nodes.active
+    node_list = [existing_node]
+    output_map = existing_node.viewer_map
+
+    for node in output_map[0]:
+        bl_idname_new_node, offset = node
+        new_node = nodes.new(bl_idname_new_node)
+        apply_default_preset(new_node)
+        offset_node_location(node_list[-1], new_node, offset)
+        frame_adjust(node_list[-1], new_node)
+        node_list.append(new_node)
+    for link in output_map[1]:
+        output_s, input_s = link
+        links.new(node_list[output_s[0]].outputs[output_s[1]],
+                  node_list[input_s[0]].inputs[input_s[1]])
+
+
 def add_connection(tree, bl_idname_new_node, offset):
 
     nodes = tree.nodes
@@ -120,13 +166,12 @@ def add_connection(tree, bl_idname_new_node, offset):
         outputs = existing_node.outputs
         inputs = new_node.inputs
 
-        # first scenario not handelled in b28 yet.
-        if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'IndexViewerNode':
+        if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'SvIDXViewer28':
             new_node.draw_bg = True
             connect_idx_viewer(tree, existing_node, new_node)
 
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
-            # we can't determin thru cursor location which socket was nearest the rightclick
+            # we can't determine thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
             for socket in outputs:
                 if socket.hide:
@@ -139,8 +184,6 @@ def add_connection(tree, bl_idname_new_node, offset):
             # existing_node.process_node(None)
 
         elif bl_idname_new_node == 'SvViewerDrawMk4':
-            previous_state = tree.sv_process
-            tree.sv_process = False
             if 'verts' in output_map:
                 links.new(outputs[output_map['verts']], inputs[0])
                 if 'faces' in output_map:
@@ -177,8 +220,6 @@ def add_connection(tree, bl_idname_new_node, offset):
                 offset_node_location(existing_node, new_node, offset)
                 frame_adjust(existing_node, new_node)
                 links.new(outputs[output_map['solid']], new_node.inputs[0])
-            tree.sv_process = previous_state
-            tree.update()
             # existing_node.process_node(None)
 
         else:
@@ -200,11 +241,12 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+            conect_to_3d_viewer(tree)
+
         elif self.fn == 'vdmk2 + idxv':
-            add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "IndexViewerNode"], offset=[180, 0])
+            add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "SvIDXViewer28"], offset=[180, 0])
         elif self.fn == '+idxv':
-            add_connection(tree, bl_idname_new_node="IndexViewerNode", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvIDXViewer28", offset=[180, 0])
         elif self.fn == 'stethoscope':
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
 
@@ -217,7 +259,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        return tree_type in sv_tree_types
+        return tree_type in {'SverchCustomTreeType', }
 
     def draw(self, context):
         layout = self.layout
@@ -239,15 +281,13 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             if len(node.outputs):
                 layout.menu('SV_MT_AllSocketsOptionsMenu', text='Outputs post-process')
                 layout.separator()
-            if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
+            if node.bl_idname in {'SvViewerDrawMk4', 'SvBmeshViewerNodeMK2'}:
                 layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
             if len(node.outputs):
                 layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
-
 
 
             layout.separator()
@@ -264,9 +304,6 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
                 col.prop(node, 'color', text='')
             col.prop(node, 'label_size', slider=True)
             col.prop(node, 'shrink')
-
-        if node and hasattr(node, 'monad'):
-            layout.operator("node.sv_monad_make_unique", icon="RNA_ADD").use_transform=True
 
         layout.separator()
         layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')

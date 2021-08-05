@@ -17,7 +17,7 @@ def unregister_node_class(class_ref):
 def register_node_classes_factory(node_class_references, ops_class_references=None):
     """
 
-    
+
     !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
 
 
@@ -53,16 +53,16 @@ def register_node_classes_factory(node_class_references, ops_class_references=No
 
         def unregister():
             for cls in reversed(ops_class_references):
-                bpy.utils.unregister_class(cls)            
+                bpy.utils.unregister_class(cls)
             for cls in reversed(node_class_references):
                 unregister_node_class(cls)
 
         return register, unregister
 
 def auto_gather_node_classes(start_module = None):
-    """ 
-    this produces a dict with mapping from bl_idname to class reference at runtime 
-    f.ex   
+    """
+    this produces a dict with mapping from bl_idname to class reference at runtime
+    f.ex
           node_classes = {SvBMeshViewerMk2: <class svechok.nodes.viz ......> , .... }
     """
 
@@ -84,12 +84,9 @@ def auto_gather_node_classes(start_module = None):
 
 
 def get_node_class_reference(bl_idname):
-    # formerly stuff like:
-    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
-
     if bl_idname == "NodeReroute":
         return getattr(bpy.types, bl_idname)
-    # this will also return a Nonetype if the ref isn't found, and the class ref if found
+
     return node_classes.get(bl_idname)
 
 
@@ -109,12 +106,12 @@ def app_handler_ops(append=None, remove=None):
     (operation, handler_dict) = ('append', append) if append else ('remove', remove)
     for handler_name, handler_function in handler_dict.items():
         handler = getattr(bpy.app.handlers, handler_name)
-        
+
         # bpy.app.handlers.<handler>.<append or remove>(function_name)
         getattr(handler, operation)(handler_function)
 
     # try:
-    #     names = lambda d: [f"    {k} -> {v.__name__}" for k, v in d.items()] 
+    #     names = lambda d: [f"    {k} -> {v.__name__}" for k, v in d.items()]
     #     listed = "\n".join(names(handler_dict))
     # except Exception as err:
     #     print('error while listing event handlers', err)
@@ -130,21 +127,25 @@ utils_modules = [
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
     "profile", "logging", "testing", "sv_requests", "sv_shader_sources", "tree_structure",
-    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "exception_drawing_with_bgl",
+    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser",
     "wfc_algorithm", "handling_nodes", "handle_blender_data", "nodes_mixins.generating_objects",
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
-    "meshes", "tree_walk", "mesh_functions",
+    "meshes", "tree_walk", "mesh_functions", 'mesh.inset_faces', 'mesh.extrude_edges', "sv_json_struct",
+    "nodeview_time_graph_drawing", "modules.shader_utils", "dummy_nodes",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
     "sv_IO_pointer_helpers",
-    "sv_IO_monad_helpers", "sv_operator_utils",
+    "sv_operator_mixins",
     "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
-    "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
+    "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw",
     "sv_texture_utils",
     # geom 2d tools
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
     "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
-    "quad_grid"
+    "quad_grid",
+    # extra addons
+    "sv_extra_addons"
+
 ]

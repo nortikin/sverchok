@@ -32,7 +32,7 @@ This node has the following parameters:
 * **Mode**:
 
   * **Automatic**. Calculate curve points for the set of curve parameter values which are evenly distributed within curve domain.
-   * **Manual**. Calculate curve point for the provided value of curve parameter.
+  * **Manual**. Calculate curve point for the provided value of curve parameter.
 
 * **Join**. If checked, then the node will output one single list of objects
   for all provided curves - for example, data in **Verties** output will have

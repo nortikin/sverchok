@@ -35,7 +35,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
 
     Cross_dist: BoolProperty(
         name='Cross_dist',
-        description='Calculate distance beteen each point of the first list with all points of second list DANGEROUS! It can be very heavy',
+        description='Calculate distance between each point of the first list with all points of second list DANGEROUS! It can be very heavy',
         default=False,
         update=updateNode)
 

@@ -252,45 +252,44 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[Matrix()])
 
-        with self.sv_throttle_tree_update():
+        if self.parent_to_empty:
+            mtname = 'Empty_' + self.basedata_name
+            self.parent_name = mtname
+
+            scene = bpy.context.scene
+            collection = scene.collection
+
+
+            if not mtname in bpy.data.objects:
+                empty = bpy.data.objects.new(mtname, None)
+                collection.objects.link(empty)
+                bpy.context.view_layer.update()
+
+
+        last_index = 0
+        for obj_index, txt_content in enumerate(text):
+            matrix = matrices[obj_index % len(matrices)]
+            if isinstance(txt_content, list) and (len(txt_content) == 1):
+                txt_content = txt_content[0]
+            else:
+                txt_content = str(txt_content)
+
+            make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
+            last_index = obj_index
+
+        self.remove_non_updated_objects(last_index)
+        objs = self.get_children()
+
+        if self.grouping:
+            self.to_collection(objs)
+
+        self.set_corresponding_materials()
+
+        for obj in objs:
             if self.parent_to_empty:
-                mtname = 'Empty_' + self.basedata_name
-                self.parent_name = mtname
-
-                scene = bpy.context.scene
-                collection = scene.collection
-
-
-                if not mtname in bpy.data.objects:
-                    empty = bpy.data.objects.new(mtname, None)
-                    collection.objects.link(empty)
-                    bpy.context.view_layer.update()
-
-
-            last_index = 0
-            for obj_index, txt_content in enumerate(text):
-                matrix = matrices[obj_index % len(matrices)]
-                if isinstance(txt_content, list) and (len(txt_content) == 1):
-                    txt_content = txt_content[0]
-                else:
-                    txt_content = str(txt_content)
-
-                make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
-                last_index = obj_index
-
-            self.remove_non_updated_objects(last_index)
-            objs = self.get_children()
-
-            if self.grouping:
-                self.to_collection(objs)
-
-            self.set_corresponding_materials()
-
-            for obj in objs:
-                if self.parent_to_empty:
-                    obj.parent = bpy.data.objects[mtname]
-                elif obj.parent:
-                    obj.parent = None
+                obj.parent = bpy.data.objects[mtname]
+            elif obj.parent:
+                obj.parent = None
 
     def draw_label(self):
         return f"TV {self.basedata_name}"

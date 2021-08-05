@@ -27,108 +27,66 @@ from sverchok.utils.macros.math_macros import math_macros
 from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
 from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
+from sverchok.utils.macros.hotswap_macros import swap_vd_mv
 
 # pylint: disable=c0301
 
+def simple_macro(description="", term="", macro_handler="verbose_macro_handler"):
+    return {
+        'display_name': description,
+        'file': 'macro',
+        'ident': [macro_handler, term]}    
 
 macros = {
-    "> obj vd": {
-        'display_name': "active_obj into objlite + vdmk2",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'obj vd']},
-    "> objs vd": {
-        'display_name': "multi obj in + vdmk2",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'objs vd']},
-    "> zen": {
-        'display_name': "zen of Sverchok",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'zen']},
-    "> sn petal": {
-        'display_name': "load snlite w/ petalsine",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'snl demo/petal_sine.py']},
-    "> Subdiv to quads": {
-        'display_name': "snlite w/ subdiv to quads",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'snl demo/subidivide_to_quads.py']},
-    "> monad info": {
-        'display_name': "output current idx / total",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'monad info']},
-    "> multiply *": {
-        'display_name': "multiply selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathMUL']},
-    "> add +": {
-        'display_name': "add selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathADD']},
-    "> sub -": {
-        'display_name': "subtract selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathSUB']},
-    "> join1": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join1']},
-    "> join123": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join123']},
-    "> join12": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join12']},
-    "> join13": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join13']},
-    "> sw1": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch1']},
-    "> sw12": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch12']},
-    "> sw13": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch13']},
-    "> sw123": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch123']},
-    "> gp +": {
-        'display_name': "grease pencil setup",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'gp +']},
-    "> gp + 2": {
-        'display_name': "grease pencil setup",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'gp + 2']},
-    "> url": {
-        'display_name': "download archive from url",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'url']},
-    "> blend 2 zip": {
-        'display_name': "archive blend as zip",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'blend 2 zip']},
-    "> all numpy True": {
-        'display_name': "existing nodes to numpy",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'output numpy True']},
-    "> all numpy False": {
-        'display_name': "existing nodes to python",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'output numpy False']}
+    "> obj vd": simple_macro(
+        description="active_obj into objlite + vdmk2", term='obj vd'),
+    "> objs vd": simple_macro(
+        description="multi obj in + vdmk2", term='objs vd'),
+    "> zen": simple_macro(
+        description="zen of Sverchok", term='zen'),
+    "> nuke python++": simple_macro(
+        description="like f8", term='nuke python++'),        
+    "> sn petal": simple_macro(
+        description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
+    "> Subdiv to quads": simple_macro(
+        description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
+    "> multiply *": simple_macro(
+        description="multiply selected nodes", term='mathMUL'),
+    "> add +": simple_macro(
+        description="add selected nodes", term='mathADD'),
+    "> sub -": simple_macro(
+        description="subtract selected nodes", term='mathSUB'),
+    "> join1": simple_macro(
+        description="selected nodes to List Join", term='join1'),
+    "> join123": simple_macro(
+        description="selected nodes to List Join", term='join123'),
+    "> join12": simple_macro(
+        description="selected nodes to List Join", term='join12'),
+    "> join13": simple_macro(
+        description="selected nodes to List Join", term='join13'),
+    "> sw1": simple_macro(
+        description="connect nodes to switch", term='switch1'),
+    "> sw12": simple_macro(
+        description="connect nodes to switch", term='switch12'),
+    "> sw13": simple_macro(
+        description="connect nodes to switch", term='switch13'),
+    "> sw123": simple_macro(
+        description="connect nodes to switch", term='switch123'),
+    "> gp +": simple_macro(
+        description="grease pencil setup", term='gp +'),
+    "> gp + 2": simple_macro(
+        description="grease pencil setup", term='gp + 2'),
+    "> hotswap vd mv": simple_macro(
+        description="hotswap vd->meshviewer", term='hotswap'),    
+    "> url": simple_macro(
+        description="download archive from url", term='url'),
+    "> blend 2 zip": simple_macro(
+        description="archive blend as zip", term='blend 2 zip'),
+    "> all numpy True": simple_macro(
+        description="existing nodes to numpy", term='output numpy True'),
+    "> all numpy False": simple_macro(
+        description="existing nodes to python", term='output numpy False')
 }
-
-
-
-sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
 def sn_loader(snlite, script_name=None):
@@ -149,7 +107,7 @@ class DefaultMacros():
         if no active nodetree
         add new empty node tree, set fakeuser immediately
         '''
-        if not context.space_data.tree_type in sv_types:
+        if not context.space_data.tree_type in {'SverchCustomTreeType', }:
             print('not running from a sv nodetree')
             return
 
@@ -180,17 +138,25 @@ class DefaultMacros():
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
+            links.new(obj_in_node.outputs[4], vd_node.inputs[3])
 
         elif term == 'objs vd':
-            obj_in_node = nodes.new('SvObjectsNodeMK3')
+            obj_in_node = nodes.new('SvGetObjectsData')
             obj_in_node.get_objects_from_scene(operator)
             vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
+            # this macro could detect specifically if the node found edges or faces or both... 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
+            links.new(obj_in_node.outputs[8], vd_node.inputs[3])
+
+        elif 'hotswap' in term:
+            swap_vd_mv(context, operator, term, nodes, links)
+            return
+
+        elif term == 'nuke python++':
+            bpy.ops.script.reload()
 
         elif term == 'zen':
             full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
@@ -202,27 +168,18 @@ class DefaultMacros():
             snlite.location = context.space_data.cursor_location
             sn_loader(snlite, script_name=file)
 
-        elif term == 'monad info':
-            x, y = context.space_data.cursor_location[:]
-            monad_info = nodes.new('SvMonadInfoNode')
-            monad_info.location = x, y
-
         elif "join" in term:
             join_macros(context, operator, term, nodes, links)
 
         elif "math" in term:
             math_macros(context, operator, term, nodes, links)
-            return {'FINISHED'}
+            return
 
         elif "switch" in term:
             switch_macros(context, operator, term, nodes, links)
-            return {'FINISHED'}
+            return
 
         elif 'output numpy' in term:
-            #stop processing to avoid one update per property
-            previous_state = tree.sv_process
-            tree.sv_process = False
-
             state_ = term.split(' ')[2]
             state = state_ == 'True'
             for node in nodes:
@@ -242,10 +199,6 @@ class DefaultMacros():
                         node.implementation = 'NumPy' if state else 'Python'
                     except TypeError:
                         pass
-
-            # establish previous processing state
-            tree.sv_process = previous_state
-            tree.update()
 
         elif term == 'gp +':
             gp_macro_one(context, operator, term, nodes, links)

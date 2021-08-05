@@ -1,5 +1,5 @@
 Polygonal Grid
-=========
+==============
 
 Functionality
 -------------
@@ -76,7 +76,7 @@ These are the vertices, edges and polygons of the hexagonal tiles centered on th
 
 Notes:
 - When the **Separate** is ON the output is a single list (joined mesh) of all the tile vertices/edges/polygons in the grid. When **Separate** is OFF the output is a list of grouped (list) tile vertices/edges/polygons (separate meshes).
-- If **Separate** is OFF (joined tiles) at **scale** = 1, when the tiles are tightly packed, the overlaping vertices will be merged.
+- If **Separate** is OFF (joined tiles) at **scale** = 1, when the tiles are tightly packed, the overlapping vertices will be merged.
 
 Example of usage
 ----------------

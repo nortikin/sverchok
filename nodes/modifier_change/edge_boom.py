@@ -20,7 +20,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, updateNode, throttle_and_update_node
+from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,12 +38,12 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         ('OBJ', "Objects", "Output list of objects, each consisting of a single edge", 1)
     ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['Vertex1'].hide_safe = self.out_mode != 'VER'
         self.outputs['Vertex2'].hide_safe = self.out_mode != 'VER'
         self.outputs['Vertices'].hide_safe = self.out_mode != 'OBJ'
         self.outputs['Edges'].hide_safe = self.out_mode != 'OBJ'
+        updateNode(self, context)
 
     out_mode : EnumProperty(
         name = "Output mode",

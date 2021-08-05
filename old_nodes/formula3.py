@@ -20,12 +20,10 @@ from math import *
 from collections import defaultdict
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
-import json
-import io
+from bpy.props import BoolProperty, StringProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
 from sverchok.utils import logging
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
@@ -39,11 +37,11 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
     replacement_nodes = [('SvFormulaNodeMk5', None, None)]
-    @throttle_and_update_node
+
     def on_update(self, context):
         self.adjust_sockets()
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def on_update_dims(self, context):
         if self.dimensions < 4:
             self.formula4 = ""
@@ -53,6 +51,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             self.formula2 = ""
 
         self.adjust_sockets()
+        updateNode(self, context)
 
     dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 

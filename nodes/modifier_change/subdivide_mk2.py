@@ -133,7 +133,7 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         name="Show Options", default=False, update=updateNode)
 
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays slows this node but may improve performance of nodes it is connected to",
         default=(False, False, False, False),
         size=4, update=updateNode)
@@ -179,7 +179,7 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_common(context, layout)
         self.draw_options(context, layout)
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.row()
         for i in range(4):
             r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
@@ -195,7 +195,7 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "only_quads", toggle=True)
         layout.prop(self, "smooth_even", toggle=True)
 
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
 
         for i in range(4):
             layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
@@ -303,6 +303,8 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
                     face_data_matched = numpy_full_list(face_data, len(faces)).tolist()
                 else:
                     face_data_matched = repeat_last_for_length(face_data, len(faces))
+            else:
+                face_data_matched =[]
 
             bm = bmesh_from_pydata(
                 vertices, edges, faces,

@@ -1,4 +1,4 @@
-from sverchok.utils.dummy_nodes import is_dummy
+from sverchok.utils.dummy_nodes import is_dependent
 from sverchok.utils.testing import *
 from sverchok.ui.sv_examples_menu import example_categories_names
 
@@ -62,9 +62,7 @@ UNITTEST_SKIPLIST = [
 class ExamplesImportTest(SverchokTestCase):
     def test_import_examples(self):
 
-        examples_path = Path(sverchok.__file__).parent / 'json_examples'
-
-        for category_name in example_categories_names():
+        for examples_path, category_name in example_categories_names():
 
             info("Opening Dir named: %s", category_name)
 
@@ -89,12 +87,11 @@ class ExamplesImportTest(SverchokTestCase):
                         new_tree.sv_process = False
                         importer = JSONImporter.init_from_path(path)
                         importer.import_into_tree(new_tree, print_log=False)
-                        if importer.has_fails:
-                            raise ImportError(importer.fail_massage)
                         for node in new_tree.nodes:
                             if is_old(node):
                                 error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file."
                                 self.fail(error_format.format(node.name, node.bl_idname))
-                            if is_dummy(node):
-                                error_format = "This example contains dummy node `{}' ({}). Please ensure dependencies before saving file."
-                                self.fail(error_format.format(node.name, node.bl_idname))
+                            if is_dependent(node.bl_idname):
+                                self.skipTest("Some dependencies was not installed")
+                        if importer.has_fails:
+                            raise ImportError(importer.fail_massage)

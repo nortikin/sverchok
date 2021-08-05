@@ -3,10 +3,10 @@ import numpy as np
 from math import pi
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
 
 class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
@@ -25,9 +25,9 @@ class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
         ('GALL', "Gall Stereographic", "Gall stereographic projection", 3)
     ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Theta1'].hide_safe = self.projection != 'EQUIRECT'
+        updateNode(self, context)
 
     projection : EnumProperty(
         name = "Projection",

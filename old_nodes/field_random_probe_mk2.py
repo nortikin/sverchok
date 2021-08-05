@@ -5,17 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import random
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils.kdtree import KDTree
+from bpy.props import FloatProperty, BoolProperty, IntProperty
 
-import sverchok
 from sverchok.core.sockets import setup_new_node_location
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
@@ -60,10 +57,10 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
             min = 0.0,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
+        updateNode(self, context)
 
     proportional : BoolProperty(
             name = "Proportional",

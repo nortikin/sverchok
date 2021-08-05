@@ -15,18 +15,16 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from colorsys import rgb_to_hls
-from itertools import repeat
+
 import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty
-from mathutils import Vector, Matrix, Color
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, throttle_and_update_node
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.color_utils import color_channels
 from sverchok.utils.modules.texture_displace_utils import displace_funcs, meshes_texture_diplace
 
@@ -71,7 +69,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         ('Texture_Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
 
     ]
-    @throttle_and_update_node
+
     def change_mode(self, context):
         inputs = self.inputs
         if self.tex_coord_type == 'Texture Matrix':
@@ -90,8 +88,8 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if 'UV Coordinates' not in inputs:
                 inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvVerticesSocket', 'UV Coordinates')
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def change_direction_sockets(self, context):
         inputs = self.inputs
         if self.out_mode == 'Custom Axis':
@@ -99,6 +97,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 inputs['Custom Axis'].hide_safe = False
         else:
             inputs['Custom Axis'].hide_safe = True
+        updateNode(self, context)
 
 
     name_texture: StringProperty(

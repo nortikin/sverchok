@@ -3,7 +3,7 @@ Network
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    file_path
    udp_client

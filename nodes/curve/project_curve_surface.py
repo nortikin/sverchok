@@ -5,19 +5,16 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level,
-                                     get_data_nesting_level, throttle_and_update_node)
+                                     get_data_nesting_level, updateNode)
 from sverchok.utils.curve.core import SvCurve
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvSolidEdgeCurve, curve_to_freecad_nurbs
 from sverchok.utils.surface.core import SvSurface
-from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad, is_solid_face_surface
+from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
 from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
@@ -38,14 +35,14 @@ class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_PROJECT_CURVE'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
         self.inputs['Vector'].hide_safe = self.projection_type != 'PARALLEL'
+        updateNode(self, context)
 
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
-            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
+            ('PERSPECTIVE', "Perspective", "Use perspective projection from given point", 1),
             ('ORTHO', "Orthogonal", "Use orthogonal projection", 2)
         ]
     

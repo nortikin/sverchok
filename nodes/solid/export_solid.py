@@ -1,9 +1,16 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import flatten_data, map_recursive
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.logging import debug
@@ -15,21 +22,22 @@ if FreeCAD is None:
 else:
 
     from FreeCAD import Part
+    try:
+        import Part as PartModule
+    except ImportError:
+        PartModule = Part
 
     from sverchok.utils.solid import to_solid
 
-    class SvExportSolidOperator(bpy.types.Operator):
+    class SvExportSolidOperator(bpy.types.Operator, SvGenericNodeLocator):
 
         bl_idname = "node.sv_export_solid_mk2"
         bl_label = "Export Solid"
         bl_options = {'INTERNAL', 'REGISTER'}
 
-        idtree: StringProperty(default='')
-        idname: StringProperty(default='')
-
         def execute(self, context):
-            tree = bpy.data.node_groups[self.idtree]
-            node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+            node = self.get_node(context)
+            if not node: return {'CANCELLED'}
 
             if not node.inputs['Folder Path'].is_linked:
                 self.report({'WARNING'}, "Folder path is not specified")
@@ -40,18 +48,18 @@ else:
 
             folder_path = node.inputs[0].sv_get()[0][0]
             objects = node.inputs['Solids'].sv_get()
-            #objects = flatten_data(objects, data_types=(Part.Shape, SvCurve, SvSurface))
+            #objects = flatten_data(objects, data_types=(PartModule.Shape, SvCurve, SvSurface))
             base_name = node.base_name
             if not base_name:
                 base_name = "sv_solid"
             for i, shape in enumerate(objects):
-                #shape = map_recursive(to_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
+                #shape = map_recursive(to_solid, object, data_types=(PartModule.Shape, SvCurve, SvSurface))
                 debug("Exporting", shape)
                 if isinstance(shape, (list, tuple)):
-                    shape = flatten_data(shape, data_types=(Part.Shape,))
+                    shape = flatten_data(shape, data_types=(PartModule.Shape,))
                 if isinstance(shape, (list,tuple)):
                     debug("Make compound:", shape)
-                    shape = Part.Compound(shape)
+                    shape = PartModule.Compound(shape)
                 file_path = folder_path + base_name + "_"  + "%05d" % i
 
                 if node.mode == "BREP":

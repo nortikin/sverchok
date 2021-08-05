@@ -81,25 +81,27 @@ Extra Parameters
 A set of extra parameters are available on the property panel.
 These parameters do not receive external input.
 
-+------------------+----------+---------+--------------------------------------+
-| Extra Param      | Type     | Default | Description                          |
-+==================+==========+=========+======================================+
-| **Flat Output**  | Bool     | True    | Flattens the matrix output [1][2]    |
-+------------------+----------+---------+--------------------------------------+
-| **Angle Units**  | Enum     | DEGREES | Interprets the angle values based on |
-|                  |  RADIANS |         | the selected angle units:            |
-|                  |  DEGREES |         |   Radians = 0 - 2pi                  |
-|                  |  UNITIES |         |   Degrees = 0 - 360                  |
-|                  |          |         |   Unities = 0 - 1                    |
-+------------------+----------+---------+--------------------------------------+
++------------------+----------+---------+----------------------------------------+
+| Extra Param      | Type     | Default | Description                            |
++==================+==========+=========+========================================+
+| **Flat Output**  | Bool     | True    | Flattens the matrix output [#1]_ [#2]_ |
++------------------+----------+---------+----------------------------------------+
+| **Angle Units**  | Enum     | DEGREES | Interprets the angle values based on   |
+|                  |  RADIANS |         | the selected angle units:              |
+|                  |  DEGREES |         | Radians = 0 - 2pi                      |
+|                  |  UNITIES |         | Degrees = 0 - 360                      |
+|                  |          |         | Unities = 0 - 1                        |
++------------------+----------+---------+----------------------------------------+
 
 NOTES:
-[1] : When the flag is enabled the node will join the first level list of
-      matrices in the output and generate a list of matrices: [M, M, ... , M].
-      When the flag is disabled the node will keep the structure matching the
-      input structure and generate the output as a list of list of matrices:
-      [[M, M, ... , M], ..., [M, M, ... , M]].
-[2] : The "Flat Output" option can be toggle via the right-click menu as well.
+
+.. [#1] When the flag is enabled the node will join the first level list of
+   matrices in the output and generate a list of matrices: [M, M, ... , M].
+   When the flag is disabled the node will keep the structure matching the
+   input structure and generate the output as a list of list of matrices:
+   [[M, M, ... , M], ..., [M, M, ... , M]].
+
+.. [#2] The "Flat Output" option can be toggle via the right-click menu as well.
 
 
 Outputs

@@ -51,8 +51,8 @@ This node has the following parameters:
   into one list. Otherwise, it will output a separate list of vertices for each
   row. Unchecked by default.
 
-Outpus
-------
+Outputs
+-------
 
 This node has the following outputs:
 

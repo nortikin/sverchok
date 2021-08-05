@@ -30,7 +30,7 @@ def compute_intersect_circle_circle(params, result, gates):
     Result has to be [[],[],[]] to host the solutions
     Gates are as follow:
     0: Is there a intersection?
-    1: First Intersecction
+    1: First Intersection
     2: Second intersection
     3: The working plane is defined by its normal (True) or by a third point (False)'''
     center_a, radius_a, center_b, radius_b, plane_pt, plane_normal = params

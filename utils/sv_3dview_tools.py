@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import sys
 
@@ -23,6 +12,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.modules import geom_utils
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 
 def get_matrix(socket):
@@ -38,19 +28,13 @@ def get_matrix(socket):
         print(repr(err))
 
 
-def get_center(self, context):
+def get_center(self, context, node):
 
     location = (0, 0, 0)
     matrix = None
+    print('node:', node.name)
 
     try:
-
-        # we must now pass the origin node/tree in 2.80  ( this code does not interpret that yet )
-
-        node_group = bpy.data.node_groups[self.idtree]
-        node = node_group.nodes[self.idname]
-        print('node:', node)
-
         inputs = node.inputs
 
         if node.bl_idname in {'SvViewerDrawMk4'}:
@@ -76,7 +60,7 @@ def get_center(self, context):
                     location = (Matrix(matrix) @ Vector(location))[:]
 
         else:
-            self.report({'INFO'}, 'viewer has no get_center function')
+            self.report({'INFO'}, 'viewer has no get_center function, or node not found')
 
     except Exception as err:
         self.report({'INFO'}, 'no active node found')
@@ -85,31 +69,20 @@ def get_center(self, context):
         print(sys.exc_info()[-1].tb_frame.f_code)
         print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 
-
     return location
 
 
 
-class Sv3DviewAlign(bpy.types.Operator):
+class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
     """ Zoom to viewer output """
     bl_idname = "node.view3d_align_from"
     bl_label = "Align 3dview to Viewer"
 
     fn_name: bpy.props.StringProperty(default='')
 
-    idname: bpy.props.StringProperty(
-        name='idname',
-        description='name of parent node',
-        default='')
+    def sv_execute(self, context, node):
 
-    idtree: bpy.props.StringProperty(
-        name='idtree',
-        description='name of parent tree',
-        default='')
-
-    def execute(self, context):
-
-        vector_3d = get_center(self, context)
+        vector_3d = get_center(self, context, node)
         if not vector_3d:
             print(vector_3d)
             return {'CANCELLED'}
@@ -124,16 +97,6 @@ class Sv3DviewAlign(bpy.types.Operator):
                 ctx['region'] = area.regions[-1]
                 bpy.ops.view3d.view_center_cursor(ctx)
 
-        return {'FINISHED'}
-
-
 
 classes = [Sv3DviewAlign,]
-
-
-def register():
-    _ = [bpy.utils.register_class(cls) for cls in classes]
-
-
-def unregister():
-    _ = [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
+register, unregister = bpy.utils.register_classes_factory(classes)

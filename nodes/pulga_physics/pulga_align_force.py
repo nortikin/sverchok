@@ -26,7 +26,7 @@ from sverchok.dependencies import scipy, Cython
 
 class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Velocity Alignation
+    Triggers: Velocity Alignment
     Tooltip: Take part of the velocity of the near particles
     """
     bl_idname = 'SvPulgaAlignForceNode'
@@ -42,7 +42,7 @@ class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
         name='Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
         default=1.0, precision=3, update=updateNode)
     max_distance: FloatProperty(
-        name='Max. Distance', description='Maximun distance',
+        name='Max. Distance', description='Maximum distance',
         default=10.0, precision=3, update=updateNode)
     mode: EnumProperty(
         name='Mode',

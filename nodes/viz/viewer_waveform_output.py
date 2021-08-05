@@ -19,11 +19,10 @@ from gpu_extras.batch import batch_for_shader
 
 from mathutils import Vector
 
-from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-
 
 DATA_SOCKET = 'SvStringsSocket'
 
@@ -134,28 +133,18 @@ def advanced_grid_xy(context, args, xy):
     config.line_shader.uniform_float("y_offset", y)
     config.line_batch.draw(config.line_shader)
 
-class NodeTreeGetter():
-    __annotations__ = {}
-    __annotations__['idname'] = bpy.props.StringProperty(default='')
-    __annotations__['idtree'] = bpy.props.StringProperty(default='')
 
-    def get_node(self):
-        return bpy.data.node_groups[self.idtree].nodes[self.idname]
-
-
-class SvWaveformViewerOperator(bpy.types.Operator, NodeTreeGetter):
+class SvWaveformViewerOperator(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.waveform_viewer_callback"
     bl_label = "Waveform Viewer Operator"
 
     fn_name: bpy.props.StringProperty(default='')
 
-    def execute(self, context):
-        node = self.get_node()
+    def sv_execute(self, context, node):
         getattr(node, self.fn_name)()
-        return {'FINISHED'}
 
 
-class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
+class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.waveform_viewer_dirpick"
     bl_label = "Waveform Viewer Directory Picker"
 
@@ -163,17 +152,15 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    def execute(self, context):
-        node = self.get_node()
+    def sv_execute(self, context, node):
         node.set_dir(self.filepath)
-        return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-# place here (out of node) to supress warnings during headless testing. i think.
+# place here (out of node) to suppress warnings during headless testing. i think.
 def get_2d_uniform_color_shader():
     # return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     uniform_2d_vertex_shader = '''
@@ -281,21 +268,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         ... # if self.num_channels < MAX_SOCKETS
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-        self.location_theta = multiplier
-        # x, y = [x * multiplier, y * multiplier]
-
-        return scale
+        from sverchok.settings import get_params
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        self.location_theta = props.render_location_xy_multiplier
+        return props.render_scale
 
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
@@ -339,7 +317,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def draw_buttons(self, context, layout):
 

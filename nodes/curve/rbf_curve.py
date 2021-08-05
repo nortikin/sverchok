@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import make_euclidian_ts
+from sverchok.utils.curve import make_euclidean_ts
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
@@ -72,7 +72,7 @@ else:
                     smooth = smooth[0]
 
                 vertices = np.array(vertices)
-                ts = make_euclidian_ts(vertices)
+                ts = make_euclidean_ts(vertices)
                 rbf = Rbf(ts, vertices,
                             function=self.function,
                             smooth=smooth,

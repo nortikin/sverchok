@@ -1,0 +1,23 @@
+# This test will be triggered if at least one file was changed inside the `docs` folder.
+# It checks whether all syntax of the doc files is correct.
+# If there are any errors information about them will be in the `files changed` tub of the pull request.
+
+name: Building docs test
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+
+jobs:
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ammaraskar/sphinx-action@master
+      with:
+
+        # sphinx properties
+        # https://www.sphinx-doc.org/en/master/man/sphinx-build.html
+        # https://www.sphinx-doc.org/en/master/usage/builders/index.html?highlight=DummyBuilder#sphinx.builders.dummy.DummyBuilder
+        build-command: sphinx-build -W --keep-going -b dummy . _test
+        pre-build-command: pip install sphinx-rtd-theme

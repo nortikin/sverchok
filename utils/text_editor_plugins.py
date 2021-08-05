@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import re
 import bpy
-from sverchok.utils.logging import getLogger, inject_logger
+from sverchok.utils.logging import getLogger
+
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -23,12 +23,12 @@ def fuzzy_compare(named_seeker, named_current):
         if named_seeker == named_current: return True
         elif named_seeker[3:] == named_current: return True
     except Exception as err:
-        print(f"Refesh Current Script called but encountered error {err}")
+        print(f"Refresh Current Script called but encountered error {err}")
 
 
 class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
-    bl_label = "Refesh Current Script"
+    bl_label = "Refresh Current Script"
     bl_idname = "text.noderefresh_from_texteditor"
 
     def execute(self, context):
@@ -42,7 +42,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
         edit_text = bpy.context.edit_text
         text_file_name = edit_text.name
-        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', }
         ngs = list(filter(is_sv_tree, ngs))
 
         if not ngs:
@@ -89,19 +89,14 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     n.reload()
 
                 elif n.bl_idname == 'SvViewerDrawMk4' and n.selected_draw_mode == "fragment":
-                    with n.sv_throttle_tree_update():
-                        if n.custom_shader_location == text_file_name:
-                            n.custom_shader_location = n.custom_shader_location
+                    if n.custom_shader_location == text_file_name:
+                        n.custom_shader_location = n.custom_shader_location
 
                 elif n.bl_idname == 'SvProfileNodeMK3':
                     print('should trigger!')
                     if n.file_pointer and n.file_pointer.name == text_file_name:
                         print('should trigger!...did it?')
                         n.file_pointer = n.file_pointer
-
-            # update node group with affected nodes
-            ng.sv_update()
-
 
         return {'FINISHED'}
 

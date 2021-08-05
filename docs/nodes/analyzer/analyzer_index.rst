@@ -3,7 +3,7 @@ Analyzers
 *********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    area
    bbox_mk3
@@ -23,10 +23,11 @@ Analyzers
    kd_tree_path
    linked_verts
    mesh_filter
-   mesh_select
+   mesh_select_mk2
    select_similar
    proportional
-   normals
+   normals_mk2
+   nearest_point_on_mesh
    bvh_overlap_polys
    object_insolation
    path_length_2

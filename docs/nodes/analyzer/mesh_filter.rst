@@ -6,7 +6,7 @@ Mesh Filter
 Functionality
 -------------
 
-This node sorts vertices, edges or faces of input mesh by several available criterias: boundary vs interior, convex vs concave and so on. For each criteria, it puts "good" and "bad" mesh elements to different outputs. Also mask output is available for each criteria.
+This node sorts vertices, edges or faces of input mesh by several available criteria: boundary vs interior, convex vs concave and so on. For each criteria, it puts "good" and "bad" mesh elements to different outputs. Also mask output is available for each criteria.
 
 Inputs
 ------
@@ -23,7 +23,7 @@ Parameters
 This node has the following parameters:
 
 - **Mode**. Which sort of mesh elements to operate on. There are three modes available: Vertices, Edges and Faces.
-- **Filter**. Criteria to be used for filtering. List of criterias available depends on mode selected. See below.
+- **Filter**. Criteria to be used for filtering. List of criteria available depends on mode selected. See below.
 
 Outputs
 -------

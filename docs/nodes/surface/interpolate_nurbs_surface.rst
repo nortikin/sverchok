@@ -4,7 +4,7 @@ Interpolate NURBS Surface
 Dependencies
 ------------
 
-This node requires Geomdl_ library to work.
+This node can optionally use Geomdl_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 
@@ -40,13 +40,39 @@ This node has the following inputs:
 * **Degree U**, **Degree V**. Degree of the surface along U and V directions,
   correspondingly. The default value is 3.
 
-Paramters
----------
+Parameters
+----------
 
-This node has the following paramters:
+This node has the following parameters:
 
-* **Centripetal**. This defines whether the node will use centripetal
-  interpolation method. Unchecked by default.
+* **Implementation**. This defines the implementation of NURBS mathematics to
+  be used. The available options are:
+
+  * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl
+    package is installed.
+  * **Sverchok**. Use built-in Sverchok implementation.
+  
+  In general (with large nuber of control points), built-in implementation
+  should be faster; but Geomdl implementation is better tested.
+  The default option is **Geomdl**, when it is available; otherwise, built-in
+  implementation is used.
+
+* **Centripetal**. This parameter is only available when **Implementation**
+  parameter is set to **Geomdl**. Defines whether the node will use
+  centripetal interpolation method. Unchecked by default.
+* **Metric**. This parameter is available only when **Implementation**
+  parameter is set to **Sverchok**. This defines the metric used to calculate
+  surface's U, V parameter values corresponding to specified points. The
+  available values are:
+
+   * Manhattan
+   * Euclidian
+   * Points (just number of points from the beginning)
+   * Chebyshev
+   * Centripetal (square root of Euclidian distance).
+
+   The default value is Euclidian.
+
 * **Input mode**. The available values are:
 
    * **Single list**. The node expects a flat list of points for each surface.

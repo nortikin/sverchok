@@ -3,12 +3,11 @@ Vector
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    attractor
    axis_input_mk2
    drop
-   normal
    interpolation_stripes
    interpolation_mk3
    math_mk3

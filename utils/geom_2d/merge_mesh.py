@@ -301,7 +301,7 @@ if bl_crop_mesh is not None:
         """
         Crop given faces by another set of faces by Blender internal function
         :param verts: list of Sv vertices
-        :param faces: list of faces wich should be cropped
+        :param faces: list of faces which should be cropped
         :param verts_crop: list of Sv vertices
         :param faces_crop: list of faces by which mesh should be cropped
         :param mode: 'inner' or 'outer'

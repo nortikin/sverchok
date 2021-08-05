@@ -78,7 +78,7 @@ supported_metrics = [
         ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
         ('POINTS', 'Points', "Points based", 2),
         ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3),
-        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
+        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidean distance", 4)
     ]
 
 xyz_metrics = [
@@ -332,6 +332,13 @@ def np_normalize_vectors(vecs):
     norms = np.linalg.norm(vecs, axis=1)
     nonzero = (norms > 0)
     vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return vecs
+
+def np_multiply_matrices_vectors(matrices, vectors):
+    vectors = vectors[np.newaxis]
+    vectors = np.transpose(vectors, axes=(1,2,0))
+    r = matrices @ vectors
+    return r[:,:,0]
 
 def weighted_center(verts, field=None):
     if field is None:

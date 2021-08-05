@@ -14,7 +14,7 @@ from sverchok.utils.geom import circle_by_two_derivatives
 class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Extend Curve
-    Tooltip: Smoothly extend a curve beyound it's range
+    Tooltip: Smoothly extend a curve beyond it's range
     """
     bl_idname = 'SvExtendCurveNode'
     bl_label = 'Extend Curve'

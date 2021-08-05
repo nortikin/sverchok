@@ -26,14 +26,21 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator, is_submenu_call, get_submenu_call_name, compose_submenu_name
-from sverchok.utils import get_node_class_reference
-from sverchok.utils.extra_categories import get_extra_categories
-from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
-from sverchok.ui import presets
-# from nodeitems_utils import _node_categories
+from sverchok.menu import (
+    make_node_cats,
+    draw_add_node_operator,
+    is_submenu_call,
+    get_submenu_call_name,
+    compose_submenu_name,
+)
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+from sverchok.utils import get_node_class_reference
+from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
+from sverchok.ui.sv_icons import node_icon, icon, custom_icon
+from sverchok.ui import presets
+
+
+sv_tree_types = {'SverchCustomTreeType', }
 node_cats = make_node_cats()
 
 menu_class_by_title = dict()
@@ -73,9 +80,9 @@ menu_structure = [
     ["NODEVIEW_MT_AddViz", 'RESTRICT_VIEW_OFF'],
     ["NODEVIEW_MT_AddText", 'TEXT'],
     ["NODEVIEW_MT_AddScene", 'SCENE_DATA'],
-    ["NODEVIEW_MT_AddExchange", 'SCENE_DATA'],
+    ["NODEVIEW_MT_AddExchange", 'ARROW_LEFTRIGHT'],
     ["NODEVIEW_MT_AddLayout", 'NODETREE'],
-    ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
+    ["NODEVIEW_MT_AddBPYData", "BLENDER"],
     ["separator"],
     ["NODEVIEW_MT_AddScript", "WORDWRAP_ON"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
@@ -84,7 +91,6 @@ menu_structure = [
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
-    ["NODE_MT_category_SVERCHOK_MONAD", "RNA"],
     ["NODE_MT_category_SVERCHOK_GROUP", "NODETREE"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
@@ -134,6 +140,18 @@ class NodeViewMenuTemplate(bpy.types.Menu):
         layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
 
+
+class SV_NodeTree_Poll():
+    """
+    mixin to detect if the current nodetree is a Sverchok type nodetree, if not poll returns False
+    """
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            return True
+
+
 # quick class factory.
 def make_class(name, bl_label):
     global menu_class_by_title
@@ -142,16 +160,9 @@ def make_class(name, bl_label):
     menu_class_by_title[bl_label] = clazz
     return clazz
 
-class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
-    bl_label = "Sverchok Nodes"
 
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type in sv_tree_types:
-            #menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
-            return True
+class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu, SV_NodeTree_Poll):
+    bl_label = "Sverchok Nodes"
 
     def draw(self, context):
 
@@ -163,8 +174,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+        # if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
+        layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
         for item in menu_structure:
             if item[0] == 'separator':
@@ -182,26 +193,31 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
                 # print('AA', globals()[item[0]].bl_label)
                     layout.menu(item[0], **icon(item[1]))
 
-        extra_categories = get_extra_categories()
-        if extra_categories:
-            layout.separator()
-            for category in extra_categories:
-                layout.menu("NODEVIEW_MT_EX_" + category.identifier)
+        if extra_category_providers:
+            for provider in extra_category_providers:
+                if hasattr(provider, 'use_custom_menu') and provider.use_custom_menu:
+                    layout.menu(provider.custom_menu)
+                else:
+                    for category in provider.get_categories():
+                        layout.menu("NODEVIEW_MT_EX_" + category.identifier)
 
-class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
-    bl_label = "Solids"
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type in sv_tree_types:
-            #menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
-            return True
+
+class NodePatialMenuTemplate(bpy.types.Menu, SV_NodeTree_Poll):
+    bl_label = ""
+    items = []
+
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
+        for i in self.items:
+            item = menu_structure[i]
+            layout.menu(item[0], **icon(item[1]))
 
+# quick class factory.
+def make_partial_menu_class(name, bl_label, items):
+    name = f'NODEVIEW_MT_{name}_Partial_Menu'
+    clazz = type(name, (NodePatialMenuTemplate,), {'bl_label': bl_label, 'items':items})
+    return clazz
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     bl_label = "Generator"
@@ -210,6 +226,14 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         layout = self.layout
         layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
+
+class NODEVIEW_MT_AddBPYData(bpy.types.Menu):
+    bl_label = "BPY Data"
+
+    def draw(self, context):
+        layout = self.layout
+        layout_draw_categories(self.layout, self.bl_label, node_cats['BPY Data'])
+        layout_draw_categories(self.layout, self.bl_label, node_cats['Objects'])
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
     bl_label = "Modifiers"
@@ -308,6 +332,7 @@ classes = [
     NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
+    NODEVIEW_MT_AddBPYData,
     NODEVIEW_MT_AddPresetOps,
     NODE_MT_category_SVERCHOK_GROUP,
     # like magic.
@@ -349,17 +374,36 @@ classes = [
     make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
-    # NODEVIEW_MT_Solids_Special_Menu
+
+    # make | NODEVIEW_MT_ + class name +_Partial_Menu , menu name, menu items
+    make_partial_menu_class('Basic_Data', 'Basic Data Types (1)', range(12, 20)),
+    make_partial_menu_class('Mesh', 'Mesh (2)', [1, 7, 8, 9, 10]),
+    make_partial_menu_class('Advanced_Objects', 'Advanced Objects (3)', [2, 3, 4, 5, 6, 28, 30, 32, 33]),
+    make_partial_menu_class('Connection', 'Connection (4)', [21, 22, 23, 24, 26, 29, 31]),
+    make_partial_menu_class('UI_tools', 'SV Interface (5)', [25, 35, 36])
+
 ]
+def sv_draw_menu(self, context):
+
+    tree_type = context.space_data.tree_type
+    if not tree_type in sv_tree_types:
+        return
+    layout = self.layout
+    layout.operator_context = "INVOKE_DEFAULT"
+
+    if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
+        layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
+        return
+
+    NODEVIEW_MT_Dynamic_Menu.draw(self, context)
 
 def register():
-    #global menu_class_by_title
-    #menu_class_by_title = dict()
 
     for category in presets.get_category_names():
         make_preset_category_menu(category)
     for class_name in classes:
         bpy.utils.register_class(class_name)
+    bpy.types.NODE_MT_add.append(sv_draw_menu)
 
 def unregister():
     global menu_class_by_title
@@ -369,5 +413,5 @@ def unregister():
     for category in presets.get_category_names():
         if category in preset_category_menus:
             bpy.utils.unregister_class(preset_category_menus[category])
-
+    bpy.types.NODE_MT_add.remove(sv_draw_menu)
     menu_class_by_title = dict()

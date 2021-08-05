@@ -8,18 +8,15 @@
 # pylint: disable=c0103
 
 import os
-import inspect
 import numpy as np
 
 import bpy
 import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
-from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.settings import get_params
-from sverchok.data_structure import updateNode, node_id, throttle_and_update_node
+from sverchok.data_structure import updateNode, node_id
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
@@ -314,11 +311,11 @@ def get_last_n_lines(content, last_n_lines):
 
 def text_decompose(content, last_n_lines):
     """
-    input: 
+    input:
         expects to receive a newline separated string, to indicate multiline text
         if anything else is received a "no valid text found..." message is passed.
     return:
-        return_str : a a list of strings, padded with " " to match the longest line
+        return_str : a list of strings, padded with " " to match the longest line
         dims       : 1. number of lines high, 
                      2. length of longest line (its char count)
     """
@@ -420,10 +417,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     bl_label = 'Console Node'
     bl_icon = 'CONSOLE'
 
-    @throttle_and_update_node
     def local_updateNode(self, context):
         # self.process()
-        ...
+        updateNode(self, context)
 
     snlite_mode: bpy.props.BoolProperty(name="Snlite mode", description="read script str from snlite node", update=updateNode)
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
@@ -484,7 +480,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
         
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -532,33 +528,31 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def terminal_text_to_config(self, update=False):
 
-        with self.sv_throttle_tree_update():
+        if not self.snlite_mode:
+            socket_data = self.inputs[0].sv_get()
 
-            if not self.snlite_mode:
-                socket_data = self.inputs[0].sv_get()
+            # this will find the newline delimited text from Object ID selector.
+            if len(socket_data) == 1:
+                socket_data = socket_data[0]
+                if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                # this will find the newline delimited text from Object ID selector.
-                if len(socket_data) == 1:
-                    socket_data = socket_data[0]
-                    if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
-
-                        if self.filter_long_strings:
-                            socket_data = filter_incoming(socket_data)
-                        self.set_node_props(socket_data)
-
-            else:
-                # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
-                connected_bl_idname = self.inputs[0].other.node.bl_idname
-                
-                if connected_bl_idname == "SvScriptNodeLite":
-                    socket_data = list(self.inputs[0].other.node.script_str.splitlines())
+                    if self.filter_long_strings:
+                        socket_data = filter_incoming(socket_data)
                     self.set_node_props(socket_data)
 
-                elif connected_bl_idname == "SvExecNodeMod":
-                    node = self.inputs[0].other.node
-                    socket_data = [j.line for j in node.dynamic_strings]
-                    # socket_data =  '\n'.join([j.line for j in self.dynamic_strings]
-                    self.set_node_props(socket_data)
+        else:
+            # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
+            connected_bl_idname = self.inputs[0].other.node.bl_idname
+            
+            if connected_bl_idname == "SvScriptNodeLite":
+                socket_data = list(self.inputs[0].other.node.script_str.splitlines())
+                self.set_node_props(socket_data)
+
+            elif connected_bl_idname == "SvExecNodeMod":
+                node = self.inputs[0].other.node
+                socket_data = [j.line for j in node.dynamic_strings]
+                # socket_data =  '\n'.join([j.line for j in self.dynamic_strings]
+                self.set_node_props(socket_data)
 
         if update:
             updateNode(self, None)

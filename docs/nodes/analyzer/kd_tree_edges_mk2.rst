@@ -19,7 +19,7 @@ Parameters
 ----------
 
 +------------+-------+-----------------------------------------------------------+
-| Parmameter | Type  | Description                                               |
+| Parameter  | Type  | Description                                               |
 +============+=======+===========================================================+
 | mindist    | float | Minimum Distance to accept a pair                         |
 +------------+-------+-----------------------------------------------------------+
@@ -39,7 +39,7 @@ This mode requires Scipy dependency. It can be from 3 to 10 times faster but lac
 
 
 Max Queries Mode
----------------
+----------------
 
 This mode requires Scipy dependency. In this mode the maxNum property is used to determine how many points will be verified so it will produce less connections that the complete mode
 

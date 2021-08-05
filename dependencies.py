@@ -128,7 +128,7 @@ except ImportError:
     info(freecad_d.message)
     FreeCAD = None
 
-cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://www.freecadweb.org/")
+cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://cython.org/")
 cython_d.pip_installable = True
 try:
     import Cython
@@ -138,6 +138,17 @@ except ImportError:
     cython_d.message = "Cython package is not available, Enhanched KDTree search will not be available"
     info(cython_d.message)
     Cython = None
+
+numba_d = sv_dependencies["numba"] = SvDependency("Numba", "https://numba.pydata.org/")
+numba_d.pip_installable = True
+try:
+    import numba
+    numba_d.message = "Numba package is available"
+    numba_d.module = numba
+except ImportError:
+    numba_d.message = "Numba package is not available, njit compiled functions will not be available"
+    info(numba_d.message)
+    numba = None
 
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:

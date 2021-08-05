@@ -4,7 +4,7 @@ List Repeater
 Functionality
 -------------
 
-Allows explicit repeat of lists and elements. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It shoudld accepts any type of data native to Sverchok..
+Allows explicit repeat of lists and elements. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It should accepts any type of data native to Sverchok..
 
 Inputs
 ------
@@ -12,7 +12,7 @@ Inputs
 +--------+--------------------------------------------------------------------------+
 | Input  | Description                                                              |
 +========+==========================================================================+
-| Data   | The data - can be anything                                               | 
+| Data   | The data - can be anything                                               |
 +--------+--------------------------------------------------------------------------+
 | Number | The amount of times to repeat elements selected by the `Level` parameter |
 +--------+--------------------------------------------------------------------------+

@@ -202,11 +202,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 return
             
             set_sv_depsgraph_need(True)
-            with self.sv_throttle_tree_update():
-                v, e, f = self.sweep_between(construct)
-                self.outputs['Verts'].sv_set([v])
-                self.outputs['Edges'].sv_set([e])
-                self.outputs['Faces'].sv_set([f])
+            v, e, f = self.sweep_between(construct)
+            self.outputs['Verts'].sv_set([v])
+            self.outputs['Edges'].sv_set([e])
+            self.outputs['Faces'].sv_set([f])
 
     def sv_free(self):
         set_sv_depsgraph_need(False)        

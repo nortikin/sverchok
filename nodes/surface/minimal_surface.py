@@ -2,14 +2,12 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from mathutils import Matrix
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
-                                     get_data_nesting_level, throttle_and_update_node)
-from sverchok.utils.logging import info, exception
+                                     get_data_nesting_level)
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.surface.rbf import SvRbfSurface
@@ -29,11 +27,11 @@ else:
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_EX_MINSURFACE'
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Matrix'].hide_safe = self.coord_mode == 'UV'
             self.inputs['SrcU'].hide_safe = self.coord_mode != 'UV' or not self.explicit_src_uv
             self.inputs['SrcV'].hide_safe = self.coord_mode != 'UV' or not self.explicit_src_uv
+            updateNode(self, context)
 
         coord_modes = [
             ('XY', "X Y -> Z", "XY -> Z function", 0),

@@ -85,7 +85,7 @@ Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist
 .. image:: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
 
 The *Connect* mode it is meant to work with paths. Sorting the vertices along the edges.
-The "Search fot limits" option will handle discontinities in the path.
+The "Search for limits" option will handle discontinities in the path.
 
 Example used to sort the vertices after the *Mesh Filter* node
 

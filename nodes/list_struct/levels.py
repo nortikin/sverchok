@@ -20,7 +20,8 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, describe_data_shape_by_level, list_levels_adjust, throttle_and_update_node, SIMPLE_DATA_TYPES, changable_sockets
+from sverchok.data_structure import updateNode, describe_data_shape_by_level, list_levels_adjust, SIMPLE_DATA_TYPES,\
+    changable_sockets
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
@@ -93,10 +94,9 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
             grid.prop(entry, 'wrap', text='')
 
     def sv_update(self):
-        self.update_ui(False)
+        self.update_buttons(False)
 
-    #@throttle_and_update_node
-    def update_ui(self, update_during_process):
+    def update_buttons(self, update_during_process):
         try:
             data = self.inputs['Data'].sv_get(default=[])
         except LookupError:
@@ -139,7 +139,7 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs['Data'].is_linked:
             return
-        self.update_ui(True)
+        self.update_buttons(True)
         if not self.outputs['Data'].is_linked:
             return
 

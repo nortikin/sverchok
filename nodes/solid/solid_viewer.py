@@ -303,7 +303,7 @@ else:
             ('Mefisto', 'Mefisto', '', 2),
         ]
         tesselate_mode: EnumProperty(
-            name="Tesselate mode",
+            name="Tessellate mode",
             description="Algorithm used for conversion",
             items=tesselate_modes, default="Standard",
             )
@@ -396,10 +396,9 @@ else:
             layout.prop(self, 'vector_light', text='')
 
         def bake(self):
-            with self.sv_throttle_tree_update():
-                bpy.ops.node.sverchok_mesh_baker_mk3(
-                    idname=self.name, idtree=self.id_data.name
-                )
+            bpy.ops.node.sverchok_mesh_baker_mk3(
+                node_name=self.name, tree_name=self.id_data.name
+            )
 
         def rclick_menu(self, context, layout):
             self.draw_additional_props(context, layout, n_panel=False)
@@ -512,6 +511,17 @@ else:
 
         def sv_free(self):
             callback_disable(node_id(self))
+
+        def show_viewport(self, is_show: bool):
+            """It should be called by node tree to show/hide objects"""
+            if not self.activate:
+                # just ignore request
+                pass
+            else:
+                if is_show:
+                    self.process()
+                else:
+                    callback_disable(node_id(self))
 
 def register():
     if FreeCAD is not None:

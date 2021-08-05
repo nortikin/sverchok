@@ -22,10 +22,9 @@ import bpy
 import bmesh
 import mathutils
 from bpy.props import BoolProperty, IntProperty
-from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,12 +37,12 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CUT'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FillSides'].hide_safe = not self.fill
         self.outputs['ObjVertices'].hide_safe = not self.make_pieces
         self.outputs['ObjEdges'].hide_safe = not self.make_pieces
         self.outputs['ObjFaces'].hide_safe = not self.make_pieces
+        updateNode(self, context)
 
     fill: BoolProperty(
         name='Make cut faces',
@@ -240,7 +239,7 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 for old_face in faces_to_remove:
                     bm_obj.faces.remove(old_face)
                 for old_v1, old_v2 in edges_to_remove:
-                    # we can't just remember BMEdge instances themselve,
+                    # we can't just remember BMEdge instances themselves,
                     # since they will be invalidated when we remove faces.
                     old_edge = bm_obj.edges.get((old_v1, old_v2))
                     if old_edge:

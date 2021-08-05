@@ -254,7 +254,7 @@ class SvCurve(object):
               * SvCurve.FAIL: raise ZeroCurvatureException
               * SvCurve.RETURN_NONE: return None
               * SvCurve.ASIS: do not perform special check for this case, the
-                algorithm wil raise a general LinAlgError exception if it can't calculate the matrix.
+                algorithm will raise a general LinAlgError exception if it can't calculate the matrix.
 
         output: tuple:
             * matrices: np.array of shape (n, 3, 3)

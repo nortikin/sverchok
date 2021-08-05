@@ -3,7 +3,7 @@ Objects
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    get_asset_properties_mk2
    lattice_analyzer
@@ -16,3 +16,6 @@ Objects
    assign_materials
    material_index
    set_custom_uv_map
+   set_loop_normals
+   set_mesh_attribute
+   set_collection

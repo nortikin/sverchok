@@ -1,17 +1,14 @@
-import traceback
-
 import bpy
 from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core import upgrade_nodes, undo_handler_node_count
-from sverchok.core.update_system import set_first_run, clear_system_cache
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
-from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
+from sverchok.core.update_system import clear_system_cache, reset_timing_graphs
+from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
-from sverchok.utils.logging import debug
+from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
+from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
 
@@ -24,7 +21,6 @@ def get_sv_depsgraph():
     global depsgraph_need
 
     if not depsgraph_need:
-
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         depsgraph_need = True
     elif not sv_depsgraph:
@@ -35,6 +31,7 @@ def get_sv_depsgraph():
 def set_sv_depsgraph_need(val):
     global depsgraph_need
     depsgraph_need = val
+
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -49,7 +46,7 @@ def has_frame_changed(scene):
 
 #
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
-#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
+#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attach viewer draw"
 #  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
 #  there is never a point where the node can ask "am i connected to anything, do i need
 #  to stop drawing?". When the Undo event causes a node to be removed, its node.free function
@@ -68,33 +65,33 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-    CurrentEvents.new_event(BlenderEventsTypes.undo)
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
-    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.sv_links.create_new_links(ng)
-        links_changed = ng.sv_links.links_have_changed(ng)
-        if links_changed:
-            break
 
-    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
-        print('looks like a node was removed, cleaning')
+    if undo_handler_node_count['sv_groups'] != num_to_test_against:
+        debug('looks like a node was removed, cleaning')
         sv_clean(scene)
-        for ng in sverchok_trees():
-            ng.nodes_dict.load_nodes(ng)
-            ng.has_changed = True
         sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
 
     import sverchok.core.group_handlers as gh
-    gh.ContextTrees.reset_data()
+    gh.GroupContextTrees.reset_data()  # todo repeat the logic from main tree?
+
+    # ideally we would like to recalculate all from scratch
+    # but with heavy trees user can be scared of pressing undo button
+    # I consider changes in tree topology as most common case
+    # but if properties or work of some viewer node (removing generated objects) was effected by undo
+    # only recalculating of all can restore the adequate state of a tree
+    for tree in BlTrees().sv_main_trees:
+        tree.update()  # the tree could changed by undo event
 
 
 @persistent
@@ -105,28 +102,12 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
 
-    CurrentEvents.new_event(BlenderEventsTypes.frame_change)
     for ng in sverchok_trees():
         try:
             # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
             print('Failed to update:', str(e))  # name,
-
-
-@persistent
-def sv_scene_handler(scene):
-    """
-    Avoid using this.
-    Update sverchok node groups on scene update events.
-    Not used yet.
-    """
-    # print('sv_scene_handler')
-    for ng in sverchok_trees():
-        try:
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', ng, str(e))
 
 
 @persistent
@@ -163,81 +144,78 @@ def sv_clean(scene):
 
 @persistent
 def sv_pre_load(scene):
+    """
+    This method is called whenever new file is opening
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    """
     clear_system_cache()
     sv_clean(scene)
 
     import sverchok.core.group_handlers as gh
     gh.NodesStatuses.reset_data()
-    gh.ContextTrees.reset_data()
-
-    set_first_run(True)
+    gh.GroupContextTrees.reset_data()
+    import sverchok.core.main_tree_handler as mh
+    mh.NodesStatuses.reset_data()
+    mh.ContextTrees.reset_data()
 
 
 @persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    post_load handler is also called when Blender is first ran
+    The method should initialize Sverchok parts which are required by loaded tree
     """
-
-    set_first_run(False)
+    from sverchok import node_tree, settings
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
-    from sverchok import node_tree
-    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
+    node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
+    # register and mark old and dependent nodes
+    with catch_log_error():
+        if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
+            old_nodes.register_all()
+            old_nodes.mark_all()
+            dummy_nodes.register_all()
+            dummy_nodes.mark_all()
 
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()
+    with catch_log_error():
+        settings.apply_theme_if_necessary()
 
-    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
-    sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
-
-    for ng in sv_trees:
-        with ng.throttle_update():
-            try:
-                old_nodes.load_old(ng)
-            except:
-                traceback.print_exc()
-            try:
-                dummy_nodes.load_dummy(ng)
-            except:
-                traceback.print_exc()
-            try:
-                upgrade_nodes.upgrade_nodes(ng)
-            except:
-                traceback.print_exc()
-
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        pref = addon.preferences
-        if pref.apply_theme_on_open:
-            color_def.apply_theme()
-
-    for ng in sv_trees:
-        if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-            ng.update()
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()
 
 
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
 
-    # scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    #if sv_scene_handler in scene:
-    #    scene.remove(sv_scene_handler)
 
     # apply the right one
     if mode == "POST":
         post.append(sv_update_handler)
     elif mode == "PRE":
         pre.append(sv_update_handler)
+
+def update_frame_change_mode():
+    from sverchok import settings
+    mode = settings.get_param("frame_change_mode", "POST")
+    set_frame_change(mode)
 
 
 handler_dict = {
@@ -256,17 +234,10 @@ def call_user_functions_on_post_load_event(scene):
 
 
 def register():
-
     app_handler_ops(append=handler_dict)
-
     data_structure.setup_init()
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        set_frame_change(addon.preferences.frame_change_mode)
-    else:
-        print("Couldn't setup Sverchok frame change handler")
 
+    update_frame_change_mode()
     bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)
 
 

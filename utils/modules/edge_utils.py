@@ -9,22 +9,35 @@ from math import acos, pi
 from mathutils import Vector
 import numpy as np
 from numpy.linalg import norm as np_norm
+from sverchok.data_structure import has_element
+from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal, vectors_center_axis_to_matrix
-from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_num
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_num, adjacent_edg_pol_idx
 from sverchok.nodes.analyzer.mesh_filter import Edges
+
+def get_v_edges(vertices, edges):
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+    if isinstance(edges, np.ndarray):
+        np_edges = edges
+    else:
+        np_edges = np.array(edges)
+    return np_verts[np_edges]
 
 def edges_aux(vertices):
     '''
     vertices: list as [[vertex,vertex,..], [vertex,..],..]
     returns edges array with the maximum length of the vertices list supplied as [np.array]
     '''
-    v_len = [len(v) for v in vertices]
-    v_len_max = max(v_len)
-    np_in = np.arange(v_len_max - 1)
+    v_len = len(vertices)
+
+    np_in = np.arange(v_len - 1)
     np_edges = np.array([np_in, np_in + 1]).T
 
-    return [np_edges]
+    return np_edges
 
 def edges_length(vertices, edges, sum_length=False, out_numpy=False):
     '''
@@ -35,18 +48,18 @@ def edges_length(vertices, edges, sum_length=False, out_numpy=False):
     out_numpy: boolean to determine if outputtig  np_array or regular python list
     returns length of edges or sum of lengths
     '''
-    np_verts = np.array(vertices)
-    if type(edges[0]) in (list, tuple):
-        np_edges = np.array(edges)
-    else:
-        np_edges = edges[:len(vertices)-1, :]
-
-    vect = np_verts[np_edges[:, 0], :] - np_verts[np_edges[:, 1], :]
+    if not has_element(vertices):
+        return
+    if not has_element(edges):
+        edges = edges_aux(vertices)
+    v_edges = get_v_edges(vertices, edges)
+    vect = v_edges[:, 1, :] - v_edges[:, 0, :]
     length = np.linalg.norm(vect, axis=1)
     if sum_length:
         length = np.sum(length)[np.newaxis]
 
     return length if out_numpy else length.tolist()
+
 
 
 def edges_direction(vertices, edges, out_numpy=False):
@@ -57,22 +70,15 @@ def edges_direction(vertices, edges, out_numpy=False):
     out_numpy: boolean to determine if outputtig  np_array or regular python list
     returns edges direction as [vertex, vertex,...] or numpy array with two axis
     '''
+    v_edges = get_v_edges(vertices, edges)
+    if out_numpy:
+        return np_normalize_vectors(v_edges[:,1,:] - v_edges[:,0,:])
 
-    np_verts = np.array(vertices)
-    if type(edges[0]) in (list, tuple):
-        np_edges = np.array(edges)
-    else:
-        np_edges = edges[:len(vertices)-1, :]
-
-    vect = np_verts[np_edges[:, 1], :] - np_verts[np_edges[:, 0], :]
-    dist = np_norm(vect, axis=1)
-    vect_norm = vect/dist[:, np.newaxis]
-    return vect_norm if out_numpy else vect_norm.tolist()
-
+    return np_normalize_vectors(v_edges[:, 1, :] - v_edges[:, 0, :]).tolist()
 
 def connected_edges(verts, edges):
     '''
-    edges conected to each edge
+    edges connected to each edge
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
@@ -87,10 +93,27 @@ def connected_edges(verts, edges):
         vals.append(adj_edges)
     return vals
 
+def connected_edges_idx(verts, edges):
+    '''
+    edges connected to each edge
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
+    '''
+    v_adjacent = adjacent_edg_pol_idx(verts, edges)
+    vals = []
+    for idx, edge in enumerate(edges):
+        adj_edges = []
+        for v_ind in edge:
+            adj_edges.extend(v_adjacent[v_ind])
+            adj_edges.remove(idx)
+        vals.append(adj_edges)
+    return vals
+
 
 def connected_edges_num(verts, edges):
     '''
-    number of edges conected to each edge
+    number of edges connected to each edge
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     returns number of edges connected to each edge as [int, int,...]
@@ -139,6 +162,27 @@ def adjacent_faces(edges, pols):
                 ad_faces[idx] += [pol]
     return ad_faces
 
+def adjacent_faces_idx(edges, pols):
+    '''
+    calculates of adjacent faces
+    edges: list as [edge, edge,..], being each edge [int, int].
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
+    '''
+    e_sorted = [sorted(e) for e in edges]
+    ad_faces = [[] for e in edges]
+    for p_idx, pol in enumerate(pols):
+        print(p_idx, pol)
+        for edge in zip(pol, pol[1:] + [pol[0]]):
+            e_s = sorted(edge)
+            try:
+                e_idx = e_sorted.index(e_s)
+                ad_faces[e_idx].append(p_idx)
+            except ValueError:
+                pass
+
+
+    return ad_faces
 
 def faces_angle_full(vertices, edges, faces):
     '''
@@ -215,7 +259,7 @@ def edges_vertices(vertices, edges):
 
 def edge_is_filter(vertices, edges, faces, mode):
     '''
-    acces to mesh_filter to get different bmesh edges filters
+    access to mesh_filter to get different bmesh edges filters
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
@@ -243,14 +287,17 @@ def edges_shell_factor(vertices, edges, faces):
     vals = [(v_shell[e[0]] + v_shell[e[1]])/2 for e in edges]
     return vals
 
-def edges_center(vertices, edges):
+def edges_center(vertices, edges, output_numpy=False):
     '''
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list with edges [[int, int], [int,int]...]
     outputs the center point of each edge [vertex, vertex..]
     '''
-    vals = [tuple((Vector(vertices[e[0]])+Vector(vertices[e[1]]))/2) for e in edges]
-    return vals
+    v_edges = get_v_edges(vertices, edges)
+    if output_numpy:
+        return ((v_edges[:, 0,:] + v_edges[:, 1,:])/2)
+    return ((v_edges[:, 0,:] + v_edges[:, 1,:])/2).tolist()
+
 
 def edges_origin(vertices, edges):
     '''
@@ -294,7 +341,7 @@ def edge_vertex(vertices, edges, origin):
         center = [Vector(vertices[e[1]]) for e in edges]
     return center
 
-def edges_matrix(vertices, edges, orientation):
+def edges_matrix(vertices, edges, origin, track, up_axis):
     '''
     Matrix aligned with edge.
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -305,14 +352,14 @@ def edges_matrix(vertices, edges, orientation):
     up_axis: String  that can be X, Y, Z, -X, -Y or -Z
     outputs each edge matrix [matrix, matrix, matrix]
     '''
-    origin, track, up_axis = orientation
+
     normal = edges_direction(vertices, edges, out_numpy=False)
     normal_v = [Vector(n) for n in normal]
     center = edge_vertex(vertices, edges, origin)
     vals = matrix_normal([center, normal_v], track, up_axis)
     return vals
 
-def edges_matrix_normal(vertices, edges, faces, orientation):
+def edges_matrix_normal(vertices, edges, faces, origin, track):
     '''
     Matrix aligned with edge and edge normal (needs faces)
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -324,7 +371,7 @@ def edges_matrix_normal(vertices, edges, faces, orientation):
     up: String  that can be X, Y, Z, -X, -Y or -Z
     outputs each edge matrix [matrix, matrix, matrix]
     '''
-    origin, track = orientation
+
     direction = edges_direction(vertices, edges, out_numpy=False)
     center = edge_vertex(vertices, edges, origin)
     ed_normals = edges_normal(vertices, edges, faces)
@@ -337,26 +384,28 @@ def edges_matrix_normal(vertices, edges, faces, orientation):
 
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 edges_modes_dict = {
-    'Geometry':           (0,  've',  '',    'u', edges_vertices,        'vs',  'Vertices, Edges', 'Geometry of each edge. (explode)'),
-    'Direction':          (1,  've',  '',    '',  edges_direction,       'v',   'Direction', 'Normalized Direction'),
-    'Center':             (2,  've',  '',    '',  edges_center,          'v',   'Center', 'Edges Midpoint'),
-    'Origin':             (3,  've',  '',    '',  edges_origin,          'v',   'Origin', 'Edges first point'),
-    'End':                (4,  've',  '',    '',  edges_end,             'v',   'End', 'Edges End point'),
-    'Normal':             (5,  'vep', '',    '',  edges_normal,          'v',   'Normal', 'Edge Normal'),
-    'Matrix':             (10, 've',  'omu', 'u', edges_matrix,          'm',   'Matrix', 'Aligned with edge'),
-    'Matrix Normal':      (11, 'vep', 'on',  'u', edges_matrix_normal,   'm',   'Matrix', 'Aligned with edge and Normal (Needs Faces)'),
-    'Length':             (20, 've',  's',   '',  edges_length,          's',   'Length', 'Edge length'),
-    'Sharpness':          (21, 'vep', '',    '',  edges_shell_factor,    's',   'Sharpness', 'Average of curvature of mesh in edges vertices'),
-    'Face Angle':         (22, 'vep', '',    '',  faces_angle_full,      's',   'Face Angle', 'Face angle'),
-    'Inverted':           (30, 'e',  '',    '',  edges_inverted,        's',   'Edges', 'Reversed Edge'),
-    'Adjacent Faces':     (31, 'ep',  '',    'u', adjacent_faces,        's',   'Faces', 'Adjacent faces'),
-    'Connected Edges':    (32, 've',  '',    'u', connected_edges,       's',   'Number', 'Adjacent faces number'),
-    'Adjacent Faces Num': (33, 'ep',  '',    '',  adjacent_faces_number, 's',   'Number', 'Adjacent faces number'),
-    'Connected Edges Num':(34, 've',  '',    '',  connected_edges_num,   's',   'Number', 'Adjacent faces number'),
-    'Is Boundary':        (40, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge on mesh borders'),
-    'Is Interior':        (41, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge part of the Mainfold'),
-    'Is Contiguous':      (42, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge  manifold and between two faces with the same winding'),
-    'Is Convex':          (43, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Convex'),
-    'Is Concave':         (44, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Concave'),
-    'Is Wire':            (45, 'vep', 'b',   '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Has no related faces'),
+    'Geometry':           (0,  've',  '',   'u', edges_vertices,        'vs',  'Vertices, Edges', 'Geometry of each edge. (explode)'),
+    'Direction':          (1,  've',  'a',   '', edges_direction,       'v',   'Direction', 'Normalized Direction'),
+    'Center':             (2,  've',  '',    '', edges_center,          'v',   'Center', 'Edges Midpoint'),
+    'Origin':             (3,  've',  '',    '', edges_origin,          'v',   'Origin', 'Edges first point'),
+    'End':                (4,  've',  '',    '', edges_end,             'v',   'End', 'Edges End point'),
+    'Normal':             (5,  'vep', '',    '', edges_normal,          'v',   'Normal', 'Edge Normal'),
+    'Matrix':             (10, 've',  'omu','u', edges_matrix,          'm',   'Matrix', 'Aligned with edge'),
+    'Matrix Normal':      (11, 'vep', 'on', 'u', edges_matrix_normal,   'm',   'Matrix', 'Aligned with edge and Normal (Needs Faces)'),
+    'Length':             (20, 've',  'sa',  '', edges_length,          's',   'Length', 'Edge length'),
+    'Sharpness':          (21, 'vep', '',    '', edges_shell_factor,    's',   'Sharpness', 'Average of curvature of mesh in edges vertices'),
+    'Face Angle':         (22, 'vep', '',    '', faces_angle_full,      's',   'Face Angle', 'Face angle'),
+    'Inverted':           (30, 'e',  '',     '', edges_inverted,        's',   'Edges', 'Reversed Edge'),
+    'Adjacent Faces':     (31, 'ep',  '',   'u', adjacent_faces,        's',   'Faces', 'Adjacent faces'),
+    'Connected Edges':    (32, 've',  '',   'u', connected_edges,       's',   'Number', 'Connected edges'),
+    'Adjacent Faces Num': (33, 'ep',  '',    '', adjacent_faces_number, 's',   'Number', 'Adjacent faces number'),
+    'Connected Edges Num':(34, 've',  '',    '', connected_edges_num,   's',   'Number', 'Connected edges number'),
+    'Adjacent Faces Idx' :(35, 'ep',  '',    '', adjacent_faces_idx,    's',   'Faces Idx', 'Adjacent faces Index'),
+    'Connected Edges Idx':(36, 've',  '',    '', connected_edges_idx,   's',   'Edges Idx', 'Connected edges Index'),
+    'Is Boundary':        (40, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge on mesh borders'),
+    'Is Interior':        (41, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge part of the Mainfold'),
+    'Is Contiguous':      (42, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge  manifold and between two faces with the same winding'),
+    'Is Convex':          (43, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Convex'),
+    'Is Concave':         (44, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Concave'),
+    'Is Wire':            (45, 'vep', 'b',   '', edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Has no related faces'),
     }

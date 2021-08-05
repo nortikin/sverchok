@@ -87,7 +87,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.width = 180
         self.inputs.new('SvStringsSocket', "pixel value")
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -96,6 +96,13 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             bgl.glDeleteTextures(1, names)
 
     def process(self):
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.image and not self.image_pointer:
+            image = self.get_bpy_data_from_name(self.image, bpy.data.images)
+            if image:
+                self.image_pointer = image
+
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
@@ -138,15 +145,12 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
 
     def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'render_scale': 1.0,
-            'render_location_xy_multiplier': 1.0})
-        return props.render_scale, props.render_location_xy_multiplier
+        return get_params({
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def get_dimensions(self, width, height):
         """
-        this could also return scale for a blf notation in the vacinity of the texture
+        this could also return scale for a blf notation in the vicinity of the texture
         """
         scale, multiplier = self.get_preferences()
         self.location_theta = multiplier
@@ -161,12 +165,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         # reset n_id on copy
         self.n_id = ''
 
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "image_pointer") and not self.image_pointer:
-            image = self.get_bpy_data_from_name(self.image, bpy.data.images)
-            if image:
-                self.image_pointer = image
 
 classes = [SvTextureViewerNodeLite,]
 register, unregister = bpy.utils.register_classes_factory(classes)

@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 # made by: Linus Yng, haxed by zeffii to mk2
 # pylint: disable=c0326
@@ -188,9 +177,6 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        over_sized_buttons = addon.preferences.over_sized_buttons
-
         col = layout.column(align=True)
         col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
@@ -211,12 +197,18 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.autodump:
             col2 = col.column(align=True)
             row = col2.row(align=True)
-            row.scale_y = 4.0 if over_sized_buttons else 1
+            row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', text="Append")
 
-
     def process(self):
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.text and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
+
         if self.text_mode in {'CSV', 'JSON'}:
             multi_socket(self, min=1)
 
@@ -251,13 +243,6 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'TEXT':
             out = get_text_data(node=self)
         return out
-
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "file_pointer") and not self.file_pointer:
-            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
-            if text:
-                self.file_pointer = text
 
 
 def register():

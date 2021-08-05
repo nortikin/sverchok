@@ -24,12 +24,22 @@ This node has the following inputs:
   will mean that the node returns the result of field application to the result
   of first application. The default value is 1.
 
+Parameters
+----------
+
+* **Output NumPy**. Outputs NumPy arrays in stead of regular python lists. Improves performance
+
 Outputs
 -------
 
 This node has the following output:
 
 * **Vertices**. The result of the vector field application to the original points.
+
+Performance Notes
+-----------------
+
+This node works faster when the vertices list are NumPy arrays
 
 Examples of usage
 -----------------
@@ -41,4 +51,3 @@ Apply noise vector field to the points of straight line segment:
 Apply the same field to the same points, by only by a small amount; then apply the same field to the resulting points, and repeat that 10 times:
 
 .. image:: https://user-images.githubusercontent.com/284644/79487987-7b164a80-8032-11ea-8197-c78314843ffa.png
-

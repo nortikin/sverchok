@@ -1,15 +1,11 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils import Matrix
-from mathutils.bvhtree import BVHTree
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
-                                     throttle_and_update_node, repeat_last_for_length)
-from sverchok.utils.logging import info, exception
+                                     repeat_last_for_length)
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.manifolds import raycast_surface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -40,10 +36,10 @@ else:
             default = True,
             update = updateNode)
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Source'].hide_safe = self.project_mode != 'CONIC'
             self.inputs['Direction'].hide_safe = self.project_mode != 'PARALLEL'
+            updateNode(self, context)
 
         modes = [
             ('PARALLEL', "Along Direction", "Project points along specified direction", 0),

@@ -118,7 +118,7 @@ class SvMirrorNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     modes = [
-        ("VERTEX", "Vertex", "Mirror aroung vertex", 1),
+        ("VERTEX", "Vertex", "Mirror around vertex", 1),
         ("AXIS2P", "Axis by 2 points", "Mirror around axis defined by two points", 2),
         ("COORDINATE_AXIS", "Coordinate Axis", "Mirror around coordinate axis (X, Y, Z)", 3),
         ("AXISPD", "Axis by point and direction", "Mirror around axis defined by a point and a direction", 4),

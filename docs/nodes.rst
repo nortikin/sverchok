@@ -3,7 +3,7 @@ Nodes
 *****
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    Generators <nodes/generator/generator_index>
    Generators Extended<nodes/generators_extended/generators_extended_index>

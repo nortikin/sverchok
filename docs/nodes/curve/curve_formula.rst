@@ -23,18 +23,19 @@ In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` fo
 One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs, sign;
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list, dict.
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not guarantee that no one can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
 
 Examples of valid expressions are:
 
@@ -63,7 +64,7 @@ This node has the following parameters:
   defining curve points in the used coordinate system. Default values define
   simple helix curve in the carthesian coordinates.
 * **Output**. This defined the coordinate system being used, and thus it
-  defines the exact meaing of formula parameters. The available modes are:
+  defines the exact meaning of formula parameters. The available modes are:
 
    * **Carthesian**. Three formulas will define correspondingly X, Y and Z coordinates.
    * **Cylindrical**. Three formulas will define correspondingly Rho, Phi and Z coordinates.

@@ -269,10 +269,12 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     sv_icon = 'SV_MESH_EXPRESSION'
 
     def captured_updateNode(self, context):
-        if not self.updating_name_from_pointer:
+        if not self.updating_name_from_pointer and self.filename:
+            self.debug("triggered captured_updateNode, not good, not terrible.")
             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-            if text_datablock:
-                self.font_pointer = text_datablock
+
+            if isinstance(text_datablock, bpy.types.Text):
+                self.file_pointer = text_datablock
                 self.adjust_sockets()
                 updateNode(self, context)
 
@@ -327,11 +329,13 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "FaceData")
 
     def load_json(self):
-        internal_file = bpy.data.texts[self.filename]
-        f = io.StringIO(internal_file.as_string())
-        json_data = json.load(f)
-        self.validate_json(json_data)
-        return json_data
+        # internal_file = bpy.data.texts[self.filename]
+        internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+        if internal_file:
+            f = io.StringIO(internal_file.as_string())
+            json_data = json.load(f)
+            self.validate_json(json_data)
+            return json_data
 
     def validate_json(self, json):
         if not "vertices" in json:
@@ -427,7 +431,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for key in self.inputs.keys():
             if key not in variables:
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
-                self.inputs.remove(self.inputs[key])
+                self.safe_socket_remove('inputs', key)
+
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
@@ -439,7 +444,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 continue
             if key not in groups:
                 self.debug("Output {} not in groups {}, remove it".format(key, str(groups)))
-                self.outputs.remove(self.outputs[key])
+                self.safe_socket_remove('outputs', key)
+        
         for name in sorted(groups):
             if name not in self.outputs:
                 self.debug("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
@@ -546,7 +552,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'geom' not in node_data:
             return  # looks like the node was empty when it was exported
         geom = node_data['geom']
-        filename = node_data['params']['filename']
+
+        if import_version < 1.0:
+            filename = node_data['params']['filename']
+        else:
+            filename = self.filename
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
@@ -558,7 +568,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             text = bpy.data.texts[self.filename].as_string()
             node_data['geom'] = text
         else:
-            self.warning("Unknown filename: {}".format(self.filename))
+            self.warning("save_to_json called with unknown filename")
 
 def register():
     bpy.utils.register_class(SvJsonFromMesh)

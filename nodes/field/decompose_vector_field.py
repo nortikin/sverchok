@@ -1,12 +1,9 @@
 
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode
 
 from sverchok.utils.math import coordinate_modes
 from sverchok.utils.field.scalar import SvVectorFieldDecomposed
@@ -21,7 +18,6 @@ class SvDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VFIELD_OUT'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if self.output_mode == 'XYZ':
             self.outputs[0].name = 'X'
@@ -35,6 +31,7 @@ class SvDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].name = 'Rho'
             self.outputs[1].name = 'Phi'
             self.outputs[2].name = 'Theta'
+        updateNode(self, context)
 
     output_mode : EnumProperty(
         name = "Coordinates",

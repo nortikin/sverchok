@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
 
 
-def ortho_proyection(verts_in, plane_in):
+def ortho_projection(verts_in, plane_in):
     verts_out = []
     z_coord_out = []
     for verts, plane in zip(*mlr([verts_in, plane_in])):
@@ -40,7 +40,7 @@ def ortho_proyection(verts_in, plane_in):
 
     return verts_out, z_coord_out
 
-def perspective_proyection(verts_in, plane_in, distance):
+def perspective_projection(verts_in, plane_in, distance):
     verts_out = []
     z_coord_out = []
     for verts, plane in zip(*mlr([verts_in, plane_in])):
@@ -76,7 +76,7 @@ def perspective_proyection(verts_in, plane_in, distance):
 class SvFlatGeometryNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: 3D to 2D
-    Tooltip: Proyection of 3d vertices into defined plane
+    Tooltip: Projection of 3d vertices into defined plane
     """
     bl_idname = 'SvFlatGeometryNode'
     bl_label = 'Flat Geometry'
@@ -107,9 +107,9 @@ class SvFlatGeometryNode(bpy.types.Node, SverchCustomTreeNode):
             verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
             plane_in = self.inputs['Plane Matrix'].sv_get(deepcopy=False)
             if self.projection_mode == 'Orthogrphic':
-                verts_out, z_coord_out = ortho_proyection(verts_in, plane_in)
+                verts_out, z_coord_out = ortho_projection(verts_in, plane_in)
             else:
-                verts_out, z_coord_out = perspective_proyection(verts_in, plane_in, 2)
+                verts_out, z_coord_out = perspective_projection(verts_in, plane_in, 2)
 
             self.outputs['Vertices'].sv_set(verts_out)
             self.outputs['Z coord'].sv_set(z_coord_out)

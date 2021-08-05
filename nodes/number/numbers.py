@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node
+from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
@@ -50,12 +50,12 @@ class SvNumberNode(Show3DProperties, DraftMode, bpy.types.Node, SverchCustomTree
     bl_label = 'A Number'
     bl_icon = 'DOT'
 
-    @throttle_and_update_node
     def wrapped_update(self, context):
         kind = self.selected_mode
         prop_name = kind + '_'
         self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop_name
         self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
+        updateNode(self, context)
 
     int_: IntProperty(
         default=0, name="an int", update=updateNode,

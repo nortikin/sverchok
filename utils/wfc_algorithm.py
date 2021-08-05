@@ -182,7 +182,7 @@ class WaveFunctionCollapse:
                 pattern2_boundary_columns = [n for i, n in enumerate(self.patterns[PatternIndex2]) if
                                              i % self.pattern_size != 0]
 
-                # Compare Columns compatability
+                # Compare Columns compatibility
                 if pattern1_boundary_columns == pattern2_boundary_columns:
                     self.allowed_pattern_adjacencies[PatternIndex1][0].add(PatternIndex2)
                     self.allowed_pattern_adjacencies[PatternIndex2][1].add(PatternIndex1)

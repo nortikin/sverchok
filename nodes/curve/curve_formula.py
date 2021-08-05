@@ -3,14 +3,13 @@ import numpy as np
 import math
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, zip_long_repeat, throttle_and_update_node,
+from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      match_long_repeat, ensure_nesting_level)
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.script_importhelper import safe_names_np
-from sverchok.utils.logging import info, exception
 from sverchok.utils.math import (
         from_cylindrical, from_spherical,
         from_cylindrical_np, from_spherical_np,
@@ -28,9 +27,9 @@ class SvCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_FORMULA'
 
-    @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
+        updateNode(self, context)
 
     formula1: StringProperty(
             name = "Formula",

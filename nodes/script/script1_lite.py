@@ -20,6 +20,7 @@ import os
 import sys
 import ast
 import json
+import textwrap
 import traceback
 import numpy as np
 
@@ -28,14 +29,13 @@ from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, Bo
 
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
-    UNPARSABLE, set_autocolor, parse_sockets, are_matched,
-    get_rgb_curve, set_rgb_curve
-)
-from sverchok.utils.snlite_utils import vectorize, ddir
+    UNPARSABLE, set_autocolor, parse_sockets, are_matched)
+
+from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode, throttled
+from sverchok.data_structure import updateNode
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -108,29 +108,34 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
 
 class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' snl SN Lite /// a lite version of SN '''
+
+    """
+    Triggers: snl
+    Tooltip: Script Node Lite
+    
+    This code represents a conscious weighing of conveniences to the user, vs somewhat harder to understand
+    code under the hood. This code evolved as design specs changed, while providing continued support for
+    previous implementation details.
+    """
 
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
 
-    def custom_enum_func(self, context):
+    def return_enumeration(self, enum_name=""):
         ND = self.node_dict.get(hash(self))
         if ND:
-            enum_list = ND['sockets']['custom_enum']
+            enum_list = ND['sockets'][enum_name]
             if enum_list:
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+    def custom_enum_func(self, context):
+        return self.return_enumeration(enum_name='custom_enum')
 
     def custom_enum_func_2(self, context):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets']['custom_enum_2']
-            if enum_list:
-                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
-
-        return [("A", "A", '', 0), ("B", "B", '', 1)]
+        return self.return_enumeration(enum_name='custom_enum_2')
 
 
     def custom_callback(self, context, operator):
@@ -196,7 +201,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             return self.bl_label
 
-    @throttled
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -206,15 +210,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for idx, (socket_description) in enumerate(v):
             """
             Socket description at the moment of typing is list of: [
-            socket_type: str, 
-            socket_name: str, 
-            default: int value, float value or None,
-            nested: int]
+                socket_type: str, 
+                socket_name: str, 
+                default: int value, float value or None,
+                nested: int]
             """
             default_value = socket_description[2]
 
             if socket_description is UNPARSABLE:
-                print(socket_description, idx, 'was unparsable')
+                self.info(f"{socket_description}, {idx}, was unparsable")
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
@@ -252,7 +256,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 socket.use_prop = False
 
         except:
-            print('some failure in the add_props_to_sockets function. ouch.')
+            self.info('some failure in the add_props_to_sockets function. ouch.')
 
         self.halt_updates = False
 
@@ -274,7 +278,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 continue
 
             if not self.add_or_update_sockets(k, v):
-                print('failed to load sockets for ', k)
+                self.info(f'failed to load sockets for {k}')
                 return
 
             self.flush_excess_sockets(k, v)
@@ -296,12 +300,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
-        if text:
+        if text and hasattr(text, "as_string"):
             self.script_str = text.as_string()
         else:
-            print(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
+            self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
-                print('but script loaded locally anyway.')
+                self.info('but script loaded locally anyway.')
 
         if self.update_sockets():
             self.injected_state = False
@@ -337,7 +341,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         # make inputs local, do function with inputs, return outputs if present
         ND = self.node_dict.get(hash(self))
         if not ND:
-            print('hash invalidated')
+            self.info('hash invalidated')
             self.injected_state = False
             self.update_sockets()
             ND = self.node_dict.get(hash(self))
@@ -367,6 +371,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def get_node_from_function_name(self, func_name):
         """
         this seems to get enough info for a snlite stateful setup function.
+        "node" here refers to a node/function in the self.script_str after being parsed 
 
         """
         tree = ast.parse(self.script_str)
@@ -419,6 +424,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             'bpy': bpy,
             'np': np,
             'ddir': ddir,
+            'sv_njit': sv_njit,
+            'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
         })
@@ -439,6 +446,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
+            if socket_info['inputs_required']:
+                # if not fully connected do not raise.
+                # should inform the user that the execution was halted because not 
+                # enough input was provided for the script to do anything useful.
+                if not self.socket_requirements_met(socket_info):
+                    return
+
             exec(self.script_str, locals(), locals())
 
             for idx, _socket in enumerate(self.outputs):
@@ -447,16 +461,42 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             set_autocolor(self, True, READY_COLOR)
 
+
         except Exception as err:
 
-            print("Unexpected error:", sys.exc_info()[0])
+
+            self.info(f"Unexpected error: {sys.exc_info()[0]}")
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
-            print('on line: ', lineno)
+            self.info(f'on line: {lineno}')
+
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
-            if hasattr(self, "snlite_raise_exception") and self.snlite_raise_exception:
-                raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
+
+            if self.snlite_raise_exception:
+                raise
+
+    def socket_requirements_met(self, socket_info):
+        required_count = 0
+        requirements = socket_info['inputs_required']
+        for socket_name in requirements:
+            if self.inputs.get(socket_name):
+                obtained_data = self.inputs[socket_name].sv_get(default=None)
+                # print(f"{obtained_data} from {socket_name}")
+                if obtained_data is None:
+                    continue
+                try:
+                    if obtained_data and obtained_data[0]:
+                        required_count += 1
+                except:
+                    ...
+        
+        requirements_met = required_count == len(requirements)
+        if requirements_met:
+            return True
+        
+        self.info(f"end execution early because required sockets are not connected {requirements}")
+
 
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
@@ -504,9 +544,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         box = layout.box()
         r = box.row()
         r.label(text="extra snlite features")
-        if hasattr(self, "snlite_raise_exception"):
-            r = box.row()
-            r.prop(self, "snlite_raise_exception", toggle=True, text="raise errors to tree level")
+        r = box.row()
+        r.prop(self, "snlite_raise_exception", toggle=True, text="raise errors to tree level")
 
 
 
@@ -514,14 +553,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def save_to_json(self, node_data: dict):
         texts = bpy.data.texts
-
-        data_list = node_data.get('snlite_ui')
-        if data_list:
-            # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
-            for data_json_str in data_list:
-                data_dict = json.loads(data_json_str)
-                if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
-                    set_rgb_curve(data_dict)
 
         includes = node_data.get('includes')
         if includes:
@@ -532,11 +563,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if include_name == new_text.name:
                     continue
 
-                print('| in', self.name, 'the importer encountered')
-                print('| an include called', include_name, '. While trying')
-                print('| to write this file to bpy.data.texts another file')
-                print('| with the same name was encountered. The importer')
-                print('| automatically made a datablock called', new_text.name)
+                multi_string_msg = textwrap.dedent(f"""\
+                | in {self.name} the importer encountered
+                | an include called {include_name}. While trying
+                | to write this file to bpy.data.texts another file
+                | with the same name was encountered. The importer
+                | automatically made a datablock called {new_text.name}.
+                """)
+                self.info(multi_string_msg)
 
     def load_from_json(self, node_data: dict, import_version: float):
 
@@ -551,27 +585,29 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         If you have files that work differently but have the same name, stop.
 
         '''
-        params = node_data.get('params')
-        if params:
-
+        if import_version < 1.0:
+            params = node_data.get('params')
             script_name = params.get('script_name')
             script_content = params.get('script_str')
+        else:
+            script_name = self.script_name
+            script_content = self.script_str
 
-            with self.sv_throttle_tree_update():
-                texts = bpy.data.texts
-                if script_name and not (script_name in texts):
+        if script_name:
+            texts = bpy.data.texts
+            if script_name and not (script_name in texts):
+                new_text = texts.new(script_name)
+                new_text.from_string(script_content)
+            elif script_name and (script_name in texts):
+                # This was added to fix existing texts with the same name but no / different content.
+                if texts[script_name].as_string() == script_content:
+                    self.debug(f'SN skipping text named "{script_name}" - their content are the same')
+                else:
+                    self.info(f'SN text named "{script_name}" already found, but content differs')
                     new_text = texts.new(script_name)
                     new_text.from_string(script_content)
-                elif script_name and (script_name in texts):
-                    # This was added to fix existing texts with the same name but no / different content.
-                    if texts[script_name].as_string() == script_content:
-                        self.debug("SN skipping text named `%s' - their content are the same", script_name)
-                    else:
-                        self.info("SN text named `%s' already found in current, but content differs", script_name)
-                        new_text = texts.new(script_name)
-                        new_text.from_string(script_content)
-                        script_name = new_text.name
-                        self.info('SN text named replaced with %s', script_name)
+                    script_name = new_text.name
+                    self.info(f'SN text named replaced with "{script_name}"')
 
             self.script_name = script_name
             self.script_str = script_content
@@ -584,20 +620,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.make_new_locals()
 
         storage = self.node_dict[hash(self)]['sockets']
-
-        ui_info = storage['snlite_ui']
-        node_data['snlite_ui'] = []
-        print(ui_info)
-        for _, info in enumerate(ui_info):
-            mat_name = info['mat_name']
-            node_name = info['node_name']
-            bl_idname = info['bl_idname']
-            if bl_idname == 'ShaderNodeRGBCurve':
-                data = get_rgb_curve(mat_name, node_name)
-                print(data)
-                data_json_str = json.dumps(data)
-                node_data['snlite_ui'].append(data_json_str)
-
         includes = storage['includes']
         if includes:
             node_data['includes'] = {}
