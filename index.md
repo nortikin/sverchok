@@ -156,7 +156,7 @@
     @ NURBS
     ---
     SvExRevolutionSurfaceNode
-    SvExTaperSweepSurfaceNode
+    SvTaperSweepSurfaceMk2Node
     SvBendCurveSurfaceNode
     SvExExtrudeCurveVectorNode
     SvExExtrudeCurveCurveSurfaceNode

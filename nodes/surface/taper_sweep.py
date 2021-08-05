@@ -5,17 +5,19 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.algorithms import SvTaperSweepSurface
+from sverchok.utils.surface.bevel_curve import nurbs_taper_sweep
 
-class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTaperSweepSurfaceMk2Node(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Taper Sweep Curve
     Tooltip: Generate a taper surface along a line
     """
-    bl_idname = 'SvExTaperSweepSurfaceNode'
+    bl_idname = 'SvTaperSweepSurfaceMk2Node'
     bl_label = 'Taper Sweep'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_TAPER_SWEEP'
@@ -32,7 +34,31 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'UNIT',
             update = updateNode)
 
+    taper_samples : IntProperty(
+        name = "Taper samples",
+        min = 3, default = 10,
+        update = updateNode)
+
+    profile_samples : IntProperty(
+        name = "Profile samples",
+        min = 3, default = 10,
+        update = updateNode)
+
+    def update_sockets(self, context):
+        is_generic = not self.use_nurbs
+        self.inputs['TaperSamples'].hide_safe = is_generic
+        self.inputs['ProfileSamples'].hide_safe = is_generic
+
+        updateNode(self, context)
+
+    use_nurbs : BoolProperty(
+        name = "NURBS",
+        description = "Process NURBS curves and output a NURBS surface",
+        default = False,
+        update = update_sockets)
+
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'use_nurbs')
         layout.prop(self, 'scale_mode')
 
     def sv_init(self, context):
@@ -44,7 +70,10 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
         p.default_property = (0.0, 0.0, 1.0)
+        self.inputs.new('SvStringsSocket', "TaperSamples").prop_name = 'taper_samples'
+        self.inputs.new('SvStringsSocket', "ProfileSamples").prop_name = 'profile_samples'
         self.outputs.new('SvSurfaceSocket', "Surface")
+        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -54,27 +83,51 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         taper_s = self.inputs['Taper'].sv_get()
         point_s = self.inputs['Point'].sv_get()
         direction_s = self.inputs['Direction'].sv_get()
+        taper_samples_s = self.inputs['TaperSamples'].sv_get()
+        profile_samples_s = self.inputs['ProfileSamples'].sv_get()
 
-        if isinstance(profile_s[0], SvCurve):
-            profile_s = [profile_s]
-        if isinstance(taper_s[0], SvCurve):
-            taper_s = [taper_s]
+        input_level = get_data_nesting_level(profile_s, data_types=(SvCurve,))
+
+        profile_s = ensure_nesting_level(profile_s, 2, data_types=(SvCurve,))
+        taper_s = ensure_nesting_level(taper_s, 2, data_types=(SvCurve,))
 
         point_s = ensure_nesting_level(point_s, 3)
         direction_s = ensure_nesting_level(direction_s, 3)
 
+        def check_nurbs(*curves):
+            return [SvNurbsCurve.to_nurbs(c) for c in curves]
+
         surface_out = []
-        for profiles, tapers, points, directions in zip_long_repeat(profile_s, taper_s, point_s, direction_s):
-            for profile, taper, point, direction in zip_long_repeat(profiles, tapers, points, directions):
-                surface = SvTaperSweepSurface(profile, taper, np.array(point), np.array(direction),
-                                scale_base = self.scale_mode)
-                surface_out.append(surface)
+        for params in zip_long_repeat(profile_s, taper_s, point_s, direction_s, taper_samples_s, profile_samples_s):
+            new_surfaces = []
+            for profile, taper, point, direction, taper_samples, profile_samples in zip_long_repeat(*params):
+                if self.use_nurbs:
+                    profile_nurbs, taper_nurbs = check_nurbs(profile, taper)
+                    if profile_nurbs is None:
+                        raise Exception("One of profiles is not NURBS")
+                    if taper_nurbs is None:
+                        raise Exception("One of tapers is not NURBS")
+
+                    surface = nurbs_taper_sweep(profile_nurbs, taper_nurbs, np.array(point), np.array(direction),
+                                scale_base = self.scale_mode,
+                                taper_samples = taper_samples,
+                                profile_samples = profile_samples)[-1]
+                else:
+                    surface = SvTaperSweepSurface(profile, taper, np.array(point), np.array(direction),
+                                    scale_base = self.scale_mode)
+
+                new_surfaces.append(surface)
+
+            if input_level < 2:
+                surface_out.extend(new_surfaces)
+            else:
+                surface_out.append(new_surfaces)
 
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvTaperSweepSurfaceNode)
+    bpy.utils.register_class(SvTaperSweepSurfaceMk2Node)
 
 def unregister():
-    bpy.utils.unregister_class(SvTaperSweepSurfaceNode)
+    bpy.utils.unregister_class(SvTaperSweepSurfaceMk2Node)
 

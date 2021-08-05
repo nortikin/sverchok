@@ -305,8 +305,9 @@ def np_signed_angle(a, b, normal):
     cross = np.cross(a, b)
     scalar = np.dot(cross, normal)
     sign = 1 if scalar >= 0 else -1
-    sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
-    alpha = asin(sin_alpha)
+    #sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
+    cos_alpha = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    alpha = acos(cos_alpha)
     return sign * alpha
 
 def np_vectors_angle(v1, v2):

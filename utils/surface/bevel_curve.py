@@ -16,6 +16,8 @@ from sverchok.utils.math import (
         to_cylindrical_np, to_cylindrical,
         from_cylindrical_np
     )
+from sverchok.utils.geom import LineEquation, rotate_vector_around_vector_np, autorotate_householder
+from sverchok.utils.math import np_vectors_angle, np_signed_angle
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -46,20 +48,85 @@ def bend_curve(field, curve):
 
     return curve.copy(control_points = control_points)
 
-def place_profile(curve, z, scale):
+def place_profile_z(curve, z, scale):
     control_points = np.copy(curve.get_control_points())
     control_points[:,0] *= scale
     control_points[:,1] *= scale
     control_points[:,2] += z
     return curve.copy(control_points = control_points)
 
-def rotate_curve(curve, angle, scale):
+def place_profile(curve, origin, scale):
+    control_points = np.copy(curve.get_control_points())
+    control_points = origin + control_points * scale
+    return curve.copy(control_points = control_points)
+
+def rotate_curve_z(curve, angle, scale):
     control_points = np.copy(curve.get_control_points())
     control_points = control_points[:,0], control_points[:,1], control_points[:,2]
     rhos, phis, zs = to_cylindrical_np(control_points, mode='radians')
     xs, ys, zs = from_cylindrical_np(rhos*scale, phis+angle, zs, mode='radians')
     control_points = np.stack((xs, ys, zs)).T
     return curve.copy(control_points = control_points)
+
+def rotate_curve(curve, axis, angle, scale):
+    control_points = np.copy(curve.get_control_points())
+    control_points = rotate_vector_around_vector_np(control_points, axis, angle)
+
+    rotation_m = np.array(autorotate_householder(Vector(axis), Vector((0.0, 0.0, 1.0))).to_3x3())
+    rotation_inv_m = np.linalg.inv(rotation_m)
+    scale_m = np.eye(3)
+    scale_m[0][0] = scale
+    scale_m[1][1] = -scale
+    #print("Scale", scale_m)
+    #print("Rot", rotation_m)
+    nonuniform_scale_m = np.linalg.inv(rotation_m) @ scale_m @ rotation_m
+
+    control_points = [nonuniform_scale_m @ pt for pt in control_points]
+    control_points = np.array(control_points)
+    return curve.copy(control_points = control_points)
+
+def nurbs_taper_sweep(profile, taper,
+        point, direction, scale_base = SvTaperSweepSurface.UNIT,
+        taper_samples=10, profile_samples=10):
+
+    taper_t_min, taper_t_max = taper.get_u_bounds()
+    profile_t_min, profile_t_max = profile.get_u_bounds()
+    taper_start = taper.evaluate(taper_t_min)
+    taper_end = taper.evaluate(taper_t_max)
+
+    taper_ts = np.linspace(taper_t_min, taper_t_max, num=taper_samples)
+    taper_pts = taper.evaluate_array(taper_ts)
+    axis = LineEquation.from_direction_and_point(direction, point)
+    taper_projections = axis.projection_of_points(taper_pts)
+    scales = np.linalg.norm(taper_projections - taper_pts, axis=1, keepdims=True)
+
+    if scale_base == SvTaperSweepSurface.TAPER:
+        profile_start = profile.evaluate(profile_t_min)
+        profile_start_projection = axis.projection_of_point(profile_start)
+        dp = np.linalg.norm(profile_start - profile_start_projection)
+        scales /= dp
+    elif scale_base == SvTaperSweepSurface.PROFILE:
+        scale0 = scales[0]
+        scales /= scale0
+
+    profiles = [place_profile(profile, pt, scale) for pt, scale in zip(taper_projections, scales)]
+    profiles = [profile.reverse() for profile in profiles]
+
+    profile_ts = np.linspace(profile_t_min, profile_t_max, num=profile_samples, endpoint=True)
+    profile_pts = profile.evaluate_array(profile_ts)
+    profile_pt_projections = axis.projection_of_points(profile_pts)
+    profile_rhos = np.linalg.norm(profile_pts - profile_pt_projections, axis=1, keepdims=True)
+    profile_start_rho = profile_rhos[0]
+
+    taper_v = taper_pts[0] - taper_projections[0]
+
+    profile_angles = [np_signed_angle(profile_pt - projection, taper_v, direction) for profile_pt, projection in zip(profile_pts, profile_pt_projections)]
+
+    tapers = [rotate_curve(taper, direction, angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
+
+    intersections = [[taper.evaluate(t) for taper in tapers] for t in taper_ts]
+
+    return tapers, profiles, gordon_surface(tapers, profiles, intersections)[-1]
 
 def nurbs_bevel_curve(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
@@ -84,7 +151,7 @@ def nurbs_bevel_curve(path, profile, taper,
     profile_start_rho = to_cylindrical(profile.evaluate(profile_t_min))[0]
     taper_start_rho, taper_start_angle, _ = to_cylindrical(taper.evaluate(taper_t_min))
 
-    profiles = [place_profile(profile, z, scale) for z, scale in zip(taper_zs, taper_rhos / profile_start_rho)]
+    profiles = [place_profile_z(profile, z, scale) for z, scale in zip(taper_zs, taper_rhos / profile_start_rho)]
     profiles = [bend_curve(field, profile) for profile in profiles]
     profiles = [profile.reverse() for profile in profiles]
 
@@ -95,7 +162,7 @@ def nurbs_bevel_curve(path, profile, taper,
 
     taper = refine_curve(taper, taper_refine)
 
-    tapers = [rotate_curve(taper, angle-taper_start_angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
+    tapers = [rotate_curve_z(taper, angle-taper_start_angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
     tapers = [bend_curve(field, taper) for taper in tapers]
 
     #intersections = [[taper.evaluate(t) for t in taper_ts] for taper in tapers]
