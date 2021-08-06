@@ -227,7 +227,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'limit_max_dist', expand=True)
         else:
             layout.prop(self, 'selected_algo', expand=True)
-            if self.selected_algo == 'algo 2':
+            if self.selected_algo == 'algo_2':
                 layout.prop(self, 'epsilon_bvh', text='Epsilon')
                 layout.prop(self, 'num_samples', text='Samples')
 
