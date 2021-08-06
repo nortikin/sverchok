@@ -55,10 +55,9 @@ def place_profile_z(curve, z, scale):
     control_points[:,2] += z
     return curve.copy(control_points = control_points)
 
-def place_profile(curve, origin, scale):
-    control_points = np.copy(curve.get_control_points())
+def place_profile(control_points, origin, scale):
     control_points = origin + control_points * scale
-    return curve.copy(control_points = control_points)
+    return control_points
 
 def rotate_curve_z(curve, angle, scale):
     control_points = np.copy(curve.get_control_points())
@@ -86,47 +85,60 @@ def rotate_curve(curve, axis, angle, scale):
     return curve.copy(control_points = control_points)
 
 def nurbs_taper_sweep(profile, taper,
-        point, direction, scale_base = SvTaperSweepSurface.UNIT,
-        taper_samples=10, profile_samples=10):
+        point, direction, scale_base = SvTaperSweepSurface.UNIT):
 
-    taper_t_min, taper_t_max = taper.get_u_bounds()
-    profile_t_min, profile_t_max = profile.get_u_bounds()
-    taper_start = taper.evaluate(taper_t_min)
-    taper_end = taper.evaluate(taper_t_max)
-
-    taper_ts = np.linspace(taper_t_min, taper_t_max, num=taper_samples)
-    taper_pts = taper.evaluate_array(taper_ts)
     axis = LineEquation.from_direction_and_point(direction, point)
-    taper_projections = axis.projection_of_points(taper_pts)
-    scales = np.linalg.norm(taper_projections - taper_pts, axis=1, keepdims=True)
+
+    taper_cpts = taper.get_control_points()
+    taper_weights = taper.get_weights()
+
+    taper_projections = axis.projection_of_points(taper_cpts)
+
+    control_points = []
+    weights = []
 
     if scale_base == SvTaperSweepSurface.TAPER:
+        profile_t_min, profile_t_max = profile.get_u_bounds()
         profile_start = profile.evaluate(profile_t_min)
         profile_start_projection = axis.projection_of_point(profile_start)
-        dp = np.linalg.norm(profile_start - profile_start_projection)
-        scales /= dp
+        divisor = np.linalg.norm(profile_start - profile_start_projection)
     elif scale_base == SvTaperSweepSurface.PROFILE:
-        scale0 = scales[0]
-        scales /= scale0
+        taper_t_min, taper_t_max = taper.get_u_bounds()
+        taper_start = taper.evaluate(taper_t_min)
+        taper_start_projection = np.array(axis.projection_of_point(taper_start))
+        divisor = np.linalg.norm(taper_start_projection - taper_start)
+    else:
+        divisor = 1.0
 
-    profiles = [place_profile(profile, pt, scale) for pt, scale in zip(taper_projections, scales)]
-    profiles = [profile.reverse() for profile in profiles]
+    profile_cpts = profile.get_control_points()
+    n = len(profile_cpts)
+    profile_knotvector = profile.get_knotvector()
+    profile_weights = profile.get_weights()
 
-    profile_ts = np.linspace(profile_t_min, profile_t_max, num=profile_samples, endpoint=True)
-    profile_pts = profile.evaluate_array(profile_ts)
-    profile_pt_projections = axis.projection_of_points(profile_pts)
-    profile_rhos = np.linalg.norm(profile_pts - profile_pt_projections, axis=1, keepdims=True)
-    profile_start_rho = profile_rhos[0]
+    for taper_control_point, taper_projection, taper_weight in zip(taper_cpts, taper_projections, taper_weights):
+        radius = np.linalg.norm(taper_control_point - taper_projection)
+        if radius < 1e-8:
+            parallel_points = np.empty((n,3))
+            parallel_points[:] = taper_projection
+        else:
+            parallel_points = place_profile(profile_cpts, taper_projection, radius / divisor)
+        parallel_weights = profile_weights * taper_weight
 
-    taper_v = taper_pts[0] - taper_projections[0]
+        control_points.append(parallel_points)
+        weights.append(parallel_weights)
 
-    profile_angles = [np_signed_angle(profile_pt - projection, taper_v, direction) for profile_pt, projection in zip(profile_pts, profile_pt_projections)]
+    control_points = np.array(control_points)
+    control_points -= point
 
-    tapers = [rotate_curve(taper, direction, angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
+    weights = np.array(weights)
 
-    intersections = [[taper.evaluate(t) for taper in tapers] for t in taper_ts]
+    degree_u = taper.get_degree()
+    degree_v = profile.get_degree()
 
-    return tapers, profiles, gordon_surface(tapers, profiles, intersections)[-1]
+    return SvNurbsSurface.build(taper.get_nurbs_implementation(),
+            degree_u, degree_v,
+            taper.get_knotvector(), profile_knotvector,
+            control_points, weights)
 
 def nurbs_bevel_curve(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
