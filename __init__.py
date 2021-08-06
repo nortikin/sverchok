@@ -49,7 +49,7 @@ bl_info = {
     "category": "Node",
     "description": "Parametric node-based geometry programming",
     "warning": "",
-    "wiki_url": "http://nikitron.cc.ua/sverch/html/main.html",
+    "wiki_url": "https://nortikin.github.io/sverchok/docs/main.html",
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
