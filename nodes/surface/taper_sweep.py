@@ -54,7 +54,6 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         p.use_prop = True
         p.default_property = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
-        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
