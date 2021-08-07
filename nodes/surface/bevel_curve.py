@@ -121,7 +121,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     ]
 
     length_mode : EnumProperty(
-        name = "Scale along curve",
+        name = "Samples distribution along path",
         items = length_modes,
         default = 'T',
         update = update_sockets)
@@ -129,7 +129,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'curve_mode', expand=True)
         if self.curve_mode == 'NURBS':
-            layout.prop(self, 'precision_method', text='')
+            layout.prop(self, 'precision_method', text='Precision')
         layout.prop(self, "algorithm")
         layout.label(text="Orientation:")
         row = layout.row()
@@ -138,7 +138,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.algorithm == 'track':
             layout.prop(self, "up_axis")
-        layout.label(text="Scale along curve:")
+        layout.label(text="Samples distribution:")
         layout.prop(self, 'length_mode', text='')
 
     def sv_init(self, context):
