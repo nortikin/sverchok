@@ -45,9 +45,9 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         is_generic = self.curve_mode == 'GENERIC'
         is_simple = self.precision_method == BEVEL_SIMPLE
         is_gordon = self.precision_method == BEVEL_GORDON
-        self.inputs['TaperSamples'].hide_safe = is_generic or not is_gordon
-        self.inputs['TaperKnots'].hide_safe = is_generic or is_simple
-        self.inputs['ProfileSamples'].hide_safe = is_generic or not is_gordon
+        self.inputs['ProfileCopies'].hide_safe = is_generic or not is_gordon
+        self.inputs['TaperRefine'].hide_safe = is_generic or is_simple
+        self.inputs['TaperCopies'].hide_safe = is_generic or not is_gordon
 
         updateNode(self, context)
 
@@ -101,17 +101,20 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     taper_samples : IntProperty(
-        name = "Taper samples",
+        name = "Profile copies",
+        description = "Number of copies of profile curve to be used for Gordon surface",
         min = 3, default = 10,
         update = updateNode)
 
     taper_refine : IntProperty(
-        name = "Taper knots",
+        name = "Taper refine",
+        description = "Number of additional knots to be inserted in the taper curve",
         min = 5, default = 20,
         update = updateNode)
 
     profile_samples : IntProperty(
-        name = "Profile samples",
+        name = "Taper copies",
+        description = "Number of copies of taper curve to be used for Gordon surface",
         min = 3, default = 10,
         update = updateNode)
 
@@ -146,9 +149,9 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Profile")
         self.inputs.new('SvCurveSocket', "Taper")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
-        self.inputs.new('SvStringsSocket', "TaperSamples").prop_name = 'taper_samples'
-        self.inputs.new('SvStringsSocket', "TaperKnots").prop_name = 'taper_refine'
-        self.inputs.new('SvStringsSocket', "ProfileSamples").prop_name = 'profile_samples'
+        self.inputs.new('SvStringsSocket', "ProfileCopies").prop_name = 'taper_samples'
+        self.inputs.new('SvStringsSocket', "TaperRefine").prop_name = 'taper_refine'
+        self.inputs.new('SvStringsSocket', "TaperCopies").prop_name = 'profile_samples'
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
@@ -203,9 +206,9 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             taper_s = [[None]]
 
         resolution_s = self.inputs['Resolution'].sv_get()
-        taper_samples_s = self.inputs['TaperSamples'].sv_get()
-        taper_refine_s = self.inputs['TaperKnots'].sv_get()
-        profile_samples_s = self.inputs['ProfileSamples'].sv_get()
+        taper_samples_s = self.inputs['ProfileCopies'].sv_get()
+        taper_refine_s = self.inputs['TaperRefine'].sv_get()
+        profile_samples_s = self.inputs['TaperCopies'].sv_get()
 
         input_level = get_data_nesting_level(path_s, data_types=(SvCurve,))
 

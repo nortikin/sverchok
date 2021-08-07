@@ -1,5 +1,5 @@
-Bevel a Curve
-=============
+Bevel a Curve (Mesh)
+====================
 
 Functionality
 -------------
