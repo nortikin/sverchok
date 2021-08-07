@@ -26,6 +26,21 @@ This node has the following inputs:
 * **Point**. The point on the taper axis line. The default value is `(0, 0, 0)`.
 * **Direction**. The directing vector of the taper axis line. The default value is `(0, 0, 1)` (Z axis).
 
+Parameters
+----------
+
+This node has the following parameters:
+
+* **NURBS**. If enabled, the node will expect NURBS (or NURBS-like) curves as
+  input, and output a NURBS surface. Otherwise, the node can process arbitrary
+  curves, and will output a generic Surface object. Unchecked by default.
+* **Scale**. This defines the scale of resulting surface in the plane
+  perpendicular to taper axis. The available options are:
+
+   * **Unit**.
+   * **Profile**. The surface will be scaled in order to match the profile curve.
+   * **Taper**. The surface will be scaled in order to match the taper curve.
+
 Outputs
 -------
 
