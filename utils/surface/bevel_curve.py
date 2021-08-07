@@ -206,6 +206,11 @@ def nurbs_bevel_curve_gordon(path, profile, taper,
         up_axis=None,
         taper_samples=10, taper_refine=20, profile_samples=10):
 
+    if profile.is_rational():
+        raise Exception("Rational profile curves are not supported by Gordon algorithm")
+    if taper.is_rational():
+        raise Exception("Rational taper curves are not supported by Gordon algorithm")
+
     taper_t_min, taper_t_max = taper.get_u_bounds()
     profile_t_min, profile_t_max = profile.get_u_bounds()
     taper_start = taper.evaluate(taper_t_min)
