@@ -181,6 +181,22 @@ def nurbs_bevel_curve_simple(path, profile, taper,
 
     return bend_surface(field, sweeped)
 
+def nurbs_bevel_curve_refined(path, profile, taper,
+        algorithm=SvBendAlongCurveField.HOUSEHOLDER,
+        scale_all=False, path_axis=2,
+        path_length_mode = 'T',
+        path_length_resolution = 50,
+        up_axis=None,
+        taper_refine=20):
+
+    taper = refine_curve(taper, taper_refine)
+    return nurbs_bevel_curve_simple(path, profile, taper,
+            algorithm = algorithm,
+            scale_all = scale_all, path_axis = path_axis,
+            path_length_mode = path_length_mode,
+            path_length_resolution = path_length_resolution,
+            up_axis = up_axis)
+
 def nurbs_bevel_curve_gordon(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
         scale_all=False, path_axis=2,
@@ -224,16 +240,20 @@ def nurbs_bevel_curve_gordon(path, profile, taper,
 
     return gordon_surface(tapers, profiles, intersections)[-1]
 
+BEVEL_SIMPLE = 'SIMPLE'
+BEVEL_REFINE = 'REFINE'
+BEVEL_GORDON = 'GORDON'
+
 def nurbs_bevel_curve(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
         scale_all=False, path_axis=2,
         path_length_mode = 'T',
         path_length_resolution = 50,
         up_axis=None,
-        use_gordon = True,
+        precision_method = BEVEL_GORDON,
         taper_samples=10, taper_refine=20, profile_samples=10):
     
-    if use_gordon:
+    if precision_method == BEVEL_GORDON:
         return nurbs_bevel_curve_gordon(path, profile, taper,
                 algorithm = algorithm,
                 scale_all = scale_all, path_axis = path_axis,
@@ -242,13 +262,23 @@ def nurbs_bevel_curve(path, profile, taper,
                 up_axis = up_axis,
                 taper_samples = taper_samples, taper_refine = taper_refine,
                 profile_samples = profile_samples)
-    else:
+    elif precision_method == BEVEL_REFINE:
+        return nurbs_bevel_curve_refined(path, profile, taper,
+                algorithm = algorithm,
+                scale_all = scale_all, path_axis = path_axis,
+                path_length_mode = path_length_mode,
+                path_length_resolution = path_length_resolution,
+                up_axis = up_axis,
+                taper_refine = taper_refine)
+    elif precision_method == BEVEL_SIMPLE:
         return nurbs_bevel_curve_simple(path, profile, taper,
                 algorithm = algorithm,
                 scale_all = scale_all, path_axis = path_axis,
                 path_length_mode = path_length_mode,
                 path_length_resolution = path_length_resolution,
                 up_axis = up_axis)
+    else:
+        raise Exception("Unknown method")
 
 def generic_bevel_curve(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,

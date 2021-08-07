@@ -16,7 +16,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.primitives import SvLine
-from sverchok.utils.surface.bevel_curve import nurbs_bevel_curve, generic_bevel_curve
+from sverchok.utils.surface.bevel_curve import nurbs_bevel_curve, generic_bevel_curve, BEVEL_SIMPLE, BEVEL_REFINE, BEVEL_GORDON
 from sverchok.utils.field.vector import SvBendAlongCurveField
 
 class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,10 +43,11 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             self.orient_axis = 'Z'
 
         is_generic = self.curve_mode == 'GENERIC'
-        is_simple = not self.use_gordon
-        self.inputs['TaperSamples'].hide_safe = is_generic or is_simple
+        is_simple = self.precision_method == BEVEL_SIMPLE
+        is_gordon = self.precision_method == BEVEL_GORDON
+        self.inputs['TaperSamples'].hide_safe = is_generic or not is_gordon
         self.inputs['TaperKnots'].hide_safe = is_generic or is_simple
-        self.inputs['ProfileSamples'].hide_safe = is_generic or is_simple
+        self.inputs['ProfileSamples'].hide_safe = is_generic or not is_gordon
 
         updateNode(self, context)
 
@@ -81,10 +82,17 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             items = curve_modes,
             update = update_sockets)
 
-    use_gordon : BoolProperty(
-            name = "Precise",
-            description = "Use taper curve refinement and Gordon surface algorithm to generate more precise surface",
-            default = True,
+    precision_methods = [
+            (BEVEL_SIMPLE, "Simple", "Transform existing control points only", 0),
+            (BEVEL_REFINE, "Refine", "Refine taper curve and transform control points", 1),
+            (BEVEL_GORDON, "Gordon", "Refine taper curve and use Gordon surface algorithm", 2)
+        ]
+
+    precision_method : EnumProperty(
+            name = "Precision method",
+            description = "Algorithm to be used to calculate control points of the surface",
+            items = precision_methods,
+            default = BEVEL_REFINE,
             update = update_sockets)
 
     resolution : IntProperty(
@@ -121,7 +129,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'curve_mode', expand=True)
         if self.curve_mode == 'NURBS':
-            layout.prop(self, 'use_gordon')
+            layout.prop(self, 'precision_method', text='')
         layout.prop(self, "algorithm")
         layout.label(text="Orientation:")
         row = layout.row()
@@ -228,7 +236,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                                 path_axis = 'XYZ'.index(self.orient_axis),
                                 path_length_resolution = resolution,
                                 up_axis = self.up_axis,
-                                use_gordon = self.use_gordon,
+                                precision_method = self.precision_method,
                                 taper_samples = taper_samples,
                                 taper_refine = taper_refine,
                                 profile_samples = profile_samples)
