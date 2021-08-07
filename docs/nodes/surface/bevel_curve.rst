@@ -32,7 +32,7 @@ one fits you better.
   for all extrusion curves. It will give better results with higher values of
   "resolution" parameter, but that may be slow.
 
-**Note**: Taper is supposed to be an open Curve, elongated along one of
+**Note 1**: Taper is supposed to be an open Curve, elongated along one of
 coordinate axes (X, Y or Z). That must be the orientation axis, i.e. the axis
 perpendicular to the plane of bevel object.
 
@@ -64,8 +64,15 @@ This node can function in several modes:
    * Use these two series of curves to generate a surface by use of Gordon
      algorithm.
 
-   Note that Gordon algorithm does not support use of rational curves as either
+   For smooth curves, Gordon algorithm is supposed to be the most precise of
+   NURBS modes of this node; but it is also the slowest one.
+
+   **Note 2**: Gordon algorithm does not support use of rational curves as either
    profile or taper.
+
+   **Note 3**: Gordon algorithm can not produce surfaces with hard edges. If
+   you provide it with profile curve which has hard turns (discontinuities of
+   curve's derivative), the output will look weird.
 
 With last two modes, this node can generate a surface with large number of
 control points. It can be wise to use "Remove excessive knots" node to simplify
