@@ -48,6 +48,24 @@ def bend_curve(field, curve):
 
     return curve.copy(control_points = control_points)
 
+def bend_surface(field, surface):
+    control_points = np.copy(surface.get_control_points())
+    m, n, _ = control_points.shape
+    control_points = control_points.reshape((m*n, 3))
+    cpt_xs = control_points[:,0]
+    cpt_ys = control_points[:,1]
+    cpt_zs = control_points[:,2]
+
+    cpt_dxs, cpt_dys, cpt_dzs = field.evaluate_grid(cpt_xs, cpt_ys, cpt_zs)
+    xs = cpt_xs + cpt_dxs
+    ys = cpt_ys + cpt_dys
+    zs = cpt_zs + cpt_dzs
+
+    control_points = np.stack((xs, ys, zs)).T
+    control_points = control_points.reshape((m,n,3))
+
+    return surface.copy(control_points = control_points)
+
 def place_profile_z(curve, z, scale):
     control_points = np.copy(curve.get_control_points())
     control_points[:,0] *= scale
@@ -140,13 +158,37 @@ def nurbs_taper_sweep(profile, taper,
             taper.get_knotvector(), profile_knotvector,
             control_points, weights)
 
-def nurbs_bevel_curve(path, profile, taper,
+def nurbs_bevel_curve_simple(path, profile, taper,
+        algorithm=SvBendAlongCurveField.HOUSEHOLDER,
+        scale_all=False, path_axis=2,
+        path_length_mode = 'T',
+        path_length_resolution = 50,
+        up_axis=None):
+
+    taper_t_min, taper_t_max = taper.get_u_bounds()
+    profile_t_min, profile_t_max = profile.get_u_bounds()
+    taper_start = taper.evaluate(taper_t_min)
+    taper_end = taper.evaluate(taper_t_max)
+    z_min = taper_start[path_axis]
+    z_max = taper_end[path_axis]
+
+    field = SvBendAlongCurveField(path, algorithm, scale_all=scale_all, axis=path_axis, t_min=z_min, t_max=z_max, length_mode=path_length_mode, resolution=path_length_resolution, up_axis=up_axis)
+
+    origin = np.zeros((3,), dtype=np.float64)
+    direction = np.zeros((3,), dtype=np.float64)
+    direction[path_axis] = 1.0
+    sweeped = nurbs_taper_sweep(profile, taper, origin, direction, scale_base = SvTaperSweepSurface.PROFILE)
+
+    return bend_surface(field, sweeped)
+
+def nurbs_bevel_curve_gordon(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
         scale_all=False, path_axis=2,
         path_length_mode = 'T',
         path_length_resolution = 50,
         up_axis=None,
         taper_samples=10, taper_refine=20, profile_samples=10):
+
     taper_t_min, taper_t_max = taper.get_u_bounds()
     profile_t_min, profile_t_max = profile.get_u_bounds()
     taper_start = taper.evaluate(taper_t_min)
@@ -181,6 +223,32 @@ def nurbs_bevel_curve(path, profile, taper,
     intersections = [[taper.evaluate(t) for taper in tapers] for t in taper_ts]
 
     return gordon_surface(tapers, profiles, intersections)[-1]
+
+def nurbs_bevel_curve(path, profile, taper,
+        algorithm=SvBendAlongCurveField.HOUSEHOLDER,
+        scale_all=False, path_axis=2,
+        path_length_mode = 'T',
+        path_length_resolution = 50,
+        up_axis=None,
+        use_gordon = True,
+        taper_samples=10, taper_refine=20, profile_samples=10):
+    
+    if use_gordon:
+        return nurbs_bevel_curve_gordon(path, profile, taper,
+                algorithm = algorithm,
+                scale_all = scale_all, path_axis = path_axis,
+                path_length_mode = path_length_mode,
+                path_length_resolution = path_length_resolution,
+                up_axis = up_axis,
+                taper_samples = taper_samples, taper_refine = taper_refine,
+                profile_samples = profile_samples)
+    else:
+        return nurbs_bevel_curve_simple(path, profile, taper,
+                algorithm = algorithm,
+                scale_all = scale_all, path_axis = path_axis,
+                path_length_mode = path_length_mode,
+                path_length_resolution = path_length_resolution,
+                up_axis = up_axis)
 
 def generic_bevel_curve(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,

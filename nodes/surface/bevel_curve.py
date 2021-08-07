@@ -43,9 +43,10 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             self.orient_axis = 'Z'
 
         is_generic = self.curve_mode == 'GENERIC'
-        self.inputs['TaperSamples'].hide_safe = is_generic
-        self.inputs['TaperKnots'].hide_safe = is_generic
-        self.inputs['ProfileSamples'].hide_safe = is_generic
+        is_simple = not self.use_gordon
+        self.inputs['TaperSamples'].hide_safe = is_generic or is_simple
+        self.inputs['TaperKnots'].hide_safe = is_generic or is_simple
+        self.inputs['ProfileSamples'].hide_safe = is_generic or is_simple
 
         updateNode(self, context)
 
@@ -80,6 +81,12 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             items = curve_modes,
             update = update_sockets)
 
+    use_gordon : BoolProperty(
+            name = "Precise",
+            description = "Use taper curve refinement and Gordon surface algorithm to generate more precise surface",
+            default = True,
+            update = update_sockets)
+
     resolution : IntProperty(
         name = "Resolution",
         min = 10, default = 50,
@@ -112,13 +119,15 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'curve_mode', expand=True)
+        if self.curve_mode == 'NURBS':
+            layout.prop(self, 'use_gordon')
+        layout.prop(self, "algorithm")
         layout.label(text="Orientation:")
         row = layout.row()
         row.prop(self, "orient_axis", expand=True)
         row.enabled = self.algorithm not in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}
 
-        layout.prop(self, 'curve_mode', expand=True)
-        layout.prop(self, "algorithm")
         if self.algorithm == 'track':
             layout.prop(self, "up_axis")
         layout.label(text="Scale along curve:")
@@ -219,6 +228,7 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                                 path_axis = 'XYZ'.index(self.orient_axis),
                                 path_length_resolution = resolution,
                                 up_axis = self.up_axis,
+                                use_gordon = self.use_gordon,
                                 taper_samples = taper_samples,
                                 taper_refine = taper_refine,
                                 profile_samples = profile_samples)
