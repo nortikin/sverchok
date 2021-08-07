@@ -160,3 +160,16 @@ This node has the following output:
 
 * **Surface**. The generated Surface object.
 
+Examples of Usage
+-----------------
+
+Example 1:
+
+.. image:: https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png
+
+Example 2:
+
+.. image:: https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png
+
+.. image:: https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png
+
