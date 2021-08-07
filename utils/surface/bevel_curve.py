@@ -178,7 +178,7 @@ def nurbs_bevel_curve_simple(path, profile, taper,
     origin = np.zeros((3,), dtype=np.float64)
     direction = np.zeros((3,), dtype=np.float64)
     direction[path_axis] = 1.0
-    sweeped = nurbs_taper_sweep(profile, taper, origin, direction, scale_base = SvTaperSweepSurface.PROFILE)
+    sweeped = nurbs_taper_sweep(profile, taper, origin, direction, scale_base = SvTaperSweepSurface.TAPER)
 
     return bend_surface(field, sweeped)
 
