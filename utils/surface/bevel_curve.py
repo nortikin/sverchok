@@ -25,6 +25,7 @@ from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             SvCurveFrameCalculator,
+            SvCurveLengthSolver,
             reparametrize_curve
         )
 from sverchok.utils.curve.nurbs_algorithms import refine_curve
@@ -214,7 +215,15 @@ def nurbs_bevel_curve_gordon(path, profile, taper,
 
     field = SvBendAlongCurveField(path, algorithm, scale_all=scale_all, axis=path_axis, t_min=z_min, t_max=z_max, length_mode=path_length_mode, resolution=path_length_resolution, up_axis=up_axis)
 
-    taper_ts = np.linspace(taper_t_min, taper_t_max, num=taper_samples)
+    if path_length_mode == 'T':
+        taper_ts = np.linspace(taper_t_min, taper_t_max, num=taper_samples)
+    else:
+        solver = SvCurveLengthSolver(taper)
+        solver.prepare('SPL', path_length_resolution)
+        total_length = solver.get_total_length()
+        input_lengths = np.linspace(0.0, total_length, num=taper_samples)
+        taper_ts = solver.solve(input_lengths)
+
     taper_pts = taper.evaluate_array(taper_ts)
     taper_pts = taper_pts[:,0], taper_pts[:,1], taper_pts[:,2]
     taper_rhos, _, taper_zs = to_cylindrical_np(taper_pts)
