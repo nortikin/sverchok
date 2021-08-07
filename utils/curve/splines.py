@@ -50,6 +50,9 @@ class SvSplineCurve(SvCurve):
     def get_u_bounds(self):
         return self.u_bounds
 
+    def get_degree(self):
+        return self.spline.get_degree()
+
     def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
         control_points = self.spline.get_control_points()
         degree = self.spline.get_degree()
