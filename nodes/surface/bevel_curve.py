@@ -156,10 +156,15 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         orient_axis = self._get_orient_axis_idx()
         x_axis = (orient_axis + 1) % 3
 
-        profile_u_min = profile.get_u_bounds()[0]
-        profile_start = profile.evaluate(profile_u_min)
-        profile_start[orient_axis] = 0.0
-        radius = np.linalg.norm(profile_start)
+        if profile is not None:
+            profile_u_min = profile.get_u_bounds()[0]
+            profile_start = profile.evaluate(profile_u_min)
+            profile_start[orient_axis] = 0.0
+            radius = np.linalg.norm(profile_start)
+            profile_degree = profile.get_degree()
+        else:
+            radius = 1.0
+            profile_degree = 2
 
         path_u_min, path_u_max = path.get_u_bounds()
         path_start = path.evaluate(path_u_min)
@@ -176,7 +181,9 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         p2[x_axis] = radius
         p2[orient_axis] = z_max
 
-        return SvLine.from_two_points(p1, p2)
+        taper = SvLine.from_two_points(p1, p2).to_nurbs()
+        taper = taper.elevate_degree(target = max(profile_degree, 2))
+        return taper
 
     def _get_orient_axis_idx(self):
         return 'XYZ'.index(self.orient_axis)
