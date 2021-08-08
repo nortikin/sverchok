@@ -1,6 +1,3 @@
-.. meta::
-    :scope: private_version
-
 An explanation of Epsilon (and the computational limits imposed by 32bit floating point arithmetic)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

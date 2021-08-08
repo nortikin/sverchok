@@ -12,3 +12,4 @@ Data structure
     nurbs
     fields
     solids
+    precision (32bit float) <../epsilon>
