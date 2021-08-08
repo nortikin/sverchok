@@ -97,8 +97,7 @@ release = version
 exclude_patterns = [
   '_build', 
   'pull_request_template.rst', 
-  'issue_template.rst', 
-  'epsilon.rst'
+  'issue_template.rst'
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
