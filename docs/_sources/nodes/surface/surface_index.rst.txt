@@ -13,6 +13,7 @@ Surface
    interpolating_surface
    revolution_surface
    taper_sweep
+   bevel_curve
    extrude_vector
    extrude_point
    extrude_curve

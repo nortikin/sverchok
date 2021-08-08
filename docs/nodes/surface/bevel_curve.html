@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Approximate NURBS Surface &mdash; Sverchok 1, 0, 0 documentation</title>
+  <title>Bevel a Curve (Surface) &mdash; Sverchok 1, 0, 0 documentation</title>
   
 
   
@@ -43,8 +43,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Interpolate NURBS Surface" href="interpolate_nurbs_surface.html" />
-    <link rel="prev" title="Build NURBS surface" href="nurbs_surface.html" /> 
+    <link rel="next" title="Extrude Curve Along Vector" href="extrude_vector.html" />
+    <link rel="prev" title="Taper Sweep Surface" href="taper_sweep.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -115,7 +115,14 @@
 <li class="toctree-l3"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Surface)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Bevel a Curve (Surface)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
@@ -135,15 +142,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Approximate NURBS Surface</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
@@ -249,13 +248,13 @@
         
           <li><a href="surface_index.html">Surface</a> &raquo;</li>
         
-      <li>Approximate NURBS Surface</li>
+      <li>Bevel a Curve (Surface)</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/nodes/surface/approximate_nurbs_surface.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/surface/bevel_curve.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -268,78 +267,170 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="approximate-nurbs-surface">
-<h1>Approximate NURBS Surface<a class="headerlink" href="#approximate-nurbs-surface" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>This node requires <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library to work.</p>
-</div>
+  <div class="section" id="bevel-a-curve-surface">
+<h1>Bevel a Curve (Surface)<a class="headerlink" href="#bevel-a-curve-surface" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
-<p>This node builds a <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Surface object, which approximates the given set of
-points, i.e. goes as close to them as possible while remaining a smooth surface.</p>
-<p>In fact, the generated surface always will be a non-rational surface, which means
-that all weights will be equal to 1.</p>
-<p>To build a NURBS surface, one needs an array of M x N points (like “3
-rows by 4 points”). There are two modes of providing this array supported:</p>
+<p>This node provides functionality similar to Blender’s standard “bevel curve”
+<a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html">feature</a>. More precisely, it extrudes one flat curve (called “profile curve”)
+along another curve (path). Scale of “profile curve” may vary along the curve,
+as it is controlled by third curve (called “taper curve”).</p>
+<p>It is in general not a trivial task to rotate a 3D object along a vector,
+because there are always 2 other axes of object and it is not clear where
+should they be directed to. So, this node supports 3 different algorithms of
+object rotation calculation. In many simple cases, all these algorithms will
+give exactly the same result. But in more complex setups, or in some corner
+cases, results can be very different. So, just try all algorithms and see which
+one fits you better.</p>
 <ul class="simple">
-<li><p>You can provide a list of lists of points for each surface;</p></li>
-<li><p>Or you can provide a flat list of points, and instruct the node to
-subdivide it into sublists of N points each.</p></li>
+<li><p>“Frenet” or “Zero-Twist” algorithms give very good results in case when
+extrusion curve has non-zero curvature in all points. If the extrusion curve
+has zero curvature points, or, even worse, it has straight segments, these
+algorithms will either make “flipping” surface, or give an error.</p></li>
+<li><p>“Householder”, “Tracking” and “Rotation difference” algorithms are
+“curve-agnostic”, they work independently of curve by itself, depending only
+on tangent direction. They give “good enough” result (at least, without
+errors or sudden flips) for all extrusion curves, but may make twisted
+surfaces in some special cases.</p></li>
+<li><p>“Track normal” algorithm is supposed to give good results without twisting
+for all extrusion curves. It will give better results with higher values of
+“resolution” parameter, but that may be slow.</p></li>
 </ul>
+<p><strong>Note 1</strong>: Taper is supposed to be an open Curve, elongated along one of
+coordinate axes (X, Y or Z). That must be the orientation axis, i.e. the axis
+perpendicular to the plane of bevel object.</p>
+<p>In the most common case, “profile curve” will lay in XY plane, so that
+orientation axis will be Z.</p>
+<p>This node can function in several modes:</p>
+<ul>
+<li><p>Generic surface. In this mode, the node can process arbitrary Curve objects,
+and will generate a generic Surface object.</p></li>
+<li><p>NURBS surface by simple algorithm. In this mode, the node can process only
+NURBS or NURBS-like curves, and will generate a NURBS surface. This algorithm
+generates a minimal amount of control points; so, the generated surface may
+follow the path curve only approximately. On the other hand, this is the
+fastest of NURBS modes of this node.</p></li>
+<li><p>NURBS surface with refinement. In this mode, the node can process only
+NURBS or NURBS-like curves, and will generate a NURBS surface. This algorithm
+first refines taper curve (i.e., adds some number of additional knots in it),
+and then applies the “simple” algorithm. This algorithm produces more control
+points, and that allows it to generate a surface which follows the path and
+taper curves more precisely.</p></li>
+<li><p>NURBS Gordon surface:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Refine taper curve;</p></li>
+<li><p>Generate a number of copies of taper curve, bent along the path curve, and
+rotated around it, according to the profile curve.</p></li>
+<li><p>Generate a number of copies of profile curve, rotated and placed along the
+path curve, scaled according to the taper curve.</p></li>
+<li><p>Use these two series of curves to generate a surface by use of Gordon
+algorithm.</p></li>
+</ul>
+<p>For smooth curves, Gordon algorithm is supposed to be the most precise of
+NURBS modes of this node; but it is also the slowest one.</p>
+<p><strong>Note 2</strong>: Gordon algorithm does not support use of rational curves as either
+profile or taper.</p>
+<p><strong>Note 3</strong>: Gordon algorithm can not produce surfaces with hard edges. If
+you provide it with profile curve which has hard turns (discontinuities of
+curve’s derivative), the output will look weird.</p>
+</div></blockquote>
+</li>
+</ul>
+<p>With last two modes, this node can generate a surface with large number of
+control points. It can be wise to use “Remove excessive knots” node to simplify
+the surface.</p>
 </div>
 <div class="section" id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Vertices</strong>. Points to be approximated. Depending on <strong>Input mode</strong>
-parameter, it expects either list of lists of control points per surface, or
-a flat list of control points per surface. This input is mandatory.</p></li>
-<li><p><strong>USize</strong>. This input is only available when <strong>Input mode</strong> parameter is set
-to <strong>Single list</strong>. The number of control points in a row. The default value
-is 5.</p></li>
-<li><p><strong>Degree U</strong>, <strong>Degree V</strong>. Degree of the surface along U and V directions,
-correspondingly. The default value is 3.</p></li>
-<li><p><strong>PointsCntU</strong>, <strong>PointsCntV</strong>. Number of control points to be used along U
-and V directions, correspondingly. These inputs are available only when
-<strong>Specify points count</strong> parameter is checked. Otherwise, the node will
-generate as many control points as it needs (which may be too many). The
-default value for these inputs (when they are available) is 5.</p></li>
+<li><p><strong>Path</strong>. Path curve. This input is mandatory.</p></li>
+<li><p><strong>Profile</strong>. Profile curve. This input is mandatory.</p></li>
+<li><p><strong>Taper</strong>. Taper curve. If this input is not connected, constant taper will
+be used.</p></li>
+<li><p><strong>Resolution</strong>. Path length calculation resolution. This input is available
+only when <strong>Samples distribution</strong> parameter is set to <strong>Curve length</strong>. The
+default value is 50.</p></li>
+<li><p><strong>ProfileCopies</strong>. This input is available only when <strong>Mode</strong> parameter is
+set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set to <strong>Gordon</strong>. Number of
+copies of profile curve to be generated and distributed along the path curve,
+in order to build a Gordon surface. The default value is 10.</p></li>
+<li><p><strong>TaperRefine</strong>. This input is available only when <strong>Mode</strong> parameter is
+set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set to <strong>Refine</strong> or
+<strong>Gordon</strong>. Number of additional knots to be inserted in the taper curve. The
+default value is 20.</p></li>
+<li><p><strong>TaperCopies</strong>. This input is available only when <strong>Mode</strong> parameter is
+set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set to <strong>Gordon</strong>. Number of
+copies of the taper curve to be rotated and bent along the path curve, in
+order to build a Gordon surface. The default value is 10.</p></li>
 </ul>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Centripetal</strong>. This defines whether the node will use centripetal
-approximation method. Unchecked by default.</p></li>
-<li><p><strong>Input mode</strong>. The available values are:</p>
+<li><p><strong>Mode</strong>. The following modes are available:</p>
+<ul class="simple">
+<li><p><strong>Generic</strong>. The node will process arbitrary curves and output a generic
+Surface object.</p></li>
+<li><p><strong>NURBS</strong>. The node will process NURBS or NURBS-like curves and output a
+NURBS surface.</p></li>
+</ul>
+<p>The default mode is <strong>Generic</strong>.</p>
+</li>
+<li><p><strong>Precision</strong>. This parameter is only available when <strong>Mode</strong> algorithm is
+set to <strong>NURBS</strong>. Defines the algorithm to be used to generate control points
+of the NURBS surface. The available options are: <strong>Simple</strong>, <strong>Refine</strong> and
+<strong>Gordon</strong>. See Functionality section for description of these algorithms.</p></li>
+<li><p><strong>Orientation</strong>. The axis of “bevel object”, which should be oriented along
+the path. Default value is Z (which means that bevel object should lay in XY plane).</p></li>
+<li><p><strong>Algorithm</strong>. Rotation calculation algorithm. Available values are:</p>
+<ul class="simple">
+<li><p>Householder: calculate rotation by using Householder’s reflection matrix
+(see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p></li>
+<li><p>Tracking: use the same algorithm as in Blender’s “TrackTo” kinematic
+constraint. This algorithm gives you a bit more flexibility comparing to
+other, by allowing to select the Up axis.</p></li>
+<li><p>Rotation difference: calculate rotation as rotation difference between two
+vectors.</p></li>
+<li><p>Frenet: rotate the space according to curve’s Frenet frame.</p></li>
+<li><p>Zero-Twist: rotate the space according to curve’s “zero-twist” frame.</p></li>
+<li><p>Track normal: try to maintain constant normal direction by tracking it along the curve.</p></li>
+</ul>
+<p>Default value is Householder.</p>
+</li>
+<li><p><strong>Up axis</strong>.  Axis of donor object that should point up in result. This
+parameter is available only when Tracking algorithm is selected.  Value of
+this parameter must differ from <strong>Orientation</strong> parameter, otherwise you will
+get an error. Default value is X.</p></li>
+<li><p><strong>Samples distribution</strong>. This defines how the scaling of the space along the path
+curve is to be calculated. The available options are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><strong>Single list</strong>. The node expects a flat list of points for each surface.
-It will be subdivided into rows according to <strong>USize</strong> input value.</p></li>
-<li><p><strong>Separate Lists</strong>. The node expects a list of lists of points for each
-surface.</p></li>
+<li><p><strong>Curve parameter</strong>. Scale the space proportional to curve’s T parameter.</p></li>
+<li><p><strong>Curve length</strong>. Scale the space proportional to curve’s length. This
+usually gives more natural results, but takes more time to compute.</p></li>
 </ul>
 </div></blockquote>
+<p>The default option is <strong>Curve parameter</strong>.</p>
 </li>
-<li><p><strong>Specify points count</strong>. If checked, then the node allows you to specify the
-number of control points to generate in <strong>PointsCntU</strong>, <strong>PointsCntV</strong>
-inputs. Unchecked by default.</p></li>
 </ul>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<p>This node has the following outputs:</p>
+<p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Surface</strong>. The generated NURBS surface.</p></li>
-<li><p><strong>ControlPoints</strong>. Control points of the generated NURBS surface.</p></li>
-<li><p><strong>KnotsU</strong>, <strong>KnotsV</strong>. Knot vectors of the generated NURBS surface.</p></li>
+<li><p><strong>Surface</strong>. The generated Surface object.</p></li>
 </ul>
 </div>
-<div class="section" id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" src="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" />
+<div class="section" id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<p>Example 1:</p>
+<img alt="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" src="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" />
+<p>Example 2:</p>
+<img alt="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" src="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" />
+<img alt="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" src="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" />
 </div>
 </div>
 
@@ -349,8 +440,8 @@ inputs. Unchecked by default.</p></li>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="interpolate_nurbs_surface.html" class="btn btn-neutral float-right" title="Interpolate NURBS Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="nurbs_surface.html" class="btn btn-neutral float-left" title="Build NURBS surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="extrude_vector.html" class="btn btn-neutral float-right" title="Extrude Curve Along Vector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="taper_sweep.html" class="btn btn-neutral float-left" title="Taper Sweep Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
