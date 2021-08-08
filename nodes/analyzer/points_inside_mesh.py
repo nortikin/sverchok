@@ -187,7 +187,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         default="algo_1", update=updateNode)
 
     epsilon_bvh: FloatProperty(
-        name='Tolerance', description='fudge value',
+        name='Tolerance', description='fudge value. You will encounter 32-bit float precision errors if input vertices have big numbers. For big numbers increase the value. see documentation',
         default=0.0, min=0.0, max=1.0,
         update=updateNode)
 
