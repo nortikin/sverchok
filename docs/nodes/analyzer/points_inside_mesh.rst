@@ -20,6 +20,8 @@ The node determines if points are inside a mesh. I has two modes, 2D and 3D
 
   * Warning. This is only a first implementation, likely it will be more correct after a few iterations.
 
+  * *Multisample* has an Epsilon parameter, which alows you to relax precision. More information about that can be found here: :doc:`Epsilon <../epsilon>`
+
 see https://github.com/nortikin/sverchok/pull/1703
 
 Examples of use
