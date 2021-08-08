@@ -74,6 +74,14 @@ class SvLine(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def split_at(self, t):
+        t_max = self.get_u_bounds()[1]
+        end_point = self.evaluate(t_max)
+        mid_point = self.evaluate(t)
+        curve1 = SvLine.from_two_points(self.point, mid_point)
+        curve2 = SvLine.from_two_points(mid_point, end_point)
+        return curve1, curve2
+
     def reverse(self):
         t_min, t_max = self.get_u_bounds()
         p1, p2 = self.evaluate(t_min), self.evaluate(t_max)

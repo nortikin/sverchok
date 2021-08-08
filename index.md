@@ -157,6 +157,7 @@
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
+    SvBendCurveSurfaceNode
     SvExExtrudeCurveVectorNode
     SvExExtrudeCurveCurveSurfaceNode
     SvExExtrudeCurvePointNode
