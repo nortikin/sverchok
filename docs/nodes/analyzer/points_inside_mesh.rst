@@ -18,9 +18,12 @@ The node determines if points are inside a mesh. I has two modes, 2D and 3D
 
   * It offers two algorithms *Regular* is faster, *Multisample* more precise
 
+    * *Multiple sample* mode offers a precision property called "Epsilon", this can be increased if your vectors are based on large numbers. A more elaborate description of Epsilon and why it exists can be found here
+
   * Warning. This is only a first implementation, likely it will be more correct after a few iterations.
 
 see https://github.com/nortikin/sverchok/pull/1703
+see https://github.com/nortikin/sverchok/issues/1740
 
 Examples of use
 ---------------
