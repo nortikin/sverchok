@@ -273,11 +273,12 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
             do_update(related_nodes, self.id_data.nodes)
 
     def range_mode(self, loop_in_node):
-        if loop_in_node.iterations == 0:
+        iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
+        if iterations == 0:
             for inp, outp in zip(loop_in_node.inputs[1:-1], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
 
-        elif loop_in_node.iterations == 1:
+        elif iterations == 1:
 
             for inp, outp in zip(self.inputs[2:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
@@ -288,7 +289,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                 raise Exception("Loops inside not well connected")
 
             do_print = loop_in_node.print_to_console
-            iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
+
             tree_nodes = self.id_data.nodes
             do_update(intersection[:-1], tree_nodes)
 
