@@ -71,4 +71,4 @@ Calculations and Epsilon
 The core concept is: if your geometry uses big numbers, you can increase
 ``Epsilon`` to allow the tolerance in the calculations to be more in
 line with the magnitude of the numbers. If you have really small numbers
-(like millimeters) in your vectors, you want ``epsilon`` to be as small
+(like millimeters) in your vectors, you want ``epsilon`` to be as small as possible.
