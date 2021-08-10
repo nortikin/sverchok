@@ -1241,6 +1241,23 @@ def updateNode(self, context):
     self.process_node(context)
 
 
+def process_node_after_function_completes(func):
+    """
+    use as a decorator
+        class YourNode
+            @update_node
+            def mode_update(self, context):
+                ...
+    """
+    @wraps(func)
+    def wrapper_update(self, context):
+        tree = self.id_data
+        func(self, context)
+        self.process_node(context)
+
+    return wrapper_update
+
+
 def update_with_kwargs(update_function, **kwargs):
     """
     You can wrap property update function for adding extra key arguments to it, like this:
