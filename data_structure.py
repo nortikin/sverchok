@@ -1245,9 +1245,18 @@ def process_node_after_function_completes(func):
     """
     use as a decorator
         class YourNode
-            @update_node
+
+            @process_node_after_function_completes
             def mode_update(self, context):
                 ...
+
+    this is the same as writing
+
+            def mode_update(self, context):
+                ...
+                self.process_node(context)
+
+    this exists to allow sverchok-extra to run in pre 1.0.0 and 0.6.0
     """
     @wraps(func)
     def wrapper_update(self, context):
