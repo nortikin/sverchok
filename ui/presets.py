@@ -69,7 +69,7 @@ def get_category_names(mkdir=True):
     categories = []
     for base in [standard, user]:
         for path in sorted(glob(join(base, "*"))):
-            if isdir(path):
+            if isdir(path) and os.listdir(path):
                 name = basename(path)
                 if name not in categories:
                     categories.append(name)
