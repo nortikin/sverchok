@@ -36,13 +36,14 @@ If we think more about architectural structures, something like 40 meters (2 dig
 
 .. code:: python
 
-# 6 digits of total precision
-# 40m is 2 digits
-# remaining precision digits are:
-6-2 = 4.
+    # 6 digits of total precision
+    # 40m is 2 digits
+    # remaining precision digits are:
+    6-2 = 4.
 
-# a tenth of a millimeter. 
-40.0001
+    # a tenth of a millimeter. 
+    40.0001
+
 
 If you are rendering a 40m tall building, how many pixels would the render need to be high to see a details of a tenth of a millimeter? That’s a big render, it’s the same as the previous example.
 
