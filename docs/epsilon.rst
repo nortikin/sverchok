@@ -32,11 +32,20 @@ You might see more numbers behind the decimal point, but consider those an illus
 
 In non-engineering tolerances in the real world what sense does it make to have a tolerance of centimeters on something that is 4 kilometer long. Especially if the end product is going to be a render. If you are rendering something that is 4km long, like a bridge, how many pixels would the render need to be wide to make a detail (like a weld-seam) of 1 centimeter thick appear in the render? That’s a big render.
 
-If we think more about architectural structures, something like 40 meters, well then the precision behind the decimal is 6-2 = 4, a tenth of a millimeter. If you are rendering a 40m tall building, how many pixels would the render need to be high to see a details of a tenth of a millimeter? That’s a big render, it’s the same as the previous example.
+If we think more about architectural structures, something like 40 meters (2 digits), well then the precision behind the decimal is
 
 .. code:: python
 
-   40.0001
+# 6 digits of total precision
+# 40m is 2 digits
+# remaining precision digits are:
+6-2 = 4.
+
+# a tenth of a millimeter. 
+40.0001
+
+If you are rendering a 40m tall building, how many pixels would the render need to be high to see a details of a tenth of a millimeter? That’s a big render, it’s the same as the previous example.
+
 
 Calculations and Epsilon
 ~~~~~~~~~~~~~~~~~~~~~~~~
