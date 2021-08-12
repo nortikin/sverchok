@@ -19,7 +19,7 @@ out level 3 =       [[[[], []], [[], []]]]
 Inputs
 ------
 
-**data** multysocket
+**data** multisocket
 
 Properties
 ----------
