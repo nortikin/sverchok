@@ -180,7 +180,7 @@ def nurbs_bevel_curve_simple(path, profile, taper,
     direction[path_axis] = 1.0
     sweeped = nurbs_taper_sweep(profile, taper, origin, direction, scale_base = SvTaperSweepSurface.TAPER)
 
-    return bend_surface(field, sweeped)
+    return bend_surface(field, sweeped).swap_uv()
 
 def nurbs_bevel_curve_refined(path, profile, taper,
         algorithm=SvBendAlongCurveField.HOUSEHOLDER,
