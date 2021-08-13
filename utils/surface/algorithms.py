@@ -984,7 +984,10 @@ class SvTaperSweepSurface(SvSurface):
             dp = self._get_profile_scale()
             scale /= dp
         elif self.scale_base == SvTaperSweepSurface.PROFILE:
-            scale0 = scale[0]
+            taper_t_min = self.taper.get_u_bounds()[0]
+            taper_start = self.taper.evaluate(taper_t_min)
+            taper_start_projection = np.array(self.line.projection_of_point(taper_start))
+            scale0 = np.linalg.norm(taper_start - taper_start_projection)
             scale /= scale0
 
         profile_point = self.profile.evaluate(u)
