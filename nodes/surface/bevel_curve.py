@@ -14,6 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.surface.bevel_curve import nurbs_bevel_curve, generic_bevel_curve, BEVEL_SIMPLE, BEVEL_REFINE, BEVEL_GORDON
@@ -153,6 +154,8 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "TaperRefine").prop_name = 'taper_refine'
         self.inputs.new('SvStringsSocket', "TaperCopies").prop_name = 'profile_samples'
         self.outputs.new('SvSurfaceSocket', "Surface")
+        self.outputs.new('SvCurveSocket', "CapStart")
+        self.outputs.new('SvCurveSocket', "CapEnd")
         self.update_sockets(context)
 
     def _make_unit_taper(self, path, profile):
@@ -218,8 +221,12 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         orient_axis = self._get_orient_axis_idx()
 
         surface_out = []
+        cap_start_out = []
+        cap_end_out = []
         for params in zip_long_repeat(path_s, profile_s, taper_s, resolution_s, taper_samples_s, taper_refine_s, profile_samples_s):
             new_surfaces = []
+            new_cap_start = []
+            new_cap_end = []
             for path, profile, taper, resolution, taper_samples, taper_refine, profile_samples in zip_long_repeat(*params):
                 if taper is None:
                     taper = self._make_unit_taper(path, profile)
@@ -251,14 +258,28 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                                 taper_refine = taper_refine,
                                 profile_samples = profile_samples)
 
+                v_min, v_max = surface.get_v_min(), surface.get_v_max()
+                cap_start = SvIsoUvCurve.take(surface, 'V', v_min)
+                cap_end = SvIsoUvCurve.take(surface, 'V', v_max)
+
                 new_surfaces.append(surface)
+                new_cap_start.append(cap_start)
+                new_cap_end.append(cap_end)
 
             if input_level < 2:
                 surface_out.extend(new_surfaces)
+                cap_start_out.extend(new_cap_start)
+                cap_end_out.extend(new_cap_end)
             else:
                 surface_out.append(new_surfaces)
+                cap_start_out.append(new_cap_start)
+                cap_end_out.append(new_cap_end)
 
         self.outputs['Surface'].sv_set(surface_out)
+        if 'CapStart' in self.outputs:
+            self.outputs['CapStart'].sv_set(cap_start_out)
+        if 'CapEnd' in self.outputs:
+            self.outputs['CapEnd'].sv_set(cap_end_out)
 
 def register():
     bpy.utils.register_class(SvBendCurveSurfaceNode)
