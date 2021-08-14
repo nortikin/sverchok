@@ -105,7 +105,6 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
         return hasattr(context, 'node') and hasattr(context, 'socket')
 
     def draw(self, context):
-        print("drawing SocketOptionsMenu")
         node = context.node
         if not node:
             return
