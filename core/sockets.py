@@ -53,7 +53,6 @@ if FreeCAD is not None:
 
 DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
-temporarily_skip_poll = (bpy.app.version >= (3, 0, 0))
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -95,14 +94,8 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
                 layout.menu('SV_MT_SocketOptionsMenu', text=s.name)
 
 
-
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
-
-    @classmethod
-    def poll(cls, context):
-        if temporarily_skip_poll: return True
-        return hasattr(context, 'node') and hasattr(context, 'socket')
 
     def draw(self, context):
         node = context.node
