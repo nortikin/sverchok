@@ -70,12 +70,14 @@
 <table class="sv_table2">
 
 <tr>
+	<td class="sv_elem2">
 	<ul>
 		<li><a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartist thread</a></li>
 		<li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker </a>(for bugs and development help)</li>
 		<li><a href='http://vk.com/public35076122'>Vk </a> (Russian)</li>
 		<li><a href='http://blender.stackexchange.com'>	Blender and bpy questions </a></li>
 	</ul>
+</td>
 </tr>
 </table>  
 
