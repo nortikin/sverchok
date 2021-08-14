@@ -53,6 +53,7 @@ if FreeCAD is not None:
 
 DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
+
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     if self.node is not None:  # https://developer.blender.org/T88587
@@ -95,10 +96,6 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
 
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
-
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context, 'node') and hasattr(context, 'socket')
 
     def draw(self, context):
         node = context.node
@@ -534,6 +531,7 @@ class SvSocketCommon(SvSocketProcessing):
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
+
 
     def draw_color(self, context, node):
         return self.color
