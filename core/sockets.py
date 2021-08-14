@@ -53,6 +53,8 @@ if FreeCAD is not None:
 
 DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
+temporarily_skip_poll = (bpy.app.version >= (3, 0, 0))
+
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     if self.node is not None:  # https://developer.blender.org/T88587
@@ -93,14 +95,17 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
                 layout.menu('SV_MT_SocketOptionsMenu', text=s.name)
 
 
+
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
 
     @classmethod
     def poll(cls, context):
+        if temporarily_skip_poll: return True
         return hasattr(context, 'node') and hasattr(context, 'socket')
 
     def draw(self, context):
+        print("drawing SocketOptionsMenu")
         node = context.node
         if not node:
             return
@@ -287,7 +292,7 @@ class SvSocketProcessing():
     def draw_menu_button(self, context, layout, node, text):
         if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
             if (self.is_output or self.is_linked or not self.use_prop):
-                layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+                layout.menu('SV_MT_SocketOptionsMenu', text='test', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
         if self.can_flatten_topology():
@@ -534,6 +539,8 @@ class SvSocketCommon(SvSocketProcessing):
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
+        else:
+            print(f"nope, {node},{text}")
 
     def draw_color(self, context, node):
         return self.color
