@@ -538,8 +538,7 @@ class SvSocketCommon(SvSocketProcessing):
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
-        else:
-            print(f"nope, {node},{text}")
+
 
     def draw_color(self, context, node):
         return self.color
