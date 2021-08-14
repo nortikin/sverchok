@@ -1,6 +1,5 @@
 <table class="sv_table2">
   <tr>
-
     <td class="sv_elem2">
 	<h3 class='tofu'>BlenderSushi series on sverchok</h3>
 	<ul>
@@ -20,8 +19,6 @@
 	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-4-part-4/'>From Sverchok to UE4 4</a></li>
 	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-bonus/'>Bonus</a></li>
 	</ul>
-
-
 	<h3 class='tofu'>Elfnor. Work with Matrix</h3>
 	<ul>
 	<li><a href='http://elfnor.com/simple-sverchok-01-centers-polygons.html'>Matrices on polygons 1</a></li>
@@ -29,7 +26,6 @@
 	<li><a href='http://elfnor.com/simple-sverchok-03-slope-dependent-trees.html'>Matrices on polygons 3</a></li>
 	</ul>
 	<br>
-	
     </td>
     <td class="sv_elem2">
 	<h3 class='tofu'>Original lessons in Russian</h3>
@@ -50,7 +46,6 @@
 	<li><a href="http://nikitron.cc.ua/Sverchok_man_13_menu.html"> 13. Menu.</a></li>
 	<li><a href="http://nikitron.cc.ua/Sverchok_man_14_IO.html"> 14. Import/Export layouts.</a></li>
 	</ul>
-	
 	<h3 class='tofu'>zeffii blogs and lessons</h3>
 	<ul>
 	<li><a href='http://blenderscripting.blogspot.com/2014/08/sverchok-basics.html'>Sverchok the basics, recommended</a></li>
@@ -60,7 +55,6 @@
 	Sverchok Callisthenics (process)</a></li>
 	<li><a href='http://blenderpython.tumblr.com/post/93016276989/two-circles-verts-and-edges'>Two Circles (Gherkin Tower)</a></li>
 	</ul>
-
    </td>
    </tr>
 </table>
@@ -68,16 +62,16 @@
 ## Links
 
 <table class="sv_table2">
-
 <tr>
 	<td class="sv_elem2">
-	<ul>
-		<li><a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartist thread</a></li>
-		<li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker </a>(for bugs and development help)</li>
-		<li><a href='http://vk.com/public35076122'>Vk </a> (Russian)</li>
-		<li><a href='http://blender.stackexchange.com'>	Blender and bpy questions </a></li>
-	</ul>
-</td>
+	<h3 class='tofu'>Pages</h3>
+	    <ul>
+		  <li><a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartist thread</a></li>
+		  <li><a href="https://github.com/nortikin/sverchok/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc">GitHub issue tracker (for bugs and development help) </a></li>
+		  <li><a href='http://vk.com/public35076122'>Vk (Russian)</a> </li>
+		  <li><a href='http://blender.stackexchange.com'>	Blender and bpy questions </a></li>
+	    </ul>
+    </td>
 </tr>
 </table>  
 
