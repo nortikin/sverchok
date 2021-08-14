@@ -176,8 +176,8 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         path_start = path.evaluate(path_u_min)
         path_end = path.evaluate(path_u_max)
 
-        z_min = path_start[orient_axis]
-        z_max = path_end[orient_axis]
+        z_min = path_u_min #path_start[orient_axis]
+        z_max = path_u_max #path_end[orient_axis]
 
         p1 = np.zeros((3,), dtype=np.float64)
         p1[x_axis] = radius
