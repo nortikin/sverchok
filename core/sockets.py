@@ -291,7 +291,7 @@ class SvSocketProcessing():
     def draw_menu_button(self, context, layout, node, text):
         if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
             if (self.is_output or self.is_linked or not self.use_prop):
-                layout.menu('SV_MT_SocketOptionsMenu', text='test', icon='TRIA_DOWN')
+                layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
         if self.can_flatten_topology():
