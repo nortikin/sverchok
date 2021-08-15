@@ -21,6 +21,8 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Circle (Curve)'
     bl_icon = 'MESH_CIRCLE'
 
+    replacement_nodes = [('SvCircleMk2Node', None, None)]
+
     radius : FloatProperty(
         name = "Radius",
         default = 1.0,
