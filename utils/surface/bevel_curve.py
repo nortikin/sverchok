@@ -190,7 +190,12 @@ def nurbs_bevel_curve_refined(path, profile, taper,
         up_axis=None,
         taper_refine=20):
 
-    taper = refine_curve(taper, taper_refine)
+    if path_length_mode == 'L':
+        solver = SvCurveLengthSolver(taper)
+        solver.prepare('SPL', path_length_resolution)
+    else:
+        solver = None
+    taper = refine_curve(taper, taper_refine, solver=solver)
     return nurbs_bevel_curve_simple(path, profile, taper,
             algorithm = algorithm,
             scale_all = scale_all, path_axis = path_axis,

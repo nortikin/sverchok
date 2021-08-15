@@ -11,6 +11,7 @@ from collections import defaultdict
 from mathutils import Vector
 import mathutils.geometry
 
+from sverchok.utils.math import distribute_int
 from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -407,13 +408,40 @@ def remove_excessive_knots(curve, tolerance=1e-6):
         curve = curve.remove_knot(u, count='ALL', if_possible=True, tolerance=tolerance)
     return curve
 
-def refine_curve(curve, samples):
-    t_min, t_max = curve.get_u_bounds()
-    ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
-    for t in ts:
-        try:
-            curve = curve.insert_knot(t, count=1)
-        except CantInsertKnotException:
-            break
+REFINE_TRIVIAL = 'TRIVIAL'
+REFINE_DISTRIBUTE = 'DISTRIBUTE'
+
+def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
+    degree = curve.get_degree()
+
+    if algorithm == REFINE_TRIVIAL:
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
+        for t in ts:
+            try:
+                curve = curve.insert_knot(t, count=degree-1)
+            except CantInsertKnotException:
+                break
+
+    elif algorithm == REFINE_DISTRIBUTE:
+        existing_knots = np.unique(curve.get_knotvector())
+        if solver is not None:
+            length_params = solver.calc_length_params(existing_knots)
+            sizes = length_params[1:] - length_params[:-1]
+        else:
+            sizes = existing_knots[1:] - existing_knots[:-1]
+
+        counts = distribute_int(samples, sizes)
+        for t1, t2, count in zip(existing_knots[1:], existing_knots[:-1], counts):
+            ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
+            for t in ts:
+                try:
+                    curve = curve.insert_knot(t, count=degree-1)
+                except CantInsertKnotException:
+                    continue
+
+    else:
+        raise Exception("Unsupported algorithm")
+
     return curve
 

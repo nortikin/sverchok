@@ -26,3 +26,11 @@ class MathTests(SverchokTestCase):
         expected_counts = [8, 2, 0]
         self.assertEquals(counts, expected_counts)
 
+    @unittest.skip
+    def test_distribute_int_3(self):
+        n = 1
+        sizes = [5.0, 5.0]
+        counts = distribute_int(n, sizes)
+        expected_counts = [0, 1]
+        self.assertEquals(counts, expected_counts)
+

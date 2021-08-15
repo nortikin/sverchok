@@ -35,7 +35,8 @@ def make_euclidean_ts(pts):
 class SvCurveLengthSolver(object):
     def __init__(self, curve):
         self.curve = curve
-        self._spline = None
+        self._reverse_spline = None
+        self._prime_spline = None
 
     def calc_length_segments(self, tknots):
         vectors = self.curve.evaluate_array(tknots)
@@ -44,7 +45,7 @@ class SvCurveLengthSolver(object):
         return lengths
 
     def get_total_length(self):
-        if self._spline is None:
+        if self._reverse_spline is None:
             raise Exception("You have to call solver.prepare() first")
         return self._length_params[-1]
 
@@ -53,23 +54,36 @@ class SvCurveLengthSolver(object):
         tknots = np.linspace(t_min, t_max, num=resolution)
         lengths = self.calc_length_segments(tknots)
         self._length_params = np.cumsum(np.insert(lengths, 0, 0))
-        self._spline = self._make_spline(mode, tknots)
+        self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+        self._prime_spline = self._make_spline(mode, self._length_params, tknots)
 
-    def _make_spline(self, mode, tknots):
+    def _make_spline(self, mode, tknots, values):
         zeros = np.zeros(len(tknots))
-        control_points = np.vstack((self._length_params, tknots, zeros)).T
+        control_points = np.vstack((values, tknots, zeros)).T
         if mode == 'LIN':
-            spline = LinearSpline(control_points, tknots = self._length_params, is_cyclic = False)
+            spline = LinearSpline(control_points, tknots = values, is_cyclic = False)
         elif mode == 'SPL':
-            spline = CubicSpline(control_points, tknots = self._length_params, is_cyclic = False)
+            spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
         else:
             raise Exception("Unsupported mode; supported are LIN and SPL.")
         return spline
 
-    def solve(self, input_lengths):
-        if self._spline is None:
+    def calc_length(self, t_min, t_max):
+        if self._prime_spline is None:
             raise Exception("You have to call solver.prepare() first")
-        spline_verts = self._spline.eval(input_lengths)
+        lengths = self._prime_spline.eval(np.array([t_min, t_max]))
+        return lengths[1] - lengths[0]
+
+    def calc_length_params(self, ts):
+        if self._prime_spline is None:
+            raise Exception("You have to call solver.prepare() first")
+        spline_verts = self._prime_spline.eval(ts)
+        return spline_verts[:,1]
+
+    def solve(self, input_lengths):
+        if self._reverse_spline is None:
+            raise Exception("You have to call solver.prepare() first")
+        spline_verts = self._reverse_spline.eval(input_lengths)
         return spline_verts[:,1]
 
 class SvNormalTrack(object):
