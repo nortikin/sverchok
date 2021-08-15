@@ -25,6 +25,19 @@ def get_old_nodes_list(path):
         if fp.endswith(".py") and not fp.startswith('__'):
             yield fp
 
+class SvBlIdnameFinder(ast.NodeVisitor):
+    def __init__(self):
+        super().__init__()
+        self.bl_idname = None
+
+    def visit_ClassDef(self, node):
+        for statement in node.body:
+            if isinstance(statement, ast.Assign):
+                if len(statement.targets) == 1 and isinstance(statement.targets[0], ast.Name):
+                    prop_name = statement.targets[0].id
+                    if prop_name == 'bl_idname':
+                        self.bl_idname = statement.value
+
 def get_sv_nodeclasses(path, old_node_file):
     collection = []
     file_path = os.path.join(path, old_node_file)
@@ -32,10 +45,17 @@ def get_sv_nodeclasses(path, old_node_file):
         
         node = ast.parse(file.read())
         classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
+        node_classes = []
         for c in classes:
             for k in c.bases:
                 if hasattr(k, 'id') and k.id == 'SverchCustomTreeNode':
-                    collection.append([c.name, old_node_file])
+                    node_classes.append(c)
+
+        for node_class in node_classes:
+            finder = SvBlIdnameFinder()
+            finder.visit(node_class)
+            bl_idname = finder.bl_idname or node_class.name
+            collection.append([bl_idname, old_node_file])
 
     return collection
 
