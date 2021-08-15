@@ -428,17 +428,27 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
         if solver is not None:
             length_params = solver.calc_length_params(existing_knots)
             sizes = length_params[1:] - length_params[:-1]
+
+            counts = distribute_int(samples, sizes)
+            for l1, l2, count in zip(length_params[1:], length_params[:-1], counts):
+                ls = np.linspace(l1, l2, num=count+2, endpoint=True)[1:-1]
+                ts = solver.solve(ls)
+                for t in ts:
+                    try:
+                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                    except CantInsertKnotException:
+                        continue
         else:
             sizes = existing_knots[1:] - existing_knots[:-1]
 
-        counts = distribute_int(samples, sizes)
-        for t1, t2, count in zip(existing_knots[1:], existing_knots[:-1], counts):
-            ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
-            for t in ts:
-                try:
-                    curve = curve.insert_knot(t, count=degree-1)
-                except CantInsertKnotException:
-                    continue
+            counts = distribute_int(samples, sizes)
+            for t1, t2, count in zip(existing_knots[1:], existing_knots[:-1], counts):
+                ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
+                for t in ts:
+                    try:
+                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                    except CantInsertKnotException:
+                        continue
 
     else:
         raise Exception("Unsupported algorithm")
