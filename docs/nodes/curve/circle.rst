@@ -75,3 +75,8 @@ Simple use:
 Use together with Extrude node to create a surafce:
 
 .. image:: https://user-images.githubusercontent.com/284644/77347798-344a7300-6d5a-11ea-88c2-e25e12be74b9.png
+
+Example of NURBS mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/129481402-e45d1583-426d-4420-b231-e717ca14e081.png
+
