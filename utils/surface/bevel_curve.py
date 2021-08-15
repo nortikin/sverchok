@@ -249,7 +249,12 @@ def nurbs_bevel_curve_gordon(path, profile, taper,
     profile_pts = profile_pts[:,0], profile_pts[:,1], profile_pts[:,2]
     profile_rhos, profile_angles, _ = to_cylindrical_np(profile_pts, mode='radians')
 
-    taper = refine_curve(taper, taper_refine)
+    if path_length_mode == 'L':
+        solver = SvCurveLengthSolver(taper)
+        solver.prepare('SPL', path_length_resolution)
+    else:
+        solver = None
+    taper = refine_curve(taper, taper_refine, solver=solver)
 
     tapers = [rotate_curve_z(taper, angle-taper_start_angle, scale) for angle, scale in zip(profile_angles, profile_rhos / profile_start_rho)]
     tapers = [bend_curve(field, taper) for taper in tapers]
