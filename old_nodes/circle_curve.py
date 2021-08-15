@@ -12,7 +12,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 
 from sverchok.utils.curve import SvCircle
 
-class SvExCircleCurveNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvExCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Circle
     Tooltip: Generate circular curve
@@ -21,7 +21,7 @@ class SvExCircleCurveNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Circle (Curve)'
     bl_icon = 'MESH_CIRCLE'
 
-    replacement_nodes = [('SvCircleMk2Node', None, None)]
+    replacement_nodes = [('SvCircleCurveMk2Node', None, None)]
 
     radius : FloatProperty(
         name = "Radius",
@@ -98,8 +98,8 @@ class SvExCircleCurveNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExCircleCurveNode)
+    bpy.utils.register_class(SvExCircleNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCircleCurveNode)
+    bpy.utils.unregister_class(SvExCircleNode)
 
