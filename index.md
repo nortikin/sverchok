@@ -49,7 +49,7 @@
 
 ## Curves @ Primitives
     SvExLineCurveNode
-    SvExCircleNode
+    SvCircleCurveMk2Node
     SvEllipseCurveNode
     SvRoundedRectangleNode
     SvArc3ptCurveNode
