@@ -373,3 +373,17 @@ def _gcd(a, b):
     while b:
         a, b = b, a%b
     return a
+
+def distribute_int(n, sizes):
+    total_size = sum(sizes)
+    ratios = [size / total_size for size in sizes]
+    counts = [int(n * ratio) for ratio in ratios]
+    count_good = sum(counts)
+    count_left = n - count_good
+    for idx in np.argsort(sizes)[::-1]:
+        if count_left == 0:
+            break
+        counts[idx] += 1
+        count_left -= 1
+    return counts
+
