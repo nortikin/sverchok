@@ -23,9 +23,10 @@ if scipy is not None:
     import scipy.optimize
 
 def unify_two_curves(curve1, curve2):
-    curve1 = curve1.to_knotvector(curve2)
-    curve2 = curve2.to_knotvector(curve1)
-    return curve1, curve2
+    return unify_curves([curve1, curve2])
+    #curve1 = curve1.to_knotvector(curve2)
+    #curve2 = curve2.to_knotvector(curve1)
+    #return curve1, curve2
 
 @deprecated("Use sverchok.utils.curve.algorithms.unify_curves_degree")
 def unify_degrees(curves):
