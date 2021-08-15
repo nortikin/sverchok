@@ -191,14 +191,14 @@ def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None)
     else:
         raise TypeError(f"Unsupported type of `cls` parameter: {type(cls)}")
 
-def concatenate_nurbs_curves(curves):
+def concatenate_nurbs_curves(curves, tolerance=1e-6):
     if not curves:
         raise Exception("List of curves must be not empty")
     curves = unify_curves_degree(curves)
     result = curves[0]
     for i, curve in enumerate(curves[1:]):
         try:
-            result = result.concatenate(curve)
+            result = result.concatenate(curve, tolerance=tolerance)
         except Exception as e:
             raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
