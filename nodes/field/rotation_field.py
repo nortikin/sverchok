@@ -2,9 +2,9 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.vector import (SvAverageVectorField, SvRotationVectorField, SvSelectVectorField)
 from sverchok.utils.math import all_falloff_types, falloff_array
@@ -19,11 +19,11 @@ class SvRotationFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ROTATION_FIELD'
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')
         coeff_types = ['inverse_exp', 'gauss', 'smooth', 'sphere', 'root', 'invsquare', 'sharp', 'linear', 'const']
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in coeff_types)
+        updateNode(self, context)
 
     falloff_type: EnumProperty(
         name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)

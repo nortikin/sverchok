@@ -1,5 +1,5 @@
 Rigid Origami
-===========
+=============
 
 Functionality
 -------------
@@ -15,7 +15,7 @@ This node has the following inputs:
 
 - **Vertices**. Vertices of a plane (paper) object to be folded. This input and the edges and faces of the paper are mandatory.
 - **Edges**. All edges of the target paper.
-- **Faces**. All faces of the target paper. The normals of each polygons shold be the same direction when not folded.
+- **Faces**. All faces of the target paper. The normals of each polygon should be the same direction when not folded.
 - **Fold edge indices**. Indices of edges to be folded. These edges should be edges inside of a paper. If some of the edges inside are not included, those edge-angles are considered to be kept the same. If boundary edges are included, they are simply ignored.
 - **Fold edge angles**. Edge angles of 'Fold edge indices'. Angles are designated with radian. Valley/Mountain angles are plus/minus values respectively. The number of the list items should be the same as the indices count.
 

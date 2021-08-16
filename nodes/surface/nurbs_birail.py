@@ -7,11 +7,10 @@
 
 import numpy as np
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
@@ -69,10 +68,10 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
             items = get_implementations,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['V1'].hide_safe = not self.explicit_v
         self.inputs['V2'].hide_safe = not self.explicit_v
+        updateNode(self, context)
 
     profiles_count : IntProperty(
         name = "V Sections",
@@ -100,9 +99,32 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    auto_rotate_profiles : BoolProperty(
+        name = "Auto rotate profiles",
+        description = "If checked, then the node will try to rotate provided profile curves appropriately. Otherwise, the node expects provided profile curves to lie in XOY plane.",
+        default = False,
+        update = updateNode)
+
+    rotate_options = [
+            ('PATHS_AVG', "Paths Normal Average", "Rotate profile(s), trying to make it perpendicular to both paths", 0),
+            ('FROM_PATH1', "Path 1 Normal", "Rotate profile(s), trying to make it perpendicular to the first path", 1),
+            ('FROM_PATH2', "Path 2 Normal", "Rotate profile(s), trying to make it perpendicular to the second path", 2),
+            ('FROM_PROFILE', "By profile", "Try to use initial rotation of profile curve(s)", 3)
+        ]
+
+    profile_rotation : EnumProperty(
+            name = "Profile rotation",
+            description = "Defines how profile curves should be rotated",
+            items = rotate_options,
+            default = 'PATHS_AVG',
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "scale_uniform")
+        layout.prop(self, "auto_rotate_profiles")
+        layout.label(text="Profile rotation:")
+        layout.prop(self, "profile_rotation", text='')
         layout.prop(self, "explicit_v")
 
     def draw_buttons_ext(self, context, layout):
@@ -179,6 +201,8 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
                                     degree_v = degree_v,
                                     metric = self.metric,
                                     scale_uniform = self.scale_uniform,
+                                    auto_rotate = self.auto_rotate_profiles,
+                                    use_tangents = self.profile_rotation,
                                     implementation = self.nurbs_implementation
                                 )
                 new_surfaces.append(surface)

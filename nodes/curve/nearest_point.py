@@ -10,40 +10,13 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.manifolds import nearest_point_on_curve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
 if scipy is None:
     add_dummy('SvExNearestPointOnCurveNode', "Nearest Point on Curve", 'scipy')
 else:
-    from scipy.optimize import minimize_scalar
-
-    def init_guess(curve, points_from, samples=50):
-        u_min, u_max = curve.get_u_bounds()
-        us = np.linspace(u_min, u_max, num=samples)
-
-        points = curve.evaluate_array(us).tolist()
-        #print("P:", points)
-
-        kdt = KDTree(len(us))
-        for i, v in enumerate(points):
-            kdt.insert(v, i)
-        kdt.balance()
-
-        us_out = []
-        nearest_out = []
-        for point_from in points_from:
-            nearest, i, distance = kdt.find(point_from)
-            us_out.append(us[i])
-            nearest_out.append(tuple(nearest))
-
-        return us_out, nearest_out
-
-    def goal(curve, point_from):
-        def distance(t):
-            dv = curve.evaluate(t) - np.array(point_from)
-            return np.linalg.norm(dv)
-        return distance
 
     class SvExNearestPointOnCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -105,54 +78,21 @@ else:
 
             points_out = []
             t_out = []
+            need_points = self.outputs['Point'].is_linked
             for curves, src_points_i in zip_long_repeat(curves_s, src_point_s):
                 for curve, src_points in zip_long_repeat(curves, src_points_i):
-                    t_min, t_max = curve.get_u_bounds()
 
-                    new_t = []
-                    new_points = []
-
-                    init_ts, init_points = init_guess(curve, src_points,samples=self.samples)
-                    #self.info("I: %s", init_points)
-                    for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
-                        if self.precise:
-                            delta_t = (t_max - t_min) / self.samples
-                            self.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
-                            if init_t <= t_min:
-                                if init_t - delta_t >= t_min:
-                                    bracket = (init_t - delta_t, init_t, t_max)
-                                else:
-                                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
-                            elif init_t >= t_max:
-                                if init_t + delta_t <= t_max:
-                                    bracket = (t_min, init_t, init_t + delta_t)
-                                else:
-                                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
-                            else:
-                                bracket = (t_min, init_t, t_max)
-                            result = minimize_scalar(goal(curve, src_point),
-                                        bounds = (t_min, t_max),
-                                        bracket = bracket,
-                                        method = self.method
-                                    )
-                            if not result.success:
-                                if hasattr(result, 'message'):
-                                    message = result.message
-                                else:
-                                    message = repr(result)
-                                raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
-                            t0 = result.x
-                            if t0 < t_min:
-                                t0 = t_min
-                            elif t0 > t_max:
-                                t0 = t_max
-                        else:
-                            t0 = init_t
-                            new_points.append(init_point)
-                        new_t.append(t0)
-
-                    if self.precise and self.outputs['Point'].is_linked:
-                        new_points = curve.evaluate_array(np.array(new_t)).tolist()
+                    results = nearest_point_on_curve(src_points, curve,
+                                samples=self.samples, precise=self.precise, 
+                                output_points = need_points,
+                                method = self.method,
+                                logger = self.get_logger())
+                    if need_points:
+                        new_t = [r[0] for r in results]
+                        new_points = [r[1].tolist() for r in results]
+                    else:
+                        new_t = results
+                        new_points = []
 
                     points_out.append(new_points)
                     t_out.append(new_t)

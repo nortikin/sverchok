@@ -21,19 +21,20 @@ In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` fo
 One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs, sign, max, min, len, sum, any, all, dir;
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list, str, dict, set, int, float.
 - External modules: np (for Numpy) and bpy (for blender data)
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not guarantee that no one can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
 
 Examples of valid expressions are:
 
@@ -52,10 +53,10 @@ Inputs
 - Set of inputs for this node depends on used formulas. Each variable used in formula becomes one input. If there are no variables used in formula, then this node will have no inputs.
 - If you specify variables, and the node creates a socket for it, then you must connect a link into that socket, otherwise the node will return early and not process anything. (but it might still output from the previously cached result.
     - the node will warn you using a message to say that the UI is not fully connected.
-    |ui_message|
 - The inputs have two properties, Depth and Transform:
   - Depth: Exposed depth to the formula. 1 means exposing scalars, 2 means scalar list, 3 list of lists...
   - Transform: Transformation done to the data before exposing to the formula. Offers:
+
     - 'As Is': Do not transform
     - 'Vector': Transforms to mathutils Vector
     - 'Array': Transforms to Numpy Array

@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, dataCorrect, repeat_last,
                                      match_long_repeat)
 from mathutils import Vector
 
-# spline function modifed from
+# spline function modified from
 # from looptools 4.5.2 done by Bart Crouch
 
 

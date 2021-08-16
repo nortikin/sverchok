@@ -4,7 +4,7 @@ Polyline
 Functionality
 -------------
 
-This node geneates a polyline (polygonal chain), i.e. a curve consisting of
+This node generates a polyline (polygonal chain), i.e. a curve consisting of
 segments of straight lines between the specified points. The polyline may be
 closed or not.
 
@@ -35,11 +35,11 @@ This node has the following parameters:
   specified curve points. The available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev.
 
-The default value is Euclidian.
+The default value is Euclidean.
 
 Outputs
 -------
@@ -59,7 +59,7 @@ The same with **Cyclic** checked:
 
 .. image:: https://user-images.githubusercontent.com/284644/77845221-8cec9680-71c6-11ea-8f5a-1558b32a2e8b.png
 
-These examples had Metric set to Euclidian (default). Since **Eval Curve** node
+These examples had Metric set to Euclidean (default). Since **Eval Curve** node
 generates evenly-distributed values of the T parameter, the number of points at
 each segment is proportional to the distance between points. The next example
 is with Metric set to Points:

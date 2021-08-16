@@ -3,7 +3,7 @@ Modifier Change
 ***************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    bevel
    subdivide_mk2
@@ -14,7 +14,6 @@ Modifier Change
    relax_mesh
    delete_loose
    mesh_clean
-   edges_intersect_mk2
    poke
    extrude_edges_mk2
    extrude_separate

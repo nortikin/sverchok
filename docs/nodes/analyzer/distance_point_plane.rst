@@ -29,9 +29,9 @@ Inputs / Parameters
 
 
 +---------------------+-------------+---------------------------------------------------------------------------------------------+
-| Param               | Type        | Description                                                                                 |  
+| Param               | Type        | Description                                                                                 |
 +=====================+=============+=============================================================================================+
-| **Vertices**        | Vertices    | Points to calculate                                                                         | 
+| **Vertices**        | Vertices    | Points to calculate                                                                         |
 +---------------------+-------------+---------------------------------------------------------------------------------------------+
 | **Verts Plane**     | Vertices    | It will get the first three vertices of the input list to define the triangle and the plane |
 +---------------------+-------------+---------------------------------------------------------------------------------------------+
@@ -62,7 +62,7 @@ Outputs
 
 **Closest Point**: Returns the closest point in the plane
 
-**Closest in Triangle**": Returns true if the closest point is is in the same plane as with input vertices.
+**Closest in Triangle**": Returns true if the closest point is in the same plane as with input vertices.
 
 
 Example of usage

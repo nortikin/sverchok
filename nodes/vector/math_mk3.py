@@ -23,7 +23,7 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProp
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    levelsOflist, levels_of_list_or_np, numpy_match_long_repeat, updateNode, no_space, throttle_and_update_node)
+    levelsOflist, levels_of_list_or_np, numpy_match_long_repeat, updateNode, no_space)
 
 from sverchok.ui.sv_icons import custom_icon
 import numpy as np
@@ -98,9 +98,9 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'THREE_DOTS'
     sv_icon = 'SV_VECTOR_MATH'
 
-    @throttle_and_update_node
     def mode_change(self, context):
         self.update_sockets()
+        updateNode(self, context)
 
     current_op: EnumProperty(
         items=vector_math_ops,
@@ -226,8 +226,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         for enum_property in enums:
             current_value = getattr(self, enum_property)
             if " " in current_value:
-                with self.sv_throttle_tree_update():
-                    setattr(self, enum_property, no_space(current_value))
+                setattr(self, enum_property, no_space(current_value))
 
 
 

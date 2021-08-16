@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import numpy as np
 from itertools import zip_longest
 
 class SvDict(dict):
@@ -134,4 +135,77 @@ class SvDict(dict):
                             elif old_type != new_type:
                                 types[i] = 'SvStringsSocket'
             return types
+
+class SvApproxDict(object):
+    def __init__(self, pairs=None, precision=6):
+        self.precision = precision
+        self.keys = np.array([])
+        self.values = np.array([])
+
+        if pairs is not None:
+            for key, value in pairs:
+                self[key] = value
+
+    def tolerance(self):
+        return 10**(-self.precision)
+
+    def __repr__(self):
+        items = [f"{key}: {value}" for key, value in zip(self.keys, self.values)]
+        s = ", ".join(items)
+        return "{" + s + "}"
+
+    def __setitem__(self, key, value):
+        if len(self.keys) == 0:
+            self.keys = np.array([key])
+            self.values = np.array([value])
+            return
+
+        i = self.keys.searchsorted(key)
+        if i > 0:
+            smaller = self.keys[i-1]
+        else:
+            smaller = None
+        if i < len(self.keys):
+            greater = self.keys[i]
+        else:
+            greater = None
+
+        if smaller is not None and (key - smaller) < self.tolerance():
+            #self.keys[i-1] = 0.5*(key + self.keys[i-1])
+            self.values[i-1] = value
+            return
+
+        if greater is not None and (greater - key) < self.tolerance():
+            #self.keys[i] = 0.5*(key + self.keys[i])
+            self.values[i] = value
+            return
+
+        self.keys = np.insert(self.keys, i, key)
+        self.values = np.insert(self.values, i, value)
+
+    def get(self, key, default=None):
+        if len(self.keys) == 0:
+            return default
+        i = self.keys.searchsorted(key)
+
+        if i > 0:
+            smaller = self.keys[i-1]
+            if (key - smaller) < self.tolerance():
+                return self.values[i-1]
+
+        if i < len(self.keys):
+            greater = self.keys[i]
+            if (greater - key) < self.tolerance():
+                return self.values[i]
+
+        return default
+
+    def __getitem__(self, key):
+        value = self.get(key, None)
+        if value is None:
+            raise KeyError("Key not found")
+        return value
+
+    def items(self):
+        return zip(self.keys, self.values)
 

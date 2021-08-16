@@ -8,10 +8,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve.biarc import SvBiArc
 
 class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
@@ -43,7 +43,6 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['Center1'].hide_safe = not self.show_details
         self.outputs['Center2'].hide_safe = not self.show_details
@@ -52,6 +51,7 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Angle1'].hide_safe = not self.show_details
         self.outputs['Angle2'].hide_safe = not self.show_details
         self.outputs['Junction'].hide_safe = not self.show_details
+        updateNode(self, context)
 
     show_details : BoolProperty(
             name = "Show Details",

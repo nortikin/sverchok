@@ -1,14 +1,11 @@
 
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import zip_long_repeat, updateNode
 
-from sverchok.utils.field.scalar import (SvScalarField,
+from sverchok.utils.field.scalar import (
             SvVectorFieldsScalarProduct,
             SvVectorFieldNorm,
             SvVectorScalarFieldComposition)
@@ -76,7 +73,6 @@ class SvVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VECTOR_FIELD_MATH'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         actual_inputs, actual_outputs = get_sockets(self.operation)
         actual_inputs = dict(actual_inputs)
@@ -92,6 +88,7 @@ class SvVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
             socket.hide_safe = registered.id not in actual_outputs
             if not socket.hide_safe:
                 socket.name = actual_outputs[registered.id]
+        updateNode(self, context)
 
     operation : EnumProperty(
         name = "Operation",

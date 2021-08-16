@@ -47,7 +47,7 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         verts_mask_out = []
         poly_edge_out = []
-        if len(poly_edge[0][0]) == 2:
+        if len(poly_edge[0]) > 0 and len(poly_edge[0][0]) == 2:
             self.outputs['PolyEdge'].label = "Edges"
         else:
             self.outputs['PolyEdge'].label = "Polygons"

@@ -11,7 +11,7 @@ from collections import defaultdict
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length, updateNode, throttle_and_update_node
+from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length
 
 import sverchok.utils.handling_nodes as hn
 

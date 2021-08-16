@@ -6,7 +6,7 @@ Polyline viewer
 Functionality
 -------------
 
-Inspite of its name it can generate splines of two types: polylines or NURBS. 
+In spite of its name it can generate splines of two types: polylines or NURBS. 
 Input vertices should be given in sorted order from start spline to its end. Generating spines can have thickness. 
 If bevel object is given (curve type) it will be extruded along generated splines.
 
@@ -42,7 +42,7 @@ Parameters
 - **2D or 3D** - Dimensions of generated splines
 - **Bevel depth** - Changes the size of the bevel
 - **Resolution** - Alters the smoothness of the bevel
-- **Spline type** - NURBS ot polyline
+- **Spline type** - NURBS to polyline
 - **Close** - Closes the generated splines
 - **Assign matrix to** - Matrix can be assigned either to objects or mesh. It will effect only onto position of origin. Also if matrix is applying to objects `lock origin` will be always True
 - **Caps** - Seals the ends of a beveled curve

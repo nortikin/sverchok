@@ -32,6 +32,12 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 default = False,
                 update=updateNode)
 
+        join : BoolProperty(
+                name = "Join",
+                description = "Output single flat list of curves",
+                default = True,
+                update=updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvVectorFieldSocket', "Field")
             self.inputs.new('SvCurveSocket', "Curve")
@@ -39,7 +45,8 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.new('SvCurveSocket', "Curve")
 
         def draw_buttons(self, context, layout):
-            layout.prop(self, "use_control_points", toggle=True)
+            layout.prop(self, "use_control_points", toggle=False)
+            layout.prop(self, "join", toggle=False)
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -55,6 +62,7 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
             curve_out = []
             for curve_i, field_i, coeff_i in zip_long_repeat(curve_s, field_s, coeff_s):
+                new_curves = []
                 for curve, field, coeff in zip_long_repeat(curve_i, field_i, coeff_i):
                     if self.use_control_points:
                         nurbs = SvNurbsCurve.to_nurbs(curve)
@@ -83,7 +91,12 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
                         new_curve.u_bounds = nurbs.u_bounds
                     else:
                         new_curve = SvDeformedByFieldCurve(curve, field, coeff)
-                    curve_out.append(new_curve)
+                    new_curves.append(new_curve)
+
+                if self.join:
+                    curve_out.extend(new_curves)
+                else:
+                    curve_out.append(new_curves)
 
             self.outputs['Curve'].sv_set(curve_out)
 

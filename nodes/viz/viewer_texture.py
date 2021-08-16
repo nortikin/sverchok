@@ -258,7 +258,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         height_socket.prop_name = 'height_custom_tex'
         height_socket.hide_safe = True
 
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
 
     def delete_texture(self):
@@ -319,15 +319,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             nvBGL2.callback_enable(n_id, draw_data)
 
     def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'render_scale': 1.0,
-            'render_location_xy_multiplier': 1.0})
-        return props.render_scale, props.render_location_xy_multiplier
+        return get_params({
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def get_dimensions(self, width, height):
         """
-        this could also return scale for a blf notation in the vacinity of the texture
+        this could also return scale for a blf notation in the vicinity of the texture
         """
         scale, multiplier = self.get_preferences()
         self.location_theta = multiplier

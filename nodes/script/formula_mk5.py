@@ -14,7 +14,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.data_structure import (updateNode, throttle_and_update_node,
+from sverchok.data_structure import (updateNode,
                                      list_match_func, numpy_list_match_modes,
                                      enum_item_4)
 
@@ -93,11 +93,10 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 
-    @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
+        updateNode(self, context)
 
-    @throttle_and_update_node
     def on_update_dims(self, context):
         if self.output_dimensions < 4:
             self.formula4 = ""
@@ -107,6 +106,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
             self.formula2 = ""
 
         self.adjust_sockets()
+        updateNode(self, context)
 
     output_dimensions: IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
@@ -208,11 +208,10 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
         self.hot_reload_sockets()
 
     def clear_and_repopulate_sockets_from_variables(self):
-        with self.sv_throttle_tree_update():
-            self.inputs.clear()
-            variables = self.get_variables()
-            for v in variables:
-                self.inputs.new('SvFormulaSocket', v)
+        self.inputs.clear()
+        variables = self.get_variables()
+        for v in variables:
+            self.inputs.new('SvFormulaSocket', v)
 
     def hot_reload_sockets(self):
         """
@@ -225,7 +224,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
 
         """
 
-        self.info('handling input wipe and relink')
+        self.debug('handling input wipe and relink')
         nodes = self.id_data.nodes
         node_tree = self.id_data
 

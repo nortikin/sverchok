@@ -201,8 +201,14 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', text="Append")
 
-
     def process(self):
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.text and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
+
         if self.text_mode in {'CSV', 'JSON'}:
             multi_socket(self, min=1)
 
@@ -237,13 +243,6 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'TEXT':
             out = get_text_data(node=self)
         return out
-
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "file_pointer") and not self.file_pointer:
-            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
-            if text:
-                self.file_pointer = text
 
 
 def register():

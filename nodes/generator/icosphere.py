@@ -122,7 +122,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     #     items=list_match_modes, default="REPEAT",
     #     update=updateNode)
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays slows this node but may improve performance of nodes it is connected to",
         default=(False, False, False),
         size=3, update=updateNode)
@@ -140,7 +140,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "subdivisions_max")
         layout.prop(self, "list_match")
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.row(align=True)
         for i in range(3):
             r.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)

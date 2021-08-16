@@ -17,7 +17,7 @@ Parameters
 ----------
 
 Active or not, turn off printing of individual node. 
-In the N-panel controll printing of inddividual sockets.
+In the N-panel control printing of individual sockets.
 
 Outputs
 -------

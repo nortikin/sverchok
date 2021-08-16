@@ -31,19 +31,19 @@ This node has the following parameters:
 
 * **Metric**. The metric to be used for creating Voronoi field. The available options are:
 
-  * **Euclidian**
+  * **Euclidean**
   * **Manhattan**
   * **Chebyshev**
   * **Custom**. A generic Minkowski metric defined by formula
     ``sum(abs(dx_i)**P)**(1.0/P)``, where P is defined in the Exponent
     parameter.
    
-  The default value is **Euclidian**.
+  The default value is **Euclidean**.
 
 * **Exponent**. This parameter is available only when **Metric** parameter is
   set to **Custom**. Exponent for generic Minkowski distance. The available
   values are from 1.0 to infinity. The default value is 2.0, which defines
-  Euclidian metric.
+  Euclidean metric.
 
 Outputs
 -------

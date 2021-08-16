@@ -26,7 +26,7 @@ formulas, that way will be faster and more precise.
 Inputs
 ------
 
-This node hsa the following inputs:
+This node has the following inputs:
 
 * **Surface**. The surface to find orthogonal projection onto. This input is
   mandatory.

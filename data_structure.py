@@ -15,12 +15,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+
 from contextlib import contextmanager
 from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
 import itertools
-import ast
 import copy
 from itertools import zip_longest, chain, cycle, islice
 import bpy
@@ -36,11 +36,11 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
-from sverchok.utils.logging import info
+from sverchok.utils.logging import debug
+import numpy as np
 
 
 DEBUG_MODE = False
-HEAT_MAP = False
 RELOAD_EVENT = False
 
 # this is set correctly later.
@@ -161,9 +161,9 @@ def match_long_cycle(lsts):
     return list(map(list, zip(*zip(*tmp))))
 
 
-# when you intent to use lenght of first list to control WHILE loop duration
+# when you intent to use length of first list to control WHILE loop duration
 # and you do not want to change the length of the first list, but you want the second list
-# lenght to by not less than the length of the first
+# length to by not less than the length of the first
 def second_as_first_cycle(F, S):
     if len(F) > len(S):
         return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))[1]
@@ -423,7 +423,7 @@ iter_list_match_func = {
 # NOTE, these function cannot possibly work in all scenarios, use with care
 
 def dataCorrect(data, nominal_dept=2):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )
     """
     dept = levelsOflist(data)
     output = []
@@ -432,11 +432,11 @@ def dataCorrect(data, nominal_dept=2):
     if dept < 2:
         return data #[dept, data]
     else:
-        output = dataStandart(data, dept, nominal_dept)
+        output = data_standard(data, dept, nominal_dept)
         return output
 
 def dataCorrect_np(data, nominal_dept=2):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )
     """
     dept = levels_of_list_or_np(data)
     output = []
@@ -445,11 +445,11 @@ def dataCorrect_np(data, nominal_dept=2):
     if dept < 2:
         return data #[dept, data]
     else:
-        output = dataStandart(data, dept, nominal_dept)
+        output = data_standard(data, dept, nominal_dept)
         return output
 
 def dataSpoil(data, dept):
-    """from standart data to initial levels: to nested lists
+    """from standard data to initial levels: to nested lists
      container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
     """
     __doc__ = 'preparing and making spoil'
@@ -471,13 +471,13 @@ def dataSpoil(data, dept):
     return out
 
 
-def dataStandart(data, dept, nominal_dept):
-    """data from nasting to standart: TO container( objects( lists( floats, ), ), )"""
+def data_standard(data, dept, nominal_dept):
+    """data from nesting to standard: TO container( objects( lists( floats, ), ), )"""
     deptl = dept - 1
     output = []
     for object in data:
         if deptl >= nominal_dept:
-            output.extend(dataStandart(object, deptl, nominal_dept))
+            output.extend(data_standard(object, deptl, nominal_dept))
         else:
             output.append(data)
             return output
@@ -761,7 +761,7 @@ def describe_data_shape(data):
     Returns string.
     Can be used for debugging or for displaying information to user.
     Note: this method inspects only first element of each list/tuple,
-    expecting they are all homogenous (that is usually true in Sverchok).
+    expecting they are all homogeneous (that is usually true in Sverchok).
 
     describe_data_shape(None) == 'Level 0: NoneType'
     describe_data_shape(1) == 'Level 0: int'
@@ -961,7 +961,7 @@ def is_ultimately(data, data_types):
 
 # tools that makes easier to convert data
 # from string to matrixes, vertices,
-# lists, other and vise versa
+# lists, other and vice versa
 
 
 def Matrix_listing(prop):
@@ -989,7 +989,7 @@ def Matrix_generate(prop):
 
 
 def Matrix_location(prop, to_list=False):
-    """return a list of locations represeting the translation of the matrices"""
+    """return a list of locations representing the translation of the matrices"""
     Vectors = []
     for p in prop:
         if to_list:
@@ -1000,7 +1000,7 @@ def Matrix_location(prop, to_list=False):
 
 
 def Matrix_scale(prop, to_list=False):
-    """return a Vector()/list represeting the scale factor of the matrices"""
+    """return a Vector()/list representing the scale factor of the matrices"""
     Vectors = []
     for p in prop:
         if to_list:
@@ -1099,6 +1099,30 @@ def has_element(pol_edge):
         return True
     return False
 
+
+def cross_indices_np(n):
+    '''
+    create list with all the indices pairs
+    for n=3 outputs a numpy array with:
+        [0,1]
+        [0,2]
+        [1,2]
+
+    '''
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind
+
 def no_space(s):
     return s.replace(' ', '_')
 
@@ -1194,47 +1218,15 @@ def setup_init():
     setup variables needed for sverchok to function
     """
     global DEBUG_MODE
-    global HEAT_MAP
     global SVERCHOK_NAME
     import sverchok
     SVERCHOK_NAME = sverchok.__name__
     addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
-        HEAT_MAP = addon.preferences.heat_map
     else:
         print("Setup of preferences failed")
 
-
-#####################################################
-###############  heat map system     ################
-#####################################################
-
-
-def heat_map_state(state):
-    """
-    colors the nodes based on execution time
-    """
-    global HEAT_MAP
-    HEAT_MAP = state
-    sv_ng = [ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchCustomTreeType']
-    if state:
-        for ng in sv_ng:
-            color_data = {node.name: (node.color[:], node.use_custom_color) for node in ng.nodes}
-            if not ng.sv_user_colors:
-                ng.sv_user_colors = str(color_data)
-    else:
-        for ng in sv_ng:
-            if not ng.sv_user_colors:
-                print("{0} has no colors".format(ng.name))
-                continue
-            color_data = ast.literal_eval(ng.sv_user_colors)
-            for name, node in ng.nodes.items():
-                if name in color_data:
-                    color, use = color_data[name]
-                    setattr(node, 'color', color)
-                    setattr(node, 'use_custom_color', use)
-            ng.sv_user_colors = ""
 
 #####################################################
 ############### update system magic! ################
@@ -1271,77 +1263,15 @@ def update_with_kwargs(update_function, **kwargs):
     return handel_update_call
 
 
-@contextmanager
-def throttle_tree_update(node):
-    """ usage
-    from sverchok.data_structure import throttle_tree_update
-
-    inside your node, f.ex inside a wrapped_update that creates a socket
-
-    def wrapped_update(self, context):
-        with throttle_tree_update(self):
-            self.inputs.new(...)
-            self.outputs.new(...)
-
-    that's it.
-
-    """
-    with node.id_data.throttle_update():
-        yield node
-
-
-def throttled(func):
-    """
-    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
-    inside nodes init methods and property changes methods
-
-    @throttled
-    def your_method(tree or node or socket, *args, **kwargs):
-    """
-    @wraps(func)
-    def wrapper_update(with_id_data, *args, **kwargs):
-        tree = with_id_data.id_data
-        with tree.throttle_update():
-            return func(with_id_data, *args, **kwargs)
-    return wrapper_update
-
-
-def throttle_and_update_node(func):
-    """
-    use as a decorator
-
-        class YourNode
-
-            @throttle_and_update_node
-            def mode_update(self, context):
-                ...
-
-    When a node has changed, like a mode-change leading to a socket change (remove, new)
-    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system.
-    - then We execute the code that makes changes to the node/node_tree
-    - then we end the throttle-state
-    - we are then ready to process
-    """
-    @wraps(func)
-    def wrapper_update(self, context):
-        tree = self.id_data
-        with tree.throttle_update():
-            func(self, context)
-        self.process_node(context)
-
-    return wrapper_update
-
-
 ##############################################################
 ##############################################################
-############## changable type of socket magic ################
+############## changeable type of socket magic ###############
 ########### if you have separate socket solution #############
-#################### welcome to provide #####################
+#################### welcome to provide ######################
 ##############################################################
 ##############################################################
 
-@throttled
+
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -1349,7 +1279,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet,
         # - or socketname incorrect
-        info(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")
+        debug(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")
         return
 
     in_socket = node.inputs[inputsocketname]
@@ -1382,7 +1312,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                     ng.links.new(to_socket, new_out_socket)
 
 
-@throttled
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     Replace a socket with a socket of new_type and keep links
@@ -1446,7 +1375,7 @@ def get_other_socket(socket):
 
 
 ###########################################
-# Multysocket magic / множественный сокет #
+# Multisocket magic / множественный сокет #
 ###########################################
 
 #     utility function for handling n-inputs, for usage see Test1.py
@@ -1460,13 +1389,13 @@ def get_other_socket(socket):
 
 # the named argument min will be replaced soonish.
 
-@throttled
+
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed
      start - integer, starting socket.
      breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
-     output - integer, deal with output, if>0 counts number of outputs multy sockets
+     output - integer, deal with output, if>0 counts number of outputs multi sockets
      base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
      node.multi_socket_type - type of socket, as .bl_idname
 
@@ -1510,17 +1439,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 #####################################
 # socket data cache                 #
 #####################################
-
-
-def SvGetSocketAnyType(self, socket, default=None, deepcopy=True):
-    """Old interface, don't use"""
-    return socket.sv_get(default, deepcopy)
-
-
-def SvSetSocketAnyType(self, socket_name, out):
-    """Old interface, don't use"""
-
-    self.outputs[socket_name].sv_set(out)
 
 
 def socket_id(socket):

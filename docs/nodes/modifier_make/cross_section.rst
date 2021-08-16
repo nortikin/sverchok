@@ -17,11 +17,11 @@ Parameters
 table
 
 +------------------+---------------+-----------------------------------------------------------------+
-| Param            | Type          | Description                                                     |  
+| Param            | Type          | Description                                                     |
 +==================+===============+=================================================================+
-| **Fill section** | Bool          | Make polygons or edges                                          | 
+| **Fill section** | Bool          | Make polygons or edges                                          |
 +------------------+---------------+-----------------------------------------------------------------+
-| **Alt+F/F**      | Bool          | If polygons, than triangles or single polygon                   |  
+| **Alt+F/F**      | Bool          | If polygons, than triangles or single polygon                   |
 +------------------+---------------+-----------------------------------------------------------------+
 
 Outputs

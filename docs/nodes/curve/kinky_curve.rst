@@ -50,11 +50,11 @@ This node has the following parameters:
   specified curve points. The available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev.
 
-   The default value is Euclidian.
+   The default value is Euclidean.
 
 Outputs
 -------

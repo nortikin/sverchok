@@ -287,8 +287,7 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         for enum_property in enums:
             current_value = getattr(self, enum_property)
             if " " in current_value:
-                with self.sv_throttle_tree_update():
-                    setattr(self, enum_property, no_space(current_value))
+                setattr(self, enum_property, no_space(current_value))
 
 
 classes = [SvScalarMathNodeMK4]

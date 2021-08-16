@@ -13,6 +13,7 @@ from contextlib import contextmanager
 import ast
 
 import sverchok
+from sverchok import old_nodes
 from sverchok.old_nodes import is_old
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
@@ -138,6 +139,16 @@ def remove_node_tree(name=None):
         tree = bpy.data.node_groups[name]
         bpy.data.node_groups.remove(tree)
 
+
+def remove_all_trees():
+    """Remove all trees"""
+    while True:
+        try:
+            bpy.data.node_groups.remove(bpy.data.node_groups[0])
+        except IndexError:
+            break
+
+
 def link_node_tree(reference_blend_path, tree_name=None):
     """
     Link node tree from specified .blend file.
@@ -149,6 +160,10 @@ def link_node_tree(reference_blend_path, tree_name=None):
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
         info(f"---- Linked node tree: {basename(reference_blend_path)}")
         data_dst.node_groups = [tree_name]
+    # right here the update method of the imported tree will be called
+    # sverchok does not have a way of preventing this update
+    # make sure that all old nodes was registered
+
 
 def link_text_block(reference_blend_path, block_name):
     """
@@ -203,6 +218,7 @@ def run_all_tests(pattern=None):
         suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+        old_nodes.register_all()
         with coverage_report():
             result = runner.run(suite)
             info("Test cases result:\n%s", buffer.getvalue())
@@ -214,7 +230,7 @@ def run_all_tests(pattern=None):
 def run_test_from_file(file_name):
     """
     Run test from file given by name. File should be places in tests folder
-    :param file_name: sting like avl_tree_tests.py
+    :param file_name: string like avl_tree_tests.py
     :return: result
     """
     tests_path = get_tests_path()
@@ -226,6 +242,7 @@ def run_test_from_file(file_name):
         suite = loader.discover(start_dir=tests_path, pattern=file_name)
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream=buffer, verbosity=2)
+        old_nodes.register_all()
         result = runner.run(suite)
         info("Test cases result:\n%s", buffer.getvalue())
         return result
@@ -616,12 +633,12 @@ class ReferenceTreeTestCase(SverchokTestCase):
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
-        
+
         with self.assert_logs_no_errors():
             self.tree = self.link_node_tree()
 
     def tearDown(self):
-        remove_node_tree()
+        remove_all_trees()  # node trees can include references to many other trees
         super().tearDown()
 
 class NodeProcessTestCase(EmptyTreeTestCase):
@@ -862,7 +879,7 @@ class SvListOldNodes(bpy.types.Operator):
         ntree = context.space_data.node_tree
 
         for node in ntree.nodes:
-            if is_old(node):
+            if old_nodes.is_old(node):
                 info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
 
         self.report({'INFO'}, "See logs")
@@ -900,14 +917,14 @@ def register():
         try:
             bpy.utils.register_class(clazz)
         except Exception as e:
-            exception("Cant register class %s: %s", clazz, e)
+            exception("Can't register class %s: %s", clazz, e)
 
 def unregister():
     for clazz in reversed(classes):
         try:
             bpy.utils.unregister_class(clazz)
         except Exception as e:
-            exception("Cant unregister class %s: %s", clazz, e)
+            exception("Can't unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys

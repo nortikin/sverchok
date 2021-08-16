@@ -4,7 +4,7 @@ Curve Torsion
 Functionality
 -------------
 
-This node calculates the torsion_ value of a curve at the certain value of curve's T paramter.
+This node calculates the torsion_ value of a curve at the certain value of curve's T parameter.
 
 .. _torsion: https://en.wikipedia.org/wiki/Torsion_of_a_curve
 
@@ -36,5 +36,5 @@ Calculate torsion value at several points of some random curve:
 .. image:: https://user-images.githubusercontent.com/284644/78502538-12e67f80-777b-11ea-8ba6-d4d1d6360ce2.png
 
 Note that calculating torsion at end points of a curve, or at some other
-signular points of the curve may give unusable results.
+singular points of the curve may give unusable results.
 

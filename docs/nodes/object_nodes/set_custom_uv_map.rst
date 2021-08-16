@@ -21,7 +21,7 @@ Inputs
 - **Objects** - Blender mesh objects
 - **UV verts** - just usual vertices (3D dimensional )
 - **UV faces** - just usual face, each face can be disjoint from each other
-- **Matrix** - optional, fro UV transformation
+- **Matrix** - optional, for UV transformation
 
 Outputs
 -------

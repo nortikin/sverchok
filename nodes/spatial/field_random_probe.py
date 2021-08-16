@@ -5,17 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import random
 import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils.kdtree import KDTree
 
-import sverchok
 from sverchok.core.sockets import setup_new_node_location
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
@@ -53,13 +50,13 @@ class SvFieldRandomProbeMk3Node(bpy.types.Node, SverchCustomTreeNode):
             min = 1,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
         self.inputs['RadiusField'].hide_safe = self.distance_mode != 'FIELD'
         self.inputs['MinDistance'].hide_safe = self.distance_mode != 'CONST'
         self.outputs['Radius'].hide_safe = self.distance_mode != 'FIELD'
+        updateNode(self, context)
 
     distance_modes = [
             ('CONST', "Min. Distance", "Specify minimum distance between points", 0),

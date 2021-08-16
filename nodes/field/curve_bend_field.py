@@ -1,13 +1,9 @@
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils import Matrix
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.vector import SvBendAlongCurveField
 
@@ -33,13 +29,13 @@ class SvBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
             (SvBendAlongCurveField.TRACK_NORMAL, "Track Normal", "Track normal", 6)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Resolution'].hide_safe = not(self.algorithm == SvBendAlongCurveField.ZERO or self.algorithm == SvBendAlongCurveField.TRACK_NORMAL or self.length_mode == 'L')
         if self.algorithm in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}:
             self.orient_axis_ = 'Z'
         #self.inputs[T_MIN_SOCKET].name = "Src {} Min".format(self.orient_axis)
         #self.inputs[T_MAX_SOCKET].name = "Src {} Max".format(self.orient_axis)
+        updateNode(self, context)
 
     algorithm: EnumProperty(
         name="Algorithm", description="Rotation calculation algorithm",

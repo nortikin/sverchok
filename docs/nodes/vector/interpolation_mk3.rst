@@ -24,20 +24,20 @@ Input & Output
 | output | Tangent Norm | Normalized Tangents at outputted vertices  |
 +--------+--------------+--------------------------------------------+
 
-Paramters
----------
+Parameters
+----------
 
   - *Mode* : Interpolation method. Can be Linear or Cubic
   - *Cyclic*: Treat the input vertices as a cyclic path.
-  - *Int Range*: When activated the node will expect a Interger Value in the 't' input and will create a range from 0 to 1 with the inputted steps.
-  - *End Point*: (Only when Int Range is activated) If active the generated range will exclude 1. Usefull when the value 0 and 1 of the interpolation is the same
+  - *Int Range*: When activated the node will expect a Integer Value in the 't' input and will create a range from 0 to 1 with the inputted steps.
+  - *End Point*: (Only when Int Range is activated) If active the generated range will exclude 1. Useful when the value 0 and 1 of the interpolation is the same
 
 Extra Parameters
 ----------------
 
   - *Knot Mode*: Used for different cubic interpolations. Can be 'Manhattan', 'Euclidan', 'Points' and 'Chebyshev'
   - *List Match*: How List should be matched
-  - *Ouput Numpy*: Ouputs numpy arrays in stead of regular python lists (makes node faster)
+  - *Output Numpy*: Outputs numpy arrays in stead of regular python lists (makes node faster)
 
 Examples
 --------

@@ -4,9 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvSurface
 
 U_SOCKET = 1
@@ -22,7 +21,6 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EVAL_SURFACE'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs[U_SOCKET].hide_safe = self.eval_mode == 'GRID' or self.input_mode == 'VERTICES'
         self.inputs[V_SOCKET].hide_safe = self.eval_mode == 'GRID' or self.input_mode == 'VERTICES'
@@ -33,6 +31,7 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Edges'].hide_safe = self.eval_mode == 'EXPLICIT'
         self.outputs['Faces'].hide_safe = self.eval_mode == 'EXPLICIT'
+        updateNode(self, context)
 
     eval_modes = [
         ('GRID', "Grid", "Generate a default grid", 0),
@@ -105,7 +104,7 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     output_numpy: BoolProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=False,
         update=updateNode)

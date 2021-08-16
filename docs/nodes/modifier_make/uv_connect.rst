@@ -9,7 +9,7 @@ Making edges/polygons between vertices objects it several ways.
 Inputs
 ------
 
-Vertices. Multysockets can eat many objects. every object to be connecting with other.
+Vertices. Multisockets can eat many objects. every object to be connecting with other.
 
 Parameters
 ----------
@@ -17,13 +17,13 @@ Parameters
 table
 
 +---------------+---------------+-----------------------------------------------------------------+
-| Param         | Type          | Description                                                     |  
+| Param         | Type          | Description                                                     |
 +===============+===============+=================================================================+
-| **UVdir**     | Enum          | Direction to connect edges and polygons                         | 
+| **UVdir**     | Enum          | Direction to connect edges and polygons                         |
 +---------------+---------------+-----------------------------------------------------------------+
-| **cicled**    | Bool, toggle  | For edges and polygons close loop                               |  
+| **cicled**    | Bool, toggle  | For edges and polygons close loop                               |
 +---------------+---------------+-----------------------------------------------------------------+
-| **polygons**  | Bool, toggle  | Active - make polygon, else edge                                | 
+| **polygons**  | Bool, toggle  | Active - make polygon, else edge                                |
 +---------------+---------------+-----------------------------------------------------------------+
 | **slice**     | Bool, toggle  | Polygons can be as slices or quads                              |
 +---------------+---------------+-----------------------------------------------------------------+

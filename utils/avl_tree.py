@@ -220,7 +220,7 @@ class AVLTree:
         else:
             node = args[0]
         if (node is None) or (node.is_leaf() and node.parent is None):
-            # trival - no sanity check needed, as either the tree is empty or there is only one node in the tree
+            # trivial - no sanity check needed, as either the tree is empty or there is only one node in the tree
             pass
         else:
             if node.height != node.max_children_height() + 1:

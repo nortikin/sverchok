@@ -78,7 +78,7 @@ def edges_direction(vertices, edges, out_numpy=False):
 
 def connected_edges(verts, edges):
     '''
-    edges conected to each edge
+    edges connected to each edge
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
@@ -95,7 +95,7 @@ def connected_edges(verts, edges):
 
 def connected_edges_idx(verts, edges):
     '''
-    edges conected to each edge
+    edges connected to each edge
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
@@ -113,7 +113,7 @@ def connected_edges_idx(verts, edges):
 
 def connected_edges_num(verts, edges):
     '''
-    number of edges conected to each edge
+    number of edges connected to each edge
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     returns number of edges connected to each edge as [int, int,...]
@@ -259,7 +259,7 @@ def edges_vertices(vertices, edges):
 
 def edge_is_filter(vertices, edges, faces, mode):
     '''
-    acces to mesh_filter to get different bmesh edges filters
+    access to mesh_filter to get different bmesh edges filters
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     edges: list as [edge, edge,..], being each edge [int, int].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].

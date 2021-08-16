@@ -19,14 +19,7 @@ class UiTests(SverchokTestCase):
             return has_sv_icon or has_bl_icon
 
         ignore_list = [
-                    'SvGroupInputsNode',
-                    'SvGroupNode',
-                    'SvGroupOutputsNode',
                     'SvIterationNode',
-                    'SvGroupInputsNodeExp',
-                    'SvGroupOutputsNodeExp',
-                    'SvMonadGenericNode',
-                    'SvMonadInfoNode',
                     'SvExMinimalScalarFieldNode',
                     'SvExScalarFieldGraphNode',
                     'SvMeshSurfaceFieldNode',

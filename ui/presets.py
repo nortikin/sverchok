@@ -58,28 +58,30 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
     if standard:
         presets = join(get_sverchok_directory(), path_partial)
     else:
-        presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=mkdir))
+        presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=False))
     if not os.path.exists(presets) and mkdir and not standard:
         os.makedirs(presets)
     return presets
 
-def get_category_names(mkdir=True):
+def get_category_names(mkdir=True, include_empty=False):
     standard = get_presets_directory(standard=True)
     user = get_presets_directory(standard=False, mkdir=mkdir)
     categories = []
     for base in [standard, user]:
         for path in sorted(glob(join(base, "*"))):
             if isdir(path):
-                name = basename(path)
-                if name not in categories:
-                    categories.append(name)
+                is_empty = len(os.listdir(path)) == 0
+                if include_empty or not is_empty:
+                    name = basename(path)
+                    if name not in categories:
+                        categories.append(name)
     return categories
 
-def get_category_items(self, context):
+def get_category_items(self, context, include_empty=False):
     category_items = None
     category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
     node_category_items = []
-    for idx, category in enumerate(get_category_names()):
+    for idx, category in enumerate(get_category_names(include_empty=include_empty)):
         node_class = get_node_class_reference(category)
         if node_class and hasattr(node_class, 'bl_label'):
             title = "/Node/ {}".format(node_class.bl_label)
@@ -92,6 +94,12 @@ def get_category_items(self, context):
         category_items = category_items + [None] + node_category_items
     return category_items
 
+def get_category_items_all(self, context):
+    return get_category_items(self, context, include_empty=True)
+
+def get_category_items_nonempty(self, context):
+    return get_category_items(self, context, include_empty=False)
+
 def get_preset_path(name, category=None, standard=False, mkdir=True):
     presets = get_presets_directory(category, standard=standard, mkdir=mkdir)
     return join(presets, name + ".json")
@@ -99,7 +107,7 @@ def get_preset_path(name, category=None, standard=False, mkdir=True):
 def get_preset_paths(category=None, mkdir=True):
     standard = get_presets_directory(category, standard=True)
     user = get_presets_directory(category, standard=False, mkdir=mkdir)
-    standard_presets = glob(join(standard, "*.json"))
+    standard_presets = glob(join(standard, "*.json"))  # todo add zip archives as well
     user_presets = glob(join(user, "*.json"))
     standard_presets.sort()
     user_presets.sort()
@@ -121,7 +129,7 @@ def node_supports_presets(node):
     if node is None:
         return False
     bl_idname = node.bl_idname
-    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
+    is_monad = False  # there are no monad nodes anymore
     is_frame = (bl_idname.startswith('NodeFrame'))
     return not is_monad and not is_frame
 
@@ -278,7 +286,7 @@ class SvPreset(object):
                 @classmethod
                 def poll(cls, context):
                     try:
-                        return context.space_data.node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+                        return context.space_data.node_tree.bl_idname in {'SverchCustomTreeType', }
                     except:
                         return False
 
@@ -336,7 +344,7 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
         return "Load node settings from the preset `{}' (overwrite current settings)".format(properties.preset_name)
 
     def execute(self, context):
-        ntree = context.space_data.node_tree
+        ntree = context.space_data.path[-1].node_tree  # in case if the node in a node group
         node = ntree.nodes[self.node_name]
         id_tree = ntree.name
         ng = bpy.data.node_groups[id_tree]
@@ -387,7 +395,7 @@ class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     category : EnumProperty(
         name = "Category",
         description = "Select presets category",
-        items = get_category_items)
+        items = get_category_items_nonempty)
     
     search_text : StringProperty(
         name = "Search",
@@ -406,7 +414,7 @@ class SvSaveSelected(bpy.types.Operator):
     preset_name: StringProperty(name="Name", description="Preset name")
     id_tree: StringProperty()
     category: StringProperty()
-    save_defaults : BoolProperty(default = False)
+    is_node_preset: BoolProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -430,11 +438,16 @@ class SvSaveSelected(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        layout_dict = JSONExporter.get_nodes_structure([n for n in ng.nodes if n.select])
+        # the operator can be used for both preset importing of a node and preset from a bunch of selected nodes
+        if self.is_node_preset:
+            layout_dict = JSONExporter.get_node_structure(nodes[0])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng, True)
+
         preset = SvPreset(name=self.preset_name, category = self.category)
         preset.make_add_operator()
         destination_path = preset.path
-        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
+        json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # sort keys is not expected by the exporter
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -459,7 +472,7 @@ class SvPresetProps(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     old_category: StringProperty(name="Old category", description="Preset category")
-    new_category: EnumProperty(name="Category", description="New preset category", items = get_category_items)
+    new_category: EnumProperty(name="Category", description="New preset category", items = get_category_items_all)
     allow_change_category : BoolProperty(default = True)
     include_node_categories : BoolProperty(default = False)
 
@@ -715,7 +728,7 @@ class SvPresetFromGist(bpy.types.Operator):
     category : EnumProperty(
         name = "Category",
         description = "Select presets category",
-        items = get_category_items)
+        items = get_category_items_all)
 
     def execute(self, context):
         if not self.preset_name:
@@ -879,6 +892,9 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        if len(context.space_data.path) > 1:
+            layout.label(text="Is not supported inside node groups")
+            return
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
 
@@ -898,6 +914,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
         op = row.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
         op.id_tree = ntree.name
         op.category = panel_props.category
+        op.is_node_preset = False
 
         selected_nodes = [node for node in ntree.nodes if node.select]
         can_save_preset = len(selected_nodes) > 0

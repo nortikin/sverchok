@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.core.update_system import process_from_nodes
+from sverchok.utils.handle_blender_data import BlTrees
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
@@ -432,8 +432,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
 
     _timer = None
     mode: bpy.props.StringProperty(default='toggle')
-    node_name: bpy.props.StringProperty(default='')
-    node_group: bpy.props.StringProperty(default='')
     speed: bpy.props.FloatProperty(default=1 / 13)
 
     def modal(self, context, event):
@@ -442,25 +440,14 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
             self.cancel(context)
             return {'FINISHED'}
 
-        if not (event.type == 'TIMER'):
+        elif not (event.type == 'TIMER'):
             return {'PASS_THROUGH'}
 
-        objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
-        obj_nodes = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                if ng.sv_process:
-                    nodes = []
-                    for n in ng.nodes:
-                        if n.bl_idname in objects_nodes_set:
-                            nodes.append(n)
-                    if nodes:
-                        obj_nodes.append(nodes)
-
         ''' reaches here only if event is TIMER and self.active '''
-        for n in obj_nodes:
-            # print('calling process on:', n.name, n.id_data)
-            process_from_nodes(n)
+        objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode',
+                             'SvGetObjectsData', 'SvObjectsNodeMK3'}
+        for ng in BlTrees().sv_main_trees:
+            ng.update_nodes((n for n in ng.nodes if n.bl_idname in objects_nodes_set), cancel=False)
 
         return {'PASS_THROUGH'}
 
@@ -493,10 +480,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
             self.toggle(context)
 
     def execute(self, context):
-        # n  = context.node
-        # self.node_name = context.node.name
-        # self.node_group = context.node.id_data.name
-
         self.event_dispatcher(context, self.mode)
         return {'RUNNING_MODAL'}
 

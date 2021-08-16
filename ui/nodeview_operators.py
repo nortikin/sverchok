@@ -5,8 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 import bpy
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+
 
 class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     """
@@ -22,8 +23,8 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
 
         for window in bpy.context.window_manager.windows:
             screen = window.screen
-    
-            for area in screen.areas:        
+
+            for area in screen.areas:
                 if area.type == 'NODE_EDITOR':
                     for space in area.spaces:
                         if hasattr(space, "edit_tree"):
@@ -32,7 +33,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                                 # unselect all first.
                                 for treenode in ng.nodes:
                                     treenode.select = False
-                                
+
                                 # set active, and select to get the thicker border around the node
                                 ng.nodes.active = node
                                 node.select = True
@@ -50,8 +51,6 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                             bpy.ops.node.view_selected(override)
                             break
 
-def register():
-    bpy.utils.register_class(SvNodeViewZoomBorder)
 
-def unregister():
-    bpy.utils.unregister_class(SvNodeViewZoomBorder)
+classes = [SvNodeViewZoomBorder]
+register, unregister = bpy.utils.register_classes_factory(classes)

@@ -129,6 +129,9 @@ class WrapNode:
 
 node_classes = []  # to register
 
+# not to register, they will be registered by old_nodes.__init__.register or register_all
+old_nodes = ['SvSplitEdgesMk2Node', 'SvSplitEdgesNode']
+
 
 def initialize_node(wrap_node: WrapNode):
     # class decorator for automatization sockets and property creation
@@ -140,7 +143,8 @@ def initialize_node(wrap_node: WrapNode):
         wrap_node.set_sv_init_method(node_class)
         if hasattr(node_class, 'process'):
             wrap_node.decorate_process_method(node_class)
-        node_classes.append(node_class)  # auto registration classes
+        if node_class.__name__ not in old_nodes:
+            node_classes.append(node_class)  # auto registration classes
         return node_class
 
     return wrapper
@@ -165,7 +169,7 @@ class SockTypes(Enum):
 
 
 class NodeProperties(NamedTuple):
-    bpy_props: tuple  # tuple is whet all bpy.props actually returns
+    bpy_props: tuple  # tuple is what all bpy.props actually returns
     name: str = ''  # not mandatory, the name will be overridden by attribute name automatically
 
     def replace_name(self, new_name):

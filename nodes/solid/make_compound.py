@@ -14,6 +14,10 @@ if FreeCAD is None:
 else:
 
     from FreeCAD import Part
+    try:
+        import Part as PartModule
+    except ImportError:
+        PartModule = Part
 
     from sverchok.utils.solid import to_solid
 
@@ -45,8 +49,8 @@ else:
 
 
             if self.inputs['Solids'].is_linked:
-                solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
-                solids_level = get_data_nesting_level(solids_s, data_types=(Part.Shape,))
+                solids_s = ensure_nesting_level(solids_s, 2, data_types=(PartModule.Shape,))
+                solids_level = get_data_nesting_level(solids_s, data_types=(PartModule.Shape,))
             else:
                 solids_level = 2
             if self.inputs['Curves'].is_linked:
@@ -65,7 +69,7 @@ else:
             for solids, curves, surfaces in zip_long_repeat(solids_s, curves_s, surfaces_s):
                 shapes = solids + curves + surfaces
                 shapes = [to_solid(s) for s in shapes if s is not None]
-                compound = Part.Compound(shapes)
+                compound = PartModule.Compound(shapes)
                 compounds_out.append(compound)
 
             self.outputs['Compound'].sv_set(compounds_out)

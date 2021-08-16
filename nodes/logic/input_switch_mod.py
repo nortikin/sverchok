@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -31,7 +31,7 @@ def get_indices_that_should_be_visible(node):
         vis_dict[socket_index] = group_index < node.num_visible_groups
         socket_index += 1
         for set_item in range(node.max_items_per_group):
-            vis_dict[socket_index] = (group_index < node.num_visible_groups and set_item < node.num_items_per_group) 
+            vis_dict[socket_index] = (group_index < node.num_visible_groups and set_item < node.num_items_per_group)
             socket_index += 1
 
     # g = "".join(["01"[k] for k in node.values()])
@@ -49,8 +49,8 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Switch among multiple input sets
 
     auto expanding feature:
-        determined by "any_sockets_of_last_input_set_connected" till last visble is max groups
-        
+        determined by "any_sockets_of_last_input_set_connected" till last visible is max groups
+
         if the node looks like:
             alpha 1
             alpha 2
@@ -59,7 +59,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
             gamma 1
             gamma 2
 
-    debug tools:   
+    debug tools:
 
         # (import inspect)
         # stick this line of code at the top of a function, and it will print the name of the function when called
@@ -181,10 +181,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
 
         for output_idx, input_idx in enumerate(remap_indices):
             input_socket = self.inputs[input_idx]
-            if input_socket.is_linked:
-                A = input_socket.sv_get()
-            else:
-                A = [None]
+            A = input_socket.sv_get(default=[None], deepcopy=False)
             self.outputs[output_idx].sv_set(A)
 
     def get_local_function(self, named_function):

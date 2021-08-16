@@ -107,7 +107,7 @@ class SvUniqueItemsNode(bpy.types.Node, SverchCustomTreeNode):
     
     level: bpy.props.IntProperty(
         name='Level',
-        description="Level where seach should be performed",
+        description="Level where search should be performed",
         default=2, min=0,
         update=updateNode)
     output_numpy: bpy.props.BoolProperty(

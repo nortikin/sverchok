@@ -15,8 +15,8 @@ This node has the following inputs:
 - **Mask**: List of boolean or integer flags. If this input is not connected, a True, False, True.. mask will be created.
 - **Verts**: Vertex list.
 - **PolyEdge** : It can be Polygon or Edge data.
-- **Matrix T** : Matrix applied to the vertex flaged as true.
-- **Matrix F** : Matrix applied to the vertex flaged as false.
+- **Matrix T** : Matrix applied to the vertex flagged as true.
+- **Matrix F** : Matrix applied to the vertex flagged as false.
 
 Parameters
 ----------

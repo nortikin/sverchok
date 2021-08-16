@@ -62,7 +62,7 @@ Notes:
 
 Extra Parameters
 ----------------
-The Property Panel contains additional settings to configure the statistics drawn in the node editor: font, text color, text scale and floating point presicion of the displayed statistics, the x/y offsest of the displayed statistics relative to the node and a setting for toggling the statistics names between full names and abreviations.
+The Property Panel contains additional settings to configure the statistics drawn in the node editor: font, text color, text scale and floating point precision of the displayed statistics, the x/y offset of the displayed statistics relative to the node and a setting for toggling the statistics names between full names and abbreviations.
 
 The fonts used for this node are monospace fonts for best text alignment.
 

@@ -24,7 +24,7 @@ from mathutils import noise, Matrix, Vector
 from itertools import cycle
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node, zip_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL, noise_numpy_types
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
 import numpy as np
@@ -97,7 +97,6 @@ class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
-    @throttle_and_update_node
     def changeMode(self, context):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':
@@ -108,6 +107,7 @@ class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             if 'Noise V' not in outputs:
                 outputs[0].replace_socket('SvVerticesSocket', 'Noise V')
                 return
+        updateNode(self, context)
 
     out_modes = [
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
@@ -207,7 +207,7 @@ class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             for i in range(max_len):
                 seed = seeds[min(i, len(seeds)-1)]
                 obj_id = min(i, len(verts)-1)
-                # 0 unsets the seed and generates unreproducable output based on system time
+                # 0 unsets the seed and generates unreproducible output based on system time
                 seed_val = int(round(seed)) or 140230
                 noise.seed_set(seed_val)
                 mathulis_noise(verts[obj_id], out, out_mode, noise_type, noise_function, output_numpy)

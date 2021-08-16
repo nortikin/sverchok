@@ -26,7 +26,7 @@ Inputs
 
 This node has the following inputs:
 
-* **Curve**. The curve (in surface's UV space) to be offseted. The curve is
+* **Curve**. The curve (in surface's UV space) to be offsetted. The curve is
   supposed to lie in XOY, XOZ or YOZ coordinate plane, depending on **Curve
   Plane** parameter. This input is mandatory.
 * **Surface**. The surface, in which the offset is to be performed. This input is mandatory.
@@ -87,8 +87,8 @@ Outputs
 
 This node has the following outputs:
 
-* **Curve**. The offseted curve (in 3D space).
-* **UVCurve**. The offseted curve in surface's UV space; it will lie in XOY,
+* **Curve**. The offsetted curve (in 3D space).
+* **UVCurve**. The offsetted curve in surface's UV space; it will lie in XOY,
   YOZ or XOZ coordinate plane, depending on **Curve plane** parameter.
 
 Examples of usage

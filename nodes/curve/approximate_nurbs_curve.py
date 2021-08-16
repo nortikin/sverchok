@@ -11,9 +11,9 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level, ensure_nesting_level, repeat_last_for_length
+from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level,\
+    repeat_last_for_length
 from sverchok.utils.math import supported_metrics, xyz_metrics
-from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.curve.splprep import scipy_nurbs_approximate
 from sverchok.dependencies import geomdl, scipy
@@ -50,11 +50,11 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         default="DISTANCE", items=supported_metrics + xyz_metrics,
         update=updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['PointsCnt'].hide_safe = not (self.implementation == 'GEOMDL' and self.has_points_cnt)
         self.inputs['Smoothing'].hide_safe = not (self.implementation == 'SCIPY' and self.has_smoothing)
         self.inputs['Weights'].hide_safe = not (self.implementation == 'SCIPY')
+        updateNode(self, context)
 
     has_points_cnt : BoolProperty(
             name = "Specify points count",
@@ -75,7 +75,7 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         return implementations
     
     implementation : EnumProperty(name = "Implementation",
-            description = "Approximation algorithm implmenetation",
+            description = "Approximation algorithm implementation",
             items = get_implementations,
             update = update_sockets)
 

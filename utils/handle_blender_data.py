@@ -7,12 +7,17 @@
 
 from __future__ import annotations
 
+from collections import Iterable
 from enum import Enum
 from functools import singledispatch
 from itertools import chain
-from typing import Any, List, Union
+from typing import Any, List, Union, TYPE_CHECKING
 
 import bpy
+
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree
+    from sverchok.node_tree import SverchCustomTree
 
 
 # ~~~~ collection property functions ~~~~~
@@ -95,14 +100,58 @@ def delete_data_block(data_block) -> None:
 
 
 def get_sv_trees():
-    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]
+    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType',}]
 
 
 # ~~~~ encapsulation Blender objects ~~~~
 
+# In general it's still arbitrary set of functionality (like module which fully consists with functions)
+# But here the functions are combine with data which they handle
 
-class BPYNode:
+class BlTrees:
+    """Wrapping around Blender tree, use with care
+    it can crash if other containers are modified a lot
+    https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
+    All this is True and about Blender class itself"""
+
+    MAIN_TREE_ID = 'SverchCustomTreeType'
+    GROUP_ID = 'SvGroupTree'
+
+    def __init__(self, node_groups=None):
+        self._trees = node_groups
+
+    @property
+    def sv_trees(self) -> Iterable[Union[SverchCustomTree, SvGroupTree]]:
+        """All Sverchok trees in a file or in given set of trees"""
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])
+
+    @property
+    def sv_main_trees(self) -> Iterable[SverchCustomTree]:
+        """All main Sverchok trees in a file or in given set of trees"""
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
+
+    @property
+    def sv_group_trees(self) -> Iterable[SvGroupTree]:
+        """All Sverchok group trees"""
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.GROUP_ID)
+
+
+class BlTree:
+    def __init__(self, tree):
+        self._tree = tree
+
+    @property
+    def is_group_tree(self) -> bool:
+        return self._tree.bl_idname == BlTrees.GROUP_ID
+
+
+class BlNode:
     """Wrapping around ordinary node for extracting some its information"""
+    DEBUG_NODES_IDS = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # can be added as Mix-in class
+
     def __init__(self, node):
         self.data = node
 
@@ -111,6 +160,22 @@ class BPYNode:
         """Iterator over all node properties"""
         node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, '__annotations__') else []
         return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+    @property
+    def is_debug_node(self) -> bool:
+        """Nodes which print sockets content"""
+        return self.base_idname in self.DEBUG_NODES_IDS
+
+    @property
+    def base_idname(self) -> str:
+        """SvStethoscopeNodeMK2 -> SvStethoscopeNode
+        it won't parse more tricky variants like SvStethoscopeMK2Node which I saw exists"""
+        id_name, _, version = self.data.bl_idname.partition('MK')
+        try:
+            int(version)
+        except ValueError:
+            return self.data.bl_idname
+        return id_name
 
 
 class BPYProperty:
@@ -167,6 +232,12 @@ class BPYProperty:
         if not self.is_valid:
             raise TypeError(f'Can not read "type" of invalid property "{self.name}"')
         return self._data.bl_rna.properties[self.name].type
+
+    @property
+    def pointer_type(self) -> BPYPointers:
+        if self.type != 'POINTER':
+            raise TypeError(f'This property is only valid for "POINTER" types, {self.type} type is given')
+        return BPYPointers.get_type(self._data.bl_rna)
 
     @property
     def default_value(self) -> Any:
@@ -250,6 +321,26 @@ class BPYProperty:
             items.append(item_props)
         return items
 
+    def collection_to_list(self):
+        """Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+        in this example the collection has two items, each item has 3 properties"""
+        if self.type != 'COLLECTION':
+            raise TypeError(f'Method supported only "collection" types, "{self.type}" was given')
+        if not self.is_valid:
+            raise TypeError(f'Can not read "non default collection values" of invalid property "{self.name}"')
+
+        collection = []
+        for item in getattr(self._data, self.name):
+            prop_list = []
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, '__annotations__') else []
+            for prop_name in chain(['name'], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                prop_list.append(prop)
+            collection.append(prop_list)
+        return collection
+
     def _extract_collection_values(self, default_value: bool = False):
         """returns something like this: [{"name": "", "my_prop": 1.0}, {"name": "", "my_prop": 2.0}, ...]"""
         items = []
@@ -290,6 +381,7 @@ class BPYPointers(Enum):
     OBJECT = bpy.types.Object
     MESH = bpy.types.Mesh
     NODE_TREE = bpy.types.NodeTree
+    NODE = bpy.types.Node  # there is pointers to nodes in Blender like node.parent property
     MATERIAL = bpy.types.Material
     COLLECTION = bpy.types.Collection
     TEXT = bpy.types.Text
@@ -306,6 +398,7 @@ class BPYPointers(Enum):
             BPYPointers.OBJECT: bpy.data.objects,
             BPYPointers.MESH: bpy.data.meshes,
             BPYPointers.NODE_TREE: bpy.data.node_groups,
+            BPYPointers.NODE: None,
             BPYPointers.MATERIAL:  bpy.data.materials,
             BPYPointers.COLLECTION: bpy.data.collections,
             BPYPointers.TEXT: bpy.data.texts,
@@ -326,7 +419,7 @@ class BPYPointers(Enum):
     def get_type(cls, bl_rna) -> Union[BPYPointers, None]:
         """Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)"""
         for pointer in BPYPointers:
-            if pointer.type.bl_rna == bl_rna:
+            if pointer.type.bl_rna == bl_rna or pointer.type.bl_rna == bl_rna.base:
                 return pointer
         raise TypeError(f'Type: "{bl_rna}" was not found in: {[t.type.bl_rna for t in BPYPointers]}')
 

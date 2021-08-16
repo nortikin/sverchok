@@ -3,7 +3,7 @@ SVG
 ***
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    svg_document
    circle_svg

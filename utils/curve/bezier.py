@@ -9,7 +9,7 @@ import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
-from sverchok.utils.geom import Spline
+from sverchok.utils.geom import Spline, bounding_box
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.algorithms import concatenate_curves
@@ -272,15 +272,34 @@ class SvBezierCurve(SvCurve):
             result.append(third)
         return result
 
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
+
     def get_degree(self):
         return self.degree
 
     def get_control_points(self):
         return self.points
 
-    def elevate_degree(self, delta=1):
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
         points = elevate_bezier_degree(self.degree, self.points, delta)
         return SvBezierCurve(points)
+
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(self.degree, len(self.points))
@@ -425,9 +444,28 @@ class SvCubicBezierCurve(SvCurve):
                 degree = 3, knotvector = knotvector,
                 control_points = control_points)
 
-    def elevate_degree(self, delta=1):
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
         points = elevate_bezier_degree(3, self.get_control_points(), delta)
         return SvBezierCurve(points)
+
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
+
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
 
     def concatenate(self, curve2):
         curve2 = SvNurbsMaths.to_nurbs_curve(curve2)

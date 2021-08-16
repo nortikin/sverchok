@@ -5,7 +5,8 @@
 </p>
 <h1 align="center">Sverchok</h1>
 
-[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+[![Sverchok CI](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml/badge.svg?event=push)](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml)
+[![Building documentation](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml/badge.svg)](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml)
 <a href="https://discord.gg/pjHHhjJz8Z"><img alt="Discord" src="https://img.shields.io/discord/745273148018262158"></a>
 [![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok)](https://blender.stackexchange.com/questions/tagged/sverchok)
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/Proposal)
@@ -15,13 +16,13 @@
 ## English
 
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
-**Addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
-**Current sverchok version**: Find version in addon settings or in the node Sverchok panel   
+**Addon for**: [Blender](http://blender.org) version *2.93* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**Prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.6+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
-
-**Manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
-
+**Prerequisites**: We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.   
+[**Documentation**:](http://nortikin.github.io/sverchok/docs/main.html) If anything isn't clear (or missing) in this document please
+ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
+and you can help us!  
+**Community**:  [Discord](https://discord.gg/pjHHhjJz8Z)
   
 ### Description
 Sverchok is a powerful parametric tool for architects, allowing geometry to be programmed visually with nodes. 
@@ -41,8 +42,8 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
 
   - do parametric constructions  
   - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
-  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools  
+  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Polygons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
+  - do cross sections, extrusions, other modifications with height level flexible parametrised and vectorised node tools  
   - calculate areas, volume, and perform other geometric analysis  
   - make or import CSV tables or custom formats  
   - use Vector/Scalar fields, create them, visualize data  
@@ -51,7 +52,7 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
   - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline  
   - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes  
   - upgrade Sverchok with pressing one button  
-  - using genetic algorythm in your workflow  
+  - using genetic algorithm in your workflow  
   - insolation/radiation calculations  
   - SVG drawing export from node tree  
   - brep/NURBS/IFC exchange  

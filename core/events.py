@@ -16,18 +16,29 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum, auto
-from typing import NamedTuple, Union, List, TYPE_CHECKING
-from itertools import takewhile
+from typing import Union, List, TYPE_CHECKING
 
-from bpy.types import Node, NodeTree
-
-from sverchok.utils.context_managers import sv_preferences
+from bpy.types import Node
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
-    from sverchok.node_tree import SverchCustomTreeNode
+    from sverchok.node_tree import SverchCustomTreeNode, SverchCustomTree
     SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
+
+
+class TreeEvent:
+    TREE_UPDATE = 'tree_update'  # some changed in a tree topology
+    NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
+    FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
+    FRAME_CHANGE = 'frame_change'  # unlike other updates this one should be un-cancellable
+
+    def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None, cancel=True):
+        self.type = event_type
+        self.tree = tree
+        self.updated_nodes = updated_nodes
+        self.cancel = cancel
 
 
 class GroupEvent:
@@ -47,17 +58,16 @@ class GroupEvent:
         self.to_update = group_nodes_path[-1].is_active
 
     @property
-    def group_tree(self) -> SvGroupTree:
+    def tree(self) -> SvGroupTree:
         return self.group_node.node_tree
 
     def __repr__(self):
-        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.group_tree.name}' \
+        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.tree.name}' \
                + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
 
 
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node
-    monad_tree_update = auto()
     node_update = auto()  # it can be called last during creation new node event
     add_node = auto()   # it is called first in update wave
     copy_node = auto()  # it is called first in update wave

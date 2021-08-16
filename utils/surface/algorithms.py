@@ -21,12 +21,13 @@ from sverchok.utils.geom import (
     )
 from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve
         )
-from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.logging import info, debug
@@ -943,12 +944,17 @@ class SvSurfaceLerpSurface(SvSurface):
 class SvTaperSweepSurface(SvSurface):
     __description__ = "Taper & Sweep"
 
-    def __init__(self, profile, taper, point, direction):
+    UNIT = 'UNIT'
+    PROFILE = 'PROFILE'
+    TAPER = 'TAPER'
+
+    def __init__(self, profile, taper, point, direction, scale_base=UNIT):
         self.profile = profile
         self.taper = taper
         self.direction = direction
         self.point = point
         self.line = LineEquation.from_direction_and_point(direction, point)
+        self.scale_base = scale_base
         self.normal_delta = 0.001
 
     def get_u_min(self):
@@ -963,10 +969,27 @@ class SvTaperSweepSurface(SvSurface):
     def get_v_max(self):
         return self.taper.get_u_bounds()[1]
 
+    def _get_profile_scale(self):
+        profile_u_min = self.profile.get_u_bounds()[0]
+        profile_start = self.profile.evaluate(profile_u_min)
+        profile_start_projection = self.line.projection_of_point(profile_start)
+        dp = np.linalg.norm(profile_start - profile_start_projection)
+        return dp
+
     def evaluate(self, u, v):
         taper_point = self.taper.evaluate(v)
         taper_projection = np.array( self.line.projection_of_point(taper_point) )
         scale = np.linalg.norm(taper_projection - taper_point)
+        if self.scale_base == SvTaperSweepSurface.TAPER:
+            dp = self._get_profile_scale()
+            scale /= dp
+        elif self.scale_base == SvTaperSweepSurface.PROFILE:
+            taper_t_min = self.taper.get_u_bounds()[0]
+            taper_start = self.taper.evaluate(taper_t_min)
+            taper_start_projection = np.array(self.line.projection_of_point(taper_start))
+            scale0 = np.linalg.norm(taper_start - taper_start_projection)
+            scale /= scale0
+
         profile_point = self.profile.evaluate(u)
         return profile_point * scale + taper_projection
 
@@ -974,6 +997,14 @@ class SvTaperSweepSurface(SvSurface):
         taper_points = self.taper.evaluate_array(vs)
         taper_projections = self.line.projection_of_points(taper_points)
         scale = np.linalg.norm(taper_projections - taper_points, axis=1, keepdims=True)
+
+        if self.scale_base == SvTaperSweepSurface.TAPER:
+            dp = self._get_profile_scale()
+            scale /= dp
+        elif self.scale_base == SvTaperSweepSurface.PROFILE:
+            scale0 = scale[0]
+            scale /= scale0
+
         profile_points = self.profile.evaluate_array(us)
         return profile_points * scale + taper_projections
 
@@ -1029,6 +1060,111 @@ class SvBlendSurface(SvSurface):
 
         return c0*p0s + c1*p1s + c2*p2s + c3*p3s
 
+class SvConcatSurface(SvSurface):
+    def __init__(self, direction, surfaces):
+        self.direction = direction
+        self.surfaces = self._unify(surfaces)
+
+        p1 = self._get_p_min(surfaces[0])
+        boundaries = [p1]
+        boundaries.extend([self._get_p_delta(s) for s in surfaces])
+        self.boundaries = np.array(boundaries).cumsum()
+
+    def _unify(self, surfaces):
+        if self.direction == 'U':
+            min_vs = [s.get_v_min() for s in surfaces]
+            max_vs = [s.get_v_max() for s in surfaces]
+
+            if min(min_vs) != max(min_vs) or min(max_vs) != max(max_vs):
+                surfaces = [SvReparametrizedSurface.build(s, s.get_u_min(), s.get_u_max(), 0.0, 1.0) for s in surfaces]
+            return surfaces
+        
+        else:
+            min_us = [s.get_u_min() for s in surfaces]
+            max_us = [s.get_u_max() for s in surfaces]
+
+            if min(min_us) != max(min_us) or min(max_us) != max(max_us):
+                surfaces = [SvReparametrizedSurface.build(s, 0.0, 1.0, s.get_v_min(), s.get_v_max()) for s in surfaces]
+            return surfaces
+
+    def _get_p_max(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_max()
+        else:
+            return surface.get_v_max()
+
+    def _get_p_delta(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_max() - surface.get_u_min()
+        else:
+            return surface.get_v_max() - surface.get_v_min()
+
+    def _get_p_min(self, surface):
+        if self.direction == 'U':
+            return surface.get_u_min()
+        else:
+            return surface.get_v_min()
+
+    def get_u_min(self):
+        if self.direction == 'U':
+            return self.boundaries[0]
+        else:
+            return self.surfaces[0].get_u_min()
+
+    def get_u_max(self):
+        if self.direction == 'U':
+            return self.boundaries[-1]
+        else:
+            return self.surfaces[0].get_u_max()
+
+    def get_v_min(self):
+        if self.direction == 'U':
+            return self.surfaces[0].get_v_min()
+        else:
+            return self.boundaries[0]
+
+    def get_v_max(self):
+        if self.direction == 'U':
+            return self.surfaces[0].get_v_max()
+        else:
+            return self.boundaries[-1]
+
+    def evaluate(self, u, v):
+        if self.direction == 'U':
+            u_idx = self.boundaries.searchsorted(u, side='right')-1
+            if u_idx >= len(self.surfaces):
+                v_idx = len(self.surfaces)-1
+                du = self._get_p_delta(self.surfaces[-1])
+            else:
+                du = u - self.boundaries[u_idx]
+            subsurf = self.surfaces[u_idx]
+            return subsurf.evaluate(subsurf.get_u_min()+du, v)
+        else:
+            v_idx = self.boundaries.searchsorted(v, side='right')-1
+            if v_idx >= len(self.surfaces):
+                v_idx = len(self.surfaces)-1
+                dv = self._get_p_delta(self.surfaces[-1])
+            else:
+                dv = v - self.boundaries[v_idx]
+            subsurf = self.surfaces[v_idx]
+            return subsurf.evaluate(u, subsurf.get_v_min()+dv)
+
+    def evaluate_array(self, us, vs):
+        # TODO: numpy implementation
+        return np.vectorize(self.evaluate, signature='(),()->(3)')(us, vs)
+
+def concatenate_surfaces(direction, surfaces):
+    if all(hasattr(s, 'concatenate') for s in surfaces):
+        try:
+            result = surfaces[0]
+            for s in surfaces[1:]:
+                result = result.concatenate(direction, s)
+            return result
+        except UnsupportedSurfaceTypeException as e:
+            debug("Can't concatenate surfaces natively: %s", e)
+    
+    return SvConcatSurface(direction, surfaces)
+
 def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
     my_control_points = curve.get_control_points()
     my_weights = curve.get_weights()
@@ -1071,4 +1207,172 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
             degree_u, degree_v,
             curve.get_knotvector(), circle_knotvector,
             control_points, weights)
+
+def round_knotvectors(surface, accuracy):
+    knotvector_u = surface.get_knotvector_u()
+    knotvector_v = surface.get_knotvector_v()
+
+    knotvector_u = np.round(knotvector_u, accuracy)
+    knotvector_v = np.round(knotvector_v, accuracy)
+
+    result = surface.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
+    tolerance = 10**(-accuracy)
+
+#     print(f"KV_U: {knotvector_u}")
+#     print(f"KV_V: {knotvector_v}")
+#     degree = surface.get_degree_u()
+#     ms = sv_knotvector.to_multiplicity(knotvector_u, tolerance)
+#     n = len(ms)
+#     for idx, (u, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"U={u}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove U={u} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.U, u, diff)
+# 
+#     degree = surface.get_degree_v()
+#     ms = sv_knotvector.to_multiplicity(knotvector_v, tolerance)
+#     n = len(ms)
+#     for idx, (v, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"V={v}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove V={v} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.V, v, diff)
+
+    return result
+
+def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6):
+    # Unify surface degrees
+
+    degrees_u = [surface.get_degree_u() for surface in surfaces]
+    degrees_v = [surface.get_degree_v() for surface in surfaces]
+
+    degree_u = max(degrees_u)
+    degree_v = max(degrees_v)
+    #print(f"Elevate everything to {degree_u}x{degree_v}")
+
+    surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
+    surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]
+
+    # Unify surface knotvectors
+
+    knotvector_tolerance = 10**(-knotvector_accuracy)
+
+    if knots_method == 'UNIFY':
+
+        surfaces = [round_knotvectors(s, knotvector_accuracy) for s in surfaces]
+        for i, surface in enumerate(surfaces):
+            #print(f"S #{i} KV_U: {surface.get_knotvector_u()}")
+            #print(f"S #{i} KV_V: {surface.get_knotvector_v()}")
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_u(), surface.get_knotvector_u(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid U knotvector: {kv_err}")
+
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_v(), surface.get_knotvector_v(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid V knotvector: {kv_err}")
+
+        dst_knots_u = defaultdict(int)
+        dst_knots_v = defaultdict(int)
+        for surface in surfaces:
+            m_u = sv_knotvector.to_multiplicity(surface.get_knotvector_u(), tolerance=knotvector_tolerance)
+            m_v = sv_knotvector.to_multiplicity(surface.get_knotvector_v(), tolerance=knotvector_tolerance)
+
+            for u, count in m_u:
+                u = round(u, knotvector_accuracy)
+                dst_knots_u[u] = max(dst_knots_u[u], count)
+
+            for v, count in m_v:
+                v = round(v, knotvector_accuracy)
+                dst_knots_v[v] = max(dst_knots_v[v], count)
+
+        result = []
+        for surface in surfaces:
+            diffs_u = []
+            kv_u = np.round(surface.get_knotvector_u(), knotvector_accuracy)
+            ms_u = dict(sv_knotvector.to_multiplicity(kv_u, tolerance=knotvector_tolerance))
+            for dst_u, dst_multiplicity in dst_knots_u.items():
+                src_multiplicity = ms_u.get(dst_u, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_u.append((dst_u, diff))
+
+            for u, diff in diffs_u:
+                if diff > 0:
+                    #print(f"S: Insert U = {u} x {diff}")
+                    surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
+
+            diffs_v = []
+            kv_v = np.round(surface.get_knotvector_v(), knotvector_accuracy)
+            ms_v = dict(sv_knotvector.to_multiplicity(kv_v, tolerance=knotvector_tolerance))
+            for dst_v, dst_multiplicity in dst_knots_v.items():
+                src_multiplicity = ms_v.get(dst_v, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_v.append((dst_v, diff))
+
+            for v, diff in diffs_v:
+                if diff > 0:
+                    #print(f"S: Insert V = {v} x {diff}")
+                    surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
+
+            result.append(surface)
+
+        return result
+
+    elif knots_method == 'AVERAGE':
+        kvs = [len(surface.get_control_points()) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"U knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+        kvs = [len(surface.get_control_points()[0]) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"V knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+
+        knotvectors = np.array([surface.get_knotvector_u() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        knotvectors = np.array([surface.get_knotvector_v() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        result = []
+        for surface in surfaces:
+            surface = SvNurbsSurface.build(surface.get_nurbs_implementation(),
+                    surface.get_degree_u(), surface.get_degree_v(),
+                    knotvector_u, knotvector_v,
+                    surface.get_control_points(),
+                    surface.get_weights())
+            result.append(surface)
+        return result
+    else:
+        raise Exception('Unsupported knotvector unification method')
+
+def remove_excessive_knots(surface, direction, tolerance=1e-6):
+    if direction not in {'U', 'V', 'UV'}:
+        raise Exception("Unsupported direction")
+
+    if direction in {'U', 'UV'}:
+        kv = surface.get_knotvector_u()
+        for u in sv_knotvector.get_internal_knots(kv):
+            surface = surface.remove_knot('U', u, count='ALL', tolerance=tolerance, if_possible=True)
+
+    if direction in {'V', 'UV'}:
+        kv = surface.get_knotvector_v()
+        for v in sv_knotvector.get_internal_knots(kv):
+            surface = surface.remove_knot('V', v, count='ALL', tolerance=tolerance, if_possible=True)
+
+    return surface
 

@@ -19,7 +19,6 @@ from gpu_extras.batch import batch_for_shader
 
 from mathutils import Vector
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
@@ -161,7 +160,7 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-# place here (out of node) to supress warnings during headless testing. i think.
+# place here (out of node) to suppress warnings during headless testing. i think.
 def get_2d_uniform_color_shader():
     # return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     uniform_2d_vertex_shader = '''
@@ -269,21 +268,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         ... # if self.num_channels < MAX_SOCKETS
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-        self.location_theta = multiplier
-        # x, y = [x * multiplier, y * multiplier]
-
-        return scale
+        from sverchok.settings import get_params
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        self.location_theta = props.render_location_xy_multiplier
+        return props.render_scale
 
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
@@ -327,7 +317,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def draw_buttons(self, context, layout):
 

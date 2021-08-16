@@ -1,12 +1,9 @@
 
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import zip_long_repeat, updateNode
 
 from sverchok.utils.math import coordinate_modes
 from sverchok.utils.field.vector import SvComposedVectorField
@@ -21,7 +18,6 @@ class SvComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VFIELD_IN'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if self.input_mode == 'XYZ':
             self.inputs[0].name = 'X'
@@ -35,6 +31,7 @@ class SvComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[0].name = 'Rho'
             self.inputs[1].name = 'Phi'
             self.inputs[2].name = 'Theta'
+        updateNode(self, context)
 
     input_mode : EnumProperty(
         name = "Coordinates",

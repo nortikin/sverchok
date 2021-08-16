@@ -3,11 +3,10 @@ Logic
 *****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    logic_node
    neuro_elman
-   neuro_elman_ru
    evolver
    genes_holder
    switch_MK2

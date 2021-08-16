@@ -190,7 +190,7 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             for item in self.vd_mk4_items_group:
                 attr = item.attr_name
                 if not item.show_socket and not item.use_default:
-                    # apparantly no desire to pass this attr
+                    # apparently no desire to pass this attr
                     continue
                 if item.use_default or not item.show_socket:
                     value = getattr(self.vd_mk4_items_props[0], attr)

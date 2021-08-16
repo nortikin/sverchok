@@ -138,7 +138,7 @@ ortho_projection_func_dict = {
     'User': user_ortho_projection
 }
 
-def perspective_proyection(verts, plane, offset):
+def perspective_projection(verts, plane, offset):
     origin = plane.decompose()[0]
     normal = ((plane @ Vector((0, 0, 1))) - origin).normalized()
     plane_point = origin
@@ -236,7 +236,7 @@ class SvSvgMeshNode(bpy.types.Node, SverchCustomTreeNode):
         if self.projection_mode == 'Orthogrphic':
             projection_func = ortho_projection_func_dict[self.projection_plane]
         else:
-            projection_func = perspective_proyection
+            projection_func = perspective_projection
 
         for verts, pols, p_plane, offset, atts in zip(*mlr([verts_in, pols_in, planes_in, offset_in, atts_in])):
 

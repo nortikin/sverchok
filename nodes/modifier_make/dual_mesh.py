@@ -29,7 +29,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, 
 
 class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Trigers: Dual Mesh
+    Triggers: Dual Mesh
     Tooltip: Create dual mesh for the given mesh
     """
     bl_idname = 'SvDualMeshNode'

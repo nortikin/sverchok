@@ -43,13 +43,13 @@
 bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
-    "version": (0, 6, 0, 0),
-    "blender": (2, 81, 0),
+    "version": (1, 0, 0),
+    "blender": (2, 93, 0),
     "location": "Node Editor",
     "category": "Node",
     "description": "Parametric node-based geometry programming",
     "warning": "",
-    "wiki_url": "http://nikitron.cc.ua/sverch/html/main.html",
+    "wiki_url": "https://nortikin.github.io/sverchok/docs/main.html",
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
@@ -77,7 +77,7 @@ node_list = make_node_list(nodes)
 
 if "bpy" in locals():
     reload_event = True
-    node_list = handle_reload_event(nodes, imported_modules, old_nodes)
+    node_list = handle_reload_event(nodes, imported_modules)
 
 
 import bpy
@@ -96,6 +96,7 @@ def register():
 
 def unregister():
     sverchok.utils.clear_node_classes()
-    sv_registration_utils.unregister_all(imported_modules + node_list)
+    sv_registration_utils.unregister_all(imported_modules)
+    sv_registration_utils.unregister_all(node_list)
 
 # EOF

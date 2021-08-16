@@ -1,6 +1,3 @@
-import traceback
-
-from sverchok.core import upgrade_nodes
 from sverchok.utils.testing import *
 from sverchok.utils.sv_json_export import JSONExporter
 
@@ -28,12 +25,6 @@ class ProfileExportTest(ReferenceTreeTestCase):
         super().setUp()
 
     def test_profile_export(self):
-
-        try:
-            upgrade_nodes.upgrade_nodes(self.tree)
-        except:
-            traceback.print_exc()
-
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
         importer.import_into_tree(self.tree, print_log=False)
@@ -58,25 +49,17 @@ class MeshExprExportTest(ReferenceTreeTestCase):
             raise(ImportError(importer.fail_massage))
 
 
-class MonadExportTest(ReferenceTreeTestCase):
+class NodeGroupExportTest(ReferenceTreeTestCase):
 
-    reference_file_name = "monad_1_ref.blend.gz"
+    reference_file_name = "node_group_test.blend.gz"
+    reference_tree_name = "NodeGroupTest"
 
-    def setUp(self):
-        self.link_node_tree(tree_name="PulledCube")
-        super().setUp()
-
-    @unittest.skip("Linking node tree with Monad node does not work correctly.")
-    def test_monad_export(self):
+    def test_node_group_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
         importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
-
-    def tearDown(self):
-        remove_node_tree("PulledCube")
-        super().tearDown()
 
 
 class ViewerTextExportTest(ReferenceTreeTestCase):
@@ -101,3 +84,8 @@ class ListJoinImportTest(ReferenceTreeTestCase):
         importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
+
+
+if __name__ == '__main__':
+    import unittest
+    unittest.main(exit=False)

@@ -1,5 +1,5 @@
 Select vertices of mesh Node
-==============
+============================
 
 Functionality
 -------------
@@ -12,7 +12,7 @@ Inputs
 This node has the following inputs:
 
 - **Objects**. Node can work with mesh type objects.
-- **Element_Index**. Select mesh elements using their indices. Not automaticaly deselect elements which is not indexed. Use **clear_selection** checkbox.
+- **Element_Index**. Select mesh elements using their indices. Not automatically deselect elements which are not indexed. Use **clear_selection** checkbox.
 - **Element_Mask**. Select and deselect elements using bool mask.
 - **Edges_Polys**. Select verts by feeding in Sverchok edges or polygons lists.
 - **Floattoboolexpr**. Use float values and textbox to create bool mask which will be used to select elements.

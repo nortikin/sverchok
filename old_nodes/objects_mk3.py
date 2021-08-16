@@ -118,7 +118,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection, options={'SKIP_SAVE'})
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
 
     active_obj_index: bpy.props.IntProperty()
 
@@ -262,43 +262,38 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
-            # code inside this context can trigger dependancy graph update events,
-            # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
-            # not doing so would trigger recursive updates and Blender would likely become unresponsive.
-            with self.sv_throttle_tree_update():
+            mtrx = obj.matrix_world
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
+                mtrx_out.append(mtrx)
+                continue
+            try:
+                if obj.mode == 'EDIT' and obj.type == 'MESH':
+                    # Mesh objects do not currently return what you see
+                    # from 3dview while in edit mode when using obj.to_mesh.
+                    me = obj.data
+                    bm = bmesh.from_edit_mesh(me)
+                    vers, edgs, pols = pydata_from_bmesh(bm)
+                    materials = self.get_materials_from_bmesh(bm)
+                    del bm
+                else:
 
-                mtrx = obj.matrix_world
-                if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
-                    mtrx_out.append(mtrx)
-                    continue
-                try:
-                    if obj.mode == 'EDIT' and obj.type == 'MESH':
-                        # Mesh objects do not currently return what you see
-                        # from 3dview while in edit mode when using obj.to_mesh.
-                        me = obj.data
-                        bm = bmesh.from_edit_mesh(me)
-                        vers, edgs, pols = pydata_from_bmesh(bm)
-                        materials = self.get_materials_from_bmesh(bm)
-                        del bm
+                    if self.modifiers:
+                        obj = sv_depsgraph.objects[obj.name]
+                        obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
+                        obj_data = obj.to_mesh()
 
-                        if self.modifiers:
-                            obj = sv_depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                        else:
-                            obj_data = obj.to_mesh()
+                    if obj_data.polygons:
+                        pols = [list(p.vertices) for p in obj_data.polygons]
+                    vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
+                    materials = self.get_materials_from_mesh(obj_data)
+                    edgs = obj_data.edge_keys
 
-                        if obj_data.polygons:
-                            pols = [list(p.vertices) for p in obj_data.polygons]
-                        vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
-                        materials = self.get_materials_from_mesh(obj_data)
-                        edgs = obj_data.edge_keys
-
-                        obj.to_mesh_clear()
+                    obj.to_mesh_clear()
 
 
-                except Exception as err:
-                    print('failure in process between frozen area', self.name, err)
+            except Exception as err:
+                print('failure in process between frozen area', self.name, err)
 
             vers_out.append(vers)
             edgs_out.append(edgs)
@@ -320,12 +315,10 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         outputs['Matrixes'].sv_set(mtrx_out)
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
-    def save_to_json(self, node_data: dict):
-        node_data['object_names'] = [o.name for o in self.object_names]
-
     def load_from_json(self, node_data: dict, import_version: float):
-        for named_object in node_data.get('object_names', []):
-            self.object_names.add().name = named_object
+        if import_version < 1.0:
+            for named_object in node_data.get('object_names', []):
+                self.object_names.add().name = named_object
 
 
 classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]

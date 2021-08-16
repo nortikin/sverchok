@@ -3,7 +3,7 @@ Text
 ****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    debug_print
    datetime_strings

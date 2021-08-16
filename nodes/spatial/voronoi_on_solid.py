@@ -16,21 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-from collections import defaultdict
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.sv_bmesh_utils import recalc_normals
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level,\
+    ensure_min_nesting, repeat_last_for_length
 from sverchok.utils.voronoi3d import voronoi_on_solid
-from sverchok.utils.geom import scale_relative, center
-from sverchok.utils.solid import BMESH, svmesh_to_solid, SvSolidTopology, SvGeneralFuse
-from sverchok.utils.surface.freecad import SvSolidFaceSurface
+from sverchok.utils.geom import scale_relative, center, diameter
+from sverchok.utils.solid import BMESH, svmesh_to_solid
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
 
@@ -107,6 +102,23 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'scale_center')
         layout.prop(self, 'accuracy')
 
+    def scale_cells(self, verts, sites, insets, precision):
+        if all(i == 0.0 for i in insets):
+            return verts
+        verts_out = []
+        for vs, site, inset in zip(verts, sites, insets):
+            if inset >= 1.0:
+                continue
+            if self.scale_center == 'SITE':
+                c = site
+            else:
+                c = center(vs)
+            vs1 = scale_relative(vs, c, 1.0 - inset)
+            if diameter(vs1, axis=None) <= precision:
+                continue
+            verts_out.append(vs1)
+        return verts_out
+
     def process(self):
 
         if not any(socket.is_linked for socket in self.outputs):
@@ -119,7 +131,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         solid_in = ensure_nesting_level(solid_in, 2, data_types=(Part.Shape,))
         input_level = get_data_nesting_level(sites_in)
         sites_in = ensure_nesting_level(sites_in, 4)
-        inset_in = ensure_nesting_level(inset_in, 2)
+        inset_in = ensure_min_nesting(inset_in, 2)
 
         nested_output = input_level > 3
         need_inner = self.outputs['InnerSolid'].is_linked
@@ -136,13 +148,11 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 verts, edges, faces = voronoi_on_solid(solid, sites,
                             do_clip=True, clipping=None)
 
-                if inset != 0.0:
-                    scale = 1.0 - inset
-                    if self.scale_center == 'SITE':
-                        verts = [scale_relative(vs, site, scale) for vs, site in zip(verts, sites)]
-                    else:
-                        verts = [scale_relative(vs, center(vs), scale) for vs, site in zip(verts, sites)]
-
+                if isinstance(inset, list):
+                    inset = repeat_last_for_length(inset, len(sites))
+                else:
+                    inset = [inset for i in range(len(sites))]
+                verts = self.scale_cells(verts, sites, inset, precision)
                 fragments = [svmesh_to_solid(vs, fs, precision, method=BMESH, remove_splitter=False) for vs, fs in zip(verts, faces)]
 
                 if self.mode == 'SURFACE':

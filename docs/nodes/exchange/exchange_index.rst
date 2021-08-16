@@ -3,7 +3,7 @@ Exchange
 ********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    export_rw3dm_json
    import_rw3dm_json

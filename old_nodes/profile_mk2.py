@@ -942,8 +942,13 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             outputs[3].sv_set([])
 
     def load_from_json(self, node_data: dict, import_version: float):
+        if import_version < 1.0:
+            file_name = node_data['params']['filename']
+        else:
+            file_name = self.filename
+
         texts = bpy.data.texts
-        new_text = texts.new(node_data['params']['filename'])
+        new_text = texts.new(file_name)
         new_text.from_string(node_data['path_file'])
         self.update()
 

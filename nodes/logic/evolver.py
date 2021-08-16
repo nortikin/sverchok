@@ -539,12 +539,13 @@ class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
             node.info_label = "Stopped - Fitness not linked"
             return
 
+        tree = node.id_data
+        
         genotype_frame = node.genotype
         evolver_mem[node.node_id] = {}
-
+        
         seed_set(node.r_seed)
         np.random.seed(node.r_seed)
-
         population = Population(genotype_frame, node, tree)
         population.evolve()
         update_list = make_tree_from_nodes([node.name], tree)
@@ -569,6 +570,8 @@ class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Evolver Run"
 
     def sv_execute(self, context, node):
+        tree = node.id_data
+        
         data = evolver_mem[node.node_id]
         genes = data["genes"]
         population = data["population"]
@@ -593,7 +596,7 @@ def get_framenodes(base_node, _):
 class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Genetics algorithm
-    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technic
+    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technique
     """
     bl_idname = 'SvEvolverNode'
     bl_label = 'Evolver'
@@ -631,7 +634,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         ]
     mode: EnumProperty(
         name="Mode",
-        description="Set Fitness as maximun or as minimum",
+        description="Set Fitness as maximum or as minimum",
         items=mode_items,
         update=props_changed
         )
@@ -672,7 +675,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         )
     fitness_booster: IntProperty(
         name="Fitness boost",
-        description="Fittest population will be more probable to be choosen (power)",
+        description="Fittest population will be more probable to be chosen (power)",
         default=3,
         min=1,
         update=props_changed

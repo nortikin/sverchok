@@ -17,65 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from logging import info
+
 import bpy
-
 from sverchok.data_structure import match_long_repeat
+from sverchok.dependencies import numba
 
-
-def get_valid_node(mat_name, node_name, bl_idname):
-
-    materials = bpy.data.materials
-
-    # make sure the Material is present
-    m = materials.get(mat_name)
-    if not m:
-        m = materials.new(mat_name)
-
-    # if it doesn't use nodes force that (and cycles ?! )
-    m.use_nodes = True
-    m.use_fake_user = True
-
-    # make sure the CurveNode we want to use is present too
-    node = m.node_tree.nodes.get(node_name)
-    if not node:
-        node = m.node_tree.nodes.new(bl_idname)
-        node.name = node_name
-
-    return node
-
-
-def get_valid_evaluate_function(mat_name, node_name):
-    ''' 
-    Takes a material name (cycles) and a Node name it expects to find.
-    The node will be of type ShaderNodeRGBCurve and this function
-    will force its existence, then return the evaluate function for the last
-    component of RGBA - allowing us to use this as a float modifier.
-    '''
-
-    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
-
-    curve = node.mapping.curves[3]
-    try: curve.evaluate(0.0)
-    except: node.mapping.initialize()
-
-    return curve.evaluate
-
-def get_valid_evaluate_function2(mat_name, node_name):
-    ''' 
-    Takes a material name (cycles) and a Node name it expects to find.
-    The node will be of type ShaderNodeRGBCurve and this function
-    will force its existence, then return the evaluate function for the last
-    component of RGBA - allowing us to use this as a float modifier.
-    '''
-
-    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
-
-    curve = node.mapping.curves[3]
-    try:  node.mapping.evaluate(curve, 0.0)
-    except: node.mapping.initialize()
-
-    evaluate = lambda val: node.mapping.evaluate(curve, val)
-    return evaluate
+njit_function_storage = {}
 
 
 def vectorize(all_data):
@@ -98,3 +46,26 @@ def ddir(content, filter_str=None):
     else:
         vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
     return vals
+
+
+def sv_njit(function_to_njit, parameters):
+    fn_name = function_to_njit.__name__
+    njit_func = njit_function_storage.get(fn_name)
+    if not njit_func:
+
+        if numba:
+            numba.njit(function_to_njit)
+
+        result = function_to_njit(*parameters)
+        njit_function_storage[fn_name] = function_to_njit
+        info(f"caching function: {fn_name}")
+    else:
+        result = njit_func(*parameters)
+    return result
+
+def sv_njit_clear(function_to_njit):
+    fn_name = function_to_njit.__name__
+    njit_func = njit_function_storage.get(fn_name)
+    if njit_func:
+        del njit_function_storage[fn_name]
+        info(f"cleared cached function: {fn_name}")

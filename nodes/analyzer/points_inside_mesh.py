@@ -20,14 +20,12 @@
 from itertools import cycle
 import bpy
 from bpy.props import (IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty)
-import bmesh
 from mathutils import Vector
-from mathutils.kdtree import KDTree
 from mathutils.bvhtree import BVHTree
 from mathutils.noise import seed_set, random_unit_vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes, throttle_and_update_node
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -153,7 +151,6 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo_1", "Regular"), ("algo_2", "Multisample")])]
     dimension_options = [(k, k, '', i) for i, k in enumerate(["2D", "3D"])]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if self.dimensions_mode == '2D' and len(self.inputs) < 4:
             self.inputs.new('SvVerticesSocket', 'Plane Normal').prop_name = 'normal'
@@ -164,6 +161,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         elif self.dimensions_mode == '3D' or not self.limit_max_dist:
             if 'Max Dist' in self.inputs:
                 self.inputs.remove(self.inputs['Max Dist'])
+        updateNode(self, context)
 
     dimensions_mode: EnumProperty(
         items=dimension_options,
@@ -180,7 +178,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         default=10.0, update=updateNode)
 
     limit_max_dist: BoolProperty(
-        name='Limit Proyection', description='Limit projection distance',
+        name='Limit Projection', description='Limit projection distance',
         default=False, update=update_sockets)
 
     selected_algo: EnumProperty(
@@ -189,7 +187,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         default="algo_1", update=updateNode)
 
     epsilon_bvh: FloatProperty(
-        name='Tolerance', description='fudge value',
+        name='Tolerance', description='fudge value. You will encounter 32-bit float precision errors if input vertices have big numbers. For big numbers increase the value. see documentation',
         default=0.0, min=0.0, max=1.0,
         update=updateNode)
 
@@ -229,7 +227,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'limit_max_dist', expand=True)
         else:
             layout.prop(self, 'selected_algo', expand=True)
-            if self.selected_algo == 'algo 2':
+            if self.selected_algo == 'algo_2':
                 layout.prop(self, 'epsilon_bvh', text='Epsilon')
                 layout.prop(self, 'num_samples', text='Samples')
 

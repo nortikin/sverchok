@@ -17,15 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bmesh
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.voronoi import voronoi_bounded
-from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
-from sverchok.utils.logging import debug, info
+
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -65,12 +62,12 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if 'Faces' in self.outputs:
             self.outputs['Faces'].hide_safe = not self.make_faces
         if 'MaxSides' in self.inputs:
             self.inputs['MaxSides'].hide_safe = not self.make_faces
+        updateNode(self, context)
 
     make_faces: BoolProperty(
         name = "Make faces",

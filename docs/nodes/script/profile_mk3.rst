@@ -26,33 +26,33 @@ There are the following statements supported:
 
 The following segment types are available:
 
-+---------------+-------+--------------------------------------------------------------------------------+ 
-| name          | cmd   | parameters                                                                     | 
-+===============+=======+================================================================================+ 
++---------------+-------+--------------------------------------------------------------------------------+
+| name          | cmd   | parameters                                                                     |
++===============+=======+================================================================================+
 | MoveTo        | M,  m | <2v coordinate>                                                                |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | LineTo        | L,  l | (<2v coordinate>)+ ["n = " num_segments] [z]                                   |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | HorLineTo     | H,  h | (<x>)+ ["n = " num_segments] ";"                                               |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | VertLineTo    | V,  v | (<y>)+ ["n = " num_segments] ";"                                               |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | CurveTo       | C,  c | (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_verts] [z]               |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | SmoothCurveTo | S,  s | (<2v control2> <2v knot2>)+ ["n = " num_verts] [z]                             |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | QuadCurveTo   | Q,  q | (<2v control> <2v knot2>)+ ["n = " num_segments] [z]                           |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | SmthQuadCurve | T,  t | (<2v knot2>)+ ["n = " num_segments] [z]                                        |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 | ArcTo         | A,  a | <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z] |
-+---------------+-------+--------------------------------------------------------------------------------+ 
-| ClosePath     | x     |                                                                                |  
-+---------------+-------+--------------------------------------------------------------------------------+ 
-| CloseAll      | X     |                                                                                |  
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
+| ClosePath     | x     |                                                                                |
++---------------+-------+--------------------------------------------------------------------------------+
+| CloseAll      | X     |                                                                                |
++---------------+-------+--------------------------------------------------------------------------------+
 | comment       | #     | anything after # is a comment.                                                 |
-+---------------+-------+--------------------------------------------------------------------------------+ 
++---------------+-------+--------------------------------------------------------------------------------+
 
 ::
 
@@ -60,7 +60,7 @@ The following segment types are available:
     []  : optional field
     2v  : two point vector `a,b`
             - no backticks
-            - a and b can be 
+            - a and b can be
                 - number literals
                 - lowercase 1-character symbols for variables
     (...)+ : this sequence may appear several times
@@ -81,7 +81,7 @@ Commands starting with lower case letters (m, l, c, a) define all coordinates in
 i.e. each coordinate is defined with relation to "current pen position".
 
 Each integer or floating value may be represented as
- 
+
 * Integer or floating literal (usual python syntax, such as 5 or 7.5)
 * Variable name, such as `a` or `b` or `variable_name`
 * Negation sign and a variable name, such as `-a` or `-size`.
@@ -111,7 +111,7 @@ directory in Sverchok distribution.
 Expression syntax
 -----------------
 
-Syntax being used in profile definitions is standard Python's syntax for expressions. 
+Syntax being used in profile definitions is standard Python's syntax for expressions.
 For exact syntax definition, please refer to https://docs.python.org/3/reference/expressions.html.
 
 In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**`
@@ -122,19 +122,20 @@ One difference with Python's syntax is that you can call only restricted number
 of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs;
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list.
 
 This restriction is for security reasons. However, Python's ecosystem does not
-guarantee that noone can call some unsafe operations by using some sort of
+guarantee that no one can call some unsafe operations by using some sort of
 language-level hacks. So, please be warned that usage of this node with profile
 definition obtained from unknown or untrusted source can potentially harm your
 system or data.
@@ -173,13 +174,13 @@ This node has the following parameters:
   doubles" functionality of the X command: if the distance between last and
   first points is less than this threshold, X command will remove the last
   point and connect pre-last point to the first instead.
-* **NURBS output**. This parameter is available in the N panel only. If
+- **NURBS output**. This parameter is available in the N panel only. If
   checked, then the node will output all curve objects as NURBS curves.
   Otherwise, it will output specific types of curves (lines, circles, Bezier
   curves). In many cases, there is no difference; NURBS curves can be usable to
   apply specific API methods, or to output the result to formats that
   understand NURBS only. Unchecked by default.
-* **Concatenate**. This parameter is available in the N panel only. If checked,
+- **Concatenate**. This parameter is available in the N panel only. If checked,
   then the node will concatenate curve objects it generates. The curves can be
   automatically split into groups before concatenation, according to which of
   their endpoints coincide. For example, if you defined several separate
@@ -188,7 +189,7 @@ This node has the following parameters:
   will output single NURBS curve for each contour. If not checked, the node
   will output separate Curve object for each segment (command). Unchecked by
   default.
-* **Concat tolerance**. This parameter is available in the N panel only, and
+- **Concat tolerance**. This parameter is available in the N panel only, and
   only if **Concatenate** parameter is checked. This defines distance between
   end point of one curve and starting point of another curve, which the node
   will use to decide whether it is required to concatenate them. The default
@@ -215,7 +216,7 @@ This node has one operator button: **from selection**. This operator works only 
 It takes an active Curve object, generates profile description from it and sets up the node
 to use this generated profile. You can adjust the profile by editing created Blender's text bufrfer.
 
-If you want to import other type of curve you have to convert one to Bezier type. 
+If you want to import other type of curve you have to convert one to Bezier type.
 Fortunately it is possible to do in edit mode with button *Set Spline Type* in the *T* panel.
 More information about conversion looks `here <https://docs.blender.org/manual/en/dev/modeling/curves/editing/introduction.html#set-spline-type>`_.
 
@@ -234,8 +235,8 @@ good idea to always start the profile with a M <pos>,<pos>.
 ::
 
     M 0,0
-    L a,a b,0 c,0 d,d e,-e 
-    
+    L a,a b,0 c,0 d,d e,-e
+
 
 the fun bit about this is that all these variables / components can be dynamic
 
@@ -248,7 +249,7 @@ the fun bit about this is that all these variables / components can be dynamic
     C 7,5 7,5 7,3 n=10
     L 7,2 5,0
     X
-    
+
 or
 
 ::
@@ -266,9 +267,9 @@ Examples of usage
 -----------------
 
 The node started out as a thought experiment and turned into something quite
-useful, you can see how it evolved in the `initial github thread <https://github.com/nortikin/sverchok/issues/350>`_ ; 
+useful, you can see how it evolved in the `initial github thread <https://github.com/nortikin/sverchok/issues/350>`_ ;
 See also `last github thread <https://github.com/nortikin/sverchok/pull/2450>`_ and examples provided within Sverchok distribution (N panel of the node).
- 
+
 Example usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png
@@ -283,7 +284,7 @@ Example usage:
       t -6,0
       t -6,0
       t 0,6
- 
+
 
 .. image:: https://user-images.githubusercontent.com/284644/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png
 
@@ -298,7 +299,7 @@ An example with use of "default" and "let" statements:
 
 .. image:: https://user-images.githubusercontent.com/284644/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png
 
-:: 
+::
 
       default straight_len = 1;
       default radius = 0.4;
@@ -325,7 +326,7 @@ Keyboard Shortcut to refresh Profile Node
 -----------------------------------------
 
 Updates made to the profile path text file are not propagated automatically to
-any nodes that might be reading that file. 
+any nodes that might be reading that file.
 To refresh a Profile Node simply hit ``Ctrl+Enter`` In TextEditor while you are
 editing the file, or click one of the inputs or output sockets of Profile Node.
 There are other ways to refresh (change a value on one of the incoming nodes,

@@ -46,7 +46,7 @@ def get_valid_node(group_name, node_name, bl_idname):
 
 def get_valid_evaluate_function_legacy(group_name, node_name):
     '''
-    Working with Blende Verion < 2.82
+    Working with Blender Version < 2.82
     Takes a material-group name and a Node name it expects to find.
     The node will be of type ShaderNodeRGBCurve and this function
     will force its existence, then return the evaluate function for the last

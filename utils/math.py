@@ -78,7 +78,7 @@ supported_metrics = [
         ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
         ('POINTS', 'Points', "Points based", 2),
         ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3),
-        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
+        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidean distance", 4)
     ]
 
 xyz_metrics = [
@@ -305,8 +305,9 @@ def np_signed_angle(a, b, normal):
     cross = np.cross(a, b)
     scalar = np.dot(cross, normal)
     sign = 1 if scalar >= 0 else -1
-    sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
-    alpha = asin(sin_alpha)
+    #sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
+    cos_alpha = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    alpha = acos(cos_alpha)
     return sign * alpha
 
 def np_vectors_angle(v1, v2):
@@ -333,6 +334,12 @@ def np_normalize_vectors(vecs):
     nonzero = (norms > 0)
     vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
     return vecs
+
+def np_multiply_matrices_vectors(matrices, vectors):
+    vectors = vectors[np.newaxis]
+    vectors = np.transpose(vectors, axes=(1,2,0))
+    r = matrices @ vectors
+    return r[:,:,0]
 
 def weighted_center(verts, field=None):
     if field is None:
@@ -366,3 +373,17 @@ def _gcd(a, b):
     while b:
         a, b = b, a%b
     return a
+
+def distribute_int(n, sizes):
+    total_size = sum(sizes)
+    ratios = [size / total_size for size in sizes]
+    counts = [int(n * ratio) for ratio in ratios]
+    count_good = sum(counts)
+    count_left = n - count_good
+    for idx in np.argsort(sizes)[::-1]:
+        if count_left == 0:
+            break
+        counts[idx] += 1
+        count_left -= 1
+    return counts
+

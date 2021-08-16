@@ -33,7 +33,7 @@ This node will accept lists of flat NumPy arrays [Not available for GCD or Round
 |               | Add, Subtract, Multiply|
 |               | Divide, Int Division,  |
 |               | x-1, x+1, x * 2,       |
-|               | x/2, x ** 2, **,       |
+|               | x/2, x ^ 2, ^,         |
 |               | Min, Max, Mean, GCD    |
 +---------------+------------------------+
 | constants     | pi, e, phi, tau.       |

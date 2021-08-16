@@ -74,6 +74,14 @@ class SvLine(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def split_at(self, t):
+        t_max = self.get_u_bounds()[1]
+        end_point = self.evaluate(t_max)
+        mid_point = self.evaluate(t)
+        curve1 = SvLine.from_two_points(self.point, mid_point)
+        curve2 = SvLine.from_two_points(mid_point, end_point)
+        return curve1, curve2
+
     def reverse(self):
         t_min, t_max = self.get_u_bounds()
         p1, p2 = self.evaluate(t_min), self.evaluate(t_max)
@@ -392,6 +400,36 @@ class SvCircle(SvCurve):
             #curve = curve_segment(curve, t_min, t_max)
         return curve
 
+    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
+        idxs = np.array(range(2*n+1), dtype=np.float64)
+        ts = pi * idxs / n
+        alpha = pi / n
+        rs = np.where(idxs % 2 == 0, 1.0, 1.0 / cos(alpha))
+
+        xs = rs * np.cos(ts)
+        ys = rs * np.sin(ts)
+        zs = np.zeros((2*n+1,))
+
+        control_points = np.stack((xs, ys, zs)).T
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        weights = np.where(idxs % 2 == 0, 1.0, cos(alpha))
+
+        knots = [0.0]
+        for i in range(n+1):
+            t = i * 2*pi / n
+            knots.extend([t, t])
+        knots.append(2*pi)
+        knots = np.array(knots)
+
+        degree = 2
+        curve = SvNurbsMaths.build_curve(implementation,
+                    degree, knots,
+                    control_points, weights)
+        return curve
+
     def reverse(self):
         circle = self.copy()
         u1, u2 = self.u_bounds
@@ -512,10 +550,26 @@ class SvEllipse(SvCurve):
         return vs
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        scale = Matrix([[1,0,0], [0, self.b/self.a, 0], [0, 0, 1]]).to_4x4()
+        if self.a == 0 and self.b == 0:
+            coef_x = 0
+            coef_y = 0
+            radius = 0
+        elif self.a == 0:
+            coef_x = 0
+            coef_y = 1
+            radius = self.b
+        elif self.b == 0:
+            coef_x = 1
+            coef_y = 0
+            radius = self.a
+        else:
+            coef_x = 1
+            coef_y = self.b/self.a
+            radius = self.a
+        scale = Matrix([[coef_x,0,0], [0, coef_y, 0], [0, 0, 1]]).to_4x4()
         matrix = Matrix(self.matrix).to_4x4()
         matrix.translation = Vector(self.get_center())
-        circle = SvCircle(matrix = matrix @ scale, radius = self.a,
+        circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
         return circle.to_nurbs(implementation)
 

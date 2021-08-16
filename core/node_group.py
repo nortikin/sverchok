@@ -8,23 +8,25 @@
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
 from collections import namedtuple
-from contextlib import contextmanager
 from functools import reduce
-from itertools import chain
+from itertools import cycle
 from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
 
 import bpy
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.main_tree_handler import empty_updater
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler, DEBUGGER_NODES, cut_mk_suffix
+from sverchok.core.group_handlers import MainHandler, NodeIdManager
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.utils.handle_blender_data import BlNode, BlTree, BlTrees
+from sverchok.utils.logging import catch_log_error
+from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon, SverchCustomTreeNode
 
 
-class SvGroupTree(bpy.types.NodeTree):
+class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     """Separate tree class for sub trees"""
     bl_idname = 'SvGroupTree'
     bl_icon = 'NODETREE'
@@ -32,19 +34,11 @@ class SvGroupTree(bpy.types.NodeTree):
 
     handler = MainHandler
 
-    group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
-    tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
-    skip_tree_update: bpy.props.BoolProperty()  # useless for API consistency # todo should be removed later
+    # should be updated by "Go to edit group tree" operator
+    group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
-    sv_draft: bpy.props.BoolProperty()
-
-    @property
-    def tree_id(self):
-        """Identifier of the tree"""
-        if not self.tree_id_memory:
-            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
-        return self.tree_id_memory
+    sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
 
     @classmethod
     def poll(cls, context):
@@ -93,8 +87,12 @@ class SvGroupTree(bpy.types.NodeTree):
         return not shared_trees
 
     def update(self):
-        """trigger on links or nodes collections changes, on assigning tree to a group node"""
+        """trigger on links or nodes collections changes, on assigning tree to a group node
+        also it is triggered when a tree, next in the path, was changed (even if this tree was not effected)"""
         # When group input or output nodes are connected some extra work should be done
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         self.check_last_socket()  # Should not be too expensive to call it each update
 
         if self.name not in bpy.data.node_groups:  # load new file event
@@ -197,6 +195,11 @@ class SvGroupTree(bpy.types.NodeTree):
         1. Node property of was changed
         2. ???
         """
+        # the method can be called during tree reconstruction from JSON file
+        # in this case we does not intend doing any updates
+        if not self.group_node_name:  # initialization tree
+            return
+
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
@@ -212,44 +215,48 @@ class SvGroupTree(bpy.types.NodeTree):
         self.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
 
         nodes_errors = self.handler.get_error_nodes(group_nodes_path)
-        exception_color = (0.8, 0.0, 0)
-        no_data_color = (1, 0.3, 0)
-        for error, node in zip(nodes_errors, self.nodes):
-
-            # update error colors
-            if error is not None:
-                node.use_custom_color = True
-                node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
-            else:
-                node.use_custom_color = False
-                node.set_color()
-
-            # update object numbers
-            [s.update_objects_number() for s in chain(node.inputs, node.outputs)
-             if hasattr(s, 'update_objects_number')]
+        to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
+        time_mode = group_nodes_path[0].id_data.show_time_mode
+        if to_show_update_time:
+            update_time = (self.handler.get_cum_time(group_nodes_path) if time_mode == "Cumulative"
+                           else self.handler.get_nodes_update_time(group_nodes_path))
+        else:
+            update_time = cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update, NodeIdManager.extract_node_id(node))
 
             # update debug nodes
-            try:
-                if cut_mk_suffix(node.bl_idname) in DEBUGGER_NODES:  # todo should be replaced by isinstance
+            if BlNode(node).is_debug_node:
+                with catch_log_error():
                     node.process()
-            except:
-                pass
-
-    @contextmanager
-    def throttle_update(self):
-        """useless, for API consistency here"""
-        yield self
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
-        Should be called only during tree or node update events
+        Should be called only when the tree is opened in one of tree editors
         returns list of group nodes in path of current screen
         """
-        group_nodes = []
-        paths = bpy.context.space_data.path
-        for path, next_path in zip(paths[:-1], paths[1:]):
-            group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
-        return group_nodes
+        for area in bpy.context.screen.areas:
+            # this is not Sverchok editor
+            if area.ui_type != BlTrees.MAIN_TREE_ID:
+                continue
+
+            # editor does not have any active tree
+            if not area.spaces[0].node_tree:
+                continue
+
+            # this editor edits another tree, What!?
+            if self not in (p.node_tree for p in area.spaces[0].path):
+                continue
+
+            group_nodes = []
+            paths = area.spaces[0].path
+            for path, next_path in zip(paths[:-1], paths[1:]):
+                group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
+                if next_path.node_tree == self:
+                    break  # the tree is no last in the path
+            return group_nodes
+        raise LookupError(f'Path the group tree: {self} was not found')
 
 
 class BaseNode:
@@ -269,8 +276,9 @@ class BaseNode:
     def copy(self, original):
         self.n_id = ''
 
-    def set_color(self):
-        self.use_custom_color = False
+    sv_default_color = SverchCustomTreeNode.sv_default_color
+
+    set_temp_color = SverchCustomTreeNode.set_temp_color
 
     @property
     def absolute_location(self):
@@ -361,7 +369,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
-    def process(self):
+    def process(self):  # todo to remove
         """
         This method is going to be called only by update system of main tree
         Calling this method means that input group node should fetch data from group node
@@ -391,11 +399,16 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 raise error
 
     def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
-                is_input_changed: bool = True) -> Iterator[Node]:
+                is_input_changed: bool = True) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
         """
         This method should be called by group tree handler
         is_input_changed should be False if update is called just for inspection of inner changes
         """
+        # todo what if the node is disabled?
+        # there is nothing to update, return empty iterator
+        if self.node_tree is None:
+            return empty_updater(is_output_changed=False, error=None)
+
         if group_nodes_path is None:
             group_nodes_path = []
         else:
@@ -416,6 +429,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 return node
 
     def update(self):
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -425,21 +441,12 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
 
-    def copy(self, original):
-        super().copy(original)
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
+    update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
     def free(self):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.forget_node(self)
-
-    def init(self, context):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
+        # This is inevitable evil cause of flexible nature of node_ids inside group trees
+        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
+        self.update_ui()
 
 
 class PlacingNodeOperator:
@@ -495,9 +502,6 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
             return False, ''
         tree = path.node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
-            for node in tree.nodes:
-                if node.bl_idname.startswith('SvGroupNodeMonad'):
-                    return False, 'Either monad or group node should be used in the tree'
             return True, 'Add group node'
         elif tree.bl_idname == 'SvGroupTree':
             return True, "Add group node"
@@ -589,7 +593,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        with base_tree.throttle_update():
+        with base_tree.init_tree(), sub_tree.init_tree():
             # copy and past nodes into group tree
             bpy.ops.node.clipboard_copy()
             context.space_data.path.append(sub_tree)
@@ -657,7 +661,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             [base_tree.nodes.remove(n) for n in base_tree.nodes
              if n.name in frame_names and n.name not in with_children_frames]
 
-        base_tree.update_nodes([group_node])
+        # todo one ui update (useless) will be done by the operator and another with update system of main handler
         bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}
@@ -748,66 +752,65 @@ class UngroupGroupTree(bpy.types.Operator):
         frame_names = {n.name for n in sub_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in sub_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        with tree.throttle_update():
-            if any(n for n in sub_tree.nodes if n.select):  # if no selection copy operator will raise error
-                # copy and past nodes into group tree
-                bpy.ops.node.clipboard_copy()
-                context.space_data.path.pop()
-                bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
+        if any(n for n in sub_tree.nodes if n.select):  # if no selection copy operator will raise error
+            # copy and past nodes into group tree
+            bpy.ops.node.clipboard_copy()
+            context.space_data.path.pop()
+            bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
 
-                # move nodes in group node center
-                tree_select_nodes = [n for n in tree.nodes if n.select]
-                center = reduce(lambda v1, v2: v1 + v2,
-                                [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
-                [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
+            # move nodes in group node center
+            tree_select_nodes = [n for n in tree.nodes if n.select]
+            center = reduce(lambda v1, v2: v1 + v2,
+                            [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
+            [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
 
-                # recreate frames
-                node_name_mapping = {n['sub_node_name']: n.name for n in tree.nodes if 'sub_node_name' in n}
-                AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
-            else:
-                context.space_data.path.pop()  # should exit from sub tree anywhere
+            # recreate frames
+            node_name_mapping = {n['sub_node_name']: n.name for n in tree.nodes if 'sub_node_name' in n}
+            AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
+        else:
+            context.space_data.path.pop()  # should exit from sub tree anywhere
 
-            # recreate py tree structure
-            sub_py_tree = Tree(sub_tree)
-            [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
-            py_tree = Tree(tree)
-            [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
-            group_py_node = py_tree.nodes[group_node.name]
-            for node in tree.nodes:
-                if 'sub_node_name' in node:
-                    sub_py_tree.nodes[node['sub_node_name']].twin = py_tree.nodes[node.name]
-                    py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
+        # recreate py tree structure
+        sub_py_tree = Tree(sub_tree)
+        [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
+        py_tree = Tree(tree)
+        [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
+        group_py_node = py_tree.nodes[group_node.name]
+        for node in tree.nodes:
+            if 'sub_node_name' in node:
+                sub_py_tree.nodes[node['sub_node_name']].twin = py_tree.nodes[node.name]
+                py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
 
-            # create in links
-            for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupInput']:
-                for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
-                    if group_in_s.links and input_out_s.links:
-                        link_out_s = group_in_s.linked_sockets[0]
-                        for twin_in_s in input_out_s.linked_sockets:
-                            if twin_in_s.node.type == 'NodeGroupOutput':  # node should be searched in above tree
-                                group_out_s = group_py_node.outputs[twin_in_s.index]
-                                for link_in_s in group_out_s.linked_sockets:
-                                    tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
-                            else:
-                                link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
+        # create in links
+        for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupInput']:
+            for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
+                if group_in_s.links and input_out_s.links:
+                    link_out_s = group_in_s.linked_sockets[0]
+                    for twin_in_s in input_out_s.linked_sockets:
+                        if twin_in_s.node.type == 'NodeGroupOutput':  # node should be searched in above tree
+                            group_out_s = group_py_node.outputs[twin_in_s.index]
+                            for link_in_s in group_out_s.linked_sockets:
                                 tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
-
-            # create out links
-            for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupOutput']:
-                for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
-                    if group_out_s.links and output_in_s.links:
-                        twin_out_s = output_in_s.linked_sockets[0]
-                        if twin_out_s.node.type == 'NodeGroupInput':
-                            continue  # we already added this link
-                        for link_in_s in group_out_s.linked_sockets:
-                            link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
+                        else:
+                            link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
                             tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
 
-            # delete group node
-            tree.nodes.remove(group_node)
-            for node in tree.nodes:
-                if 'sub_node_name' in node:
-                    del node['sub_node_name']
+        # create out links
+        for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupOutput']:
+            for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
+                if group_out_s.links and output_in_s.links:
+                    twin_out_s = output_in_s.linked_sockets[0]
+                    if twin_out_s.node.type == 'NodeGroupInput':
+                        continue  # we already added this link
+                    for link_in_s in group_out_s.linked_sockets:
+                        link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
+                        tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+
+        # delete group node
+        tree.nodes.remove(group_node)
+        for node in tree.nodes:
+            if 'sub_node_name' in node:
+                del node['sub_node_name']
 
         tree.update()
 

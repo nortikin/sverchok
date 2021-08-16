@@ -122,7 +122,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     active_obj_index: bpy.props.IntProperty()
 
     out_np: bpy.props.BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode)
     output_np_all: BoolProperty(
@@ -216,7 +216,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     def draw_buttons_ext(self, context, layout):
         r = layout.column(align=True)
         row = r.row(align=True)
-        row.label(text="Ouput Numpy:")
+        row.label(text="Output Numpy:")
         row.prop(self, 'output_np_all', text='If possible', toggle=True)
         if not self.output_np_all:
             for i in range(7):
@@ -227,7 +227,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         layout.prop(self, 'output_np_all', text='All', toggle=True)
         if not self.output_np_all:
             for i in range(7):
@@ -282,79 +282,74 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             if not obj:
                 continue
 
-            # code inside this context can trigger dependancy graph update events,
-            # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
-            # not doing so would trigger recursive updates and Blender would likely become unresponsive.
-            with self.sv_throttle_tree_update():
+            mtrx = obj.matrix_world
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
+                if o_ms:
+                    ms.append(mtrx)
+                continue
+            try:
+                if obj.mode == 'EDIT' and obj.type == 'MESH':
+                    # Mesh objects do not currently return what you see
+                    # from 3dview while in edit mode when using obj.to_mesh.
+                    me = obj.data
+                    bm = bmesh.from_edit_mesh(me)
+                    vers, edgs, pols = pydata_from_bmesh(bm)
 
-                mtrx = obj.matrix_world
-                if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
-                    if o_ms:
-                        ms.append(mtrx)
-                    continue
-                try:
-                    if obj.mode == 'EDIT' and obj.type == 'MESH':
-                        # Mesh objects do not currently return what you see
-                        # from 3dview while in edit mode when using obj.to_mesh.
-                        me = obj.data
-                        bm = bmesh.from_edit_mesh(me)
-                        vers, edgs, pols = pydata_from_bmesh(bm)
+                    if o_vs:
+                        vs.append(vers)
+                    if o_es:
+                        es.append(edgs)
+                    if o_ps:
+                        ps.append(pols)
+                    if o_vn:
+                        vn.append([v.normal[:] for v in bm.verts])
+                    if o_mi:
+                        mi.append(self.get_materials_from_bmesh(bm))
+                    if o_pa:
+                        pa.append([p.calc_area() for p in bm.faces])
+                    if o_pc:
+                        pc.append([p.calc_center_median()[:] for p in bm.faces])
+                    if o_pn:
+                        pn.append([p.normal[:] for p in bm.faces])
 
-                        if o_vs:
-                            vs.append(vers)
-                        if o_es:
-                            es.append(edgs)
-                        if o_ps:
-                            ps.append(pols)
-                        if o_vn:
-                            vn.append([v.normal[:] for v in bm.verts])
-                        if o_mi:
-                            mi.append(self.get_materials_from_bmesh(bm))
-                        if o_pa:
-                            pa.append([p.calc_area() for p in bm.faces])
-                        if o_pc:
-                            pc.append([p.calc_center_median()[:] for p in bm.faces])
-                        if o_pn:
-                            pn.append([p.normal[:] for p in bm.faces])
+                    del bm
+                else:
 
-                        del bm
+                    if self.modifiers:
+                        obj = sv_depsgraph.objects[obj.name]
+                        obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
+                        obj_data = obj.to_mesh()
 
-                        if self.modifiers:
-                            obj = sv_depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+                    if o_vs:
+                        vs.append(read_verts(obj_data, out_np[0]))
+                    if o_es:
+                        es.append(read_edges(obj_data, out_np[1]))
+                    if o_ps:
+                        ps.append([list(p.vertices) for p in obj_data.polygons])
+                    if self.vergroups:
+                        vers_out_grouped.append(get_vertgroups(obj_data))
+                    if o_vn:
+                        vn.append(read_verts_normal(obj_data, out_np[2]))
+                    if o_mi:
+                        mi.append(read_materials_idx(obj_data, out_np[3]))
+                    if o_pa:
+                        pa.append(read_face_area(obj_data, out_np[4]))
+                    if o_pc:
+                        if out_np[5]:
+                            pc.append(read_face_center(obj_data, output_numpy=True))
                         else:
-                            obj_data = obj.to_mesh()
+                            pc.append([p.center[:] for p in obj_data.polygons])
+                    if o_pn:
+                        if out_np[6]:
+                            pn.append(read_face_normal(obj_data, True))
+                        else:
+                            pn.append([p.normal[:] for p in obj_data.polygons])
 
-                        if o_vs:
-                            vs.append(read_verts(obj_data, out_np[0]))
-                        if o_es:
-                            es.append(read_edges(obj_data, out_np[1]))
-                        if o_ps:
-                            ps.append([list(p.vertices) for p in obj_data.polygons])
-                        if self.vergroups:
-                            vers_out_grouped.append(get_vertgroups(obj_data))
-                        if o_vn:
-                            vn.append(read_verts_normal(obj_data, out_np[2]))
-                        if o_mi:
-                            mi.append(read_materials_idx(obj_data, out_np[3]))
-                        if o_pa:
-                            pa.append(read_face_area(obj_data, out_np[4]))
-                        if o_pc:
-                            if out_np[5]:
-                                pc.append(read_face_center(obj_data, output_numpy=True))
-                            else:
-                                pc.append([p.center[:] for p in obj_data.polygons])
-                        if o_pn:
-                            if out_np[6]:
-                                pn.append(read_face_normal(obj_data, True))
-                            else:
-                                pn.append([p.normal[:] for p in obj_data.polygons])
+                    obj.to_mesh_clear()
 
-                        obj.to_mesh_clear()
-
-                except Exception as err:
-                    print('failure in process between frozen area', self.name, err)
+            except Exception as err:
+                print('failure in process between frozen area', self.name, err)
 
             if o_ms:
                 ms.append(mtrx)

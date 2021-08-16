@@ -20,7 +20,7 @@ This node has the following inputs:
 * **Curve2**. Second curve to be blended. This input is available and mandatory
   only if **Blend** parameter is set to **Two curves**.
 * **Curves**. List of curves to be blended. This input is available and
-  mandatory only if **Blend** paramter is set to **List of curves**.
+  mandatory only if **Blend** parameter is set to **List of curves**.
 * **Factor1**. This input is available and mandatory only if **Blend**
   parameter is set to **Two curves**, and **Continuity** parameter is set to
   **Tangency**. This defines the strength with which the tangent vector of the
@@ -82,7 +82,7 @@ This node has the following parameters:
   together with generated blending curves, concatenated into one curve.
   Otherwise, original curves (optionally) and generated curves will be output
   as separate Curve objects. Checked by default.
-* **Cyclic**. This paramter is available only when the **Blend** parameter is set
+* **Cyclic**. This parameter is available only when the **Blend** parameter is set
   to **List of curves**. If checked, then the node will connect the end of last
   curve to the beginning of the first curve. Unchecked by default.
 * **Output source curves**. This parameter is available only when the **Blend**

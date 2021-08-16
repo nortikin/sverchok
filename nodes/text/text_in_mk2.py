@@ -245,12 +245,16 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         # if we turn on reload on update we need a safety check for this to work.
         updateNode(self, None)
 
-
     def process(self):  # dispatch based on mode
-        print(self.textmode, self.current_text, 5)
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.text and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
+
         if not self.current_text:
             return
-        print(self.textmode)
         if self.textmode == 'CSV':
             self.update_csv()
         elif self.textmode == 'SV':
@@ -605,15 +609,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         # load data into selected socket
-        print(self.list_data[n_id])
         self.outputs[0].sv_set(self.list_data[n_id])
-
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "file_pointer") and not self.file_pointer:
-            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
-            if text:
-                self.file_pointer = text
 
     def save_to_json(self, node_data: dict):
         if not self.text:
@@ -636,19 +632,22 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         as it's a beta service, old IO json may not be compatible - in this interest
         of neat code we assume it finds everything.
         '''
+        if import_version < 1.0:
+            params = node_data.get('params')
+
+            # original textin used 'current_text', textin+ uses 'text'
+            current_text = params.get('current_text', params.get('text'))
+
+            # it's not clear from the exporter code why textmode parameter isn't stored
+            # in params.. for now this lets us look in both places. ugly but whatever.
+            textmode = params.get('textmode')
+            if not textmode:
+                textmode = node_data.get('textmode')
+            self.textmode = textmode
+        else:
+            current_text = self.current_text
+
         texts = bpy.data.texts
-        params = node_data.get('params')
-
-        # original textin used 'current_text', textin+ uses 'text'
-        current_text = params.get('current_text', params.get('text'))
-
-        # it's not clear from the exporter code why textmode parameter isn't stored
-        # in params.. for now this lets us look in both places. ugly but whatever.
-        textmode = params.get('textmode')
-        if not textmode:
-            textmode = node_data.get('textmode')
-        self.textmode = textmode
-
         if not current_text:
             self.info("`%s' doesn't store a current_text in params", self.name)
 

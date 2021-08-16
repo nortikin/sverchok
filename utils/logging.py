@@ -1,3 +1,4 @@
+from typing import Type, Dict
 
 import bpy
 
@@ -5,6 +6,7 @@ import inspect
 import traceback
 import logging
 import logging.handlers
+from contextlib import contextmanager
 
 import sverchok
 from sverchok.utils.development import get_version_string
@@ -19,6 +21,46 @@ internal_buffer_initialized = False
 file_initialized = False
 # Whether logging is initialized
 initialized = False
+
+
+@contextmanager
+def catch_log_error():
+    """Catch logging errors"""
+    try:
+        yield
+    except Exception as e:
+        frame, _, line, *_ = inspect.trace()[-1]
+        module = inspect.getmodule(frame)
+        name = module.__name__ or "<Unknown Module>"
+        try_initialize()
+        _logger = logging.getLogger(f'{name} {line}')
+        _logger.error(e)
+        if _logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
+
+
+def log_error(err):
+    """Should be used in except statement"""
+    frame, _, line, *_ = inspect.trace()[-1]
+    module = inspect.getmodule(frame)
+    name = module.__name__ or "<Unknown Module>"
+    try_initialize()
+    _logger = logging.getLogger(f'{name}:{line} ')
+    _logger.error(err)
+    if _logger.isEnabledFor(logging.DEBUG):
+        traceback.print_exc()
+
+
+@contextmanager
+def fix_error_msg(msgs: Dict[Type[Exception], str]):
+    try:
+        yield
+    except Exception as e:
+        err_class = type(e)
+        if err_class in msgs:
+            e.args = (msgs[err_class], )
+        raise
+
 
 def get_log_buffer(log_buffer_name):
     """
@@ -145,7 +187,7 @@ def try_initialize():
                     ("yes" if prefs.log_to_console else "no"))
             initialized = True
 
-# Convinience functions
+# Convenience functions
 
 def with_module_logger(method_name):
     """
@@ -153,14 +195,13 @@ def with_module_logger(method_name):
     Logger name is obtained from caller module name.
     """
     def wrapper(*args, **kwargs):
-        frame = inspect.stack()[1]
-        module = inspect.getmodule(frame[0])
-        if module is None:
-            name = "<Unknown Module>"
-        else:
-            name = module.__name__
+        if not is_enabled_for(method_name.upper()):
+            return
+        frame, _, line, *_ = inspect.stack()[1]
+        module = inspect.getmodule(frame)
+        name = module.__name__ or "<Unknown Module>"
         try_initialize()
-        logger = logging.getLogger(name)
+        logger = logging.getLogger(f'{name} {line}')
         method = getattr(logger, method_name)
         return method(*args, **kwargs)
 
@@ -181,9 +222,9 @@ def getLogger(name=None):
     If name is None, then logger name is obtained from caller module name.
     """
     if name is None:
-        frame = inspect.stack()[1]
-        module = inspect.getmodule(frame[0])
-        name = module.__name__
+        frame, _, line, *_ = inspect.stack()[1]
+        module = inspect.getmodule(frame)
+        name = f'{module.__name__} {line}'
     try_initialize()
     return logging.getLogger(name)
 
@@ -198,13 +239,15 @@ def setLevel(level):
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
-def inject_logger(name):
-    logger = getLogger(name)
-    globals()["debug"] = logger.debug
-    globals()["info"] = logger.info
-    globals()["warning"] = logger.warning
-    globals()["error"] = logger.error
-    globals()["exception"] = logger.exception
+
+def is_enabled_for(log_level="DEBUG") -> bool:
+    """This chek should be used for improving performance of calling disabled loggers"""
+    rates = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "EXCEPTION": 50}
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    current_level = rates.get(addon.preferences.log_level, 0)
+    given_level = rates.get(log_level, 0)
+    return given_level >= current_level
+
 
 consoleHandler = None
 

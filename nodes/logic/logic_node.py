@@ -22,7 +22,7 @@ from bpy.props import (EnumProperty, FloatProperty, BoolProperty,
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
-                                     numpy_list_match_func, throttle_and_update_node)
+                                     numpy_list_match_func)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 
 
@@ -79,7 +79,6 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'NONE' #'LOGIC'
     sv_icon = 'SV_LOGIC'
 
-    @throttle_and_update_node
     def change_type(self, context):
         signature = func_dict[self.items_][2]
         self.set_inputs(len(signature))
@@ -91,6 +90,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 socket.prop_name = n
                 self.prop_types[i] = False
+        updateNode(self, context)
 
     def set_inputs(self, num_inputs):
         if num_inputs == len(self.inputs):

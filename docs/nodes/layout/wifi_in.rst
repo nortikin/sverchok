@@ -11,7 +11,7 @@ Create an invisible noodle, useful for keeping layout clean for example constant
 Concept
 -------
 A named Wifi Input node can be listened to by any number of Wifi Output nodes. 
-A Wifi Output node needs to be linked to a specific Wifi Input node useing the dropdown list.
+A Wifi Output node needs to be linked to a specific Wifi Input node using the dropdown list.
 
 
 

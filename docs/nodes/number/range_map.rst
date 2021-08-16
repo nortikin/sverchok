@@ -14,7 +14,7 @@ All the values except clamp, may be floats or int.
 +-------------------+-------------------------------+
 | value             | incoming float values         |
 +-------------------+-------------------------------+
-| Old Min           | old minimun value             |
+| Old Min           | old minimum value             |
 +-------------------+-------------------------------+
 | Old Max           | old maximum value             |
 +-------------------+-------------------------------+

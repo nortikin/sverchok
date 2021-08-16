@@ -18,9 +18,9 @@ Parameters
 
 +-----------+------------------+-----------+----------------------------------------------------------------+
 | Param     | Type             | Default   | Description                                                    |
-+===========+==================+===========+================================================================+    
-| Mask      | list of booleans | [1,0]     | Mask can be defined with ListInput node or Formula node        |   
-|           |                  |           | or other as list [n,n1,n2...ni] where n's can be 0 or 1        |  
++===========+==================+===========+================================================================+
+| Mask      | list of booleans | [1,0]     | Mask can be defined with ListInput node or Formula node        |
+|           |                  |           | or other as list [n,n1,n2...ni] where n's can be 0 or 1        |
 |           |                  |           | (False or True)                                                |
 +-----------+------------------+-----------+----------------------------------------------------------------+
 

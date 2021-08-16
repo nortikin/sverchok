@@ -18,7 +18,7 @@ The following algorithm is used:
    * Having greater length;
    * Having bigger curvature value.
 
-   Number of points to be added into each subdivision is calcluated
+   Number of points to be added into each subdivision is calculated
    proportionally to this "subdivision factor".
    These additional points can be distributed either evenly (in terms of
    curve's T parameter), or randomly.

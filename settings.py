@@ -7,8 +7,8 @@ from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
 from sverchok import data_structure
+from sverchok.core import main_tree_handler  # don't remove this should fix #4229 (temp solution)
 from sverchok.core import handlers
-from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.utils.sv_extra_addons import draw_extra_addons
@@ -20,7 +20,7 @@ if bpy.app.version >= (2, 91, 0):
 else:
     PYPATH = bpy.app.binary_path_python
 
-def get_params(settings_and_fallbacks):
+def get_params(prop_names_and_fallbacks, direct=False):
     """
     This function returns an object which you can use the . op on.
     example usage:
@@ -28,22 +28,54 @@ def get_params(settings_and_fallbacks):
         from sverchok.settings import get_params
 
         props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
-        # 20 = props.prop_name_1
-        # 30 = props.prop_name_2
+        # props.prop_name_1    20
+        # props.prop_name_2    30
+
+    example usage using direct=True
+        props = get_params({'prop_name_1': 20, 'prop_name_2': 30}, direct=True)
+        # props[0]   20
+        # props[1]   30 
     """
     from sverchok.utils.context_managers import sv_preferences
 
     props = lambda: None
 
     with sv_preferences() as prefs:
-        for k, v in settings_and_fallbacks.items():
+        for k, v in prop_names_and_fallbacks.items():
             try:
                 value = getattr(prefs, k)
             except:
                 print(f'returning a default for {k}')
                 value = v
             setattr(props, k, value)
+
+    if direct:
+        return [getattr(props, k) for k in prop_names_and_fallbacks.keys()]
+
     return props
+
+def get_param(prop_name, fallback):
+    """
+    for getting a single parameter from sv preferences
+    example usage:
+
+        from sverchok.settings import get_params
+        prop = get_param("render_scale", 1.0)
+        # prop = 1.0 if settings wasn't available, or else the current value
+    """
+    from sverchok.utils.context_managers import sv_preferences
+    with sv_preferences() as prefs:
+        try:
+            value = getattr(prefs, prop_name)
+        except:
+            print(f'returning a default for {prop_name}')
+            value = fallback
+        return value
+
+def apply_theme_if_necessary():
+    if get_param("apply_theme_on_open", False):
+        color_def.apply_theme()    
+        print("applied theme.")
 
 # getDpiFactor and getDpi are lifted from Animation Nodes :)
 
@@ -64,10 +96,13 @@ class SvExPipInstall(bpy.types.Operator):
     package : bpy.props.StringProperty(name = "Package names")
 
     def execute(self, context):
-        first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
+        # https://github.com/robertguetzkow/blender-python-examples/tree/master/add_ons/install_dependencies
+        environ_copy = dict(os.environ)
+        environ_copy["PYTHONNOUSERSITE"] = "1"  # is set to disallow pip from checking the user site-packages
         cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
-        ok = subprocess.call(cmd) == 0
+        ok = subprocess.call(cmd, env=environ_copy) == 0
         if ok:
+            first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
             if first_install:
                 self.report({'INFO'}, "%s installed successfully. Please restart Blender to see effect." % self.package)
             else:
@@ -130,10 +165,10 @@ class SvSetFreeCadPath(bpy.types.Operator):
                 site_packages = p
                 break
 
-        file_path= open(os.path.join(site_packages, "freecad_path.pth"), "w+")
-
+        file_path = open(os.path.join(site_packages, "freecad_path.pth"), "w+")
         file_path.write(self.FreeCAD_folder)
         file_path.close()
+
         self.report({'INFO'}, "FreeCad path saved successfully. Please restart Blender to see effect.")
         return {'FINISHED'}
 
@@ -143,9 +178,6 @@ class SverchokPreferences(AddonPreferences):
 
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
-
-    def update_heat_map(self, context):
-        data_structure.heat_map_state(self.heat_map)
 
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
@@ -165,8 +197,8 @@ class SverchokPreferences(AddonPreferences):
 
     #  debugish...
     show_debug: BoolProperty(
-        name="Print update timings",
-        description="Print update timings in console",
+        name="Debug mode",  # todo to remove, there is logging level for this
+        description="Deprecated",
         default=False, subtype='NONE',
         update=update_debug_mode)
 
@@ -174,30 +206,13 @@ class SverchokPreferences(AddonPreferences):
         name="No data", description='When a node can not get data',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
+    )
 
     exception_color: FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
-
-    #  heat map settings
-    heat_map: BoolProperty(
-        name="Heat map",
-        description="Color nodes according to time",
-        default=False, subtype='NONE',
-        update=update_heat_map)
-
-    heat_map_hot: FloatVectorProperty(
-        name="Heat map hot", description='',
-        size=3, min=0.0, max=1.0,
-        default=(.8, 0, 0), subtype='COLOR')
-
-    heat_map_cold: FloatVectorProperty(
-        name="Heat map cold", description='',
-        size=3, min=0.0, max=1.0,
-        default=(1, 1, 1), subtype='COLOR')
+    )
 
     # Profiling settings
     profiling_sections = [
@@ -225,11 +240,11 @@ class SverchokPreferences(AddonPreferences):
         default="default_theme")
 
     auto_apply_theme: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     apply_theme_on_open: BoolProperty(
-        name="Apply theme", description="Apply theme automaticlly",
+        name="Apply theme", description="Apply theme automatically",
         default=False)
 
     color_viz: FloatVectorProperty(
@@ -321,7 +336,7 @@ class SverchokPreferences(AddonPreferences):
 
     show_input_menus : EnumProperty(
             name = "Show input menus",
-            description = "Wheter to display buttons near node socket inputs to automatically create parameter nodes",
+            description = "Whether to display buttons near node socket inputs to automatically create parameter nodes",
             items = input_links_options,
             default = 'QUICKLINK'
         )
@@ -346,11 +361,8 @@ class SverchokPreferences(AddonPreferences):
         description="Auto update angle values when angle units are changed to preserve the angle")
 
     def set_nodeview_render_params(self, context):
-        # i think these are both the same..
-        self.render_scale = get_dpi_factor()
+        self.render_scale = get_dpi_factor()   # this was intended as a general draw scale multiplier, not location but size.
         self.render_location_xy_multiplier = get_dpi_factor()
-        # print(f'set render_scale to: {self.render_scale}')
-        # print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
 
     ##
 
@@ -413,9 +425,6 @@ class SverchokPreferences(AddonPreferences):
         col = layout.row().column()
         col_split = col.split(factor=0.5)
         col1 = col_split.column()
-        col1.label(text="UI:")
-        col1.prop(self, "show_icons")
-        col1.prop(self, "over_sized_buttons")
 
         toolbar_box = col1.box()
         toolbar_box.label(text="Node toolbars")
@@ -425,7 +434,6 @@ class SverchokPreferences(AddonPreferences):
             if self.node_panels_icons_only:
                 toolbar_box.prop(self, "node_panels_columns")
 
-        col1.prop(self, 'show_input_menus')
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
 
@@ -444,7 +452,6 @@ class SverchokPreferences(AddonPreferences):
         col2box = col2.box()
         col2box.label(text="Debug:")
         col2box.prop(self, "show_debug")
-        col2box.prop(self, "heat_map")
         col2box.prop(self, "developer_mode")
 
         log_box = col2.box()
@@ -472,10 +479,7 @@ class SverchokPreferences(AddonPreferences):
         box_sub1_col = box_sub1.column(align=True)
 
         box_sub1_col.label(text='Render Scale & Location')
-        # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-        # box_sub1_col.prop(self, 'render_scale', text='scale')
         box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
-        box_sub1_col.label(text=f'render_scale : {self.render_scale}')
 
         box_sub1_col.label(text='Stethoscope')
         box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
@@ -521,11 +525,6 @@ class SverchokPreferences(AddonPreferences):
         row_x1.prop(self, "no_data_color", text='')
 
         col_x2 = split_extra_colors.split().column()
-        col_x2.label(text="Heat map colors: ( hot / cold )")
-        row_x2 = col_x2.row()
-        row_x2.active = self.heat_map
-        row_x2.prop(self, "heat_map_hot", text='')
-        row_x2.prop(self, "heat_map_cold", text='')
 
         col3 = right_split.column()
         col3.label(text='Theme:')
@@ -576,6 +575,7 @@ dependencies, or install only some of them.""")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
         draw_message(box, "cython")
+        draw_message(box, "numba")
 
         draw_freecad_ops()
 

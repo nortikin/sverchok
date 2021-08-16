@@ -49,7 +49,7 @@
 
 ## Curves @ Primitives
     SvExLineCurveNode
-    SvExCircleNode
+    SvCircleCurveMk2Node
     SvEllipseCurveNode
     SvRoundedRectangleNode
     SvArc3ptCurveNode
@@ -68,6 +68,10 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    ---
+    SvCurveInsertKnotNode
+    SvCurveRemoveKnotNode
+    SvCurveRemoveExcessiveKnotsNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
@@ -102,6 +106,7 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
+    SvIntersectNurbsCurvesNode
     SvExNearestPointOnCurveNode
     SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode
@@ -132,9 +137,14 @@
     SvNurbsLoftNode
     SvNurbsSweepNode
     SvNurbsBirailNode
+    SvGordonSurfaceNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
+    ---
+    SvSurfaceInsertKnotNode
+    SvSurfaceRemoveKnotNode
+    SvSurfaceRemoveExcessiveKnotsNode
 
 ## Surfaces
     SvExPlaneSurfaceNode
@@ -147,6 +157,7 @@
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
+    SvBendCurveSurfaceNode
     SvExExtrudeCurveVectorNode
     SvExExtrudeCurveCurveSurfaceNode
     SvExExtrudeCurvePointNode
@@ -464,7 +475,7 @@
 
 ## CAD
     SvBevelNode
-    SvIntersectEdgesNodeMK2
+    SvIntersectEdgesNodeMK3
     SvOffsetNode
     SvInsetSpecialMk2
     SvInsetFaces
@@ -670,11 +681,12 @@
     SvFormulaNodeMk5
     SvFormulaInterpolateNode
     SvExecNodeMod
-    SvScriptNodeLite
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvTopologySimple
+    ---
+    SvScriptNodeLite
 
 ## Network
     UdpClientNode

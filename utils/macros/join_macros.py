@@ -30,8 +30,6 @@ def join_macros(context, operator, term, nodes, links):
         return
 
     tree = nodes[0].id_data
-    previous_state = tree.sv_process
-    tree.sv_process = False
 
     framed = are_nodes_in_same_frame(selected_nodes)
 
@@ -78,9 +76,6 @@ def join_macros(context, operator, term, nodes, links):
             if len(socket_indices) > 2:
                 links.new(join_nodes[2].outputs[0], viewer_node.inputs[socket_indices[2]])
 
-        tree.sv_process = previous_state
-        tree.update()
         operator.report({'INFO'}, 'Nodes Joined')
     except Exception as err:
-        tree.sv_process = previous_state
         operator.report({'ERROR'}, f'Nodes not joined, error:\n {err}')

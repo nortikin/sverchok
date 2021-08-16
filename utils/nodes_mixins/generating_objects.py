@@ -394,10 +394,9 @@ class SvViewerNode(BlenderObjects):
         Regenerate object names, and clean data
         Use super().sv_copy(other) to override this method
         """
-        with self.sv_throttle_tree_update():
-            self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
-            # object and mesh lists should be clear other wise two nodes would have links to the same objects
-            self.object_data.clear()
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        # object and mesh lists should be clear other wise two nodes would have links to the same objects
+        self.object_data.clear()
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""

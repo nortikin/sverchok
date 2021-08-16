@@ -43,7 +43,7 @@ def parse_to_path(p):
     ops are:
     name - global name to use
     attr - attribute to get using getattr(obj,attr)
-    key - key for accesing via obj[key]
+    key - key for accessing via obj[key]
     '''
 
     if isinstance(p, ast.Attribute):
@@ -192,8 +192,7 @@ class SvPropNodeMixin():
             return
 
         self.bad_prop = False
-        with self.sv_throttle_tree_update():
-            self.execute_inside_throttle()
+        self.execute_inside_throttle()
         updateNode(self, context)
     
     def type_assesment(self):
@@ -229,7 +228,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
-    def execute_inside_throttle(self):    
+    def execute_inside_throttle(self):  # the name of the method does not have any meaning now
         s_type = self.type_assesment()
 
         outputs = self.outputs
@@ -297,9 +296,6 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
-
-        #with self.sv_throttle_tree_update():
-            # changes here should not reflect back into the nodetree?
 
         try:
             if isinstance(obj, (int, float, bpy_prop_array)):

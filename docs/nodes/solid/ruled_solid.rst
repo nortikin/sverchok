@@ -1,5 +1,5 @@
 Solid from two Faces
-================
+====================
 
 Dependencies
 ------------
@@ -30,7 +30,7 @@ valid, it will try to automatically fix it.  If this automatic fix process
 fails, the node will raise an exception (become red) and processing will stop.
 
 **NOTE**: some operations with Solid objects which are not "valid" are known to
-cause crashes. So it is strongly recomended to have "Validate" parameter turned
+cause crashes. So it is strongly recommended to have "Validate" parameter turned
 on.
 
 Solid Face object can be created with nodes from "Make Face" submenu (such as
@@ -56,7 +56,7 @@ This node has the following parameters:
   second Face, correspondingly (invert it's normal direction). It can be
   required to build a proper Solid object. Unchecked by default.
 * **Rev. Edges 1**, **Rev. Edges 2**. If checked, the node will reverse the
-  order of edges of first or second Face, correspondingly. It can be requierd
+  order of edges of first or second Face, correspondingly. It can be required
   to build a proper Solid object. Unchecked by default.
 * **Flip Edges 1**, **Flip Edges 2**. If checked, the node will reverse the
   direction of each edge of first or second Face, correspondingly. It can be

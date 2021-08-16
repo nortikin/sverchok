@@ -68,11 +68,11 @@ This node has the following parameters:
   * **Geomdl**. Use the implementation from Geomdl_ library. This is available only when Geomdl library is installed.
   * **SciPy**. Use the implementation from SciPy_ library. This is available only when SciPy library is installed.
 
-  By default, the first available implementaiton is used.
+  By default, the first available implementation is used.
 
 * **Centripetal**. This parameter is available only when **Implementation**
   parameter is set to **Geomdl**. This defines whether the node will use
-  centripetal metric. If not checked, the node will use euclidian metric.
+  centripetal metric. If not checked, the node will use euclidean metric.
   Unchecked by default.
 * **Specify points count**. This parameter is available only when
   **Implementation** parameter is set to **Geomdl**. If checked, then it will
@@ -100,13 +100,13 @@ This node has the following parameters:
   available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance)
+   * Centripetal (square root of Euclidean distance)
    * X, Y, Z axis - use distance along one of coordinate axis, ignore others.
 
-   The default value is Euclidian.
+   The default value is Euclidean.
 
 * **Specify smoothing**. This parameter is available only when
   **Implementation** parameter is set to **SciPy**. If checked, the node will

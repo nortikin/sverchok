@@ -39,7 +39,7 @@ from sverchok.utils.extra_categories import external_node_docs
 
 
 def displaying_sverchok_nodes(context):
-    return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+    return context.space_data.tree_type in {'SverchCustomTreeType', }
 
 def node_show_branch(self, context):
     if not displaying_sverchok_nodes(context):
@@ -148,7 +148,7 @@ class SvViewHelpForNode(bpy.types.Operator):
         # valid doc link!
         help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
-            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
+            destination = 'http://nortikin.github.io/sverchok/docs/nodes/' + help_url + '.html'
         elif self.kind == 'offline':
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
@@ -277,7 +277,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
             save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as node preset", icon='SOLO_ON')
             save.id_tree = ntree.name
             save.category = node.bl_idname
-            save.save_defaults = True
+
 
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
@@ -306,7 +306,7 @@ def idname_draw(self, context):
         save = save_row.operator(SvSaveSelected.bl_idname, text="Save Node Preset", icon='SOLO_ON')
         save.id_tree = ntree.name
         save.category = node.bl_idname
-        save.save_defaults = True
+        save.is_node_preset = True
         selected_nodes = [node for node in ntree.nodes if node.select]
         save_row.enabled = len(selected_nodes) == 1
 

@@ -2,11 +2,11 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty
 
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvOffsetCurve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR
 
@@ -46,12 +46,12 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             (SvOffsetCurve.BY_LENGTH, "Curve length", "Use offset curve value according to curve's length", 1)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Offset'].hide_safe = not (self.offset_type == 'CONST' and (self.algorithm == NORMAL_DIR or self.mode != 'C'))
         self.inputs['Vector'].hide_safe = not (self.algorithm == NORMAL_DIR or self.mode == 'C')
         self.inputs['Resolution'].hide_safe = not (self.algorithm in {ZERO, TRACK_NORMAL} or (self.offset_type == 'CURVE' and self.offset_curve_type == SvOffsetCurve.BY_LENGTH))
         self.inputs['OffsetCurve'].hide_safe = not (self.offset_type == 'CURVE')
+        updateNode(self, context)
 
     mode : EnumProperty(
             name = "Direction",
@@ -84,7 +84,7 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
 
     offset_curve_type : EnumProperty(
             name = "Offset curve usage",
-            description = "How offset curve is evaluated along the curve being offseted",
+            description = "How offset curve is evaluated along the curve being offsetted",
             items = offset_curve_types,
             default = SvOffsetCurve.BY_PARAMETER,
             update = update_sockets)

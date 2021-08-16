@@ -3,11 +3,10 @@ import random
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, BoolProperty, IntProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
@@ -45,10 +44,10 @@ class SvFieldRandomProbeNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
+        updateNode(self, context)
 
     proportional : BoolProperty(
             name = "Proportional",

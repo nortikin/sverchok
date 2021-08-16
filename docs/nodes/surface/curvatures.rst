@@ -12,7 +12,7 @@ This node calculates several types of information about surface curvature:
 * Mean curvature
 * Matrix based on principal curvature directions and surface normal.
 
-You can refer to Wikipedia_ for more detailed information about these terms.
+You can refer to Wkikpedia_ for more detailed information about these terms.
 
 .. _Wkikpedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 
@@ -94,7 +94,7 @@ This node has the following outputs:
   value.
 * **Dir1**. The first principal curvature direction - one which corresponds to **Curvature1**.
 * **Dir2**. The second principal curvature direction - one which corresponds to **Curvature2**.
-* **Gauss*. Gauss curvature value.
+* **Gauss**. Gauss curvature value.
 * **Mean**. Mean curvature value.
 * **Matrix**. A matrix composed from principal curvature directions. It's X
   axis is looking along **Dir1**, Y axis is looking along **Dir2** and Z axis

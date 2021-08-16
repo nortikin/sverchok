@@ -3,12 +3,27 @@ Get Objects Data
 
 Functionality
 -------------
-Takes object from scene to Sverchok node tree. Support meshed, empties, curves, NURBS, but all converting to mesh. Empties has only matrix data. Than sorting by name. If you write group of objects to group field, all object in signed group will be imported. It understands also vertes groups, when activated, showing additional socket representing indexes, that you can use to sort or mask edges/polygons. or do any you want with vertex groups. All groups cached in one list, but without weight.
+Get objects from the Blender ``Scene`` and output them into Sverchok's node tree. This node supports most object types. All are converted to a Sverchok representation of ``Mesh`` where possible. 
+
+A few points worth stating explicitely.
+
+- Empties, Cameras, and Lamps produce only matrix data. 
+- The order of the selected Objects can be sorted by name. 
+- It supports Object collections.
+- It understands also ``vertex groups``, when activated, showing additional socket representing indices, that you can use for further processing. All groups are cached in one list _without_weights_.
+- When you ``Get`` objects from the Scene that have modifiers on them, you can import the final mesh by enableing the ``Post`` button.
+- Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)
+- The Matrix socket lets you ignore or acquire the Object's ``World Matrix``, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitely transform the vertex data.
+
+limitations:
+
+- When you use the ``Post`` mode Sverchok/Blender expect Objects to be visible. If you want to "hide" the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.
+- We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh. 
 
 Inputs
 ------
 
-None
+Objects Socket
 
 
 Parameters
@@ -21,7 +36,7 @@ Parameters
 +-----------------+---------------+--------------------------------------------------------------------------+
 | **sorting**     | Bool, toggle  | Sorting inserted objects by name                                         |
 +-----------------+---------------+--------------------------------------------------------------------------+
-| **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applyed to mesh before importing |
+| **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applied to mesh before importing |
 +-----------------+---------------+--------------------------------------------------------------------------+
 | **vert groups** | Bool, toggle  | Import all vertex groups that in object's data. just import indexes      |
 +-----------------+---------------+--------------------------------------------------------------------------+
@@ -48,7 +63,7 @@ Outputs
 | Vertex Normals   | Vertex Normals                                                           |
 +------------------+--------------------------------------------------------------------------+
 | Material Idx     | Material indexes per object face.                                        |
-+-----------------+--------------------------------------------------------------------------+
++------------------+--------------------------------------------------------------------------+
 | Polygons Areas   | Polygons of objects.                                                     |
 +------------------+--------------------------------------------------------------------------+
 | Polygons Centers | Polygons Center of objects.                                              |
@@ -57,13 +72,14 @@ Outputs
 +------------------+--------------------------------------------------------------------------+
 | Matrix           | Matrices of objects                                                      |
 +------------------+--------------------------------------------------------------------------+
-|_Vers_grouped_    | Vertex groups' indices from all vertex groups                            |
+| Vers grouped     | Vertex groups' indices from all vertex groups                            |
 +------------------+--------------------------------------------------------------------------+
 
 It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)
 
 Examples
 --------
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4328096/bd8b274e-3f80-11e4-8582-6b2ae9743431.png
 
-Importing cobe and look to indeces.
+.. image:: https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png
+
+Importing an object with two array modifiers applied and showing indices.

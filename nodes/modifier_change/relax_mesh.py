@@ -9,7 +9,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.relax_mesh import *
 
 class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,9 +34,9 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.5,
         update=updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Factor'].hide_safe = self.algorithm not in {'EDGES', 'FACES'}
+        updateNode(self, context)
 
     algorithms = [
             ('LLOYD', "Lloyd", "Lloyd", 0),

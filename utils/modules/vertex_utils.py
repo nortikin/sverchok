@@ -13,7 +13,7 @@ from sverchok.utils.math import np_normalize_vectors
 def center(verts):
     '''
     verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
-    returns the verts centred arround [0,0,0]
+    returns the verts centered around [0,0,0]
     '''
     verts_out = []
     for vec in verts:
@@ -27,7 +27,7 @@ def center(verts):
 def center_of_many(verts):
     '''
     verts: list as [[vertex, vertex, ...],[vertex,...]], being each vertex [float, float, float].
-    returns the verts centred arround [0,0,0] calculating the mean of all lists
+    returns the verts centered around [0,0,0] calculating the mean of all lists
     '''
     verts_out = []
     verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
@@ -82,7 +82,7 @@ def adjacent_edg_pol_idx(verts, edgs_pols):
 
     return adj_edgs_pols
 '''
-The functions bellow expect:
+The functions below expect:
 vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
 faces: list as [polygon, polygon,..], being each polygon [int, int, ...].

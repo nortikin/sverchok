@@ -3,7 +3,7 @@ Vector
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    attractor
    axis_input_mk2
