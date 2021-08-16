@@ -80,7 +80,7 @@ Let's wrap each number into a separate list (this is what "Graft" option of outp
 
 By enabling "Wrap" at the next level, we put each vertex into a separate list:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511986-c4bf1bac-f8a6-44a9-b187-b532210f89f8.png
+.. image:: https://user-images.githubusercontent.com/9460236/129513146-33f5e2c7-345b-414e-bbf6-561b3dacabd7.png
 
 The next level - put each list of vertices (object) into a separate list:
 
