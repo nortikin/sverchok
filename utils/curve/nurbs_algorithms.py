@@ -411,15 +411,19 @@ def remove_excessive_knots(curve, tolerance=1e-6):
 REFINE_TRIVIAL = 'TRIVIAL'
 REFINE_DISTRIBUTE = 'DISTRIBUTE'
 
-def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
-    degree = curve.get_degree()
+def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None):
+    if refine_max:
+        degree = curve.get_degree()
+        count = degree
+    else:
+        count = 1
 
     if algorithm == REFINE_TRIVIAL:
         t_min, t_max = curve.get_u_bounds()
         ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
         for t in ts:
             try:
-                curve = curve.insert_knot(t, count=degree-1)
+                curve = curve.insert_knot(t, count=count)
             except CantInsertKnotException:
                 break
 
@@ -435,7 +439,7 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
                 ts = solver.solve(ls)
                 for t in ts:
                     try:
-                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                        curve = curve.insert_knot(t, count=count, if_possible=True)
                     except CantInsertKnotException:
                         continue
         else:
@@ -446,7 +450,7 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
                 ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
                 for t in ts:
                     try:
-                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                        curve = curve.insert_knot(t, count=count, if_possible=True)
                     except CantInsertKnotException:
                         continue
 
