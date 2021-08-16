@@ -72,34 +72,33 @@ Examples of Usage
 
 By default, all checkboxes are disabled, so the node does nothing:
 
-.. image:: https://user-images.githubusercontent.com/284644/101237916-558f9b80-36fe-11eb-9240-25c0cf25c0c3.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511959-8e17fe20-ce5e-4127-a88b-bb1dc84b916e.png
 
 Let's wrap each number into a separate list (this is what "Graft" option of output socket menus does as well):
 
-.. image:: https://user-images.githubusercontent.com/284644/101237917-56c0c880-36fe-11eb-8b0f-2caed2f5bcdb.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511970-6767616b-7f4f-4672-85d8-2ecf96cc4111.png
 
 By enabling "Wrap" at the next level, we put each vertex into a separate list:
 
-.. image:: https://user-images.githubusercontent.com/284644/101237918-57595f00-36fe-11eb-9ddf-a7d456f0f985.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511986-c4bf1bac-f8a6-44a9-b187-b532210f89f8.png
 
 The next level - put each list of vertices (object) into a separate list:
 
-.. image:: https://user-images.githubusercontent.com/284644/101237919-57f1f580-36fe-11eb-937c-362b336de9c3.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511986-c4bf1bac-f8a6-44a9-b187-b532210f89f8.png
 
 And the outermost level - put the whole data structure into additional pair of square brackets:
 
-.. image:: https://user-images.githubusercontent.com/284644/101237920-57f1f580-36fe-11eb-9f64-1c06d3831efe.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511989-bf1b69d4-b916-4771-a289-30d0761cf60c.png
 
 By enabling "Flatten" at the deepest available level, we concatenate vertices data into lists of numbers:
 
-.. image:: https://user-images.githubusercontent.com/284644/101237921-588a8c00-36fe-11eb-9dd5-cf30a7701ac7.png
+.. image:: https://user-images.githubusercontent.com/9460236/129511997-5fe4d9bd-ce06-40cc-811e-f41de1ec3378.png
 
 By flattening at the outermost level, we concatenate lists of vertices into a single list of vertices:
 
--- this image is duplicate with above image, should be changed.
-.. image:: https://user-images.githubusercontent.com/284644/101237921-588a8c00-36fe-11eb-9dd5-cf30a7701ac7.png
+.. image:: https://user-images.githubusercontent.com/9460236/129512002-d194d402-d80f-4a4f-a3e6-4afb281fd191.png
 
 If we enable both Flatten flags, we concatenate lists of vertices into lists of numbers, AND we concatenate lists of numbers into a single list of numbers:
 
-.. image:: https://user-images.githubusercontent.com/284644/101238132-f0d54080-36ff-11eb-99aa-d351bfb7f31e.png
+.. image:: https://user-images.githubusercontent.com/9460236/129512012-38d5314a-d799-4fb5-ad50-b6792e2907e4.png
 
