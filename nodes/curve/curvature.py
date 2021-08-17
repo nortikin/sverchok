@@ -6,6 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.utils.curve.core import DEFAULT_TANGENT_DELTA
 
 class SvCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -20,6 +21,17 @@ class SvCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
                 name = "T",
                 default = 0.5,
                 update = updateNode)
+
+        tangent_delta : FloatProperty(
+                name = "Tangent step",
+                description = "Derivatives calculation step; bigger values lead to more smooth results",
+                min = 0.0,
+                precision = 8,
+                default = DEFAULT_TANGENT_DELTA,
+                update = updateNode)
+
+        def draw_buttons_ext(self, context, layout):
+            layout.prop(self, 'tangent_delta')
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curve")

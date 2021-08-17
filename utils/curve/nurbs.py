@@ -659,11 +659,11 @@ class SvGeomdlCurve(SvNurbsCurve):
         vs = self.curve.evaluate_list(list(ts))
         return np.array(vs)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         p, t = operations.tangent(self.curve, t, normalize=False)
         return np.array(t)
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         t_min, t_max = self.get_u_bounds()
         ts[ts < t_min] = t_min
         ts[ts > t_max] = t_max
@@ -672,21 +672,21 @@ class SvGeomdlCurve(SvNurbsCurve):
         #print(f"ts: {ts}, vs: {tangents}")
         return np.array(tangents)
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         p, first, second = self.curve.derivatives(t, order=2)
         return np.array(second)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         return np.vectorize(self.second_derivative, signature='()->(3)')(ts)
 
-    def third_derivative(self, t):
+    def third_derivative(self, t, tangent_delta=None):
         p, first, second, third = self.curve.derivatives(t, order=3)
         return np.array(third)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         return np.vectorize(self.third_derivative, signature='()->(3)')(ts)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         def derivatives(t):
             result = self.curve.derivatives(t, order=n)
             return np.array(result[1:])
@@ -824,10 +824,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 #             print("Denom:", denominator)
         return nurbs_divide(numerator, denominator)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         # curve = numerator / denominator
         # ergo:
         # numerator = curve * denominator
@@ -841,10 +841,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         curve1 = (numerator1 - curve*denominator1) / denominator
         return curve1
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         # numerator'' = (curve * denominator)'' =
         #  = curve'' * denominator + 2 * curve' * denominator' + curve * denominator''
         numerator, denominator = self.fraction(0, ts)
@@ -855,7 +855,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
         return curve2
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         # numerator''' = (curve * denominator)''' = 
         #  = curve''' * denominator + 3 * curve'' * denominator' + 3 * curve' * denominator'' + denominator'''
         numerator, denominator = self.fraction(0, ts)
@@ -869,7 +869,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
         return curve3
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
         if n >= 1:
             numerator, denominator = self.fraction(0, ts)

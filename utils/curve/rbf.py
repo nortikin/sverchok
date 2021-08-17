@@ -29,13 +29,15 @@ class SvRbfCurve(SvCurve):
         vs = self.rbf(ts)
         return vs
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         point = self.rbf(t)
-        point_h = self.rbf(t+self.tangent_delta)
-        return (point_h - point) / self.tangent_delta
+        point_h = self.rbf(t+h)
+        return (point_h - point) / h
     
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         points = self.rbf(ts)
-        points_h = self.rbf(ts+self.tangent_delta)
-        return (points_h - points) / self.tangent_delta
+        points_h = self.rbf(ts+h)
+        return (points_h - points) / h
 
