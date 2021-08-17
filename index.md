@@ -670,13 +670,14 @@
     SvExJsonToNurbsNode
     SvImportSolidNode
     SvExportSolidNode
+    SvReceiveFromSorcarNode
+    SvExportGcodeNode
     SvReadFCStdNode
     SvWriteFCStdNode
     SvReadFCStdSketchNode
     SvFCStdSpreadsheetNode
-    SvReceiveFromSorcarNode
-    SvExportGcodeNode
-
+    SvApproxSubdtoNurbsNode
+    
 ## Script
     SvFormulaNodeMk5
     SvFormulaInterpolateNode
