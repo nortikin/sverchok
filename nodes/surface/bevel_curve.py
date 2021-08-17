@@ -167,7 +167,10 @@ class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             profile_start = profile.evaluate(profile_u_min)
             profile_start[orient_axis] = 0.0
             radius = np.linalg.norm(profile_start)
-            profile_degree = profile.get_degree()
+            if self.curve_mode != 'GENERIC':
+                profile_degree = profile.get_degree()
+            else:
+                profile_degree = 2
         else:
             radius = 1.0
             profile_degree = 2

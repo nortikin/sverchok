@@ -411,15 +411,19 @@ def remove_excessive_knots(curve, tolerance=1e-6):
 REFINE_TRIVIAL = 'TRIVIAL'
 REFINE_DISTRIBUTE = 'DISTRIBUTE'
 
-def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
-    degree = curve.get_degree()
+def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None):
+    if refine_max:
+        degree = curve.get_degree()
+        inserts_count = degree
+    else:
+        inserts_count = 1
 
     if algorithm == REFINE_TRIVIAL:
         t_min, t_max = curve.get_u_bounds()
         ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
         for t in ts:
             try:
-                curve = curve.insert_knot(t, count=degree-1)
+                curve = curve.insert_knot(t, count=inserts_count)
             except CantInsertKnotException:
                 break
 
@@ -429,13 +433,14 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
             length_params = solver.calc_length_params(existing_knots)
             sizes = length_params[1:] - length_params[:-1]
 
+            #print(f"K: {existing_knots} => Ls {length_params} => Sz {sizes}")
             counts = distribute_int(samples, sizes)
             for l1, l2, count in zip(length_params[1:], length_params[:-1], counts):
                 ls = np.linspace(l1, l2, num=count+2, endpoint=True)[1:-1]
                 ts = solver.solve(ls)
                 for t in ts:
                     try:
-                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
                     except CantInsertKnotException:
                         continue
         else:
@@ -446,7 +451,7 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, solver=None):
                 ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
                 for t in ts:
                     try:
-                        curve = curve.insert_knot(t, count=degree, if_possible=True)
+                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
                     except CantInsertKnotException:
                         continue
 
