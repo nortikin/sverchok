@@ -102,7 +102,7 @@ def ApproxSubdToNurbs(Object):
 
     obj = Object
 
-    if obj.modifiers[0].levels <= 1:
+    if obj.modifiers[0].levels == 0:
         return []
     else:
         obj.modifiers[0].levels -= 1 
