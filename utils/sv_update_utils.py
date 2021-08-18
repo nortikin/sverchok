@@ -175,6 +175,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
         try:
             branch_name = dload_archive_name or self.master_branch_name
             branch_origin = dload_archive_path or self.archive_link
+            
+            print(f"branch_name: {branch_name}")
+            print(f"branch_origin: {branch_origin}")
+
             zipname = '{0}.zip'.format(branch_name)
             url = branch_origin + zipname
 
