@@ -35,6 +35,8 @@ class UnsupportedCurveTypeException(TypeError):
 #                #
 ##################
 
+DEFAULT_TANGENT_DELTA = 0.001
+
 class SvCurve(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -48,6 +50,16 @@ class SvCurve(object):
 
     def evaluate_array(self, ts):
         raise Exception("not implemented!")
+
+    def get_tangent_delta(self, tangent_delta=None):
+        if tangent_delta is None:
+            if hasattr(self, 'tangent_delta'):
+                h = self.tangent_delta
+            else:
+                h = DEFAULT_TANGENT_DELTA
+        else:
+            h = DEFAULT_TANGENT_DELTA
+        return h
 
     def calc_length(self, t_min, t_max, resolution = 50):
         ts = np.linspace(t_min, t_max, num=resolution)
@@ -80,43 +92,42 @@ class SvCurve(object):
         tangents = np.stack((tangents_x, tangents_y, tangents_z)).T
         return tangents
 
-    def second_derivative(self, t):
-        if hasattr(self, 'tangent_delta'):
-            h = self.tangent_delta
-        else:
-            h = 0.001
+    def second_derivative(self, t, tangent_delta = None):
+        h = self.get_tangent_delta(tangent_delta)
+
         v0 = self.evaluate(t-h)
         v1 = self.evaluate(t)
         v2 = self.evaluate(t+h)
         return (v2 - 2*v1 + v0) / (h * h)
 
-    def second_derivative_array(self, ts):
-        h = 0.001
+    def second_derivative_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         v0s = self.evaluate_array(ts-h)
         v1s = self.evaluate_array(ts)
         v2s = self.evaluate_array(ts+h)
         return (v2s - 2*v1s + v0s) / (h * h)
 
-    def third_derivative(self, t):
-        return self.third_derivative_array(np.array([t]))[0]
+    def third_derivative(self, t, tangent_delta = None):
+        return self.third_derivative_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def third_derivative_array(self, ts):
-        h = 0.001
+    def third_derivative_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         v0s = self.evaluate_array(ts)
         v1s = self.evaluate_array(ts+h)
         v2s = self.evaluate_array(ts+2*h)
         v3s = self.evaluate_array(ts+3*h)
         return (- v0s + 3*v1s - 3*v2s + v3s) / (h * h * h)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
         result = []
         N = len(ts)
         t_min, t_max = self.get_u_bounds()
         if n >= 1:
-            first = self.tangent_array(ts)
+            first = self.tangent_array(ts, tangent_delta=h)
             result.append(first)
 
-        h = 0.001
         if n >= 2:
             low = ts < t_min + h
             high = ts > t_max - h
@@ -154,25 +165,31 @@ class SvCurve(object):
 
         return result
 
-    def main_normal(self, t, normalize=True):
-        tangent = self.tangent(t)
-        binormal = self.binormal(t, normalize)
+    def main_normal(self, t, normalize=True, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangent = self.tangent(t, tangent_delta=h)
+        binormal = self.binormal(t, normalize, tangent_delta=h)
         v = np.cross(binormal, tangent)
         if normalize:
             v = v / np.linalg.norm(v)
         return v
 
-    def binormal(self, t, normalize=True):
-        tangent = self.tangent(t)
-        second = self.second_derivative(t)
+    def binormal(self, t, normalize=True, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangent = self.tangent(t, tangent_delta=h)
+        second = self.second_derivative(t, tangent_delta=h)
         v = np.cross(tangent, second)
         if normalize:
             v = v / np.linalg.norm(v)
         return v
 
-    def main_normal_array(self, ts, normalize=True):
-        tangents = self.tangent_array(ts)
-        binormals = self.binormal_array(ts, normalize)
+    def main_normal_array(self, ts, normalize=True, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangents = self.tangent_array(ts, tangent_delta=h)
+        binormals = self.binormal_array(ts, normalize, tangent_delta=h)
         v = np.cross(binormals, tangents)
         if normalize:
             norms = np.linalg.norm(v, axis=1, keepdims=True)
@@ -180,8 +197,10 @@ class SvCurve(object):
             v[nonzero] = v[nonzero] / norms[nonzero][:,0][np.newaxis].T
         return v
 
-    def binormal_array(self, ts, normalize=True):
-        tangents, seconds = self.derivatives_array(2, ts)
+    def binormal_array(self, ts, normalize=True, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
         v = np.cross(tangents, seconds)
         if normalize:
             norms = np.linalg.norm(v, axis=1, keepdims=True)
@@ -189,8 +208,10 @@ class SvCurve(object):
             v[nonzero] = v[nonzero] / norms[nonzero][:,0][np.newaxis].T
         return v
 
-    def tangent_normal_binormal_array(self, ts, normalize=True):
-        tangents, seconds = self.derivatives_array(2, ts)
+    def tangent_normal_binormal_array(self, ts, normalize=True, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
         binormals = np.cross(tangents, seconds)
         if normalize:
             norms = np.linalg.norm(binormals, axis=1, keepdims=True)
@@ -203,12 +224,14 @@ class SvCurve(object):
             normals[nonzero] = normals[nonzero] / norms[nonzero][:,0][np.newaxis].T
         return tangents, normals, binormals
 
-    def arbitrary_frame_array(self, ts):
+    def arbitrary_frame_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
         normals = []
         binormals = []
 
         points = self.evaluate_array(ts)
-        tangents = self.tangent_array(ts)
+        tangents = self.tangent_array(ts, tangent_delta=h)
         tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
 
         for i, t in enumerate(ts):
@@ -227,9 +250,10 @@ class SvCurve(object):
         matrices_np = np.linalg.inv(matrices_np)
         return matrices_np, normals, binormals
 
-    def frame_by_plane_array(self, ts, plane_normal):
+    def frame_by_plane_array(self, ts, plane_normal, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         n = len(ts)
-        tangents = self.tangent_array(ts)
+        tangents = self.tangent_array(ts, tangent_delta=h)
         tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
         plane_normals = np.tile(plane_normal[np.newaxis].T, n).T
         normals = np.cross(tangents, plane_normals)
@@ -245,7 +269,7 @@ class SvCurve(object):
     ASIS = 'asis'
     RETURN_NONE = 'none'
 
-    def frame_array(self, ts, on_zero_curvature=ASIS):
+    def frame_array(self, ts, on_zero_curvature=ASIS, tangent_delta=None):
         """
         input:
             * ts - np.array of shape (n,)
@@ -261,7 +285,8 @@ class SvCurve(object):
             * normals: np.array of shape (n, 3)
             * binormals: np.array of shape (n, 3)
         """
-        tangents, normals, binormals = self.tangent_normal_binormal_array(ts)
+        h = self.get_tangent_delta(tangent_delta)
+        tangents, normals, binormals = self.tangent_normal_binormal_array(ts, tangent_delta=h)
 
         if on_zero_curvature != SvCurve.ASIS:
             zero_normal = np.linalg.norm(normals, axis=1) < 1e-6
@@ -284,7 +309,7 @@ class SvCurve(object):
                     error("M[%s] (t = %s):\n%s", i, ts[i], m)
             raise e
 
-    def zero_torsion_frame_array(self, ts):
+    def zero_torsion_frame_array(self, ts, tangent_delta=None):
         """
         input: ts - np.array of shape (n,)
         output: tuple:
@@ -294,8 +319,9 @@ class SvCurve(object):
         if not hasattr(self, '_torsion_integral'):
             raise Exception("pre_calc_torsion_integral() has to be called first")
 
+        h = self.get_tangent_delta(tangent_delta)
         vectors = self.evaluate_array(ts)
-        matrices_np, normals, binormals = self.frame_array(ts)
+        matrices_np, normals, binormals = self.frame_array(ts, tangent_delta=h)
         integral = self.torsion_integral(ts)
         new_matrices = []
         for matrix_np, point, angle in zip(matrices_np, vectors, integral):
@@ -307,15 +333,18 @@ class SvCurve(object):
 
         return integral, new_matrices
 
-    def curvature_array(self, ts):
-        tangents, seconds = self.derivatives_array(2, ts)
+    def curvature_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
         numerator = np.linalg.norm(np.cross(tangents, seconds), axis=1)
         tangents_norm = np.linalg.norm(tangents, axis=1)
         denominator = tangents_norm * tangents_norm * tangents_norm
         return numerator / denominator
 
-    def torsion_array(self, ts):
-        tangents, seconds, thirds = self.derivatives_array(3, ts)
+    def torsion_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+
+        tangents, seconds, thirds = self.derivatives_array(3, ts, tangent_delta=h)
         seconds_thirds = np.cross(seconds, thirds)
         numerator = (tangents * seconds_thirds).sum(axis=1)
         #numerator = np.apply_along_axis(lambda tangent: tangent.dot(seconds_thirds), 1, tangents)
@@ -323,14 +352,15 @@ class SvCurve(object):
         denominator = np.linalg.norm(first_second, axis=1)
         return numerator / (denominator * denominator)
 
-    def pre_calc_torsion_integral(self, resolution):
+    def pre_calc_torsion_integral(self, resolution, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         t_min, t_max = self.get_u_bounds()
         ts = np.linspace(t_min, t_max, resolution)
         vectors = self.evaluate_array(ts)
         dvs = vectors[1:] - vectors[:-1]
         lengths = np.linalg.norm(dvs, axis=1)
         xs = np.insert(np.cumsum(lengths), 0, 0)
-        ys = self.torsion_array(ts)
+        ys = self.torsion_array(ts, tangent_delta=h)
         self._torsion_integral = TrapezoidIntegral(ts, xs, ys)
         self._torsion_integral.calc()
 
@@ -486,30 +516,30 @@ class SvFlipCurve(SvCurve):
         ts = M - ts + m
         return self.curve.evaluate_array(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         t = M - t + m
-        return -self.curve.tangent(t)
+        return -self.curve.tangent(t, tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return - self.curve.tangent_array(ts)
+        return - self.curve.tangent_array(ts, tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_detla=None):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return self.curve.second_derivative_array(ts)
+        return self.curve.second_derivative_array(ts, tangnet_delta=tangent_delta)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return - self.curve.third_derivative_array(ts)
+        return - self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        derivs = self.curve.derivatives_array(n, ts)
+        derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
         array = []
         sign = -1
         for deriv in derivs:
@@ -548,20 +578,20 @@ class SvReparametrizedCurve(SvCurve):
     def evaluate_array(self, ts):
         return self.curve.evaluate_array(self.map_u(ts))
 
-    def tangent(self, t):
-        return self.scale * self.curve.tangent(self.map_u(t))
+    def tangent(self, t, tangent_delta=None):
+        return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts):
-        return self.scale * self.curve.tangent_array(self.map_u(ts))
+    def tangent_array(self, ts, tangent_delta=None):
+        return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts):
-        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts))
+    def second_derivative_array(self, ts, tangent_delta=None):
+        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts):
-        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts))
+    def third_derivative_array(self, ts, tangent_delta=None):
+        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def derivatives_array(self, n, ts):
-        derivs = self.curve.derivatives_array(n, ts)
+    def derivatives_array(self, n, ts, tangent_delta=None):
+        derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
         k = self.scale
         array = []
         for deriv in derivs:
@@ -591,30 +621,30 @@ class SvReparametrizeCurve(SvCurve):
         ts = m + ts*(M-m)
         return self.curve.evaluate_array(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         t = m + t*(M-m)
         return -self.curve.tangent(t)
         
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = m + ts*(M-m)
-        return self.curve.tangent_array(ts)
+        return self.curve.tangent_array(ts, tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = m + ts*(M-m)
-        return self.curve.second_derivative_array(ts)
+        return self.curve.second_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = m + ts*(M-m)
-        return self.curve.third_derivative_array(ts)
+        return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def derivatives_array(self, ts):
+    def derivatives_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = m + ts*(M-m)
-        return self.curve.derivatives_array(ts)
+        return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)
 
 class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
@@ -654,35 +684,35 @@ class SvCurveSegment(SvCurve):
             ts = (M - m)*ts + m
         return self.curve.evaluate_array(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             t = (M - m)*t + m
-        return self.curve.tangent(t)
+        return self.curve.tangent(t, tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             ts = (M - m)*ts + m
-        return self.curve.tangent_array(ts)
+        return self.curve.tangent_array(ts, tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             ts = (M - m)*ts + m
-        return self.curve.second_derivative_array(ts)
+        return self.curve.second_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             ts = (M - m)*ts + m
-        return self.curve.third_derivative_array(ts)
+        return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def derivatives_array(self, ts):
+    def derivatives_array(self, ts, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             ts = (M - m)*ts + m
-        return self.curve.derivatives_array(ts)
+        return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)
 
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"

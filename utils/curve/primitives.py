@@ -47,12 +47,12 @@ class SvLine(SvCurve):
         ts = ts[np.newaxis].T
         return self.point + ts * self.direction
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         tg = self.direction
         n = np.linalg.norm(tg)
         return tg / n
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         tg = self.direction
         n = np.linalg.norm(tg)
         tangent = tg / n
@@ -258,13 +258,13 @@ class SvCircle(SvCurve):
         #return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
         return self.center + rotate_radius(self.vectorx, self.normal, ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         x = - self.radius * sin(t)
         y = self.radius * cos(t)
         z = 0
         return self.matrix @ np.array([x, y, z])
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         xs = - self.radius * np.sin(ts)
         ys = self.radius * np.cos(ts)
         zs = np.zeros_like(xs)
@@ -527,10 +527,10 @@ class SvEllipse(SvCurve):
         center = self.get_center()
         return center + vs
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         xs = - self.a * np.sin(ts)
         ys = self.b * np.cos(ts)
         zs = np.zeros_like(xs)
@@ -538,10 +538,10 @@ class SvEllipse(SvCurve):
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
         return vs
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         xs = - self.a * np.cos(ts)
         ys = - self.b * np.sin(ts)
         zs = np.zeros_like(xs)

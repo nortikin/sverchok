@@ -51,7 +51,7 @@ class SvFourierCurve(SvCurve):
                 
         return result
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         result = np.array([0, 0, 0])
         o = self.omega
         for i, coeff in enumerate(self.coeffs):
@@ -62,7 +62,7 @@ class SvFourierCurve(SvCurve):
                 result += (j+1)*o * coeff * cos((j+1)*o*t)
         return result
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         n = len(ts)
         result = np.zeros((n, 3))
         o = self.omega
@@ -76,10 +76,10 @@ class SvFourierCurve(SvCurve):
                 result = result + (j+1)*o* coeff*sint
         return result
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         n = len(ts)
         result = np.zeros((n, 3))
         o = self.omega

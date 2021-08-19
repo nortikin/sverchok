@@ -1,6 +1,6 @@
 > ### This file is parsed by menu.py
 >
-> The following strict rules apply to editing this file:
+> The following rules apply to editing this file:
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
