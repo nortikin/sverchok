@@ -33,7 +33,7 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType' and context.scene.node_tree
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except Exception as err:
             return False
 
