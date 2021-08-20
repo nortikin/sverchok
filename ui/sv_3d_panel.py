@@ -170,6 +170,7 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
                 row.prop(tree, 'sv_show',
                          icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
                 row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+                row.prop(tree, 'sv_scene_update', icon='SCENE_DATA', text=' ')
                 row.prop(tree, "sv_process", toggle=True, text="P")
                 row.prop(tree, "sv_draft", toggle=True, text="D")
 

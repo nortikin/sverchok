@@ -141,6 +141,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         update=on_draft_mode_changed,
         options=set(),
     )
+    sv_scene_update: BoolProperty(name="Scene update", description="Update upon changes in the scene", options=set(),
+                                  default=True)
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
@@ -154,6 +156,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
         return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes, cancel))
+
+    def scene_update(self):
+        """This method should be called by scene changes handler
+        it ignores events related with S
+        sverchok trees in other cases it updates nodes which read data from Blender"""
+        if self.sv_scene_update:
+            nodes_to_update = (n for n in self.nodes if hasattr(n, 'is_animatable') and n.is_animatable)
+            TreeHandler.send(TreeEvent(TreeEvent.SCENE_UPDATE, self, nodes_to_update, cancel=False))
 
     def process_ani(self):
         """
