@@ -331,13 +331,6 @@ def node_show_tree_mode(self, context):
         layout.label(text=message, icon=icon)
 
 
-def view3d_show_live_mode(self, context):
-    if context.scene.SvShowIn3D_active:
-        layout = self.layout
-        OP = 'wm.sv_obj_modal_update'
-        layout.operator(OP, text='Stop Live Update', icon='CANCEL').mode = 'end'
-
-
 sv_tools_classes = [
     SV_PT_ToolsMenu,
     SV_PT_ActiveTreePanel,
@@ -355,26 +348,15 @@ sv_tools_classes = [
 
 
 def register():
-    bpy.types.Scene.SvShowIn3D_active = bpy.props.BoolProperty(
-        name='update from 3dview',
-        default=False,
-        description='Allows updates directly to object-in nodes from 3d panel')
-
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
     bpy.types.Scene.ui_list_selected_tree = bpy.props.IntProperty()  # Pointer to selected item in list of trees
 
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
-    bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
 
 
 def unregister():
     del bpy.types.Scene.ui_list_selected_tree
 
-    for class_name in reversed(sv_tools_classes):
-        bpy.utils.unregister_class(class_name)
-
-    del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
-    bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)

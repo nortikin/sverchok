@@ -397,9 +397,6 @@ With this panel your layout becomes addon itself. So, you making your life easy.
 Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor.
 Another located in `Active tool and workspace settings` shelf of `Properties` editor.
 
-
-**Start live update** - will start update layouts by a timer (several times in second)
-
 **Update all trees** - manual update of all layouts
 
 Node properties list

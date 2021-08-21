@@ -136,13 +136,6 @@ Node property / socket property changes
 `Update all` operator (:ref:`layout_manager`)
     It is the same as `re-update all nodes` operator but effect all trees in a file.
 
-.. _live_update_operator:
-
-Live update modal operator (:ref:`3d_panel`)
-    It makes update some nodes, which read information from Blender objects, via timer with update period
-    about 1/10 second. If the tree did not manage to update while this period next event will be ignored.
-    In this case there can be a visible lag between user action and tree response.
-
 Frame changes
     Update upon frame changes. Extra information `Animation`_.
 
@@ -184,8 +177,7 @@ enabled the node will be update each frame change. This can serve two purposes.
 - Firstly this can be used for generating animations. In this case
   :doc:`Frame info node <nodes/scene/frame_info_mk2>` will be most useful.
 - Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks.
-  For frame change the left/right arrow buttons can be used. Alternative way is to use
-  :ref:`Live update operator <live_update_operator>`
+  For frame change the left/right arrow buttons can be used.
 
 
 .. warning::
