@@ -18,7 +18,7 @@
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
 **Addon for**: [Blender](http://blender.org) version *2.93* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**Prerequisites**: We added optional nodes that depend on additional libraries. [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) lists these dependencies and includes installation instructions. 
+**Prerequisites**: We added optional nodes that depend on additional libraries. This [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) lists these dependencies and includes installation instructions.  
 [**Documentation**:](http://nortikin.github.io/sverchok/docs/main.html) If anything isn't clear (or missing) in this document please
 ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
 and you can help us!  
