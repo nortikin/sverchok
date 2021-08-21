@@ -157,8 +157,13 @@ lexed_fragment_shader = '''
         else if (cIndex == 92) { test_tint = qualifierColor; }
 
         vec4 pixelColor = texture(image, texCoord_interp);
-        if (pixelColor == background_black) { fragColor = bgColor; }
-        else { fragColor = texture(image, texCoord_interp) * test_tint; }
+
+        if (length(pixelColor.xyz) < 0.0001){
+            fragColor = mix(bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
+        }
+        else{
+            fragColor = texture(image, texCoord_interp) * test_tint;
+        }
 
     }
 '''
