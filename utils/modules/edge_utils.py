@@ -172,7 +172,6 @@ def adjacent_faces_idx(edges, pols):
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
     for p_idx, pol in enumerate(pols):
-        print(p_idx, pol)
         for edge in zip(pol, pol[1:] + [pol[0]]):
             e_s = sorted(edge)
             try:
