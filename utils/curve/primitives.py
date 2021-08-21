@@ -421,7 +421,7 @@ class SvCircle(SvCurve):
         for i in range(n+1):
             t = i * 2*pi / n
             knots.extend([t, t])
-        knots.append(2*pi)
+        knots.append(knots[-1])
         knots = np.array(knots)
 
         degree = 2
