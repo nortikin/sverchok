@@ -18,7 +18,7 @@
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
 **Addon for**: [Blender](http://blender.org) version *2.93* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**Prerequisites**: We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.   
+**Prerequisites**: We added optional nodes that depend on additional libraries. Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.   
 [**Documentation**:](http://nortikin.github.io/sverchok/docs/main.html) If anything isn't clear (or missing) in this document please
 ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
 and you can help us!  
@@ -86,7 +86,7 @@ Install Sverchok as you would any blender addon.
 
 ### Troubleshooting Installation Errors
 
-If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
+If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names.
 
 If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
 
