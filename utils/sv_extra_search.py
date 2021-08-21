@@ -59,9 +59,14 @@ def ensure_short_description(description):
 
 def ensure_valid_show_string(nodetype):
 
-    loop_reverse[nodetype.bl_label] = nodetype.bl_idname
-    description = nodetype.bl_rna.docstring.get_shorthand()
-    return nodetype.bl_label + ensure_short_description(description)
+    try:
+        loop_reverse[nodetype.bl_label] = nodetype.bl_idname
+        description = nodetype.bl_rna.docstring.get_shorthand()
+        return nodetype.bl_label + ensure_short_description(description)
+    except Exception as err:
+        print(f"{nodetype}")
+        print(err)    
+
 
 def function_iterator(module_file):
     for name in ddir(module_file):
