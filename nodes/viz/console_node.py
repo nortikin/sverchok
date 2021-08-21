@@ -112,7 +112,7 @@ fragment_shader = '''
 lexed_colors = [
     'stringColor', 'numberColor', 'name1Color',
     'parenColor', 'braceColor', 'bracketColor', 'equalsColor',
-    'opColor', 'commentColor', 'name2Color', 'name3Color', 'qualifierColor'
+    'opColor', 'commentColor', 'name2Color', 'name3Color', 'qualifierColor', 'bgColor'
 ]
 
 lexed_fragment_shader = '''
@@ -134,37 +134,32 @@ lexed_fragment_shader = '''
     uniform vec4 name2Color;
     uniform vec4 name3Color;
     uniform vec4 qualifierColor;
+    uniform vec4 bgColor;
     
     void main()
     {
         vec4 test_tint = vec4(0.0, 0.0, 1.0, 1.0);
+        vec4 background_black = vec4(0.0, 0.0, 0.0, 1.0);
 
         int cIndex = int(v_lexer);
-        if (cIndex == 1) { test_tint = name1Color; }
-        else if (cIndex == 2) { 
-            test_tint = numberColor; }
-        else if (cIndex == 3) { 
-            test_tint = stringColor; }
-        else if (cIndex == 7 || cIndex == 8) { 
-            test_tint = parenColor; }
-        else if (cIndex == 9 || cIndex == 10) { 
-            test_tint = bracketColor; }
-        else if (cIndex == 22) { 
-            test_tint = equalsColor; }
-        else if (cIndex == 25 || cIndex == 26) { 
-            test_tint = braceColor; }
-        else if (cIndex == 53 || cIndex == 54) { 
-            test_tint = opColor; }
-        else if (cIndex == 55 || cIndex == 60) { 
-            test_tint = commentColor; }
-        else if (cIndex == 90) { 
-            test_tint = name2Color; }
-        else if (cIndex == 91) { 
-            test_tint = name3Color; }
-        else if (cIndex == 92) { 
-            test_tint = qualifierColor; }
 
-        fragColor = texture(image, texCoord_interp) * test_tint;
+        if (cIndex == 1) { test_tint = name1Color; }
+        else if (cIndex == 2) { test_tint = numberColor; }
+        else if (cIndex == 3) { test_tint = stringColor; }
+        else if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
+        else if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
+        else if (cIndex == 22) { test_tint = equalsColor; }
+        else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
+        else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
+        else if (cIndex == 55 || cIndex == 60) { test_tint = commentColor; }
+        else if (cIndex == 90) { test_tint = name2Color; }
+        else if (cIndex == 91) { test_tint = name3Color; }
+        else if (cIndex == 92) { test_tint = qualifierColor; }
+
+        vec4 pixelColor = texture(image, texCoord_interp);
+        if (pixelColor == background_black) { fragColor = bgColor; }
+        else { fragColor = texture(image, texCoord_interp) * test_tint; }
+
     }
 '''
 
@@ -232,8 +227,8 @@ def syntax_highlight_basic(node):
             if not token.string or (token.start == token.end):
                 continue
 
-            if token.type != 1:
-                print(f"token.type, {token.type} , precise token={token.exact_type} ({token_dict.get(token.exact_type)}) ---> {token.string}")
+            # if token.type != 1:
+            #    print(f"token.type, {token.type} , precise token={token.exact_type} ({token_dict.get(token.exact_type)}) ---> {token.string}")
 
             token_type = token.type
             
@@ -491,10 +486,11 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     equalsColor: make_color("Equals",          (0.90, 0.70, 0.60, 1.0))  # 22
     braceColor: make_color("Braces",           (0.40, 0.50, 0.70, 1.0))  # 25, 26
     opColor: make_color("Operators",           (1.00, 0.18, 0.00, 1.0))  # 53, 54
-    commentColor: make_color("Comments",       (0.20, 0.20, 0.20, 1.0))  # 55, 60
+    commentColor: make_color("Comments",       (0.49, 0.49, 0.49, 1.0))  # 55, 60
     name2Color: make_color("Main syntax",      (0.90, 0.01, 0.02, 1.0))  # 90
     name3Color: make_color("Bool etc,..",      (0.30, 0.90, 0.40, 1.0))  # 91
     qualifierColor: make_color("Qualifiers",   (0.18, 0.77, 0.01, 1.0))  # 92
+    bgColor: make_color("Background",          (0.06, 0.06, 0.06, 1.0))  # there are nicer ways to calculate the background overlay.
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -584,11 +580,16 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                     self.set_node_props(socket_data)
 
         else:
+            #@ LET A be the other node you are receiving socket link from
+            #@ LET B be this node
+            #@ this feature requires A to be outputting something to the receving socket on B, else update system won't trigger process upstream from A.
+            #@ consequently this node is not processed. Usually this will be the case. The actual content of the socket link is not relevant.
+
             # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
             connected_bl_idname = self.inputs[0].other.node.bl_idname
-            
             if connected_bl_idname == "SvScriptNodeLite":
                 socket_data = list(self.inputs[0].other.node.script_str.splitlines())
+
                 self.set_node_props(socket_data)
 
             elif connected_bl_idname == "SvExecNodeMod":
@@ -629,9 +630,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         config.syntax_mode = self.syntax_mode
 
         if self.syntax_mode == "Code":
-            # config.colors = {}
-            # for color_name in lexed_colors:
-            #     config.colors[color_name] = getattr(self, color_name)[:]
             config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
         draw_data = {
@@ -653,7 +651,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def sv_free(self):
         nvBGL2.callback_disable(node_id(self))
-        # self.delete_texture()
 
     def sv_copy(self, node):
         self.n_id = ''
