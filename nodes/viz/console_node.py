@@ -583,7 +583,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             #@ LET A be the other node you are receiving socket link from
             #@ LET B be this node
             #@ this feature requires A to be outputting something to the receving socket on B, else update system won't trigger process upstream from A.
-            #@ consequently this node is not processed. Usually this will be the case. The actual content of the socket link is not relevant.
+            #@ consequently this node is not processed. Usually sockets will be passing data. The actual content of the socket link is not relevant.
 
             # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
             connected_bl_idname = self.inputs[0].other.node.bl_idname
