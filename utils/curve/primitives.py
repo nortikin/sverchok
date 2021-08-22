@@ -400,35 +400,77 @@ class SvCircle(SvCurve):
             #curve = curve_segment(curve, t_min, t_max)
         return curve
 
-    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-        idxs = np.array(range(2*n+1), dtype=np.float64)
-        ts = pi * idxs / n
-        alpha = pi / n
-        rs = np.where(idxs % 2 == 0, 1.0, 1.0 / cos(alpha))
+    def to_nurbs_arc(self, n=4, t_min=None, t_max=None, implementation = SvNurbsMaths.NATIVE):
+        if t_min is None:
+            t_min = 0.0
+        if t_max is None:
+            t_max = 2*pi
 
-        xs = rs * np.cos(ts)
-        ys = rs * np.sin(ts)
-        zs = np.zeros((2*n+1,))
+        if t_max < t_min:
+            return self.to_nurbs_arc(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+        omega = t_max - t_min
+        alpha = pi / n
+        n_full_arcs = round(omega // (2*alpha))
+        small_arc_angle = omega % (2*alpha)
+
+        idxs_full = np.array(range(2*n_full_arcs+1), dtype=np.float64)
+        ts_full = pi * idxs_full / n + t_min
+        rs_full = np.where(idxs_full % 2 == 0, 1.0, 1.0 / cos(alpha))
+
+        xs_full = rs_full * np.cos(ts_full)
+        ys_full = rs_full * np.sin(ts_full)
+        zs_full = np.zeros_like(xs_full)
+
+        weights_full = np.where(idxs_full % 2 == 0, 1.0, cos(alpha))
+
+        knots_full = np.array(range(n_full_arcs+1), dtype=np.float64)
+        knots_full = 2*pi * knots_full / n + t_min
+        knots_full = np.repeat(knots_full, 2)
+
+        if small_arc_angle > 1e-6:
+            t_mid_small_arc = ts_full[-1] + small_arc_angle / 2.0
+            r_mid_small_arc = 1.0 / cos(small_arc_angle / 2.0)
+            x_mid_small_arc = r_mid_small_arc * cos(t_mid_small_arc)
+            y_mid_small_arc = r_mid_small_arc * sin(t_mid_small_arc)
+            z_mid_small_arc = 0.0
+
+            x_end = cos(t_max)
+            y_end = sin(t_max)
+            z_end = 0.0
+
+            xs = np.concatenate((xs_full, [x_mid_small_arc, x_end]))
+            ys = np.concatenate((ys_full, [y_mid_small_arc, y_end]))
+            zs = np.concatenate((zs_full, [z_mid_small_arc, z_end]))
+
+            weight_mid_small_arc = cos(small_arc_angle / 2.0)
+            weight_end = 1.0
+            weights = np.concatenate((weights_full, [weight_mid_small_arc, weight_end]))
+
+            knots = np.concatenate((knots_full, [t_max, t_max]))
+        else:
+            xs = xs_full
+            ys = ys_full
+            zs = zs_full
+
+            weights = weights_full
+            knots = knots_full
+
+        knots = np.concatenate(([knots[0]], knots, [knots[-1]]))
 
         control_points = np.stack((xs, ys, zs)).T
         control_points = self.radius * control_points
         control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
         control_points = self.center + control_points
 
-        weights = np.where(idxs % 2 == 0, 1.0, cos(alpha))
-
-        knots = [0.0]
-        for i in range(n+1):
-            t = i * 2*pi / n
-            knots.extend([t, t])
-        knots.append(knots[-1])
-        knots = np.array(knots)
-
         degree = 2
         curve = SvNurbsMaths.build_curve(implementation,
                     degree, knots,
                     control_points, weights)
         return curve
+
+    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
+        return self.to_nurbs_arc(n=n, implementation=implementation)
 
     def reverse(self):
         circle = self.copy()

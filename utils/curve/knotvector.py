@@ -272,6 +272,7 @@ def check(degree, knot_vector, num_ctrlpts):
     prev_knot = knot_vector[0]
     for i, knot in enumerate(knot_vector):
         if prev_knot > knot:
+            print(knot_vector)
             return f"Knot vector items are not all non-decreasing: u[{i-1}] = {prev_knot} > u[{i}] = {knot}"
         prev_knot = knot
 
