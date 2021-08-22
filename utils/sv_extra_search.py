@@ -23,6 +23,7 @@ import bpy
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
@@ -64,8 +65,7 @@ def ensure_valid_show_string(nodetype):
         description = nodetype.bl_rna.docstring.get_shorthand()
         return nodetype.bl_label + ensure_short_description(description)
     except Exception as err:
-        print(f"{nodetype}")
-        print(err)    
+        error(f'Nodetype "{nodetype}": ensure_valid_show_string() threw an exception:\n {err}')
 
 
 def function_iterator(module_file):
