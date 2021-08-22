@@ -163,7 +163,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             spline = curve_object.data.splines.new(type='BEZIER')
             spline.bezier_points.add(len(control_points))
 
-            start_point = spline.bezier_points[0]
+            first_point = start_point = spline.bezier_points[0]
             for idx, segment in enumerate(control_points):
                 end_point = spline.bezier_points[idx+1]
 
@@ -175,6 +175,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
                 start_point = end_point
 
+            first_point.handle_left = first_point.co
             end_point.handle_right = end_point.co
 
 
