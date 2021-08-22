@@ -53,7 +53,12 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         description = "Apply object matrices to control points",
         default = True,
         update = updateNode)
-
+    
+    concat_segments : BoolProperty(
+        name = "Concatenate segments",
+        description = "If checked, join Bezier segments of the curve into a single Curve object; otherwise, output a separate Curve object for each segment",
+        default = True,
+        update = updateNode)
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
@@ -118,8 +123,9 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text=op_text)
 
-        layout.prop(self, 'sort', text='Sort', toggle=True)
-        layout.prop(self, 'apply_matrix', toggle=True)
+        layout.prop(self, 'sort', text='Sort', toggle=False)
+        layout.prop(self, 'apply_matrix', toggle=False)
+        layout.prop(self, 'concat_segments', toggle=False)
 
         self.draw_obj_names(layout)
 
@@ -142,7 +148,10 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
             points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
-        return points, concatenate_curves(segments)
+        if self.concat_segments:
+            return points, concatenate_curves(segments)
+        else:
+            return points, segments
 
     def process(self):
 
