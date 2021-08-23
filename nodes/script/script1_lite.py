@@ -364,6 +364,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                     if t and t[0] and len(t[0]) > 0:
                         val = t[0][0]
 
+            # setting the label of the connected socket.
+            if len(sock_desc) == 5:
+                display_name = sock_desc[4]
+                if display_name:
+                    if not s.label == display_name:
+                        s.label == display_name
+
             local_dict[s.name] = val
 
         return local_dict

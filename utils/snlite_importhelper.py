@@ -82,17 +82,38 @@ def parse_required_socket_line(node, line):
 
 def parse_extended_socket_line(node, line):
     """
-    returns socket_info: socket_type, socket_name, default, nested  (display name)
+    returns socket_info: 
+        socket_type, socket_name, default, nested  (display name)
     """
-    pattern = r"\+in\s+(\w+)\s+(\w+)\s+d=(.+)\s+n=(\d)(\s+#\sname=.+)?"
+    socket_info = [None, None, None, None, None]
 
-    socket_type = ...
-    socket_name = ...
-    default = ...
-    nested = ...
-    display_name = ...
+    pattern = """
+    \+in\s+              # valid for inputs
+    (\w+)\s+             # list name to use
+    (\w+)\s+             # socket type
+    d=(.+)\s+            # default value
+    n=(\d)               # nested value
+    (.+name="(.+)")?     # optional socket label
+    """
 
-    return socket_type, socket_name, default, nested, display_name
+    try:
+        p = re.compile(pattern, re.VERBOSE)
+        g = p.search(line.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                socket_info[idx] = m
+                if idx == 4:
+                    socket_info[idx] = matches[5]
+                    break
+
+        return socket_info
+
+    except Exception as err:
+        print("SNLITE ERROR:", err)
+
+
 
 def extract_directive_as_multiline_string(lines):
     pattern = """
