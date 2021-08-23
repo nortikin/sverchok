@@ -80,6 +80,20 @@ def parse_required_socket_line(node, line):
     return UNPARSABLE
 
 
+def parse_extended_socket_line(node, line):
+    """
+    returns socket_info: socket_type, socket_name, default, nested  (display name)
+    """
+    pattern = r"\+in\s+(\w+)\s+(\w+)\s+d=(.+)\s+n=(\d)(\s+#\sname=.+)?"
+
+    socket_type = ...
+    socket_name = ...
+    default = ...
+    nested = ...
+    display_name = ...
+
+    return socket_type, socket_name, default, nested, display_name
+
 def extract_directive_as_multiline_string(lines):
     pattern = """
     \"{3}(.*?)\"{3}   # double quote enclosure
@@ -138,6 +152,11 @@ def parse_sockets(node):
             input_info = parse_required_socket_line(node, L)
             snlite_info['inputs'].append(input_info)
             snlite_info['inputs_required'].append(input_info[1])
+
+        if L.startswith('+in '):
+            # this is extended :regex: parsing of socket info line.
+            input_info = parse_extended_socket_line(node, L):
+            snlite_info['inputs'].append(input_info)
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
