@@ -870,3 +870,9 @@ class SvTaylorCurve(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
+    def reverse(self):
+        return self.to_nurbs().reverse()
+

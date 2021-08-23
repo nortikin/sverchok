@@ -106,6 +106,9 @@ class SvLine(SvCurve):
     def to_bezier_segments(self):
         return [self.to_bezier()]
 
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
 def rotate_radius(radius, normal, thetas):
     ct = np.cos(thetas)[np.newaxis].T
     st = np.sin(thetas)[np.newaxis].T
@@ -494,6 +497,10 @@ class SvCircle(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+#     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+#         t_min, t_max = self.get_u_bounds()
+#         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"
 
@@ -614,4 +621,7 @@ class SvEllipse(SvCurve):
         circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
         return circle.to_nurbs(implementation)
+
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 

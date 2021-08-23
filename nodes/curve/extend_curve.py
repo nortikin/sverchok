@@ -240,7 +240,7 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 curves.append(curve)
                 if end_extent is not None:
                     curves.append(end_extent)
-                new_curve = concatenate_curves(curves)
+                new_curve = concatenate_curves(curves)#, allow_generic=False)
                 curve_out.append(new_curve)
 
         self.outputs['StartExtent'].sv_set(start_out)
