@@ -176,7 +176,7 @@ def parse_sockets(node):
 
         if L.startswith('+in '):
             # this is extended :regex: parsing of socket info line.
-            input_info = parse_extended_socket_line(node, L):
+            input_info = parse_extended_socket_line(node, L)
             snlite_info['inputs'].append(input_info)
 
         elif L.startswith('inject'):
