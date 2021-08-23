@@ -104,7 +104,11 @@ def parse_extended_socket_line(node, line):
         for idx, m in enumerate(matches):
             if m:
                 socket_info[idx] = m
-                if idx == 4:
+                if idx in (2, 3): 
+                    # defaults or nested, are still a string at this point
+                    socket_info[idx] = ast.literal_eval(m)
+                elif idx == 4:
+                    # if 4 is a match, then 5 contains the desired label
                     socket_info[idx] = matches[5]
                     break
 
