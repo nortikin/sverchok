@@ -64,6 +64,8 @@ macros = {
         description="selected nodes to List Join", term='join12'),
     "> join13": simple_macro(
         description="selected nodes to List Join", term='join13'),
+    "> rnd col": simple_macro(
+        description="list of n-random colors", term='rndcol'),
     "> sw1": simple_macro(
         description="connect nodes to switch", term='switch1'),
     "> sw12": simple_macro(
@@ -98,6 +100,9 @@ def sn_loader(snlite, script_name=None):
     snlite.script_name = os.path.basename(txt.name)
     snlite.load()
 
+def set_node_props(node, prop_dict):
+    for prop, val in prop_dict.items():
+        setattr(node, prop, val)
 
 class DefaultMacros():
 
@@ -150,6 +155,62 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
+
+        elif term == 'rndcol':
+
+            # all locations will be relative to cursor
+            MOUSE_X, MOUSE_Y = context.space_data.cursor_location
+
+            # add nodes to layout
+            NUM = nodes.new("SvNumberNode")
+            RR = nodes.new('NodeReroute')
+            RND_0 = nodes.new('SvRndNumGen')
+            RND_1 = nodes.new('SvRndNumGen')
+            RND_2 = nodes.new('SvRndNumGen')
+            COL = nodes.new('SvColorsInNodeMK1')
+
+            # set locations
+            COL.location = MOUSE_X + 140, MOUSE_Y + 40
+            RND_0.location.x = MOUSE_X - 40
+            RND_0.location.y = MOUSE_Y + 40
+            RND_1.location.x = MOUSE_X - 40
+            RND_1.location.y = MOUSE_Y
+            RND_2.location.x = MOUSE_X - 40
+            RND_2.location.y = MOUSE_Y - 40
+            RR.location = MOUSE_X - 110, MOUSE_Y
+            NUM.location = MOUSE_X - 280, MOUSE_Y + 20
+
+            # configure nodes
+            set_node_props(NUM, {
+                'selected_mode': 'int',
+                'int_': 30
+                })
+
+            set_node_props(RND_0, {
+                'type_selected_mode': 'Float',
+                'seed': 20,
+                'hide': True})
+
+            set_node_props(RND_1, {
+                'type_selected_mode': 'Float',
+                'seed': 30,
+                'hide': True})
+
+            set_node_props(RND_2, {
+                'type_selected_mode': 'Float',
+                'seed': 40,
+                'hide': True})
+
+            # link nodes
+            links.new(NUM.outputs[0], RR.inputs[0])
+            links.new(RR.outputs[0], RND_0.inputs[0])
+            links.new(RR.outputs[0], RND_1.inputs[0])
+            links.new(RR.outputs[0], RND_2.inputs[0])
+            links.new(RND_0.outputs[0], COL.inputs[0])
+            links.new(RND_1.outputs[0], COL.inputs[1])
+            links.new(RND_2.outputs[0], COL.inputs[2])
+
+
 
         elif 'hotswap' in term:
             swap_vd_mv(context, operator, term, nodes, links)
