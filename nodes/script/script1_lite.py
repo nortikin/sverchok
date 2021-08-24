@@ -368,8 +368,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if len(sock_desc) == 5:
                 display_name = sock_desc[4]
                 if display_name:
-                    if not s.label == display_name:
-                        s.label == display_name
+
+                    # if label is not yet set or the label is currently
+                    # different to the proposed label, change it.
+                    if not s.label or (s.label != display_name):
+                       s.label = display_name
+
+            else:
+                if s.label:
+                    s.label = ''
 
             local_dict[s.name] = val
 
