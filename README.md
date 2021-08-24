@@ -63,8 +63,18 @@ Install Sverchok as you would any blender addon.
   
 -  _Installation from Preferences_  
    Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)   
-   User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
-   Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
+   -  Edit > Preferences > Add-ons > 
+   -  Press the `Install..` button 
+   -  Browse to the location of the zip and select it, then press "Install Add-on"
+   -  Blender begin unpacking the add-on, it will then present the option to enable it.
+   -  Enable it by clicking in the box beside `Node: Sverchok`:
+   -  Let Blender complete the installation, most likely this will take a few seconds, be patient.
+   -  When complete Blender will display:
+       -  [x] Node: Sverchok
+   
+   
+   By default Blender ( above 2.80) will store the fact that you enabled an add-on and it will be available next time you start Blender.
+   
 
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
