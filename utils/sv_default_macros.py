@@ -182,24 +182,19 @@ class DefaultMacros():
 
             # configure nodes
             set_node_props(NUM, {
-                'selected_mode': 'int',
-                'int_': 30
-                })
+                'selected_mode': 'int', 'int_': 30})
 
             set_node_props(RND_0, {
                 'type_selected_mode': 'Float',
-                'seed': 20,
-                'hide': True})
+                'seed': 20, 'hide': True})
 
             set_node_props(RND_1, {
                 'type_selected_mode': 'Float',
-                'seed': 30,
-                'hide': True})
+                'seed': 30, 'hide': True})
 
             set_node_props(RND_2, {
                 'type_selected_mode': 'Float',
-                'seed': 40,
-                'hide': True})
+                'seed': 40, 'hide': True})
 
             # link nodes
             links.new(NUM.outputs[0], RR.inputs[0])
@@ -209,8 +204,6 @@ class DefaultMacros():
             links.new(RND_0.outputs[0], COL.inputs[0])
             links.new(RND_1.outputs[0], COL.inputs[1])
             links.new(RND_2.outputs[0], COL.inputs[2])
-
-
 
         elif 'hotswap' in term:
             swap_vd_mv(context, operator, term, nodes, links)
