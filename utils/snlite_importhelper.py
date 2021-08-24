@@ -103,12 +103,12 @@ def parse_extended_socket_line(node, line):
         matches = g.groups()
         for idx, m in enumerate(matches):
             if m:
-                if idx == 1:
+                if idx == 0:
                     # the socket name used by user passing info to lists.
-                    socket_info[idx] = m
-                elif idx == 0:
+                    socket_info[1] = m
+                elif idx == 1:
                     # remap to the bl_idname of a sockettype
-                    socket_info[idx] = sock_dict.get(m.strip())
+                    socket_info[0] = sock_dict.get(m.strip())
                 elif idx in (2, 3): 
                     # defaults or nested, are still a string at this point
                     socket_info[idx] = ast.literal_eval(m)
@@ -117,6 +117,7 @@ def parse_extended_socket_line(node, line):
                     socket_info[idx] = matches[5]
                     break
 
+        # print(f"socket_info:{socket_info}")
         return socket_info
 
     except Exception as err:
