@@ -80,6 +80,51 @@ def parse_required_socket_line(node, line):
     return UNPARSABLE
 
 
+def parse_extended_socket_line(node, line):
+    """
+    returns socket_info: 
+        socket_type, socket_name, default, nested  (display name)
+    """
+    socket_info = [None, None, None, None, None]
+
+    pattern = """
+    \+in\s+              # valid for inputs
+    (\w+)\s+             # list name to use
+    (\w+)\s+             # socket type
+    d=(.+)\s+            # default value
+    n=(\d)               # nested value
+    (.+name="(.+)")?     # optional socket label
+    """
+
+    try:
+        p = re.compile(pattern, re.VERBOSE)
+        g = p.search(line.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                if idx == 0:
+                    # the socket name used by user passing info to lists.
+                    socket_info[1] = m
+                elif idx == 1:
+                    # remap to the bl_idname of a sockettype
+                    socket_info[0] = sock_dict.get(m.strip())
+                elif idx in (2, 3): 
+                    # defaults or nested, are still a string at this point
+                    socket_info[idx] = ast.literal_eval(m)
+                elif idx == 4:
+                    # if 4 is a match, then 5 contains the desired label
+                    socket_info[idx] = matches[5]
+                    break
+
+        # print(f"socket_info:{socket_info}")
+        return socket_info
+
+    except Exception as err:
+        print("SNLITE ERROR:", err)
+
+
+
 def extract_directive_as_multiline_string(lines):
     pattern = """
     \"{3}(.*?)\"{3}   # double quote enclosure
@@ -138,6 +183,11 @@ def parse_sockets(node):
             input_info = parse_required_socket_line(node, L)
             snlite_info['inputs'].append(input_info)
             snlite_info['inputs_required'].append(input_info[1])
+
+        if L.startswith('+in '):
+            # this is extended :regex: parsing of socket info line.
+            input_info = parse_extended_socket_line(node, L)
+            snlite_info['inputs'].append(input_info)
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
