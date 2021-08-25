@@ -64,6 +64,7 @@ Install Sverchok as you would any blender addon.
 -  _Installation from Preferences_  
    Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)
    -  Do not unpack it after downloading, Blender will take care of that later.
+       - Mac OS users can [recompress the folder](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac) if Safari has automatically extracted it and deleted the `.zip`  
    -  Edit > Preferences > Add-ons > 
    -  Press the `Install..` button 
    -  Browse to the location of the zip and select it, then press "Install Add-on"
