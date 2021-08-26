@@ -117,7 +117,7 @@ def app_handler_ops(append=None, remove=None):
     #     print('error while listing event handlers', err)
     #     listed = ""
 
-    print(f'sv: {operation} app.handlers')
+    # print(f'sv: {operation} app.handlers')
     # print(f'{listed}')
 
 utils_modules = [
