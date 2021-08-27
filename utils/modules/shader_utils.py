@@ -56,7 +56,7 @@ class ShaderLib2D():
         self.addc(new_colors)
         self.addi([[offset + i for i in tri] for tri in new_indices])
 
-    def add_rect(self, x, y, w, h, color):
+    def add_rect(self, x, y, w, h, color, color2=False):
         """
         b - c
         | / |
@@ -69,9 +69,13 @@ class ShaderLib2D():
         c = (x + w, y - h)
         d = (x + w, y)
 
+        colors = [color for _ in range(4)]
+        if color2:
+            colors = [color, color2, color2, color]
+
         self.add_data(
             new_vectors=[a, b, c, d], 
-            new_colors=[color for _ in range(4)],
+            new_colors=colors,
             new_indices=[[0, 1, 2], [0, 2, 3]]
         )
 
