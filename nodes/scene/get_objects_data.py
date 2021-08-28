@@ -9,9 +9,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
@@ -78,7 +76,8 @@ def get_vertgroups(mesh):
 
 numpy_socket_names = ['Vertices', 'Edges', 'Vertex Normals', 'Material Idx', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
 
-class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree
@@ -88,6 +87,16 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    @property
+    def is_scene_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
+                                                           or self.object_names)
+
+    @property
+    def is_animation_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
+                                                           or self.object_names)
 
     def hide_show_versgroups(self, context):
         outs = self.outputs
@@ -188,8 +197,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     def by_input(self):
         return self.inputs[0].object_ref_pointer is not None or self.inputs[0].is_linked
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         by_input = self.by_input
         if not by_input:
@@ -213,7 +221,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         if not by_input:
             self.draw_obj_names(layout)
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         r = layout.column(align=True)
         row = r.row(align=True)
         row.label(text="Output Numpy:")
@@ -223,7 +231,6 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                 r.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
 
         layout.prop(self, 'draw_3dpanel', text="To Control panel")
-        self.draw_animatable_buttons(layout)
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''

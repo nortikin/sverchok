@@ -10,14 +10,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -39,7 +37,7 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
@@ -48,6 +46,8 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
     bl_label = 'NURBS In'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
@@ -118,12 +118,7 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
             items = get_implementations,
             update = updateNode)
 
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "draw_3dpanel")
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
-
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
         col = layout.column(align=True)
         row = col.row(align=True)

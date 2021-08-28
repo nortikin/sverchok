@@ -8,7 +8,6 @@
 # upgraded to pointerproperty
 
 import ast
-from math import *
 from collections import defaultdict
 import numpy as np
 
@@ -19,7 +18,6 @@ import json
 import io
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.data_structure import updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
@@ -258,7 +256,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         bpy.data.texts[text].clear()
         bpy.data.texts[text].write(values)
 
-class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: mesh JSON eval expression
     Tooltip: Generate mesh from parametric JSON expression
@@ -305,7 +303,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                     update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
         row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
         row = layout.row()

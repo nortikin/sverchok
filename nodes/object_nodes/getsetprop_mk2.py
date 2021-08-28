@@ -26,7 +26,6 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
 
@@ -221,12 +220,20 @@ class SvPropNodeMixin():
     prop_name: StringProperty(name='', update=verify_prop)
 
 
-class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, SvAnimatableNode):
+class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Get property '''
     bl_idname = 'SvGetPropNodeMK2'
     bl_label = 'Get property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
+
+    @property
+    def is_scene_dependent(self):
+        return bool(self.outputs)
+
+    @property
+    def is_animation_dependent(self):
+        return bool(self.outputs)
 
     def execute_inside_throttle(self):  # the name of the method does not have any meaning now
         s_type = self.type_assesment()
@@ -237,8 +244,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
         elif s_type:
             outputs.new(s_type, "Data")
     
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 

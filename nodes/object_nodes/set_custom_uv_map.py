@@ -13,7 +13,6 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.sv_bmesh_utils import bmesh_from_edit_mesh
 
@@ -68,7 +67,7 @@ def set_uv_edit_mode(verts: list, faces: list, mesh: bpy.types.Mesh, uv_name: st
                 bml[uv_layer].uv = uv
 
 
-class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Set custom UV map to Blender mesh
 
@@ -79,11 +78,18 @@ class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_label = 'Set custom UV map'
     bl_icon = 'GROUP_UVS'
 
+    @property
+    def is_scene_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and self.inputs['Objects'].object_ref_pointer
+
+    @property
+    def is_animation_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and self.inputs['Objects'].object_ref_pointer
+
     uv_name: bpy.props.StringProperty(name='Uv name', default='SVMap', description='Name of UV layer',
                                       update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'uv_name', text='', icon='GROUP_UVS')
 
     def sv_init(self, context):

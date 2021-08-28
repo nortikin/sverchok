@@ -7,21 +7,16 @@
 
 import sys
 import json
-import inspect
 import imp
 import types
 import itertools
-from importlib import reload
 
 import bpy
-from mathutils import Matrix, Vector
 from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
 
 functions = "draw_buttons", "process", "functor_init"
@@ -55,7 +50,7 @@ class SvSNPropsFunctor:
         self.inputs.clear()
         self.outputs.clear()
 
-class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAnimatableNode):
+class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     """
     Triggers:  functorB
     Tooltip:  use a simpler nodescript style
@@ -66,6 +61,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     bl_idname = 'SvSNFunctorB'
     bl_label = 'SN Functor B'
     bl_icon = 'SYSTEM'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def wrapped_update(self, context):
         if self.script_pointer:
@@ -114,8 +111,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             print('on line # {}'.format(exec_info.tb_lineno))
             print('code:', exec_info.tb_frame.f_code)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         if not self.loaded:
             row = layout.row()
             row.prop_search(self, 'script_pointer', bpy.data, 'texts', text='')

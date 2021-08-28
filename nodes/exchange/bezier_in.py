@@ -7,10 +7,8 @@
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
@@ -31,7 +29,7 @@ class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         node.get_objects_from_scene(self)
 
 
-class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -40,6 +38,14 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
     bl_label = 'Bezier In'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    @property
+    def is_scene_dependent(self):
+        return self.object_names
+
+    @property
+    def is_animation_dependent(self):
+        return self.object_names
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
@@ -95,17 +101,13 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         else:
             layout.label(text='--None--')
 
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "draw_3dpanel")
-
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
 

@@ -9,7 +9,6 @@ import numpy as np
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
@@ -21,7 +20,7 @@ def interp_v3l_v3v3(a, b, t):
     else: return ((1.0 - t) * a) + (t * b)
 
 
-class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: SvSweepModulator
@@ -31,6 +30,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvSweepModulator'
     bl_label = 'Sweep Modulator'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
     active: bpy.props.BoolProperty(name="active", update=updateNode)
@@ -49,8 +50,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         onew("SvStringsSocket", "Edges")
         onew("SvStringsSocket", "Faces")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "active", text="ACTIVATE")
         row = layout.row(align=True)
