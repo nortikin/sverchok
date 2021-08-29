@@ -88,7 +88,10 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     out = []
     for line in display_text:
-        out.append(re.sub(rounded_vals, mround, line) if not "bpy." in line else line)
+        if rounding == 0:
+            out.append(line)
+        else:
+            out.append(re.sub(rounded_vals, mround, line) if not "bpy." in line else line)
     return out
 
 
@@ -127,7 +130,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     view_by_element: BoolProperty(update=updateNode)
     num_elements: IntProperty(default=0)
     element_index: IntProperty(default=0, update=updateNode)
-    rounding: IntProperty(min=1, max=5, default=3, update=updateNode)
+    rounding: IntProperty(min=0, max=5, default=3, update=updateNode)
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
