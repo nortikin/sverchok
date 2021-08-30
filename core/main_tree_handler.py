@@ -33,8 +33,12 @@ class TreeHandler:
                 return  # ignore the event
 
         # frame update
+        # This event can't be handled via NodesUpdater during animation rendering because new frame change event
+        # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
         if event.type == TreeEvent.FRAME_CHANGE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+            list(global_updater(event.type))
+            return
 
         # mark given nodes as outdated
         elif event.type == TreeEvent.NODES_UPDATE:
@@ -207,10 +211,11 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
 
     # grab trees from active node group editors
     trees_ui_to_update = set()
-    for area in bpy.context.screen.areas:
-        if area.ui_type == BlTrees.MAIN_TREE_ID:
-            if area.spaces[0].path:  # filter editors without active tree
-                trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
+    if bpy.context.screen:  # during animation rendering can be None
+        for area in bpy.context.screen.areas:
+            if area.ui_type == BlTrees.MAIN_TREE_ID:
+                if area.spaces[0].path:  # filter editors without active tree
+                    trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
 
     for bl_tree in BlTrees().sv_main_trees:
         was_changed = False
