@@ -891,7 +891,6 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-
         try:
             return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except:
