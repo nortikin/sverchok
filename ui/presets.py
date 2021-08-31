@@ -29,6 +29,7 @@ import hashlib
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
+from sverchok.core.handlers import _state
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
@@ -890,12 +891,17 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
+
         try:
             return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
         except:
             return False
 
     def draw(self, context):
+
+        if _state['is_rendering']:
+            return
+
         layout = self.layout
         if len(context.space_data.path) > 1:
             layout.label(text="Is not supported inside node groups")

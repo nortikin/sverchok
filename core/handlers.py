@@ -10,7 +10,10 @@ from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
 from sverchok.utils.logging import catch_log_error, debug
 
-_state = {'frame': None}
+_state = {
+    'frame': None, 
+    'is_rendering': False
+}
 
 pre_running = False
 sv_depsgraph = []
@@ -192,6 +195,14 @@ def sv_post_load(scene):
     for tree in BlTrees().sv_main_trees:
         tree.update()
 
+@persistent
+def set_render_state_true(scene):
+    _state['is_rendering'] = True
+
+@persistent
+def set_render_state_false(scene):
+    _state['is_rendering'] = False
+
 
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
@@ -220,7 +231,10 @@ handler_dict = {
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'depsgraph_update_pre': sv_main_handler,
+    'render_init': set_render_state_true,
+    'render_cancel': set_render_state_false,
+    'render_complete': set_render_state_false
 }
 
 
