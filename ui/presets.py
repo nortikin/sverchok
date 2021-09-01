@@ -387,6 +387,9 @@ def apply_default_preset(node):
     if preset is not None:
         JSONImporter(preset.data).import_node_settings(node)
 
+def search_text_update(self, context):
+    presets_lookup['presets'] = get_presets(self.category, search=self.search_text)
+
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
         name="Manage Presets",
@@ -399,7 +402,8 @@ class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     
     search_text : StringProperty(
         name = "Search",
-        description = "Enter search term and press Enter to search; clear the field to return to selection of preset category.")
+        description = "Enter search term and press Enter to search; clear the field to return to selection of preset category.",
+        update=search_text_update)
 
 
 class SvSaveSelected(bpy.types.Operator):
@@ -880,6 +884,8 @@ def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=
     for preset in presets:
         preset.draw_operator(col, id_tree) #, category=category)
 
+preset_lookup = {'presets': []}
+
 class SV_PT_UserPresetsPanel(bpy.types.Panel):
     bl_idname = "SV_PT_UserPresetsPanel"
     bl_label = "Presets"
@@ -905,12 +911,12 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
         layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
 
-        needle = None
+        # needle = None
         if not panel_props.manage_mode:
             row = layout.row(align=True)
             row.prop(panel_props, "search_text", text="")
             row.operator("node.sv_reset_preset_search", icon="X", text="")
-            needle = panel_props.search_text
+            # needle = panel_props.search_text
 
         if not panel_props.search_text:
             layout.prop(panel_props, 'category', text='')
@@ -934,7 +940,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
         layout.separator()
 
-        presets = get_presets(panel_props.category, search=needle)
+        presets = preset_lookup['presets']
         layout.separator()
 
         if panel_props.manage_mode:
@@ -944,7 +950,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
             col.operator('node.sv_preset_category_new', icon='NEWFOLDER')
             if panel_props.category != GENERAL:
-                remove = col.operator('node.sv_preset_category_remove', text="Delete category {}".format(panel_props.category), icon='CANCEL')
+                remove = col.operator('node.sv_preset_category_remove', text=f"Delete category {panel_props.category}", icon='CANCEL')
                 remove.category = panel_props.category
 
             if len(presets):
@@ -976,7 +982,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                         delete.category = panel_props.category
             else:
                 layout.label(text="You do not have any presets")
-                layout.label(text="under `{}` category.".format(panel_props.category))
+                layout.label(text=f"under `{panel_props.category}` category.")
                 layout.label(text="You can import some presets")
                 layout.label(text="from Gist or from file.")
 
@@ -984,12 +990,12 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             if len(presets):
                 layout.label(text="Use preset:")
                 draw_presets_ops(layout, panel_props.category, ntree.name, presets)
-            elif needle:
+            elif panel_props.search_text:
                 layout.label(text="There are no presets matching")
                 layout.label(text="the search terms.")
             else:
                 layout.label(text="You do not have any presets")
-                layout.label(text="under `{}` category.".format(panel_props.category))
+                layout.label(text=f"under `{panel_props.category}` category.")
                 layout.label(text="Select some nodes and")
                 layout.label(text="Use the `Save Preset' button.")
 
