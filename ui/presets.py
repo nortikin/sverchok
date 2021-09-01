@@ -37,6 +37,8 @@ from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.utils.sv_json_export import JSONExporter
 import sverchok
 
+preset_lookup = {'presets': []}
+
 # To be moved somewhere under core/
 def get_sverchok_directory():
     filename = inspect.getfile(sverchok)
@@ -388,7 +390,7 @@ def apply_default_preset(node):
         JSONImporter(preset.data).import_node_settings(node)
 
 def search_text_update(self, context):
-    presets_lookup['presets'] = get_presets(self.category, search=self.search_text)
+    preset_lookup['presets'] = get_presets(self.category, search=self.search_text)
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
@@ -884,7 +886,6 @@ def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=
     for preset in presets:
         preset.draw_operator(col, id_tree) #, category=category)
 
-preset_lookup = {'presets': []}
 
 class SV_PT_UserPresetsPanel(bpy.types.Panel):
     bl_idname = "SV_PT_UserPresetsPanel"
