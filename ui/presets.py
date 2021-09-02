@@ -926,8 +926,6 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             row.operator("node.sv_reset_preset_search", icon="X", text="")
             # needle = panel_props.search_text
 
-        layout.prop(panel_props, 'demo_category', text='')
-
         if not panel_props.search_text:
             layout.prop(panel_props, 'category', text='')
 
