@@ -16,17 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import math
 from collections import defaultdict
 
-from mathutils import Vector, Matrix
-
 import bpy
-from bpy.props import EnumProperty, IntProperty
+from bpy.props import EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+
 
 class Vertices(object):
     outputs = [
@@ -55,69 +53,51 @@ class Vertices(object):
     @staticmethod
     def process(bm, submode, orig_edges):
 
-        def find_new_idxs(data, old_idxs):
-            new_idxs = []
-            for old_idx in old_idxs:
-                new = [n for (co, o, n) in data if o == old_idx]
-                if not new:
-                    return None
-                new_idxs.append(new[0])
-            return new_idxs
-
-        def is_good(v):
+        def is_good_function():
             if submode == "Wire":
-                return v.is_wire
+                return lambda v: v.is_wire
             if submode == "Boundary":
-                return v.is_boundary
+                return lambda v: v.is_boundary
             if submode == "Interior":
-                return (v.is_manifold and not v.is_boundary)
+                return lambda v: (v.is_manifold and not v.is_boundary)
 
-        good = []
-        bad = []
+        is_good = is_good_function()
 
-        good_idx = 0
-        bad_idx = 0
-        mask = []
+        good_vert_new_index = dict()
+        bad_vert_new_index = dict()
+        vertices_mask = []
 
         for v in bm.verts:
-            co = tuple(v.co)
             ok = is_good(v)
             if ok:
-                good.append((co, v.index, good_idx))
-                good_idx += 1
+                good_vert_new_index[v] = len(good_vert_new_index)
             else:
-                bad.append((co, v.index, bad_idx))
-                bad_idx += 1
-            mask.append(ok)
+                bad_vert_new_index[v] = len(bad_vert_new_index)
+            vertices_mask.append(ok)
 
-        good_vertices = [x[0] for x in good]
-        bad_vertices = [x[0] for x in bad]
+        good_vertices = [v.co[:] for v in good_vert_new_index.keys()]
+        bad_vertices = [v.co[:] for v in bad_vert_new_index.keys()]
 
         good_edges = []
         bad_edges = []
 
         for e in bm.edges:
-            sv1, sv2 = e.verts[0].index, e.verts[1].index
-            good_edge = find_new_idxs(good, [sv1, sv2])
-            if good_edge:
-                good_edges.append(good_edge)
-            bad_edge = find_new_idxs(bad, [sv1, sv2])
-            if bad_edge:
-                bad_edges.append(bad_edge)
+            v1, v2 = e.verts[0], e.verts[1]
+            if v1 in good_vert_new_index and v2 in good_vert_new_index:
+                good_edges.append([good_vert_new_index[v1], good_vert_new_index[v2]])
+            elif v1 in bad_vert_new_index and v2 in bad_vert_new_index:
+                bad_edges.append([bad_vert_new_index[v1], bad_vert_new_index[v2]])
 
         good_faces = []
         bad_faces = []
 
         for f in bm.faces:
-            vs = [v.index for v in f.verts]
-            good_face = find_new_idxs(good, vs)
-            if good_face:
-                good_faces.append(good_face)
-            bad_face = find_new_idxs(bad, vs)
-            if bad_face:
-                bad_faces.append(bad_face)
+            if all(v in good_vert_new_index for v in f.verts):
+                good_faces.append([good_vert_new_index[v] for v in f.verts])
+            elif all(v in bad_vert_new_index for v in f.verts):
+                bad_faces.append([bad_vert_new_index[v] for v in f.verts])
 
-        return [good_vertices, bad_vertices, mask,
+        return [good_vertices, bad_vertices, vertices_mask,
                 good_edges, bad_edges,
                 good_faces, bad_faces]
 
@@ -284,9 +264,9 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
 
         cls = globals()[self.mode]
         results = []
@@ -296,6 +276,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(vertices, edges, faces)
             bm.normal_update()
             outs = cls.process(bm, self.submode, edges)
+            bm.free()
             results.append(outs)
 
         results = zip(*results)
