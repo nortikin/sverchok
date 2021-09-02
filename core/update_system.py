@@ -38,11 +38,6 @@ no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
 
 
-def clear_system_cache():
-    print("cleaning Sverchok cache")
-    clear_all_socket_cache()
-
-
 def update_error_colors(self, context):
     global no_data_color
     global exception_color

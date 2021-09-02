@@ -17,7 +17,7 @@ from time import time
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
 
 from sverchok.core.events import GroupEvent
-from sverchok.core.main_tree_handler import empty_updater, NodesUpdater, CancelError, ContextTrees
+from sverchok.core.main_tree_handler import empty_updater, NodesUpdater, CancelError, ContextTrees, get_sock_data
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.logging import log_error
 from sverchok.utils.handle_blender_data import BlNode
@@ -355,6 +355,8 @@ def group_node_updater(node: Node, group_nodes_path=None) -> Generator[Node, Non
     previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
     should_be_updated = (not node.is_updated or node.is_input_changed or previous_nodes_are_changed)
     yield node  # yield groups node so it be colored by node Updater if necessary
+    if should_be_updated:
+        get_sock_data(node)
     updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
     is_output_changed, out_error = yield from updater
     node.is_input_changed = False
@@ -372,9 +374,12 @@ def node_updater(node: Node, group_node: SvGroupTreeNode):
     node_error = None
     try:
         if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
+            if bl_node.bl_idname == 'NodeGroupOutput':
+                get_sock_data(node)
             bl_node.process(group_node)
         elif hasattr(bl_node, 'process'):
             yield node  # yield only normal nodes
+            get_sock_data(node)
             bl_node.process()
         node.is_updated = True
     except CancelError as e:

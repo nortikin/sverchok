@@ -16,26 +16,23 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from sverchok import data_structure
-from sverchok.utils.logging import warning, info, debug
+"""For internal usage of the sockets module"""
 
-#####################################
-# socket data cache                 #
-#####################################
+from collections import defaultdict
+from typing import Dict, NewType, Union, Optional
 
-sentinel = object()
-
-# socket cache
-socket_data_cache = {}
-
-# faster than builtin deep copy for us.
-# useful for our limited case
-# we should be able to specify vectors here to get them create
-# or stop destroying them when in vector socket.
+SockAddress = NewType('SockAddress', str)
+SockContext = NewType('SockContext', str)  # socket can have multiple values in case it used inside node group
+DataAddress = Dict[SockAddress, Dict[Union[SockContext, None], Optional[list]]]
+socket_data_cache: DataAddress = defaultdict(lambda: defaultdict(lambda: None))
 
 
 def sv_deep_copy(lst):
     """return deep copied data of list/tuple structure"""
+    # faster than builtin deep copy for us.
+    # useful for our limited case
+    # we should be able to specify vectors here to get them create
+    # or stop destroying them when in vector socket.
     if isinstance(lst, (list, tuple)):
         if lst and not isinstance(lst[0], (list, tuple)):
             return lst[:]
@@ -43,77 +40,34 @@ def sv_deep_copy(lst):
     return lst
 
 
-# Build string for showing in socket label
-def SvGetSocketInfo(socket):
-    """returns string to show in socket label"""
-    global socket_data_cache
-    ng = socket.id_data.tree_id
-
-    if socket.is_output:
-        s_id = socket.socket_id
-    elif socket.is_linked:
-        other = socket.other
-        if other and hasattr(other, 'socket_id'):
-            s_id = other.socket_id
-        else:
-            return ''
-    else:
-        return ''
-    if ng in socket_data_cache:
-        if s_id in socket_data_cache[ng]:
-            data = socket_data_cache[ng][s_id]
-            if data:
-                return str(len(data))
-    return ''
-
-def SvForgetSocket(socket):
+def sv_forget_socket(socket):
     """deletes socket data from cache"""
-    global socket_data_cache
-    if data_structure.DEBUG_MODE:
-        if not socket.is_output:
-            warning(f"{socket.node.name} forgetting input socket: {socket.name}")
-    s_id = socket.socket_id
-    s_ng = socket.id_data.tree_id
     try:
-        socket_data_cache[s_ng].pop(s_id, None)
+        del socket_data_cache[_get_sock_address(socket)]
     except KeyError:
-        debug("it was never there")
+        pass
 
-def SvSetSocket(socket, out):
+
+def sv_set_socket(socket, data, context: SockContext = None):
     """sets socket data for socket"""
-    global socket_data_cache
-
-    s_id = socket.socket_id
-    s_ng = socket.id_data.tree_id
-    try:
-        socket_data_cache[s_ng][s_id] = out
-    except KeyError:
-        socket_data_cache[s_ng] = {}
-        socket_data_cache[s_ng][s_id] = out
+    socket_data_cache[_get_sock_address(socket)][context] = data
 
 
-def SvGetSocket(socket, other=None, deepcopy=True):
+def sv_get_socket(socket, deepcopy=True, context: SockContext = None):
     """gets socket data from socket,
     if deep copy is True a deep copy is make_dep_dict,
     to increase performance if the node doesn't mutate input
     set to False and increase performance substanstilly
     """
-    global socket_data_cache
-    try:
-        s_id = other.socket_id
-        s_ng = other.id_data.tree_id
-        out = socket_data_cache[s_ng][s_id]
-        if deepcopy:
-            return sv_deep_copy(out)
-        return out
-
-    except Exception as e:
-        if data_structure.DEBUG_MODE:
-            if socket.node is not None or other.node is not None:
-                debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
-            else:
-                debug(f"Cache miss. A socket was recently created, it is not bound with a node yet")
+    data = socket_data_cache[_get_sock_address(socket)][context]
+    if data is not None:
+        return sv_deep_copy(data) if deepcopy else data
+    else:
         raise SvNoDataError(socket)
+
+
+def _get_sock_address(sock) -> SockAddress:
+    return sock.id_data.tree_id + sock.socket_id
 
 
 class SvNoDataError(LookupError):
@@ -148,35 +102,23 @@ class SvNoDataError(LookupError):
     def __format__(self, spec):
         return repr(self)
 
-def get_output_socket_data(node, output_socket_name):
+
+def get_output_socket_data(node, output_socket_name, context: SockContext = None):
     """
     This method is intended to usage in internal tests mainly.
     Get data that the node has written to the output socket.
     Raises SvNoDataError if it hasn't written any.
     """
-
-    global socket_data_cache
-
-    tree_name = node.id_data.tree_id
-    socket = node.outputs[output_socket_name]
-    socket_id = socket.socket_id
-    if tree_name not in socket_data_cache:
-        raise SvNoDataError()
-    if socket_id in socket_data_cache[tree_name]:
-        return socket_data_cache[tree_name][socket_id]
+    socket = node.inputs[output_socket_name]  # todo why output?
+    sock_address = _get_sock_address(socket)
+    if sock_address in socket_data_cache and context in socket_data_cache[sock_address]:
+        return socket_data_cache[sock_address][context]
     else:
         raise SvNoDataError(socket)
 
-def reset_socket_cache(ng):
-    """
-    Reset socket cache either for node group.
-    """
-    global socket_data_cache
-    socket_data_cache[ng.tree_id] = {}
 
 def clear_all_socket_cache():
     """
     Reset socket cache for all node-trees.
     """
-    global socket_data_cache
     socket_data_cache.clear()

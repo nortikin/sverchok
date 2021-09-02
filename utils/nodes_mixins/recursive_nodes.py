@@ -8,14 +8,13 @@ from bpy.props import EnumProperty
 from mathutils import Matrix
 from bpy.props import BoolProperty, IntVectorProperty
 from sverchok.utils.sv_itertools import process_matched
-from sverchok.core.socket_data import sentinel
 from sverchok.data_structure import (updateNode,
                                     list_match_func, numpy_list_match_modes,
                                     ensure_nesting_level, ensure_min_nesting)
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 DEFAULT_TYPES = {
-    'NONE': sentinel,
+    'NONE': ...,
     'EMPTY_LIST': [[]],
     'MATRIX': [Matrix()],
     'MASK': [[True]]

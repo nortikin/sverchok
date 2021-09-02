@@ -12,6 +12,8 @@ from time import time
 from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple, Union
 
 import bpy
+from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.data_structure import post_load_call
 from sverchok.core.events import TreeEvent, GroupEvent
 from sverchok.utils.logging import debug, catch_log_error, log_error
@@ -37,7 +39,7 @@ class TreeHandler:
         # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
         if event.type == TreeEvent.FRAME_CHANGE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-            list(global_updater(event.type))
+            profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
             return
 
         # mark given nodes as outdated
@@ -451,6 +453,7 @@ def node_updater(node: Node, *args) -> Generator[Node, None, Optional[Exception]
     if should_be_updated:
         try:
             yield node
+            get_sock_data(node)
             node.bl_tween.process(*args)
             node.is_updated = True
             node.is_output_changed = True
@@ -469,6 +472,8 @@ def group_node_updater(node: Node) -> Generator[Node, None, Tuple[bool, Optional
     previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
     should_be_updated = (not node.is_updated or node.is_input_changed or previous_nodes_are_changed)
     yield node  # yield groups node so it be colored by node Updater if necessary
+    if should_be_updated:
+        get_sock_data(node)
     updater = node.bl_tween.updater(is_input_changed=should_be_updated)
     is_output_changed, out_error = yield from updater
     node.is_input_changed = False
@@ -488,6 +493,32 @@ def empty_updater(node: Node = None, **kwargs):
         node.is_output_changed = True if should_be_updated else False
     return tuple(kwargs.values()) if len(kwargs) > 1 else next(iter(kwargs.values()))
     yield
+
+
+def get_sock_data(node: Node):
+    """Get data from previous nodes. Should be called before given node execution"""
+    for in_sock in node.inputs:
+        for out_sock in in_sock.linked_sockets:
+
+            # reroute nodes should be treated separately, they does not have socket catch
+            # and data should be searched in previous nodes
+            # it would be nice to standardize their API but its seems impossible without node.copy trigger
+            if out_sock.node.bl_tween.bl_idname == 'NodeReroute':
+                while True:
+                    prev_socks = out_sock.node.inputs[0].linked_sockets
+                    if prev_socks:
+                        out_sock = prev_socks[0]
+                        if out_sock.node.bl_tween.bl_idname != 'NodeReroute':
+                            break
+                    else:
+                        raise SvNoDataError(in_sock.bl_tween)
+
+            # get data from normal node
+            data = out_sock.bl_tween.sv_get()
+            if out_sock.bl_tween.bl_idname != in_sock.bl_tween.bl_idname:
+                implicit_conversions = ConversionPolicies.get_conversion(in_sock.bl_tween.default_conversion_name)
+                data = implicit_conversions.convert(in_sock.bl_tween, out_sock.bl_tween, data)
+            in_sock.bl_tween.sv_set(data)
 
 
 @post_load_call

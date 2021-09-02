@@ -3,7 +3,7 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.update_system import clear_system_cache, reset_timing_graphs
+from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
@@ -149,7 +149,7 @@ def sv_pre_load(scene):
     3. post_load handler
     4. evaluate trees from main tree handler
     """
-    clear_system_cache()
+    clear_all_socket_cache()
     sv_clean(scene)
 
     import sverchok.core.group_handlers as gh
