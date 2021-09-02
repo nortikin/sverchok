@@ -810,7 +810,7 @@ class SvPresetCategoryNew(bpy.types.Operator):
 
         path = get_presets_directory(category = self.category, mkdir=True)
         info(f"Created new category '{self.category}' at {path}")
-        self.report({'INFO'}, "Created new category {self.category}")
+        self.report({'INFO'}, f"Created new category {self.category}")
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -990,7 +990,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                         delete.category = panel_props.category
             else:
                 layout.label(text="You do not have any presets")
-                layout.label(text=f"under `{panel_props.category}` category.")
+                layout.label(text=f"under '{panel_props.category}' category.")
                 layout.label(text="You can import some presets")
                 layout.label(text="from Gist or from file.")
 
@@ -1003,7 +1003,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                 layout.label(text="the search terms.")
             else:
                 layout.label(text="You do not have any presets")
-                layout.label(text=f"under `{panel_props.category}` category.")
+                layout.label(text=f"under '{panel_props.category}' category.")
                 layout.label(text="Select some nodes and")
                 layout.label(text="Use the `Save Preset' button.")
 
