@@ -927,7 +927,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             # needle = panel_props.search_text
 
         layout.prop(panel_props, 'demo_category', text='')
-        return
+
         if not panel_props.search_text:
             layout.prop(panel_props, 'category', text='')
 
