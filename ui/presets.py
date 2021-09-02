@@ -51,12 +51,12 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
         if standard:
             path_partial = 'presets'
         else:
-            path_partial = os.path.join('sverchok', 'presets')
+            path_partial = join('sverchok', 'presets')
     else:
         if standard:
             path_partial = join('presets', category)
         else:
-            path_partial = os.path.join('sverchok', 'presets', category)
+            path_partial = join('sverchok', 'presets', category)
     if standard:
         presets = join(get_sverchok_directory(), path_partial)
     else:
@@ -80,20 +80,24 @@ def get_category_names(mkdir=True, include_empty=False):
     return categories
 
 def get_category_items(self, context, include_empty=False):
-    category_items = None
+    # category_items = None  <-seems redundant
     category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
     node_category_items = []
+
     for idx, category in enumerate(get_category_names(include_empty=include_empty)):
         node_class = get_node_class_reference(category)
         if node_class and hasattr(node_class, 'bl_label'):
-            title = "/Node/ {}".format(node_class.bl_label)
+            title = f"/Node/ {node_class.bl_label}"
             node_category_items.append((category, title, category, idx+1))
         else:
             title = category
             category_items.append((category, title, category, idx+1))
+
     include_node_categories = not hasattr(self, 'include_node_categories') or self.include_node_categories
     if node_category_items and include_node_categories:
+        # [None] here is to add a divider between categories of the enum.
         category_items = category_items + [None] + node_category_items
+
     return category_items
 
 def get_category_items_all(self, context):
@@ -236,14 +240,14 @@ class SvPreset(object):
 
     def save(self):
         if self._data is None:
-            debug("Preset `%s': no data was loaded, nothing to save.", self.name)
+            debug(f"Preset '{self.name}': no data was loaded, nothing to save.")
             return
 
         data = json.dumps(self.data, sort_keys=True, indent=2).encode('utf8')
         with open(self.path, 'wb') as jsonfile:
             jsonfile.write(data)
 
-        info("Saved preset `%s'", self.name)
+        info(f"Saved preset '{self.name}'")
 
     @staticmethod
     def get_target_location(node_tree):
@@ -257,7 +261,7 @@ class SvPreset(object):
             selection = node_tree.nodes[:]
         n = len(selection)
         if not n:
-            return [0,0]
+            return [0, 0]
         locations = [node.location for node in selection]
         location_sum = [sum(x) for x in zip(*locations)]
         average_location = [x / float(n) for x in location_sum]
@@ -279,7 +283,7 @@ class SvPreset(object):
 
             class SverchPresetAddOperator(bpy.types.Operator):
                 bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category)
-                bl_label = "Add {} preset ({} category)".format(preset_name, self.category)
+                bl_label = f"Add {preset_name} preset ({self.category} category)"
                 bl_options = {'REGISTER', 'UNDO'}
 
                 cursor_x: bpy.props.IntProperty()
@@ -343,7 +347,7 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
 
     @classmethod
     def description(cls, context, properties):
-        return "Load node settings from the preset `{}' (overwrite current settings)".format(properties.preset_name)
+        return f"Load node settings from the preset '{properties.preset_name}' (overwrite current settings)"
 
     def execute(self, context):
         ntree = context.space_data.path[-1].node_tree  # in case if the node in a node group
@@ -357,15 +361,18 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
 
 def get_presets(category=None, search=None, mkdir=True):
     result = []
+
     if search:
         categories = [GENERAL] + get_category_names(mkdir=mkdir)
     else:
         categories = [category]
+
     for category in categories:
         for is_standard, path in get_preset_paths(category, mkdir=mkdir):
             preset = SvPreset(path=path, category=category, standard=is_standard)
             if preset.matches(search):
                 result.append(preset)
+
     return result
 
 def check_category(category):
@@ -392,6 +399,7 @@ def apply_default_preset(node):
 def search_text_update(self, context):
     preset_lookup['presets'] = get_presets(self.category, search=self.search_text)
 
+
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
         name="Manage Presets",
@@ -412,7 +420,6 @@ class SvSaveSelected(bpy.types.Operator):
     """
     Save selected nodes as a preset
     """
-
     bl_idname = "node.sv_save_selected"
     bl_label = "Save selected tree part"
     bl_options = {'INTERNAL'}
@@ -454,10 +461,10 @@ class SvSaveSelected(bpy.types.Operator):
         preset.make_add_operator()
         destination_path = preset.path
         json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # sort keys is not expected by the exporter
+
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
-
         return {'FINISHED'}
 
     def draw(self, context):
@@ -529,7 +536,7 @@ class SvPresetProps(bpy.types.Operator):
             new_path = get_preset_path(self.new_name, category=self.new_category)
 
             if os.path.exists(new_path):
-                msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.new_name)
+                msg = f"Preset named '{self.new_name}' already exists. Refusing to rewrite existing preset."
                 error(msg)
                 self.report({'ERROR'}, msg)
                 return {'CANCELLED'}
@@ -537,8 +544,9 @@ class SvPresetProps(bpy.types.Operator):
             os.rename(old_path, new_path)
             preset.name = self.new_name
             preset.category = self.new_category
-            info("Renamed `%s' to `%s'", old_path, new_path)
-            self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
+
+            info(f"Renamed '{old_path}' to '{new_path}'")
+            self.report({'INFO'}, f"Renamed '{self.old_name}' to '{self.new_name}'")
 
         bpy.utils.unregister_class(preset_add_operators[(self.old_category, self.old_name)])
         del preset_add_operators[(self.old_category, self.old_name)]
@@ -578,8 +586,8 @@ class SvDeletePreset(bpy.types.Operator):
         path = get_preset_path(self.preset_name, category=self.category)
 
         os.remove(path)
-        info("Removed `%s'", path)
-        self.report({'INFO'}, "Removed `{} / {}'".format(self.category, self.preset_name))
+        info(f"Removed '{path}'")
+        self.report({'INFO'}, f"Removed '{self.category} / {self.preset_name}'")
 
         return {'FINISHED'}
 
@@ -661,10 +669,10 @@ class SvPresetToFile(bpy.types.Operator):
 
         existing_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(existing_path, self.filepath)
-        msg = "Saved `{} / {}' as `{}'".format(self.category, self.preset_name, self.filepath)
+
+        msg = f"Saved '{self.category} / {self.preset_name}' as '{self.filepath}'"
         info(msg)
         self.report({'INFO'}, msg)
-
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -706,10 +714,10 @@ class SvPresetFromFile(bpy.types.Operator):
 
         target_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(self.filepath, target_path)
-        msg = "Imported `{}' as `{} / {}'".format(self.filepath, self.category, self.preset_name)
+
+        msg = f"Imported '{self.filepath}' as '{self.category} / {self.preset_name}'"
         info(msg)
         self.report({'INFO'}, msg)
-
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -752,7 +760,7 @@ class SvPresetFromGist(bpy.types.Operator):
         gist_data = sv_IO_panel_tools.load_json_from_gist(self.gist_id, self)
         target_path = get_preset_path(self.preset_name, category=self.category)
         if os.path.exists(target_path):
-            msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.preset_name)
+            msg = f"Preset named '{self.preset_name}' already exists. Refusing to rewrite existing preset."
             error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
@@ -764,10 +772,9 @@ class SvPresetFromGist(bpy.types.Operator):
         preset = SvPreset(name = self.preset_name, category = self.category)
         preset.make_add_operator()
 
-        msg = "Imported `{}' as `{}'".format(self.gist_id, self.preset_name)
+        msg = f"Imported '{self.gist_id}' as '{self.preset_name}'"
         info(msg)
         self.report({'INFO'}, msg)
-
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -796,14 +803,14 @@ class SvPresetCategoryNew(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
         if self.category == GENERAL or self.category in get_category_names():
-            msg = "Category named `{}' already exists; refusing to overwrite existing category"
+            msg = f"Category named '{self.category}' already exists; refusing to overwrite existing category"
             error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         path = get_presets_directory(category = self.category, mkdir=True)
-        info("Created new category `%s' at %s", self.category, path)
-        self.report({'INFO'}, "Created new category {}".format(self.category))
+        info(f"Created new category '{self.category}' at {path}")
+        self.report({'INFO'}, "Created new category {self.category}")
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -835,7 +842,7 @@ class SvPresetCategoryDelete(bpy.types.Operator):
         path = get_presets_directory(category = self.category)
         files = glob(join(path, "*"))
         if files:
-            msg = "Category `{}' is not empty; refusing to delete non-empty category.".format(self.category)
+            msg = f"Category '{self.category}' is not empty; refusing to delete non-empty category."
             error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
@@ -919,6 +926,8 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             row.operator("node.sv_reset_preset_search", icon="X", text="")
             # needle = panel_props.search_text
 
+        layout.prop(panel_props, 'demo_category', text='')
+        return
         if not panel_props.search_text:
             layout.prop(panel_props, 'category', text='')
 
