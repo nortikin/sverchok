@@ -22,7 +22,6 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func,
                                      no_space)
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -144,7 +143,8 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
 
             c.prop_search(self, "name_texture", bpy.data, 'textures', text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
+
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         b = layout.split(factor=0.33, align=True)

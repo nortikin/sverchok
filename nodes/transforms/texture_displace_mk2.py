@@ -22,7 +22,6 @@ from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
 from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -164,7 +163,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             c.label(text=socket.name+ ':')
             c.prop_search(self, "texture_pointer", bpy.data, 'textures', text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
             
     def draw_buttons(self, context, layout):
         is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']

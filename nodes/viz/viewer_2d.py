@@ -28,7 +28,6 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
@@ -711,7 +710,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, socket.prop_name, text="")
         else:
             if draw_name:
-                layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+                layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
     def get_drawing_attributes(self):
         """ obtain the dpi adjusted xy and scale factors, cache location_theta """
