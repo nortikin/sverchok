@@ -57,12 +57,15 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
             path_partial = join('presets', category)
         else:
             path_partial = join('sverchok', 'presets', category)
+
     if standard:
         presets = join(get_sverchok_directory(), path_partial)
     else:
         presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=False))
+
     if not os.path.exists(presets) and mkdir and not standard:
         os.makedirs(presets)
+
     return presets
 
 def get_category_names(mkdir=True, include_empty=False):
