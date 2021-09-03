@@ -6,15 +6,27 @@
 # License-Filename: LICENSE
 
 import os
+import json
+import shutil
+from glob import glob
 from os.path import join, isdir, basename, dirname
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
+from sverchok.utils import sv_gist_tools
+from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.utils.sv_json_export import JSONExporter
 from sverchok.utils.logging import debug, info, error, exception
-from sverchok.ui.presets import SvPreset
+from sverchok.ui.presets import (
+	SvPreset, 
+	get_category_items_all,
+	get_category_names,
+	get_preset_path,
+	get_presets_directory,
+	GENERAL
+)
 
 class SvPresetReplace(bpy.types.Operator):
     """Load node settings from preset"""

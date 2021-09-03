@@ -9,7 +9,6 @@
 import os
 from functools import reduce
 from os.path import join, isdir, basename, dirname
-import shutil
 from glob import glob
 import json
 from urllib.parse import quote_plus
@@ -20,8 +19,6 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
 from sverchok.utils.logging import debug, info, error, exception
-from sverchok.utils import sv_gist_tools
-from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_json_import import JSONImporter
 
