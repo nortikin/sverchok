@@ -21,12 +21,12 @@ from sverchok.utils.sv_json_export import JSONExporter
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.ui.presets import (
     preset_lookup,
-	SvPreset, 
-	get_category_items_all,
-	get_category_names,
-	get_preset_path,
-	get_presets_directory,
-	GENERAL
+    SvPreset, 
+    get_category_items_all,
+    get_category_names,
+    get_preset_path,
+    get_presets_directory,
+    GENERAL
 )
 
 class SvPresetReplace(bpy.types.Operator):

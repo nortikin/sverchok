@@ -272,8 +272,7 @@ class SvPreset(object):
 
         if (self.category, self.name) not in preset_lookup['preset_add_operators']:
 
-            preset_name = self.name if not self.description else self.description
-            # preset_name = self.description or self.name
+            preset_name = self.description or self.name
 
             class SverchPresetAddOperator(bpy.types.Operator):
                 bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category)
