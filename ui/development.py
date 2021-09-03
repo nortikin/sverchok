@@ -159,20 +159,17 @@ class SvViewHelpForNode(bpy.types.Operator):
         return {'FINISHED'}
 
     def throw_404(self, n):
-        # bl_label of some nodes is edited by us, but those nodes do have docs ..
+
         _dirname = os.path.dirname(sverchok.__file__)
-        path1 = os.path.join(_dirname, 'docs', '404.html')
-        path2 = os.path.join(_dirname, 'docs', '404_custom.html')
+        url_base = os.path.join(_dirname, 'docs', '404.html')
 
-        with open(path1) as origin:
-            with open(path2, 'w') as destination:
-                for line in origin:
-                    if '{{variable}}' in line:
-                        destination.write(line.replace("{{variable}}", n.bl_label))
-                    else:
-                        destination.write(line)
-
-        webbrowser.open(path2)
+        if hasattr(n, "bl_label"):
+            full_url = f"{url_base}?param1={n.bl_label}" 
+        else:
+            self.report({'INFO'}, "This Node does not have bl_label")
+            return
+        
+        webbrowser.open(full_url)
 
 
 class SvViewSourceForNode(bpy.types.Operator):

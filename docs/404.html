@@ -23,7 +23,7 @@
             
             Sorry! It appears that <span id="label">{{variable}}</span> doesn't have a document associated with it.<br/>
             Search for information about this node on our issue tracker using
-            <a href="https://github.com/nortikin/sverchok/search?q={{variable}}">this link</a>.<br/>
+            <a id="searchable" href="https://github.com/nortikin/sverchok/search?q={{variable}}">this link</a>.<br/>
             <br/>
             For any further questions you can contact us on the <a href="https://github.com/nortikin/sverchok/issues">GitHub issue tracker</a> or any of the following social sites: 
             <div id="social"><a href="http://vk.com/public35076122">VK</a> or <a href="http://www.blenderartists.org/forum/showthread.php?272679">Blenderartists</a>.</div>
@@ -35,7 +35,25 @@
               <a class='footer_link' href="https://github.com/nortikin/sverchok">Github</a> 
             </div>
 
-          </div>
+        </div>
+
+    <script type="text/javascript">
+
+          // get bl_label    
+          var url = location.href;
+          var myurl_parts = url.split('?');
+          var slug_parameters = myurl_parts[1];
+          var bl_label = slug_parameters.split('=')[1];
+
+          // set label content to show user this page is about this missing node's documentation
+          document.getElementById("label").innerHTML = bl_label;
+
+          // set the search term in the href
+          var search_link_element = document.getElementById('searchable');
+          var new_search_url = 'https://github.com/nortikin/sverchok/search?q=' + bl_label;
+          search_link_element.setAttribute('href', new_search_url);
+    
+    </script>
 
     </body>
 </html>
