@@ -517,7 +517,7 @@ classes = [
     SvPresetCategoryDelete,
     SvPresetToGist,
     SvPresetToFile,
-    SvPresetReplace
+    SvPresetReplace,
     SvPresetDelete,
     SvResetPresetSearch
 ]
