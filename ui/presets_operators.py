@@ -20,6 +20,7 @@ from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.utils.sv_json_export import JSONExporter
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.ui.presets import (
+    preset_lookup,
 	SvPreset, 
 	get_category_items_all,
 	get_category_names,
@@ -184,8 +185,8 @@ class SvPresetProps(bpy.types.Operator):
             info(f"Renamed '{old_path}' to '{new_path}'")
             self.report({'INFO'}, f"Renamed '{self.old_name}' to '{self.new_name}'")
 
-        bpy.utils.unregister_class(preset_add_operators[(self.old_category, self.old_name)])
-        del preset_add_operators[(self.old_category, self.old_name)]
+        bpy.utils.unregister_class(preset_lookup['preset_add_operators'][(self.old_category, self.old_name)])
+        del preset_lookup['preset_add_operators'][(self.old_category, self.old_name)]
         preset.make_add_operator()
 
         return {'FINISHED'}

@@ -24,7 +24,13 @@ from sverchok.utils.sv_json_import import JSONImporter
 
 import sverchok
 
-preset_lookup = {'presets': []}
+# We are creating and registering preset adding operators dynamically.
+# So, we have to remember them in order to unregister them when needed.
+
+preset_lookup = {
+    'presets': [],
+    'preset_add_operators': {}
+}
 
 # To be moved somewhere under core/
 def get_sverchok_directory():
@@ -129,9 +135,7 @@ def node_supports_presets(node):
     is_frame = (bl_idname.startswith('NodeFrame'))
     return not is_monad and not is_frame
 
-# We are creating and registering preset adding operators dynamically.
-# So, we have to remember them in order to unregister them when needed.
-preset_add_operators = {}
+
 
 class SvPreset(object):
     def __init__(self, name=None, path=None, category=None, standard=False):
@@ -263,13 +267,13 @@ class SvPreset(object):
         Tooltip (docstring) for that operator is copied from metainfo/description field.
         """
 
-        global preset_add_operators
         if self.category is None:
             self.category = GENERAL
 
-        if (self.category, self.name) not in preset_add_operators:
+        if (self.category, self.name) not in preset_lookup['preset_add_operators']:
 
             preset_name = self.name if not self.description else self.description
+            # preset_name = self.description or self.name
 
             class SverchPresetAddOperator(bpy.types.Operator):
                 bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category)
@@ -295,8 +299,7 @@ class SvPreset(object):
                     ng = bpy.data.node_groups[id_tree]
 
                     center = context.space_data.cursor_location
-                    # Deselect everything, so as a result only imported nodes
-                    # will be selected
+                    # Deselect everything, so as a result only imported nodes will be selected
                     bpy.ops.node.select_all(action='DESELECT')
                     JSONImporter.init_from_path(self.path).import_into_tree(ng)
                     new_nodes = [node for node in ng.nodes if node.select]
@@ -315,7 +318,7 @@ class SvPreset(object):
             if self.standard:
                 SverchPresetAddOperator.__doc__ += " [standard]"
 
-            preset_add_operators[(self.category, self.name)] = SverchPresetAddOperator
+            preset_lookup['preset_add_operators'][(self.category, self.name)] = SverchPresetAddOperator
             bpy.utils.register_class(SverchPresetAddOperator)
             #debug("Registered: %s",
             #    "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
@@ -347,15 +350,16 @@ def check_category(category):
     return len(presets) != 0
 
 def get_preset(category, name):
-    file_name = name + ".json"
+    
+    file_name = f"{name}.json"
     user = get_presets_directory(category, standard=False)
     standard = get_presets_directory(category, standard=True)
 
     for is_standard, directory in [(False, user), (True, standard)]:
         path = join(directory, file_name)
         if os.path.exists(path):
-            preset = SvPreset(path = path, category=category, standard=is_standard)
-            return preset
+            return SvPreset(path = path, category=category, standard=is_standard)
+    
     return None
 
 def apply_default_preset(node):
@@ -539,6 +543,6 @@ def unregister():
 
     for c in reversed(classes): bpy.utils.unregister_class(c)
 
-    for category, name in preset_add_operators:
-        bpy.utils.unregister_class(preset_add_operators[(category, name)])
+    for category, name in preset_lookup['preset_add_operators']:
+        bpy.utils.unregister_class(preset_lookup['preset_add_operators'][(category, name)])
 
