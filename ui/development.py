@@ -32,7 +32,7 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
+from sverchok.ui.presets import get_presets, node_supports_presets
 from sverchok.nodes.__init__ import nodes_dict
 from sverchok.settings import PYPATH
 from sverchok.utils.extra_categories import external_node_docs
@@ -262,7 +262,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
         has_presets = False
         for preset in get_presets(category = node.bl_idname, mkdir=False):
             has_presets = True
-            op = layout.operator(SverchPresetReplaceOperator.bl_idname, text=preset.name)
+            op = layout.operator("node.sv_preset_replace_node", text=preset.name)
             op.preset_path = preset.path
             op.preset_name = preset.name
             op.node_name = node.name
@@ -274,7 +274,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
         if hasattr(context, 'region') and context.region.type == 'WINDOW':
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT' # otherwise Blender will not call invoke()
-            save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as node preset", icon='SOLO_ON')
+            save = layout.operator("node.sv_save_selected", text="Save current settings as node preset", icon='SOLO_ON')
             save.id_tree = ntree.name
             save.category = node.bl_idname
 
