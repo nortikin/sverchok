@@ -165,11 +165,11 @@ class SvViewHelpForNode(bpy.types.Operator):
 
         if hasattr(n, "bl_label"):
             full_url = f"{url_base}?param1={n.bl_label}" 
+            webbrowser.open(full_url)
         else:
             self.report({'INFO'}, "This Node does not have bl_label")
             return
         
-        webbrowser.open(full_url)
 
 
 class SvViewSourceForNode(bpy.types.Operator):
