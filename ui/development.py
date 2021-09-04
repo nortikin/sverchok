@@ -165,12 +165,8 @@ class SvViewHelpForNode(bpy.types.Operator):
 
         if hasattr(n, "bl_label"):
             slug = f"?param1={n.bl_idname}"
-            url = os.path.realpath(local_path) + slug
-            full_url = url.replace(os.sep, '/')
-
-            # this might be platform specific ?
-            print(full_url)
-            webbrowser.open('file:///' + full_url)
+            url = 'https://sverchok.github.io/missing_doc_handler/index.html' + slug
+            webbrowser.open(url)
 
         else:
             self.report({'INFO'}, "This Node does not have bl_label")
