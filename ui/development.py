@@ -160,9 +160,6 @@ class SvViewHelpForNode(bpy.types.Operator):
 
     def throw_404(self, n):
 
-        _dirname = os.path.dirname(sverchok.__file__)
-        local_path = os.path.join(_dirname, 'docs', '404.html')
-
         if hasattr(n, "bl_label"):
             slug = f"?param1={n.bl_idname}"
             url = 'https://sverchok.github.io/missing_doc_handler/index.html' + slug
