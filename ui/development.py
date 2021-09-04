@@ -161,11 +161,17 @@ class SvViewHelpForNode(bpy.types.Operator):
     def throw_404(self, n):
 
         _dirname = os.path.dirname(sverchok.__file__)
-        url_base = os.path.join(_dirname, 'docs', '404.html')
+        local_path = os.path.join(_dirname, 'docs', '404.html')
 
         if hasattr(n, "bl_label"):
-            full_url = f"{url_base}?param1={n.bl_label}" 
-            webbrowser.open(full_url)
+            slug = f"?param1={n.bl_idname}"
+            url = os.path.realpath(local_path) + slug
+            full_url = url.replace(os.sep, '/')
+
+            # this might be platform specific ?
+            print(full_url)
+            webbrowser.open('file:///' + full_url)
+
         else:
             self.report({'INFO'}, "This Node does not have bl_label")
             return
