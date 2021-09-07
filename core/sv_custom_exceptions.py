@@ -6,6 +6,42 @@
 # License-Filename: LICENSE
 
 
+class SvNoDataError(LookupError):
+    def __init__(self, socket=None, node=None, msg=None):
+
+        self.extra_message = msg if msg else ""
+
+        if node is None and socket is not None:
+            node = socket.node
+        self.node = node
+        self.socket = socket
+
+        super(LookupError, self).__init__(self.get_message())
+
+    def get_message(self):
+        if self.extra_message:
+            return f"node {self.socket.node.name} (socket {self.socket.name}) {self.extra_message}"
+        if not self.node and not self.socket:
+            return "SvNoDataError"
+        else:
+            return f"No data passed into socket '{self.socket.name}'"
+
+    def __repr__(self):
+        return self.get_message()
+
+    def __str__(self):
+        return repr(self)
+
+    def __unicode__(self):
+        return repr(self)
+
+    def __format__(self, spec):
+        return repr(self)
+
+
+class CancelError(Exception):
+    """Aborting tree evaluation by user"""
+
 
 class SvProcessingError(Exception):
     pass

@@ -13,7 +13,7 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.core.events import TreeEvent
 from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.core.group_handlers import NodeIdManager

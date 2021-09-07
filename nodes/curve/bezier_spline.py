@@ -4,7 +4,7 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, BoolProperty
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvBezierCurve, SvCubicBezierCurve

@@ -12,7 +12,7 @@ from time import time
 from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple, Union
 
 import bpy
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError, CancelError
 from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.data_structure import post_load_call
 from sverchok.core.events import TreeEvent, GroupEvent

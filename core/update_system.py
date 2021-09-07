@@ -23,7 +23,7 @@ from itertools import chain
 import bpy
 
 from sverchok import data_structure
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.logging import warning, error, exception
 from sverchok.utils.profile import profile
 from sverchok.core.socket_data import clear_all_socket_cache

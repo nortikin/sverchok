@@ -10,7 +10,7 @@ import random
 import bpy
 from bpy.props import FloatProperty, BoolProperty, EnumProperty, IntProperty
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, repeat_last_for_length,\
     get_data_nesting_level

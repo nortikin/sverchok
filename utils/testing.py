@@ -14,9 +14,9 @@ import ast
 
 import sverchok
 from sverchok import old_nodes
-from sverchok.old_nodes import is_old
 from sverchok.data_structure import get_data_nesting_level
-from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
+from sverchok.core.socket_data import get_output_socket_data
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names

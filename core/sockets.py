@@ -23,9 +23,8 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.socket_conversions import ConversionPolicies
-from sverchok.core.socket_data import (
-    sv_get_socket, sv_set_socket, sv_forget_socket,
-    SvNoDataError)
+from sverchok.core.socket_data import sv_get_socket, sv_set_socket, sv_forget_socket
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 
 from sverchok.data_structure import (
     enum_item_4,

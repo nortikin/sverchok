@@ -26,7 +26,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
