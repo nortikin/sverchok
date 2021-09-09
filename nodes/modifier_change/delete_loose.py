@@ -64,8 +64,15 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Vertices'].sv_set(verts_out)
         if poly_edge_out:
             self.outputs['PolyEdge'].sv_set(poly_edge_out)
-        if self.outputs['VertsMask'].is_linked:
-            self.outputs['VertsMask'].sv_set(verts_mask_out)
+        
+        # potentially older layouts have nodes where sv_init has not added this socket yet.
+        vm_socket = self.outputs.get('VertsMask')
+        if vm_socket and vm_socket.is_linked:
+            vm_socket.sv_set(verts_mask_out)
+        
+        # this autoupgrades older nodes.
+        if not vm_socket:
+            self.outputs.new('SvStringsSocket', 'VertsMask')
 
 
 def register():
