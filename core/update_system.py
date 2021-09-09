@@ -26,7 +26,6 @@ from sverchok import data_structure
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.logging import warning, error, exception
 from sverchok.utils.profile import profile
-from sverchok.core.socket_data import clear_all_socket_cache
 import sverchok
 
 import ast

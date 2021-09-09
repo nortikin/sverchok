@@ -355,7 +355,7 @@ class SvSocketCommon(SvSocketProcessing):
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.node.node_id + self.identifier))
+        return str(hash(self.node.node_id + self.identifier + ('o' if self.is_output else 'i')))
 
     @property
     def index(self):
@@ -380,27 +380,26 @@ class SvSocketCommon(SvSocketProcessing):
 
         self.hide = value
 
-    def sv_get(self, default=..., deepcopy=True, context=None):
+    def sv_get(self, default=..., deepcopy=True):  # todo should be removed, data should path directly to process method
         """
         The method is used for getting socket data
         In most cases the method should not be overridden
         Also a socket can use its default_property
         Order of getting data (if available):
-        1. written socket data (for output sockets this is the only option)
+        1. written socket data
         2. node default property
         3. socket default property
         4. script default property
         5. Raise no data error
         :param default: script default property
         :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
-        :param context: provide this in case the node can be evaluated several times in different contexts
         :return: data bound to the socket
         """
         if self.is_output:
-            return sv_get_socket(self, False, context)
+            return sv_get_socket(self, False)
 
         if self.is_linked:
-            return sv_get_socket(self, deepcopy, context)
+            return sv_get_socket(self, deepcopy)
 
         prop_name = self.get_prop_name()
         if prop_name:
@@ -416,11 +415,11 @@ class SvSocketCommon(SvSocketProcessing):
 
         raise SvNoDataError(self)
 
-    def sv_set(self, data, context: str = None):
+    def sv_set(self, data):  # todo should be removed
         """Set data, provide context in case the node can be evaluated several times in different context"""
         if self.is_output:
             data = self.postprocess_output(data)
-        sv_set_socket(self, data, context=context)
+        sv_set_socket(self, data)
 
     def sv_forget(self):
         """Delete socket memory"""
@@ -529,13 +528,13 @@ class SvSocketCommon(SvSocketProcessing):
     def draw_color(self, context, node):
         return self.color
 
-    def update_objects_number(self, context=None):  # todo should be context here?
+    def update_objects_number(self):  # todo should be the method here?
         """
         Should be called each time after process method of the socket owner
         It will update number of objects to show in socket labels
         """
         try:
-            self.objects_number = len(self.sv_get(deepcopy=False, default=[], context=context))
+            self.objects_number = len(self.sv_get(deepcopy=False, default=[]))
         except LookupError:
             self.objects_number = 0
         except Exception as e:

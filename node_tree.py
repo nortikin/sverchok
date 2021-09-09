@@ -16,7 +16,6 @@ from bpy.types import NodeTree
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.core.events import TreeEvent
 from sverchok.core.main_tree_handler import TreeHandler
-from sverchok.core.group_handlers import NodeIdManager
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -27,7 +26,6 @@ from sverchok.utils.logging import debug, catch_log_error
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui import bgl_callback_nodeview as sv_bgl
-from sverchok.utils.handle_blender_data import BlTree
 
 
 class SvNodeTreeCommon:
@@ -241,14 +239,15 @@ class UpdateNodes:
 
     def free(self):
         """Called upon the node removal"""
+        # custom free function
         self.sv_free()
 
+        # free sockets memory
         for s in self.outputs:
             s.sv_forget()
 
-        # This is inevitable evil cause of flexible nature of node_ids inside group trees
-        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
-        self.update_ui(node_id=node_id)
+        # remove tree space drawings
+        self.update_ui()
 
     def copy(self, original):
         """Called upon the node being copied"""
@@ -265,7 +264,7 @@ class UpdateNodes:
 
         self.sv_update()
 
-    def update_ui(self, error=None, update_time=None, node_id=None):
+    def update_ui(self, error=None, update_time=None):
         """updating tree contextual information -> node colors, text
         node_id only for usage of a group tree"""
         sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
@@ -273,23 +272,22 @@ class UpdateNodes:
         no_data_color = sv_settings.no_data_color
         error_pref = "error"
         update_pref = "update_time"
-        node_id = node_id or self.node_id  # inevitable evil
 
         # update error colors
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, repr(error), error_pref + node_id, color, 1.3, "UP")
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, "UP")
         else:
-            sv_bgl.callback_disable(error_pref + node_id)
+            sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
 
         # show update timing
         if update_time is not None:
             update_time = int(update_time * 1000)
-            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + node_id, align="UP", dynamic_location=False)
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP", dynamic_location=False)
         else:
-            sv_bgl.callback_disable(update_pref + node_id)
+            sv_bgl.callback_disable(update_pref + self.node_id)
 
         # update object numbers
         for s in chain(self.inputs, self.outputs):

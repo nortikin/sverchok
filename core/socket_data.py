@@ -19,11 +19,13 @@
 """For internal usage of the sockets module"""
 
 from collections import defaultdict
-from typing import Dict, NewType, Union, Optional
+from typing import Dict, NewType, Optional
 
-SockAddress = NewType('SockAddress', str)
+from sverchok.core.sv_custom_exceptions import SvNoDataError
+
+SockId = NewType('SockId', str)
 SockContext = NewType('SockContext', str)  # socket can have multiple values in case it used inside node group
-DataAddress = Dict[SockAddress, Dict[Union[SockContext, None], Optional[list]]]
+DataAddress = Dict[SockId, Dict[SockContext, Optional[list]]]
 socket_data_cache: DataAddress = defaultdict(lambda: defaultdict(lambda: None))
 
 
@@ -43,74 +45,37 @@ def sv_deep_copy(lst):
 def sv_forget_socket(socket):
     """deletes socket data from cache"""
     try:
-        del socket_data_cache[_get_sock_address(socket)]
+        del socket_data_cache[socket.socket_id]
     except KeyError:
         pass
 
 
-def sv_set_socket(socket, data, context: SockContext = None):
+def sv_set_socket(socket, data, context: SockContext = ''):
     """sets socket data for socket"""
-    socket_data_cache[_get_sock_address(socket)][context] = data
+    socket_data_cache[socket.socket_id][context] = data
 
 
-def sv_get_socket(socket, deepcopy=True, context: SockContext = None):
+def sv_get_socket(socket, deepcopy=True, context: SockContext = ''):
     """gets socket data from socket,
     if deep copy is True a deep copy is make_dep_dict,
     to increase performance if the node doesn't mutate input
     set to False and increase performance substanstilly
     """
-    data = socket_data_cache[_get_sock_address(socket)][context]
+    data = socket_data_cache[socket.socket_id][context]
     if data is not None:
         return sv_deep_copy(data) if deepcopy else data
     else:
         raise SvNoDataError(socket)
 
 
-def _get_sock_address(sock) -> SockAddress:
-    return sock.id_data.tree_id + sock.socket_id
-
-
-class SvNoDataError(LookupError):
-    def __init__(self, socket=None, node=None, msg=None):
-
-        self.extra_message = msg if msg else ""
-
-        if node is None and socket is not None:
-            node = socket.node
-        self.node = node
-        self.socket = socket
-
-        super(LookupError, self).__init__(self.get_message())
-
-    def get_message(self):
-        if self.extra_message:
-            return f"node {self.socket.node.name} (socket {self.socket.name}) {self.extra_message}"
-        if not self.node and not self.socket:
-            return "SvNoDataError"
-        else:
-            return f"No data passed into socket '{self.socket.name}'"
-
-    def __repr__(self):
-        return self.get_message()
-
-    def __str__(self):
-        return repr(self)
-
-    def __unicode__(self):
-        return repr(self)
-
-    def __format__(self, spec):
-        return repr(self)
-
-
-def get_output_socket_data(node, output_socket_name, context: SockContext = None):
+def get_output_socket_data(node, output_socket_name, context: SockContext = ''):
     """
     This method is intended to usage in internal tests mainly.
     Get data that the node has written to the output socket.
     Raises SvNoDataError if it hasn't written any.
     """
     socket = node.inputs[output_socket_name]  # todo why output?
-    sock_address = _get_sock_address(socket)
+    sock_address = socket.socket_id
     if sock_address in socket_data_cache and context in socket_data_cache[sock_address]:
         return socket_data_cache[sock_address][context]
     else:

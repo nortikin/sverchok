@@ -17,11 +17,11 @@ from sverchok.core.main_tree_handler import empty_updater
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler, NodeIdManager
+from sverchok.core.group_handlers import MainHandler
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlNode, BlTree, BlTrees
+from sverchok.utils.handle_blender_data import BlNode, BlTrees
 from sverchok.utils.logging import catch_log_error
 from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon, SverchCustomTreeNode
 
@@ -211,9 +211,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
                     yield node
 
     def update_ui(self, group_nodes_path: List['SvGroupTreeNode']):
-        """updating tree contextual information -> node colors, objects number in sockets, debugger nodes"""
-        self.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
-
+        """updating tree contextual information -> node colors, objects number in sockets"""
         nodes_errors = self.handler.get_error_nodes(group_nodes_path)
         to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
         time_mode = group_nodes_path[0].id_data.show_time_mode
@@ -224,12 +222,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
             update_time = cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
             if hasattr(node, 'update_ui'):
-                node.update_ui(error, update, NodeIdManager.extract_node_id(node))
-
-            # update debug nodes
-            if BlNode(node).is_debug_node:
-                with catch_log_error():
-                    node.process()
+                node.update_ui(error, update)
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
@@ -399,7 +392,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 raise error
 
     def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
-                is_input_changed: bool = True) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
+                is_input_changed: bool = True,
+                trees_ui_to_update: set = None) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
         """
         This method should be called by group tree handler
         is_input_changed should be False if update is called just for inspection of inner changes
@@ -420,7 +414,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         input_node = self.active_input() if is_input_changed else None
         return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
                                                         group_nodes_path,
-                                                        [input_node] if input_node else []))
+                                                        [input_node] if input_node else []),
+                                             trees_ui_to_update or set())
 
     def active_input(self) -> Optional[bpy.types.Node]:
         # https://developer.blender.org/T82350
@@ -444,8 +439,6 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
     def free(self):
-        # This is inevitable evil cause of flexible nature of node_ids inside group trees
-        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
         self.update_ui()
 
 
@@ -828,7 +821,8 @@ class EditGroupTree(bpy.types.Operator):
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
         group_nodes_path = sub_tree.get_update_path()
-        sub_tree.update_ui(group_nodes_path)
+        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path,
+                                         (n for n in sub_tree.nodes if BlNode(n).is_debug_node)))
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator
         return {'FINISHED'}
