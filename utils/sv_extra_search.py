@@ -121,7 +121,12 @@ def gather_items(context):
             nodetype = get_node_class_reference(item[0])
             if not nodetype:
                 continue
-            fx.append((str(idx), ensure_valid_show_string(nodetype), '', idx))
+
+            docstring = ensure_valid_show_string(nodetype)
+            if not docstring:
+                continue
+
+            fx.append((str(idx), docstring, '', idx))
             idx += 1
 
     for k, v in macros.items():
