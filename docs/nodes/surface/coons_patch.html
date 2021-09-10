@@ -326,6 +326,21 @@ ends of curves do not coincide, the generated surface may be weird.</p></li>
 allowable to decide that they actually coincide. The default value is 0.001.
 This parameter is only available if <strong>Check coincidence</strong> parameter is
 enabled.</p></li>
+<li><p><strong>NURBS option</strong>. This defines whether the node will generate a NURBS surface
+or a generic Surface object. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Generic</strong>. Always create a generic Surface object.</p></li>
+<li><p><strong>Always NURBS</strong>. Create a NURBS surface. If input curves are not NURBS or
+NURBS-like, or if it is not possible to generate a NURBS surface for some
+another reason, the node will fail.</p></li>
+<li><p><strong>NURBS if possible</strong>. Create a NURBS surface. If input curves are not NURBS or
+NURBS-like, or if it is not possible to generate a NURBS surface for some
+another reason, the node will create a generic Surface object.</p></li>
+</ul>
+<p>The default option is <strong>NURBS if possible</strong>.</p>
+</div></blockquote>
+</li>
 </ul>
 </div>
 <div class="section" id="outputs">
