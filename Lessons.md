@@ -49,11 +49,6 @@
 	<h3 class='tofu'>zeffii blogs and lessons</h3>
 	<ul>
 	<li><a href='http://blenderscripting.blogspot.com/2014/08/sverchok-basics.html'>Sverchok the basics, recommended</a></li>
-	<li><a href='http://blenderpython.tumblr.com/post/91852059604/sverchok-a-brief-introduction-to-parametric-modelling'>
-	How to make a bridge skeleton</a></li>
-	<li><a href='http://blenderpython.tumblr.com/post/92143781744/sverchok-callisthenics-set-1-primitive-fish'>
-	Sverchok Callisthenics (process)</a></li>
-	<li><a href='http://blenderpython.tumblr.com/post/93016276989/two-circles-verts-and-edges'>Two Circles (Gherkin Tower)</a></li>
 	</ul>
    </td>
    </tr>
