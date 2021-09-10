@@ -184,7 +184,10 @@ class SvExtraSearch(bpy.types.Operator):
 
     def invoke(self, context, event):
         context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-        loop['results'] = gather_items(context)
+        
+        if not loop.get('results'):
+            loop['results'] = gather_items(context)
+        
         wm = context.window_manager
         wm.invoke_search_popup(self)
         return {'FINISHED'}
