@@ -184,7 +184,17 @@ class SvExtraSearch(bpy.types.Operator):
 
     def invoke(self, context, event):
         context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-        loop['results'] = gather_items(context)
+        
+        if not loop.get('results'):
+            loop['results'] = gather_items(context)
+            print(":) extra search results cached")
+        else:
+            # line_1 = "using cached items! clear cache by doing\n"
+            # line_2 = ">>> import sverchok\n"
+            # line_3 = ">>> sverchok.utils.sv_extra_search.loop[\"results\"] = None"
+            # print(line_1 + line_2 + line_3)
+            pass
+        
         wm = context.window_manager
         wm.invoke_search_popup(self)
         return {'FINISHED'}
