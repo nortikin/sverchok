@@ -11,14 +11,6 @@
 	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-flower-and-snake_474.html'>Flower and snake (+18)</a></li>
 	</ul>
 	You'll find many exploratory posts on blendersushi's blog, above is a small sampling.
-	<h3 class='tofu'>Luis Chavez. Sverchok + Unreal 4</h3>
-	<ul>
-	<li><a href='http://www.timefirevr.com/2014/10/13/sverchok-unreal-engine-4-part-1/'>From Sverchok to UE4 1</a></li>
-	<li><a href='http://www.timefirevr.com/2014/10/14/sverchok-unreal-engine-4-part-2/'>From Sverchok to UE4 2</a></li>
-	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-4-part-3/'>From Sverchok to UE4 3</a></li>
-	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-4-part-4/'>From Sverchok to UE4 4</a></li>
-	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-bonus/'>Bonus</a></li>
-	</ul>
 	<h3 class='tofu'>Elfnor. Work with Matrix</h3>
 	<ul>
 	<li><a href='http://elfnor.com/simple-sverchok-01-centers-polygons.html'>Matrices on polygons 1</a></li>
