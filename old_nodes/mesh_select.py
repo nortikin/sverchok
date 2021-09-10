@@ -137,7 +137,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return result
 
     def by_normal(self, vertices, edges, faces):
-        vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+        vertex_normals, face_normals = calc_mesh_normals(vertices, faces)
         percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
         direction = self.inputs['Direction'].sv_get()[0][0]
         values = [Vector(n).dot(direction) for n in face_normals]
