@@ -93,7 +93,7 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if not node.props.data_to_mask:
-            mask = np.zeros(node.inputs.mask_size[0], dtype=bool)
+            mask = np.zeros(int(node.inputs.mask_size[0]), dtype=bool)
         else:
             if node.props.is_topo_mask:
                 mask = np.zeros(len(node.inputs.data_to_mask), dtype=bool)
