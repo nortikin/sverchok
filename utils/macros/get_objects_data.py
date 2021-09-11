@@ -1,6 +1,6 @@
 
 
-def objdata_macro_one(context, operator, term, nodes, links)
+def objdata_macro_one(context, operator, term, nodes, links):
 
     A = context.active_node
     if not A: 
