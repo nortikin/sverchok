@@ -28,6 +28,7 @@ from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
 from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
 from sverchok.utils.macros.hotswap_macros import swap_vd_mv
+from sverchok.utils.macros.get_objects_data import objdata_macro_one
 
 # pylint: disable=c0301
 
@@ -42,6 +43,8 @@ macros = {
         description="active_obj into objlite + vdmk2", term='obj vd'),
     "> objs vd": simple_macro(
         description="multi obj in + vdmk2", term='objs vd'),
+    "> objs socket to get-Obj-Data": simple_macro(
+        description="objsocket -> get objects data", term='objs socket to data'),
     "> zen": simple_macro(
         description="zen of Sverchok", term='zen'),
     "> nuke python++": simple_macro(
@@ -155,6 +158,9 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
+
+        elif term == "objs socket to data":
+            objdata_macro_one(context, operator, term, nodes, links)
 
         elif term == 'rndcol':
 
