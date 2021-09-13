@@ -784,7 +784,7 @@ class PlaneEquation(object):
         normal = self.normal.length
         if abs(normal) < 1e-8:
             raise Exception("Normal of the plane is (nearly) zero: ({}, {}, {})".format(self.a, self.b, self.c))
-        return PlaneEquation(a/normal, b/normal, c/normal, d/normal)
+        return PlaneEquation(self.a/normal, self.b/normal, self.c/normal, self.d/normal)
     
     def check(self, point, eps=1e-6):
         """
@@ -902,7 +902,7 @@ class PlaneEquation(object):
         denominator = math.sqrt(a*a + b*b + c*c)
         return numerators / denominator
 
-    def intersect_with_line(self, line, min_det=1e-8):
+    def intersect_with_line(self, line, min_det=1e-12):
         """
         Calculate intersection between this plane and specified line.
         input: line - an instance of LineEquation.
@@ -1099,23 +1099,23 @@ class PlaneEquation(object):
         p1 = plane2.intersect_with_line(line1)
         p2 = plane2.intersect_with_line(line2)
         if p1 is None:
-            raise Exception(f"Plane {plane2} does not intersect with line {line1}")
+            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line1}")
         if p2 is None:
-            raise Exception(f"Plane {plane2} does not intersect with line {line2}")
+            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line2}")
         return LineEquation.from_two_points(p1, p2)
 
-    def is_parallel(self, other):
+    def is_parallel(self, other, eps=1e-8):
         """
         Check if other object is parallel to this plane.
         input: PlaneEquation, LineEquation or Vector.
         output: boolean.
         """
         if isinstance(other, PlaneEquation):
-            return abs(self.normal.angle(other.normal)) < 1e-8
+            return abs(self.normal.angle(other.normal)) < eps
         elif isinstance(other, LineEquation):
-            return abs(self.normal.dot(other.direction)) < 1e-8
+            return abs(self.normal.dot(other.direction)) < eps
         elif isinstance(other, mathutils.Vector):
-            return abs(self.normal.dot(other)) < 1e-8
+            return abs(self.normal.dot(other)) < eps
         else:
             raise Exception("Don't know how to check is_parallel for {}".format(type(other)))
 
@@ -1626,6 +1626,13 @@ class Triangle(object):
         The radius of the inscribed circle.
         """
         return 2 * self.area() / self.perimeter()
+
+    def circumscribed_circle_radius(self):
+        a = (self.v2 - self.v1).length
+        b = (self.v3 - self.v1).length
+        c = (self.v3 - self.v2).length
+        p = (a+b+c)/2.0
+        return (a*b*c) / (4 * sqrt(p*(p-a)*(p-b)*(p-c)))
 
     def inscribed_circle_center(self):
         """
@@ -2187,9 +2194,9 @@ def circle_by_three_points(p1, p2, p3):
     edge1_mid = v1.lerp(v2, 0.5)
     edge2_mid = v2.lerp(v3, 0.5)
 
-    plane0 = PlaneEquation.from_three_points(v1, v2, v3)
-    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid)
-    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid)
+    plane0 = PlaneEquation.from_three_points(v1, v2, v3).normalized()
+    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid).normalized()
+    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid).normalized()
     axis = plane1.intersect_with_plane(plane2)
     if not axis:
         return None
