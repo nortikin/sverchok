@@ -2194,9 +2194,9 @@ def circle_by_three_points(p1, p2, p3):
     edge1_mid = v1.lerp(v2, 0.5)
     edge2_mid = v2.lerp(v3, 0.5)
 
-    plane0 = PlaneEquation.from_three_points(v1, v2, v3).normalized()
-    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid).normalized()
-    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid).normalized()
+    plane0 = PlaneEquation.from_three_points(v1, v2, v3)#.normalized()
+    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid)#.normalized()
+    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid)#.normalized()
     axis = plane1.intersect_with_plane(plane2)
     if not axis:
         return None
