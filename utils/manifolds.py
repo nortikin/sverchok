@@ -116,7 +116,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
             us_out.append(us[i])
             nearest_out.append(tuple(nearest))
 
-        return us_out, nearest_out
+        return us_out, np.array(nearest_out)
 
     def goal(t):
         dv = curve.evaluate(t) - np.array(src_point)
