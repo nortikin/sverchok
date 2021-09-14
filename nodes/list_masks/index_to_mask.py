@@ -21,7 +21,7 @@ import numpy as np
 
 import bpy
 from bpy.props import IntProperty, BoolProperty
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, fixed_iter
 
 from sverchok.node_tree import SverchCustomTreeNode
 
@@ -83,12 +83,14 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['mask'].name = 'Mask'
 
         index = self.inputs["Index"].sv_get(deepcopy=False, default=[])
-        mask_size = self.inputs['Mask size'].sv_get(deepcopy=False, default=cycle([None]))
+        mask_size = self.inputs['Mask size'].sv_get(deepcopy=False, default=[None])
         data_to_mask = self.inputs['Data masking'].sv_get(deepcopy=False,
-                                                          default=[] if self.data_to_mask else cycle([None]))
+                                                          default=[] if self.data_to_mask else [None])
 
+        obj_num = max(len(d) for d in [index, mask_size, data_to_mask])
         masks = []
-        for ind, mask, data in zip(index, mask_size, data_to_mask):
+        for ind, mask, data in zip(fixed_iter(index, obj_num), fixed_iter(mask_size, obj_num),
+                                   fixed_iter(data_to_mask, obj_num)):
             if not self.data_to_mask:
                 mask = mask[0] if mask is not None else 0
                 mask = np.zeros(int(mask), dtype=bool)
