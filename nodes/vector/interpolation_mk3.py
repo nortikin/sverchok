@@ -157,7 +157,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
 
             else:  # SPL
                 spline = CubicSpline(v, metric=self.knot_mode, is_cyclic=self.is_cyclic)
-                out = spline.eval(np.array(t_corr))
+                out = spline.eval(t_corr)
                 verts_out.append(out if self.output_numpy else out.tolist())
                 if calc_tanget:
                     tangent = spline.tangent(t_corr, h)
