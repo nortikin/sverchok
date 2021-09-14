@@ -170,9 +170,4 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
         return verts_out, tanget_out, norm_tanget_out
 
 
-def register():
-    bpy.utils.register_class(SvInterpolationNodeMK3)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvInterpolationNodeMK3)
+register, unregister = bpy.utils.register_classes_factory([SvInterpolationNodeMK3])
