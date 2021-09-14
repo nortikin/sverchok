@@ -41,14 +41,18 @@ def catch_log_error():
 
 def log_error(err):
     """Should be used in except statement"""
-    frame, _, line, *_ = inspect.trace()[-1]
-    module = inspect.getmodule(frame)
-    name = module.__name__ or "<Unknown Module>"
-    try_initialize()
-    _logger = logging.getLogger(f'{name}:{line} ')
-    _logger.error(err)
-    if _logger.isEnabledFor(logging.DEBUG):
-        traceback.print_exc()
+    for frame, _, line, *_ in inspect.trace()[::-1]:
+        module = inspect.getmodule(frame)
+        if module is None:  # looks like frame points into non Python module
+            continue  # try to find the module before
+        else:
+            name = module.__name__ or "<Unknown Module>"
+            try_initialize()
+            _logger = logging.getLogger(f'{name}:{line} ')
+            _logger.error(err)
+            if _logger.isEnabledFor(logging.DEBUG):
+                traceback.print_exc()
+            break
 
 
 @contextmanager
