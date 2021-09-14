@@ -30,8 +30,8 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 
 def make_range(number, end_point):
     if number in {0, 1, 2} or number < 0:
-        return [0.0]
-    return np.linspace(0.0, 1.0, num=number, endpoint=end_point).tolist()
+        return np.array([0.0])
+    return np.linspace(0.0, 1.0, num=number, endpoint=end_point)
 
 
 
@@ -170,9 +170,4 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
         return verts_out, tanget_out, norm_tanget_out
 
 
-def register():
-    bpy.utils.register_class(SvInterpolationNodeMK3)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvInterpolationNodeMK3)
+register, unregister = bpy.utils.register_classes_factory([SvInterpolationNodeMK3])
