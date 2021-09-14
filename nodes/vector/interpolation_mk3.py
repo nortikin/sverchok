@@ -30,8 +30,8 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 
 def make_range(number, end_point):
     if number in {0, 1, 2} or number < 0:
-        return [0.0]
-    return np.linspace(0.0, 1.0, num=number, endpoint=end_point).tolist()
+        return np.array([0.0])
+    return np.linspace(0.0, 1.0, num=number, endpoint=end_point)
 
 
 
@@ -157,7 +157,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
 
             else:  # SPL
                 spline = CubicSpline(v, metric=self.knot_mode, is_cyclic=self.is_cyclic)
-                out = spline.eval(t_corr)
+                out = spline.eval(np.array(t_corr))
                 verts_out.append(out if self.output_numpy else out.tolist())
                 if calc_tanget:
                     tangent = spline.tangent(t_corr, h)
