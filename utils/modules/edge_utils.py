@@ -155,7 +155,7 @@ def adjacent_faces(edges, pols):
 def adjacent_faces_idx(edges, pols):
     """
     calculates of adjacent faces
-    edges: list as [edge, edge,..], being each edge [int, int].
+    edges: list as [edge, edge,..], being each edge [int, int]. Optional, it can be empty lies
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
     returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
     """
@@ -166,9 +166,10 @@ def adjacent_faces_idx(edges, pols):
             e_s = tuple(sorted(edge))
             try:
                 e_idx = edge_to_index[e_s]
-                ad_faces[e_idx].append(p_idx)
-            except ValueError:
+            except KeyError:
                 pass
+            else:
+                ad_faces[e_idx].append(p_idx)
     return ad_faces
 
 
