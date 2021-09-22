@@ -1056,6 +1056,41 @@ class PlaneEquation(object):
         v2p = self.projection_of_point(v2)
         return v2p - v1p
 
+    def projection_of_matrix(self, matrix, direction_axis='Z', track_axis='X'):
+        if direction_axis == track_axis:
+            raise Exception("Direction axis must differ from tracked axis")
+
+        direction_axis_idx = 'XYZ'.index(direction_axis)
+        track_axis_idx = 'XYZ'.index(track_axis)
+        third_axis_idx = list(set([0,1,2]).difference([direction_axis_idx, track_axis_idx]))[0]
+
+        xx = Vector((1, 0, 0))
+        yy = Vector((0, 1, 0))
+        zz = Vector((0, 0, 1))
+        axes = [xx, yy, zz]
+
+        z_axis_v = axes[direction_axis_idx]
+        x_axis_v = axes[track_axis_idx]
+        y_axis_v = axes[third_axis_idx]
+
+        direction = matrix @ z_axis_v
+        x_axis = matrix @ x_axis_v
+        y_axis = matrix @ y_axis_v
+
+        orig_point = matrix.translation
+        line = LineEquation.from_direction_and_point(direction, orig_point)
+        point = self.intersect_with_line(line)
+
+        new_x_axis = self.projection_of_vector(orig_point, orig_point + x_axis).normalized()
+        new_y_axis = self.projection_of_vector(orig_point, orig_point + y_axis).normalized()
+        new_z_axis = new_x_axis.cross(new_y_axis).normalized()
+        new_y_axis = new_z_axis.cross(new_x_axis)
+        
+        new_matrix = Matrix([new_x_axis, new_y_axis, new_z_axis]).transposed().to_4x4()
+        new_matrix.translation = point
+        
+        return new_matrix
+
     def intersect_with_plane(self, plane2):
         """
         Return an intersection of this plane with another one.
