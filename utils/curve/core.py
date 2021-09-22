@@ -464,27 +464,27 @@ class SvConcatCurve(SvCurve):
         points_grouped = [self.curves[i].evaluate_array(np.array(dts)) for i, dts in dts_grouped]
         return np.concatenate(points_grouped)
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        tangents_grouped = [self.curves[i].tangent_array(np.array(dts)) for i, dts in dts_grouped]
+        tangents_grouped = [self.curves[i].tangent_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(tangents_grouped)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        vectors = [self.curves[i].second_derivative_array(np.array(dts)) for i, dts in dts_grouped]
+        vectors = [self.curves[i].second_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(vectors)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        vectors = [self.curves[i].third_derivative_array(np.array(dts)) for i, dts in dts_grouped]
+        vectors = [self.curves[i].third_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(vectors)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        derivs = [self.curves[i].derivatives_array(n, np.array(dts)) for i, dts in dts_grouped]
+        derivs = [self.curves[i].derivatives_array(n, np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         result = []
         for i in range(n):
             ith_derivs_grouped = [curve_derivs[i] for curve_derivs in derivs]
@@ -774,7 +774,7 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         result = np.array([0, 0, 0])
         denom = 1
         for i, vec in enumerate(self.derivatives):
@@ -782,7 +782,7 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         n = len(ts)
         result = np.zeros((n, 3))
         denom = 1
@@ -792,10 +792,10 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         n = len(ts)
         result = np.zeros((n, 3))
         denom = 1
@@ -806,7 +806,7 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         n = len(ts)
         result = np.zeros((n, 3))
         denom = 1
