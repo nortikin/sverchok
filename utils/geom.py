@@ -1062,7 +1062,7 @@ class PlaneEquation(object):
 
         direction_axis_idx = 'XYZ'.index(direction_axis)
         track_axis_idx = 'XYZ'.index(track_axis)
-        third_axis_idx = list(set([0,1,2]).difference([direction_axis_idx, track_axis_idx]))[0]
+        #third_axis_idx = list(set([0,1,2]).difference([direction_axis_idx, track_axis_idx]))[0]
 
         xx = Vector((1, 0, 0))
         yy = Vector((0, 1, 0))
@@ -1070,8 +1070,8 @@ class PlaneEquation(object):
         axes = [xx, yy, zz]
 
         z_axis_v = axes[direction_axis_idx]
-        x_axis_v = axes[track_axis_idx]
-        y_axis_v = axes[third_axis_idx]
+        x_axis_v = axes[(direction_axis_idx+1)%3]
+        y_axis_v = axes[(direction_axis_idx+2)%3]
 
         direction = matrix @ z_axis_v
         x_axis = matrix @ x_axis_v
@@ -1084,7 +1084,10 @@ class PlaneEquation(object):
         new_x_axis = self.projection_of_vector(orig_point, orig_point + x_axis).normalized()
         new_y_axis = self.projection_of_vector(orig_point, orig_point + y_axis).normalized()
         new_z_axis = new_x_axis.cross(new_y_axis).normalized()
-        new_y_axis = new_z_axis.cross(new_x_axis)
+        if (track_axis_idx + 1) % 3 == direction_axis_idx:
+            new_y_axis = new_z_axis.cross(new_x_axis)
+        else:
+            new_x_axis = new_y_axis.cross(new_z_axis)
         
         new_matrix = Matrix([new_x_axis, new_y_axis, new_z_axis]).transposed().to_4x4()
         new_matrix.translation = point
