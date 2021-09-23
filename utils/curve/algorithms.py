@@ -49,13 +49,40 @@ class SvCurveLengthSolver(object):
             raise Exception("You have to call solver.prepare() first")
         return self._length_params[-1]
 
-    def prepare(self, mode, resolution=50):
+    def _calc_tknots_fixed(self, resolution):
         t_min, t_max = self.curve.get_u_bounds()
         tknots = np.linspace(t_min, t_max, num=resolution)
-        lengths = self.calc_length_segments(tknots)
-        self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        return tknots
+
+    def _prepare_find(self, resolution, tolerance, tknots=None, lengths=None, length_params=None):
+        if tknots is None:
+            tknots = self._calc_tknots_fixed(resolution)
+        if lengths is None:
+            lengths = self.calc_length_segments(tknots)
+        if length_params is None:
+            length_params = np.cumsum(np.insert(lengths, 0, 0))
+
+        resolution2 = resolution * 2 - 1
+        tknots2 = self._calc_tknots_fixed(resolution2)
+        lengths2 = self.calc_length_segments(tknots2)
+        length_params2 = np.cumsum(np.insert(lengths2, 0, 0))
+        
+        dl = abs(length_params2[::2] - length_params)
+        if (dl < tolerance).all():
+            return tknots2, length_params2
+        else:
+            return self._prepare_find(resolution2, tolerance, tknots2, lengths2, length_params2)
+
+    def prepare(self, mode, resolution=50, tolerance=None):
+        if tolerance is None:
+            tknots = self._calc_tknots_fixed(resolution)
+            lengths = self.calc_length_segments(tknots)
+            self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        else:
+            tknots, self._length_params = self._prepare_find(resolution, tolerance)
         self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
         self._prime_spline = self._make_spline(mode, self._length_params, tknots)
+
 
     def _make_spline(self, mode, tknots, values):
         zeros = np.zeros(len(tknots))
@@ -72,7 +99,7 @@ class SvCurveLengthSolver(object):
         if self._prime_spline is None:
             raise Exception("You have to call solver.prepare() first")
         lengths = self._prime_spline.eval(np.array([t_min, t_max]))
-        return lengths[1] - lengths[0]
+        return lengths[1][1] - lengths[0][1]
 
     def calc_length_params(self, ts):
         if self._prime_spline is None:

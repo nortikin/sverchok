@@ -467,7 +467,7 @@ class SvNurbsCurve(SvCurve):
             curve = curve.reparametrize(0, 1)
         return curve
 
-    def is_line(self, tolerance=0.001):
+    def is_line(self, tolerance=0.001, use_length_tolerance=False):
         # Check that the provided curve is nearly a straight line segment.
         # This implementation depends heavily on the fact that this curve is
         # NURBS. It uses so-called "godograph property". In short, this 
@@ -488,9 +488,14 @@ class SvNurbsCurve(SvCurve):
             dv = cpt2 - cpt1
             dv /= np.linalg.norm(dv)
             cos_angle = np.dot(dv, direction)
-            tan_angle = sqrt(1.0 - cos_angle**2) / cos_angle
-            if vector_len * tan_angle > tolerance:
-                return False
+            if use_length_tolerance:
+                vector2_len = vector_len / cos_angle
+                if abs(vector2_len - vector_len) > tolerance/10:
+                    return False
+            else:
+                tan_angle = sqrt(1.0 - cos_angle**2) / cos_angle
+                if vector_len * tan_angle > tolerance:
+                    return False
 
         return True
 

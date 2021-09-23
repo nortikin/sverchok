@@ -16,7 +16,7 @@ from sverchok.utils.math import distribute_int
 from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import scipy
@@ -440,4 +440,52 @@ def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, refine_max=False, 
         raise Exception("Unsupported algorithm")
 
     return curve
+
+class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
+    def __init__(self, curve):
+        self.curve = curve
+        self._reverse_spline = None
+        self._prime_spline = None
+
+    def _calc_tknots(self, resolution, tolerance):
+
+        def middle(segment):
+            u1, u2 = segment.get_u_bounds()
+            u = (u1+u2)*0.5
+            return u
+        
+        def split(segment):
+            u = middle(segment)
+            return segment.split_at(u)
+        
+        def calc_tknots(segment):
+            if segment.is_line(tolerance, use_length_tolerance=True):
+                u1, u2 = segment.get_u_bounds()
+                return set([u1, u2])
+            else:
+                segment1, segment2 = split(segment)
+                knots1 = calc_tknots(segment1)
+                knots2 = calc_tknots(segment2)
+                knots = knots1.union(knots2)
+                return knots
+
+        t_min, t_max = self.curve.get_u_bounds()
+        init_knots = np.linspace(t_min, t_max, num=resolution)
+        segments = [self.curve.cut_segment(u1, u2) for u1, u2 in zip(init_knots, init_knots[1:])]
+
+        all_knots = set()
+        for segment in segments:
+            knots = calc_tknots(segment)
+            all_knots = all_knots.union(knots)
+
+        return np.array(sorted(all_knots))
+
+    def prepare(self, mode, resolution=50, tolerance=1e-3):
+        if tolerance is None:
+            tolerance = 1e-3
+        tknots = self._calc_tknots(resolution, tolerance)
+        lengths = self.calc_length_segments(tknots)
+        self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+        self._prime_spline = self._make_spline(mode, self._length_params, tknots)
 
