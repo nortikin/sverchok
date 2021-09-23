@@ -388,10 +388,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
         return good_sign, raycast
 
     good_ranges = []
-    if support_nurbs and is_nurbs:
-        u_range = np.linspace(u_min, u_max, num=init_samples)
-    else:
-        u_range = curve.calc_linear_segment_knots(tolerance)
+    u_range = np.linspace(u_min, u_max, num=init_samples)
     points = curve.evaluate_array(u_range)
     tangents = curve.tangent_array(u_range)
     for u1, u2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
