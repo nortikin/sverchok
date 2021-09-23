@@ -58,6 +58,12 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         min = 0,
         update = updateNode)
 
+    use_nurbs : BoolProperty(
+        name = "NURBS",
+        description = "Use special algorithm for NURBS curves",
+        default = False,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
@@ -71,6 +77,7 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'specify_accuracy')
         if self.specify_accuracy:
             layout.prop(self, 'accuracy')
+        #layout.prop(self, 'use_nurbs')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -111,7 +118,10 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
                     resolution = int(resolution * (t_max - t_min) / (curve_t_max - curve_t_min))
                     if resolution < 1:
                         resolution = 1
-                    solver = SvCurveLengthSolver(curve)
+                    if self.use_nurbs:
+                        solver = SvNurbsCurveLengthSolver(curve)
+                    else:
+                        solver = SvCurveLengthSolver(curve)
                     solver.prepare('SPL', resolution, tolerance=tolerance)
                     length = solver.calc_length(t_min, t_max)
 

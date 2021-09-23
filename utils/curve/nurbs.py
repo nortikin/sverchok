@@ -486,15 +486,16 @@ class SvNurbsCurve(SvCurve):
             # angle with `direction`. If not, this is
             # clearly not a straight line.
             dv = cpt2 - cpt1
-            dv /= np.linalg.norm(dv)
+            dv_len = np.linalg.norm(dv)
+            dv /= dv_len
             cos_angle = np.dot(dv, direction)
             if use_length_tolerance:
-                vector2_len = vector_len / cos_angle
-                if abs(vector2_len - vector_len) > tolerance/10:
+                dv2_len = dv_len / cos_angle
+                if abs(dv2_len - dv_len) > tolerance/len(cpts):
                     return False
             else:
                 tan_angle = sqrt(1.0 - cos_angle**2) / cos_angle
-                if vector_len * tan_angle > tolerance:
+                if dv_len * tan_angle > tolerance:
                     return False
 
         return True
