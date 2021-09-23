@@ -5,6 +5,7 @@ from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.logging import debug, info, getLogger
 from sverchok.utils.geom import PlaneEquation, LineEquation
 from sverchok.dependencies import scipy
@@ -359,12 +360,17 @@ def raycast_surface(surface, src_points, directions, samples=50, precise=True, c
     raycaster.init_bvh(samples)
     return raycaster.raycast(src_points, directions, precise=precise, calc_points=calc_points, method=method, on_init_fail=on_init_fail)
 
-def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method='hybr'):
+def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method='hybr', support_nurbs=False):
     """
     Intersect a curve with a surface.
     dependencies: scipy
     """
     u_min, u_max = curve.get_u_bounds()
+    is_nurbs = False
+    c = SvNurbsCurve.to_nurbs(curve)
+    if c is not None:
+        curve = c
+        is_nurbs = True
 
     raycaster = SurfaceRaycaster(surface)
     raycaster.init_bvh(raycast_samples)
@@ -382,7 +388,10 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
         return good_sign, raycast
 
     good_ranges = []
-    u_range = np.linspace(u_min, u_max, num=init_samples)
+    if support_nurbs and is_nurbs:
+        u_range = np.linspace(u_min, u_max, num=init_samples)
+    else:
+        u_range = curve.calc_linear_segment_knots(tolerance)
     points = curve.evaluate_array(u_range)
     tangents = curve.tangent_array(u_range)
     for u1, u2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
@@ -392,6 +401,31 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
         if raycast is None:
             continue
         good_ranges.append((u1, u2, raycast.points[0], raycast.points[1]))
+
+    def to_curve(point, curve, u1, u2, raycast=None):
+        if support_nurbs and is_nurbs and raycast is not None:
+            segment = curve.cut_segment(u1, u2)
+            surface_u, surface_v = raycast.us[0], raycast.vs[0]
+            point_on_surface = raycast.points[0]
+            surface_normal = surface.normal(surface_u, surface_v)
+            plane = PlaneEquation.from_normal_and_point(surface_normal, point_on_surface)
+            r = intersect_curve_plane_nurbs(segment, plane,
+                        init_samples=2,
+                        tolerance=tolerance,
+                        maxiter=maxiter)
+            if not r:
+                return None
+            else:
+                return r[0]
+        else:
+            ortho = ortho_project_curve(point, curve,
+                        subdomain = (u1, u2),
+                        init_samples = 2,
+                        on_fail = RETURN_NONE)
+            if ortho is None:
+                return None
+            else:
+                return ortho.nearest_u, ortho.nearest
 
     result = []
     for u1, u2, init_p1, init_p2 in good_ranges:
@@ -405,19 +439,16 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
         prev_point = init_p1
         u_root = None
         point_found = False
+        raycast = None
         while True:
             i += 1
             if i > maxiter:
                 raise Exception("Maximum number of iterations is exceeded; last step {} - {} = {}".format(prev_prev_point, point, step))
 
-            ortho = ortho_project_curve(prev_point, curve,
-                        subdomain = (u1, u2),
-                        init_samples = 2,
-                        on_fail = RETURN_NONE)
-            if ortho is None:
+            on_curve = to_curve(prev_point, curve, u1, u2, raycast=raycast)
+            if on_curve is None:
                 break
-            point = ortho.nearest
-            u_root = ortho.nearest_u
+            u_root, point = on_curve
             if u_root < u1 or u_root > u2:
                 break
             step = np.linalg.norm(point - prev_point)
@@ -427,10 +458,10 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
                 break
 
             prev_point = point
-            tangent = curve.tangent(ortho.nearest_u)
+            tangent = curve.tangent(u_root)
             sign, raycast = do_raycast(point, tangent, sign)
             if raycast is None:
-                raise Exception("Can't do a raycast with point {}, direction {} onto surface {}".format(point, tangent, surface))
+                raise Exception("Iteration #{}: Can't do a raycast with point {}, direction {} onto surface {}".format(i, point, tangent, surface))
             point = raycast.points[0]
             step = np.linalg.norm(point - prev_point)
             prev_prev_point = prev_point

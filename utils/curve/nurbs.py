@@ -500,6 +500,27 @@ class SvNurbsCurve(SvCurve):
 
         return True
 
+    def calc_linear_segment_knots(self, tolerance=0.001):
+
+        def split(segment):
+            u1, u2 = segment.get_u_bounds()
+            u = (u1+u2)*0.5
+            return segment.split_at(u)
+
+        def calc_knots(segment):
+            if segment.is_line(tolerance):
+                u1, u2 = segment.get_u_bounds()
+                return set([u1, u2])
+            else:
+                segment1, segment2 = split(segment)
+                knots1 = calc_knots(segment1)
+                knots2 = calc_knots(segment2)
+                knots = knots1.union(knots2)
+                return knots
+        
+        knots = np.array(sorted(calc_knots(self)))
+        return knots
+
     def to_bezier(self):
         points = self.get_control_points()
         if not self.is_bezier():
