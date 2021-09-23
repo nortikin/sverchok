@@ -7,6 +7,7 @@
 
 import numpy as np
 from collections import defaultdict
+import math
 
 from mathutils import Vector
 import mathutils.geometry
@@ -243,30 +244,10 @@ def nurbs_curve_matrix(curve):
     return matrix
 
 def _check_is_line(curve, eps=0.001):
-    # Check that the provided curve is nearly a straight line segment.
-    # This implementation depends heavily on the fact that this curve is
-    # NURBS. It uses so-called "godograph property". In short, this 
-    # property states that edges of curve's control polygon determine
-    # maximum variation of curve's tangent vector.
-
-    cpts = curve.get_control_points()
-    # direction from first to last point of the curve
-    direction = cpts[-1] - cpts[0]
-    direction /= np.linalg.norm(direction)
-
-    for cpt1, cpt2 in zip(cpts, cpts[1:]):
-        # for each edge of control polygon,
-        # check that it constitutes a small enough
-        # angle with `direction`. If not, this is
-        # clearly not a straight line.
-        dv = cpt2 - cpt1
-        dv /= np.linalg.norm(dv)
-        angle = np.arccos(np.dot(dv, direction))
-        if angle > eps:
-            #print(f"A: {direction} x {dv} => {angle}")
-            return False
-
-    return (cpts[0], cpts[-1])
+    if curve.is_line(eps):
+        return (cpts[0], cpts[-1])
+    else:
+        return False
 
 def intersect_segment_segment_mu(v1, v2, v3, v4):
     tolerance = 1e-3

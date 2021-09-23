@@ -443,6 +443,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
 
 ORTHO = 'ortho'
 EQUATION = 'equation'
+NURBS = 'nurbs'
 
 def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10, tolerance=1e-3, maxiter=50):
     """
@@ -574,16 +575,100 @@ def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3
 
     return solutions
 
+def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 < 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    def check_signs(segment):
+        cpts = segment.get_control_points()
+        signs = plane.side_of_points(cpts)
+        all_one_side = (signs > 0).all() or (signs < 0).all()
+        return not all_one_side
+
+    def middle(segment):
+        u1, u2 = segment.get_u_bounds()
+        u = (u1+u2)*0.5
+        return u
+
+    def split(segment):
+        u = middle(segment)
+        return segment.split_at(u)
+
+    def is_small(segment):
+        bbox = segment.get_bounding_box()
+        return bbox.size() < tolerance
+
+    def locate_p(p1, p2, p):
+        if abs(p1[0] - p2[0]) > tolerance:
+            return (p[0] - p1[0]) / (p2[0] - p1[0])
+        elif abs(p1[1] - p2[1]) > tolerance:
+            return (p[1] - p1[1]) / (p2[1] - p1[1])
+        else:
+            return (p[2] - p1[2]) / (p2[2] - p1[2])
+
+    def intersect_line(segment):
+        cpts = segment.get_control_points()
+        p1, p2 = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(p1, p2)
+        p = plane.intersect_with_line(line)
+        p = np.array(p)
+        u = locate_p(p1, p2, p)
+        u1, u2 = segment.get_u_bounds()
+        if u >= 0 and u <= 1.0:
+            v = (1-u)*u1 + u*u2
+            return v, p
+        else:
+            return None
+
+    def solve(segment, i=0):
+        if check_signs(segment):
+            if is_small(segment):
+                cpts = segment.get_control_points()
+                p1, p2 = cpts[0], cpts[-1]
+                p = 0.5*(p1 + p2)
+                u = middle(segment)
+                #print(f"I: small segment: {u} - {p}")
+                return [(u, p)]
+            elif segment.is_line(tolerance):
+                r = intersect_line(segment)
+                if r is None:
+                    return []
+                else:
+                    #print(f"I: linear: {r}")
+                    return [r]
+            else:
+                if i > maxiter:
+                    raise Exception("Maximum number of subdivision iterations reached")
+                s1, s2 = split(segment)
+                return solve(s1, i+1) + solve(s2, i+1)
+        else:
+            return []
+
+    segments = [curve.cut_segment(u1, u2) for u1, u2 in good_ranges]
+    solutions = [solve(segment) for segment in segments]
+    return sum(solutions, [])
+
 def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
     """
-    Call for intersect_curve_plane_equation or intersect_curve_plane_ortho,
-    depending on `method` parameter.
+    Call for intersect_curve_plane_equation, intersect_curve_plane_ortho,
+    or intersect_curve_plane_nurbs, depending on `method` parameter.
     Inputs and outputs: see corresponding method docs.
     """
     if method == EQUATION:
         return intersect_curve_plane_equation(curve, plane, **kwargs)
     elif method == ORTHO:
         return intersect_curve_plane_ortho(curve, plane, **kwargs)
+    elif method == NURBS:
+        return intersect_curve_plane_nurbs(curve, plane, **kwargs)
     else:
         raise Exception("Unsupported method")
 

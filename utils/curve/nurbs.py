@@ -7,7 +7,7 @@
 
 from copy import deepcopy
 import numpy as np
-from math import pi
+from math import pi, sqrt
 import traceback
 
 from sverchok.utils.logging import info
@@ -466,6 +466,33 @@ class SvNurbsCurve(SvCurve):
         if rescale:
             curve = curve.reparametrize(0, 1)
         return curve
+
+    def is_line(self, tolerance=0.001):
+        # Check that the provided curve is nearly a straight line segment.
+        # This implementation depends heavily on the fact that this curve is
+        # NURBS. It uses so-called "godograph property". In short, this 
+        # property states that edges of curve's control polygon determine
+        # maximum variation of curve's tangent vector.
+
+        cpts = self.get_control_points()
+        # direction from first to last point of the curve
+        vector = cpts[-1] - cpts[0]
+        vector_len = np.linalg.norm(vector)
+        direction = vector / vector_len
+
+        for cpt1, cpt2 in zip(cpts, cpts[1:]):
+            # for each edge of control polygon,
+            # check that it constitutes a small enough
+            # angle with `direction`. If not, this is
+            # clearly not a straight line.
+            dv = cpt2 - cpt1
+            dv /= np.linalg.norm(dv)
+            cos_angle = np.dot(dv, direction)
+            tan_angle = sqrt(1.0 - cos_angle**2) / cos_angle
+            if vector_len * tan_angle > tolerance:
+                return False
+
+        return True
 
     def to_bezier(self):
         points = self.get_control_points()
