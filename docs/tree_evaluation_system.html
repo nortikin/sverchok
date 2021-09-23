@@ -1,82 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Node tree evaluation system &mdash; Sverchok 1, 0, 0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/sverchock_icon_b.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Data structure" href="data_structure/data_structure_index.html" />
     <link rel="prev" title="Shortcuts" href="user_interface/shortcuts.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="main.html" class="icon icon-home"> Sverchok
-          
-
-          
-            
             <img src="_static/title_big_b.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1, 0, 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation/installation.html">Installation</a></li>
@@ -125,89 +71,52 @@
 <li class="toctree-l1"><a class="reference internal" href="contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="main.html">Sverchok</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="main.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Node tree evaluation system</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/tree_evaluation_system.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="node-tree-evaluation-system">
+             
+  <section id="node-tree-evaluation-system">
 <h1>Node tree evaluation system<a class="headerlink" href="#node-tree-evaluation-system" title="Permalink to this headline">¶</a></h1>
-<div class="figure align-default" id="id1">
+<figure class="align-default" id="id1">
 <img alt="https://user-images.githubusercontent.com/28003269/125029133-3b55db80-e09a-11eb-8bea-3e631ad763eb.gif" src="https://user-images.githubusercontent.com/28003269/125029133-3b55db80-e09a-11eb-8bea-3e631ad763eb.gif" />
-<p class="caption"><span class="caption-text">Highlighting nodes which were effected by property changes in an initial node</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Highlighting nodes which were effected by property changes in an initial node</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Sverchok layout is a tree of nodes connected with each other by links. The tree represents an algorithm.
 Typically, in the left side a tree has nodes which generate some data. In the middle there are nodes
 which manipulate with data. And in the right side there are output nodes which save/show the result.
 The role of the evaluation system is to combine work of every single node into a meaningful work of an algorithm.</p>
-<div class="section" id="control-flow">
+<section id="control-flow">
 <h2>Control flow<a class="headerlink" href="#control-flow" title="Permalink to this headline">¶</a></h2>
 <p>In general execution process of a tree is happening from left to right. There is a rule that a node can be executed
 before all previous nodes are executed. However it does not make execution process fully ordered. Consider next example.</p>
-<div class="figure align-center" id="id2">
+<figure class="align-center" id="id2">
 <img alt="https://user-images.githubusercontent.com/28003269/124717678-6c0d0800-df16-11eb-83fa-b9f6d21c417a.png" src="https://user-images.githubusercontent.com/28003269/124717678-6c0d0800-df16-11eb-83fa-b9f6d21c417a.png" />
-<p class="caption"><span class="caption-text">Simple tree</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Simple tree</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Possible order of execution is A -&gt; B -&gt; C -&gt; D -&gt; E -&gt; F. However D -&gt; B -&gt; A -&gt; C -&gt; E -&gt; F is also possible.
 And there are another variants. If there are two or more disjoint nets of nodes their execution,
 relatively to each other, also is unordered.</p>
@@ -218,42 +127,44 @@ In this case A, B, D nodes could be executed concurrently if more than two proce
 But now Sverchok can use only one processor.</p>
 </div>
 <p>There are nodes which can change control flow in some way.</p>
-<div class="section" id="group-nodes">
+<section id="group-nodes">
 <h3>Group nodes<a class="headerlink" href="#group-nodes" title="Permalink to this headline">¶</a></h3>
 <p>If there is a pattern of nodes which is repeated several times in a tree it can be converted into a group node.
 Group node encapsulates bunch of nodes inside a subtree. Evaluation system of main tree evaluate group nodes
 in the same way as regular nodes except that their work can be cancelled. Cancelling of group nodes happen between
 execution of its nodes.</p>
-</div>
-<div class="section" id="loop-nodes">
+</section>
+<section id="loop-nodes">
 <h3><a class="reference internal" href="nodes/logic/loop_out.html"><span class="doc">Loop nodes</span></a><a class="headerlink" href="#loop-nodes" title="Permalink to this headline">¶</a></h3>
 <p>Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flow and
 return it to evaluation system after their part is done.</p>
-</div>
-<div class="section" id="wifi-nodes">
+</section>
+<section id="wifi-nodes">
 <h3><a class="reference internal" href="nodes/layout/wifi_in.html"><span class="doc">Wifi nodes</span></a><a class="headerlink" href="#wifi-nodes" title="Permalink to this headline">¶</a></h3>
-<div class="figure align-right" id="id3" style="width: 400px">
+<figure class="align-right" id="id3" style="width: 400px">
 <img alt="https://user-images.githubusercontent.com/28003269/125024249-6f78ce80-e091-11eb-836f-1f8a9fcad205.png" src="https://user-images.githubusercontent.com/28003269/125024249-6f78ce80-e091-11eb-836f-1f8a9fcad205.png" />
-<p class="caption"><span class="caption-text">Connection between <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">number</span></code> and <code class="docutils literal notranslate"><span class="pre">Stethoscope</span></code> nodes via wifi nodes</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Connection between <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">number</span></code> and <code class="docutils literal notranslate"><span class="pre">Stethoscope</span></code> nodes via wifi nodes</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>In case if you have links which go through all your tree and spoil the tree readability it’s possible
 to hide the links by using wifi nodes. <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">in</span></code> and <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">out</span></code> nodes act as if they had a link between each other.
 <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">in</span></code> can be connected to multiple <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">out</span></code> nodes.</p>
-</div>
-<div class="section" id="reroute-nodes">
+</section>
+<section id="reroute-nodes">
 <h3>Reroute nodes<a class="headerlink" href="#reroute-nodes" title="Permalink to this headline">¶</a></h3>
 <p>This is <img alt="reroute" src="https://user-images.githubusercontent.com/28003269/125025744-4574db80-e094-11eb-9f1a-16f8f9191ef0.png" /> <a class="reference external" href="https://docs.blender.org/manual/en/latest/interface/controls/nodes/reroute.html">standard Blender nodes</a> which are used for links organization. They just pass data to next nodes.</p>
-</div>
-<div class="section" id="other-nodes">
+</section>
+<section id="other-nodes">
 <h3>Other nodes<a class="headerlink" href="#other-nodes" title="Permalink to this headline">¶</a></h3>
 <p>Also there are other nodes which can evaluate nodes on their own accord. Here is at least one of them
 <a class="reference internal" href="nodes/logic/evolver.html"><span class="doc">Evolver node</span></a>.</p>
-</div>
-<div class="section" id="muting-links">
+</section>
+<section id="muting-links">
 <h3>Muting links<a class="headerlink" href="#muting-links" title="Permalink to this headline">¶</a></h3>
-<div class="figure align-right" style="width: 300px">
+<figure class="align-right" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/125027738-c681a200-e097-11eb-9033-8b8924a76661.gif" src="https://user-images.githubusercontent.com/28003269/125027738-c681a200-e097-11eb-9033-8b8924a76661.gif" />
-</div>
+</figure>
 <p>This is <a class="reference external" href="https://docs.blender.org/manual/en/latest/interface/controls/nodes/editing.html?#mute-links">standard Blender functionality</a> which allows temporary to mute links. A muted link acts as if it did not
 exist. Muting links connected to reroute nodes mutes also the link from opposite side.</p>
 <div class="admonition warning">
@@ -261,9 +172,9 @@ exist. Muting links connected to reroute nodes mutes also the link from opposite
 <p>Muting nodes is not supported neither by Blender (Blender does not support muting nodes UI for custom trees) or
 Sverchok. However Sverchok is moving slowly in the direction to make it possible.</p>
 </div>
-</div>
-</div>
-<div class="section" id="triggers">
+</section>
+</section>
+<section id="triggers">
 <span id="sv-triggers"></span><h2>Triggers<a class="headerlink" href="#triggers" title="Permalink to this headline">¶</a></h2>
 <p>Each evaluation starts with update event (trigger). Each event has information about what was previously changed.
 Evaluation system use this information to evaluate only those nodes which have been effected by the change.
@@ -309,7 +220,7 @@ property and update the tree manually with <cite>Re-update all nodes</cite> oper
 Also you can add shortcut for the operator by pressing <kbd class="kbd docutils literal notranslate">RMB</kbd> on the button of the operator (active tree panel).
 Another way to update is enabling <cite>Live update</cite> mode. In this case only changed put of the tree will be updated.</p>
 </div>
-<div class="section" id="modes-active-tree-panel">
+<section id="modes-active-tree-panel">
 <h3>Modes (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
@@ -320,15 +231,17 @@ Enabling the property will call the tree topology changes trigger.</p>
 which have property <cite>to_animate</cite> enabled.</p>
 </dd>
 </dl>
-</div>
-</div>
-<div class="section" id="animation">
+</section>
+</section>
+<section id="animation">
 <h2>Animation<a class="headerlink" href="#animation" title="Permalink to this headline">¶</a></h2>
-<div class="figure align-right" id="id4" style="width: 300px">
+<figure class="align-right" id="id4" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/124884635-83fe8d80-dfe3-11eb-903d-e6c2922e41ca.gif" src="https://user-images.githubusercontent.com/28003269/124884635-83fe8d80-dfe3-11eb-903d-e6c2922e41ca.gif" />
-<p class="caption"><span class="caption-text">Example of how a tree can be recalculated after editing base object by changing current frame pressing the arrow
+<figcaption>
+<p><span class="caption-text">Example of how a tree can be recalculated after editing base object by changing current frame pressing the arrow
 button on keyboard.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
-</div>
+</figcaption>
+</figure>
 <p>With Sverchok it’s possible to create animations. Some nodes have <cite>Animate node</cite> option <img alt="option" src="https://user-images.githubusercontent.com/28003269/124885639-87464900-dfe4-11eb-8796-a54ff5f84e58.png" />. If the option is
 enabled the node will be update each frame change. This can serve two purposes.</p>
 <ul class="simple">
@@ -343,13 +256,15 @@ For frame change the left/right arrow buttons can be used. Alternative way is to
 <p>Blender does not support keyframes for custom trees. It’s possible to inset keyframes to node properties but
 they won’t react upon actual frame changes and you won’t find them in the graph editor.</p>
 </div>
-</div>
-<div class="section" id="handling-errors">
+</section>
+<section id="handling-errors">
 <h2>Handling errors<a class="headerlink" href="#handling-errors" title="Permalink to this headline">¶</a></h2>
-<div class="figure align-right" id="id5" style="width: 300px">
+<figure class="align-right" id="id5" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/124915446-9805b780-e002-11eb-8df0-b0b9e53d91dc.png" src="https://user-images.githubusercontent.com/28003269/124915446-9805b780-e002-11eb-8df0-b0b9e53d91dc.png" />
-<p class="caption"><span class="caption-text">Displaying an error happen during the node execution</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Displaying an error happen during the node execution</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>It can happen that during execution of a tree some nodes won’t be able to be evaluated properly.
 In this case the node will be marked by a color and it will got an error massage nearby itself.
 An error can have two parts - a name of the error and optionally some message.</p>
@@ -374,64 +289,49 @@ after nodes with errors.</p>
 <p>This behaviour may be changed in the future iterations and nodes with errors won’t cause stopping execution
 of next nodes.</p>
 </div>
-</div>
-<div class="section" id="progress-message">
+</section>
+<section id="progress-message">
 <h2>Progress message<a class="headerlink" href="#progress-message" title="Permalink to this headline">¶</a></h2>
-<div class="figure align-right" id="id6" style="width: 350px">
+<figure class="align-right" id="id6" style="width: 350px">
 <img alt="https://user-images.githubusercontent.com/28003269/124924441-84f7e500-e00c-11eb-9b5f-c91329f635cd.gif" src="https://user-images.githubusercontent.com/28003269/124924441-84f7e500-e00c-11eb-9b5f-c91329f635cd.gif" />
-<p class="caption"><span class="caption-text">Showing progress of execution of a tree</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">Showing progress of execution of a tree</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Cancellable events show execution progress of a tree in the header of the tree editor. The message displays
 name of a node which is currently executed. Not all nodes get into the message.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="data_structure/data_structure_index.html" class="btn btn-neutral float-right" title="Data structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="user_interface/shortcuts.html" class="btn btn-neutral float-left" title="Shortcuts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_structure/data_structure_index.html" class="btn btn-neutral float-right" title="Data structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014...2021, sverchok team.
-
-    </p>
+    <p>&#169; Copyright 2014...2021, sverchok team.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

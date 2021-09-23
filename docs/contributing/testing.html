@@ -1,81 +1,38 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Testing &mdash; Sverchok 1, 0, 0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Adding new Node" href="add_new_node.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../main.html" class="icon icon-home"> Sverchok
-          
-
-          
-            
             <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1, 0, 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -83,18 +40,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
@@ -118,76 +64,34 @@
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../main.html">Sverchok</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../main.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="contributing_to_sverchok.html">Contributing to sverchok</a> &raquo;</li>
-        
       <li>Testing</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/contributing/testing.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="testing">
+             
+  <section id="testing">
 <h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="preface">
+<section id="preface">
 <h2>Preface<a class="headerlink" href="#preface" title="Permalink to this headline">¶</a></h2>
 <p>This document describes (for developers mainly) our approach to testing the code of Sverchok.</p>
 <p>The main ideas are:</p>
@@ -204,8 +108,8 @@
 </li>
 <li><p>So: write automated tests where they are not too complex, or too heavy, or too fragile. For GUI things, or for complex setups, or for things that take too much code to setup programmatically - just do manual testing.</p></li>
 </ul>
-</div>
-<div class="section" id="implementation">
+</section>
+<section id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
 <p>Automated testing of Sverchok is implemented based on standard Python’s <a class="reference external" href="https://docs.python.org/3/library/unittest.html">unittest</a> module.
 In <code class="docutils literal notranslate"><span class="pre">sverchok.utils.testing</span></code> module there is a number of utility methods and some base classes for test cases. Please refer to docstrings in that module for more detailed information.
@@ -217,8 +121,8 @@ Test data files are located under <code class="docutils literal notranslate"><sp
 <li><p>From command line. There is script named <code class="docutils literal notranslate"><span class="pre">run_tests.sh</span></code> in root directory (this is for bash,  I imagine anyone familiar with Windows’s <code class="docutils literal notranslate"><span class="pre">cmd.exe</span></code> / Powershell scripting can easily write similar script for Windows). If your blender executable is not available as simple <code class="docutils literal notranslate"><span class="pre">blender</span></code> command, you have to pass it in the command line, like <code class="docutils literal notranslate"><span class="pre">BLENDER=~/soft/blender-2.79-linux-glibc219-x86_64/blender</span> <span class="pre">./run_tests.sh</span></code>.</p></li>
 </ul>
 <p>Please do run the tests at least before making a pull request.</p>
-</div>
-<div class="section" id="continuous-integration">
+</section>
+<section id="continuous-integration">
 <h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h2>
 <p>GitHub actions are used for executing tests. You can see current status of Sverchok tests
 <a class="reference external" href="https://github.com/nortikin/sverchok/actions">here</a>.
@@ -229,8 +133,8 @@ GitHub action is configured to trigger automatically on the following events:</p
 </ul>
 <p>The status of build triggered by pull request is displayed directly in the GitHub interface. If your pull request breaks existing tests, it is not going to be merged in such state. You need to either a) fix your code, or b) update the code of tests themselves, in case the problem is in tests, not in code being tested.</p>
 <p>Moreover, it is a good idea to add some automated tests with each pull request. For example, if you added a new feature, add a test for it (in case it is not too hard to write such a test; otherwise just do manual testing).</p>
-</div>
-<div class="section" id="testing-documentation">
+</section>
+<section id="testing-documentation">
 <h2>Testing Documentation<a class="headerlink" href="#testing-documentation" title="Permalink to this headline">¶</a></h2>
 <p>For building Sverchok docs <a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">Sphinx</a> documentation generator is used.
 If in a pul request there are changed files located in <code class="docutils literal notranslate"><span class="pre">sverchok/docs</span></code> folder it will trigger testing of building
@@ -242,54 +146,37 @@ installed.</p>
 <img alt="https://user-images.githubusercontent.com/28003269/125597392-c3598def-f5d2-4bb5-94ae-ff802820c4a8.png" src="https://user-images.githubusercontent.com/28003269/125597392-c3598def-f5d2-4bb5-94ae-ff802820c4a8.png" />
 <p>If there is nothing in the tab then you have to go to the test details and read the log but most likely
 you will not face with such fail unless there was changes in the configuration file.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="add_new_node.html" class="btn btn-neutral float-left" title="Adding new Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014...2021, sverchok team.
-
-    </p>
+    <p>&#169; Copyright 2014...2021, sverchok team.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

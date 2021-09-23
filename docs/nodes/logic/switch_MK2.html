@@ -1,82 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Switch &mdash; Sverchok 1, 0, 0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Input Switch" href="input_switch_mod.html" />
     <link rel="prev" title="Genes Holder" href="genes_holder.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../main.html" class="icon icon-home"> Sverchok
-          
-
-          
-            
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1, 0, 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
@@ -163,101 +109,58 @@
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../main.html">Sverchok</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-        
           <li><a href="logic_index.html">Logic</a> &raquo;</li>
-        
       <li>Switch</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../_sources/nodes/logic/switch_MK2.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="switch">
+             
+  <section id="switch">
 <h1>Switch<a class="headerlink" href="#switch" title="Permalink to this headline">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/71510839-aae5ea80-28a9-11ea-8511-a185fe337206.png" src="https://user-images.githubusercontent.com/28003269/71510839-aae5ea80-28a9-11ea-8511-a185fe337206.png" />
-<div class="section" id="functionality">
+<section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>Switches between to sets of inputs. Also can work as filter.</p>
-</div>
-<div class="section" id="category">
+</section>
+<section id="category">
 <h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
 <p>Logic -&gt; Switch</p>
-</div>
-<div class="section" id="inputs">
+</section>
+<section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><strong>State</strong> - True or False (0 or 1)</p></li>
 <li><p><strong>A_0 - 10</strong> - True, False or None</p></li>
 <li><p><strong>B_0 - 10</strong> - True, False or None</p></li>
 </ul>
-</div>
-<div class="section" id="outputs">
+</section>
+<section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Out_0 - 10</strong> - result of switching between two values</p></li>
 </ul>
-</div>
-<div class="section" id="parameters">
+</section>
+<section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
@@ -278,8 +181,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="usage">
+</section>
+<section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p><strong>Generation of bool sequence easily:</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/39827448-f8d6c08c-53c8-11e8-864e-b72afd67befb.png" src="https://user-images.githubusercontent.com/28003269/39827448-f8d6c08c-53c8-11e8-864e-b72afd67befb.png" />
@@ -295,63 +198,46 @@ list with two or more values.</p>
 <img alt="https://user-images.githubusercontent.com/28003269/69896932-219cd000-135e-11ea-9e99-93def391466b.png" src="https://user-images.githubusercontent.com/28003269/69896932-219cd000-135e-11ea-9e99-93def391466b.png" />
 <p><strong>Alternative of list mask out node:</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/69903773-791b5a00-13b7-11ea-8210-0c73a46cae77.png" src="https://user-images.githubusercontent.com/28003269/69903773-791b5a00-13b7-11ea-8210-0c73a46cae77.png" />
-</div>
-<div class="section" id="working-inside-and-outside-of-object-level">
+</section>
+<section id="working-inside-and-outside-of-object-level">
 <h2>Working inside and outside of object level<a class="headerlink" href="#working-inside-and-outside-of-object-level" title="Permalink to this headline">¶</a></h2>
 <p>Something unexpected can be with none iterable objects like matrix or Blender objects.
 On the picture below it can be expected that switch should add first matrix and second quaternion:</p>
 <img alt="https://user-images.githubusercontent.com/28003269/69897081-1054c300-1360-11ea-80de-0aac8f310633.png" src="https://user-images.githubusercontent.com/28003269/69897081-1054c300-1360-11ea-80de-0aac8f310633.png" />
 <p>but for this states input should have values on first object level not on second data level:</p>
 <img alt="https://user-images.githubusercontent.com/28003269/69897085-38dcbd00-1360-11ea-8939-b6910445e5eb.png" src="https://user-images.githubusercontent.com/28003269/69897085-38dcbd00-1360-11ea-8939-b6910445e5eb.png" />
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="input_switch_mod.html" class="btn btn-neutral float-right" title="Input Switch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="genes_holder.html" class="btn btn-neutral float-left" title="Genes Holder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="input_switch_mod.html" class="btn btn-neutral float-right" title="Input Switch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014...2021, sverchok team.
-
-    </p>
+    <p>&#169; Copyright 2014...2021, sverchok team.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

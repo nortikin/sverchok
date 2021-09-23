@@ -1,82 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Generative Art &mdash; Sverchok 1, 0, 0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Scene" href="../scene/scene_index.html" />
     <link rel="prev" title="Mesh Expression Node" href="mesh_eval.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../main.html" class="icon icon-home"> Sverchok
-          
-
-          
-            
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1, 0, 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
@@ -161,84 +107,41 @@
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../main.html">Sverchok</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-        
           <li><a href="script_index.html">Script</a> &raquo;</li>
-        
       <li>Generative Art</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../_sources/nodes/script/generative_art.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="generative-art">
+             
+  <section id="generative-art">
 <h1>Generative Art<a class="headerlink" href="#generative-art" title="Permalink to this headline">¶</a></h1>
 <p><em>destination after Beta: Generators</em></p>
-<div class="section" id="functionality">
+<section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>This node can be used to produce recursive three dimensional structures following a design specified in a separate xml file. These structures are similar to fractals or lsystems.</p>
 <p>The xml file defines a set of transformation rules and instructions to place objects. A simple set of rules can often generate surprising and complex structures.</p>
-</div>
-<div class="section" id="inputs-parameters">
+</section>
+<section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
@@ -251,15 +154,15 @@
 <li><p><strong>Vertices</strong> - Optional. A list of vertices to be joined in a ring and used as the basis for a tube structure. Typically the output of a Circle or NGon node.</p></li>
 <li><p><strong>data</strong> - Optional. The xml file can have optional variables defined using {myvar} type format notation. Extra named data inputs are generated for each of these these variables. These variables can be used to control animations.</p></li>
 </ul>
-</div>
-<div class="section" id="outputs">
+</section>
+<section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Vertices, Edges and Faces</strong> - If the Vertices input is connected, these outputs will define the mesh of a tube that skins the structure defined in the xml file.</p></li>
 <li><p><strong>Shapes Matrices</strong> - For each <em>shape</em> attribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.</p></li>
 </ul>
-</div>
-<div class="section" id="examples-of-usage">
+</section>
+<section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
 <p>A simplified description of the algorithm for the evaluation of a design.</p>
 <p>The xml file (see below for examples and descriptions) consist of a set of rules, each rule has a list of instructions, each instruction defines a transform and either a call to a rule or an instruction to place an instance.</p>
@@ -296,7 +199,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>Instead of using a single <em>transform</em> attribute, each transform can be specified individually. For example <code class="docutils literal notranslate"><span class="pre">transforms=&quot;tx</span> <span class="pre">1</span> <span class="pre">rz</span> <span class="pre">90</span> <span class="pre">sa</span> <span class="pre">0.75&quot;</span></code> can be replaced with <code class="docutils literal notranslate"><span class="pre">tx=&quot;1&quot;</span> <span class="pre">rz=&quot;90&quot;</span> <span class="pre">sa=&quot;0.75&quot;</span></code>.</p>
 <p>The count attribute specifies how many times that instruction is repeated.  if count is omitted it defaults to 1. For example the instruction <code class="docutils literal notranslate"><span class="pre">&lt;call</span> <span class="pre">count=&quot;3&quot;</span> <span class="pre">transforms=&quot;rz</span> <span class="pre">120&quot;</span> <span class="pre">rule=&quot;R1&quot;/&gt;</span></code> calls rule <code class="docutils literal notranslate"><span class="pre">R1</span></code> applying a 120 degree rotation about <code class="docutils literal notranslate"><span class="pre">z</span></code> in between each call.</p>
 <p>An instance instruction tells the processor to add a matrix to the output list defining the state of the system at that point. The names used in the shape attribute are used as the names for the node’s output sockets. If there is more than one type of shape each will have its own output socket.</p>
-<div class="section" id="multiple-rule-definition-example">
+<section id="multiple-rule-definition-example">
 <h3>Multiple Rule Definition Example<a class="headerlink" href="#multiple-rule-definition-example" title="Permalink to this headline">¶</a></h3>
 <p>There can be multiple definitions of the same rule in an xml file.</p>
 <p>For example</p>
@@ -328,8 +231,8 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>In the above xml file there are four definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule. Each rule version has a weight attribute. The processor will call each version of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule in a random manner. The weight attribute will determine the probability a particular rule version is called.</p>
 <p>The first three definitions of the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule all place an object instance and then call the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule with the same translation along the <code class="docutils literal notranslate"><span class="pre">z</span></code> axis and rotation about the <code class="docutils literal notranslate"><span class="pre">x</span></code> axis but different amounts of rotation about the <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">z</span></code> axis. The fourth definition calls the <code class="docutils literal notranslate"><span class="pre">spiral</span></code> rule twice without placing an instance. This causes the branches in the tree structure. Changing the value of the weight attribute for this rule version will change how often the tree branches. For a larger weight value, the rule gets called more often and there are more branches.</p>
 <p>If the weight attribute is omitted each version will have equal weight. Changing the value of <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">seed</span></code> in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.</p>
-</div>
-<div class="section" id="successor-rule-example">
+</section>
+<section id="successor-rule-example">
 <h3>Successor Rule Example<a class="headerlink" href="#successor-rule-example" title="Permalink to this headline">¶</a></h3>
 <p>Normally when the <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> for a rule is reached that ‘arm’ of the structure is finished. If a rule defines a successor rule then this rule will be called when the <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> is reached. In the following example when the <code class="docutils literal notranslate"><span class="pre">y180</span></code> rule gets called it will be called  90 times in succession and produce a 180 degree turn about the y axis. When it finishes the successor rule <code class="docutils literal notranslate"><span class="pre">r</span></code> will be called and either produce a 180 degree turn about the <code class="docutils literal notranslate"><span class="pre">y</span></code> axis or the <code class="docutils literal notranslate"><span class="pre">z</span></code> axis.</p>
 <p>Nouveau variation</p>
@@ -355,8 +258,8 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 </div>
 <img alt="nouveau variation structure" src="https://cloud.githubusercontent.com/assets/7930130/7629793/cb2d4a30-fa83-11e4-8c75-2fa6488f65fe.png" />
 <p>This example needs “max matrices” set to 5000 to get the above result.</p>
-</div>
-<div class="section" id="mesh-mode-example">
+</section>
+<section id="mesh-mode-example">
 <h3>Mesh Mode Example<a class="headerlink" href="#mesh-mode-example" title="Permalink to this headline">¶</a></h3>
 <p>Using the matrices output allows a separate object to be placed at each location. The vertices input and the mesh (vertices, edges, faces) output “skins” the mesh into a much smaller number of objects. The vertices input should be a list of vertices such as that generated by the “Circle” node or “NGon” node. It could also be a circle type object taking from the scene using the “Objects In” node. The list of vertices should be in order so they can be made into a ring with the last vertex joined to the first. That ring doesn’t have to be planar.</p>
 <img alt="node and result picture for 6 spiral in mesh mode" src="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" />
@@ -412,8 +315,8 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 </div>
 <img alt="image fern right" src="https://cloud.githubusercontent.com/assets/7930130/7629783/bbe99588-fa83-11e4-8d70-92cc2909675e.png" />
 <p>Again these were both done with max mats set to 5000.</p>
-</div>
-<div class="section" id="constants-and-variables-example">
+</section>
+<section id="constants-and-variables-example">
 <h3>Constants and Variables Example<a class="headerlink" href="#constants-and-variables-example" title="Permalink to this headline">¶</a></h3>
 <p>Constants and variables can be included in the xml file by replacing a numerical value with a pair of braces.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transforms</span> <span class="o">=</span> <span class="s2">&quot;tx 0.5 rx 20 sa 0.9&quot;</span>
@@ -476,60 +379,43 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 </pre></div>
 </div>
 <p>Only the transforms that take a single number that is <code class="docutils literal notranslate"><span class="pre">tx,</span> <span class="pre">ty,</span> <span class="pre">tz,</span> <span class="pre">rx,</span> <span class="pre">ry,</span> <span class="pre">rz,</span> <span class="pre">sx,</span> <span class="pre">sy,</span> <span class="pre">sz</span></code> and <code class="docutils literal notranslate"><span class="pre">sa</span></code> have been implemented using individual attributes. The ones that use triplets to specify all three translations or scales at once (<code class="docutils literal notranslate"><span class="pre">t</span></code> and <code class="docutils literal notranslate"><span class="pre">s</span></code>) can only be used in a transform string.</p>
-</div>
-</div>
-<div class="section" id="references">
+</section>
+</section>
+<section id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <p>This node is closely based on <a class="reference external" href="http://structuresynth.sourceforge.net/">Structure Synth</a> but the xml design format and most of the code comes from <a class="reference external" href="http://prideout.net/">Philip Rideout’s</a> <a class="reference external" href="https://github.com/prideout/lsystem">lsystem</a> repository on github.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../scene/scene_index.html" class="btn btn-neutral float-right" title="Scene" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="mesh_eval.html" class="btn btn-neutral float-left" title="Mesh Expression Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../scene/scene_index.html" class="btn btn-neutral float-right" title="Scene" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014...2021, sverchok team.
-
-    </p>
+    <p>&#169; Copyright 2014...2021, sverchok team.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

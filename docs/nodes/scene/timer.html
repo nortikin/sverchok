@@ -1,82 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Timer &mdash; Sverchok 1, 0, 0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  
-
-  
-  
-
-  
-
-  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Objects" href="../object_nodes/object_nodes_index.html" />
     <link rel="prev" title="selection grabber lite" href="selection_grabber_lite.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../main.html" class="icon icon-home"> Sverchok
-          
-
-          
-            
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1, 0, 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -84,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
@@ -169,86 +115,43 @@
 <li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../main.html">Sverchok</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-        
           <li><a href="scene_index.html">Scene</a> &raquo;</li>
-        
       <li>Timer</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../_sources/nodes/scene/timer.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="timer">
+             
+  <section id="timer">
 <h1>Timer<a class="headerlink" href="#timer" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="functionality">
+<section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>This node helps with managing time, particularly useful for animations.
 It provides a set of (internal/external) operations that allow to control timing.
 The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.</p>
 <p>The the node measures time is in seconds and it is based on Blender timeline’s time, so the measured time depends on on frame changes in the timeline as well as the frame rate. Because this is tied to Blender’s timeline, starting the timer will not measure any time unless the Blender’s timeline changes (either via playback, timeline scrubbing or other methods of changing the frame). Scrubbing the timeline back and forth will also affect the timer node’s measured time. When scrubbing backwards, the recorded time will also go backwards (assuming the timer is started).</p>
 <p>Note: The timer node does not record negative times. Going backward in time (either via backward playback or scrubbing the timeline backwards) will decrease the measured time down to zero and the timer will stop.</p>
-</div>
-<div class="section" id="inputs">
+</section>
+<section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
 <p>All inputs accept single or multiple values. When any of the node’s inputs take multiple values the node creates multiple timers with different settings, which can be controlled collectively via the node’s IU (internal operations) or they can be controlled individually via the external operations.</p>
 <ul class="simple">
@@ -259,8 +162,8 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 </ul>
 <p>Notes:
 [1] : The operation is a value between 0-6, used to control the timer externally by other nodes.</p>
-</div>
-<div class="section" id="operations">
+</section>
+<section id="operations">
 <h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
 <p>Same set of operations are supported internally (via node’s UI) or externally via <strong>Operations</strong> input socket.</p>
 <p>Supported operations:
@@ -282,12 +185,12 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 | LOOP FORWARD    |  6              |
 +—————–+—————–+</p>
 <p>Note: when an operation is given externally it is only executed if different than the previously executed external operation. This way, during playback if the nodes gets the same value (e.g. 1 = START) every frame, the (START) operation is only executed once.</p>
-</div>
-<div class="section" id="the-time-slider">
+</section>
+<section id="the-time-slider">
 <h2>The Time Slider<a class="headerlink" href="#the-time-slider" title="Permalink to this headline">¶</a></h2>
 <p>The node has a time slider that can be used to set the timers current time (as a percentage of the timer’s duration). This allows the timer to go back and forth in time without playing back the Blender’s timeline and it can be useful to set a particular starting time or to test the output of the timer, hence the animationt the timer controls. (the speed option is in this case ignored, since the user controls the speed of time flow via scrubbing the time slider).</p>
-</div>
-<div class="section" id="parameters">
+</section>
+<section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
@@ -328,8 +231,8 @@ percentage of the timer duration [0-1]</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="extra-parameters">
+</section>
+<section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
 <p>Property Panel has some extra parameters to adjust the timer node behavior for all of its timers.</p>
 <table class="docutils align-default">
@@ -365,8 +268,8 @@ unexpire as the timeline is scrubbed</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="outputs">
+</section>
+<section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p>All outputs will be generated when connected.</p>
 <p><strong>Status</strong>
@@ -387,58 +290,41 @@ This outputs True if the timer expired, otherwise False.</p>
 <p>One useful case for this output is that you can chain timer nodes and have one timer, upon expiration, trigger the starting of another timer.</p>
 <p><strong>Loop</strong>
 This outputs how many times the timer has looped since it started (a value in between 0 and <strong>Loops</strong> number).</p>
-</div>
-<div class="section" id="example-of-usage">
+</section>
+<section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../object_nodes/object_nodes_index.html" class="btn btn-neutral float-right" title="Objects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="selection_grabber_lite.html" class="btn btn-neutral float-left" title="selection grabber lite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../object_nodes/object_nodes_index.html" class="btn btn-neutral float-right" title="Objects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2014...2021, sverchok team.
-
-    </p>
+    <p>&#169; Copyright 2014...2021, sverchok team.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
