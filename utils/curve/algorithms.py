@@ -715,7 +715,7 @@ class SvIsoUvCurve(SvCurve):
             return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))
 
 class SvLengthRebuiltCurve(SvCurve):
-    def __init__(self, curve, resolution, mode='SPL'):
+    def __init__(self, curve, resolution, mode='SPL', tolerance=None):
         self.curve = curve
         self.resolution = resolution
         if hasattr(curve, 'tangent_delta'):
@@ -724,7 +724,7 @@ class SvLengthRebuiltCurve(SvCurve):
             self.tangent_delta = 0.001
         self.mode = mode
         self.solver = SvCurveLengthSolver(curve)
-        self.solver.prepare(self.mode, resolution)
+        self.solver.prepare(self.mode, resolution, tolerance=tolerance)
         self.u_bounds = (0.0, self.solver.get_total_length())
         self.__description__ = "{} rebuilt".format(curve)
 

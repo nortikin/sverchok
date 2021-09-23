@@ -28,12 +28,40 @@ class SvLengthRebuildCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode: EnumProperty(name='Interpolation mode', default="SPL", items=modes, update=updateNode)
 
+    specify_accuracy : BoolProperty(
+        name = "Specify accuracy",
+        default = False,
+        update = updateNode)
+
+    accuracy : IntProperty(
+        name = "Accuracy",
+        default = 3,
+        min = 0,
+        update = updateNode)
+
+    accuracy_draft : IntProperty(
+        name = "[D] Accuracy",
+        default = 1,
+        min = 0,
+        update = updateNode)
+
+    draft_properties_mapping = dict(accuracy = 'accuracy_draft')
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.outputs.new('SvCurveSocket', "Curve")
 
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'specify_accuracy')
+        if self.specify_accuracy:
+            if self.id_data.sv_draft:
+                layout.prop(self, 'accuracy_draft')
+            else:
+                layout.prop(self, 'accuracy')
+
     def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, 'mode', expand=True)
 
     def does_support_draft_mode(self):
@@ -60,9 +88,17 @@ class SvLengthRebuildCurveNode(bpy.types.Node, SverchCustomTreeNode):
         for curves, resolutions in zip_long_repeat(curves_s, resolution_s):
             for curve, resolution in zip_long_repeat(curves, resolutions):
                 mode = self.mode
+                accuracy = self.accuracy
                 if self.id_data.sv_draft:
                     mode = 'LIN'
-                new_curve = SvLengthRebuiltCurve(curve, resolution, mode=mode)
+                    accuracy = self.accuracy_draft
+
+                if self.specify_accuracy:
+                    tolerance = 10 ** (-accuracy)
+                else:
+                    tolerance = None
+
+                new_curve = SvLengthRebuiltCurve(curve, resolution, mode=mode, tolerance=tolerance)
                 curves_out.append(new_curve)
 
         self.outputs['Curve'].sv_set(curves_out)
