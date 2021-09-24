@@ -172,7 +172,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
             bmesh.ops.create_icosphere(
                 bm,
                 subdivisions=subdivisions,
-                radius=radius)
+                diameter=radius)
 
             verts, edges, faces, _ = numpy_data_from_bmesh(bm, self.out_np)
             bm.free()
