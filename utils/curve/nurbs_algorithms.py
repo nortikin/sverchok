@@ -245,6 +245,7 @@ def nurbs_curve_matrix(curve):
 
 def _check_is_line(curve, eps=0.001):
     if curve.is_line(eps):
+        cpts = curve.get_control_points()
         return (cpts[0], cpts[-1])
     else:
         return False
