@@ -272,8 +272,8 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
         # If both curves look very much like straight line segments,
         # then we can calculate their intersections by solving simple
         # linear equations.
-        line1 = _check_is_line(curve1)
-        line2 = _check_is_line(curve2)
+        line1 = _check_is_line(curve1, precision)
+        line2 = _check_is_line(curve2, precision)
 
         if line1 and line2:
             v1, v2 = line1
