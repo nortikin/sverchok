@@ -250,13 +250,48 @@ def _check_is_line(curve, eps=0.001):
     else:
         return False
 
-def intersect_segment_segment_mu(v1, v2, v3, v4):
-    tolerance = 1e-3
+def _get_curve_direction(curve):
+    cpts = curve.get_control_points()
+    return (cpts[0], cpts[-1])
+
+def locate_p(p1, p2, p, tolerance=1e-3):
+    if abs(p1[0] - p2[0]) > tolerance:
+        return (p[0] - p1[0]) / (p2[0] - p1[0])
+    elif abs(p1[1] - p2[1]) > tolerance:
+        return (p[1] - p1[1]) / (p2[1] - p1[1])
+    else:
+        return (p[2] - p1[2]) / (p2[2] - p1[2])
+
+def intersect_segment_segment_mu(v1, v2, v3, v4, tolerance=1e-3):
     r1, r2 = mathutils.geometry.intersect_line_line(v1, v2, v3, v4)
     if (r1 - r2).length < tolerance:
         v = 0.5 * (r1 + r2)
-        return np.array(v)
+        v = np.array(v)
+        t1 = locate_p (v1, v2, v, tolerance)
+        t2 = locate_p (v3, v4, v, tolerance)
+        return t1, t2, v
     return None
+
+def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
+    if logger is None:
+        logger = getLogger()
+
+    t1_min, t1_max = curve1.get_u_bounds()
+    t2_min, t2_max = curve2.get_u_bounds()
+
+    v1, v2 = _get_curve_direction(curve1)
+    v3, v4 = _get_curve_direction(curve2)
+
+    logger.debug(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+    r = intersect_segment_segment(v1, v2, v3, v4, tolerance=precision, endpoint_tolerance=0.0)
+    if not r:
+        logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
+        return []
+    else:
+        u, v, pt = r
+        t1 = (1-u)*t1_min + u*t1_max
+        t2 = (1-v)*t2_min + v*t2_max
+        return [(t1, t2, pt)]
 
 def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, logger=None):
     if logger is None:
@@ -264,34 +299,6 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
 
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
-
-    lower = np.array([t1_min, t2_min])
-    upper = np.array([t1_max, t2_max])
-
-    def linear_intersection():
-        # If both curves look very much like straight line segments,
-        # then we can calculate their intersections by solving simple
-        # linear equations.
-        line1 = _check_is_line(curve1, precision)
-        line2 = _check_is_line(curve2, precision)
-
-        if line1 and line2:
-            v1, v2 = line1
-            v3, v4 = line2
-            logger.debug(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-            r = intersect_segment_segment(v1, v2, v3, v4)
-            if not r:
-                logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
-                return None
-            else:
-                u, v, pt = r
-                t1 = (1-u)*t1_min + u*t1_max
-                t2 = (1-v)*t2_min + v*t2_max
-                return [(t1, t2, pt)]
-
-    r = linear_intersection()
-    if r is not None:
-        return r
 
     def goal(ts):
         p1 = curve1.evaluate(ts[0])
@@ -334,10 +341,39 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
         logger.debug(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
 
+def _intersect_endpoints(segment1, segment2, tolerance=0.001):
+    cpts1 = segment1.get_control_points()
+    cpts2 = segment2.get_control_points()
+    s1, e1 = cpts1[0], cpts1[-1]
+    s2, e2 = cpts2[0], cpts2[-1]
+
+    t1_min, t1_max = segment1.get_u_bounds()
+    t2_min, t2_max = segment2.get_u_bounds()
+
+    if np.linalg.norm(s1 - s2) < tolerance:
+        return t1_min, t2_min, 0.5*(s1+s2)
+    elif np.linalg.norm(e1 -  e2) < tolerance:
+        return t1_max, t2_max, 0.5*(e1+e2)
+    elif np.linalg.norm(s1 - e2) < tolerance:
+        return t1_min, t2_max, 0.5*(s1+e2)
+    elif np.linalg.norm(e1 - s2) < tolerance:
+        return t1_max, t2_min, 0.5*(e1+s2)
+    else:
+        return None
+
 def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.001, logger=None):
     if logger is None:
         logger = getLogger()
 
+    u1_min, u1_max = curve1.get_u_bounds()
+    u2_min, u2_max = curve2.get_u_bounds()
+
+    expected_subdivisions = 10
+
+    max_dt1 = (u1_max - u1_min) / expected_subdivisions
+    max_dt2 = (u2_max - u2_min) / expected_subdivisions
+
+    # Float precision problems workaround
     bbox_tolerance = 1e-4
 
     # "Recursive bounding box" algorithm:
@@ -349,7 +385,7 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
     # give us a simple way to calculate bounding box of the curve: it's a bounding box of curve's
     # control points.
 
-    def _intersect(curve1, curve2, c1_bounds, c2_bounds):
+    def _intersect(curve1, curve2, c1_bounds, c2_bounds, i=0):
         if curve1 is None or curve2 is None:
             return []
 
@@ -363,11 +399,22 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         if not bbox1.intersects(bbox2):
             return []
 
-        THRESHOLD = 0.01
+        r = _intersect_endpoints(curve1, curve2, numeric_precision)
+        if r:
+            logger.debug("Endpoint intersection after %d iterations; bbox1: %s, bbox2: %s", i, bbox1.size(), bbox2.size())
+            return [r]
+
+        THRESHOLD = 0.02
+
+        if curve1.is_line(numeric_precision) and curve2.is_line(numeric_precision):
+            logger.debug("Calling Lin() after %d iterations", i)
+            r = _intersect_curves_line(curve1, curve2, numeric_precision, logger=logger)
+            if r:
+                return r
 
         if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
-        #if _check_is_line(curve1) and _check_is_line(curve2):
-            return _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision)
+            logger.debug("Calling Eq() after %d iterations", i)
+            return _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
 
         mid1 = (t1_min + t1_max) * 0.5
         mid2 = (t2_min + t2_max) * 0.5
@@ -375,10 +422,10 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         c11,c12 = curve1.split_at(mid1)
         c21,c22 = curve2.split_at(mid2)
 
-        r1 = _intersect(c11,c21, (t1_min, mid1), (t2_min, mid2))
-        r2 = _intersect(c11,c22, (t1_min, mid1), (mid2, t2_max))
-        r3 = _intersect(c12,c21, (mid1, t1_max), (t2_min, mid2))
-        r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max))
+        r1 = _intersect(c11,c21, (t1_min, mid1), (t2_min, mid2), i+1)
+        r2 = _intersect(c11,c22, (t1_min, mid1), (mid2, t2_max), i+1)
+        r3 = _intersect(c12,c21, (mid1, t1_max), (t2_min, mid2), i+1)
+        r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max), i+1)
 
         return r1 + r2 + r3 + r4
     

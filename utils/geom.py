@@ -44,6 +44,7 @@ from sverchok.utils.modules.geom_primitives import (
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.data_structure import match_long_repeat, describe_data_shape
+from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
 identity_matrix = Matrix()
@@ -895,7 +896,7 @@ class PlaneEquation(object):
         #   rho = -------------------------
         #           sqrt(A^2 + B^2 + C^2)
         #
-        points = np.array(points)
+        points = np.asarray(points)
         a, b, c, d = self.a, self.b, self.c, self.d
         # (A x + B y + C z) is a scalar product of (x, y, z) and (A, B, C)
         numerators = abs(points.dot([a, b, c]) + d)
@@ -1313,16 +1314,70 @@ class LineEquation(object):
         projection_lengths = projection_lengths[np.newaxis].T
         projections = projection_lengths * unit_direction
         return center + projections
+    
+    def distance_to_line(self, line2, parallel_threshold=1e-6):
+        r1 = self.point
+        r2 = line2.point
+        s1 = self.direction
+        s2 = line2.direction
+        num = np_mixed_product(r2-r1, s1, s2)
+        denom = np.linalg.norm(np.cross(s1, s2))
+        if denom < parallel_threshold:
+            raise Exception("Lines are (almost) parallel")
+        return abs(num) / denom
 
-def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
+def distance(v1, v2):
+    v1 = np.asarray(v1)
+    v2 = np.asarray(v2)
+    return np.linalg.norm(v1 - v2)
+
+def locate_linear(p1, p2, p):
+    dx = p2[0] - p1[0]
+    dy = p2[1] - p1[1]
+    dz = p2[2] - p1[2]
+    dxs = np.array([dx, dy, dz])
+
+    i = np.argmax(abs(dxs))
+    u = (p[i] - p1[i]) / dxs[i]
+    #print(f"L: {p1} - {p2}: {p} => {u}")
+    return u
+
+def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
     x4,y4,z4 = v4
 
-    m = np.array([v2-v1, v3-v1, v4-v1])
-    if abs(np.linalg.det(m)) > 1e-6:
+    #d1 = distance(v1, v2)
+    #d2 = distance(v3, v4)
+    #m = np.array([v2-v1, v3-v1, v4-v1])
+    #det_m = np.linalg.det(m)
+    #if abs(det_m) > 1e-6:
+    #    print(f"Det_m: {det_m}")
+    #    return None
+
+    line1 = LineEquation.from_two_points(v1, v2)
+    line2 = LineEquation.from_two_points(v3, v4)
+    dist = line1.distance_to_line(line2)
+    if dist > tolerance:
+        #print(f"Distance: {dist}")
         return None
+
+    ds = line1.distance_to_points([v3, v4])
+    if ds[0] < tolerance:
+        u = locate_linear(v1, v2, v3)
+        return u, 0.0, np.asarray(v3)
+    if ds[1] < tolerance:
+        u = locate_linear(v1, v2, v4)
+        return u, 1.0, np.asarray(v4)
+
+    ds = line2.distance_to_points([v1, v2])
+    if ds[0] < tolerance:
+        v = locate_linear(v3, v4, v1)
+        return 0.0, v, np.asarray(v1)
+    if ds[1] < tolerance:
+        v = locate_linear(v3, v4, v2)
+        return 1.0, v, np.asarray(v2)
 
     denom = np.linalg.det(np.array([
             [x1-x2, x4-x3],
@@ -1343,7 +1398,16 @@ def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
 
     et = endpoint_tolerance
     if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
+        #print(f"U = {u}, V = {v}, Dist={dist}")
         return None
+#     if u < 0.0:
+#         u = 0.0
+#     if u > 1.0:
+#         u = 1.0
+#     if v < 0.0:
+#         v = 0.0
+#     if v > 0.0:
+#         v = 1.0
 
     x = u*(x1-x2) + x2
     y = u*(y1-y2) + y2
