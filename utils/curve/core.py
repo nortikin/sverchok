@@ -68,15 +68,15 @@ class SvCurve(object):
         lengths = np.linalg.norm(dvs, axis=1)
         return np.sum(lengths)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         v = self.evaluate(t)
-        h = self.tangent_delta
+        h = self.get_tangent_delta(tangent_delta)
         v_h = self.evaluate(t+h)
         return (v_h - v) / h
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         vs = self.evaluate_array(ts)
-        h = self.tangent_delta
+        h = self.get_tangent_delta(tangent_delta)
         u_max = self.get_u_bounds()[1]
         bad_idxs = (ts+h) > u_max
         good_idxs = (ts+h) <= u_max
