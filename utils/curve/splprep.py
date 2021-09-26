@@ -54,7 +54,7 @@ def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, f
                 degree, knotvector,
                 control_points)
     if is_cyclic:
-        curve = curve.cut_segment(0.0, 1.01)
+        curve = curve.cut_segment(0.0, 1.00)
     #curve.u_bounds = (0.0, 1.0)
     return curve
 
