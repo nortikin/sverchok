@@ -49,12 +49,14 @@ else:
             default = False,
             update = updateNode)
 
-#         join : BoolProperty(
-#             name = "Join",
-#             default = True,
-#             update = updateNode)
+        join : BoolProperty(
+            name = "Join",
+            description = "If checked, output one list of points for all curves; otherwise, output a separate list of points for each curve",
+            default = True,
+            update = updateNode)
 
         def draw_buttons(self, context, layout):
+            layout.prop(self, 'join')
             layout.prop(self, 'use_nurbs')
             layout.prop(self, 'samples')
             
@@ -104,8 +106,13 @@ else:
                             tolerance = tolerance)
                     ts = [p[0] for p in ps]
                     points = [p[1].tolist() for p in ps]
-                    new_points.extend(points)
-                    new_ts.extend(ts)
+
+                    if self.join:
+                        new_points.extend(points)
+                        new_ts.extend(ts)
+                    else:
+                        new_points.append(points)
+                        new_ts.append(ts)
 
                 points_out.append(new_points)
                 t_out.append(new_ts)
