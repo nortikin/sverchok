@@ -38,7 +38,7 @@ mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
 
 def get_font(node):
     fonts = bpy.data.fonts
-    default = fonts.get('Bfont Regular')
+    default = fonts.get('Bfont Regular') or fonts.get('Bfont')
 
     if node.font_pointer:
         return node.font_pointer
