@@ -761,6 +761,21 @@ class PlaneEquation(object):
             raise Exception("Unknown coordinate plane name")
 
     @classmethod
+    def from_coordinate_value(cls, axis, value):
+        if axis in 'XYZ':
+            axis = 'XYZ'.index(axis)
+        elif axis not in {0, 1, 2}:
+            raise Exception("Unknown coordinate axis")
+        
+        point = np.zeros((3,), dtype=np.float64)
+        normal = np.zeros((3,), dtype=np.float64)
+
+        point[axis] = value
+        normal[axis] = 1.0
+
+        return PlaneEquation.from_normal_and_point(normal, point)
+
+    @classmethod
     def from_matrix(cls, matrix, normal_axis='Z'):
         if normal_axis == 'X':
             normal = Vector((1,0,0))
@@ -1891,6 +1906,12 @@ class BoundingBox(object):
                 self.min_z - d, self.max_z + d)
         return box
 
+    def contains(self, point):
+        return (point >= self.min).all() and (point <= self.max).all()
+
+    def __contains__(self, point):
+        return self.contains(point)
+
 #     def is_empty(self):
 #         return (self.min == self.max).all()
 
@@ -1908,6 +1929,19 @@ class BoundingBox(object):
         #print(f"{self} x {box} => {result}")
         return result
 
+    def get_plane(self, axis, side):
+        if axis in 'XYZ':
+            axis = 'XYZ'.index(axis)
+        elif axis not in {0, 1, 2}:
+            raise Exception("Unknown coordinate axis")
+        if side == 'MIN':
+            value = self.min[axis]
+        elif side == 'MAX':
+            value = self.max[axis]
+        else:
+            raise Exception("Unknown bounding box side")
+        return PlaneEquation.from_coordinate_value(axis, value)
+
     def __repr__(self):
         return f"<BBox: {self.min} .. {self.max}>"
 
@@ -1917,6 +1951,12 @@ def bounding_box(vectors):
     r.min = vectors.min(axis=0)
     r.max = vectors.max(axis=0)
     return r
+
+def intersects_line_bbox(line, bbox):
+    planes = [bbox.get_plane(axis, side) for axis in [0,1,2] for side in ['MIN', 'MAX']]
+    intersections = [plane.intersect_with_line(line) is not None for plane in planes]
+    good = [point for point in intersections if point in bbox]
+    return len(good) > 0
 
 class LinearApproximationData(object):
     """
