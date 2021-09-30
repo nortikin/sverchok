@@ -23,7 +23,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
-from sverchok.utils.geom import bounding_box
+from sverchok.utils.geom import bounding_box, LineEquation
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
@@ -467,58 +467,47 @@ class SvNurbsCurve(SvCurve):
             curve = curve.reparametrize(0, 1)
         return curve
 
-    def is_line(self, tolerance=0.001, use_length_tolerance=False):
-        # Check that the provided curve is nearly a straight line segment.
-        # This implementation depends heavily on the fact that this curve is
-        # NURBS. It uses so-called "godograph property". In short, this 
-        # property states that edges of curve's control polygon determine
-        # maximum variation of curve's tangent vector.
+    def is_line(self, tolerance=0.001):
+        """
+        Check that the curve is nearly a straight line segment.
+        This implementation relies on the property of NURBS curves,
+        known as "strong convex hull property": the whole curve is lying
+        inside the convex hull of it's control points.
+        """
 
         cpts = self.get_control_points()
         # direction from first to last point of the curve
-        vector = cpts[-1] - cpts[0]
-        vector_len = np.linalg.norm(vector)
-        direction = vector / vector_len
+        direction = cpts[-1] - cpts[0]
+        line = LineEquation.from_direction_and_point(direction, cpts[0])
+        distances = line.distance_to_points(cpts)
+        # Technically, this means that all control points lie
+        # inside the cylinder, defined as "distance from line < tolerance";
+        # As a consequence, the convex hull of control points lie in the
+        # same cylinder; and the curve lies in that convex hull.
+        return (distances < tolerance).all()
 
-        for cpt1, cpt2 in zip(cpts, cpts[1:]):
-            # for each edge of control polygon,
-            # check that it constitutes a small enough
-            # angle with `direction`. If not, this is
-            # clearly not a straight line.
-            dv = cpt2 - cpt1
-            dv_len = np.linalg.norm(dv)
-            dv /= dv_len
-            cos_angle = np.dot(dv, direction)
-            if use_length_tolerance:
-                dv2_len = dv_len / cos_angle
-                if abs(dv2_len - dv_len) > tolerance/len(cpts):
-                    return False
-            else:
-                tan_angle = sqrt(1.0 - cos_angle**2) / cos_angle
-                if dv_len * tan_angle > tolerance:
-                    return False
+    def calc_linear_segment_knots(self, splits=2, tolerance=0.001):
+        """
+        Calculate T values, which split the curve into segments in
+        such a way that each segment is nearly a straight line segment.
+        """
 
-        return True
-
-    def calc_linear_segment_knots(self, tolerance=0.001):
-
-        def split(segment):
-            u1, u2 = segment.get_u_bounds()
-            u = (u1+u2)*0.5
-            return segment.split_at(u)
-
-        def calc_knots(segment):
+        def calc_knots(segment, u1, u2):
             if segment.is_line(tolerance):
-                u1, u2 = segment.get_u_bounds()
+                print(f"[{u1} - {u2}]: line")
                 return set([u1, u2])
             else:
-                segment1, segment2 = split(segment)
-                knots1 = calc_knots(segment1)
-                knots2 = calc_knots(segment2)
-                knots = knots1.union(knots2)
+                us = np.linspace(u1, u2, num=int(splits+1))
+                ranges = list(zip(us, us[1:]))
+                segments = [segment.cut_segment(u, v) for u, v in ranges]
+                all_knots = [calc_knots(segment, u1, u2) for segment, (u1, u2) in zip(segments, ranges)]
+                knots = set()
+                for ks in all_knots:
+                    knots = knots.union(ks)
                 return knots
         
-        knots = np.array(sorted(calc_knots(self)))
+        u1, u2 = self.get_u_bounds()
+        knots = np.array(sorted(calc_knots(self, u1, u2)))
         return knots
 
     def to_bezier(self):
