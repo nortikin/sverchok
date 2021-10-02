@@ -167,10 +167,11 @@ def elevate_degree(knot_vector, delta=1):
 
 def insert(knot_vector, u, count=1):
     idx = np.searchsorted(knot_vector, u)
-    result = knot_vector
+    result = knot_vector.tolist()
     for i in range(count):
-        result = np.insert(result, idx, u)
-    return result
+        result.insert(idx, u)
+        #result = np.insert(result, idx, u)
+    return np.asarray(result)
 
 def rescale(knot_vector, new_t_min, new_t_max):
     t_min = knot_vector[0]

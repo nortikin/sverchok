@@ -698,7 +698,6 @@ class OtherNurbsTests(SverchokTestCase):
         endpoint = nurbs.evaluate(u_max)
         self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
 
-
 class KnotvectorTests(SverchokTestCase):
     def test_to_multiplicity_1(self):
         kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
@@ -816,4 +815,61 @@ class InterpolateTests(SverchokTestCase):
         weights = curve.get_weights()
         expected_weights = np.array([1, 3, 1])
         self.assert_numpy_arrays_equal(weights, expected_weights, precision=6)
+
+class TaylorTests(SverchokTestCase):
+    def test_bezier_to_taylor_1(self):
+        cpts = np.array([[0,0,0], [1,0,0], [1,1,0], [2,1,0]], dtype=np.float64)
+        degree = 3
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+
+        taylor = curve.bezier_to_taylor()
+        coeffs = taylor.get_coefficients()
+
+        self.assert_numpy_arrays_equal(coeffs[0], np.array([0,0,0,1]))
+        self.assert_numpy_arrays_equal(coeffs[1], np.array([3,0,0,0]))
+        self.assert_numpy_arrays_equal(coeffs[2], np.array([-3,3,0,0]))
+        self.assert_numpy_arrays_equal(coeffs[3], np.array([2,-2,0,0]))
+
+    def test_bezier_to_taylor_2(self):
+        cpts = np.array([[0,0,0], [1,0,0], [1,1,0], [2,1,0]], dtype=np.float64)
+        degree = 3
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        knotvector += 1.0
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+
+        taylor = curve.bezier_to_taylor()
+        nurbs = taylor.to_nurbs()
+
+        self.assert_numpy_arrays_equal(nurbs.get_control_points(), cpts)
+
+    def test_outside_sphere_1(self):
+        cpts = np.array([[-2, 1, 0], [2, 1, 0]])
+        degree = 1
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+
+        result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 2)
+        expected_result = False
+        self.assertEquals(result, expected_result)
+
+    def test_outside_sphere_2(self):
+        cpts = np.array([[-2, 1, 0], [2, 1, 0]])
+        degree = 1
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+
+        result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 1)
+        expected_result = False
+        self.assertEquals(result, expected_result)
+
+    def test_outside_sphere_3(self):
+        cpts = np.array([[-2, 5, 0], [2, 5, 0]])
+        degree = 1
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+
+        result = curve.is_strongly_outside_sphere(np.array([0, 0, 0]), 1)
+        expected_result = True
+        self.assertEquals(result, expected_result)
 

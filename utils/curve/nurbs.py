@@ -11,7 +11,7 @@ from math import pi, sqrt
 import traceback
 
 from sverchok.utils.logging import info
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -23,6 +23,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
+from sverchok.utils.math import binomial_array, cmp
 from sverchok.utils.geom import bounding_box, LineEquation
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
@@ -129,7 +130,9 @@ class SvNurbsCurve(SvCurve):
         return curves
 
     def get_bounding_box(self):
-        return bounding_box(self.get_control_points())
+        if not hasattr(self, '_bounding_box') or self._bounding_box is None:
+            self._bounding_box = bounding_box(self.get_control_points())
+        return self._bounding_box
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
         curve1 = self
@@ -494,7 +497,6 @@ class SvNurbsCurve(SvCurve):
 
         def calc_knots(segment, u1, u2):
             if segment.is_line(tolerance):
-                print(f"[{u1} - {u2}]: line")
                 return set([u1, u2])
             else:
                 us = np.linspace(u1, u2, num=int(splits+1))
@@ -540,6 +542,29 @@ class SvNurbsCurve(SvCurve):
         else:
             segments.append(rest)
         return segments
+
+    def bezier_to_taylor(self):
+        # Refer to The NURBS Book, 2nd ed., p. 6.6
+        if not self.is_bezier():
+            raise Exception("Non-Bezier NURBS curve cannot be converted to Taylor curve")
+
+        p = self.get_degree()
+        cpts = self.get_homogenous_control_points()
+
+        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+
+        coeffs = np.zeros((4, p+1))
+        for k in range(4):
+            coeffs[k] = R @ M @ cpts[:,k]
+        #print(f"T: {self.get_u_bounds()} => {coeffs.T}")
+        #print(f"C: {c}, D: {d} => R {R}")
+
+        taylor = SvTaylorCurve.from_coefficients(coeffs.T)
+        taylor.u_bounds = self.get_u_bounds()
+        return taylor
+
+    def to_taylor_segments(self):
+        return [segment.bezier_to_taylor() for segment in self.to_bezier_segments()]
 
     def make_revolution_surface(self, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
         return nurbs_revolution_surface(self, origin, axis, v_min, v_max, global_origin)
@@ -597,6 +622,79 @@ class SvNurbsCurve(SvCurve):
                     self.get_knotvector(),
                     new_controls,
                     self.get_weights())
+
+    def is_inside_sphere(self, sphere_center, sphere_radius):
+        """
+        Check that the whole curve lies inside the specified sphere
+        """
+        # Because of NURBS curve's "strong convex hull property",
+        # if all control points of the curve lie inside the sphere,
+        # then the whole curve lies inside the sphere too.
+        # This relies on the fact that the sphere is a convex set of points.
+        cpts = self.get_control_points()
+        distances = np.linalg.norm(sphere_center - cpts)
+        return (distances < sphere_radius).all()
+
+    def bezier_distance_curve(self, src_point):
+        taylor = self.bezier_to_taylor()
+        taylor.start[:3] -= src_point
+        return taylor.square(to_axis=0).to_nurbs()
+
+    def bezier_distance_coeffs(self, src_point):
+        distance_curve = self.bezier_distance_curve(src_point)
+        square_cpts = distance_curve.get_control_points()
+        square_coeffs = square_cpts[:,0]
+        return square_coeffs
+
+    def bezier_is_strongly_outside_sphere(self, sphere_center, sphere_radius):
+        # Complement of the sphere is not a convex set of points;
+        # Thus, we can not directly use "strong convex hull property" here.
+        # For example, consider a sphere with center = origin and radius = 2,
+        # and a straight line segment from [-2, 1, 0] to [2, 1, 0]: both control
+        # points are outside the sphere, but part of the segment lies inside it.
+        #
+        # So, here we are using "Property 1" from the paper [1]:
+        # Xiao-Diao Chen, Jun-Hai Yong, Guozhao Wang, Jean-Claude Paul, Gang
+        # Xu. Computing the minimum distance between a point and a NURBS curve.
+        # Computer-Aided Design, Elsevier, 2008, 40 (10-11), pp.1051-1054.
+        # 10.1016/j.cad.2008.06.008. inria-00518359
+        # available at: https://hal.inria.fr/inria-00518359
+
+        if not self.is_bezier():
+            raise Exception("this method is not applicable to non-Bezier curves")
+
+        square_coeffs = self.bezier_distance_coeffs(sphere_center)
+        return (square_coeffs >= sphere_radius**2).all()
+
+    def is_strongly_outside_sphere(self, sphere_center, sphere_radius):
+        """
+        If this method returns True, then the whole curve lies outside the
+        specified sphere.
+        If this method returns False, then the curve may partially or wholy
+        lie inside the sphere, or may not touch it at all.
+        """
+        # See comment to bezier_is_strongly_outside_sphere()
+        return all(segment.bezier_is_strongly_outside_sphere(sphere_center, sphere_radius) for segment in self.to_bezier_segments(to_bezier_class=False))
+
+    def bezier_has_one_nearest_point(self, src_point):
+        square_coeffs = self.bezier_distance_coeffs(src_point)
+
+        should_grow = False
+        result = True
+        for p1, p2 in zip(square_coeffs, square_coeffs[1:]):
+            if not should_grow and not (p1 > p2):
+                should_grow = True
+            elif should_grow and not (p1 < p2):
+                result = False
+                break
+        return result
+
+    def has_exactly_one_nearest_point(self, src_point):
+        # This implements Property 2 from the paper [1]
+        segments = self.to_bezier_segments(to_bezier_class=False)
+        if len(segments) > 1:
+            return False
+        return segments[0].bezier_has_one_nearest_point(src_point)
 
 class SvGeomdlCurve(SvNurbsCurve):
     """
@@ -932,8 +1030,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def get_u_bounds(self):
         if self.u_bounds is None:
-            m = self.knotvector.min()
-            M = self.knotvector.max()
+            m = self.knotvector[0]
+            M = self.knotvector[-1]
             return (m, M)
         else:
             return self.u_bounds

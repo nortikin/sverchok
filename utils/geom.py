@@ -1831,9 +1831,19 @@ class BoundingBox(object):
     def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
         self.min = np.array([min_x, min_y, min_z])
         self.max = np.array([max_x, max_y, max_z])
+        self._mean = None
+        self._radius = None
 
     def mean(self):
-        return 0.5 * (self.min + self.max)
+        if self._mean is None:
+            self._mean = 0.5 * (self.min + self.max)
+        return self._mean
+
+    def radius(self):
+        if self._radius is None:
+            mean = self.mean()
+            self._radius = np.linalg.norm(mean - self.min)
+        return self._radius
 
     @property
     def min_x(self):

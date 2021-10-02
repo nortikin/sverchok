@@ -7,7 +7,7 @@ from mathutils.bvhtree import BVHTree
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.logging import debug, info, getLogger
-from sverchok.utils.geom import PlaneEquation, LineEquation
+from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
 if scipy is not None:
@@ -171,6 +171,176 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
             return list(zip(result_ts, init_points))
     else:
         return result_ts
+
+def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4, start_numeric_search_threshold=0.1):
+
+    src_point = np.asarray(src_point)
+    default_splits = splits
+
+    def farthest(cpts):
+        distances = np.linalg.norm(src_point - cpts)
+        return distances.max()
+
+    def too_far(segment, distance):
+        return segment.is_strongly_outside_sphere(src_point, distance)
+        #bbox = segment.get_bounding_box()
+        #ctr = bbox.mean()
+        #distance_to_ctr = np.linalg.norm(ctr - src_point)
+        #return (distance_to_ctr > bbox.radius() + distance)
+
+    def split(segment, n_splits=splits):
+        u_min, u_max = segment.get_u_bounds()
+        us = np.linspace(u_min, u_max, num=n_splits+1)
+        segments = [segment.cut_segment(u1, u2) for u1, u2 in zip(us, us[1:])]
+        return segments
+
+    def goal(t):
+        dv = curve.evaluate(t) - src_point
+        return (dv * dv).sum()
+        #return np.linalg.norm(dv)
+
+    def numeric_method(segment, approx=None):
+        u_min, u_max = segment.get_u_bounds()
+        if approx is not None:
+            bracket = (u_min, approx, u_max)
+        else:
+            bracket = (u_min, u_max)
+        result = minimize_scalar(goal,
+                bounds = (u_min, u_max),
+                bracket = bracket,
+                method = method)
+
+        if not result.success:
+            if hasattr(result, 'message'):
+                message = result.message
+            else:
+                message = repr(result)
+            print(f"No solution for {u_min} - {u_max}: {message}")
+            return None
+        else:
+            t0 = result.x
+            if u_min <= t0 <= u_max:
+                return t0, result.fun
+            else:
+                return None
+
+    def merge(segments):
+        if len(segments) <= 1:
+            return segments
+        result_us = []
+        prev_start, prev_end = segments[0].get_u_bounds()
+        current_pair = [prev_start, prev_end]
+        to_end_last = False
+        for segment in segments[1:]:
+            to_end_last = False
+            u1, u2 = segment.get_u_bounds()
+            if u1 == current_pair[1]:
+                current_pair[1] = u2
+                to_end_last = True
+            else:
+                result_us.append(current_pair)
+                current_pair = list(segment.get_u_bounds())
+
+        result_us.append(current_pair)
+
+        result = [curve.cut_segment(u1,u2) for u1, u2 in result_us]
+        #print(f"Merge: {[s.get_u_bounds() for s in segments]} => {[s.get_u_bounds() for s in result]}")
+        return result
+
+    def linear_search(segment):
+        cpts = segment.get_control_points()
+        start, end = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(start, end)
+        p = line.projection_of_point(src_point)
+        t = locate_linear(start, end, p)
+        if 0.0 <= t <= 1.0:
+            u1, u2 = segment.get_u_bounds()
+            u = (1-t)*u1 + t*u2
+            return u
+        else:
+            return None
+
+    def process(segments, min_distance=0.0, step=0, n_splits=splits):
+        if not segments:
+            return []
+
+        #print("Consider: ", [s.get_u_bounds() for s in segments])
+
+        to_remove = set()
+        for segment1_idx, segment1 in enumerate(segments):
+            if segment1_idx in to_remove:
+                continue
+            farthest_distance = farthest(segment1.get_control_points())
+            #print(f"S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}")
+            for segment2_idx, segment2 in enumerate(segments):
+                if segment1_idx == segment2_idx:
+                    continue
+                if segment2_idx in to_remove:
+                    continue
+                if too_far(segment2, min(farthest_distance, min_distance)):
+                    print(f"S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove")
+                    to_remove.add(segment2_idx)
+
+        stop_subdivide = step > 6
+        #if stop_subdivide:
+            #print("Will not subdivide anymore")
+        if len(to_remove) == 0:
+            n_splits += 2
+        #else:
+        #    n_splits = default_splits
+        segments_to_consider = [segment for i, segment in enumerate(segments) if i not in to_remove]
+        #segments_to_consider = merge(segments_to_consider)
+
+        results = []
+        new_segments = []
+        for_numeric = []
+        for segment in segments_to_consider:
+            if segment.is_line(linearity_threshold):
+                # find nearest on line
+                print(f"Linear search for {segment.get_u_bounds()}")
+                approx = linear_search(segment)
+                if approx is not None:
+                    result = numeric_method(segment, approx)
+                    if result:
+                        results.append(result)
+            elif stop_subdivide:
+                print(f"Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}")
+                for_numeric.append(segment)
+            elif segment.has_exactly_one_nearest_point(src_point):
+                print(f"Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}")
+                for_numeric.append(segment)
+            else:
+                #print(f"Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments")
+                sub_segments = split(segment, n_splits)
+                new_segments.extend(sub_segments)
+
+        for_numeric = merge(for_numeric)
+        for segment in for_numeric:
+            print(f"Run numeric method on {segment.get_u_bounds()}")
+            result = numeric_method(segment)
+            if result:
+                results.append(result)
+
+        if results:
+            new_min_distance = min([r[1] for r in results])
+        else:
+            new_min_distance = min_distance
+        return results + process(new_segments, min_distance=new_min_distance, step=step+1, n_splits=n_splits)
+
+    def postprocess(rs):
+        m = min(r[1] for r in rs)
+        return [r[0] for r in rs if r[1] == m]
+
+    u_min, u_max = curve.get_u_bounds()
+    us = np.linspace(u_min, u_max, num=init_samples+1)
+    init_points = curve.evaluate_array(us)
+    init_distances = np.linalg.norm(init_points - src_point, axis=1)
+    min_distance = init_distances.min()
+
+    segments = split(curve)#, init_samples)
+    rs = process(segments, min_distance=min_distance)
+    rs = postprocess(rs)
+    return rs
 
 def ortho_project_surface(src_point, surface, init_samples=10, maxiter=30, tolerance=1e-4):
     """
