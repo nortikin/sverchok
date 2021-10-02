@@ -94,6 +94,9 @@ def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_
     return result
 
 def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='Brent', output_points=True, logger=None):
+    """
+    Find nearest point on any curve.
+    """
     if logger is None:
         logger = getLogger()
 
@@ -172,7 +175,12 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     else:
         return result_ts
 
-def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4, start_numeric_search_threshold=0.1):
+def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=1e-4):
+    """
+    Find nearest point on a NURBS curve.
+    At the moment, this method is not, in general, faster than generic
+    nearest_point_on_curve() method; although this method can be more precise.
+    """
 
     src_point = np.asarray(src_point)
     default_splits = splits
