@@ -68,7 +68,7 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     def make_curve(self, vertices, radiuses):
         if self.cyclic:
             last_fillet = calc_fillet(vertices[-1], vertices[0], vertices[1], radiuses[0])
-            prev_edge_start = last_fillet.p2
+            prev_edge_start = vertices[0] if last_fillet is None else last_fillet.p2
             radiuses = radiuses[1:] + [radiuses[0]]
             corners = list(zip(vertices, vertices[1:], vertices[2:], radiuses))
             corners.append((vertices[-2], vertices[-1], vertices[0], radiuses[-1]))
