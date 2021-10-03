@@ -200,7 +200,11 @@ def faces_angle(normals, edges, pols):
     for face_indexes in adjacent_faces_idx(edges, pols):
         if len(face_indexes) > 1:
             dot_p = Vector(normals[face_indexes[0]]).dot(Vector(normals[face_indexes[1]]))
-            ang = acos(dot_p)
+            if dot_p >= 1.0:
+                # Floating-point maths calculation error workaround
+                ang = 0.0
+            else:
+                ang = acos(dot_p)
         else:
             ang = 2*pi
         angles.append(ang)
