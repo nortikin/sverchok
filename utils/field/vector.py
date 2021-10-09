@@ -166,6 +166,7 @@ class SvVectorFieldBinOp(SvVectorField):
         self.function = function
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = f"<BinOp ({field1}, {field2})>"
 
     def evaluate(self, x, y, z):
         return self.function(self.field1.evaluate(x, y, z), self.field2.evaluate(x, y, z))
