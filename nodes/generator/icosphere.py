@@ -28,7 +28,7 @@ from sverchok.utils.sv_bmesh_utils import numpy_data_from_bmesh
 from sverchok.utils.math import from_cylindrical
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
-# icosphere parameter rename, blender older than sept 13 2021
+# icosphere parameter rename on sept 13 2021 - this will allow both to exist.
 # https://github.com/blender/blender/commit/9b2b32a3338d873529a9b2c402feae4e9d25afdf
 old_icosphere = "diameter=" in bmesh.ops.create_icosphere.__doc__
 size_param = "diameter" if old_icosphere else "radius"
