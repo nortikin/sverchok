@@ -15,6 +15,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat, numpy_full_list
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.curve.core import SvCurve 
+
 def _split_points(vertices_s):
     result = []
     for vertices in vertices_s:
