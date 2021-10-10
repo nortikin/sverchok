@@ -2111,19 +2111,24 @@ class SphericalApproximationData(object):
     vertices by a sphere.
     It's instance is returned by spherical_approximation() method.
     """
-    def __init__(self):
-        self.radius = 0
-        self.center = None
+    def __init__(self, center=None, radius=0.0):
+        self.radius = radius
+        self.center = center
         self.residues = None
 
     def get_projections(self, vertices):
         """
         Calculate projections of vertices to the sphere.
         """
-        vertices = np.array(vertices) - self.center
+        vertices = np.asarray(vertices) - self.center
         norms = np.linalg.norm(vertices, axis=1)[np.newaxis].T
         normalized = vertices / norms
         return self.radius * normalized + self.center
+
+    def projection_of_points(self, points):
+        return self.get_projections(points)
+
+SphereEquation = SphericalApproximationData
 
 def spherical_approximation(data):
     """
@@ -2419,6 +2424,24 @@ def circle_by_two_derivatives(start, tangent, second):
     circle.normal = np.array(normal)
     circle.point1 = np.array(start)
     return circle
+
+class CylinderEquation(object):
+    def __init__(self, axis, radius):
+        self.axis = axis
+        self.radius = radius
+
+    @classmethod
+    def from_point_direction_radius(cls, point, direction, radius):
+        axis = LineEquation.from_direction_and_point(direction, point)
+        return CylinderEquation(axis, radius)
+
+    def projection_of_points(self, points):
+        points = np.asarray(points)
+        projection_to_line = self.axis.projection_of_points(points)
+        radial = points - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
+        projections = projection_to_line + radius
+        return projections
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)

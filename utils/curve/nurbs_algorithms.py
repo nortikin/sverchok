@@ -537,3 +537,14 @@ class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
         self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
         self._prime_spline = self._make_spline(mode, self._length_params, tknots)
 
+def cast_nurbs_curve(curve, target, coeff=1.0):
+    if not hasattr(target, 'projection_of_points'):
+        raise TypeError("Target object does not support projection_of_points method")
+
+    cpts = curve.get_control_points()
+    target_cpts = target.projection_of_points(cpts)
+
+    result_cpts = (1-coeff) * cpts + coeff * target_cpts
+
+    return curve.copy(control_points = result_cpts)
+
