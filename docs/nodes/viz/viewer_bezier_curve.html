@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index Viewer &mdash; Sverchok 1, 0, 0 documentation</title>
+  <title>Bezier Curve Viewer &mdash; Sverchok 1, 0, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -19,8 +19,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Polyline viewer" href="polyline_viewer.html" />
-    <link rel="prev" title="vd matrix" href="vd_matrix.html" /> 
+    <link rel="next" title="NURBS Curve Out Node" href="viewer_nurbs_curve.html" />
+    <link rel="prev" title="Curve Viewer" href="viewer_curves.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,13 +77,17 @@
 <li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">vd matrix</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Index Viewer</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Index Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Bezier Curve Viewer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
@@ -132,9 +136,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="viz_index.html">Viz</a> &raquo;</li>
-      <li>Index Viewer</li>
+      <li>Bezier Curve Viewer</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/viz/viewer_idx28.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/viz/viewer_bezier_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -142,28 +146,83 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="index-viewer">
-<h1>Index Viewer<a class="headerlink" href="#index-viewer" title="Permalink to this headline">¶</a></h1>
+  <section id="bezier-curve-viewer">
+<h1>Bezier Curve Viewer<a class="headerlink" href="#bezier-curve-viewer" title="Permalink to this headline">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
-<p>This node’s primary purpose is for display the index information of geometry and topology, it will draw the indices of <code class="docutils literal notranslate"><span class="pre">Vertices</span></code>, <code class="docutils literal notranslate"><span class="pre">Edges</span></code>, and <code class="docutils literal notranslate"><span class="pre">Faces</span></code></p>
+<p>This node generates Blender Curve objects of Bezier type. Blender’s curve
+bevelling feature is supported as well.</p>
+<p>This node can be used to bring Sverchok’s Bezier, NURBS or NURBS-lie curves
+into Blender scene.</p>
+<p>Note that Blender’s Bezier curves can have only one possible degree of 3.
+However, Sverchok can automatically elevate degree of the curve, so this node
+can also take curves of degree 1 or 2 as input.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p>Vertex indices are drawn on the locations of the vertices</p></li>
-<li><p>Edge indices are drawn on midpoint of the Edge</p></li>
-<li><p>Face indices are drawn at the average location of the Vertices associated with the face.</p></li>
+<li><p><strong>Curve</strong>. Sverchok’s Curve object to be generated as Blender object. This
+input is available and mandatory only if <strong>Input mode</strong> parameter is set to
+<strong>Bezier curve</strong> or <strong>BSpline curve</strong>.</p></li>
+<li><p><strong>ControlPoints</strong>. Control points of curve to be generated. This input is
+available and mandatory only when <strong>Input mode</strong> parameter is set to <strong>Curve
+control points</strong> or <strong>Segment control points</strong>.</p></li>
+<li><p><strong>Matrix</strong>. Transformation matrix to be applied to the generated object. By
+default, identity matrix is used (no transformation).</p></li>
+<li><p><strong>Radius</strong>. Bevel radius. The node can process either single value per curve,
+or a specific value per Bezier control point. Default value is 0.0.</p></li>
+<li><p><strong>Tilt</strong>. Tilt value. The node can process either single value per curve,
+or a specific value per Bezier control point. Default value is 0.0.</p></li>
+<li><p><strong>BevelObject</strong>. Blender’s Curve object to be used as Bevel object. If not
+specified and <strong>Bevel Depth</strong> is not zero, then round profile will be used.</p></li>
+<li><p><strong>TaperObject</strong>. Blender’s Curve object to be used as Taper object. This
+input is optional.</p></li>
 </ul>
-<p>Additionally
-- the input geometry can be transformed using the Matrix socket.
-- the Node can draw arbitrary (non renderable) text into the 3dview at the location of incoming verts. There must be a one-to-one supply of vertices and text to draw, else the node will decide where to draw the excess text elements.</p>
-<img alt="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" src="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" />
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul>
+<li><p><strong>Live</strong> - Processing only happens if <em>update</em> is ticked</p></li>
+<li><p><strong>Hide View</strong> - Hides current meshes from view</p></li>
+<li><p><strong>Hide Select</strong> - Disables the ability to select these meshes</p></li>
+<li><p><strong>Hide Render</strong> - Disables the renderability of these meshes</p></li>
+<li><p><strong>Base Name</strong> - Base name for Objects and Meshes made by this node</p></li>
+<li><p><strong>Select</strong> - Select every object in 3dview that was created by this Node</p></li>
+<li><p><strong>Material Select</strong> - Assign materials to Objects made by this node</p></li>
+<li><p><strong>Add material</strong> - It creates new material and assigns to generated objects</p></li>
+<li><p><strong>Bevel depth</strong> - Changes the size of the bevel. To disable bevelling, you
+have to set this to 0 and unset <strong>BevelObject</strong> input / parameter.</p></li>
+<li><p><strong>Input mode</strong>. This defines how input curves are provided. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Segment control points</strong>. In the <strong>ControlPoints</strong> input, the node will
+expect a list of lists, each of which consists of exactly 4 control points
+for each Bezier segment.</p></li>
+<li><p><strong>Curve control points</strong>. In the <strong>ControlPoints</strong> input, the node will
+expect a single list of all (concatenated) Bezier segments.</p></li>
+<li><p><strong>Bezier curve</strong>. In the <strong>Curve</strong> input, the node will expect a
+Sverchok’s Bezier Curve object. Such an object can be generated, for
+example, by <strong>Bezier Spline</strong> node.</p></li>
+<li><p><strong>BSpline curve</strong>. In the <strong>Curve</strong> input, the node will expect Sverchok’s
+BSpline curve, i.e. non-rational NURBS curve or NURBS-like curve.</p></li>
+</ul>
+<p>The default option is <strong>BSpline curve</strong>.</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following output:</p>
 <ul class="simple">
-<li><p>(available from N Panel) the Node can display the Object index associated with the element ( the first object, first index will be drawn as <code class="docutils literal notranslate"><span class="pre">0:</span> <span class="pre">0</span></code> )</p></li>
+<li><p><strong>Objects</strong>. Generated Blender’s Curve objects.</p></li>
 </ul>
-<p>Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.</p>
-<ul class="simple">
-<li><p>(using the Ghost icon in the Node UI) if you attach verts + faces, you can also hide backfacing indices from being displayed. Adding the faces information gives the node enough information to detect what can be seen directly by the viewport “eye” location.</p></li>
-</ul>
-<img alt="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" src="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" />
+</section>
+<section id="example-of-usage">
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<img alt="https://user-images.githubusercontent.com/284644/136706135-6fb22e96-420b-4c03-9e6c-af1e369c76bf.png" src="https://user-images.githubusercontent.com/284644/136706135-6fb22e96-420b-4c03-9e6c-af1e369c76bf.png" />
 </section>
 </section>
 
@@ -171,8 +230,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vd_matrix.html" class="btn btn-neutral float-left" title="vd matrix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="polyline_viewer.html" class="btn btn-neutral float-right" title="Polyline viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viewer_curves.html" class="btn btn-neutral float-left" title="Curve Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_nurbs_curve.html" class="btn btn-neutral float-right" title="NURBS Curve Out Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

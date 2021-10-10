@@ -12,6 +12,7 @@ Viz
    viewer_idx28
    polyline_viewer
    viewer_curves
+   viewer_bezier_curve
    viewer_nurbs_curve
    viewer_nurbs_surface
    viewer_metaball
