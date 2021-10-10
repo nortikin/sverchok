@@ -106,8 +106,8 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             default = 0.0,
             update = updateNode)
 
-    caps: bpy.props.BoolProperty(
-            update=updateNode,
+    caps: BoolProperty(
+            update = updateNode,
             description="Seals the ends of a beveled curve")
 
     bevel_depth: FloatProperty(
@@ -117,8 +117,21 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             default = 0.2,
             update = updateNode)
 
+    taper_radius_modes = [
+            ('OVERRIDE', "Override", "Override the radius of the spline point with the taper radius", 0),
+            ('MULTIPLY', "Multiply", "Multiply the radius of the spline point by the taper radius", 1),
+            ('ADD', "Add", "Add the radius of the bevel point to the taper radius", 2)
+        ]
+
+    taper_radius_mode : EnumProperty(
+            name = "Taper radius mode",
+            description = "Determine how the effective radius of the spline point is computed when a taper object is specified",
+            items = taper_radius_modes,
+            default = 'OVERRIDE',
+            update = updateNode)
+
     resolution: IntProperty(
-            name = "Resolution",
+            name = "Bevel Resolution",
             description = "Alters the smoothness of the bevel",
             min = 0,
             default = 3,
@@ -146,7 +159,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def get_curve_name(self, index):
         return f'{self.basedata_name}.{index:04d}'
 
-    def create_curve(self, index, matrix=None, bevel=None):
+    def create_curve(self, index, matrix=None, bevel=None, taper=None):
         object_name = self.get_curve_name(index)
         curve_data = bpy.data.curves.new(object_name, 'CURVE')
         curve_data.dimensions = '3D'
@@ -162,6 +175,13 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             curve_object.data.bevel_object = bevel
         else:
             curve_object.data.bevel_mode = 'ROUND'
+
+        if taper is not None:
+            curve_object.data.taper_object = taper
+        else:
+            curve_object.data.taper_object = None
+
+        curve_object.data.taper_radius_mode = self.taper_radius_mode
 
         curve_object.data.bevel_depth = self.bevel_depth
         curve_object.data.bevel_resolution = self.resolution
@@ -196,7 +216,8 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         first_point.handle_left = first_point.co
         end_point.handle_right = end_point.co
 
-        if radiuses is not None: spline.bezier_points.foreach_set('radius', numpy_full_list(radiuses, len(spline.bezier_points)))
+        if radiuses is not None:
+            spline.bezier_points.foreach_set('radius', numpy_full_list(radiuses, len(spline.bezier_points)))
         if tilts is not None:
             spline.bezier_points.foreach_set('tilt', numpy_full_list(tilts, len(spline.bezier_points)))
 
@@ -211,7 +232,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def draw_label(self):
         return f"Bezier Curve {self.basedata_name}"
 
-    def draw_object_props(self, socket, context, layout):
+    def draw_bevel_object_props(self, socket, context, layout):
         row = layout.row(align=True)
         if not socket.is_linked:
             row.prop_search(socket, 'object_ref_pointer', bpy.data, 'objects',
@@ -222,6 +243,14 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row.ui_units_x = 0.6
         row.prop(self, 'caps', text='C', toggle=True)
 
+    def draw_taper_object_props(self, socket, context, layout):
+        row = layout.row(align=True)
+        if not socket.is_linked:
+            row.prop_search(socket, 'object_ref_pointer', bpy.data, 'objects',
+                            text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
+        else:
+            row.label(text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'ControlPoints')
         self.inputs.new('SvCurveSocket', 'Curve')
@@ -230,7 +259,11 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.inputs.new('SvStringsSocket', 'Tilt').prop_name = 'tilt'
 
         obj_socket = self.inputs.new('SvObjectSocket', 'BevelObject')
-        obj_socket.custom_draw = 'draw_object_props'
+        obj_socket.custom_draw = 'draw_bevel_object_props'
+        obj_socket.object_kinds = "CURVE"
+
+        obj_socket = self.inputs.new('SvObjectSocket', 'TaperObject')
+        obj_socket.custom_draw = 'draw_taper_object_props'
         obj_socket.object_kinds = "CURVE"
 
         self.outputs.new('SvObjectSocket', "Objects")
@@ -242,15 +275,15 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         layout.label(text="Input mode:")
         layout.prop(self, 'input_mode', text='')
 
-        col_dimensions = layout.column(align=True)
-        col_dimensions.prop(self, 'bevel_depth')
-        col_dimensions.prop(self, 'resolution')
+        layout.prop(self, 'bevel_depth')
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
         col.prop(self, 'show_wire')
         col.prop(self, 'use_smooth')
         col.prop(self, "preview_resolution_u")
+        col.prop(self, 'resolution')
+        col.prop(self, 'taper_radius_mode')
 
     def process(self):
         if not self.activate:
@@ -280,13 +313,14 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         radius_s = self.inputs['Radius'].sv_get(deepcopy=False)
         tilt_s = self.inputs['Tilt'].sv_get(deepcopy=False)
         bevel_s = self.inputs['BevelObject'].sv_get(deepcopy=False, default=[None])
+        taper_s = self.inputs['TaperObject'].sv_get(deepcopy=False, default=[None])
 
         objects_out = []
         object_index = 0
-        for matrix, control_points, radiuses, tilts, bevel in zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s):
+        for matrix, control_points, radiuses, tilts, bevel, taper in zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s, taper_s):
             object_index += 1
 
-            curve_object = self.create_curve(object_index, matrix, bevel)
+            curve_object = self.create_curve(object_index, matrix, bevel, taper)
             self.debug("Object: %s", curve_object)
             if not curve_object:
                 continue
