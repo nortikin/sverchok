@@ -60,6 +60,13 @@ This node has the following parameters:
    The default option is L-BFGS-B. In simple cases, you do not have to change
    this parameter. In more complex cases, you will have to try all algorithms
    and select the one which fits you the best.
+* **Sequential**. This parameter is available in the N panel only, and only
+  when **Precise** parameter is checked. When checked, the node will use result
+  of finding the nearest point from one source point as an initial guess for
+  finding the nearest point for the next source point. This approach can give
+  better results or better performance in case you are, for example, finding
+  nearest points for a series of points generated from one curve. Unchecked by
+  default.
 
 Outputs
 -------
