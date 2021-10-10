@@ -272,10 +272,10 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def draw_buttons(self, context, layout):
         self.draw_live_and_outliner(context, layout)
         self.draw_object_buttons(context, layout)
+        layout.prop(self, 'bevel_depth')
+
         layout.label(text="Input mode:")
         layout.prop(self, 'input_mode', text='')
-
-        layout.prop(self, 'bevel_depth')
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
