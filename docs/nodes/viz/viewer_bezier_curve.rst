@@ -73,3 +73,8 @@ This node has the following output:
 
 * **Objects**. Generated Blender's Curve objects.
 
+Example of usage
+----------------
+
+.. image:: https://user-images.githubusercontent.com/284644/136706135-6fb22e96-420b-4c03-9e6c-af1e369c76bf.png
+
