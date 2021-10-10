@@ -11,7 +11,7 @@ from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
 if scipy is not None:
-    from scipy.optimize import root_scalar, root, minimize_scalar
+    from scipy.optimize import root_scalar, root, minimize_scalar, minimize
 
 SKIP = 'skip'
 FAIL = 'fail'
@@ -646,6 +646,81 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
             result.append((u_root, point))
 
     return result
+
+def nearest_point_on_surface(points_from, surface, init_samples=50, precise=True, method='L-BFGS-B', sequential=False, output_points=True):
+
+    u_min = surface.get_u_min()
+    u_max = surface.get_u_max()
+    v_min = surface.get_v_min()
+    v_max = surface.get_v_max()
+
+    def init_guess():
+        us = np.linspace(u_min, u_max, num=init_samples)
+        vs = np.linspace(v_min, v_max, num=init_samples)
+        us, vs = np.meshgrid(us, vs)
+        us = us.flatten()
+        vs = vs.flatten()
+
+        points = surface.evaluate_array(us, vs).tolist()
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        vs_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            vs_out.append(vs[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, vs_out, nearest_out
+
+    def goal(point_from):
+        def distance(p):
+            dv = surface.evaluate(p[0], p[1]) - np.array(point_from)
+            return (dv * dv).sum(axis=0)
+        return distance
+
+    init_us, init_vs, init_points = init_guess()
+    result_us = []
+    result_vs = []
+    result_points = []
+
+    prev_uv = None
+    for src_point, init_u, init_v, init_point in zip(points_from, init_us, init_vs, init_points):
+        if precise:
+            if sequential and prev_uv is not None:
+                x0 = np.array(prev_uv)
+            else:
+                x0 = np.array([init_u, init_v])
+
+            result = minimize(goal(src_point),
+                        x0 = x0,
+                        bounds = [(u_min, u_max), (v_min, v_max)],
+                        method = method
+                    )
+            if not result.success:
+                raise Exception("Can't find the nearest point for {}: {}".format(src_point, result.message))
+            u0, v0 = result.x
+            prev_uv = result.x
+        else:
+            u0, v0 = init_u, init_v
+            result_points.append(init_point)
+
+        result_us.append(u0)
+        result_vs.append(v0)
+
+    if precise and output_points:
+        result_points = surface.evaluate_array(np.array(result_us), np.array(result_vs)).tolist()
+
+    if output_points:
+        return result_us, result_vs, result_points
+    else:
+        return result_us, result_vs
 
 ORTHO = 'ortho'
 EQUATION = 'equation'
