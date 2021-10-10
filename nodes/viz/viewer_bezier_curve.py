@@ -9,13 +9,12 @@ import numpy as np
 
 import bpy
 from mathutils import Matrix, Vector
-from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat
+from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat, numpy_full_list
 from sverchok.utils.sv_obj_helper import SvObjHelper
-from sverchok.utils.curve.core import SvCurve
-
+from sverchok.utils.curve.core import SvCurve 
 def _split_points(vertices_s):
     result = []
     for vertices in vertices_s:
@@ -95,17 +94,114 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             default = 'NURBS',
             update = update_sockets)
 
+    bevel_radius : FloatProperty(
+            name = "Radius",
+            description = "Bevel radius",
+            default = 0.0,
+            update = updateNode)
+
+    tilt : FloatProperty(
+            name = "Tilt",
+            default = 0.0,
+            update = updateNode)
+
+    caps: bpy.props.BoolProperty(
+            update=updateNode,
+            description="Seals the ends of a beveled curve")
+
+    bevel_depth: FloatProperty(
+            name = "Bevel depth",
+            description = "Changes the size of the bevel",
+            min = 0.0,
+            default = 0.2,
+            update = updateNode)
+
+    resolution: IntProperty(
+            name = "Resolution",
+            description = "Alters the smoothness of the bevel",
+            min = 0,
+            default = 3,
+            update = updateNode)
+
+    preview_resolution_u: IntProperty(
+            name = "Resolution Preview U",
+            default = 12,
+            min = 1,
+            max = 64,
+            update = updateNode,
+            description = "The resolution property defines the number of points that are"
+                          " computed between every pair of control points.")
+
+    use_smooth: BoolProperty(
+            name = "Smooth shading",
+            update = updateNode,
+            default = True)
+
+    show_wire: BoolProperty(
+            name = "Show Wire",
+            default = False,
+            update = updateNode)
+
     def get_curve_name(self, index):
         return f'{self.basedata_name}.{index:04d}'
 
-    def create_curve(self, index):
+    def create_curve(self, index, matrix=None, bevel=None):
         object_name = self.get_curve_name(index)
         curve_data = bpy.data.curves.new(object_name, 'CURVE')
         curve_data.dimensions = '3D'
         curve_object = bpy.data.objects.get(object_name)
         if not curve_object:
             curve_object = self.create_object(object_name, index, curve_data)
+
+        if matrix is not None:
+            curve_object.matrix_local = matrix
+
+        if bevel is not None:
+            curve_object.data.bevel_mode = 'OBJECT'
+            curve_object.data.bevel_object = bevel
+        else:
+            curve_object.data.bevel_mode = 'ROUND'
+
+        curve_object.data.bevel_depth = self.bevel_depth
+        curve_object.data.bevel_resolution = self.resolution
+        curve_object.data.resolution_u = self.preview_resolution_u
+        curve_object.data.use_fill_caps = self.caps
+        curve_object.show_wire = self.show_wire
+
+        if self.material_pointer:
+            curve_object.data.materials.clear()
+            curve_object.data.materials.append(self.material_pointer)
+
         return curve_object
+
+    def create_spline(self, curve_object, control_points, radiuses=None, tilts=None):
+        curve_object.data.splines.clear()
+
+        spline = curve_object.data.splines.new(type='BEZIER')
+        spline.bezier_points.add(len(control_points))
+
+        first_point = start_point = spline.bezier_points[0]
+        for idx, segment in enumerate(control_points):
+            end_point = spline.bezier_points[idx+1]
+
+            start_point.co = Vector(segment[0])
+            start_point.handle_right = Vector(segment[1])
+
+            end_point.handle_left = Vector(segment[2])
+            end_point.co = Vector(segment[3])
+
+            start_point = end_point
+
+        first_point.handle_left = first_point.co
+        end_point.handle_right = end_point.co
+
+        if radiuses is not None: spline.bezier_points.foreach_set('radius', numpy_full_list(radiuses, len(spline.bezier_points)))
+        if tilts is not None:
+            spline.bezier_points.foreach_set('tilt', numpy_full_list(tilts, len(spline.bezier_points)))
+
+        spline.use_smooth = self.use_smooth
+
+        return spline
 
     def find_curve(self, index):
         object_name = self.get_curve_name(index)
@@ -114,9 +210,28 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def draw_label(self):
         return f"Bezier Curve {self.basedata_name}"
 
+    def draw_object_props(self, socket, context, layout):
+        row = layout.row(align=True)
+        if not socket.is_linked:
+            row.prop_search(socket, 'object_ref_pointer', bpy.data, 'objects',
+                            text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
+        else:
+            row.label(text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
+        row = row.row(align=True)
+        row.ui_units_x = 0.6
+        row.prop(self, 'caps', text='C', toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'ControlPoints')
         self.inputs.new('SvCurveSocket', 'Curve')
+        self.inputs.new('SvMatrixSocket', 'Matrix')
+        self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'bevel_radius'
+        self.inputs.new('SvStringsSocket', 'Tilt').prop_name = 'tilt'
+
+        obj_socket = self.inputs.new('SvObjectSocket', 'BevelObject')
+        obj_socket.custom_draw = 'draw_object_props'
+        obj_socket.object_kinds = "CURVE"
+
         self.outputs.new('SvObjectSocket', "Objects")
         self.update_sockets(context)
 
@@ -125,6 +240,16 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.draw_object_buttons(context, layout)
         layout.label(text="Input mode:")
         layout.prop(self, 'input_mode', text='')
+
+        col_dimensions = layout.column(align=True)
+        col_dimensions.prop(self, 'bevel_depth')
+        col_dimensions.prop(self, 'resolution')
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+        col.prop(self, 'show_wire')
+        col.prop(self, 'use_smooth')
+        col.prop(self, "preview_resolution_u")
 
     def process(self):
         if not self.activate:
@@ -150,34 +275,25 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
                 control_points_s = _split_bezier(curves_s)
 
+        matrix_s = self.inputs['Matrix'].sv_get(deepcopy=False, default=[None])
+        radius_s = self.inputs['Radius'].sv_get(deepcopy=False)
+        tilt_s = self.inputs['Tilt'].sv_get(deepcopy=False)
+        bevel_s = self.inputs['BevelObject'].sv_get(deepcopy=False, default=[None])
+
+        objects_out = []
         object_index = 0
-        for control_points in control_points_s:
+        for matrix, control_points, radiuses, tilts, bevel in zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s):
             object_index += 1
 
-            curve_object = self.create_curve(object_index)
+            curve_object = self.create_curve(object_index, matrix, bevel)
             self.debug("Object: %s", curve_object)
             if not curve_object:
                 continue
+            self.create_spline(curve_object, control_points, radiuses, tilts)
 
-            curve_object.data.splines.clear()
-            spline = curve_object.data.splines.new(type='BEZIER')
-            spline.bezier_points.add(len(control_points))
+            objects_out.append(curve_object)
 
-            first_point = start_point = spline.bezier_points[0]
-            for idx, segment in enumerate(control_points):
-                end_point = spline.bezier_points[idx+1]
-
-                start_point.co = Vector(segment[0])
-                start_point.handle_right = Vector(segment[1])
-
-                end_point.handle_left = Vector(segment[2])
-                end_point.co = Vector(segment[3])
-
-                start_point = end_point
-
-            first_point.handle_left = first_point.co
-            end_point.handle_right = end_point.co
-
+        self.outputs['Objects'].sv_set(objects_out)
 
 classes = [SvBezierCurveOutNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
