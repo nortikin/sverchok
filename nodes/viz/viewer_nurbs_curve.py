@@ -94,7 +94,6 @@ class SvNurbsCurveOutMk2Node(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         spline.points.add(len(control_points)-1)
 
         for p, new_co, new_weight in zip(spline.points, control_points, weights):
-            print(new_co)
             p.co = Vector(list(new_co) + [new_weight])
             p.select = True
         
@@ -161,6 +160,7 @@ class SvNurbsCurveOutMk2Node(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bevel_radius : FloatProperty(
             name = "Radius",
             description = "Bevel radius",
+            min = 0.0,
             default = 0.0,
             update = updateNode)
 
@@ -177,7 +177,7 @@ class SvNurbsCurveOutMk2Node(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             name = "Bevel depth",
             description = "Changes the size of the bevel",
             min = 0.0,
-            default = 0.2,
+            default = 0.0,
             update = updateNode)
 
     taper_radius_modes = [

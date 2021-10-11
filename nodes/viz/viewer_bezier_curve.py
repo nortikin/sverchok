@@ -100,6 +100,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             name = "Radius",
             description = "Bevel radius",
             default = 0.0,
+            min = 0.0,
             update = updateNode)
 
     tilt : FloatProperty(
