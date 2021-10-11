@@ -232,10 +232,6 @@ class SvNurbsCurveOutMk2Node(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         col.prop(self, 'taper_radius_mode')
         col.prop(self, 'bevel_resolution')
 
-    def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
-        layout.prop(self, 'bevel_resolution')
-
     def draw_label(self):
         return f"NURBS Curve {self.basedata_name}"
 
