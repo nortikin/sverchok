@@ -81,6 +81,7 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def update_sockets(self, context):
         self.inputs['ControlPoints'].hide_safe = self.input_mode not in ['SEGMENT_PTS', 'CURVE_PTS']
         self.inputs['Curve'].hide_safe = self.input_mode not in ['BEZIER', 'NURBS']
+        updateNode(self, context)
 
     input_modes = [
             ('SEGMENT_PTS', "Segment control points", "List of 4 control points for each Bezier segment", 0),
@@ -315,7 +316,6 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         bevel_s = self.inputs['BevelObject'].sv_get(deepcopy=False, default=[None])
         taper_s = self.inputs['TaperObject'].sv_get(deepcopy=False, default=[None])
 
-        objects_out = []
         object_index = 0
         for matrix, control_points, radiuses, tilts, bevel, taper in zip_long_repeat(matrix_s, control_points_s, radius_s, tilt_s, bevel_s, taper_s):
             object_index += 1
@@ -326,7 +326,9 @@ class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 continue
             self.create_spline(curve_object, control_points, radiuses, tilts)
 
-            objects_out.append(curve_object)
+        self.remove_non_updated_objects(object_index)
+        self.set_corresponding_materials()
+        objects_out = self.get_children()
 
         self.outputs['Objects'].sv_set(objects_out)
 

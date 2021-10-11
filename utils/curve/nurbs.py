@@ -489,6 +489,12 @@ class SvNurbsCurve(SvCurve):
         # same cylinder; and the curve lies in that convex hull.
         return (distances < tolerance).all()
 
+    def is_periodic(self, tolerance = 1e-6):
+        return sv_knotvector.is_periodic(self.get_knotvector(), degree=self.get_degree(), tolerance=tolerance)
+
+    def is_clamped(self, tolerance = 1e-6):
+        return sv_knotvector.is_clamped(self.get_knotvector(), degree=self.get_degree(), tolerance=tolerance)
+
     def calc_linear_segment_knots(self, splits=2, tolerance=0.001):
         """
         Calculate T values, which split the curve into segments in

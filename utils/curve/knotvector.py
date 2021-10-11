@@ -148,6 +148,16 @@ def is_clamped(knot_vector, degree, check_start=True, check_end=True, tolerance=
     end_ok = not check_end or m2 == degree+1
     return start_ok and end_ok
 
+def is_periodic(knot_vector, degree, allow_clamped=True, tolerance=1e-6):
+    if allow_clamped:
+        if is_clamped(knot_vector, degree, tolerance=tolerance):
+            knot_vector = knot_vector[degree+1 : -degree-1]
+
+    periodic = np.linspace(knot_vector[0], knot_vector[-1], num=len(knot_vector))
+    diff = abs(knot_vector - periodic)
+
+    return diff.max() < tolerance
+
 def concatenate(kv1, kv2, join_multiplicity):
     join_knot = kv1.max()
     kv2 = kv2 - kv2.min() + join_knot

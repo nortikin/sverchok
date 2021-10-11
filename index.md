@@ -597,7 +597,7 @@
     SvSkinViewerNodeV28
     SvMetaballOutNode
     SvBezierCurveOutNode
-    SvNurbsCurveOutNode
+    SvNurbsCurveOutMk2Node
     SvNurbsSurfaceOutNode
     ---
     SvInstancerNodeMK3
