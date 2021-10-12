@@ -21,10 +21,12 @@ from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
 
-    def __init__(self, point, direction):
+    def __init__(self, point, direction, u_bounds=None):
         self.point = np.array(point)
         self.direction = np.array(direction)
-        self.u_bounds = (0.0, 1.0)
+        if u_bounds is None:
+            u_bounds = (0.0, 1.0)
+        self.u_bounds = u_bounds
 
     def __repr__(self):
         return f"<{self.point} - {self.point+self.direction}>"
@@ -33,6 +35,11 @@ class SvLine(SvCurve):
     def from_two_points(cls, point1, point2):
         direction = np.array(point2) - np.array(point1)
         return SvLine(point1, direction)
+    
+    def copy(self, u_bounds=None):
+        if u_bounds is None:
+            u_bounds = self.u_bounds
+        return SvLine(self.point, self.direction, u_bounds=u_bounds)
 
     def get_degree(self):
         return 1
@@ -75,11 +82,9 @@ class SvLine(SvCurve):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
     def split_at(self, t):
-        t_max = self.get_u_bounds()[1]
-        end_point = self.evaluate(t_max)
-        mid_point = self.evaluate(t)
-        curve1 = SvLine.from_two_points(self.point, mid_point)
-        curve2 = SvLine.from_two_points(mid_point, end_point)
+        t_min, t_max = self.get_u_bounds()
+        curve1 = self.copy(u_bounds=(t_min, t))
+        curve2 = self.copy(u_bounds=(t, t_max))
         return curve1, curve2
 
     def reverse(self):
@@ -88,8 +93,9 @@ class SvLine(SvCurve):
         return SvLine.from_two_points(p2, p1)
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
+        knotvector = sv_knotvector.generate(1, 2)
+        knotvector = sv_knotvector.rescale(knotvector, u_min, u_max)
         p1 = self.evaluate(u_min)
         p2 = self.evaluate(u_max)
         control_points = np.array([p1, p2])
