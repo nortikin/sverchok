@@ -182,7 +182,6 @@ class SvBlendCurvesMk2Node(bpy.types.Node, SverchCustomTreeNode):
             new_curves = []
             new_controls = []
             for curve1, curve2, factor1, factor2, parameter in params:
-                print(factor1, factor2)
                 _, t_max_1 = curve1.get_u_bounds()
                 t_min_2, _ = curve2.get_u_bounds()
 
