@@ -365,9 +365,8 @@ class SverchokPreferences(AddonPreferences):
         self.render_location_xy_multiplier = get_dpi_factor()
 
     ##
-
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-    defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
+
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
 
@@ -493,8 +492,6 @@ class SverchokPreferences(AddonPreferences):
         box_sub2_col.prop(self, 'auto_update_angle_values', text="Auto Update Angle Values")
 
         col3 = row_sub1.split().column()
-        col3.label(text='Location of custom defaults')
-        col3.prop(self, 'defaults_location', text='')
 
     def theme_tab(self, layout):
         row = layout.row()
