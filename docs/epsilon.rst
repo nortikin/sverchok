@@ -52,3 +52,8 @@ Calculations and Epsilon
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The core concept is: if your geometry uses big numbers, you can increase ``Epsilon`` to allow the tolerance in the calculations to be more in line with the magnitude of the numbers. If you have really small numbers (like millimeters) in your vectors, you want ``epsilon`` to be as small as possible.
+
+Further Reading
+~~~~~~~~~~~~~~~
+
+Floating Point Arithmetic:  https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
