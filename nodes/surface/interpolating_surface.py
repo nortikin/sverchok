@@ -14,7 +14,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurb
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.math import rbf_functions
 
-def get_interpolatation_enum():
+def get_interpolation_enum():
     modes = [
         ('LIN', "Linear", "Linear interpolation", 0),
         ('CUBIC', "Cubic", "Cubic interpolation", 1)
@@ -36,7 +36,7 @@ def get_implementation_enum():
     items.append(item)
     return items
 
-interpolation_modes = get_interpolatation_enum()
+interpolation_modes = get_interpolation_enum()
 implementation_modes = get_implementation_enum()
 
 class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
