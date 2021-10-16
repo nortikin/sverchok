@@ -14,6 +14,31 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurb
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.math import rbf_functions
 
+def get_interpolatation_enum():
+    modes = [
+        ('LIN', "Linear", "Linear interpolation", 0),
+        ('CUBIC', "Cubic", "Cubic interpolation", 1)
+    ]
+    modes.append(('BSPLINE', "B-Spline", "B-Spline interpolation", 2))
+    if scipy is not None:
+        modes.append(('RBF', "RBF", "RBF interpolation", 3))    
+
+    return modes
+
+def get_implementation_enum():
+    items = []
+    i = 0
+    if geomdl is not None:
+        item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
+        i += 1
+        items.append(item)
+    item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
+    items.append(item)
+    return items
+
+interpolation_modes = get_interpolatation_enum()
+implementation_modes = get_implementation_enum()
+
 class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Loft / Interpolating surface from curves
@@ -25,31 +50,16 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SURFACE_FROM_CURVES'
 
     def get_interp_modes(self, context):
-        modes = [
-            ('LIN', "Linear", "Linear interpolation", 0),
-            ('CUBIC', "Cubic", "Cubic interpolation", 1)
-        ]
-        modes.append(('BSPLINE', "B-Spline", "B-Spline interpolation", 2))
-        if scipy is not None:
-            modes.append(('RBF', "RBF", "RBF interpolation", 3))
-        return modes
+        return interpolation_modes
+
+    def get_implementations(self, context):
+        return implementation_modes
 
     def update_sockets(self, context):
         self.inputs['Degree'].hide_safe = self.interp_mode != 'BSPLINE'
         self.inputs['Smooth'].hide_safe = self.interp_mode != 'RBF'
         self.inputs['Epsilon'].hide_safe = self.interp_mode != 'RBF'
         updateNode(self, context)
-
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        return items
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
