@@ -470,6 +470,20 @@ class SvNurbsCurve(SvCurve):
             curve = curve.reparametrize(0, 1)
         return curve
 
+    def get_end_points(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            cpts = self.get_control_points()
+            return cpts[0], cpts[-1]
+        else:
+            u_min, u_max = self.get_u_bounds()
+            begin = self.evaluate(u_min)
+            end = self.evaluate(u_max)
+            return begin, end
+
+    def is_closed(self, tolerance=1e-6):
+        begin, end = self.get_end_points()
+        return np.linalg.norm(begin - end) < tolerance
+
     def is_line(self, tolerance=0.001):
         """
         Check that the curve is nearly a straight line segment.
@@ -478,10 +492,11 @@ class SvNurbsCurve(SvCurve):
         inside the convex hull of it's control points.
         """
 
+        begin, end = self.get_end_points()
         cpts = self.get_control_points()
         # direction from first to last point of the curve
         direction = cpts[-1] - cpts[0]
-        line = LineEquation.from_direction_and_point(direction, cpts[0])
+        line = LineEquation.from_direction_and_point(direction, begin)
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
         # inside the cylinder, defined as "distance from line < tolerance";
@@ -496,7 +511,7 @@ class SvNurbsCurve(SvCurve):
         """
 
         def calc_knots(segment, u1, u2):
-            if segment.is_line(tolerance):
+            if not segment.is_closed(tolerance) and segment.is_line(tolerance):
                 return set([u1, u2])
             else:
                 us = np.linspace(u1, u2, num=int(splits+1))

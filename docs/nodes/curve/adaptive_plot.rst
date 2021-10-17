@@ -25,6 +25,8 @@ The following algorithm is used:
 
 * Then all resulting points are connected to make a curve-like mesh object.
 
+For NURBS and NURBS-like curves, consider use of "Adaptive Plot NURBS Curve" node.
+
 Inputs
 ------
 
