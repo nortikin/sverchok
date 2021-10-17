@@ -54,6 +54,7 @@ Curves
    insert_knot
    remove_knot
    remove_excessive_knots
+   adaptive_plot_nurbs
    catenary_curve
    bezier_fit
    circlify
