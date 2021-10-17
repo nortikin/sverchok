@@ -55,3 +55,14 @@ This node has the following outputs:
 * **Edges**. The edges of the generated mesh.
 * **T**. Values of curve's T parameter for all generated points on the curve.
 
+Examples of Usage
+-----------------
+
+Example 1:
+
+.. image:: https://user-images.githubusercontent.com/284644/137624189-60f75834-b119-4340-a40a-fbb2f3e7f3fb.png
+
+Example 2:
+
+.. image:: https://user-images.githubusercontent.com/284644/137624185-964ea9bf-463c-418c-a674-1f88fab24c4d.png
+
