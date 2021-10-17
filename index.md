@@ -72,6 +72,8 @@
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
     SvCurveRemoveExcessiveKnotsNode
+    ---
+    SvAdaptivePlotNurbsCurveNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
