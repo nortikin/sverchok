@@ -200,13 +200,18 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 <li><p><strong>Field</strong>. A vector field, whose values can be used in the formula. This
 input is required only if the formula involves the <strong>V</strong> variable.</p></li>
 </ul>
-<p>Each variable used in the formula, except for <cite>V</cite> and the coordinate variables, also becomes additional input.</p>
+<p>Each variable used in the formula, except for <cite>V</cite> and the coordinate variables,
+also becomes additional input.</p>
 <p>The following variables are considered to be point coordinates:</p>
 <ul class="simple">
 <li><p>For Carthesian input mode: <cite>x</cite>, <cite>y</cite> and <cite>z</cite>;</p></li>
 <li><p>For Cylindrical input mode: <cite>rho</cite>, <cite>phi</cite> and <cite>z</cite>;</p></li>
 <li><p>For Spherical input mode: <cite>rho</cite>, <cite>phi</cite> and <cite>theta</cite>.</p></li>
 </ul>
+<p><cite>V</cite> variable in formulas stands for NumPy array of shape <code class="docutils literal notranslate"><span class="pre">(3,)</span></code>, which
+represents the value of field passed in the <strong>Field</strong> input, in the appropriate
+point in space. So, <cite>V[0]</cite> is X coordinate of that field’s value, <cite>V[1]</cite> is
+it’s Y coordinate, and <cite>V[Z]</cite> is Z coordinate.</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
@@ -246,6 +251,8 @@ disable this parameter.</p></li>
 <img alt="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" src="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" />
 <p>Similar field applied to some box:</p>
 <img alt="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" src="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" />
+<p>Example of V variable usage:</p>
+<img alt="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" src="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" />
 </section>
 </section>
 
