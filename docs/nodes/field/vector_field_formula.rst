@@ -110,4 +110,7 @@ Similar field applied to some box:
 
 .. image:: https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png
 
+Example of V variable usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png
 
