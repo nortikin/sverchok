@@ -53,13 +53,19 @@ This node has the following input:
 * **Field**. A vector field, whose values can be used in the formula. This
   input is required only if the formula involves the **V** variable.
 
-Each variable used in the formula, except for `V` and the coordinate variables, also becomes additional input.
+Each variable used in the formula, except for `V` and the coordinate variables,
+also becomes additional input.
 
 The following variables are considered to be point coordinates:
 
 * For Carthesian input mode: `x`, `y` and `z`;
 * For Cylindrical input mode: `rho`, `phi` and `z`;
 * For Spherical input mode: `rho`, `phi` and `theta`.
+
+`V` variable in formulas stands for NumPy array of shape ``(3,)``, which
+represents the value of field passed in the **Field** input, in the appropriate
+point in space. So, `V[0]` is X coordinate of that field's value, `V[1]` is
+it's Y coordinate, and `V[Z]` is Z coordinate.
 
 Parameters
 ----------
