@@ -152,6 +152,7 @@ class SvVectorFieldLambda(SvVectorField):
             return np.vectorize(self.function,
                         signature = "(),(),(),(3)->(),(),()")(xs, ys, zs, Vs)
         else:
+            Vs = Vs.T
             return self.function_numpy(xs, ys, zs, Vs)
 
     def evaluate(self, x, y, z):
