@@ -159,7 +159,8 @@ def by_normal(vertices, edges, faces, percent, direction):
     return out_face_mask
 
 def by_outside(vertices, edges, faces, percent, center):
-    face_normals, _ = calc_mesh_normals(vertices, edges, faces)
+    # face_normals, _ = calc_mesh_normals(vertices, edges, faces)
+    face_normals = pols_normals(vertices, faces, output_numpy=True)
     center = Vector(center[0])
 
     def get_center(face):
