@@ -50,9 +50,9 @@ Inputs
 
 This node has the following input:
 
-* **Field**. A scalar field, whose values can be used in the formula. This input is required only if the formula involves the **S** variable.
+* **Field**. A scalar field, whose values can be used in the formula. This input is required only if the formula involves the **V** variable.
 
-Each variable used in the formula, except for `S` and the coordinate variables, also becomes additional input.
+Each variable used in the formula, except for `V` and the coordinate variables, also becomes additional input.
 
 The following variables are considered to be point coordinates:
 
