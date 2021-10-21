@@ -346,6 +346,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     else: # VOLUME, SURFACE
         all_points = sites[:]
         if do_clip:
+            clipping = float(clipping)
             for site in sites:
                 loc, normal, index, distance = bvh.find_nearest(site)
                 if loc is not None:
