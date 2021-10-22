@@ -72,6 +72,8 @@
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
     SvCurveRemoveExcessiveKnotsNode
+    ---
+    SvAdaptivePlotNurbsCurveNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
@@ -596,6 +598,7 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvBezierCurveOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     ---

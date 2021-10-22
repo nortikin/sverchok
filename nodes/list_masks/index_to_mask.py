@@ -15,68 +15,50 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from itertools import cycle
 
 import numpy as np
 
 import bpy
 from bpy.props import IntProperty, BoolProperty
+from sverchok.data_structure import updateNode, fixed_iter
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.handling_nodes import NodeProperties, SockTypes, SocketProperties, initialize_node, WrapNode
 
 
-node = WrapNode()
-
-node.props.data_to_mask = NodeProperties(
-    bpy_props=BoolProperty(
-        name="Data masking",
-        description="Use data to define mask length",
-        default=False))
-
-node.props.is_topo_mask = NodeProperties(
-    bpy_props=BoolProperty(
-        name="Topo mask",
-        description="data consists of verts or polygons / edges. "
-                    "Otherwise the two vertices will be masked as [[[T, T, T], [F, F, F]]] instead of [[T, F]]",
-        default=False))
-
-node.props.output_numpy = NodeProperties(
-    bpy_props=BoolProperty(
-        name="Output NumPy",
-        description="Output Numpy arrays in stead of regular python lists",
-        default=False))
-
-node.props.index = NodeProperties(bpy_props=IntProperty(name="Index"))
-node.props.mask_size = NodeProperties(bpy_props=IntProperty(name='Mask Length', default=10, min=2))
-
-node.inputs.index = SocketProperties(
-    name="Index",
-    socket_type=SockTypes.STRINGS,
-    prop=node.props.index,
-    deep_copy=False)
-node.inputs.mask_size = SocketProperties(
-    name="Mask size",
-    socket_type=SockTypes.STRINGS,
-    prop=node.props.mask_size,
-    deep_copy=False,
-    show_function=lambda: not node.props.data_to_mask)
-node.inputs.data_to_mask = SocketProperties(
-    name="Data masking",
-    socket_type=SockTypes.STRINGS,
-    deep_copy=False,
-    mandatory=True,
-    show_function=lambda: node.props.data_to_mask)
-
-node.outputs.mask = SocketProperties(name="Mask", socket_type=SockTypes.STRINGS)
-
-
-@initialize_node(node)
 class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Create mask list from index '''
     bl_idname = 'SvIndexToMaskNode'
     bl_label = 'Index To Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INDEX_TO_MASK'
+
+    def data_to_mask_update(self, context):
+        self.inputs['Mask size'].hide_safe = self.data_to_mask
+        self.inputs['Data masking'].hide_safe = not self.data_to_mask
+        updateNode(self, context)
+
+    data_to_mask: BoolProperty(name="Data masking", description="Use data to define mask length", default=False,
+                                update=data_to_mask_update)
+
+    is_topo_mask: BoolProperty(
+        name="Topo mask", default=False, update=updateNode,
+        description="data consists of verts or polygons / edges. "
+                    "Otherwise the two vertices will be masked as [[[T, T, T], [F, F, F]]] instead of [[T, F]]")
+
+    output_numpy: BoolProperty(
+        name="Output NumPy", default=False, update=updateNode,
+        description="Output Numpy arrays in stead of regular python lists")
+
+    # socket properties
+    index: IntProperty(name="Index", update=updateNode)
+    mask_size: IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
+
+    def sv_init(self, context):
+        self.inputs.new("SvStringsSocket", "Index").prop_name = "index"
+        self.inputs.new("SvStringsSocket", "Mask size").prop_name = "mask_size"
+        self.inputs.new("SvStringsSocket", "Data masking").hide_safe = True
+        self.outputs.new("SvStringsSocket", "Mask")
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -92,17 +74,40 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'output_numpy')
 
     def process(self):
-        if not node.props.data_to_mask:
-            mask = np.zeros(node.inputs.mask_size[0], dtype=bool)
-        else:
-            if node.props.is_topo_mask:
-                mask = np.zeros(len(node.inputs.data_to_mask), dtype=bool)
-            else:
-                # inconsistent mode with Sverchok data structure, should be reconsidered in MK2 version
-                mask = np.zeros_like(node.inputs.data_to_mask, dtype=bool)
+        # upgrade old nodes
+        if 'mask size' in self.inputs:
+            self.inputs['mask size'].name = 'Mask size'
+        if 'data to mask' in self.inputs:
+            self.inputs['data to mask'].name = 'Data masking'
+        if 'mask' in self.outputs:
+            self.outputs['mask'].name = 'Mask'
 
-        mask[node.inputs.index] = True
-        if node.props.output_numpy:
-            node.outputs.mask = mask
+        index = self.inputs["Index"].sv_get(deepcopy=False, default=[])
+        mask_size = self.inputs['Mask size'].sv_get(deepcopy=False, default=[None])
+        data_to_mask = self.inputs['Data masking'].sv_get(deepcopy=False,
+                                                          default=[] if self.data_to_mask else [None])
+
+        obj_num = max(len(d) for d in [index, mask_size, data_to_mask])
+        masks = []
+        for ind, mask, data in zip(fixed_iter(index, obj_num), fixed_iter(mask_size, obj_num),
+                                   fixed_iter(data_to_mask, obj_num)):
+            if not self.data_to_mask:
+                mask = mask[0] if mask is not None else 0
+                mask = np.zeros(int(mask), dtype=bool)
+            else:
+                if self.is_topo_mask:
+                    mask = np.zeros(len(data), dtype=bool)
+                else:
+                    # inconsistent mode with Sverchok data structure, should be reconsidered in MK2 version
+                    mask = np.zeros_like(data, dtype=bool)
+
+            mask[ind] = True
+            masks.append(mask)
+
+        if self.output_numpy:
+            self.outputs['Mask'].sv_set(masks)
         else:
-            node.outputs.mask = mask.tolist()
+            self.outputs['Mask'].sv_set([m.tolist() for m in masks])
+
+
+register, unregister = bpy.utils.register_classes_factory([SvIndexToMaskNode])

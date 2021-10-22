@@ -117,7 +117,7 @@ def app_handler_ops(append=None, remove=None):
     #     print('error while listing event handlers', err)
     #     listed = ""
 
-    print(f'sv: {operation} app.handlers')
+    # print(f'sv: {operation} app.handlers')
     # print(f'{listed}')
 
 utils_modules = [
@@ -127,7 +127,7 @@ utils_modules = [
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
     "profile", "logging", "testing", "sv_requests", "sv_shader_sources", "tree_structure",
-    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser",
+    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "modules.edge_utils", "modules.polygon_utils",
     "wfc_algorithm", "handling_nodes", "handle_blender_data", "nodes_mixins.generating_objects",
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
     "meshes", "tree_walk", "mesh_functions", 'mesh.inset_faces', 'mesh.extrude_edges', "sv_json_struct",

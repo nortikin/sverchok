@@ -47,6 +47,11 @@ This node has the following parameter:
     **Direction** (directing vector of the cylinder's axis) and **Radius** of
     the cylinder.
 
+* **Use control points**. If checked, then for NURBS curves the node will
+  project only control points of the curve, instead of projecting each point of
+  the curve. For non-NURBS curves, the node will raise an error (become red),
+  and processing will stop. Unchecked by default.
+
 Outputs
 -------
 

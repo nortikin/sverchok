@@ -127,6 +127,8 @@ def flat_iter(data):
 def match_long_repeat(lsts):
     """return matched list, using the last value to fill lists as needed
     longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
+    
+    lists passed into this function are not modified, it produces non-deep copies and extends those.
     """
     max_l = 0
     tmp = []

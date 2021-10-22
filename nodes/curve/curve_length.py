@@ -6,6 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.utils.curve.algorithms import SvCurveLengthSolver
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.nurbs_algorithms import SvNurbsCurveLengthSolver
 
 class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -44,6 +47,23 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         items = modes,
         update = updateNode)
 
+    specify_accuracy : BoolProperty(
+        name = "Specify accuracy",
+        default = False,
+        update = updateNode)
+
+    accuracy : IntProperty(
+        name = "Accuracy",
+        default = 3,
+        min = 0,
+        update = updateNode)
+
+    use_nurbs : BoolProperty(
+        name = "NURBS",
+        description = "Use special algorithm for NURBS curves",
+        default = False,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
@@ -54,6 +74,13 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text='T mode:')
         layout.prop(self, 'mode', expand=True)
+        layout.prop(self, 'specify_accuracy')
+        if self.specify_accuracy:
+            layout.prop(self, 'accuracy')
+        #layout.prop(self, 'use_nurbs')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -67,6 +94,11 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         t_min_s = ensure_nesting_level(t_min_s, 2)
         t_max_s = ensure_nesting_level(t_max_s, 2)
         resolution_s = ensure_nesting_level(resolution_s, 2)
+
+        if self.specify_accuracy:
+            tolerance = 10 ** (-self.accuracy)
+        else:
+            tolerance = None
 
         length_out = []
         for curve, t_mins, t_maxs, resolutions in zip_long_repeat(curves, t_min_s, t_max_s, resolution_s):
@@ -86,7 +118,12 @@ class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
                     resolution = int(resolution * (t_max - t_min) / (curve_t_max - curve_t_min))
                     if resolution < 1:
                         resolution = 1
-                    length = curve.calc_length(t_min, t_max, resolution)
+                    if self.use_nurbs:
+                        solver = SvNurbsCurveLengthSolver(curve)
+                    else:
+                        solver = SvCurveLengthSolver(curve)
+                    solver.prepare('SPL', resolution, tolerance=tolerance)
+                    length = solver.calc_length(t_min, t_max)
 
                 length_out.append([length])
 

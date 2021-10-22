@@ -34,3 +34,20 @@ class MathTests(SverchokTestCase):
         expected_counts = [0, 1]
         self.assertEquals(counts, expected_counts)
 
+    def test_binom_1(self):
+        self.assertEquals(binomial(2,1), 2)
+        self.assertEquals(binomial(2,0), 1)
+        self.assertEquals(binomial(2,2), 1)
+
+    def test_binom_array(self):
+        binom = binomial_array(4)
+
+        expected_binom = np.array([
+                [1, 0, 0, 0],
+                [1, 1, 0, 0],
+                [1, 2, 1, 0],
+                [1, 3, 3, 1]
+            ])
+
+        self.assert_numpy_arrays_equal(binom, expected_binom)
+

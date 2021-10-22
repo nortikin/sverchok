@@ -9,8 +9,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.geom import PlaneEquation
-from sverchok.utils.manifolds import intersect_curve_plane, EQUATION, ORTHO
+from sverchok.utils.manifolds import intersect_curve_plane, EQUATION, ORTHO, NURBS
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
@@ -32,7 +33,7 @@ else:
             name = "Init Resolution",
             description = "A number of segments to subdivide the curve in; defines the maximum number of intersection points that is possible to find.",
             default = 10,
-            min = 3,
+            min = 1,
             update = updateNode)
 
         accuracy : IntProperty(
@@ -42,12 +43,21 @@ else:
             min = 1,
             update = updateNode)
 
-#         join : BoolProperty(
-#             name = "Join",
-#             default = True,
-#             update = updateNode)
+        use_nurbs : BoolProperty(
+            name = "NURBS",
+            description = "Use special algorithm for NURBS curves",
+            default = False,
+            update = updateNode)
+
+        join : BoolProperty(
+            name = "Join",
+            description = "If checked, output one list of points for all curves; otherwise, output a separate list of points for each curve",
+            default = True,
+            update = updateNode)
 
         def draw_buttons(self, context, layout):
+            layout.prop(self, 'join')
+            layout.prop(self, 'use_nurbs')
             layout.prop(self, 'samples')
             
         def draw_buttons_ext(self, context, layout):
@@ -82,15 +92,27 @@ else:
                 new_points = []
                 new_ts = []
                 for curve, point, normal in zip_long_repeat(curves, points, normals):
+                    method = EQUATION
+                    if self.use_nurbs:
+                        c = SvNurbsCurve.to_nurbs(curve)
+                        if c is not None:
+                            curve = c
+                            method = NURBS
+
                     plane = PlaneEquation.from_normal_and_point(normal, point)
                     ps = intersect_curve_plane(curve, plane,
-                            method = EQUATION,
+                            method = method,
                             init_samples = self.samples,
                             tolerance = tolerance)
                     ts = [p[0] for p in ps]
                     points = [p[1].tolist() for p in ps]
-                    new_points.extend(points)
-                    new_ts.extend(ts)
+
+                    if self.join:
+                        new_points.extend(points)
+                        new_ts.extend(ts)
+                    else:
+                        new_points.append(points)
+                        new_ts.append(ts)
 
                 points_out.append(new_points)
                 t_out.append(new_ts)

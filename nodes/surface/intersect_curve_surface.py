@@ -65,9 +65,16 @@ else:
             min = 1,
             update = updateNode)
 
+        use_nurbs : BoolProperty(
+            name = "NURBS",
+            description = "Use special algorithm for NURBS curves",
+            default = False,
+            update = updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, 'raycast_samples')
             layout.prop(self, 'curve_samples')
+            layout.prop(self, 'use_nurbs')
 
         def draw_buttons_ext(self, context, layout):
             self.draw_buttons(context, layout)
@@ -99,7 +106,8 @@ else:
                                 init_samples = self.curve_samples,
                                 raycast_samples = self.raycast_samples,
                                 tolerance = tolerance,
-                                raycast_method = self.raycast_method
+                                raycast_method = self.raycast_method,
+                                support_nurbs = self.use_nurbs
                             )
                     new_points = [p[1] for p in result]
                     new_u = [p[0] for p in result]

@@ -36,6 +36,12 @@ from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.presets import apply_default_preset
 from sverchok.utils.sv_json_import import JSONImporter
 
+temp_details = {
+    'not_enabled_nodes': {},
+    'node_count': 0
+}
+
+
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
@@ -419,6 +425,23 @@ def strformated_tree(nodes):
 
     return "".join(lstr)
 
+def log_non_enabled_nodes():
+    """ 
+    this function will output a formatted log of the nodes that are not currently enabled 
+    """
+    msg = "The following nodes are not enabled (probably due to missing dependencies)"
+    logger.info(f"sv: {msg}\n{strformated_tree(temp_details['not_enabled_nodes'])}")    
+
+def log_node_count():
+    """
+    this will log the node count at startup, but can also be a place to log the current node count - if we want.
+    """
+    logger.info(f"sv: {temp_details['node_count']} nodes at startup.")
+
+def log_details():
+    log_non_enabled_nodes()
+    log_node_count()
+
 
 def make_categories():
     original_categories = make_node_cats()
@@ -452,7 +475,8 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
 
-    logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
+    # logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
+    temp_details['not_enabled_nodes'] = nodes_not_enabled
 
     return node_categories, node_count, original_categories
 
@@ -598,6 +622,8 @@ def register():
     global logger
     logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
+    temp_details['node_count'] = node_count
+
     if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
 
@@ -613,11 +639,9 @@ def register():
                     )
 
     bpy.utils.register_class(SvResetNodeSearchOperator)
-
     register_node_panels("SVERCHOK", menu)
 
     build_help_remap(original_categories)
-    print(f"sv: {node_count} nodes.")
 
 def unregister():
     unregister_node_panels()

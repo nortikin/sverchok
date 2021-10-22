@@ -32,6 +32,14 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
+    replacement_nodes = [('SvViewerDrawMk4', 
+                            dict(vertices = 'Vertices',
+                                 edges = 'Edges',
+                                 faces = 'Polygons',
+                                 matrix = 'Matrix'
+                            ),
+                        None)]
+
     mesh_data: bpy.props.CollectionProperty(type=SvMeshData, options={'SKIP_SAVE'})
 
     is_merge: BoolProperty(default=False, update=updateNode, description="Merge all meshes into one object")

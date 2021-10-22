@@ -160,9 +160,9 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def match(self, curves1, curves2):
         if self.matching == 'LONG':
-            return zip_long_repeat(curves1, curves2)
+            return zip_long_repeat(list(enumerate(curves1)), list(enumerate(curves2)))
         else:
-            return [(c1, c2) for c2 in curves2 for c1 in curves1]
+            return [(c1, c2) for c2 in enumerate(curves2) for c1 in enumerate(curves1)]
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -178,11 +178,12 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         t1_out = []
         t2_out = []
 
+        object_idx = 0
         for curve1s, curve2s in zip_long_repeat(curve1_s, curve2_s):
             new_points = []
             new_t1 = []
             new_t2 = []
-            for curve1, curve2 in self.match(curve1s, curve2s):
+            for (i, curve1), (j, curve2) in self.match(curve1s, curve2s):
                 curve1 = SvNurbsCurve.to_nurbs(curve1)
                 if curve1 is None:
                     raise Exception("Curve1 is not a NURBS")
@@ -197,7 +198,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if self.check_intersection:
                     if not ps:
-                        raise Exception("Some curves do not intersect!")
+                        raise Exception(f"Object #{object_idx}: Curve #{i} does not intersect with curve #{j}!")
 
                 if self.single:
                     if len(ps) >= 1:
@@ -219,6 +220,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             points_out.append(new_points)
             t1_out.append(new_t1)
             t2_out.append(new_t2)
+            object_idx += 1
 
         self.outputs['Intersections'].sv_set(points_out)
         self.outputs['T1'].sv_set(t1_out)
