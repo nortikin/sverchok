@@ -125,7 +125,7 @@
 </pre></div>
 </div>
 <p>If we want to generate an object composed of 3 edges from the above <code class="docutils literal notranslate"><span class="pre">vertex</span> <span class="pre">list</span></code> we would end up with an edge list similar to this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edges_list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edges_list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
 </pre></div>
 </div>
 <p>At a fundamental level sverchok works by using nodes to creat lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.</p>
