@@ -599,6 +599,25 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations, weight_field = Non
 
     return uvpoints, points
 
+def lloyd_on_surface(surface, uv_sites, thickness, n_iterations, weight_field = None):
+
+    def evaluate(uv_pts):
+        us = uv_pts[:,0]
+        vs = uv_pts[:,1]
+        return surface.evaluate_array(us, vs)
+
+    def iteration(uvpoints, points):
+        us = uv_pts[:,0]
+        vs = uv_pts[:,1]
+        data = surface.derivatives_data_array(us, vs)
+
+    uvpoints = np.asarray(uv_sites)
+    points = evaluate(uvpoints)
+    for i in range(n_iterations):
+        uvpoints, points = iteration(uvpoints, points)
+
+    return uvpoints, points
+
 def lloyd_on_sphere(center, radius, sites, n_iterations, weight_field=None):
     def iteration(pts):
         diagram = SphericalVoronoi(pts, radius=radius, center=np.array(center))
