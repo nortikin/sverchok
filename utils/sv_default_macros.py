@@ -48,7 +48,9 @@ macros = {
     "> zen": simple_macro(
         description="zen of Sverchok", term='zen'),
     "> nuke python++": simple_macro(
-        description="like f8", term='nuke python++'),        
+        description="like f8", term='nuke python++'),
+    "> 3d cursor to Vector In": simple_macro(description="makes new node", term="3dcursor_to_vector_in"),
+    "> 3d cursor to Matrix In": simple_macro(description="makes new node", term="3dcursor_to_matrix_in"),
     "> sn petal": simple_macro(
         description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
     "> Subdiv to quads": simple_macro(
@@ -161,6 +163,15 @@ class DefaultMacros():
 
         elif term == "objs socket to data":
             objdata_macro_one(context, operator, term, nodes, links)
+
+        elif term == "3dcursor_to_vector_in":
+            
+            MOUSE_X, MOUSE_Y = context.space_data.cursor_location
+            cursor = context.scene.cursor.location
+
+            node = nodes.new("GenVectorsNode")
+            node.location = MOUSE_X, MOUSE_Y
+            node.x_, node.y_, node.z_ = tuple(cursor)
 
         elif term == 'rndcol':
 
