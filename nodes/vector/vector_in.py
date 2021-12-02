@@ -28,7 +28,7 @@ class SvVectorFromCursor(bpy.types.Operator):
 
     bl_idname = "node.sverchok_vector_from_cursor"
     bl_label = "Vector from 3D Cursor"
-    bl_options = {'REGISTER'}
+    bl_options = {'INTERNAL', 'REGISTER'}
 
     nodename: StringProperty(name='nodename')
     treename: StringProperty(name='treename')
