@@ -83,6 +83,9 @@ def set_node_props(node, prop_dict):
     for prop, val in prop_dict.items():
         setattr(node, prop, val)
 
+def flatten_matrix(matrix):
+    return list(matrix[0]) + list(matrix[1]) + list(matrix[2]) + list(matrix[3])
+
 class DefaultMacros():
 
     @classmethod
@@ -150,13 +153,11 @@ class DefaultMacros():
         elif term == "3dcursor_to_matrix_in":
             
             MOUSE_X, MOUSE_Y = context.space_data.cursor_location
-            cursor = context.scene.cursor.location
             matrix = context.scene.cursor.matrix
 
-            node = nodes.new("SvMatrixInNodeMK4")
+            node = nodes.new("SvMatrixValueIn") # "SvMatrixInNodeMK4")
             node.location = MOUSE_X, MOUSE_Y
-            # node.x_, node.y_, node.z_ = tuple(cursor)
-
+            node.matrix = flatten_matrix(matrix)
 
         elif term == 'rndcol':
 
