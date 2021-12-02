@@ -45,7 +45,7 @@ macros = {
     "> zen": simple_macro(description="zen of Sverchok", term='zen'),
     "> nuke python++": simple_macro(description="like f8", term='nuke python++'),
     "> 3d cursor to Vector In": simple_macro(description="makes new node", term="3dcursor_to_vector_in"),
-    "> 3d cursor to Matrix In": simple_macro(description="makes new node", term="3dcursor_to_matrix_in"),
+    "> 3d cursor to Matrix Input": simple_macro(description="makes new node", term="3dcursor_to_matrix"),
     "> sn petal": simple_macro(description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
     "> Subdiv to quads": simple_macro(description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
     "> multiply *": simple_macro(description="multiply selected nodes", term='mathMUL'),
@@ -147,7 +147,7 @@ class DefaultMacros():
             node.location = MOUSE_X, MOUSE_Y
             node.x_, node.y_, node.z_ = tuple(cursor)
 
-        elif term == "3dcursor_to_matrix_in":
+        elif term == "3dcursor_to_matrix":
 
             def flattened(matrix):
                 return list(matrix[0]) + list(matrix[1]) + list(matrix[2]) + list(matrix[3])
