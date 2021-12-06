@@ -351,11 +351,11 @@ class CubicSpline(Spline):
         t_great_than_1 = t_ph > 1.0
         t_mh[t_less_than_0] += h
         t_ph[t_great_than_1] -= h
-        tanget_ph = self.eval(t_ph)
-        tanget_mh = self.eval(t_mh)
-        tanget = tanget_ph - tanget_mh
-        tanget[t_less_than_0 | t_great_than_1] *= 2
-        return tanget / h
+        tangent_ph = self.eval(t_ph)
+        tangent_mh = self.eval(t_mh)
+        tangent = tangent_ph - tangent_mh
+        tangent[t_less_than_0 | t_great_than_1] *= 2
+        return tangent / h
 
 class LinearSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):

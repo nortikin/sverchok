@@ -104,8 +104,8 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Interval').prop_name = 't_in'
         self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvVerticesSocket', 'Tanget')
-        self.outputs.new('SvVerticesSocket', 'Unit Tanget')
+        self.outputs.new('SvVerticesSocket', 'Tangent')
+        self.outputs.new('SvVerticesSocket', 'Unit Tangent')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
@@ -137,10 +137,10 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
     def process_data(self, params):
         verts, t_ins = params
 
-        calc_tanget = self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
-        norm_tanget = self.outputs['Unit Tanget'].is_linked
+        calc_tangent = self.outputs['Tangent'].is_linked or self.outputs['Unit Tangent'].is_linked
+        norm_tangent = self.outputs['Unit Tangent'].is_linked
         h = self.h
-        verts_out, tanget_out, norm_tanget_out = [], [], []
+        verts_out, tangent_out, norm_tangent_out = [], [], []
         for v, t_in in zip(verts, t_ins):
             if self.infer_from_integer_input:
                 t_corr = make_range(int(t_in), self.end_point)
@@ -152,22 +152,22 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
                 out = spline.eval(t_corr)
                 verts_out.append(out if self.output_numpy else out.tolist())
 
-                if calc_tanget:
-                    tanget_out.append(spline.tangent(t_corr) if self.output_numpy else spline.tangent(t_corr).tolist())
+                if calc_tangent:
+                    tangent_out.append(spline.tangent(t_corr) if self.output_numpy else spline.tangent(t_corr).tolist())
 
             else:  # SPL
                 spline = CubicSpline(v, metric=self.knot_mode, is_cyclic=self.is_cyclic)
                 out = spline.eval(t_corr)
                 verts_out.append(out if self.output_numpy else out.tolist())
-                if calc_tanget:
+                if calc_tangent:
                     tangent = spline.tangent(t_corr, h)
-                    if norm_tanget:
+                    if norm_tangent:
                         norm = np.linalg.norm(tangent, axis=1)
                         tangent_norm = tangent / norm[:, np.newaxis]
-                        norm_tanget_out.append(tangent_norm if self.output_numpy else tangent_norm.tolist())
-                    tanget_out.append(tangent if self.output_numpy else tangent.tolist())
+                        norm_tangent_out.append(tangent_norm if self.output_numpy else tangent_norm.tolist())
+                    tangent_out.append(tangent if self.output_numpy else tangent.tolist())
 
-        return verts_out, tanget_out, norm_tanget_out
+        return verts_out, tangent_out, norm_tangent_out
 
 
 register, unregister = bpy.utils.register_classes_factory([SvInterpolationNodeMK3])
