@@ -38,7 +38,7 @@ class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
 
     if_possible : BoolProperty(
             name = "Only if possible",
-            description = "Do not fail if knot multiplicity is already too hight, just insert the knot as many times as it is possible",
+            description = "Do not fail if knot multiplicity is already too high, just insert the knot as many times as it is possible",
             default = False,
             update = updateNode)
     

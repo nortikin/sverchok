@@ -39,7 +39,7 @@ class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
             updateNode(self, context)
 
         algorithms = [
-                ('FRENET', "Integrate torsion", "Substract torsion integral from Frenet matrices", 0),
+                ('FRENET', "Integrate torsion", "Subtract torsion integral from Frenet matrices", 0),
                 ('TRACK', "Track normal", "Try to maintain constant normal direction by tracking it along the curve", 1)
             ]
 

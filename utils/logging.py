@@ -245,7 +245,7 @@ def setLevel(level):
 
 
 def is_enabled_for(log_level="DEBUG") -> bool:
-    """This chek should be used for improving performance of calling disabled loggers"""
+    """This check should be used for improving performance of calling disabled loggers"""
     rates = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "EXCEPTION": 50}
     addon = bpy.context.preferences.addons.get(sverchok.__name__)
     current_level = rates.get(addon.preferences.log_level, 0)
