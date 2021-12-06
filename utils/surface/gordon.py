@@ -75,7 +75,7 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
         raise Exception("U or V curves are not provided")
 
     if (u_knots is None) != (v_knots is None):
-        raise Exception("u_knots and v_knots must be either both provided or both omited")
+        raise Exception("u_knots and v_knots must be either both provided or both omitted")
 
     if any(c.is_rational() for c in u_curves):
         raise Exception("Some of U-curves are rational. Rational curves are not supported for Gordon surface.")

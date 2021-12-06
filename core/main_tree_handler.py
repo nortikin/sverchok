@@ -104,7 +104,7 @@ class NodesUpdater:
 
     @classmethod
     def add_task(cls, event: Union[TreeEvent, GroupEvent]):
-        """It can handle ony one tree at a time"""
+        """It can handle only one tree at a time"""
         if cls.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name}, already updating tree: {cls._event.tree.name}")
         cls._event = event
@@ -351,7 +351,8 @@ class ContextTrees:
         Should be called upon loading new file, other wise it can lead to errors and even crash
         Also according the fact that trees have links to real blender nodes
         it is also important to call this method upon undo method otherwise errors and crashes
-        Also single tre can be added, in this case only it will be deleted (it's going to be used in force update)
+        Also single tree can be added, in this case only it will be deleted
+        (it's going to be used in force update)
         """
         if bl_tree and bl_tree.tree_id in cls._trees:
             del cls._trees[bl_tree.tree_id]
@@ -394,7 +395,7 @@ class ContextTrees:
                     has_old_from_socket_links = False
 
                 # this is only because some nodes calculated data only if certain output socket is connected
-                # ideally we would not like ot make previous node outdated, but it requires changes in many nodes
+                # ideally we would not like to make previous node outdated, but it requires changes in many nodes
                 if not has_old_from_socket_links:
                     link.from_node.is_input_changed = True
                 else:

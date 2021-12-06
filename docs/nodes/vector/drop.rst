@@ -6,13 +6,13 @@ Functionality
 
 Reverse operation to Matrix apply. 
 If matrix apply adding all transformations to vertices.
-Than vector drop substract matrix from vertices.
+Than vector drop subtract matrix from vertices.
 
 Inputs
 ------
 
 **Vertices** - Vectors input to transform
-**Matrix** - Matrix to substract from vertices
+**Matrix** - Matrix to subtract from vertices
 
 Outputs
 -------

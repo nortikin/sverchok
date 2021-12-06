@@ -36,7 +36,7 @@ If we want to generate an object composed of 3 edges from the above ``vertex lis
 
   edges_list = [(0, 1), (1, 2), (2, 0)]
 
-At a fundamental level sverchok works by using nodes to creat lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.
+At a fundamental level sverchok works by using nodes to create lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.
 
 This is why the nesting concept is fundamental in order to use Sverchok.
 

@@ -685,7 +685,7 @@ class SvNurbsCurve(SvCurve):
         """
         If this method returns True, then the whole curve lies outside the
         specified sphere.
-        If this method returns False, then the curve may partially or wholy
+        If this method returns False, then the curve may partially or wholly
         lie inside the sphere, or may not touch it at all.
         """
         # See comment to bezier_is_strongly_outside_sphere()
