@@ -87,7 +87,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">NURBS Surface from Curves Net</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionaltiy">Functionaltiy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
@@ -172,8 +172,8 @@
              
   <section id="nurbs-surface-from-curves-net">
 <h1>NURBS Surface from Curves Net<a class="headerlink" href="#nurbs-surface-from-curves-net" title="Permalink to this headline">¶</a></h1>
-<section id="functionaltiy">
-<h2>Functionaltiy<a class="headerlink" href="#functionaltiy" title="Permalink to this headline">¶</a></h2>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>Given a net of intersecting curves, this node generates a surface which passes
 through all given curves.</p>
 <p>A net of curves is two sets of curves, one set along one direction and one set
@@ -181,7 +181,7 @@ along another. One set of curves is called “U-curves” (curves along U
 direction) and another set of curves is called “V-curves” (curves along V
 direction).</p>
 <p>Apart of curves grid, this node requires intersection points of curves provided
-explictly. Intersection points can be calculated by use of “Intersect NURBS
+explicitly. Intersection points can be calculated by use of “Intersect NURBS
 curves” node. Note: that node uses numeric algorithms to calculate
 intersections, so it can fail to find intersections, or give imprecise results.
 So, if you have intersection points in advance, it’s better to use them.</p>
@@ -260,10 +260,10 @@ they are not provided by user. The available options are:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Manhattan</p></li>
-<li><p>Euclidian</p></li>
+<li><p>Euclidean</p></li>
 <li><p>Points (just number of points from the beginning)</p></li>
 <li><p>Chebyshev</p></li>
-<li><p>Centripetal (square root of Euclidian distance).</p></li>
+<li><p>Centripetal (square root of Euclidean distance).</p></li>
 </ul>
 <p>The default option is Points. In most cases, this option gives the best results.</p>
 </div></blockquote>

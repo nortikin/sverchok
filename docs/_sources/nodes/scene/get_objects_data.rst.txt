@@ -5,15 +5,15 @@ Functionality
 -------------
 Get objects from the Blender ``Scene`` and output them into Sverchok's node tree. This node supports most object types. All are converted to a Sverchok representation of ``Mesh`` where possible. 
 
-A few points worth stating explicitely.
+A few points worth stating explicitly.
 
 - Empties, Cameras, and Lamps produce only matrix data. 
 - The order of the selected Objects can be sorted by name. 
 - It supports Object collections.
 - It understands also ``vertex groups``, when activated, showing additional socket representing indices, that you can use for further processing. All groups are cached in one list _without_weights_.
-- When you ``Get`` objects from the Scene that have modifiers on them, you can import the final mesh by enableing the ``Post`` button.
+- When you ``Get`` objects from the Scene that have modifiers on them, you can import the final mesh by enabling the ``Post`` button.
 - Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)
-- The Matrix socket lets you ignore or acquire the Object's ``World Matrix``, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitely transform the vertex data.
+- The Matrix socket lets you ignore or acquire the Object's ``World Matrix``, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.
 
 limitations:
 
