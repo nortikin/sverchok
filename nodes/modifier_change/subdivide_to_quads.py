@@ -114,11 +114,11 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
     def process_data(self, params):
         result = [[] for s in self.outputs]
         output_edges = self.outputs['Edges'].is_linked
-        ouput_vert_map = self.outputs['Vert Map'].is_linked
+        output_vert_map = self.outputs['Vert Map'].is_linked
         for sub_params in zip(*params):
             output = subdiv_mesh_to_quads_np(*sub_params,
                                              output_edges=output_edges,
-                                             output_vert_map=ouput_vert_map)
+                                             output_vert_map=output_vert_map)
 
             if isinstance(sub_params[8], SvDict):
                 vert_data = SvDict(check_numpy(output[4], sub_params[8]))

@@ -323,8 +323,8 @@ def get_voronoi_with_radius(verts_in,radius,resolution):
     
         len_neibs = len(dict['neibs'])
         #We could start from chord which has the list height chord
-        min_hight = min(dict['height_chords'])
-        i_min_chord = dict['height_chords'].index(min_hight)
+        min_height = min(dict['height_chords'])
+        i_min_chord = dict['height_chords'].index(min_height)
         iterator = list(range(len_neibs))[i_min_chord:] + list(range(len_neibs))[:i_min_chord]
     
         if is_chords:
