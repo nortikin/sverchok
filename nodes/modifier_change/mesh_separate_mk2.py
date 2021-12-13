@@ -41,18 +41,18 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvStringsSocket', 'Poly Edge')
+        self.inputs.new('SvStringsSocket', 'Poly Egde')
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Poly Edge')
+        self.outputs.new('SvStringsSocket', 'Poly Egde')
         self.outputs.new('SvStringsSocket', 'Vert idx')
-        self.outputs.new('SvStringsSocket', 'Poly Edge idx')
+        self.outputs.new('SvStringsSocket', 'Poly Egde idx')
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)
-        poly = self.inputs['Poly Edge'].sv_get(deepcopy=False)
+        poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
         verts_out = []
         poly_edge_out = []
 
@@ -125,9 +125,9 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 poly_edge_index.append(new_poly_indexes)
 
         self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Poly Edge'].sv_set(poly_edge_out)
+        self.outputs['Poly Egde'].sv_set(poly_edge_out)
         self.outputs['Vert idx'].sv_set(vert_index)
-        self.outputs['Poly Edge idx'].sv_set(poly_edge_index)
+        self.outputs['Poly Egde idx'].sv_set(poly_edge_index)
 
 
 def register():

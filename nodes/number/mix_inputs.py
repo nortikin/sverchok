@@ -326,7 +326,7 @@ class SvMixInputsNode(bpy.types.Node, SverchCustomTreeNode):
         [a, b] = input_getter(self.inputs[i], self.inputs[j])
         return [f, a, b]
 
-    def set_outputs(self, values):
+    def set_ouputs(self, values):
         output_setter = input_info[self.mode]["Outputs"]
         output_setter(self.outputs[0], values)
 
@@ -364,7 +364,7 @@ class SvMixInputsNode(bpy.types.Node, SverchCustomTreeNode):
             v = mix(t, v1, v2)
             values.append(v)
 
-        self.set_outputs(values)
+        self.set_ouputs(values)
 
 
 def register():
