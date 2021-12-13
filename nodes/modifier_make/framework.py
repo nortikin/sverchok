@@ -137,7 +137,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             min = 0, default = 1.0,
             update = updateNode)
 
-    n_connections : IntProperty(name = "Conections",
+    n_connections : IntProperty(name = "Connections",
             description = "How many vertices to connect to each vertex",
             min = 0, default = 1,
             update = updateNode)

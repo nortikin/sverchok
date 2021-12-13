@@ -33,16 +33,16 @@ class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvStringsSocket', 'Poly Egde')
+        self.inputs.new('SvStringsSocket', 'Poly Edge')
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Poly Egde')
+        self.outputs.new('SvStringsSocket', 'Poly Edge')
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)
-        poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
+        poly = self.inputs['Poly Edge'].sv_get(deepcopy=False)
         verts_out = []
         poly_edge_out = []
         for ve, pe in zip_long_repeat(verts, poly):
@@ -91,7 +91,7 @@ class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 poly_edge_out.append(pe)
 
         self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Poly Egde'].sv_set(poly_edge_out)
+        self.outputs['Poly Edge'].sv_set(poly_edge_out)
 
 
 def register():
