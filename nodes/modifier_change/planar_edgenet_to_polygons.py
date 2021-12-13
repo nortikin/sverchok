@@ -97,7 +97,7 @@ def calc_angle(p1,p2):
 
 def cycles_list(value,list):
     #Cycle list as item is equal value gets first position
-    cut_i = list.index(value)
+    cut_i = lsit.index(value)
     return list[cut_i:] + list[:cut_i]
 
 def get_next_neighbour(start, neibs, turn='left'):

@@ -69,7 +69,7 @@ def prepare_dest_data(tri_dest):
 
 def compute_barycentric_transform_np(params, matched_index, result, out_numpy, edg_pol_data):
     '''NumPy Implementation of a barycentric transform'''
-    verts, edge_pol, tri_src, tri_dest = params
+    verts, egde_pol, tri_src, tri_dest = params
     np_verts = [array(v) for v in verts]
     inverted_matrix_s, tri3_src = prepare_source_data(tri_src)
     matrix_transform_d, tri3_dest = prepare_dest_data(tri_dest)
@@ -82,7 +82,7 @@ def compute_barycentric_transform_np(params, matched_index, result, out_numpy, e
 
         result[0].append(cartesian_co if out_numpy else cartesian_co.tolist())
         if edg_pol_data:
-            result[1].append(edge_pol[edge_id])
+            result[1].append(egde_pol[edge_id])
 
 
 def compute_barycentric_transform_mu(params, result):
