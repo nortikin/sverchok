@@ -22,7 +22,7 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     segments : IntProperty(
             name = "Segments",
-            description = "Numer of parts the curve should be split into",
+            description = "Number of parts the curve should be split into",
             default = 10,
             min = 2,
             update = updateNode)

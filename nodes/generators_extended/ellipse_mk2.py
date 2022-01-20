@@ -285,8 +285,9 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             input_c = list(map(lambda a, c: max(0.0, min(a, c)), input_a, input_c))
             input_b = list(map(lambda a, c: sqrt(a * a - c * c), input_a, input_c))
 
-        # sanitize the input
+        # sanitize more inputs
         input_N = list(map(lambda n: max(3, int(n)), input_N))
+        input_s = list(map(lambda s: max(0.0, s), input_s))
 
         parameters = match_long_repeat([input_a, input_b, input_N, input_p, input_r, input_s])
 

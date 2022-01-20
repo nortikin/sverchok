@@ -18,7 +18,7 @@ Inputs
 This node has the following inputs, all of them can accept one or many different values:
 
 - **Distance** - distance to vertex.
-- **Nº Vertices** - Number of vectices per vertex
+- **Nº Vertices** - Number of vertices per vertex
 - **Verts_in** - origin vertices.
 - **Edgs_in** - edges (pairs of integers).
 
@@ -37,11 +37,11 @@ Parameters
 +------------------+---------------+-------------+-------------------------------------------------------------+
 |**Distance**      | Float         | 1.0         | Distance to vertex.                                         |
 +------------------+---------------+-------------+-------------------------------------------------------------+
-|**Nº Vertices**   | Float         | 1.0         | Number of vectices per vertex.                              |
+|**Nº Vertices**   | Float         | 1.0         | Number of vertices per vertex.                              |
 +------------------+---------------+-------------+-------------------------------------------------------------+
 | **Verts_in**     | Vector        |(0.0,0.0,0.0)| Origin vectors.                                             |
 +------------------+---------------+-------------+-------------------------------------------------------------+
-| **Edges_in**     | Int tuples    | []          | Connexion between vectices                                  |
+| **Edges_in**     | Int tuples    | []          | Connection between vertices                                 |
 +------------------+---------------+-------------+-------------------------------------------------------------+
 |In the N-Panel                                                                                                |
 +------------------+---------------+-------------+-------------------------------------------------------------+

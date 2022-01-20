@@ -735,15 +735,17 @@ class SvLambdaCurve(SvCurve):
         else:
             return np.vectorize(self.function, signature='()->(3)')(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         point = self.function(t)
-        point_h = self.function(t+self.tangent_delta)
-        return (point_h - point) / self.tangent_delta
+        point_h = self.function(t+h)
+        return (point_h - point) / h
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         points = np.vectorize(self.function, signature='()->(3)')(ts)
-        points_h = np.vectorize(self.function, signature='()->(3)')(ts+self.tangent_delta)
-        return (points_h - points) / self.tangent_delta
+        points_h = np.vectorize(self.function, signature='()->(3)')(ts+h)
+        return (points_h - points) / h
 
 class SvTaylorCurve(SvCurve):
     __description__ = "Taylor"

@@ -123,14 +123,14 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     degree_u : IntProperty(
             name = "Degree U",
             description = "Degree of the surface in the U direction",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
     degree_v : IntProperty(
             name = "Degree V",
             description = "Degree of the surface in the V direction",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 

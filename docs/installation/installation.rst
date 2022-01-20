@@ -22,7 +22,7 @@ And activate Sverchok with flag:
 
 .. image:: https://user-images.githubusercontent.com/28003269/125616257-1c5af6b8-9bae-486b-8bed-cff1210987d9.png
 
-If the add-on was enabled successfully open Sverchok editor and crate new node tree. Now you can add new nodes.
+If the add-on was enabled successfully open Sverchok editor and create new node tree. Now you can add new nodes.
 If the add-on was not enabled open system console ``Window -> Toggle system console`` and create 
 `new issue <https://github.com/nortikin/sverchok/issues/new>`_ with the error message.
 

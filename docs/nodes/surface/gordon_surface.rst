@@ -1,7 +1,7 @@
 NURBS Surface from Curves Net
 =============================
 
-Functionaltiy
+Functionality
 -------------
 
 Given a net of intersecting curves, this node generates a surface which passes
@@ -13,7 +13,7 @@ direction) and another set of curves is called "V-curves" (curves along V
 direction).
 
 Apart of curves grid, this node requires intersection points of curves provided
-explictly. Intersection points can be calculated by use of "Intersect NURBS
+explicitly. Intersection points can be calculated by use of "Intersect NURBS
 curves" node. Note: that node uses numeric algorithms to calculate
 intersections, so it can fail to find intersections, or give imprecise results.
 So, if you have intersection points in advance, it's better to use them.
@@ -101,10 +101,10 @@ This node has the following parameters:
   they are not provided by user. The available options are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance).
+   * Centripetal (square root of Euclidean distance).
 
    The default option is Points. In most cases, this option gives the best results.
 * **Knotvector accuracy**. This parameter is available in the N panel only.
