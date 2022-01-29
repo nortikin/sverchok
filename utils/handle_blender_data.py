@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from collections import Iterable
+from collections.abc import Iterable
 from enum import Enum
 from functools import singledispatch
 from itertools import chain

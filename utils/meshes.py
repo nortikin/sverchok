@@ -19,7 +19,7 @@ It can bring unexpected errors
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Collection
+from collections.abc import Collection
 from functools import wraps
 from itertools import chain
 from typing import Tuple, List, Callable, Union, Type, Iterable, Dict
