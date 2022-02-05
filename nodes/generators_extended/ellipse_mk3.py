@@ -34,19 +34,37 @@ mode_items = [("AB", "a b", "Major Radius / Minor Radius", 1),
               ("AC", "a c", "Major Radius / Focal Length", 3)]
 
 
-class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+def sign(x): return 1 if x > 0 else -1 if x < 0 else 0
+
+epsilon = 1e-10  # used to eliminate division by zero
+
+# name : [ major radius, minor radius, x exponent, y exponent, num verts ]
+super_presets = {
+    "_":                [0.0, 0.0, 0.0, 0.0, 0],
+    "STAR":             [1.0, 1.0, 0.3, 0.3, 200],
+    "ASTROID":          [1.0, 1.0, 0.6, 0.6, 200],
+    "DIAMOND":          [1.0, 0.6, 1.0, 1.0, 100],
+    "EYELENS":          [1.0, 0.6, 2.0, 1.0, 100],
+    "SQUARE":           [1.0, 1.0, 1.0, 1.0, 100],
+    "CIRCLE":           [1.0, 1.0, 2.0, 2.0, 100],
+    "ELLIPSE":          [1.0, 0.6, 2.0, 2.0, 100],
+    "SQUIRCLE":         [1.0, 1.0, 4.0, 4.0, 100],
+    "HYPOELLIPSE":      [1.0, 0.6, 1.5, 1.5, 100],
+    "HYPERELLIPSE":     [1.0, 0.6, 2.5, 2.5, 100],
+    "RECTELLIPSE":      [1.0, 0.6, 4.0, 4.0, 100],
+}
+
+class SvEllipseNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
-    Triggers: Ellipse
-    Tooltip: Generate ellipses
+    Triggers: Ellipse Super-Ellipse
+    Tooltip: Generate various types of (super) ellipse shapes
     """
-    bl_idname = 'SvEllipseNodeMK2'
-    bl_label = 'Ellipse'
+    bl_idname = 'SvEllipseNodeMK3'
+    bl_label = 'Ellipse MK3'
     sv_icon = 'SV_ELLIPSE'
 
-    replacement_nodes = [('SvEllipseNodeMK3', None, None)]
-
     def update_mode(self, context):
-        ''' Update the ellipse parameters of the new mode based on previous mode ones'''
+        ''' Update the ellipse parameters of the new mode based on previous mode ones '''
 
         if self.mode == self.last_mode:
             return
@@ -91,12 +109,42 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         if self.updating:
             return
 
+        self.presets = "_"
         updateNode(self, context)
 
     def update_angles(self, context, au):
         ''' Update all the angles to preserve their values in the new units '''
         self.phase = self.phase * au
         self.rotation = self.rotation * au
+
+    def update_presets(self, context):
+        self.updating = True
+
+        if self.presets == "_":
+            self.updating = False
+            return
+
+        a, b, ex, ey, n = super_presets[self.presets.replace(" ", "_")]
+        self.major_radius = a
+        self.minor_radius = b
+        self.num_verts = n
+        self.phase = 0.0
+        self.rotation = 0.0
+        self.scale = 1.0
+        self.exponent_x = ex
+        self.exponent_y = ey
+        self.mode = "AB"
+        self.last_mode = "AB"
+        self.centering = "C"
+
+        self.updating = False
+        updateNode(self, context)
+
+    preset_items = [(k, k.replace("_", " ").title(), "", "", i) for i, (k, v) in enumerate(sorted(super_presets.items()))]
+
+    presets: EnumProperty(
+        name="Presets", items=preset_items, description="Various presets",
+        update=update_presets)
 
     centering: EnumProperty(
         name="Centering", items=centering_items,
@@ -109,8 +157,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         default="AB", update=update_mode)
 
     last_mode: EnumProperty(
-        name="Mode", items=mode_items,
-        description="Ellipse definition last mode",
+        name="Last Mode", items=mode_items,
+        description="Last ellipse definition mode",
         default="AB")
 
     major_radius: FloatProperty(
@@ -142,8 +190,16 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         default=0.0, update=SvAngleHelper.update_angle)
 
     scale: FloatProperty(
-        name='Scale', description='Scale ellipse radii by this amount',
+        name='Scale', description='Scale ellipse radii by this factor',
         default=1.0, min=0.0, update=updateNode)
+
+    exponent_x: FloatProperty(
+        name='Exponent X', description='Exponent X to modulate the ellipse along X direction',
+        default=2.0, min=0.0, update=updateNode)
+
+    exponent_y: FloatProperty(
+        name='Exponent Y', description='Exponent Y to modulate the ellipse along Y direction',
+        default=2.0, min=0.0, update=updateNode)
 
     updating: BoolProperty(default=False)  # used for disabling update callback
 
@@ -161,14 +217,23 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.inputs.new('SvStringsSocket', "Phase").prop_name = "phase"
         self.inputs.new('SvStringsSocket', "Rotation").prop_name = "rotation"
         self.inputs.new('SvStringsSocket', "Scale").prop_name = "scale"
+        self.inputs.new('SvStringsSocket', "Exponent X").prop_name = "exponent_x"
+        self.inputs.new('SvStringsSocket', "Exponent Y").prop_name = "exponent_y"
 
         self.outputs.new('SvVerticesSocket', "Verts")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polys")
+
         self.outputs.new('SvVerticesSocket', "F1")
         self.outputs.new('SvVerticesSocket', "F2")
 
+        self.presets = "ELLIPSE"
+
+
     def draw_buttons(self, context, layout):
+        if not self.inputs["Exponent X"].is_linked and not self.inputs["Exponent Y"].is_linked:
+            layout.prop(self, "presets", text="")
+
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "mode", expand=True)
@@ -189,7 +254,7 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             socket2 = self.inputs[1]
             socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
 
-    def make_ellipse(self, a, b, N, phase, rotation, scale):
+    def make_ellipse(self, a, b, N, phase, rotation, scale, ex, ey):
         '''
         Make an Ellipse (verts, edges and polys)
 
@@ -199,6 +264,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         phase     : shift the points along the curve by this angle amount
         rotation  : rotate the ellipse in plane by this angle amount
         scale     : scale the major & minor radii by this factor
+        ex        : exponent x (modulates the ellipse along x direction)
+        ey        : exponent y (modulates the ellipse along y direction)
         '''
         verts = []
         edges = []
@@ -227,6 +294,7 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         sins = sin(rotation)  # cached for performance
         coss = cos(rotation)  # cached for performance
 
+        # locations of the focal points of the centered and rotated ellipse
         f1x = -cx - dx
         f1y = -cy - dy
         f2x = -cx + dx
@@ -239,13 +307,18 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         f1 = [f1xx, f1yy, 0]
         f2 = [f2xx, f2yy, 0]
 
-        delta = 2 * pi / N  # cached for performance
+        delta = 2 * pi / N  # angle increment (cached for performance)
+
+        exx = 2.0 / (ex + epsilon)
+        eyy = 2.0 / (ey + epsilon)
 
         add_vert = verts.append
         for n in range(N):
             theta = delta * n + phase
-            x = -cx + a * cos(theta)
-            y = -cy + b * sin(theta)
+            cost = cos(theta)
+            sint = sin(theta)
+            x = -cx + a * pow(abs(cost), exx) * sign(cost)
+            y = -cy + b * pow(abs(sint), eyy) * sign(sint)
             # apply in-plane rotation
             xx = x * coss - y * sins
             yy = x * sins + y * coss
@@ -270,6 +343,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         input_p = inputs["Phase"].sv_get()[0]
         input_r = inputs["Rotation"].sv_get()[0]
         input_s = inputs["Scale"].sv_get()[0]
+        input_ex = inputs["Exponent X"].sv_get()[0]
+        input_ey = inputs["Exponent Y"].sv_get()[0]
 
         # convert main input parameters to major/minor radii (and sanitize inputs)
         if self.mode == "AB":
@@ -290,8 +365,12 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         # sanitize more inputs
         input_N = list(map(lambda n: max(3, int(n)), input_N))
         input_s = list(map(lambda s: max(0.0, s), input_s))
+        input_ex = list(map(lambda e: max(0.0, e), input_ex))
+        input_ey = list(map(lambda e: max(0.0, e), input_ey))
 
-        parameters = match_long_repeat([input_a, input_b, input_N, input_p, input_r, input_s])
+        parameters = match_long_repeat([input_a, input_b, input_N,
+                                        input_p, input_r, input_s,
+                                        input_ex, input_ey])
 
         # conversion factor from the current angle units to radians
         au = self.radians_conversion_factor()
@@ -301,8 +380,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         polys_list = []
         f1_list = []
         f2_list = []
-        for a, b, N, p, r, s in zip(*parameters):
-            verts, edges, polys, f1, f2 = self.make_ellipse(a, b, N, p * au, r * au, s)
+        for a, b, N, p, r, s, ex, ey in zip(*parameters):
+            verts, edges, polys, f1, f2 = self.make_ellipse(a, b, N, p * au, r * au, s, ex, ey)
             verts_list.append(verts)
             edges_list.append(edges)
             polys_list.append(polys)
@@ -318,8 +397,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
 
 def register():
-    bpy.utils.register_class(SvEllipseNodeMK2)
+    bpy.utils.register_class(SvEllipseNodeMK3)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvEllipseNodeMK2)
+    bpy.utils.unregister_class(SvEllipseNodeMK3)

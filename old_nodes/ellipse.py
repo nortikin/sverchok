@@ -35,7 +35,7 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
-    replacement_nodes = [('SvEllipseNodeMK2', None, None)]
+    replacement_nodes = [('SvEllipseNodeMK3', None, None)]
 
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
