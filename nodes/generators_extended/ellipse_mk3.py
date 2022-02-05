@@ -60,7 +60,7 @@ class SvEllipseNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     Tooltip: Generate various types of (super) ellipse shapes
     """
     bl_idname = 'SvEllipseNodeMK3'
-    bl_label = 'Ellipse MK3'
+    bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
     def update_mode(self, context):

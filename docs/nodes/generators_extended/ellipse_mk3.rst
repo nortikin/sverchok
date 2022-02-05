@@ -9,8 +9,9 @@ Super Ellipse formula:
 
 (x/a)^n + (y/b)^m = 1
 
-Different values of the x/y exponents n and m generate various shapes such as: asteroid, square/rhombus, circle/ellipse, squircle/rectellipse.
-asteroids: 0 < n,m < 1
+Different values of the x and y exponents (n and m) generate various shapes such as: asteroid, square/rhombus, circle/ellipse, squircle/rectellipse.
+
+asteroid: 0 < n,m < 1
 square/diamond: n/m = 1
 circle/ellipse: n/m = 2
 squircle/rectellipse: n/m > 2
@@ -116,6 +117,40 @@ These are the vertices, edges and polygons of the ellipse.
 
 **F1**, **F2**
 These are the locations of the ellipse foci.
+
+
+Presets
+-------
+A set of super ellipse configuration **presets** is available for convenience. Once a preset is selected the super ellipse settings are updated with the preset values and the user can modify the settings to further alter the super ellipse shape.
+
+Note: once a setting is altered (after selecting a preset) the preset selection is cleared from the preset drop-down indicating that the new setting configuration is no longer the one corresponding to the previously selected preset.
+
++------------------+-----+-----+-----+-----+-----+
+| Preset           | R   | r   | eX  | eY  | N   |
++==================+=====+=====+=====+=====+=====+
+| **STAR**         | 1.0 | 1.0 | 0.3 | 0.3 | 200 |
++------------------+-----+-----+-----+-----+-----+
+| **ASTROID**      | 1.0 | 1.0 | 0.6 | 0.6 | 200 |
++------------------+-----+-----+-----+-----+-----+
+| **DIAMOND**      | 1.0 | 0.6 | 1.0 | 1.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **EYELENS**      | 1.0 | 0.6 | 2.0 | 1.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **SQUARE**       | 1.0 | 1.0 | 1.0 | 1.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **CIRCLE**       | 1.0 | 1.0 | 2.0 | 2.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **ELLIPSE**      | 1.0 | 0.6 | 2.0 | 2.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **SQUIRCLE**     | 1.0 | 1.0 | 4.0 | 4.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **HYPOELLIPSE**  | 1.0 | 0.6 | 1.5 | 1.5 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **HYPERELLIPSE** | 1.0 | 0.6 | 2.5 | 2.5 | 100 |
++------------------+-----+-----+-----+-----+-----+
+| **RECTELLIPSE**  | 1.0 | 0.6 | 4.0 | 4.0 | 100 |
++------------------+-----+-----+-----+-----+-----+
+
 
 Example of usage
 ----------------
