@@ -21,3 +21,4 @@ Generators Extended
    spiral_mk2
    triangle
    wfc_texture
+   trochoid
