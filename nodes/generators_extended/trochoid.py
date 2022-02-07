@@ -84,8 +84,13 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
     def update_normalize(self, context):
         self.update_sockets()
-        # updateNode(self, context)
+        updateNode(self, context)
 
+    def update_demo(self, context):
+        print("demo mode:", self.demo_mode)
+        self.update_sockets()
+        updateNode(self, context)
+        
     def update_trochoid(self, context):
         if self.updating:
             return
@@ -181,7 +186,11 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     turn_stretch: BoolProperty(
         name='Stretch Turn', description='Stretch the turns in order to close trochoid path',
         default=False, update=updateNode)
-
+    
+    demo_mode: BoolProperty(
+        name='Demo Mode', description='Show extra outputs for demo purposes',
+        default=False, update=update_demo)
+    
     updating: BoolProperty(default=False)  # used for disabling update callback
 
     def sv_init(self, context):
@@ -196,15 +205,17 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.inputs.new('SvStringsSocket', "Shift").prop_name = "shift"
         self.inputs.new('SvStringsSocket', "S").prop_name = "scale"
 
-        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
-
+        
+        # demo mode sockets
         self.outputs.new('SvMatrixSocket', "Matrix")
-
+        self.outputs.new('SvVerticesSocket', "Scaled r1 r2 d")
         self.outputs.new('SvVerticesSocket', "Min Range")
         self.outputs.new('SvVerticesSocket', "Max Range")
 
         self.presets = "ROSETTE"
+        self.update_sockets()
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'presets', text="")
@@ -218,21 +229,37 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     def draw_buttons_ext(self, context, layout):
         self.draw_angle_units_buttons(context, layout)
         layout.prop(self, "turn_stretch")
+        layout.prop(self, "demo_mode")
 
     def update_sockets(self):
+        """
+        Replace sockets based on currently selected mode
+        """
         if self.normalize:
             socket = self.inputs[-1]
             socket.replace_socket("SvStringsSocket", "S").prop_name = "normalize_size"
         else:
             socket = self.inputs[-1]
             socket.replace_socket("SvStringsSocket", "S").prop_name = "scale"
-
-    def grid_range(self, r1, r2, d, p1, p2, t, s):
+            
+        self.outputs["Matrix"].hide_safe = not self.demo_mode
+        self.outputs["Scaled r1 r2 d"].hide_safe = not self.demo_mode
+        self.outputs["Min Range"].hide_safe = not self.demo_mode
+        self.outputs["Max Range"].hide_safe = not self.demo_mode
+        
+    def scaling_factor(self, s, a, b, d):
         """
-        Get the min/max grid range (radial for EPI/HYPO and planar for LINE)
-        """
-        a, b = [r2, r1] if self.swap else [r1, r2]
+        Returns the scaling factor based on whether normalization is on or off
 
+        Args:
+            s : scale / size
+            a : static circle radius
+            b : moving circle radius
+            d : distance
+
+        Returns:
+            The normalized scaling factor
+        """
         if self.normalize:  # normalize ? => set scale to fit the normalize size
             if self.trochoid_type == "EPI":
                 s = s / (abs(a + b) + d + epsilon)
@@ -240,10 +267,20 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 s = s / (abs(a - b) + d + epsilon)
             else:  # LINE
                 s = s / (2 * pi * a + d + epsilon)
+                
+        return s
+    
+    def grid_range(self, r1, r2, d, p1, p2, t, s):
+        """
+        Get the min/max grid range (radial for EPI/HYPO and planar for LINE)
+        """
+        a, b = [r2, r1] if self.swap else [r1, r2]
 
-        a = a * s
-        b = b * s
-        d = d * s
+        ss = self.scaling_factor(s, r1, r2, d)
+
+        a = a * ss
+        b = b * ss
+        d = d * ss
 
         if self.trochoid_type == "EPI":
             min_r_range = abs(a + b - d)
@@ -260,11 +297,11 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         else:  # LINE
             min_y_range = b - d
             max_y_range = b + d
-            print("b=", b)
-            print("d=", d)
-            print("b/d=", b/d)
+            # print("b=", b)
+            # print("d=", d)
+            # print("b/d=", b/d)
             k = min(1.0, abs(b/d))
-            f = p2 % (2*pi)
+            # f = p2 % (2*pi)
             a0 = acos(k)  # - f # angle at which P reaches min X position
             min_x_range = b * a0 - d * sin(a0)
             an = - acos(k) + 2 * pi * ceil(t+epsilon)
@@ -282,17 +319,11 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         ts = b / gcd(int(a), int(b))
         t = t * ts if self.turn_stretch else t
 
-        if self.normalize:  # normalize ? => set scale to fit the normalize size
-            if self.trochoid_type == "EPI":
-                s = s / (abs(a + b) + d + epsilon)
-            elif self.trochoid_type == "HYPO":
-                s = s / (abs(a - b) + d + epsilon)
-            else:  # LINE
-                s = s / (2 * pi * a + d + epsilon)
+        ss = self.scaling_factor(s, r1, r2, d)
 
-        a = a * s
-        b = max(b * s, epsilon)  # safeguard to avoid division by zero
-        d = d * s
+        a = a * ss
+        b = max(b * ss, epsilon)  # safeguard to avoid division by zero
+        d = d * ss
 
         if self.trochoid_type == "EPI":
             sign = +1.0
@@ -360,17 +391,11 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         ts = b / gcd(int(a), int(b))
         t = t * ts if self.turn_stretch else t
 
-        if self.normalize:  # normalize ? => set scale to fit the normalize size
-            if self.trochoid_type == "EPI":
-                s = s / (abs(a + b) + d + epsilon)
-            elif self.trochoid_type == "HYPO":
-                s = s / (abs(a - b) + d + epsilon)
-            else:  # LINE
-                s = s / (2 * pi * a + d + epsilon)
+        ss = self.scaling_factor(s, r1, r2, d)
 
-        a = a * s
-        b = max(b * s, epsilon)  # safeguard to avoid division by zero
-        d = d * s
+        a = a * ss
+        b = max(b * ss, epsilon)  # safeguard to avoid division by zero
+        d = d * ss
 
         if self.trochoid_type == "EPI":
             r = a + b  # outer radius
@@ -444,6 +469,7 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         vert_list = []
         edge_list = []
         matrix_list = []
+        scaled_rrd_list = []
         max_range_list = []
         min_range_list = []
         for r1, r2, d, p1, p2, t, n, f, s in zip(*parameters):
@@ -451,25 +477,32 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             vert_list.append(verts)
             edge_list.append(edges)
 
-            m = self.moving_circle_transform(r1, r2, d, p1 * au, p2 * au, t, n, s)
-            matrix_list.append(m)
+            if self.demo_mode:
+                m = self.moving_circle_transform(r1, r2, d, p1 * au, p2 * au, t, n, s)
+                matrix_list.append(m)
 
-            min_range, max_range = self.grid_range(r1, r2, d, p1 * au, p2 * au, t, s)
-            min_range_list.append(min_range)
-            max_range_list.append(max_range)
-
-        if outputs["Verts"].is_linked:
-            outputs["Verts"].sv_set(vert_list)
+                ss = self.scaling_factor(s, r1, r2, d)
+                scaled_rrd_list.append([r1*ss, r2*ss, d*ss])
+                
+                min_range, max_range = self.grid_range(r1, r2, d, p1 * au, p2 * au, t, s)
+                min_range_list.append(min_range)
+                max_range_list.append(max_range)
+            
+        if outputs["Vertices"].is_linked:
+            outputs["Vertices"].sv_set(vert_list)
         if outputs["Edges"].is_linked:
             outputs["Edges"].sv_set(edge_list)
-
-        if outputs["Matrix"].is_linked:
-            outputs["Matrix"].sv_set(matrix_list)
-
-        if outputs["Max Range"].is_linked:
-            outputs["Max Range"].sv_set([max_range_list])
-        if outputs["Min Range"].is_linked:
-            outputs["Min Range"].sv_set([min_range_list])
+           
+        # demo mode sockets
+        if self.demo_mode: 
+            if outputs["Matrix"].is_linked:
+                outputs["Matrix"].sv_set(matrix_list)
+            if outputs["Scaled r1 r2 d"].is_linked:
+                outputs["Scaled r1 r2 d"].sv_set([scaled_rrd_list])
+            if outputs["Max Range"].is_linked:
+                outputs["Max Range"].sv_set([max_range_list])
+            if outputs["Min Range"].is_linked:
+                outputs["Min Range"].sv_set([min_range_list])
 
 
 def register():
