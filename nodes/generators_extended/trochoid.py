@@ -83,12 +83,10 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.phase2 = self.phase2 * au
 
     def update_normalize(self, context):
-        print("update_normalize")
         self.update_sockets()
         updateNode(self, context)
 
     def update_demo(self, context):
-        print("demo mode:", self.demo_mode)
         self.update_sockets()
         updateNode(self, context)
 
@@ -148,15 +146,15 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         default=4.0, min=0.0, update=update_trochoid)
 
     phase1: FloatProperty(
-        name='Phase1', description='Starting angle for the static circle',
+        name='Phase1', description='Starting angle on the static circle',
         default=0.0, update=SvAngleHelper.update_angle)
 
     phase2: FloatProperty(
-        name='Phase2', description='Starting angle for the moving circle',
+        name='Phase2', description='Starting angle on the moving circle',
         default=0.0, update=SvAngleHelper.update_angle)
 
     turns: FloatProperty(
-        name='Turns', description='Number of turns around the static circle',
+        name='Turns', description='Number of turns the moving circle makes around the static circle',
         default=1.0, min=0.0, update=update_trochoid)
 
     shift: FloatProperty(
@@ -215,6 +213,8 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.outputs.new('SvVerticesSocket', "Min Range")
         self.outputs.new('SvVerticesSocket', "Max Range")
         self.outputs.new('SvStringsSocket', "Normalized Scale")
+        self.outputs.new('SvVerticesSocket', "V")
+        self.outputs.new('SvStringsSocket', "E")
 
         self.presets = "ROSETTE"
         self.update_sockets()
@@ -273,6 +273,7 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
         return s
 
+    @profile
     def grid_range(self, r1, r2, d, p1, p2, t, s):
         """
         Get the min/max grid range (radial for EPI/HYPO and planar for LINE)
@@ -315,6 +316,7 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
         return min_range, max_range
 
+    @profile
     def moving_circle_transform(self, r1, r2, d, p1, p2, t, n, s):
 
         a, b, p1, p2 = [r2, r1, p2, p1] if self.swap else [r1, r2, p1, p2]
@@ -369,10 +371,11 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
         return m
 
+    @profile
     def make_trochoid(self, r1, r2, d, p1, p2, t, n, f, s):
         """
         Generates the vertices and edges of the trochoid for the given parameters.
-        
+
         r1 : radius1    = radius of the static circle
         r2 : radius2    = radius of the moving circle
         d  : distance   = drawing point distance to the center of the moving circle
@@ -452,7 +455,7 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         input_p1 = inputs["Phase1"].sv_get()[0]    # phase P1
         input_p2 = inputs["Phase2"].sv_get()[0]    # phase P2
         input_t = inputs["Turns"].sv_get()[0]      # turns
-        input_n = inputs["Resolution"].sv_get()[0]  # resolution
+        input_n = inputs["Resolution"].sv_get()[0] # resolution
         input_f = inputs["Shift"].sv_get()[0]      # shift
         input_s = inputs["S"].sv_get()[0]          # scale
 
@@ -479,6 +482,8 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             max_range_list = []
             min_range_list = []
             normalized_scale_list = []
+            v_list = []
+            e_list = []
         for r1, r2, d, p1, p2, t, n, f, s in zip(*parameters):
             verts, edges = self.make_trochoid(r1, r2, d, p1 * au, p2 * au, t, n, f, s)
             vert_list.append(verts)
@@ -494,8 +499,12 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 min_range, max_range = self.grid_range(r1, r2, d, p1 * au, p2 * au, t, s)
                 min_range_list.append(min_range)
                 max_range_list.append(max_range)
-                
+
                 normalized_scale_list.append(ss)
+                
+                v, e = self.make_trochoid(r1, r2, d, p1 * au, p2 * au, self.turns, n, f, s)
+                v_list.append(v)
+                e_list.append(e)
 
         if outputs["Vertices"].is_linked:
             outputs["Vertices"].sv_set(vert_list)
@@ -514,6 +523,10 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 outputs["Min Range"].sv_set([min_range_list])
             if outputs["Normalized Scale"].is_linked:
                 outputs["Normalized Scale"].sv_set([normalized_scale_list])
+            if outputs["V"].is_linked:
+                outputs["V"].sv_set(v_list)
+            if outputs["E"].is_linked:
+                outputs["E"].sv_set(e_list)
 
 def register():
     bpy.utils.register_class(SvTrochoidNode)
