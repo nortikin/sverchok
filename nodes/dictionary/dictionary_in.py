@@ -13,6 +13,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
+from pprint import pprint
 
 class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -112,15 +113,25 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
         max_len = max([len(sock.sv_get()) for sock in list(self.inputs)[:-1]])
         data = [chain(sock.sv_get(), cycle([None])) for sock in list(self.inputs)[:-1]]
         keys = [sock.prop_name for sock in list(self.inputs)[:-1]]
+        print("data=")
+        pprint(data)
+        print("keys=")
+        pprint(keys)
         out = []
         for i, *props in zip(range(max_len), *data):
             out_dict = SvDict({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
+            print("out_dict = ")
+            pprint(out_dict)
             for sock in list(self.inputs)[:-1]:
                 out_dict.inputs[sock.identifier] = {
                     'type': sock.dynamic_type,
                     'name': getattr(self, sock.prop_name),
                     'nest': sock.sv_get()[0].inputs if sock.dynamic_type == 'SvDictionarySocket' else None}
+            print("out_dict.inputs = ")
+            pprint(out_dict.inputs)
             out.append(out_dict)
+        print("out=")
+        pprint(out)
         self.outputs[0].sv_set(out)
 
 def register():

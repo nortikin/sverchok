@@ -26,7 +26,9 @@ from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from math import sin, cos, pi, sqrt, gcd, acos, ceil
 from mathutils import Quaternion, Matrix, Euler
 
+from sverchok.utils.dictionary import SvDict
 from sverchok.utils.profile import profile
+from pprint import pprint
 
 epsilon = 1e-5  # used to avoid division by zero
 
@@ -216,6 +218,8 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.outputs.new('SvVerticesSocket', "Min Range")
         self.outputs.new('SvVerticesSocket', "Max Range")
         self.outputs.new('SvStringsSocket', "Normalized Scale")
+
+        self.outputs.new('SvDictionarySocket', "Data")
 
         self.presets = "ROSETTE"
         self.update_sockets()
@@ -531,6 +535,24 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             if outputs["Normalized Scale"].is_linked:
                 outputs["Normalized Scale"].sv_set([normalized_scale_list])
                 
+            data = SvDict()
+            
+            data["Full Turns Vertices"] = v_list[0]
+            data.inputs["Data Zero"] = {
+                "type": "SvVerticesSocket", 
+                "name": "Vertices", 
+                "nest": None }
+            
+            print("----")
+            print("data=")
+            pprint(data)
+            print("data.inputs=")
+            pprint(data.inputs)
+            print("----")
+            
+            if outputs["Data"].is_linked:
+                outputs["Data"].sv_set([data])
+             
 
 def register():
     bpy.utils.register_class(SvTrochoidNode)
