@@ -257,6 +257,7 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.outputs["Max Range"].hide_safe = not self.demo_mode
         self.outputs["Moving Circle Transform"].hide_safe = not self.demo_mode
         self.outputs["Normalized Scale"].hide_safe = not self.demo_mode
+        self.outputs["Data"].hide_safe = not self.demo_mode
 
     def scaling_factor(self, s, a, b, d):
         """
@@ -538,11 +539,17 @@ class SvTrochoidNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             data = SvDict()
             
             data["Full Turns Vertices"] = v_list[0]
-            data.inputs["Data Zero"] = {
+            data.inputs["Data1"] = {
                 "type": "SvVerticesSocket", 
-                "name": "Vertices", 
+                "name": "Full Turns Vertices", 
                 "nest": None }
-            
+ 
+            data["Full Turns Edges"] = e_list[0]
+            data.inputs["Data2"] = {
+                "type": "SvStringsSocket", 
+                "name": "Full Turns Edges", 
+                "nest": None }
+                       
             print("----")
             print("data=")
             pprint(data)
