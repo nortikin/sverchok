@@ -14,7 +14,7 @@ Generators Extended
    regular_solid
    ring_mk2
    smooth_lines
-   ellipse_mk2
+   ellipse_mk3
    torus_knot_mk2
    conic_section
    super_ellipsoid

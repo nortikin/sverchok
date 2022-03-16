@@ -39,7 +39,7 @@
     SvWFCTextureNode
     SvTorusKnotNodeMK2
     SvRingNodeMK2
-    SvEllipseNodeMK2
+    SvEllipseNodeMK3
     SvSuperEllipsoidNode
     SvRegularSolid
     SvConicSectionNode

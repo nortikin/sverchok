@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from collections import Mapping
+from collections.abc import Mapping
 from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic, Optional, Union
 
 import bpy

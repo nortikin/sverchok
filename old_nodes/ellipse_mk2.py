@@ -43,6 +43,8 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
+    replacement_nodes = [('SvEllipseNodeMK3', None, None)]
+
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
 
@@ -244,7 +246,7 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             theta = delta * n + phase
             x = -cx + a * cos(theta)
             y = -cy + b * sin(theta)
-            # apply inplane rotation
+            # apply in-plane rotation
             xx = x * coss - y * sins
             yy = x * sins + y * coss
             add_vert((xx, yy, 0))
