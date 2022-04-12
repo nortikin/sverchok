@@ -10,4 +10,8 @@ Exchange
    bezier_in
    nurbs_in
    receive_from_sorcar
+   FCStd_sketch
+   FCStd_spreadsheet
+   FCStd_write
+   FCStd_read
    gcode_exporter
