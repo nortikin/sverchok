@@ -645,6 +645,7 @@
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
     SvSetCollection
+    SvCopyModifiersNode
 
 ## Scene
     SvGetObjectsData
