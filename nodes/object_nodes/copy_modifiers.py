@@ -11,6 +11,7 @@ from sverchok.data_structure import repeat_last
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.handle_blender_data import BlModifier
 
 
 class SvCopyModifiersNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node):
@@ -43,10 +44,9 @@ class SvCopyModifiersNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node
                     is_valid = False
                     break
                 mod_to = to.modifiers[mod_from.name]
-                for prop in (p for p in mod_from.bl_rna.properties if not p.is_readonly):
-                    if getattr(mod_to, prop.identifier) != getattr(mod_from, prop.identifier):
-                        is_valid = False
-                        break
+                if BlModifier(mod_to) != BlModifier(mod_from):
+                    is_valid = False
+                    break
             else:
                 if len(to.modifiers) != len(_from.modifiers):
                     is_valid = False
@@ -55,9 +55,20 @@ class SvCopyModifiersNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node
             if not is_valid:
                 to.modifiers.clear()
                 for mod_from in _from.modifiers:
-                    new_mod = to.modifiers.new(mod_from.name, mod_from.type)
+                    mod_to = to.modifiers.new(mod_from.name, mod_from.type)
+
+                    # apply modifier properties
                     for prop in (p for p in mod_from.bl_rna.properties if not p.is_readonly):
-                        setattr(new_mod, prop.identifier, getattr(mod_from, prop.identifier))
+                        setattr(mod_to, prop.identifier, getattr(mod_from, prop.identifier))
+                    if mod_from.type == 'NODES' and mod_from.node_group:
+                        for tree_inp in mod_from.node_group.inputs[1:]:
+                            prop_name = tree_inp.identifier
+                            mod_to[prop_name] = mod_from[prop_name]
+                            mod_to[f"{prop_name}_use_attribute"] = mod_from[f"{prop_name}_use_attribute"]
+                            mod_to[f"{prop_name}_attribute_name"] = mod_from[f"{prop_name}_attribute_name"]
+                        for tree_out in mod_from.node_group.outputs[1:]:
+                            prop_name = tree_out.identifier
+                            mod_to[f"{prop_name}_attribute_name"] = mod_from[f"{prop_name}_attribute_name"]
 
         self.outputs['Object'].sv_set(obj_to)
 
