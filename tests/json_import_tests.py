@@ -56,6 +56,7 @@ UNITTEST_SKIPLIST = [
     "l-systems.json",
     "ABCnaming.json",
     "ArchiCAD24import.json",
+    "CNC_CUTHOLES_RESIZE.json",
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 
