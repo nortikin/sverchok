@@ -1456,7 +1456,7 @@ def node_id(node):
     return node.node_id
 
 
-# EDGE CACHE settings : used to accellerate the (linear) edge list generation
+# EDGE CACHE settings : used to accelerate the (linear) edge list generation
 _edgeCache = {}
 _edgeCache["main"] = []  # e.g. [[0, 1], [1, 2], ... , [N-1, N]] (extended as needed)
 
@@ -1482,7 +1482,7 @@ def get_edge_list(n):
 
     e.g. [[0, 1], [1, 2], ... , [n-1, n]]
 
-    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    NOTE: This uses an "edge cache" to accelerate the edge list generation.
     The cache is extended automatically as needed to satisfy the largest number
     of edges within the node tree and it is shared by all nodes using this method.
     """
@@ -1496,7 +1496,7 @@ def get_edge_loop(n):
 
     e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
 
-    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    NOTE: This uses an "edge cache" to accelerate the edge list generation.
     The cache is extended automatically as needed to satisfy the largest number
     of edges within the node tree and it is shared by all nodes using this method.
     """

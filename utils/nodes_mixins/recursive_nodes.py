@@ -110,7 +110,7 @@ class SvRecursiveNode():
                 bmesh_list, other_param1, other_param2 = params
 
         creating the bmesh_list before matching improves performance a lot, but if
-        you are modifiying the bm in your function do it over a copy  -> bm.copy()
+        you are modifying the bm in your function do it over a copy  -> bm.copy()
 
 
     '''

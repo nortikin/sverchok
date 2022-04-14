@@ -54,7 +54,7 @@ An example that sets us up for the first Sverchok example is the cube. Conceptua
     polygons = [[],[],[],[],[],[]]
     
 
-Once you define polygons then you are also defining edges implicitely. If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons may share edges. I think this broadly covers the things you should be comfortable with before Sverchok will make sense.
+Once you define polygons then you are also defining edges implicitly. If a polygon has 4 vertices, then it also has 4 edges. Two adjacent polygons may share edges. I think this broadly covers the things you should be comfortable with before Sverchok will make sense.
 
 ###Sverchok
 

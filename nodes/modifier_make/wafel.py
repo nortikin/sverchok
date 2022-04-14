@@ -446,7 +446,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                                  lz1])
                                 k += 10
 
-                            # streight section
+                            # straight section
                             else:
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ
