@@ -23,7 +23,7 @@ import webbrowser
 import socket
 import inspect
 import bpy
-from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
+from bpy.props import StringProperty
 
 # global variables in tools
 import sverchok
@@ -339,10 +339,18 @@ def idname_draw(self, context):
     op.new_bl_idname = bl_idname
 
 
+VERSION = f"v{sverchok.bl_info['version'][0]}.{sverchok.bl_info['version'][1]}.{sverchok.bl_info['version'][2]}"
+
+
+def test(self, context):
+    self.layout.label(text=VERSION)
+
+
 def register():
     branch = get_branch()
     if branch:
         bpy.types.NODE_HT_header.append(node_show_branch)
+    bpy.types.NODE_HT_header.append(test)
 
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
