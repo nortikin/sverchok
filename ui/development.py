@@ -339,11 +339,8 @@ def idname_draw(self, context):
     op.new_bl_idname = bl_idname
 
 
-VERSION = f"v{sverchok.bl_info['version'][0]}.{sverchok.bl_info['version'][1]}.{sverchok.bl_info['version'][2]}"
-
-
 def test(self, context):
-    self.layout.label(text=VERSION)
+    self.layout.label(text=sverchok.VERSION)
 
 
 def register():
