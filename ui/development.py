@@ -339,15 +339,16 @@ def idname_draw(self, context):
     op.new_bl_idname = bl_idname
 
 
-def test(self, context):
-    self.layout.label(text=sverchok.VERSION)
+def show_sv_version(self, context):
+    if displaying_sverchok_nodes(context):
+        self.layout.label(text=sverchok.VERSION)
 
 
 def register():
     branch = get_branch()
     if branch:
         bpy.types.NODE_HT_header.append(node_show_branch)
-    bpy.types.NODE_HT_header.append(test)
+    bpy.types.NODE_HT_header.append(show_sv_version)
 
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
