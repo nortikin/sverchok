@@ -143,6 +143,7 @@ limited_dissolve.py
 limited_dissolve_mk2.py
 mesh_separate_mk2.py
 symmetrize.py
+approx_subd_to_nurbs.py
 vd_attr_node_mk2.py
 scalar_field_point.py
 quads_to_nurbs.py

@@ -80,7 +80,7 @@ Outputs
 
 **Quaternions**
 
-The node outputs a list of one ore more quaternions based on the given input.
+The node outputs a list of one or more quaternions based on the given input.
 
 The node only generates the quaternions when the output socket is connected.
 

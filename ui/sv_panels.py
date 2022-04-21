@@ -20,7 +20,6 @@ import bpy
 
 import sverchok
 from sverchok.utils import profile
-from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.handle_blender_data import BlTrees
@@ -38,7 +37,7 @@ class SverchokPanels:
 
 class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ToolsMenu"
-    bl_label = f"Tree properties ({version_and_sha})"
+    bl_label = f"Tree properties"
     bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 

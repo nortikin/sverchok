@@ -19,3 +19,4 @@ Objects
    set_loop_normals
    set_mesh_attribute
    set_collection
+   copy_modifiers

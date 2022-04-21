@@ -117,7 +117,7 @@ Component Sharpness:
 
 .. image:: https://user-images.githubusercontent.com/10011941/71564638-61adba80-2aa4-11ea-9c1f-c1f5551287cf.png
 
-Adjacent Edges, Faces Angle and Neibor Faces Num:
+Adjacent Edges, Faces Angle and Neighbor Faces Num:
 
 .. image:: https://user-images.githubusercontent.com/10011941/71564682-134ceb80-2aa5-11ea-9b97-15891503f39c.png
 

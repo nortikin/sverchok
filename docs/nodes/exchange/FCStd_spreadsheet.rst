@@ -1,5 +1,5 @@
 FCStd Spreadsheet (Exchange)
-===========
+============================
 
 Functionality
 -------------
