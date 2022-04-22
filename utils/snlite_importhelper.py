@@ -29,6 +29,7 @@ sock_dict = {
     'm': 'SvMatrixSocket',
     'o': 'SvObjectSocket',
     'C': 'SvCurveSocket',
+    'D': 'SvDictionarySocket',
     'S': 'SvSurfaceSocket',
     'So': 'SvSolidSocket',
     'SF': 'SvScalarFieldSocket',
