@@ -60,6 +60,8 @@ UNITTEST_SKIPLIST = [
     "CNC_CUTHOLES_RESIZE.json",
     "Open4d_mesh.json",
     "BIM_ArchiCAD24_import.json",
+    "BIM_FreeCAD_import.json",
+    "BIM_truss_joint.json",
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 
