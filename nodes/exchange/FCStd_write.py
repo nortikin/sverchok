@@ -136,16 +136,25 @@ else:
             else:
                 return
 
-          
-            
+
 
 def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     try:
-        F.open(fc_file)
+        from os.path import exists
+
         Fname = bpy.path.display_name_from_filepath(fc_file)
-    except:
-        info ('FCStd open error')
+
+        if not exists(fc_file):
+            doc = F.newDocument(Fname)
+            doc.FileName = fc_file
+            doc.recompute()
+            doc.save()
+
+        F.open(fc_file)
+
+    except Exception as err:
+        info(f'FCStd open error, {err}')
         return
 
     F.setActiveDocument(Fname)
