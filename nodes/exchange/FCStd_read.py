@@ -239,4 +239,4 @@ def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvReadFCStdNode)
         bpy.utils.unregister_class(SvShowFcstdNamesOp)
-        bpy.utils.register_class(SvReadFCStdOperator)
+        bpy.utils.unregister_class(SvReadFCStdOperator)
