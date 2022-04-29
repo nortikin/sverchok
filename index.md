@@ -490,6 +490,7 @@
     SvBisectNode
     SvCutObjBySurfaceNode
     SvEdgesToFaces2D
+    SvTriangleFillScanline
     SvMergeMesh2D
     SvMergeMesh2DLite
     SvCropMesh2D
