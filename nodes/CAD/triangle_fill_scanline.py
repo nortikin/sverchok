@@ -61,10 +61,10 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs["Verts"].is_linked: return
 
-        bool_parameters = dict(use_beauty=self.use_beauty, use_dissolve=self.use_dissolve)
         def _set_multiple_sockets(data): _ = [self.outputs[i].sv_set(data[i]) for i in range(3)]
 
         def perform_ops(verts, edges):
+            bool_parameters = dict(use_beauty=self.use_beauty, use_dissolve=self.use_dissolve)
             bm = bmesh_from_pydata(verts, edges, [])
             bmesh.ops.triangle_fill(bm, **(bool_parameters | dict(edges=bm.edges[:])))   # pass normal?
             return pydata_from_bmesh(bm)            
@@ -89,15 +89,8 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
                 out = perform_ops(verts, edges)
                 _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
             else:
-                # [ ] works
-                # out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
-                out = [[],[],[]]
-                for geom in zip(VERTS_IN, EDGES_IN):
-                    new_values = perform_ops(*geom)
-                    _ = [out[i].append(new_values[i]) for i in range(3)]
-                _set_multiple_sockets(out)
-
-        
+                out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
+                _set_multiple_sockets(list(zip(*out)))
 
 
 classes = [SvTriangleFillScanline]
