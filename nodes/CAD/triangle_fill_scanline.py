@@ -77,14 +77,17 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             [ ] works
             - generate edges, each separate set of verts will be considered as a closed ring
             '''
-            vert_list = []
-            edge_list = []
+            if self.merge_incoming and self.vertex_list_count > 1:
+                EDGES_IN = ...
+                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
+            else:
+                ...
 
         else:
             EDGES_IN = self.inputs["Edges"].sv_get()
   
-            if len(VERTS_IN) > 1 and self.merge_incoming:
-                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*len(VERTS_IN))
+            if self.vertex_list_count > 1 and self.merge_incoming:
+                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
                 out = perform_ops(verts, edges)
                 _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
             else:
