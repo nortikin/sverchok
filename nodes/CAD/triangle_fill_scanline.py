@@ -81,16 +81,15 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         else:
             EDGES_IN = self.inputs["Edges"].sv_get()
 
-            if self.merge_incoming:
                
-                if len(VERTS_IN) == 1:
-                    verts, edges = VERTS_IN[0], EDGES_IN[0]
-                elif len(VERTS_IN) > 1:
-                    verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*len(VERTS_IN))
-                
+            if len(VERTS_IN) == 1:
+                verts, edges = VERTS_IN[0], EDGES_IN[0]
                 out = perform_ops(verts, edges)
                 _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
-                
+            elif len(VERTS_IN) > 1 and self.merge_incoming:
+                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*len(VERTS_IN))
+                out = perform_ops(verts, edges)
+                _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
             else:
                 # [ ] works
                 # out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
