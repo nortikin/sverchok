@@ -73,26 +73,17 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         if hasattr(VERTS_IN, "__len__"): self.vertex_list_count = len(VERTS_IN)
 
         if not self.inputs["Edges"].is_linked:
-            '''
-            [ ] works
-            - generate edges, each separate set of verts will be considered as a closed ring
-            '''
-            if self.merge_incoming and self.vertex_list_count > 1:
-                EDGES_IN = ...
-                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
-            else:
-                ...
-
+            EDGES_IN = [get_edge_loop(len(verts)) for verts in VERTS_IN]
         else:
             EDGES_IN = self.inputs["Edges"].sv_get()
   
-            if self.vertex_list_count > 1 and self.merge_incoming:
-                verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
-                out = perform_ops(verts, edges)
-                _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
-            else:
-                out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
-                _set_multiple_sockets(list(zip(*out)))
+        if self.merge_incoming and self.vertex_list_count > 1:
+            verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
+            out = perform_ops(verts, edges)
+            _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
+        else:
+            out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
+            _set_multiple_sockets(list(zip(*out)))
 
 
 classes = [SvTriangleFillScanline]
