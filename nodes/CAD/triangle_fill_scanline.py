@@ -57,7 +57,6 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs["Verts"].is_linked: return
 
         bool_parameters = dict(use_beauty=self.use_beauty, use_dissolve=self.use_dissolve)
-        def _get(name): return self.inputs[name].sv_get()
         def _set_multiple_sockets(data): _ = [self.outputs[i].sv_set(data[i]) for i in range(3)]
 
         def perform_ops(verts, edges):
@@ -65,6 +64,8 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             bmesh.ops.triangle_fill(bm, **(bool_parameters | dict(edges=bm.edges[:])))   # pass normal?
             return pydata_from_bmesh(bm)            
         
+        VERTS_IN = self.inputs["Verts"].sv_get()
+
         if not self.inputs["Edges"].is_linked:
             '''
             - generate edges, each separate set of verts will be considered as a closed ring
@@ -74,7 +75,6 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             edge_list = []
 
         else:
-            VERTS_IN = self.inputs["Verts"].sv_get()
             EDGES_IN = self.inputs["Edges"].sv_get()
 
             if self.merge_incoming:
