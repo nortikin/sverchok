@@ -76,7 +76,6 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             '''
             [ ] works
             - generate edges, each separate set of verts will be considered as a closed ring
-            - hide merge, verts will be merged anyway
             '''
             vert_list = []
             edge_list = []
