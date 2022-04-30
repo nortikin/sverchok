@@ -54,6 +54,9 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         if self.vertex_list_count > 1:
             layout.prop(self, "merge_incoming")
+        row = layout.row()
+        row.prop(self, "use_dissolve", text="Dissolve")
+        row.prop(self, "use_beauty", text="Beauty")
 
     def process(self):
         if not self.inputs["Verts"].is_linked: return
@@ -80,13 +83,8 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
 
         else:
             EDGES_IN = self.inputs["Edges"].sv_get()
-
-               
-            if len(VERTS_IN) == 1:
-                verts, edges = VERTS_IN[0], EDGES_IN[0]
-                out = perform_ops(verts, edges)
-                _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
-            elif len(VERTS_IN) > 1 and self.merge_incoming:
+  
+            if len(VERTS_IN) > 1 and self.merge_incoming:
                 verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*len(VERTS_IN))
                 out = perform_ops(verts, edges)
                 _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
