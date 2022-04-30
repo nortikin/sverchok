@@ -71,8 +71,10 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         VERTS_IN = self.inputs["Verts"].sv_get()
         if hasattr(VERTS_IN, "__len__"): self.vertex_list_count = len(VERTS_IN)
 
-        NO_EDGES = not self.inputs["Edges"].is_linked
-        EDGES_IN = [get_edge_loop(len(verts)) for verts in VERTS_IN] if NO_EDGES else self.inputs["Edges"].sv_get()
+        if not self.inputs["Edges"].is_linked:
+            EDGES_IN = [get_edge_loop(len(verts)) for verts in VERTS_IN]
+        else:
+            EDGES_IN = self.inputs["Edges"].sv_get()
   
         if self.merge_incoming and self.vertex_list_count > 1:
             verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
