@@ -42,6 +42,7 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
     use_beauty: bpy.props.BoolProperty(name="use beauty", default=False, update=updateNode,
         description="use best triangulation division")
 
+    vertex_list_count: bpy.props.IntProperty(name="Track input socket count", description="used at runtime..")
 
     def sv_init(self, context):
         self.inputs.new("SvVerticesSocket", "Verts")
@@ -51,7 +52,8 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", "Polygons")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "merge_incoming")
+        if self.vertex_list_count > 1:
+            layout.prop(self, "merge_incoming")
 
     def process(self):
         if not self.inputs["Verts"].is_linked: return
@@ -65,9 +67,11 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             return pydata_from_bmesh(bm)            
         
         VERTS_IN = self.inputs["Verts"].sv_get()
+        if hasattr(VERTS_IN, "__len__"): self.vertex_list_count = len(VERTS_IN)
 
         if not self.inputs["Edges"].is_linked:
             '''
+            [ ] works
             - generate edges, each separate set of verts will be considered as a closed ring
             - hide merge, verts will be merged anyway
             '''
@@ -78,17 +82,23 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
             EDGES_IN = self.inputs["Edges"].sv_get()
 
             if self.merge_incoming:
-                
+               
                 if len(VERTS_IN) == 1:
                     verts, edges = VERTS_IN[0], EDGES_IN[0]
                 elif len(VERTS_IN) > 1:
-                    verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [])
+                    verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*len(VERTS_IN))
                 
                 out = perform_ops(verts, edges)
                 _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
+                
             else:
-                out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
-                _set_multiple_sockets(zip(*out))
+                # [ ] works
+                # out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]
+                out = [[],[],[]]
+                for geom in zip(VERTS_IN, EDGES_IN):
+                    new_values = perform_ops(*geom)
+                    _ = [out[i].append(new_values[i]) for i in range(3)]
+                _set_multiple_sockets(out)
 
         
 
