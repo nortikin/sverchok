@@ -46,6 +46,9 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new("SvVerticesSocket", "Verts")
         self.inputs.new("SvStringsSocket", "Edges")
+        # self.inputs.new("SvStringsSocket", "Edge Mask")
+        # self.inputs.new("SvVerticesSocket", "Normal")
+        
         self.outputs.new("SvVerticesSocket", "Verts")
         self.outputs.new("SvStringsSocket", "Edges")
         self.outputs.new("SvStringsSocket", "Polygons")
