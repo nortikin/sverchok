@@ -49,8 +49,10 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
 
     def sv_execute(self, context, node):
         if self.mode == "FreeCAD":
-            print("can do something here")
-            # if len self.files == 1 , and it doesn't end in FCStd/FCStd1 set it.
+            # This is triggered after the file is selected or typed in by the user in the Text Field of path
+            if self.directory and len(self.files) == 1:
+                if self.files[0].name and not self.files[0].name.endswith(".FCStd"):
+                    self.files[0].name = self.files[0].name + ".FCStd" 
 
         node.set_data(self.directory, self.files)
 
