@@ -38,15 +38,14 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         name="File Path", description="Filepath used for writing files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
+    filename_ext: StringProperty(default="")
+    filter_glob: StringProperty(default="", options={'HIDDEN'})    
+
+    mode: StringProperty(default='')
     def custom_config(self, context):
         if self.mode == "FreeCAD":
             self.filename_ext = ".FCStd"  #  ".tif"
             self.filter_glob = "*.FCStd"  # #*.tif;*.png;"  (if more than one, separate by ;)
-
-    mode: StringProperty(default='', update=custom_config)
-    filename_ext: StringProperty(default="")
-    filter_glob: StringProperty(default="", options={'HIDDEN'})    
-
 
     def sv_execute(self, context, node):
         if self.mode == "FreeCAD":
@@ -56,6 +55,9 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         node.set_data(self.directory, self.files)
 
     def invoke(self, context, event):
+        
+        if self.mode: self.custom_config(context)
+
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -74,6 +76,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     files_num: IntProperty(name='files number ', default=0)
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH', update=updateNode)
+    mode: StringProperty(default='', description="mode determines behaviour of the File Open Dialogue and Operator")
 
     def sv_init(self, context):
 
