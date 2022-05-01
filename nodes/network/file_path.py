@@ -38,13 +38,21 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         name="File Path", description="Filepath used for writing files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filename_ext: StringProperty(default="")#  ".tif"
-    filter_glob: StringProperty(
-        default="", #*.tif;*.png;*.jpeg;*.jpg", 
-        options={'HIDDEN'})    
+    def custom_config(self, context):
+        if self.mode == "FreeCAD":
+            self.filename_ext = ".FCStd"  #  ".tif"
+            self.filter_glob = "*.FCStd"  # #*.tif;*.png;"  (if more than one, separate by ;)
+
+    mode: StringProperty(default='', update=custom_config)
+    filename_ext: StringProperty(default="")
+    filter_glob: StringProperty(default="", options={'HIDDEN'})    
 
 
     def sv_execute(self, context, node):
+        if self.mode == "FreeCAD":
+            print("can do something here")
+            # if len self.files == 1 , and it doesn't end in FCStd/FCStd1 set it.
+
         node.set_data(self.directory, self.files)
 
     def invoke(self, context, event):
@@ -67,11 +75,6 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH', update=updateNode)
 
-    filename_ext: StringProperty(default="")#  ".tif"
-    filter_glob: StringProperty(
-        default="", #*.tif;*.png;*.jpeg;*.jpg", 
-        options={'HIDDEN'})  
-
     def sv_init(self, context):
 
         self.outputs.new('SvFilePathSocket', "File Path")
@@ -80,8 +83,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         op = 'node.sv_file_path'
         file_path_operator = self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
-        file_path_operator.filename_ext = self.filename_ext
-        file_path_operator.filter_glob = self.filter_glob
+        file_path_operator.mode = self.mode
 
         if self.files_num == 0:
             layout.label(text=self.directory)
