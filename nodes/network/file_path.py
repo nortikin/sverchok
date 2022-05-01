@@ -34,9 +34,15 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH')
 
-    filepath: bpy.props.StringProperty(
-        name="File Path", description="Filepath used for writing waveform files",
+    filepath: StringProperty(
+        name="File Path", description="Filepath used for writing files",
         maxlen=1024, default="", subtype='FILE_PATH')
+
+    filename_ext: StringProperty(default="")#  ".tif"
+    filter_glob: StringProperty(
+        default="", #*.tif;*.png;*.jpeg;*.jpg", 
+        options={'HIDDEN'})    
+
 
     def sv_execute(self, context, node):
         node.set_data(self.directory, self.files)
@@ -61,6 +67,11 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH', update=updateNode)
 
+    filename_ext: StringProperty(default="")#  ".tif"
+    filter_glob: StringProperty(
+        default="", #*.tif;*.png;*.jpeg;*.jpg", 
+        options={'HIDDEN'})  
+
     def sv_init(self, context):
 
         self.outputs.new('SvFilePathSocket', "File Path")
@@ -68,7 +79,10 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
 
         op = 'node.sv_file_path'
-        self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
+        file_path_operator = self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
+        file_path_operator.filename_ext = self.filename_ext
+        file_path_operator.filter_glob = self.filter_glob
+
         if self.files_num == 0:
             layout.label(text=self.directory)
         elif self.files_num == 1:
