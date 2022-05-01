@@ -60,10 +60,11 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "use_dissolve", text="Dissolve")
         row.prop(self, "use_beauty", text="Beauty")
 
+    def set_multiple_sockets(self, data): _ = [self.outputs[i].sv_set(data[i]) for i in range(3)]
+
     def process(self):
         if not self.inputs["Verts"].is_linked: return
-
-        def _set_multiple_sockets(data): _ = [self.outputs[i].sv_set(data[i]) for i in range(3)]
+        #if not any(socket.is_linked in self.outputs): return
 
         def perform_ops(verts, edges, mask=None, normal=None):
             bm = bmesh_from_pydata(verts, edges, [])
@@ -75,18 +76,20 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         VERTS_IN = self.inputs["Verts"].sv_get()
         if hasattr(VERTS_IN, "__len__"): self.vertex_list_count = len(VERTS_IN)
 
+        # Prepare Edges, even if they aren't passed explicitely
         if not self.inputs["Edges"].is_linked:
             EDGES_IN = [get_edge_loop(len(verts)) for verts in VERTS_IN]
         else:
             EDGES_IN = self.inputs["Edges"].sv_get()
   
+        # perform main purpose of the node, and pass computed output to sockets
         if self.merge_incoming and self.vertex_list_count > 1:
             verts, edges, _ = mesh_join(VERTS_IN, EDGES_IN, [[]]*self.vertex_list_count)
             out = perform_ops(verts, edges)
-            _set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
+            self.set_multiple_sockets(([out[0]], [out[1]], [out[2]]))
         else:
             out = [perform_ops(*geom) for geom in zip(VERTS_IN, EDGES_IN)]  # MASK_IN, NORMAL
-            _set_multiple_sockets(list(zip(*out)))
+            self.set_multiple_sockets(list(zip(*out)))
 
 
 classes = [SvTriangleFillScanline]
