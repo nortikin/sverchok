@@ -66,16 +66,16 @@ class SvTriangleFillScanline(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs["Verts"].is_linked: return
         #if not any(socket.is_linked in self.outputs): return
 
+        VERTS_IN = self.inputs["Verts"].sv_get(default=[[]])
+        self.vertex_list_count = len(VERTS_IN)
+
         def perform_ops(verts, edges, mask=None, normal=None):
             bm = bmesh_from_pydata(verts, edges, [])
             bool_parameters = dict(use_beauty=self.use_beauty, use_dissolve=self.use_dissolve)
-            # extended_params = dict(edges=bm.edges[:], normal=custom_normal)
-            bmesh.ops.triangle_fill(bm, **(bool_parameters | dict(edges=bm.edges[:])))   # pass edge mask, and normal in advanced mode?
+            extended_params = dict(edges=bm.edges[:]) #, normal=custom_normal) # pass edge mask, and normal in advanced mode?
+            bmesh.ops.triangle_fill(bm, **(bool_parameters | extended_params))
             return pydata_from_bmesh(bm)            
         
-        VERTS_IN = self.inputs["Verts"].sv_get()
-        if hasattr(VERTS_IN, "__len__"): self.vertex_list_count = len(VERTS_IN)
-
         # Prepare Edges, even if they aren't passed explicitely
         if not self.inputs["Edges"].is_linked:
             EDGES_IN = [get_edge_loop(len(verts)) for verts in VERTS_IN]
