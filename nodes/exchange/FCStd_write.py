@@ -136,16 +136,24 @@ else:
             else:
                 return
 
-          
-            
+
 
 def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     try:
-        F.open(fc_file)
+        from os.path import exists
+
         Fname = bpy.path.display_name_from_filepath(fc_file)
-    except:
-        info ('FCStd open error')
+
+        if not exists(fc_file):
+            doc = F.newDocument(Fname)
+            doc.recompute()
+            doc.saveAs(fc_file) # using full filepath, saveAs also sets doc.FileName internally
+
+        F.open(fc_file)
+
+    except Exception as err:
+        info(f'FCStd open error, {err}')
         return
 
     F.setActiveDocument(Fname)
@@ -170,7 +178,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     if mod == 'solid': #EXPORT SOLID 
 
-        for i,s in enumerate(solid):      
+        for i, s in enumerate(solid):      
             new_part = F.ActiveDocument.addObject( "Part::Feature",part_name+str(i) ) #multiple: give numbered name
             new_part.Shape = s
 
@@ -180,10 +188,9 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
         
         for i in range(len(verts)):
 
-            temp_faces=faces[i]
-            temp_verts=verts[i]
-
-            meshdata=[]
+            temp_faces = faces[i]
+            temp_verts = verts[i]
+            meshdata = []
 
             for f in temp_faces:
                 v1,v2,v3 = f[0],f[1],f[2]
