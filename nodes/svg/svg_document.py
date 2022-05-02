@@ -152,7 +152,7 @@ class SvSVGWrite(bpy.types.Operator, SvGenericNodeLocator):
         if hasattr(node, "suffix_filename_with_framenumber"):
             if node.suffix_filename_with_framenumber:
                 frame_number = bpy.context.scene.frame_current
-                file_name = f"{file_name}_{frame_number:04}_"
+                file_name = f"{file_name}_{frame_number:04}"
         
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
@@ -201,7 +201,9 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
     file_name: StringProperty(name="Name", default="Sv_svg")
     live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
 
-    suffix_filename_with_framenumber: BoolProperty(name="Suffix with Frame Number")
+    suffix_filename_with_framenumber: BoolProperty(
+        name="Suffix with Frame Number", 
+        description="adds the frame number to the end of the filename, useful for animations")
 
     def sv_init(self, context):
         self.width = 200
