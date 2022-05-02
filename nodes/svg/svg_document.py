@@ -147,6 +147,13 @@ class SvSVGWrite(bpy.types.Operator, SvGenericNodeLocator):
         svg_defs += '</defs>\n'
         svg_end = '</svg>'
         file_name = node.file_name
+
+        # for animation this is the code that changes the local file_name before writing.
+        if hasattr(node, "suffix_filename_with_framenumber"):
+            if node.suffix_filename_with_framenumber:
+                frame_number = bpy.context.scene.frame_current
+                file_name = f"{file_name}_{frame_number:04}_"
+        
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
         svg = svg_head + svg_defs + svg_shapes + svg_end
@@ -192,7 +199,9 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     file_name: StringProperty(name="Name", default="Sv_svg")
-    live_update: BoolProperty(name='Live Update')
+    live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
+
+    suffix_filename_with_framenumber: BoolProperty(name="Suffix with Frame Number")
 
     def sv_init(self, context):
         self.width = 200
@@ -213,6 +222,9 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
         self.wrapper_tracked_ui_draw_op(layout, "node.svg_write", icon='RNA_ADD', text="Write")
+    
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "suffix_filename_with_framenumber")
 
     def process(self):
 
