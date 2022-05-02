@@ -223,11 +223,10 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "doc_width")
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
-        self.wrapper_tracked_ui_draw_op(layout, "node.svg_write", icon='RNA_ADD', text="Write")
+        row = layout.row(align=True)
+        self.wrapper_tracked_ui_draw_op(row, "node.svg_write", icon='RNA_ADD', text="Write")
+        row.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
     
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "suffix_filename_with_framenumber")
-
     def process(self):
 
         x = self.doc_width / (self.doc_scale)
