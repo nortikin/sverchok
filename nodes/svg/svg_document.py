@@ -217,10 +217,17 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_filename_socket(self, socket, context, layout):
         text = f"{socket.name}. {str(socket.objects_number) if socket.is_linked else ''}"
-        layout.label(text=text)
+
         if not socket.is_linked:
-            layout.prop(self, "file_name", text="")
-        layout.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
+            col = layout.column()
+            col.label(text="File Name:")
+            row_below = col.row(align=True)
+            row_below.prop(self, "file_name", text='')
+            row_below.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
+        else:
+            layout.label(text=text)
+            #layout.prop(self, "file_name", text="")
+            layout.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
 
 
     def draw_buttons(self, context, layout):
