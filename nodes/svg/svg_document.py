@@ -211,7 +211,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvFilePathSocket', 'Folder Path')
         self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
-        self.inputs.new('SvStringsSocket', "File Name").prop_name = "file_name"
+        self.inputs.new('SvTextSocket', "File Name").prop_name = "file_name"
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
 
