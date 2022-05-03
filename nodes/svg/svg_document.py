@@ -211,9 +211,17 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvFilePathSocket', 'Folder Path')
         self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
-        self.inputs.new('SvTextSocket', "File Name").prop_name = "file_name"
+        self.sv_new_input('SvTextSocket', "File Name", prop_name="file_name", custom_draw="draw_filename_socket")
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
+
+    def draw_filename_socket(self, socket, context, layout):
+        text = f"{socket.name}. {str(socket.objects_number)}"
+        layout.label(text=text)
+        if not socket.is_linked:
+            layout.prop(self, "file_name", text="")
+        layout.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
+
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "live_update")
@@ -221,13 +229,10 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         mode_row = layout.split(factor=0.4, align=False)
         mode_row.label(text="Units:")
         mode_row.prop(self, "units", text="")
-        # layout.prop(self, "file_name")
         layout.prop(self, "doc_width")
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
-        row = layout.row(align=True)
-        self.wrapper_tracked_ui_draw_op(row, "node.svg_write", icon='RNA_ADD', text="Write")
-        row.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
+        self.wrapper_tracked_ui_draw_op(layout, "node.svg_write", icon='RNA_ADD', text="Write")
     
     def process(self):
 
