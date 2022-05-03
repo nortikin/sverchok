@@ -202,6 +202,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
     live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
 
     suffix_filename_with_framenumber: BoolProperty(
+        default=False,
         name="Suffix with Frame Number", 
         description="adds the frame number to the end of the filename, useful for animations")
 
@@ -210,6 +211,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvFilePathSocket', 'Folder Path')
         self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
+        self.inputs.new('SvStringsSocket', "File Name").prop_name = "file_name"
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
 
@@ -219,7 +221,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         mode_row = layout.split(factor=0.4, align=False)
         mode_row.label(text="Units:")
         mode_row.prop(self, "units", text="")
-        layout.prop(self, "file_name")
+        # layout.prop(self, "file_name")
         layout.prop(self, "doc_width")
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
@@ -238,6 +240,10 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
             (x, y, 0),
             (0, y, 0)
         ]
+
+        filename_socket = self.inputs.get("File Name")
+        if filename_socket and filename_socket.is_linked:
+            self.file_name = filename_socket.sv_get()[0][0]
 
         self.outputs['Canvas Vertices'].sv_set([verts])
         self.outputs['Canvas Edges'].sv_set([[(0, 1),(1, 2), (2, 3), (3, 0)]])
