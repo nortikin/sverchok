@@ -216,7 +216,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
 
     def draw_filename_socket(self, socket, context, layout):
-        text = f"{socket.name}. {str(socket.objects_number)}"
+        text = f"{socket.name}. {str(socket.objects_number) if socket.is_linked else ''}"
         layout.label(text=text)
         if not socket.is_linked:
             layout.prop(self, "file_name", text="")
