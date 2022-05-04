@@ -6,6 +6,15 @@ Functionality
 
 This node outputs the SVG objects to a SVG document.
 
+**Note:**
+
+There are slight UI modifications to this Node which are not visible in all documentation images
+
+* the *file name* property can now be controlled via a socket
+
+* there is a button (the clapperboard icon) which when enabled will suffix the filename with a frame number padded with 4 zeros, this can be useful for rendering animations
+
+
 Inputs
 ------
 
