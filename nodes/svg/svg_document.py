@@ -199,7 +199,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     file_name: StringProperty(name="Name", default="Sv_svg",
-        description="this variable holds the name of the file only, the file extension will be added automatically by sverchok")
+        description="File Name: this variable holds the name of the file only, the file extension will be added automatically by sverchok")
     live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
 
     suffix_filename_with_framenumber: BoolProperty(
@@ -211,9 +211,25 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvFilePathSocket', 'Folder Path')
         self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
-        self.sv_new_input('SvTextSocket', 'File Name', prop_name="file_name", quick_link_to_node="NoteNode")
+        self.sv_new_input('SvTextSocket', 'File Name',
+            custom_draw="draw_filename_socket", 
+            prop_name="file_name",
+            quick_link_to_node="NoteNode")
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
+
+    def draw_filename_socket(self, socket, context, layout):
+        linked = socket.is_linked
+        text = f"{socket.name}. {socket.objects_number if linked else ''}"
+
+        if not linked:
+            row = layout.row(align=True)
+            socket.draw_quick_link(context, row, self)
+            split = row.split(factor=0.2)
+            split.label(text=text)
+            split.prop(self, socket.prop_name, text='')
+        else:
+            layout.label(text=text)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "live_update")
