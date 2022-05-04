@@ -147,6 +147,13 @@ class SvSVGWrite(bpy.types.Operator, SvGenericNodeLocator):
         svg_defs += '</defs>\n'
         svg_end = '</svg>'
         file_name = node.file_name
+
+        # for animation this is the code that changes the local file_name before writing.
+        if hasattr(node, "suffix_filename_with_framenumber"):
+            if node.suffix_filename_with_framenumber:
+                frame_number = bpy.context.scene.frame_current
+                file_name = f"{file_name}_{frame_number:04}"
+        
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
         svg = svg_head + svg_defs + svg_shapes + svg_end
@@ -191,14 +198,20 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         name='Scale', description='Iterations',
         update=updateNode)
 
-    file_name: StringProperty(name="Name", default="Sv_svg")
-    live_update: BoolProperty(name='Live Update')
+    file_name: StringProperty(name="Name", default="Sv_svg",
+        description="this variable holds the name of the file only, the file extension will be added automatically by sverchok")
+    live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
+
+    suffix_filename_with_framenumber: BoolProperty(
+        name="Suffix with Frame Number", 
+        description="adds the frame number to the end of the filename, useful for animations")
 
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvFilePathSocket', 'Folder Path')
         self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
+        self.sv_new_input('SvTextSocket', 'File Name', prop_name="file_name", quick_link_to_node="NoteNode")
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
 
@@ -208,13 +221,20 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         mode_row = layout.split(factor=0.4, align=False)
         mode_row.label(text="Units:")
         mode_row.prop(self, "units", text="")
-        layout.prop(self, "file_name")
+        #layout.prop(self, "file_name")
         layout.prop(self, "doc_width")
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
-        self.wrapper_tracked_ui_draw_op(layout, "node.svg_write", icon='RNA_ADD', text="Write")
-
+        row = layout.row(align=True)
+        self.wrapper_tracked_ui_draw_op(row, "node.svg_write", icon='RNA_ADD', text="Write")
+        row.separator()
+        row.prop(self, "suffix_filename_with_framenumber", icon="SEQUENCE", text='')
+    
     def process(self):
+
+        filename_socket = self.inputs.get('File Name')
+        if filename_socket and filename_socket.is_linked:
+            self.file_name = filename_socket.sv_get()[0][0]
 
         x = self.doc_width / (self.doc_scale)
         y = self.doc_height / (self.doc_scale)

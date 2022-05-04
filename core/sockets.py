@@ -648,6 +648,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_label = "Text Socket"
 
     color = (0.68,  0.85,  0.90, 1)
+    quick_link_to_node: StringProperty()
 
     default_property: StringProperty(update=process_from_socket)
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name
