@@ -1226,6 +1226,14 @@ class SvSolidSocket(NodeSocket, SvSocketCommon):
         import Part
         return graft_data(data, item_level=0, data_types=(Part.Shape,))
 
+
+class SvMeshSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvMeshSocket"
+    bl_label = "Mesh Socket"
+
+    color = (0.0, 0.6, 0.7, 1.0)
+
+
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
     bl_idname = "node.sv_quicklink_new_node_input"
@@ -1450,7 +1458,7 @@ classes = [
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
     SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp, SvInputLinkMenuOp
+    SvSocketHelpOp, SvInputLinkMenuOp, SvMeshSocket,
 ]
 
 def socket_interface_classes():

@@ -35,7 +35,8 @@ SOCKET_TYPES = {
     'q': 'SvQuaternionSocket',
     'c': 'SvColorSocket',
     'vf': "SvVectorFieldSocket",
-    'sf': 'SvScalarFieldSocket'
+    'sf': 'SvScalarFieldSocket',
+    'me': 'SvMeshSocket',
     }
 
 def test_socket_type(self, other, A, B):
@@ -178,6 +179,11 @@ def vector_to_color(socket, source_data):
 
     return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]
 
+
+def mesh_to_vector(socket, source_data):
+    return [source_data.verts]
+
+
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket, msg=None):
         super().__init__()
@@ -229,7 +235,9 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         ['m', 'q', matrices_to_quaternions],
         ['s', 'v', string_to_vector],
         ['s', 'c', string_to_color],
-        ['v', 'c', vector_to_color]]
+        ['v', 'c', vector_to_color],
+        ['me', 'v', mesh_to_vector],
+    ]
 
     @classmethod
     def convert(cls, socket, other, source_data):

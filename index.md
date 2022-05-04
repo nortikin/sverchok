@@ -225,6 +225,13 @@
     SvExVectorFieldLinesNode
     SvExScalarFieldGraphNode
 
+## Mesh
+    SvLimeMeshNode
+    SvGridMeshNode
+    SvSetPositionMeshNode
+    SvMeshDataNode
+    SvMeshToObjectNode
+
 ## Solids @ Make Face
     SvSolidPolygonFaceNode
     SvSolidWireFaceNode

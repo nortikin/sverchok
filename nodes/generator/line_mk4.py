@@ -63,7 +63,7 @@ def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=Non
     vert_number = sum([v_number if v_number > 1 else 2 for _, v_number in
                        zip(range(line_number), params[0])])
 
-    verts_lines = np.empty((vert_number, 3))
+    verts_lines = np.empty((vert_number, 3), dtype=np.float32)
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))

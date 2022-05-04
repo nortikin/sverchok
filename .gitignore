@@ -77,3 +77,14 @@ htmlcov/
 utils/sv_svg_custom_server.htm
 node_scripts/SNLite_templates/local/
 
+# Cython compilation files - https://stackoverflow.com/a/16318111
+# Subfloders should be included manually into the pattern :(
+utils/cython/*
+!*.py
+!*.pyx
+!utils/cython/src
+
+utils/cython/src/*
+!*.pyx
+!*.pxd
+!utils/cython/src/cpp
