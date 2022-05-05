@@ -145,18 +145,29 @@ Frame changes
     Also you can add shortcut for the operator by pressing :kbd:`RMB` on the button of the operator (active tree panel).
     Another way to update is enabling `Live update` mode. In this case only changed put of the tree will be updated.
 
+Scene changes
+    This trigger reacts on arbitrary changes in scene. Those can be: moving
+    objects, changing edit / object mode, mesh editing, assign materials etc.
+
 
 Modes (:ref:`active_tree_panel`)
 --------------------------------
 
 Live update
-    If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
-    made by user. This property does not effect evaluation upon frame changes or by `re-update all nodes` operator.
+    If enabled it means that the tree will be evaluated upon changes in its
+    topology, changes in node properties or scene changes made by user.
+    This property does not effect evaluation upon frame changes or by
+    `re-update all nodes` operator.
     Enabling the property will call the tree topology changes trigger.
 
 Animate
     If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
     which have property `to_animate` enabled.
+
+Scene update
+    If enabled togather with Live Update the tree will be reevaluated upon
+    changes in the scene. It will effect only nodes with `interactive`
+    property enabled.
 
 
 Animation
@@ -176,8 +187,10 @@ enabled the node will be update each frame change. This can serve two purposes.
 
 - Firstly this can be used for generating animations. In this case
   :doc:`Frame info node <nodes/scene/frame_info_mk2>` will be most useful.
-- Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks.
-  For frame change the left/right arrow buttons can be used.
+- **(Deprecated, the Scene trigger is used instead now)** Secondly updating
+  nodes upon frame change can be used for refreshing nodes which take data from
+  Blender data blocks. For frame change the left/right arrow buttons can be
+  used.
 
 
 .. warning::
