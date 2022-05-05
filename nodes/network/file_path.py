@@ -112,10 +112,26 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.files_num = len(files)
 
+    def get_linked_socket_mode_and_set_operator(self):
+        """
+        only call this mode if the output(s) .is_linked returns true
+        """
+        socket = self.outputs[0]
+        if socket.is_linked:
+            other_socket = socket.other
+            if hasattr(other_socket, "filepath_node_mode"):
+                print("YES!", other_socket.filepath_node_mode)
+                self.mode = other_socket.filepath_node_mode
+            else:
+                self.mode = ''
+
     def process(self):
         # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
+
+        self.get_linked_socket_mode_and_set_operator()
+
         directory = self.directory
         if self.files:
             files = []
