@@ -112,7 +112,7 @@ fragment_shader = '''
 lexed_colors = [
     'stringColor', 'numberColor', 'name1Color',
     'parenColor', 'braceColor', 'bracketColor', 'equalsColor',
-    'opColor', 'commentColor', 'name2Color', 'name3Color'
+    'opColor', 'commentColor', 'name2Color', 'name3Color', 'qualifierColor', 'bgColor'
 ]
 
 lexed_fragment_shader = '''
@@ -133,23 +133,38 @@ lexed_fragment_shader = '''
     uniform vec4 commentColor;
     uniform vec4 name2Color;
     uniform vec4 name3Color;
+    uniform vec4 qualifierColor;
+    uniform vec4 bgColor;
     
     void main()
     {
-        vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
+        vec4 test_tint = vec4(0.0, 0.0, 1.0, 1.0);
+        vec4 background_black = vec4(0.0, 0.0, 0.0, 1.0);
+
         int cIndex = int(v_lexer);
-        if (cIndex == 3) { test_tint = stringColor; }
-        if (cIndex == 2) { test_tint = numberColor; }
+
         if (cIndex == 1) { test_tint = name1Color; }
-        if (cIndex == 22) { test_tint = equalsColor; }
-        if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
-        if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
-        if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
-        if (cIndex == 53) { test_tint = opColor; }
-        if (cIndex == 55) { test_tint = commentColor; }
-        if (cIndex == 90) { test_tint = name2Color; }
-        if (cIndex == 91) { test_tint = name3Color; }
-        fragColor = texture(image, texCoord_interp) * test_tint;
+        else if (cIndex == 2) { test_tint = numberColor; }
+        else if (cIndex == 3) { test_tint = stringColor; }
+        else if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
+        else if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
+        else if (cIndex == 22) { test_tint = equalsColor; }
+        else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
+        else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
+        else if (cIndex == 55 || cIndex == 60) { test_tint = commentColor; }
+        else if (cIndex == 90) { test_tint = name2Color; }
+        else if (cIndex == 91) { test_tint = name3Color; }
+        else if (cIndex == 92) { test_tint = qualifierColor; }
+
+        vec4 pixelColor = texture(image, texCoord_interp);
+
+        if (length(pixelColor.xyz) < 0.0001){
+            fragColor = mix(bgColor, texture(image, texCoord_interp) * test_tint, 0.5);
+        }
+        else{
+            fragColor = texture(image, texCoord_interp) * test_tint;
+        }
+
     }
 '''
 
@@ -182,7 +197,27 @@ def syntax_highlight_basic(node):
     import token
 
     text = node.terminal_text
-    # print(token.tok_name) #   <--- dict of token-kinds.
+    token_dict = tokenize.tok_name
+    """
+    in py3.7 this is different than py3.9+ 
+
+    print(tokenize.tok_name) #   <--- dict of token-kinds.
+
+    {0: 'ENDMARKER', 1: 'NAME', 2: 'NUMBER', 3: 'STRING', 4: 'NEWLINE', 5: 'INDENT', 
+    6: 'DEDENT', 7: 'LPAR', 8: 'RPAR', 9: 'LSQB', 10: 'RSQB', 11: 'COLON', 
+    12: 'COMMA', 13: 'SEMI', 14: 'PLUS', 15: 'MINUS', 16: 'STAR', 17: 'SLASH', 
+    18: 'VBAR', 19: 'AMPER', 20: 'LESS', 21: 'GREATER', 22: 'EQUAL', 23: 'DOT', 
+    24: 'PERCENT', 25: 'LBRACE', 26: 'RBRACE', 27: 'EQEQUAL', 28: 'NOTEQUAL', 
+    29: 'LESSEQUAL', 30: 'GREATEREQUAL', 31: 'TILDE', 32: 'CIRCUMFLEX', 
+    33: 'LEFTSHIFT', 34: 'RIGHTSHIFT', 35: 'DOUBLESTAR', 36: 'PLUSEQUAL', 
+    37: 'MINEQUAL', 38: 'STAREQUAL', 39: 'SLASHEQUAL', 40: 'PERCENTEQUAL', 
+    41: 'AMPEREQUAL', 42: 'VBAREQUAL', 43: 'CIRCUMFLEXEQUAL', 44: 'LEFTSHIFTEQUAL', 
+    45: 'RIGHTSHIFTEQUAL', 46: 'DOUBLESTAREQUAL', 47: 'DOUBLESLASH', 48: 'DOUBLESLASHEQUAL', 
+    49: 'AT', 50: 'ATEQUAL', 51: 'RARROW', 52: 'ELLIPSIS', 53: 'COLONEQUAL', 
+    54: 'OP', 55: 'AWAIT', 56: 'ASYNC', 57: 'TYPE_IGNORE', 58: 'TYPE_COMMENT', 
+    59: 'ERRORTOKEN', 60: 'COMMENT', 61: 'NL', 62: 'ENCODING', 63: 'N_TOKENS', 256: 'NT_OFFSET'
+    }
+    """
 
     array_size = node.terminal_width * node.num_rows
     ones = np.ones(array_size)
@@ -190,24 +225,30 @@ def syntax_highlight_basic(node):
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
-
         for token in tokens:
+
             if token.type in (0, 4, 56, 256):
                 continue
             if not token.string or (token.start == token.end):
                 continue
 
+            # if token.type != 1:
+            #    print(f"token.type, {token.type} , precise token={token.exact_type} ({token_dict.get(token.exact_type)}) ---> {token.string}")
+
             token_type = token.type
             
             if token.type == 1:
                 if token.string in {
-                        'print', 'def', 'class', 'break', 'continue', 'return', 'while', 'or', 'and',
-                        'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for'}:
+                        'print', 'break', 'continue', 'return', 'while', 'or', 'and', 'dir',
+                        'if', 'else', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for',
+                        'try', 'except', 'finally'}:
                     token_type = 90
+                elif token.string in {'def', 'class', 'lambda'}:
+                    token_type = 92
                 elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
                     token_type = 91
 
-            elif token.type == 53:
+            elif token.type == 54:
                 # OPS
                 # 7: 'LPAR', 8: 'RPAR
                 # 9: 'LSQB', 10: 'RSQB'
@@ -230,6 +271,7 @@ def syntax_highlight_basic(node):
             np.put(ones, np.arange(index1, index2), [current_type])
             
 
+    # print(ones.tolist())
     final_ones = ones.reshape((-1, node.terminal_width))
     return final_ones
 
@@ -441,17 +483,19 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     last_n_lines: bpy.props.IntProperty(min=0, name="last n lines", description="show n number of last lines", update=updateNode)
     filter_long_strings: bpy.props.BoolProperty(default=True, name="Filter", description="Filter long strings", update=updateNode)
 
-    stringColor: make_color("string color", (0.148, 0.447, 0.040, 1.0))  # 3
-    numberColor: make_color("number color", (0.9, 0.9, 1.0, 1.0))  # 2
-    name1Color: make_color("name1 color", (0.4, 0.9, 0.8, 1.0))  # 1
-    parenColor: make_color("parenthesis color", (0.4, 0.3, 0.7, 1.0))  # 53     7/8
-    bracketColor: make_color("brackets color", (0.5, 0.7, 0.7, 1.0))  # 53      9/10
-    braceColor: make_color("braces color", (0.4, 0.5, 0.7, 1.0))  # 53         25/26
-    opColor: make_color("op color", (1.0, 0.3, 0.7, 1.0))  # 53
-    name2Color: make_color("name2 color", (0.7, 0.9, 0.3, 1.0))  # 90
-    name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
-    commentColor: make_color("comment color", (0.2, 0.2, 0.2, 1.0))
-    equalsColor: make_color("equals color", (0.9, 0.7, 0.6, 1.0))
+    name1Color: make_color("name1 color",      (0.83, 0.91, 1.00, 1.0))  # 1
+    numberColor: make_color("number color",    (0.08, 0.70, 0.98, 1.0))  # 2
+    stringColor: make_color("Strings",         (0.96, 0.85, 0.00, 1.0))  # 3
+    parenColor: make_color("parenthesis"  ,    (0.70, 0.07, 0.01, 1.0))  # 7, 8
+    bracketColor: make_color("Brackets color", (0.65, 0.68, 0.70, 1.0))  # 9, 10
+    equalsColor: make_color("Equals",          (0.90, 0.70, 0.60, 1.0))  # 22
+    braceColor: make_color("Braces",           (0.40, 0.50, 0.70, 1.0))  # 25, 26
+    opColor: make_color("Operators",           (1.00, 0.18, 0.00, 1.0))  # 53, 54
+    commentColor: make_color("Comments",       (0.49, 0.49, 0.49, 1.0))  # 55, 60
+    name2Color: make_color("Main syntax",      (0.90, 0.01, 0.02, 1.0))  # 90
+    name3Color: make_color("Bool etc,..",      (0.30, 0.90, 0.40, 1.0))  # 91
+    qualifierColor: make_color("Qualifiers",   (0.18, 0.77, 0.01, 1.0))  # 92
+    bgColor: make_color("Background",          (0.06, 0.06, 0.06, 1.0))  # there are nicer ways to calculate the background overlay.
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -543,9 +587,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         else:
             # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
             connected_bl_idname = self.inputs[0].other.node.bl_idname
-            
             if connected_bl_idname == "SvScriptNodeLite":
                 socket_data = list(self.inputs[0].other.node.script_str.splitlines())
+
                 self.set_node_props(socket_data)
 
             elif connected_bl_idname == "SvExecNodeMod":
@@ -586,9 +630,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         config.syntax_mode = self.syntax_mode
 
         if self.syntax_mode == "Code":
-            config.colors = {}
-            for color_name in lexed_colors:
-                config.colors[color_name] = getattr(self, color_name)[:]
+            config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
         draw_data = {
             'tree_name': self.id_data.name[:],
@@ -609,7 +651,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def sv_free(self):
         nvBGL2.callback_disable(node_id(self))
-        # self.delete_texture()
 
     def sv_copy(self, node):
         self.n_id = ''

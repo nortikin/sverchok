@@ -11,32 +11,32 @@ import copy
 from collections import deque, defaultdict
 from mathutils import Vector
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-        
+
 # === Object wrapper class ===
 class ObjectParams:
-    
+
     # Constructor
     def __init__(self, verts, edges, faces):
-        
+
         # Store the vertices, edges and faces
         self.verts = np.array(verts)
         self.num_verts = len(self.verts)
         self.edges = [tuple(sorted([e[0], e[1]])) for e in edges]
         self.faces = faces
-        
-        # Create bmesh from the datas
+
+        # Create bmesh from the data
         self.bm = bmesh_from_pydata(verts, self.edges, self.faces)
         self.bm.faces.ensure_lookup_table()
         self.bm.edges.ensure_lookup_table()
         self.bm.normal_update()
-    
+
     def free(self):
         if self.bm != None:
             self.bm.free()
 
     # Get the object-edge index from a bmesh edge
     def bm_to_obj_edge_index(self, bm_edge):
-        edge = tuple(sorted([bm_edge.verts[0].index, bm_edge.verts[1].index])) 
+        edge = tuple(sorted([bm_edge.verts[0].index, bm_edge.verts[1].index]))
         return self.edges.index(edge)
 
     # Get the object face index from a bmesh face
@@ -46,7 +46,7 @@ class ObjectParams:
             if set(f) == set(v_indices):
                 return i
         raise ValueError("Created BMesh faces is wrong")
-        
+
 # === Crease Lines class ===
 class CreaseLines:
 

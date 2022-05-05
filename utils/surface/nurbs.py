@@ -329,7 +329,7 @@ class SvNurbsSurface(SvSurface):
 
         if surface1.get_control_points().shape[1] != surface2.get_control_points().shape[1]:
             # TODO: try to unify knots first?
-            raise UnsupportedSurfaceTypeException("number of control poins along V direction does not match")
+            raise UnsupportedSurfaceTypeException("number of control points along V direction does not match")
 
         p1, p2 = surface1.get_degree_u(), surface2.get_degree_u()
         if p1 > p2:
@@ -377,7 +377,7 @@ class SvNurbsSurface(SvSurface):
 
         if surface1.get_control_points().shape[0] != surface2.get_control_points().shape[0]:
             # TODO: try to unify knots first?
-            raise UnsupportedSurfaceTypeException("number of control poins along U direction does not match")
+            raise UnsupportedSurfaceTypeException("number of control points along U direction does not match")
 
         p1, p2 = surface1.get_degree_v(), surface2.get_degree_v()
         if p1 > p2:
@@ -1163,7 +1163,7 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
     m = len(points[0])
 
     if (uknots is None) != (vknots is None):
-        raise Exception("uknots and vknots must be either both provided or both omited")
+        raise Exception("uknots and vknots must be either both provided or both omitted")
 
     if uknots is None:
         knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n)])

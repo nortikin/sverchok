@@ -103,11 +103,8 @@ def sv_update_handler(scene):
         return
 
     for ng in sverchok_trees():
-        try:
-            # print('sv_update_handler')
+        with catch_log_error():
             ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', str(e))  # name,
 
 
 @persistent

@@ -504,7 +504,7 @@ class SvCreateMaterial(bpy.types.Operator):
 
     @classmethod
     def description(cls, context, properties):
-        return "Crate new material"
+        return "Create new material"
 
     def execute(self, context):
         mat = bpy.data.materials.new('sv_material')

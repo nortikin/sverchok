@@ -1,6 +1,6 @@
 > ### This file is parsed by menu.py
 >
-> The following strict rules apply to editing this file:
+> The following rules apply to editing this file:
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
@@ -39,7 +39,7 @@
     SvWFCTextureNode
     SvTorusKnotNodeMK2
     SvRingNodeMK2
-    SvEllipseNodeMK2
+    SvEllipseNodeMK3
     SvSuperEllipsoidNode
     SvRegularSolid
     SvConicSectionNode
@@ -72,6 +72,8 @@
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
     SvCurveRemoveExcessiveKnotsNode
+    ---
+    SvAdaptivePlotNurbsCurveNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
@@ -596,6 +598,7 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvBezierCurveOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     ---
@@ -642,6 +645,7 @@
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
     SvSetCollection
+    SvCopyModifiersNode
 
 ## Scene
     SvGetObjectsData
@@ -672,7 +676,12 @@
     SvExportSolidNode
     SvReceiveFromSorcarNode
     SvExportGcodeNode
-
+    SvReadFCStdNode
+    SvWriteFCStdNode
+    SvReadFCStdSketchNode
+    SvFCStdSpreadsheetNode
+    SvApproxSubdtoNurbsNode
+    
 ## Script
     SvFormulaNodeMk5
     SvFormulaInterpolateNode

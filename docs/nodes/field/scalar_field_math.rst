@@ -22,7 +22,7 @@ This node has the following parameter:
 * **Operation**. This defines the mathematical operation to perform. The available operations are:
 
   * **Add**. Add two scalar fields.
-  * **Sub**. Substract one scalar field from another.
+  * **Sub**. Subtract one scalar field from another.
   * **Multiply**. Multiply two scalar fields.
   * **Minimum**. Create a scalar field, the value of which is calculated as
     minimal of values of two scalar fields at the same point.

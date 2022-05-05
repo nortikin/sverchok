@@ -127,6 +127,8 @@ def flat_iter(data):
 def match_long_repeat(lsts):
     """return matched list, using the last value to fill lists as needed
     longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]
+    
+    lists passed into this function are not modified, it produces non-deep copies and extends those.
     """
     max_l = 0
     tmp = []
@@ -1190,9 +1192,11 @@ def extend_blender_class(cls):
     Take into account that this decorator does not delete anything onto reload event
     """
     bl_class = getattr(bpy.types, cls.__name__)
-    for base_cls in chain([cls], cls.__bases__[1:]):
-        if hasattr(base_cls, '__annotations__'):
-            for name, prop in base_cls.__annotations__.items():
+    for base_cls in chain([cls], cls.__bases__):
+        # https://docs.python.org/3/howto/annotations.html#accessing-the-annotations-dict-of-an-object-in-python-3-9-and-older
+        # avoiding getting inherited annotations
+        if '__annotations__' in base_cls.__dict__:
+            for name, prop in base_cls.__dict__['__annotations__'].items():
                 setattr(bl_class, name, prop)
         for key in (key for key in dir(base_cls) if not key.startswith('_')):
             setattr(bl_class, key, getattr(base_cls, key))
@@ -1452,7 +1456,7 @@ def node_id(node):
     return node.node_id
 
 
-# EDGE CACHE settings : used to accellerate the (linear) edge list generation
+# EDGE CACHE settings : used to accelerate the (linear) edge list generation
 _edgeCache = {}
 _edgeCache["main"] = []  # e.g. [[0, 1], [1, 2], ... , [N-1, N]] (extended as needed)
 
@@ -1478,7 +1482,7 @@ def get_edge_list(n):
 
     e.g. [[0, 1], [1, 2], ... , [n-1, n]]
 
-    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    NOTE: This uses an "edge cache" to accelerate the edge list generation.
     The cache is extended automatically as needed to satisfy the largest number
     of edges within the node tree and it is shared by all nodes using this method.
     """
@@ -1492,7 +1496,7 @@ def get_edge_loop(n):
 
     e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
 
-    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    NOTE: This uses an "edge cache" to accelerate the edge list generation.
     The cache is extended automatically as needed to satisfy the largest number
     of edges within the node tree and it is shared by all nodes using this method.
     """

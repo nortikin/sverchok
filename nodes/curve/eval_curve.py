@@ -92,7 +92,7 @@ class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 for curve, ts, samples in zip_long_repeat(curves, ts_i, samples_i):
                     if self.eval_mode == 'AUTO':
                         t_min, t_max = curve.get_u_bounds()
-                        ts = np.linspace(t_min, t_max, num=samples, dtype=np.float64)
+                        ts = np.linspace(t_min, t_max, num=int(samples), dtype=np.float64)
                     else:
                         ts = np.array(ts)
 

@@ -35,11 +35,13 @@ Features
 - You can view Faces, set their color, and infer the associated Edges. The non-flat shader modes require Faces to produce enough information for normals. Color can be set by polygon or by mesh, also can use vertex colors to color edges.
 - Bake the current mesh(es)
 - Set the 3d cursor to the center of Mesh 1. (handy for rotating around in this virtual geometry)
-- "Polygon offset" (to prevent z-fighting between edges and faces)
+- "Polygon offset" (to prevent z-fighting between edges and faces), on by default.
 - "quad tessellator", this mode treats all faces as potentially irregular and uses extended mathutils to get the normal.
-
-- (experimental..) the "Attribute socket" can be used to configure the viewer node from another node, in this case a dedicated Attributes node.
 - can show matrices if you only connect matrices without any other geometry. Size can be defined in the N-Panel or in the right click menu
+- alpha channel, the color socket is rgba.
+  - multiple simultaneous viewers mixing opaque geometry may show render artifacts. 
+- (experimental..) the "Attribute socket" can be used to configure the viewer node from another node, in this case a dedicated Attributes node.
+
 
 Inputs
 ------

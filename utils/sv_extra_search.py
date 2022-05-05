@@ -23,6 +23,7 @@ import bpy
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
@@ -59,9 +60,13 @@ def ensure_short_description(description):
 
 def ensure_valid_show_string(nodetype):
 
-    loop_reverse[nodetype.bl_label] = nodetype.bl_idname
-    description = nodetype.bl_rna.docstring.get_shorthand()
-    return nodetype.bl_label + ensure_short_description(description)
+    try:
+        loop_reverse[nodetype.bl_label] = nodetype.bl_idname
+        description = nodetype.bl_rna.docstring.get_shorthand()
+        return nodetype.bl_label + ensure_short_description(description)
+    except Exception as err:
+        error(f'Nodetype "{nodetype}": ensure_valid_show_string() threw an exception:\n {err}')
+
 
 def function_iterator(module_file):
     for name in ddir(module_file):
@@ -116,7 +121,12 @@ def gather_items(context):
             nodetype = get_node_class_reference(item[0])
             if not nodetype:
                 continue
-            fx.append((str(idx), ensure_valid_show_string(nodetype), '', idx))
+
+            docstring = ensure_valid_show_string(nodetype)
+            if not docstring:
+                continue
+
+            fx.append((str(idx), docstring, '', idx))
             idx += 1
 
     for k, v in macros.items():
@@ -174,7 +184,10 @@ class SvExtraSearch(bpy.types.Operator):
 
     def invoke(self, context, event):
         context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-        loop['results'] = gather_items(context)
+        
+        if not loop.get('results'):
+            loop['results'] = gather_items(context)
+        
         wm = context.window_manager
         wm.invoke_search_popup(self)
         return {'FINISHED'}

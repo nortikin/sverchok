@@ -522,6 +522,14 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
+    replacement_nodes = [('SvMeshViewer',
+                            dict(Vertices = 'vertices',
+                                 Edges = 'edges',
+                                 Polygons = 'faces',
+                                 Matrix = 'matrix'
+                            ),
+                        None)]
+
     node_dict = {}
 
     selected_draw_mode: EnumProperty(
@@ -699,6 +707,8 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
+        layout.separator()
+        self.node_replacement_menu(context, layout)
 
     def bake(self):
         bpy.ops.node.sverchok_mesh_baker_mk3(

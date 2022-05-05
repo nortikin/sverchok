@@ -14,6 +14,11 @@ from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 if skimage is not None:
     import skimage.measure
 
+    try:
+        from skimage.measure import marching_cubes_lewiner as skimage_marching_cubes
+    except ImportError:
+        from skimage.measure import marching_cubes as skimage_marching_cubes
+
 # This node can work without dependencies, but slower.
 
 class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
@@ -239,7 +244,7 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
                 new_verts, new_faces = new_verts.tolist(), new_faces.tolist()
                 new_normals = []
             elif self.implementation == 'skimage':
-                new_verts, new_faces, normals, values = skimage.measure.marching_cubes_lewiner(
+                new_verts, new_faces, normals, values = skimage_marching_cubes(
                         func_values, level = value,
                         step_size = 1)
                 new_verts = self.scale_back(b1n, b2n, samples_x, samples_y, samples_z, new_verts)

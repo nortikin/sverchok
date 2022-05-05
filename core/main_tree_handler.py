@@ -33,8 +33,12 @@ class TreeHandler:
                 return  # ignore the event
 
         # frame update
+        # This event can't be handled via NodesUpdater during animation rendering because new frame change event
+        # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
         if event.type == TreeEvent.FRAME_CHANGE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+            list(global_updater(event.type))
+            return
 
         # something changed in scene and it duplicates some tree events which should be ignored
         elif event.type == TreeEvent.SCENE_UPDATE:
@@ -111,7 +115,7 @@ class NodesUpdater:
 
     @classmethod
     def add_task(cls, event: Union[TreeEvent, GroupEvent]):
-        """It can handle ony one tree at a time"""
+        """It can handle only one tree at a time"""
         if cls.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name}, already updating tree: {cls._event.tree.name}")
         cls._event = event
@@ -218,10 +222,11 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
 
     # grab trees from active node group editors
     trees_ui_to_update = set()
-    for area in bpy.context.screen.areas:
-        if area.ui_type == BlTrees.MAIN_TREE_ID:
-            if area.spaces[0].path:  # filter editors without active tree
-                trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
+    if bpy.context.screen:  # during animation rendering can be None
+        for area in bpy.context.screen.areas:
+            if area.ui_type == BlTrees.MAIN_TREE_ID:
+                if area.spaces[0].path:  # filter editors without active tree
+                    trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
 
     for bl_tree in BlTrees().sv_main_trees:
         was_changed = False
@@ -363,7 +368,8 @@ class ContextTrees:
         Should be called upon loading new file, other wise it can lead to errors and even crash
         Also according the fact that trees have links to real blender nodes
         it is also important to call this method upon undo method otherwise errors and crashes
-        Also single tre can be added, in this case only it will be deleted (it's going to be used in force update)
+        Also single tree can be added, in this case only it will be deleted
+        (it's going to be used in force update)
         """
         if bl_tree and bl_tree.tree_id in cls._trees:
             del cls._trees[bl_tree.tree_id]
@@ -406,7 +412,7 @@ class ContextTrees:
                     has_old_from_socket_links = False
 
                 # this is only because some nodes calculated data only if certain output socket is connected
-                # ideally we would not like ot make previous node outdated, but it requires changes in many nodes
+                # ideally we would not like to make previous node outdated, but it requires changes in many nodes
                 if not has_old_from_socket_links:
                     link.from_node.is_input_changed = True
                 else:

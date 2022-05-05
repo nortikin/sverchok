@@ -114,7 +114,7 @@ class SvCircleCurveMk2Node(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 if self.curve_mode == 'GENERIC':
                     curve.u_bounds = (t_min, t_max)
                 else:
-                    curve = curve.to_nurbs_full(n = n_points).cut_segment(t_min, t_max)
+                    curve = curve.to_nurbs_arc(n = n_points, t_min=t_min, t_max=t_max)
                 curves_out.append(curve)
 
         self.outputs['Curve'].sv_set(curves_out)

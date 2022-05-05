@@ -40,6 +40,11 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'VertsMask')
 
     def process(self):
+        
+        # older versions of this node do not have a vertsmask socket. This upgrades them silently
+        if not self.outputs.get('VertsMask'):
+            self.outputs.new('SvStringsSocket', 'VertsMask')
+        
         if not (all([s.is_linked for s in self.inputs]) and any([s.is_linked for s in self.outputs])):
             return
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)

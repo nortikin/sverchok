@@ -76,7 +76,7 @@ def get_hash():
         return None
 
 def get_version_string():
-    version = ".".join(map(str, sverchok.bl_info['version']))
+    version = sverchok.VERSION
     branch = get_branch()
     if branch:
         version += ", branch " + branch

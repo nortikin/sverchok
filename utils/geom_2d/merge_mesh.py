@@ -262,7 +262,7 @@ def mark_crop_faces(mesh, mode, crop_name='crop', del_flag='del'):
 
 
 def get_face_mask_by_flag(mesh, flag, del_flag='del'):
-    # returns mask of faces where 1 mean that face has given flag
+    # returns mask of faces where 1 means that face has given flag
     out = [0 for face in mesh.faces if del_flag not in face.flags]
     for i, face in enumerate(mesh.faces):
         if del_flag in face.flags:

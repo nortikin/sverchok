@@ -49,15 +49,29 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    arc_modes = [
+            ('ARC', "Circular arc", "Circular arc", 0),
+            ('BEZIER2', "Quadratic Bezier arc", "Quadratic Bezier curve segment", 1)
+        ]
+
+    arc_mode : EnumProperty(
+        name = "Fillet mode",
+        description = "Type of curve to generate for fillets",
+        items = arc_modes,
+        default = 'ARC',
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, "concat", toggle=True)
+        layout.label(text='Fillet mode:')
+        layout.prop(self, 'arc_mode', text='')
+        layout.prop(self, "concat")
         if self.concat:
-            layout.prop(self, "scale_to_unit", toggle=True)
-        layout.prop(self, "cyclic", toggle=True)
+            layout.prop(self, "scale_to_unit")
+        layout.prop(self, "cyclic")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'make_nurbs', toggle=True)
+        layout.prop(self, 'make_nurbs')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -68,7 +82,7 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     def make_curve(self, vertices, radiuses):
         if self.cyclic:
             last_fillet = calc_fillet(vertices[-1], vertices[0], vertices[1], radiuses[0])
-            prev_edge_start = last_fillet.p2
+            prev_edge_start = vertices[0] if last_fillet is None else last_fillet.p2
             radiuses = radiuses[1:] + [radiuses[0]]
             corners = list(zip(vertices, vertices[1:], vertices[2:], radiuses))
             corners.append((vertices[-2], vertices[-1], vertices[0], radiuses[-1]))
@@ -86,7 +100,10 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
                 edge_len = np.linalg.norm(edge_direction)
                 edge = SvLine(prev_edge_start, edge_direction / edge_len)
                 edge.u_bounds = (0.0, edge_len)
-                arc = fillet.get_curve()
+                if self.arc_mode == 'ARC':
+                    arc = fillet.get_circular_arc()
+                else:
+                    arc = fillet.get_bezier_arc()
                 prev_edge_start = fillet.p2
                 curves.append(edge)
                 curves.append(arc)

@@ -18,7 +18,7 @@
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
 **Addon for**: [Blender](http://blender.org) version *2.93* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**Prerequisites**: We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.   
+**Prerequisites**: We added optional nodes that depend on additional libraries. This [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) lists these dependencies and includes installation instructions.  
 [**Documentation**:](http://nortikin.github.io/sverchok/docs/main.html) If anything isn't clear (or missing) in this document please
 ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right
 and you can help us!  
@@ -62,9 +62,21 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)   
-   User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
-   Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
+   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)
+   -  Do not unpack it after downloading, Blender will take care of that later.
+       - Mac OS users can [recompress the folder](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac) if Safari has automatically extracted it and deleted the `.zip`  
+   -  Edit > Preferences > Add-ons > 
+   -  Press the `Install..` button 
+   -  Browse to the location of the zip and select it, then press "Install Add-on"
+   -  Blender unpacks the add-on, and when completed it will present the option to enable it.
+   -  Enable it by clicking in the box beside `Node: Sverchok`:
+   -  Let Blender complete the installation, most likely this will take a few seconds, be patient.
+   -  When complete Blender will display:
+       -  [x] Node: Sverchok
+   
+   
+   By default Blender ( above 2.80) will store the fact that you enabled an add-on and it will be available next time you start Blender.
+   
 
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
@@ -86,7 +98,7 @@ Install Sverchok as you would any blender addon.
 
 ### Troubleshooting Installation Errors
 
-If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
+If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names.
 
 If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
 

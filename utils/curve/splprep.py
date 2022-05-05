@@ -35,7 +35,7 @@ def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, f
     if weights is not None:
         kwargs['w'] = np.asarray(weights)
     if metric is not None:
-        tknots = Spline.create_knots(points_orig, metric)
+        tknots = Spline.create_knots(points.T, metric)
         if len(tknots) != len(points.T):
             raise Exception(f"Number of T knots ({len(tknots)}) is not equal to number of points ({len(points.T)})")
         kwargs['u'] = tknots
@@ -54,7 +54,7 @@ def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, f
                 degree, knotvector,
                 control_points)
     if is_cyclic:
-        curve = curve.cut_segment(0.0, 1.0)
+        curve = curve.cut_segment(0.0, 1.00)
     #curve.u_bounds = (0.0, 1.0)
     return curve
 

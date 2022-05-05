@@ -44,6 +44,7 @@ from sverchok.utils.modules.geom_primitives import (
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.data_structure import match_long_repeat, describe_data_shape
+from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
 identity_matrix = Matrix()
@@ -760,6 +761,21 @@ class PlaneEquation(object):
             raise Exception("Unknown coordinate plane name")
 
     @classmethod
+    def from_coordinate_value(cls, axis, value):
+        if axis in 'XYZ':
+            axis = 'XYZ'.index(axis)
+        elif axis not in {0, 1, 2}:
+            raise Exception("Unknown coordinate axis")
+        
+        point = np.zeros((3,), dtype=np.float64)
+        normal = np.zeros((3,), dtype=np.float64)
+
+        point[axis] = value
+        normal[axis] = 1.0
+
+        return PlaneEquation.from_normal_and_point(normal, point)
+
+    @classmethod
     def from_matrix(cls, matrix, normal_axis='Z'):
         if normal_axis == 'X':
             normal = Vector((1,0,0))
@@ -784,7 +800,7 @@ class PlaneEquation(object):
         normal = self.normal.length
         if abs(normal) < 1e-8:
             raise Exception("Normal of the plane is (nearly) zero: ({}, {}, {})".format(self.a, self.b, self.c))
-        return PlaneEquation(a/normal, b/normal, c/normal, d/normal)
+        return PlaneEquation(self.a/normal, self.b/normal, self.c/normal, self.d/normal)
     
     def check(self, point, eps=1e-6):
         """
@@ -895,14 +911,14 @@ class PlaneEquation(object):
         #   rho = -------------------------
         #           sqrt(A^2 + B^2 + C^2)
         #
-        points = np.array(points)
+        points = np.asarray(points)
         a, b, c, d = self.a, self.b, self.c, self.d
         # (A x + B y + C z) is a scalar product of (x, y, z) and (A, B, C)
         numerators = abs(points.dot([a, b, c]) + d)
         denominator = math.sqrt(a*a + b*b + c*c)
         return numerators / denominator
 
-    def intersect_with_line(self, line, min_det=1e-8):
+    def intersect_with_line(self, line, min_det=1e-12):
         """
         Calculate intersection between this plane and specified line.
         input: line - an instance of LineEquation.
@@ -1056,6 +1072,44 @@ class PlaneEquation(object):
         v2p = self.projection_of_point(v2)
         return v2p - v1p
 
+    def projection_of_matrix(self, matrix, direction_axis='Z', track_axis='X'):
+        if direction_axis == track_axis:
+            raise Exception("Direction axis must differ from tracked axis")
+
+        direction_axis_idx = 'XYZ'.index(direction_axis)
+        track_axis_idx = 'XYZ'.index(track_axis)
+        #third_axis_idx = list(set([0,1,2]).difference([direction_axis_idx, track_axis_idx]))[0]
+
+        xx = Vector((1, 0, 0))
+        yy = Vector((0, 1, 0))
+        zz = Vector((0, 0, 1))
+        axes = [xx, yy, zz]
+
+        z_axis_v = axes[direction_axis_idx]
+        x_axis_v = axes[(direction_axis_idx+1)%3]
+        y_axis_v = axes[(direction_axis_idx+2)%3]
+
+        direction = matrix @ z_axis_v
+        x_axis = matrix @ x_axis_v
+        y_axis = matrix @ y_axis_v
+
+        orig_point = matrix.translation
+        line = LineEquation.from_direction_and_point(direction, orig_point)
+        point = self.intersect_with_line(line)
+
+        new_x_axis = self.projection_of_vector(orig_point, orig_point + x_axis).normalized()
+        new_y_axis = self.projection_of_vector(orig_point, orig_point + y_axis).normalized()
+        new_z_axis = new_x_axis.cross(new_y_axis).normalized()
+        if (track_axis_idx + 1) % 3 == direction_axis_idx:
+            new_y_axis = new_z_axis.cross(new_x_axis)
+        else:
+            new_x_axis = new_y_axis.cross(new_z_axis)
+        
+        new_matrix = Matrix([new_x_axis, new_y_axis, new_z_axis]).transposed().to_4x4()
+        new_matrix.translation = point
+        
+        return new_matrix
+
     def intersect_with_plane(self, plane2):
         """
         Return an intersection of this plane with another one.
@@ -1099,23 +1153,23 @@ class PlaneEquation(object):
         p1 = plane2.intersect_with_line(line1)
         p2 = plane2.intersect_with_line(line2)
         if p1 is None:
-            raise Exception(f"Plane {plane2} does not intersect with line {line1}")
+            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line1}")
         if p2 is None:
-            raise Exception(f"Plane {plane2} does not intersect with line {line2}")
+            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line2}")
         return LineEquation.from_two_points(p1, p2)
 
-    def is_parallel(self, other):
+    def is_parallel(self, other, eps=1e-8):
         """
         Check if other object is parallel to this plane.
         input: PlaneEquation, LineEquation or Vector.
         output: boolean.
         """
         if isinstance(other, PlaneEquation):
-            return abs(self.normal.angle(other.normal)) < 1e-8
+            return abs(self.normal.angle(other.normal)) < eps
         elif isinstance(other, LineEquation):
-            return abs(self.normal.dot(other.direction)) < 1e-8
+            return abs(self.normal.dot(other.direction)) < eps
         elif isinstance(other, mathutils.Vector):
-            return abs(self.normal.dot(other)) < 1e-8
+            return abs(self.normal.dot(other)) < eps
         else:
             raise Exception("Don't know how to check is_parallel for {}".format(type(other)))
 
@@ -1275,16 +1329,70 @@ class LineEquation(object):
         projection_lengths = projection_lengths[np.newaxis].T
         projections = projection_lengths * unit_direction
         return center + projections
+    
+    def distance_to_line(self, line2, parallel_threshold=1e-6):
+        r1 = self.point
+        r2 = line2.point
+        s1 = self.direction
+        s2 = line2.direction
+        num = np_mixed_product(r2-r1, s1, s2)
+        denom = np.linalg.norm(np.cross(s1, s2))
+        if denom < parallel_threshold:
+            raise Exception("Lines are (almost) parallel")
+        return abs(num) / denom
 
-def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
+def distance(v1, v2):
+    v1 = np.asarray(v1)
+    v2 = np.asarray(v2)
+    return np.linalg.norm(v1 - v2)
+
+def locate_linear(p1, p2, p):
+    dx = p2[0] - p1[0]
+    dy = p2[1] - p1[1]
+    dz = p2[2] - p1[2]
+    dxs = np.array([dx, dy, dz])
+
+    i = np.argmax(abs(dxs))
+    u = (p[i] - p1[i]) / dxs[i]
+    #print(f"L: {p1} - {p2}: {p} => {u}")
+    return u
+
+def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
     x4,y4,z4 = v4
 
-    m = np.array([v2-v1, v3-v1, v4-v1])
-    if abs(np.linalg.det(m)) > 1e-6:
+    #d1 = distance(v1, v2)
+    #d2 = distance(v3, v4)
+    #m = np.array([v2-v1, v3-v1, v4-v1])
+    #det_m = np.linalg.det(m)
+    #if abs(det_m) > 1e-6:
+    #    print(f"Det_m: {det_m}")
+    #    return None
+
+    line1 = LineEquation.from_two_points(v1, v2)
+    line2 = LineEquation.from_two_points(v3, v4)
+    dist = line1.distance_to_line(line2)
+    if dist > tolerance:
+        #print(f"Distance: {dist}")
         return None
+
+    ds = line1.distance_to_points([v3, v4])
+    if ds[0] < tolerance:
+        u = locate_linear(v1, v2, v3)
+        return u, 0.0, np.asarray(v3)
+    if ds[1] < tolerance:
+        u = locate_linear(v1, v2, v4)
+        return u, 1.0, np.asarray(v4)
+
+    ds = line2.distance_to_points([v1, v2])
+    if ds[0] < tolerance:
+        v = locate_linear(v3, v4, v1)
+        return 0.0, v, np.asarray(v1)
+    if ds[1] < tolerance:
+        v = locate_linear(v3, v4, v2)
+        return 1.0, v, np.asarray(v2)
 
     denom = np.linalg.det(np.array([
             [x1-x2, x4-x3],
@@ -1305,7 +1413,16 @@ def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
 
     et = endpoint_tolerance
     if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
+        #print(f"U = {u}, V = {v}, Dist={dist}")
         return None
+#     if u < 0.0:
+#         u = 0.0
+#     if u > 1.0:
+#         u = 1.0
+#     if v < 0.0:
+#         v = 0.0
+#     if v > 0.0:
+#         v = 1.0
 
     x = u*(x1-x2) + x2
     y = u*(y1-y2) + y2
@@ -1627,6 +1744,13 @@ class Triangle(object):
         """
         return 2 * self.area() / self.perimeter()
 
+    def circumscribed_circle_radius(self):
+        a = (self.v2 - self.v1).length
+        b = (self.v3 - self.v1).length
+        c = (self.v3 - self.v2).length
+        p = (a+b+c)/2.0
+        return (a*b*c) / (4 * sqrt(p*(p-a)*(p-b)*(p-c)))
+
     def inscribed_circle_center(self):
         """
         The center of the inscribed circle.
@@ -1707,9 +1831,19 @@ class BoundingBox(object):
     def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
         self.min = np.array([min_x, min_y, min_z])
         self.max = np.array([max_x, max_y, max_z])
+        self._mean = None
+        self._radius = None
 
     def mean(self):
-        return 0.5 * (self.min + self.max)
+        if self._mean is None:
+            self._mean = 0.5 * (self.min + self.max)
+        return self._mean
+
+    def radius(self):
+        if self._radius is None:
+            mean = self.mean()
+            self._radius = np.linalg.norm(mean - self.min)
+        return self._radius
 
     @property
     def min_x(self):
@@ -1782,6 +1916,12 @@ class BoundingBox(object):
                 self.min_z - d, self.max_z + d)
         return box
 
+    def contains(self, point):
+        return (point >= self.min).all() and (point <= self.max).all()
+
+    def __contains__(self, point):
+        return self.contains(point)
+
 #     def is_empty(self):
 #         return (self.min == self.max).all()
 
@@ -1799,6 +1939,19 @@ class BoundingBox(object):
         #print(f"{self} x {box} => {result}")
         return result
 
+    def get_plane(self, axis, side):
+        if axis in 'XYZ':
+            axis = 'XYZ'.index(axis)
+        elif axis not in {0, 1, 2}:
+            raise Exception("Unknown coordinate axis")
+        if side == 'MIN':
+            value = self.min[axis]
+        elif side == 'MAX':
+            value = self.max[axis]
+        else:
+            raise Exception("Unknown bounding box side")
+        return PlaneEquation.from_coordinate_value(axis, value)
+
     def __repr__(self):
         return f"<BBox: {self.min} .. {self.max}>"
 
@@ -1808,6 +1961,12 @@ def bounding_box(vectors):
     r.min = vectors.min(axis=0)
     r.max = vectors.max(axis=0)
     return r
+
+def intersects_line_bbox(line, bbox):
+    planes = [bbox.get_plane(axis, side) for axis in [0,1,2] for side in ['MIN', 'MAX']]
+    intersections = [plane.intersect_with_line(line) is not None for plane in planes]
+    good = [point for point in intersections if point in bbox]
+    return len(good) > 0
 
 class LinearApproximationData(object):
     """
@@ -1952,19 +2111,24 @@ class SphericalApproximationData(object):
     vertices by a sphere.
     It's instance is returned by spherical_approximation() method.
     """
-    def __init__(self):
-        self.radius = 0
-        self.center = None
+    def __init__(self, center=None, radius=0.0):
+        self.radius = radius
+        self.center = center
         self.residues = None
 
     def get_projections(self, vertices):
         """
         Calculate projections of vertices to the sphere.
         """
-        vertices = np.array(vertices) - self.center
+        vertices = np.asarray(vertices) - self.center
         norms = np.linalg.norm(vertices, axis=1)[np.newaxis].T
         normalized = vertices / norms
         return self.radius * normalized + self.center
+
+    def projection_of_points(self, points):
+        return self.get_projections(points)
+
+SphereEquation = SphericalApproximationData
 
 def spherical_approximation(data):
     """
@@ -2187,9 +2351,9 @@ def circle_by_three_points(p1, p2, p3):
     edge1_mid = v1.lerp(v2, 0.5)
     edge2_mid = v2.lerp(v3, 0.5)
 
-    plane0 = PlaneEquation.from_three_points(v1, v2, v3)
-    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid)
-    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid)
+    plane0 = PlaneEquation.from_three_points(v1, v2, v3)#.normalized()
+    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid)#.normalized()
+    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid)#.normalized()
     axis = plane1.intersect_with_plane(plane2)
     if not axis:
         return None
@@ -2260,6 +2424,24 @@ def circle_by_two_derivatives(start, tangent, second):
     circle.normal = np.array(normal)
     circle.point1 = np.array(start)
     return circle
+
+class CylinderEquation(object):
+    def __init__(self, axis, radius):
+        self.axis = axis
+        self.radius = radius
+
+    @classmethod
+    def from_point_direction_radius(cls, point, direction, radius):
+        axis = LineEquation.from_direction_and_point(direction, point)
+        return CylinderEquation(axis, radius)
+
+    def projection_of_points(self, points):
+        points = np.asarray(points)
+        projection_to_line = self.axis.projection_of_points(points)
+        radial = points - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
+        projections = projection_to_line + radius
+        return projections
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)

@@ -167,10 +167,11 @@ def elevate_degree(knot_vector, delta=1):
 
 def insert(knot_vector, u, count=1):
     idx = np.searchsorted(knot_vector, u)
-    result = knot_vector
+    result = knot_vector.tolist()
     for i in range(count):
-        result = np.insert(result, idx, u)
-    return result
+        result.insert(idx, u)
+        #result = np.insert(result, idx, u)
+    return np.asarray(result)
 
 def rescale(knot_vector, new_t_min, new_t_max):
     t_min = knot_vector[0]
@@ -270,9 +271,10 @@ def check(degree, knot_vector, num_ctrlpts):
 
     # Check ascending order
     prev_knot = knot_vector[0]
-    for knot in knot_vector:
+    for i, knot in enumerate(knot_vector):
         if prev_knot > knot:
-            return "Knot vector items are not all non-decreasing"
+            print(knot_vector)
+            return f"Knot vector items are not all non-decreasing: u[{i-1}] = {prev_knot} > u[{i}] = {knot}"
         prev_knot = knot
 
     return None

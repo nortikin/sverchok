@@ -43,7 +43,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
-    "version": (1, 0, 0),
+    "version": (1, 1, 0),
     "blender": (2, 93, 0),
     "location": "Node Editor",
     "category": "Node",
@@ -53,6 +53,7 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
+VERSION = 'v1.1.0-alpha'  # looks like the only way to have custom format for the version
 
 import sys
 import importlib

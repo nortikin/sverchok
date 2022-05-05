@@ -868,7 +868,12 @@ def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=
     if id_tree is None:
         if context is None:
             raise Exception("Either id_tree or context must be provided for draw_presets_ops()")
+
         ntree = context.space_data.node_tree
+        if not ntree:
+            # the node tree is not yet ready?
+            return
+
         id_tree = ntree.name
 
     col = layout.column(align=True)

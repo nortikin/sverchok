@@ -235,40 +235,40 @@ class SvBezierCurve(SvCurve):
         coeffs = np.array(coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv1(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C1", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv2(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C2", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv3(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C3", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
         if n >= 1:
-            first = self.tangent_array(ts)
+            first = self.tangent_array(ts, tangent_delta=tangent_delta)
             result.append(first)
         if n >= 2:
-            second = self.second_derivative_array(ts)
+            second = self.second_derivative_array(ts, tangent_delta=tangent_delta)
             result.append(second)
         if n >= 3:
-            third = self.third_derivative_array(ts)
+            third = self.third_derivative_array(ts, tangent_delta=tangent_delta)
             result.append(third)
         return result
 
@@ -277,6 +277,9 @@ class SvBezierCurve(SvCurve):
 
     def get_degree(self):
         return self.degree
+
+    def is_rational(self):
+        return False
 
     def get_control_points(self):
         return self.points
@@ -383,10 +386,10 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         c0 = -3*(1 - ts)**2
         c1 = 3*(1-ts)**2 - 6*(1-ts)*ts
         c2 = 6*(1-ts)*ts - 3*ts**2
@@ -397,7 +400,7 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
     def second_derivative_array(self, ts):
@@ -410,7 +413,7 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         c0 = np.full_like(ts, -6)[:,np.newaxis]
         c1 = np.full_like(ts, 18)[:,np.newaxis]
         c2 = np.full_like(ts, -18)[:,np.newaxis]
@@ -418,7 +421,7 @@ class SvCubicBezierCurve(SvCurve):
         p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
         if n >= 1:
             first = self.tangent_array(ts)
@@ -433,6 +436,9 @@ class SvCubicBezierCurve(SvCurve):
 
     def get_degree(self):
         return 3
+
+    def is_rational(self):
+        return False
 
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])

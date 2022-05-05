@@ -28,7 +28,7 @@ from sverchok.utils.modules.matrix_utils import matrix_apply_np
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 dimensionsItems = [
     ("SIZE", 'Size', 'Define size by total size'),
-    ("NUMBER", 'Num', 'Define size by numer of steps and step size'),
+    ("NUMBER", 'Num', 'Define size by number of steps and step size'),
     ("STEPS", 'Steps', 'Define size by total size'),
     ("SIZE_STEPS", 'Si+St', 'Define size by total size'),
 ]

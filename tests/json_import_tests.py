@@ -45,16 +45,23 @@ class MeshExprImportTest(SverchokTestCase):
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
 # because they
 #  1) require .blend data (greasepencil strokes) or
-#  2) 3rd party python modules (mcubes, conway)
+#  2) 3rd party python modules (mcubes, conway, archicad)
 
 UNITTEST_SKIPLIST = [
     "GreacePencil_injection.json",
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
-    "Genetic_algorithm.blend.json",  # looks like script node is trying to update via import_from_json method
+    # "Genetic_algorithm.blend.json",  # looks like script node is trying to update via import_from_json method
+    "Genetic_algorythm_scripted_node.json",
     "Elfnor_topology_nodes.json",
     "l-systems.json",
     "ABCnaming.json",
+    "ArchiCAD24import.json",
+    "CNC_CUTHOLES_RESIZE.json",
+    "Open4d_mesh.json",
+    "BIM_ArchiCAD24_import.json",
+    "BIM_FreeCAD_import.json",
+    "BIM_truss_joint.json",
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 

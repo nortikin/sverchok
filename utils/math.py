@@ -298,6 +298,16 @@ def binomial(n,k):
         n -= 1
     return b
 
+def binomial_array(size, dtype=np.float64):
+    binom = np.zeros((size, size), dtype=dtype)
+    binom[:,0] = 1.0
+    for j in range(size):
+        binom[j,j] = 1.0
+    for n in range(2, size):
+        for k in range(1, n):
+            binom[n,k] = binom[n-1, k-1] + binom[n-1, k]
+    return binom
+
 def np_mixed_product(a, b, c):
     return np.dot(a, np.cross(b, c))
 
@@ -386,4 +396,15 @@ def distribute_int(n, sizes):
         counts[idx] += 1
         count_left -= 1
     return counts
+
+def cmp(a, b):
+    return int(a > b) - int(a < b)
+
+def cartesian_product(*arrays):
+    la = len(arrays)
+    dtype = np.result_type(*arrays)
+    arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
+    for i, a in enumerate(np.ix_(*arrays)):
+        arr[...,i] = a
+    return arr.reshape(-1, la)
 
