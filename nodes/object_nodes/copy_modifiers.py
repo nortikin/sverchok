@@ -10,11 +10,10 @@ import bpy
 from sverchok.data_structure import repeat_last
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.handle_blender_data import BlModifier
 
 
-class SvCopyModifiersNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node):
+class SvCopyModifiersNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: modifiers
     Tooltip:
@@ -23,12 +22,22 @@ class SvCopyModifiersNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node
     bl_label = 'Copy Modifiers'
     bl_icon = 'MODIFIER_DATA'
 
+    @property
+    def is_scene_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
+                                                           or self.object_names)
+
+    @property
+    def is_animation_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
+                                                           or self.object_names)
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object To')
         self.inputs.new('SvObjectSocket', 'Object From')
         self.outputs.new('SvObjectSocket', 'Object')
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout)
 
     def process(self):
