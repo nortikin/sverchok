@@ -45,7 +45,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         if self.mode == "FreeCAD":
             self.filename_ext = ".FCStd"  #  ".tif"
             self.filter_glob = "*.FCStd;*.FCStd1"  # #*.tif;*.png;"  (if more than one, separate by ;)
-        else:
+        elif self.mode == "None":
             self.filename_ext = ''
             self.filter_glob = ''
 
@@ -84,7 +84,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
     files_num: IntProperty(name='files number ', default=0)
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH', update=updateNode)
-    mode: StringProperty(default='', description="mode determines behaviour of the File Open Dialogue and Operator")
+    mode: StringProperty(default='None', description="mode determines behaviour of the File Open Dialogue and Operator")
 
     def sv_init(self, context):
 
@@ -122,7 +122,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         only call this mode if the output(s) .is_linked returns true
         """
         socket = self.outputs[0]
-        self.mode = ""
+        self.mode = "None"
         if socket.is_linked:
             other_socket = socket.other
             if hasattr(other_socket, "filepath_node_mode"):
