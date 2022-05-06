@@ -204,12 +204,6 @@ and trigger its reevaluation. The update can be suppress by disabled live update
 </dd>
 <dt><cite>Update all</cite> operator (<a class="reference internal" href="user_interface/panels.html#layout-manager"><span class="std std-ref">Layout manager</span></a>)</dt><dd><p>It is the same as <cite>re-update all nodes</cite> operator but effect all trees in a file.</p>
 </dd>
-</dl>
-<dl class="simple" id="live-update-operator">
-<dt>Live update modal operator (<a class="reference internal" href="user_interface/panels.html#d-panel"><span class="std std-ref">3D Panel</span></a>)</dt><dd><p>It makes update some nodes, which read information from Blender objects, via timer with update period
-about 1/10 second. If the tree did not manage to update while this period next event will be ignored.
-In this case there can be a visible lag between user action and tree response.</p>
-</dd>
 <dt>Frame changes</dt><dd><p>Update upon frame changes. Extra information <a class="reference internal" href="#animation">Animation</a>.</p>
 </dd>
 </dl>
@@ -220,15 +214,26 @@ property and update the tree manually with <cite>Re-update all nodes</cite> oper
 Also you can add shortcut for the operator by pressing <kbd class="kbd docutils literal notranslate">RMB</kbd> on the button of the operator (active tree panel).
 Another way to update is enabling <cite>Live update</cite> mode. In this case only changed put of the tree will be updated.</p>
 </div>
+<dl class="simple">
+<dt>Scene changes</dt><dd><p>This trigger reacts on arbitrary changes in scene. Those can be: moving
+objects, changing edit / object mode, mesh editing, assign materials etc.</p>
+</dd>
+</dl>
 <section id="modes-active-tree-panel">
 <h3>Modes (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
-<dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
-made by user. This property does not effect evaluation upon frame changes or by <cite>re-update all nodes</cite> operator.
+<dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in its
+topology, changes in node properties or scene changes made by user.
+This property does not effect evaluation upon frame changes or by
+<cite>re-update all nodes</cite> operator.
 Enabling the property will call the tree topology changes trigger.</p>
 </dd>
 <dt>Animate</dt><dd><p>If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
 which have property <cite>to_animate</cite> enabled.</p>
+</dd>
+<dt>Scene update</dt><dd><p>If enabled togather with Live Update the tree will be reevaluated upon
+changes in the scene. It will effect only nodes with <cite>interactive</cite>
+property enabled.</p>
 </dd>
 </dl>
 </section>
@@ -247,9 +252,10 @@ enabled the node will be update each frame change. This can serve two purposes.<
 <ul class="simple">
 <li><p>Firstly this can be used for generating animations. In this case
 <a class="reference internal" href="nodes/scene/frame_info_mk2.html"><span class="doc">Frame info node</span></a> will be most useful.</p></li>
-<li><p>Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks.
-For frame change the left/right arrow buttons can be used. Alternative way is to use
-<a class="reference internal" href="#live-update-operator"><span class="std std-ref">Live update operator</span></a></p></li>
+<li><p><strong>(Deprecated, the Scene trigger is used instead now)</strong> Secondly updating
+nodes upon frame change can be used for refreshing nodes which take data from
+Blender data blocks. For frame change the left/right arrow buttons can be
+used.</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>

@@ -37,6 +37,8 @@ Tree item buttons:
         Controls all OpenGL viewer of this layout. Viewer, Stethoscope and Viewer Indices 
     Animate layout
         to animate the layout (or not) - may preserve you time.
+    Scene Update
+        Update upon changes in the scene
     Process layout
         Automatically evaluate layout while editing, disable for large or complex layouts (F6)
     Draft Mode
@@ -70,10 +72,19 @@ Animate
     If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
     which have property to_animate enabled.
 
+Scene update
+    If enabled togather with Live Update the tree will be reevaluated upon
+    changes in the scene. It will effect only nodes with `interactive`
+    property enabled.
+    
+
 Live update
-    If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
-    made by user. This property does not effect evaluation upon frame changes or by **Re-update all nodes** operator.
-    Enabling the property will call the tree topology changes :ref:`trigger <sv_triggers>`.
+    If enabled it means that the tree will be evaluated upon changes in its
+    topology, changes in node properties or scene changes made by user.
+    This property does not effect evaluation upon frame changes or by
+    `re-update all nodes` operator.
+    Enabling the property will call the tree topology changes
+    :ref:`trigger <sv_triggers>`.
 
 Draft mode
     It switches to draft property in :doc:`A number node <../nodes/number/numbers>` and some others.
@@ -396,9 +407,6 @@ It is not possible to edit or remove presets that are distributed with Sverchok.
 With this panel your layout becomes addon itself. So, you making your life easy.
 Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor.
 Another located in `Active tool and workspace settings` shelf of `Properties` editor.
-
-
-**Start live update** - will start update layouts by a timer (several times in second)
 
 **Update all trees** - manual update of all layouts
 

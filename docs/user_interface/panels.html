@@ -134,6 +134,8 @@ Bake only if bakeable button is active on node, else ignore.</p>
 </dd>
 <dt>Animate layout</dt><dd><p>to animate the layout (or not) - may preserve you time.</p>
 </dd>
+<dt>Scene Update</dt><dd><p>Update upon changes in the scene</p>
+</dd>
 <dt>Process layout</dt><dd><p>Automatically evaluate layout while editing, disable for large or complex layouts (F6)</p>
 </dd>
 <dt>Draft Mode</dt><dd><p>Switch tree to Draft mode (F7)</p>
@@ -164,9 +166,16 @@ Bake only if bakeable button is active on node, else ignore.</p>
 <dt>Animate</dt><dd><p>If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
 which have property to_animate enabled.</p>
 </dd>
-<dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
-made by user. This property does not effect evaluation upon frame changes or by <strong>Re-update all nodes</strong> operator.
-Enabling the property will call the tree topology changes <a class="reference internal" href="../tree_evaluation_system.html#sv-triggers"><span class="std std-ref">trigger</span></a>.</p>
+<dt>Scene update</dt><dd><p>If enabled togather with Live Update the tree will be reevaluated upon
+changes in the scene. It will effect only nodes with <cite>interactive</cite>
+property enabled.</p>
+</dd>
+<dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in its
+topology, changes in node properties or scene changes made by user.
+This property does not effect evaluation upon frame changes or by
+<cite>re-update all nodes</cite> operator.
+Enabling the property will call the tree topology changes
+<a class="reference internal" href="../tree_evaluation_system.html#sv-triggers"><span class="std std-ref">trigger</span></a>.</p>
 </dd>
 <dt>Draft mode</dt><dd><p>It switches to draft property in <a class="reference internal" href="../nodes/number/numbers.html"><span class="doc">A number node</span></a> and some others.
 Its usage is to add set of draft properties to the node tree to improve performance.</p>
@@ -480,7 +489,6 @@ Description attribute will be used as a tooltip for preset button.</p></li>
 <p>With this panel your layout becomes addon itself. So, you making your life easy.
 Since Blender 2.8 this panel has two instances. One instance located on <cite>N</cite> panel in <cite>Tool</cite> category of <cite>3D</cite> editor.
 Another located in <cite>Active tool and workspace settings</cite> shelf of <cite>Properties</cite> editor.</p>
-<p><strong>Start live update</strong> - will start update layouts by a timer (several times in second)</p>
 <p><strong>Update all trees</strong> - manual update of all layouts</p>
 <section id="node-properties-list">
 <h3>Node properties list<a class="headerlink" href="#node-properties-list" title="Permalink to this headline">¶</a></h3>
