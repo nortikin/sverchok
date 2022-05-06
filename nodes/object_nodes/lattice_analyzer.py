@@ -18,16 +18,15 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-
-from sverchok.data_structure import updateNode
 
 
-class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode):
     '''Lattice object props'''
     bl_idname = 'SvLatticePropsNode'
     bl_label = 'Lattice Props'
     bl_icon = 'MOD_LATTICE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Lattice Object')
@@ -36,9 +35,6 @@ class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.outputs.new('SvVerticesSocket', 'init points')
         self.outputs.new('SvVerticesSocket', 'deformed points')
         self.outputs.new('SvObjectSocket', "Lattice Object")
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
 
     def process(self):
         lattobj, dep, selm = self.inputs

@@ -40,6 +40,17 @@ class TreeHandler:
             list(global_updater(event.type))
             return
 
+        # something changed in scene and it duplicates some tree events which should be ignored
+        elif event.type == TreeEvent.SCENE_UPDATE:
+            # Either the scene handler was triggered by changes in the tree or tree is still in progress
+            if NodesUpdater.has_task():
+                return  # ignore the event
+            # this event was caused my update system itself and should be ignored
+            elif 'SKIP_UPDATE' in event.tree:
+                del event.tree['SKIP_UPDATE']
+                return
+            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+
         # mark given nodes as outdated
         elif event.type == TreeEvent.NODES_UPDATE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
@@ -238,6 +249,12 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
         if was_changed:
             bl_tree.update_ui()  # this only will update UI of main trees
             trees_ui_to_update.discard(bl_tree)  # protection from double updating
+
+            # this only need to trigger scene changes handler again
+            bl_tree.nodes[-1].use_custom_color = not bl_tree.nodes[-1].use_custom_color
+            bl_tree.nodes[-1].use_custom_color = not bl_tree.nodes[-1].use_custom_color
+            # this indicates that process of the tree is finished and next scene event can be skipped
+            bl_tree['SKIP_UPDATE'] = True
 
     # this will update all opened trees (in group editors)
     # regardless whether the trees was changed or not, including group nodes

@@ -215,12 +215,19 @@ def update_frame_change_mode():
     set_frame_change(mode)
 
 
+@persistent
+def update_trees_scene_change(scene):
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()
+
+
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'depsgraph_update_pre': sv_main_handler,
+    'depsgraph_update_post': update_trees_scene_change,
 }
 
 

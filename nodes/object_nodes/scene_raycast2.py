@@ -18,16 +18,17 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
-class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' RayCast Scene '''
     bl_idname = 'SvSCNRayCastNodeMK2'
     bl_label = 'Scene Raycast MK2' #new is nonsense name
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RAYCASTER_SCENE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
@@ -39,9 +40,6 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         so('SvStringsSocket', "FaceIndex")
         so("SvObjectSocket", "Objects")
         so("SvMatrixSocket", "hited object matrix")
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
 
     def process(self):
         P,N,S,I,O,M = self.outputs

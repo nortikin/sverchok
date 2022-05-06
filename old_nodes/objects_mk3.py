@@ -9,9 +9,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
@@ -71,7 +69,7 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: obj Input Scene Objects pydata
     Tooltip: Get Scene Objects into Sverchok Tree
@@ -81,6 +79,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+    is_animation_dependent = True
 
     replacement_nodes = [('SvGetObjectsData',
                           None,
@@ -174,10 +173,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         else:
             layout.label(text='--None--')
 
-
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row()
 
@@ -197,9 +193,8 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         row.prop(self, "vergroups", text="VeGr", toggle=True)
         self.draw_obj_names(layout)
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         layout.prop(self, 'draw_3dpanel', text="To Control panel")
-        self.draw_animatable_buttons(layout)
 
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'

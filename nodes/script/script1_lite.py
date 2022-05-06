@@ -19,7 +19,6 @@
 import os
 import sys
 import ast
-import json
 import textwrap
 import traceback
 import numpy as np
@@ -34,7 +33,6 @@ from sverchok.utils.snlite_importhelper import (
 from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
 
@@ -107,7 +105,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: snl
@@ -121,6 +119,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def return_enumeration(self, enum_name=""):
         ND = self.node_dict.get(hash(self))
@@ -530,8 +530,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if f:
                 f(self, context, layout)
 
-
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         sn_callback = 'node.scriptlite_ui_callback'
 
         if not self.script_str:
@@ -540,7 +539,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         else:
-            self.draw_animatable_buttons(layout, icon_only=True)
             col = layout.column(align=True)
             row = col.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
@@ -548,8 +546,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.custom_draw(context, layout)
 
-
-    def draw_buttons_ext(self, _, layout):
+    def sv_draw_buttons_ext(self, _, layout):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()

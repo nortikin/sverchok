@@ -21,7 +21,6 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -30,9 +29,7 @@ from sverchok.utils.sv_color_ramp_utils import (
     set_color_ramp,
     get_color_ramp)
 
-from sverchok.utils.curve import SvScalarFunctionCurve
 
-import numpy as np
 node_group_name = 'sverchok_helper_group'
 
 def color_ramp_mapper(params, constant, matching_f):
@@ -46,7 +43,7 @@ def color_ramp_mapper(params, constant, matching_f):
             result.append([evaluate(v)[:-1] for v in flist])
     return result
 
-class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Color Gradient
     Tooltip:  Map input list to a defined color
@@ -56,6 +53,7 @@ class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_label = 'Color Ramp'
     bl_icon = 'COLOR'
     sv_icon = 'SV_COLOR_RAMP'
+    is_scene_dependent = True
 
     value: FloatProperty(
         name='Value', description='Input value(s)',
@@ -71,14 +69,12 @@ class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvColorSocket', "Color")
         _ = get_evaluator(node_group_name, self._get_color_ramp_node_name())
 
-
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         m = bpy.data.node_groups.get(node_group_name)
         if not m:
             layout.label(text="Connect input to activate")
             return
         try:
-            self.draw_animatable_buttons(layout, icon_only=True, update_big=True)
             layout.prop(self, 'use_alpha')
             tnode = m.nodes[self._get_color_ramp_node_name()]
             if not tnode:

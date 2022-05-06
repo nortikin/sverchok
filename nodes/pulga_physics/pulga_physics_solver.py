@@ -21,12 +21,11 @@ from numpy import array
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.pulga_physics_modular_core import pulga_system_init
 
 
-class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Simulate Particles
     Tooltip: Modular Physics Engine
@@ -34,6 +33,7 @@ class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
     bl_idname = 'SvPulgaPhysicsSolverNode'
     bl_label = 'Pulga Physics Solver'
     bl_icon = 'MOD_PHYSICS'
+    is_animation_dependent = True
 
     iterations: IntProperty(
         name='Iterations', description='Number of Iterations',

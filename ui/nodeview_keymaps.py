@@ -222,12 +222,6 @@ def add_keymap():
         kmi = km.keymap_items.new('node.zoom_to_node', 'Z', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
-        # 3D View
-        km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.sv_obj_modal_update', 'F5', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.mode='toggle'
-        nodeview_keymaps.append((km, kmi))
-
 
 def remove_keymap():
 

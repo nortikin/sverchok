@@ -18,10 +18,8 @@
 
 
 import bpy
-from mathutils import Matrix
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
@@ -30,7 +28,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 # pylint: disable=w0613
 
 
-class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: obj id set data
     Tooltip: Set Object Properties
@@ -41,11 +39,12 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_SET'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")
 
     def sv_init(self, context):

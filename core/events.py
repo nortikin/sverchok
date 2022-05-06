@@ -33,12 +33,16 @@ class TreeEvent:
     NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
     FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
     FRAME_CHANGE = 'frame_change'  # unlike other updates this one should be un-cancellable
+    SCENE_UPDATE = 'scene_update'  # something was changed in the scene
 
     def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None, cancel=True):
         self.type = event_type
         self.tree = tree
         self.updated_nodes = updated_nodes
         self.cancel = cancel
+
+    def __repr__(self):
+        return f"<TreeEvent type={self.type}>"
 
 
 class GroupEvent:
