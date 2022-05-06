@@ -13,7 +13,7 @@ import bmesh
 from bpy.props import (
         StringProperty,
         CollectionProperty,
-        IntProperty,
+        IntProperty, EnumProperty
         )
 from bpy.types import (
         Operator,
@@ -39,14 +39,20 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         maxlen=1024, default="", subtype='FILE_PATH')
 
     filename_ext: StringProperty(default="")
-    filter_glob: StringProperty(default="", options={'HIDDEN'})    
+    filter_glob: StringProperty(default="")    
 
-    mode: StringProperty(default='')
 
     def custom_config(self, context):
         if self.mode == "FreeCAD":
             self.filename_ext = ".FCStd"  #  ".tif"
             self.filter_glob = "*.FCStd"  # #*.tif;*.png;"  (if more than one, separate by ;)
+        else:
+            self.filename_ext = ''
+            self.filter_glob = ''
+
+    # mode: StringProperty(default='')
+    behaviours = ["FreeCAD", "None"]
+    mode: EnumProperty(items=[(i, i, '') for i in behaviours], update=custom_config)
 
     def sv_execute(self, context, node):
         if self.mode == "FreeCAD":
