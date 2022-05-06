@@ -41,7 +41,6 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
     filename_ext: StringProperty(default="")
     filter_glob: StringProperty(default="")    
 
-
     def custom_config(self, context):
         if self.mode == "FreeCAD":
             self.filename_ext = ".FCStd"  #  ".tif"
