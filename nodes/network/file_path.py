@@ -64,7 +64,15 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
 
     def invoke(self, context, event):
         
-        if self.mode: self.custom_config(context)
+        if self.mode:
+            node = self.get_node(context)
+            # this is a small check to see if the button was pressed while the node was connected to
+            # an output. if it was not connected, then the operator should be file agnostic by default.
+            # it's also a change to reset the node.mode.
+            if not node.outputs[0].is_linked:
+                node.mode = 'None'
+            else:
+                self.custom_config(context)
 
         wm = context.window_manager
         wm.fileselect_add(self)
@@ -94,7 +102,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         op = 'node.sv_file_path'
         file_path_operator = self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
-        file_path_operator.mode = self.mode if self.outputs[0].is_linked else 'None'  # not sure how stable this is.
+        file_path_operator.mode = self.mode
 
         if self.files_num == 0:
             layout.label(text=self.directory)
