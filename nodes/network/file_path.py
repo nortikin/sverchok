@@ -51,7 +51,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
 
     # mode: StringProperty(default='')
     behaviours = ["FreeCAD", "None"]
-    mode: EnumProperty(items=[(i, i, '') for i in behaviours], update=custom_config)
+    mode: EnumProperty(items=[(i, i, '') for i in behaviours], update=custom_config, default='None')
 
     def sv_execute(self, context, node):
         if self.mode == "FreeCAD":
@@ -64,15 +64,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
 
     def invoke(self, context, event):
         
-        if self.mode:
-            node = self.get_node(context)
-            # this is a small check to see if the button was pressed while the node was connected to
-            # an output. if it was not connected, then the operator should be file agnostic by default.
-            # it's also a change to reset the node.mode.
-            if not node.outputs[0].is_linked:
-                node.mode = 'None'
-            else:
-                self.custom_config(context)
+        self.custom_config(context)
 
         wm = context.window_manager
         wm.fileselect_add(self)
