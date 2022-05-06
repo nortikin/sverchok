@@ -94,7 +94,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         op = 'node.sv_file_path'
         file_path_operator = self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
-        file_path_operator.mode = self.mode
+        file_path_operator.mode = self.mode if self.outputs[0].is_linked else 'None'  # not sure how stable this is.
 
         if self.files_num == 0:
             layout.label(text=self.directory)
