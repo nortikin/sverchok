@@ -45,7 +45,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
     def custom_config(self, context):
         if self.mode == "FreeCAD":
             self.filename_ext = ".FCStd"  #  ".tif"
-            self.filter_glob = "*.FCStd"  # #*.tif;*.png;"  (if more than one, separate by ;)
+            self.filter_glob = "*.FCStd;*.FCStd1"  # #*.tif;*.png;"  (if more than one, separate by ;)
         else:
             self.filename_ext = ''
             self.filter_glob = ''
@@ -58,7 +58,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         if self.mode == "FreeCAD":
             # This is triggered after the file is selected or typed in by the user in the Text Field of path
             if self.directory and len(self.files) == 1:
-                if self.files[0].name and not self.files[0].name.endswith(".FCStd"):
+                if self.files[0].name and not self.files[0].name.endswith((".FCStd", ".FCStd1")):
                     self.files[0].name = self.files[0].name + ".FCStd" 
 
         node.set_data(self.directory, self.files)
