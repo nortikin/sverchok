@@ -8,5 +8,5 @@ cdef extern from "cpp/implementation.hpp":
         float z
 
 cdef extern from "cpp/implementation.hpp" namespace "some_namespace":
-    void test(uintptr_t mesh_ptr, const vector[Vector3D]& vert_poses)
+    void test(uintptr_t mesh_ptr, float *verts)
 

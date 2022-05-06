@@ -10,14 +10,12 @@ from libcpp.vector cimport vector
 import bpy
 from typing import List, Tuple
 
-def py_test(me: bpy.types.Mesh, vert_positions: List[Tuple[float, float, float]]):
-    cdef vector[Vector3D] vec;
-    vec.resize(len(vert_positions))
 
-    for i, vert_pos in enumerate(vert_positions):
-        vec[i] = Vector3D(vert_pos[0], vert_pos[1], vert_pos[2])
-
-    mesh.test(me.as_pointer(), vec)
+# https://cython.readthedocs.io/en/latest/src/userguide/memoryviews.html#pass-data-from-a-c-function-via-pointer
+def py_test(me: bpy.types.Mesh, verts: np.array):
+    verts = np.ravel(verts)
+    cdef float[::1] verts_view = verts
+    mesh.test(me.as_pointer(), &verts_view[0])
 
 
 @cython.cdivision(True)

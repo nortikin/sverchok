@@ -67,6 +67,7 @@ nodes/generator/meta_balls.py
 # IDE
 .idea
 .DS_Store
+.vscode
 
 # vim swap files
 *.swp

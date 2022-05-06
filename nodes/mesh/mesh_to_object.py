@@ -42,16 +42,16 @@ class SvMeshToObjectNode(SverchCustomTreeNode, bpy.types.Node):
 
         obj.data.clear_geometry()
         obj.data.vertices.add(len(me.verts))
-        obj.data.vertices.foreach_set("co", np.ravel(me.verts))
+        # obj.data.vertices.foreach_set("co", np.ravel(me.verts))
 
-        cyt.mesh.py_test(obj.data, me.verts.tolist())
+        cyt.mesh.py_test(obj.data, me.verts)
 
         calc_edges = False
         obj.data.update(calc_edges_loose=calc_edges)
         self.outputs['Object'].sv_set([obj])
     
     # pure Python
-    def _process(self):
+    def py_process(self):
         # No vectorization here
         me: Mesh = self.inputs["Mesh"].sv_get(deepcopy=False)
 
