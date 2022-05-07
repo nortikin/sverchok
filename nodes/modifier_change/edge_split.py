@@ -70,7 +70,7 @@ class SvSplitEdgesMk3Node(bpy.types.Node, SverchCustomTreeNode):
         verts = self.inputs['Vertices'].sv_get(default=[])
         edges = self.inputs['Edges'].sv_get(default=[])
         faces = self.inputs['Faces'].sv_get(default=[])
-        e_mask = self.inputs['EdgeMask'].sv_get(deepcopy=False, default=[])
+        e_mask = self.inputs['EdgeMask'].sv_get(deepcopy=False, default=[[True]])
         factor = self.inputs['Factor'].sv_get(deepcopy=False)
         cuts = self.inputs['Cuts'].sv_get(deepcopy=False)
 
@@ -83,7 +83,7 @@ class SvSplitEdgesMk3Node(bpy.types.Node, SverchCustomTreeNode):
             return fixed_iter(arr, obj_n, [])
 
         for v, e, face, m, fact, c in zip(vec(verts), vec(edges), vec(faces), vec(e_mask), vec(factor), vec(cuts)):
-            if not all((v, e, face, c)):
+            if not all((v, e)):
                 break
 
             new_faces = list(face)
