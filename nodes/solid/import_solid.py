@@ -20,7 +20,7 @@ else:
         solid_catergory = "Inputs"
         
         def sv_init(self, context):
-            self.sv_new_input('SvFilePathSocket', "File Path", filepath_node_mode="BREP")
+            self.sv_new_input('SvFilePathSocket', "File Path") #, filepath_node_mode="BREP")
             self.outputs.new('SvSolidSocket', "Solid")
 
         def process(self):

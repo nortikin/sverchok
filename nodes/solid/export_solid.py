@@ -110,7 +110,7 @@ else:
             self.wrapper_tracked_ui_draw_op(layout, SvExportSolidOperator.bl_idname, icon='EXPORT', text="EXPORT")
 
         def sv_init(self, context):
-            self.sv_new_input('SvFilePathSocket', "Folder Path", filepath_node_mode="Solids")
+            self.inputs.new('SvFilePathSocket', "Folder Path")
             self.inputs.new('SvSolidSocket', "Solids")
 
         def process(self):
