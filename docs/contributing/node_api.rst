@@ -3,7 +3,7 @@ Node API
 ========
 
 This page has a claim to define all aspects of node creation. Brief introduction
-to node creation is represented :doc:`on this page <contributing/add_new_node>`.
+to node creation is represented :doc:`on this page <add_new_node>`.
 
 Code of new node should be created in separate file. The file should obtain
 one of the available categories in ``nodes`` folder.
@@ -196,11 +196,13 @@ There are 4 places where node can show its properties:
 
 Node interface is appropriate place for adding properties which are used
 regularly during work with a node tree. They should be defined in
-``draw_buttons`` method which expects ``context`` and ``layout`` arguments.
+``sv_draw_buttons`` method which expects ``context`` and ``layout`` arguments.
 
 Property panel of the Node editor is good place for showing properties which
 are rarely changed or should be changed only once. Its possible to do in
-``draw_buttons_ext`` method which expects ``context`` and ``layout`` arguments.
+``sv_draw_buttons_ext`` method which expects ``context`` and ``layout``
+arguments.
+
 
 .. code-block:: python
 
@@ -208,10 +210,10 @@ are rarely changed or should be changed only once. Its possible to do in
         value: IntProperty()
         mode: BoolProperty()
 
-        def draw_buttons(self, context, layout):
+        def sv_draw_buttons(self, context, layout):
             layout.prop(self, "value")
 
-        def draw_buttons_ext(self, context, layout):
+        def sv_draw_buttons_ext(self, context, layout):
             layout.prop(self, "mode")
 
 
@@ -271,6 +273,16 @@ in ``default_property_type`` attribute which can receive either 'float' or
             socket.use_prop = True
             socket.default_float_property = 1.0
             self.outputs.new('SvVerticesSocket', "Verts")
+
+.. tip::
+   Alternative way of creating input sockets is using ``sv_new_input`` method.
+
+   .. code-block:: python
+
+      class Node:
+          def sv_init(self, context):
+              self.sv_new_input('SvStringsSocket', "Size", use_prop=True,
+                                default_float_property=1)
 
 Dynamic Sockets
 ^^^^^^^^^^^^^^^
@@ -363,6 +375,7 @@ link_menu_handler
   creating nodes during dragging a link from a socket in Blender 3.1.
 
   .. code-block:: python
+
      class Node:
          class MenuHandler:
              @classmethod
@@ -473,6 +486,15 @@ saving result. It expects only one parameter - data.
    Sometimes node does not have enough data to perform its function in this case
    it should pass available data to output sockets unmodified. It's important
    because the whole node tree will stop working otherwise.
+
+.. tip::
+   Also ``sv_get`` method has third parameter - ``implicit_conversions``. It
+   expects one of the values of ``core.socket_conversions.ConversionPolicies``
+   enum. It's purpose is to convert format of output data of previous nodes to
+   format of input data of current node. For example via Conversion Policy
+   conversion simple values to vectors is happening. Usually such settings are
+   applied globally to all sockets but sometimes it can be useful to override
+   them via the parameter (not single node do this currently though).
 
 Data vectorization
 ^^^^^^^^^^^^^^^^^^
@@ -605,6 +627,44 @@ This library uses special BMesh data structure. It's similar to Half-edge
 data structure. To convert data from Sverchok format to BMesh and vice versa
 there is ``utils.sv_bmesh_utils`` module.
 
+Tests
+^^^^^
+
+Ideally nodes should go with some tests. But currently there is no framework
+for automation of tests creation. So it's optional now. More about tests in the
+separate section :doc:`testing`.
+
+Performance
+^^^^^^^^^^^
+
+.. figure::  https://user-images.githubusercontent.com/28003269/167471557-e10fb5f4-af31-47a2-86f2-e826a253fd06.png
+   :align: right
+   :width: 300px
+
+   Dot graph https://github.com/jrfonseca/gprof2dot
+
+.. figure:: https://user-images.githubusercontent.com/28003269/167472803-225b8fd9-4584-4eb5-b7e8-f0ce9695f604.png
+   :align: right
+   :width: 300px
+
+   Icicle style https://github.com/jiffyclub/snakeviz
+
+Performance of the nodes is very important and quite a big problem in Sverchok
+currently. Using pure Python is quite weak solution. First step to improve
+performance is to rewrite code with numpy library if it's possible.
+
+Sverchok has tool with UI to measure performance of separate nodes or a whole
+tree. It's located in the Tree Profiling panel in Sverchok tab of Property
+panel. It only appears if the Developer mode is enabled in the add-on settings.
+
+In Node Tree Update mode the performance of a whole tree will be measured. To
+measure performance of separate nodes their process method should be marked with
+``utils.profile.profile`` decorator.
+
+After measuring the performance the result can be outputted in the console which
+is standard output of cProfile Python module. Also the result can be saved in
+separate file which can be visualized with another tools.
+
 
 Node Registration
 -----------------
@@ -625,13 +685,33 @@ class registration standard Blender function is used.
 Also node should be placed in some existing category by adding its ``bl_idname``
 to the ``index.md`` file.
 
+.. tip::
+   In case new node should obtain new category it's possible to create it in
+   ``ui/nodeview_space_menu`` module. Here is example of adding a category
+   with name Test.
+
+   .. code-block:: python
+
+      menu_structure = [
+          ...,
+          ["NODEVIEW_MT_AddTest", 'ICON_NAME'],
+          ...,
+          ]
+
+      classes = [
+          ...,
+          make_class('Test', "Test"),
+          ...,
+          ]
+
+   Also the category should be added to ``index.md`` file similar to other
+   categories.
+
 When the add-on is disabled or reloaded its classes should be unregister. To
 unregister a node is possible in function with name ``unregister`` in the same
 module with Node class.
 
-Also node with node should go documentation file in ``docs.nodes`` folder.
-
-.. todo node tests
+Also with node should go documentation file in ``docs.nodes`` folder.
 
 
 Animation
