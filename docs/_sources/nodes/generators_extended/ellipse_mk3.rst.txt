@@ -9,9 +9,10 @@ Super Ellipse formula:
 
 (x/a)^n + (y/b)^m = 1
 
-Different values of the x and y exponents (n and m) generate various shapes such as: asteroid, square/rhombus, circle/ellipse, squircle/rectellipse.
+Different values of the x and y exponents (n and m) generate various shapes such
+as: astroid, square/rhombus, circle/ellipse, squircle/rectellipse.
 
-asteroid: 0 < n,m < 1
+astroid: 0 < n,m < 1
 square/diamond: n/m = 1
 circle/ellipse: n/m = 2
 squircle/rectellipse: n/m > 2
