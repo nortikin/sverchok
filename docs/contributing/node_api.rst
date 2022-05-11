@@ -86,9 +86,9 @@ Creating Node Custom Properties
 Properties are created in standard way similar to other areas of Blender.
 `Blender documentation <https://docs.blender.org/api/current/bpy.props.html>`_
 
-After properties are added they can be used as node buttons or socket property.
-Also they can be used for internal usage but it's usually better to use ID
-properties instead.
+After properties are added they can be used as node buttons or socket
+properties. Also they can be used for internal usage but it's usually better to
+use Custom properties (``node['prop_name']``) instead.
 
 .. note::
    Using node properties for displaying on sockets is deprecated. Usually
@@ -96,7 +96,7 @@ properties instead.
 
 To make a node to react on property changes they should define update argument.
 If not extra logic is required the argument can be define thus
-``update=sverchok.data_structure.updateNode``. Also in case for example if after
+``update=data_structure.updateNode``. Also in case for example if after
 property changing some sockets should appear it can be done in custom update
 method of a node. The method expects to get the ``self`` and ``context``
 parameters.
@@ -296,14 +296,14 @@ of them:
 
 There are many ways to show / hide sockets. First of all it's possible ot use
 Blender standard API for adding and removing sockets. Most resent nodes use
-``hide_safe`` attribute of sockets. Disadvantage of this method is tha sockets
+``hide_safe`` attribute of sockets. Disadvantage of this method is that sockets
 are not really deleted and can be shown with `Ctrl+h` by user. The proper
 way now is to use standard Blender ``enabled`` attribute.
 
 When type of a socket should be changed it's possible to use
 ``data_structure.changable_sockets`` function or ``replace_socket`` method of a
 socket. First function changes type of output sockets dependently on type of
-a socket connected to input one. With the method you have to define new
+a socket connected to input one. With the second method you have to define new
 type of a socket by yourself.
 
 .. warning::
@@ -370,7 +370,7 @@ quick_link_to_node
 
 link_menu_handler
   Expects a sting of class name defined inside node of the socket. This only
-  works whe displaying quick links is in multiple values mode. In the class
+  works when displaying quick links is in multiple values mode. In the class
   its possible to define extra nodes for connections. This is analog of
   creating nodes during dragging a link from a socket in Blender 3.1.
 
@@ -501,7 +501,7 @@ Data vectorization
 
 All nodes should be designed in a way that they can handle not only one object
 but multiple of them. That is called vectorization in Sverchok. For example if
-a node works with vertices of an object it should handle list of list of
+a node works with vertices of an object it should handle list of lists of
 vertices.
 
 It can happen that some input data has one number of objects and another
@@ -574,7 +574,7 @@ Representation is a simple list of vertices, and a set of edges and polygons
 that point to the vertices they use.
 
 .. note::
-   Usually list of vertices, edges and polygons ary ordinary Python lists.
+   Usually list of vertices, edges and polygons are ordinary Python lists.
    Vertices can be represented as numpy arrays. If a node is generator it can
    have an option in which format to output vertices. If a node has vertices as
    an input it should output them in the same format in which they came.
@@ -665,6 +665,17 @@ After measuring the performance the result can be outputted in the console which
 is standard output of cProfile Python module. Also the result can be saved in
 separate file which can be visualized with another tools.
 
+Printing / Logging
+^^^^^^^^^^^^^^^^^^
+
+Printing and profiling are very expensive operations. Also console can fastly
+turn into unreadable mess. So it's better to avoid using them inside node code.
+During debugging it's valid to use print function but it should removed in the
+end.
+
+Usually logging can be don in some operators in this case you can use loggers
+from ``utils.logging`` module or by using ``node.debug``, ``node.info`` and
+other aliases.
 
 Node Registration
 -----------------
@@ -717,20 +728,168 @@ Also with node should go documentation file in ``docs.nodes`` folder.
 Animation
 ---------
 
+There are nodes which should be updated upon frame change. Usually they read
+some data from a Blender scene. To make a node to be updated every frame it's
+enough to override ``is_animation_dependent`` node attribute with True value.
 
-Viewer Nodes
-------------
+.. note::
+   Buttons should be displayed via ``sv_draw_buttons`` method otherwise the
+   node won't display extra property which can be used by user to disable
+   updates for the current node.
 
 
-Noes With Dependencies
-----------------------
+Nodes With Dependencies
+-----------------------
+
+Nodes can use some external library which can be installed manually by user from
+Extra Nodes tab in the add-on settings. When a node uses external library and
+it is not installed the node should add itself into a list of dummy nodes.
+Dummy nodes do nothing but display information that a library is not installed.
+
+.. figure:: https://user-images.githubusercontent.com/10011941/85948219-e3957800-b94f-11ea-9040-d1e3009dc016.png
+   :align: right
+   :width: 250px
+
+Also when library is not installed the nodes should not register their selves.
+Also such nodes dose not apper in the Add node menu.
+
+.. code-block:: python
+   
+   from sverchok.dependencies import FreeCAD
+
+   if FreeCAD is None:
+       utils.dummy_nodes.add_dummy('SvSolidAreaNode', 'Solid Area', 'FreeCAD')
+   
+   class SvSolidAreaNode:
+       ...
+   
+   def register():
+       if FreeCAD is not None:
+           bpy.utils.register_class(SvSolidAreaNode)
+
+The dependencies is a special module from which all dependent library should be
+imported. If a library is not available instead of NoModuleFound error the 
+None value will be imported. The ``add_dummy`` function expects ``bl_idname`` 
+of the node, its name and name of the library on which the node is dependent.
+
+.. tip::
+   There is alternative and more simple way to handle the nodes with missing
+   dependencies. They should be registered as regular nodes but in their process
+   method they should raise an Error with a message which points that some
+   library should be installed to make the node to work.
+
+   The approach can handle the case when node is not dependent on a library
+   except in some of its modes.
 
 
 JSON Import / Export
 --------------------
 
+Sverchok has special format for sharing node trees and saving them into presets.
+In most cases nodes developers should not prepare their node to make them work
+with JSON import / export system. What is important to know:
+
+- Standard json export saves all properties including collection and nesting
+  collection and pointers. 
+- For now only data block names of pointer properties will be saved. 
+- During import pointers will be searched in current scene, if there is no data
+  blocks with current name nothing will be assigned to the pointer.
+- It is strongly not recommended to save pointers for viewer nodes. For skipping
+  property to save use: `BoolProperty(options={'SKIP_SAVE'}` it will impact only
+  on unsaving property into json file.
+- Custom properties (which uses square bracket interface) are ignored.
+- It is possible to add `save_to_json(node_data: dict)` and
+  `load_from_json(node_data: dict, import_version: float)` method to a node for
+  adding extra logic into import export, but it's better to avoid using it.
+  It's difficult to add changes into nodes using this methods and support import
+  previous JSON files.
+
 
 Upgrade Node
 ------------
 
-.. todo context menu
+It's possible to improve existing nodes but it should be done carefully, without
+breaking existing layouts. It can be done in two ways:
+
+Improve existing node
+^^^^^^^^^^^^^^^^^^^^^
+
+First is when you add extra functionality to some node. It's possible by adding
+extra buttons, sockets, modes. Whe you add something like this you should ensure
+that default behaviour will be unchanged.
+
+New socket, in most cases, can be placed anywhere among existing ones but it
+should be checked in the process method that data from sockets is not collecting
+by their indexes. Also there is no any automation and in old Blender files the
+socket will be missing. So the socket should be added manually and currently
+most appropriate place for this is the process method. It leads to some overhead
+so probably in future there will be a special upgrade method for such things.
+The socket should be optional and the node should be able to work without the
+socket to be connected.
+
+.. tip::
+   Also quite frequent case is socket renaming. It can be done by adding 
+   ``label`` attribute with new name. Also for old files this should be
+   repeated in the process method.
+
+Any property can be added to a node but it's default value should not change 
+initial node behaviour.
+
+It's possible to add extra values to Enum properties but they always should be
+placed in the end of the lists because Blender files keep current enum value
+by its index.
+
+All other changes should be done by creating new version of the node.
+
+Create new node version
+^^^^^^^^^^^^^^^^^^^^^^^
+
+If it's needed to fix some existing behaviour or remove one the new version of
+a node should be introduced. It's not necessary step when changes should be 
+applied to changes which were made in not released version of Sverchok. In this
+case changes can be done with breaking backward compatibility.
+
+Creating new version should be done togather with keeping previous one. In most
+cases it's enough **to move** module of current node into old_nodes folder. It
+should be done more carefully if in the module together with the node something
+else is registered.
+
+New version of the node should be created **in new file** in the same place and
+with the same name as version of previous node. Class of a new version should
+get ``MKn`` suffix where *n* is index of new version. The same should be done to
+``bl_idname`` attribute of the class. New version of the node can implement
+anything what can be implemented in new node.
+
+When new version is introduced it's convenient to add replacement operator to
+the old version of the node which automatically replace old node with new one
+with keeping all connected links. This can be done by adding 
+``replacement_nodes`` attribute. The operator will appear in the node context
+menu.
+
+.. code-block:: python
+
+   class Node:
+       replacement_nodes = [
+           (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+       ]
+
+where ``new_node_bl_idname`` is ``bl_idname`` of replacement node class,
+``inputs_mapping_dict`` is a dictionary mapping names of inputs of this node
+to names of inputs to new node, and ``outputs_mapping_dict`` is a dictionary
+mapping names of outputs of this node to names of outputs of new node.
+``inputs_mapping_dict`` and ``outputs_mapping_dict`` can be None.
+
+.. note::
+   This attribute also can be used by regular node for quick replacement with
+   nodes which have similar functionality.
+
+.. warning::
+   When a node has multiple previous version the replacement operator should be
+   added (updated) to all of them.
+
+Also the operator will try to copy all node properties by their names. If it's
+impossible it's possible to copy properties manually by adding 
+``migrate_from(self, old_node)`` method to new node. Also if some extra
+work should be done with sockets it's possible to implement in
+``migrate_props_pre_relink(self, old_node)`` method which will be called before
+links creation.
