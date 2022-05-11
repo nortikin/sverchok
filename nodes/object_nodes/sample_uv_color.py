@@ -22,21 +22,21 @@ from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.data_structure import (updateNode)
 
 
-class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Sample pixel color on UV texture from surface'''
     bl_idname = 'SvSampleUVColorNode'
     bl_label = 'Sample UV Color'
     bl_icon = 'UV'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     image: StringProperty(default='', update=updateNode)
 
-    def draw_buttons(self, context,   layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context,   layout):
         ob = self.inputs[0].sv_get(default=[[]])[0]
         if ob and ob.type == 'MESH':
             layout.prop_search(self, 'image', bpy.data, "images", text="")

@@ -50,6 +50,17 @@ class TreeHandler:
             profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
             return
 
+        # something changed in scene and it duplicates some tree events which should be ignored
+        elif event.type == TreeEvent.SCENE_UPDATE:
+            # Either the scene handler was triggered by changes in the tree or tree is still in progress
+            if NodesUpdater.has_task():
+                return  # ignore the event
+            # this event was caused my update system itself and should be ignored
+            elif 'SKIP_UPDATE' in event.tree:
+                del event.tree['SKIP_UPDATE']
+                return
+            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+
         # mark given nodes as outdated
         elif event.type == TreeEvent.NODES_UPDATE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
@@ -127,7 +138,7 @@ class NodesUpdater:
 
     @classmethod
     def add_task(cls, event: Union[TreeEvent, GroupEvent]):
-        """It can handle ony one tree at a time"""
+        """It can handle only one tree at a time"""
         if cls.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name}, already updating tree: {cls._event.tree.name}")
         cls._event = event
@@ -264,6 +275,12 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
             bl_tree.update_ui()  # this only will update UI of main trees
             trees_ui_to_update.discard(bl_tree)  # protection from double updating
 
+            # this only need to trigger scene changes handler again
+            bl_tree.nodes[-1].use_custom_color = not bl_tree.nodes[-1].use_custom_color
+            bl_tree.nodes[-1].use_custom_color = not bl_tree.nodes[-1].use_custom_color
+            # this indicates that process of the tree is finished and next scene event can be skipped
+            bl_tree['SKIP_UPDATE'] = True
+
     # this will update all opened trees (in group editors)
     # regardless whether the trees was changed or not, including group nodes
     for bl_tree in trees_ui_to_update:
@@ -368,7 +385,8 @@ class ContextTrees:
         Should be called upon loading new file, other wise it can lead to errors and even crash
         Also according the fact that trees have links to real blender nodes
         it is also important to call this method upon undo method otherwise errors and crashes
-        Also single tre can be added, in this case only it will be deleted (it's going to be used in force update)
+        Also single tree can be added, in this case only it will be deleted
+        (it's going to be used in force update)
         """
         if bl_tree and bl_tree.tree_id in cls._trees:
             cls._trees[bl_tree.tree_id].delete()
@@ -435,7 +453,7 @@ class ContextTrees:
                     has_old_from_socket_links = False
 
                 # this is only because some nodes calculated data only if certain output socket is connected
-                # ideally we would not like ot make previous node outdated, but it requires changes in many nodes
+                # ideally we would not like to make previous node outdated, but it requires changes in many nodes
                 if not has_old_from_socket_links:
                     del link.from_node.is_input_changed
                 else:

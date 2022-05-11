@@ -18,6 +18,7 @@ from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
 from sverchok.core.group_handlers import MainHandler
+from sverchok.core.sockets import socket_type_names
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -125,11 +126,14 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
                     n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
-        for node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
-            for n_in_s, t_out_s in zip(node.inputs, self.outputs):
-                n_in_s.use_prop = not t_out_s.hide_value
-                if hasattr(t_out_s, 'default_type'):
-                    n_in_s.default_property_type = t_out_s.default_type
+        for out_node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
+            for n_in_s, t_out_s in zip(out_node.inputs, self.outputs):
+                if hasattr(n_in_s, 'default_property'):
+                    n_in_s.use_prop = not t_out_s.hide_value
+                    if hasattr(t_out_s, 'default_type'):
+                        n_in_s.default_property_type = t_out_s.default_type
+                else:
+                    n_in_s.use_prop = False
 
     def check_reroutes_sockets(self):
         """
@@ -250,6 +254,12 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
                     break  # the tree is no last in the path
             return group_nodes
         raise LookupError(f'Path the group tree: {self} was not found')
+
+    if bpy.app.version >= (3, 2):  # in 3.1 this can lead to a crash
+        @classmethod
+        def valid_socket_type(cls, socket_type: str):
+            # https://docs.blender.org/api/master/bpy.types.NodeTree.html#bpy.types.NodeTree.valid_socket_type
+            return socket_type in socket_type_names()
 
 
 class BaseNode:

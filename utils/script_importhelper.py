@@ -108,6 +108,12 @@ _add_numpy_exact(safe_names_np, [
 def _numpy_wrapper(f):
     return lambda a: np.array([f(x) for x in a])
 
+def np_pow(x, p, mod=None):
+    if mod is None:
+        return x ** p
+    else:
+        return (x ** p) % mod
+
 safe_names_np.update({
         'acos': np.arccos,
         'acosh': np.arccosh,
@@ -115,9 +121,11 @@ safe_names_np.update({
         'asinh': np.arcsinh,
         'atan2': np.arctan2,
         'atanh': np.arctanh,
+        'pow': np_pow,
         'erf': _numpy_wrapper(erf),
         'erfc': _numpy_wrapper(erfc),
         'gamma': _numpy_wrapper(gamma),
         'lgamma': _numpy_wrapper(lgamma),
         'factorial': _numpy_wrapper(factorial)
     })
+

@@ -16,6 +16,9 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+import inspect
+import sys
+from typing import Set
 
 from mathutils import Matrix, Quaternion
 import bpy
@@ -69,6 +72,17 @@ def update_interface(self, context):
     input_node = group_node.active_input()
     if input_node:
         group_tree.update_nodes([input_node])
+
+
+def socket_type_names() -> Set[str]:
+    names = set()
+    for name, member in inspect.getmembers(sys.modules[__name__]):
+        is_module_cls = inspect.isclass(member) and member.__module__ == __name__
+        if is_module_cls:
+            if NodeSocket in member.__bases__:
+                names.add(member.bl_idname)
+    return names
+
 
 class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
     bl_label = "Sockets Options"
@@ -630,6 +644,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_label = "Text Socket"
 
     color = (0.68,  0.85,  0.90, 1)
+    quick_link_to_node: StringProperty()
 
     default_property: StringProperty(update=process_from_socket)
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name
@@ -1462,13 +1477,17 @@ def socket_interface_classes():
             prop_args['name'] = "Default value"
             prop_args['update'] = lambda s, c: s.id_data.update_sockets()
             socket_interface_attributes['__annotations__'] = {}
-            socket_interface_attributes['__annotations__']['default_value'] = (prop_func, prop_args)
+            socket_interface_attributes['__annotations__']['default_value'] = socket_cls.__annotations__['default_property']
 
             def draw(self, context, layout):
                 col = layout.column()
                 col.prop(self, 'default_value')
                 col.prop(self, 'hide_value')
-            socket_interface_attributes['draw'] = draw
+        else:
+            def draw(self, context, layout):
+                pass
+
+        socket_interface_attributes['draw'] = draw
         yield type(
             f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterface,), socket_interface_attributes)
 

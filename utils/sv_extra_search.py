@@ -121,7 +121,12 @@ def gather_items(context):
             nodetype = get_node_class_reference(item[0])
             if not nodetype:
                 continue
-            fx.append((str(idx), ensure_valid_show_string(nodetype), '', idx))
+
+            docstring = ensure_valid_show_string(nodetype)
+            if not docstring:
+                continue
+
+            fx.append((str(idx), docstring, '', idx))
             idx += 1
 
     for k, v in macros.items():
@@ -179,7 +184,10 @@ class SvExtraSearch(bpy.types.Operator):
 
     def invoke(self, context, event):
         context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-        loop['results'] = gather_items(context)
+        
+        if not loop.get('results'):
+            loop['results'] = gather_items(context)
+        
         wm = context.window_manager
         wm.invoke_search_popup(self)
         return {'FINISHED'}

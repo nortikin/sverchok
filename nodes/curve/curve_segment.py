@@ -34,6 +34,12 @@ class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    join : BoolProperty(
+            name = "Join",
+            description = "Output single flat list of curves",
+            default = True,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
@@ -41,7 +47,8 @@ class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvCurveSocket', "Segment")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "rescale", toggle=True)
+        layout.prop(self, "join")
+        layout.prop(self, "rescale")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -58,9 +65,14 @@ class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
 
         curve_out = []
         for curves, tmins, tmaxs in zip_long_repeat(curve_s, tmin_s, tmax_s):
+            new_curves = []
             for curve, t_min, t_max in zip_long_repeat(curves, tmins, tmaxs):
                 new_curve = curve_segment(curve, t_min, t_max, self.rescale)
-                curve_out.append(new_curve)
+                new_curves.append(new_curve)
+            if self.join:
+                curve_out.extend(new_curves)
+            else:
+                curve_out.append(new_curves)
 
         self.outputs['Segment'].sv_set(curve_out)
 

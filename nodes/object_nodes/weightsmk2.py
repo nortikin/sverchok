@@ -19,27 +19,27 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Vertex Group mk2'''
     bl_idname = 'SvVertexGroupNodeMK2'
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VERTEX_WEIGHT'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     fade_speed: FloatProperty(name='fade', default=2, update=updateNode)
     clear: BoolProperty(name='clear w', default=True, update=updateNode)
     group_name: StringProperty(default='Sv_VGroup', update=updateNode)
 
-    def draw_buttons(self, context,   layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context,   layout):
         layout.prop(self, "group_name", text="")
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         lp = layout.prop
         lp(self,    "clear",   text="clear unindexed")
         lp(self, "fade_speed", text="Clearing speed")

@@ -6,8 +6,6 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from itertools import zip_longest
-import traceback
 
 import bpy
 from mathutils import Matrix, Vector

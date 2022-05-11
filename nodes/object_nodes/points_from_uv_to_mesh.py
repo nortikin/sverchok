@@ -23,7 +23,6 @@ from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode)
 
@@ -52,16 +51,15 @@ def UV(self, object):
     return [vertices_new, polygons_new]
 
 
-class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Transform vectors from UV space to Object space '''
     bl_idname = 'SvUVPointonMeshNode'
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'GROUP_UVS'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     object_ref: StringProperty(default='', update=updateNode)
-
-    def draw_buttons(self, context,   layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new

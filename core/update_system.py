@@ -74,15 +74,15 @@ def make_dep_dict(node_tree, down=False):
                      if node.bl_idname == 'WifiInNode'}
 
     for i,link in enumerate(list(ng.links)):
-        #  this proctects against a rare occurance where
+        #  this protects against a rare occurrence where
         #  a link is considered valid without a to_socket
-        #  or a from_socket. proctects against a blender crash
+        #  or a from_socket. protects against a blender crash
         #  see https://github.com/nortikin/sverchok/issues/493
 
         if not (link.to_socket and link.from_socket):
             ng.links.remove(link)
             raise ValueError("Invalid link found!, please report this file")
-        # it seems to work even with invalid links, maybe beacuse sverchok update is indepentent from blender update
+        # it seems to work even with invalid links, maybe because sverchok update is independent from blender update
         # if not link.is_valid:
             # return collections.defaultdict(set)  # this happens more often than one might think
         if link.is_hidden:

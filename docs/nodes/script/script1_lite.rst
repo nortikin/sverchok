@@ -12,6 +12,12 @@ Sverchok itself.
 
 The script node implementation is intended for quick, non serious, experimentation.
 
+Keyboard Shortcuts
+------------------
+
+When a script is loaded in the SNLite node you can keep editing the script from the TextEditor.
+Instead of pressing the reload button the Node's UI you can press "Ctrl+Enter" while inside the TextEditor.
+
 Features
 --------
 

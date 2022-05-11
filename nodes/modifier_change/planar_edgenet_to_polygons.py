@@ -95,9 +95,9 @@ def calc_angle(p1,p2):
     angle = p1.angle_signed(p2)
     return angle + TWO_PI if angle < 0 else angle
 
-def cycles_list(value,list):
+def cycles_list(value, list):
     #Cycle list as item is equal value gets first position
-    cut_i = lsit.index(value)
+    cut_i = list.index(value)
     return list[cut_i:] + list[:cut_i]
 
 def get_next_neighbour(start, neibs, turn='left'):

@@ -20,17 +20,24 @@
 import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
     ''' Set custom normals for verts or loops '''
     bl_idname = 'SvSetCustomMeshNormals'
     bl_label = 'Set Custom Normals'
     bl_icon = 'SNAP_NORMAL'
     sv_icon = 'SV_CUSTOM_NORMALS'
+
+    @property
+    def is_scene_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and self.inputs['Objects'].object_ref_pointer
+
+    @property
+    def is_animation_dependent(self):
+        return (not self.inputs['Objects'].is_linked) and self.inputs['Objects'].object_ref_pointer
 
     modes = [
         ("per_Vert", "per Vert", "", 1),
@@ -39,8 +46,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
 
     mode: EnumProperty(items=modes, default='per_Vert', update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
 
     def sv_init(self, context):

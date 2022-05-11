@@ -139,6 +139,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         update=on_draft_mode_changed,
         options=set(),
     )
+    sv_scene_update: BoolProperty(name="Scene update", description="Update upon changes in the scene", options=set(),
+                                  default=True)
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
@@ -153,14 +155,34 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """This method expects to get list of its nodes which should be updated"""
         return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes, cancel))
 
+    def scene_update(self):
+        """This method should be called by scene changes handler
+        it ignores events related with S
+        sverchok trees in other cases it updates nodes which read data from Blender"""
+        def nodes_to_update():
+            for node in self.nodes:
+                try:
+                    if node.is_scene_dependent and node.is_interactive:
+                        yield node
+                except AttributeError:
+                    pass
+        if self.sv_scene_update:
+            TreeHandler.send(TreeEvent(TreeEvent.SCENE_UPDATE, self, nodes_to_update(), cancel=False))
+
     def process_ani(self):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
+        def animated_nodes():
+            for node in self.nodes:
+                try:
+                    if node.is_animation_dependent and node.is_animatable:
+                        yield node
+                except AttributeError:
+                    pass
         if self.sv_animate:
-            animated_nodes = (n for n in self.nodes if hasattr(n, 'is_animatable') and n.is_animatable)
-            TreeHandler.send(TreeEvent(TreeEvent.FRAME_CHANGE, self, animated_nodes))
+            TreeHandler.send(TreeEvent(TreeEvent.FRAME_CHANGE, self, animated_nodes()))
 
     def update_ui(self):
         """ The method get information about node statistic of last update from the handler to show in view space
@@ -190,6 +212,23 @@ class UpdateNodes:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    def update_interactive_mode(self, context):
+        if self.is_interactive:
+            self.process_node(context)
+
+    is_interactive: BoolProperty(default=True, description="Update node upon changes in the scene",
+                                 update=update_interactive_mode, name="Interactive")
+    is_scene_dependent = False  # if True and is_interactive then the node will be updated upon scene changes
+
+    def refresh_node(self, context):
+        if self.refresh:
+            self.refresh = False
+            self.process_node(context)
+
+    refresh: BoolProperty(name="Update Node", description="Update Node", update=refresh_node)
+    is_animatable: BoolProperty(name="Animate Node", description="Update Node on frame change", default=True)
+    is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
 
     def sv_init(self, context):
         """
@@ -358,7 +397,7 @@ class NodeUtils:
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
         """
-        fail gracefuly?
+        fail gracefully?
         This function acknowledges that the identifier being passed can be a string or an object proper.
         for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
         be stored with that data in .blends, here we try to permit older blends having data stored as a string,
@@ -414,6 +453,34 @@ class NodeUtils:
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     """Base class for all nodes"""
     _docstring = None  # A cache for docstring property
+
+    def draw_buttons(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, 'is_animatable', icon='ANIM', icon_only=True)
+            if self.is_scene_dependent:
+                row.prop(self, 'is_interactive', icon='SCENE_DATA', icon_only=True)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, 'refresh', icon='FILE_REFRESH')
+        self.sv_draw_buttons(context, layout)
+
+    def sv_draw_buttons(self, context, layout):
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, 'is_animatable', icon='ANIM')
+            if self.is_scene_dependent:
+                row.prop(self, 'is_interactive', icon='SCENE_DATA')
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, 'refresh', icon='FILE_REFRESH')
+        self.sv_draw_buttons_ext(context, layout)
+
+    def sv_draw_buttons_ext(self, context, layout):
+        self.sv_draw_buttons(context, layout)
 
     @classproperty
     def docstring(cls):

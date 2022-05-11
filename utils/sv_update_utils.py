@@ -38,7 +38,7 @@ MASTER_BRANCH_NAME = 'master'
 def sv_get_local_path():
     script_paths = os.path.normpath(os.path.dirname(__file__))
     addons_path = os.path.split(os.path.dirname(script_paths))[0]
-    version_local = ".".join(map(str, sverchok.bl_info["version"]))
+    version_local = sverchok.VERSION
     return script_paths, addons_path, version_local
 
 sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()

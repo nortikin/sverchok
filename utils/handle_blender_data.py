@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from collections import Iterable
+from collections.abc import Iterable
 from enum import Enum
 from functools import singledispatch
 from itertools import chain
@@ -107,6 +107,59 @@ def get_sv_trees():
 
 # In general it's still arbitrary set of functionality (like module which fully consists with functions)
 # But here the functions are combine with data which they handle
+
+class BlModifier:
+    def __init__(self, modifier):
+        self._mod: bpy.types.Modifier = modifier
+
+    def get_property(self, name):
+        return getattr(self._mod, name)
+
+    def set_property(self, name, value):
+        setattr(self._mod, name, value)
+
+    def get_tree_prop(self, name):
+        return self._mod[name]
+
+    def set_tree_prop(self, name, value):
+        self._mod[name] = value
+
+    @property
+    def type(self) -> str:
+        return self._mod.type
+
+    def __eq__(self, other):
+        if isinstance(other, BlModifier):
+            # check type
+            if self.type != other.type:
+                return False
+
+            # check properties
+            for prop in (p for p in self._mod.bl_rna.properties if not p.is_readonly):
+                if other.get_property(prop.identifier) != self.get_property(prop.identifier):
+                    return False
+
+            # check tree properties
+            if self._mod.type == 'NODES' and self._mod.node_group:
+                for tree_inp in self._mod.node_group.inputs[1:]:
+                    prop_name = tree_inp.identifier
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+                    use_name = f"{prop_name}_use_attribute"
+                    if self.get_tree_prop(use_name) != other.get_tree_prop(use_name):
+                        return False
+                    attr_name = f"{prop_name}_attribute_name"
+                    if self.get_tree_prop(attr_name) != other.get_tree_prop(attr_name):
+                        return False
+                for tree_out in self._mod.node_group.outputs[1:]:
+                    prop_name = f"{tree_out.identifier}_attribute_name"
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+
+            return True
+        else:
+            return NotImplemented
+
 
 class BlTrees:
     """Wrapping around Blender tree, use with care

@@ -15,13 +15,11 @@ import csv
 import collections
 import json
 import ast
-import sverchok
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
 
 from sverchok.utils.sv_text_io_common import (
@@ -73,7 +71,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView

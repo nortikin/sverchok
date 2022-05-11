@@ -4,7 +4,7 @@ Box
 Functionality
 -------------
 
-Offers a Box primitive with variable X,Y and Z divisions, and overal Size.
+Offers a Box primitive with variable X,Y and Z divisions, and overall Size.
 
 Inputs
 ------

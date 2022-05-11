@@ -27,7 +27,7 @@ All Vector parameters (except axis) default to (0,0,0) if no input is given.
 +-------------+---------------+-----------------------------------------------------------------+
 | **Degrees** | Scalar, Float | angle of the total rotation. Default 360.0                      |
 +-------------+---------------+-----------------------------------------------------------------+
-| **Steps**   | Scalar, Int   | numer of rotation steps. Default 20                             |
+| **Steps**   | Scalar, Int   | number of rotation steps. Default 20                            |
 +-------------+---------------+-----------------------------------------------------------------+
 | **Merge**   | Bool, toggle  | removes double vertices if the geometry can be merged,          |
 |             |               | usually used to prevent doubles of first profile and last       |

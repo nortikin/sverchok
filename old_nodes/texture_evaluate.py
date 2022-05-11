@@ -21,7 +21,6 @@ from bpy.props import EnumProperty, StringProperty, BoolProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func,
                                      no_space)
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -73,7 +72,8 @@ mapper_funcs = {
     'Object': lambda v: Vector(v),
 }
 
-class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scence Texture In
     Tooltip: Evaluate Scene texture at input coordinates
@@ -83,7 +83,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
     bl_idname = 'SvTextureEvaluateNode'
     bl_label = 'Texture Evaluate'
     bl_icon = 'FORCE_TEXTURE'
-
+    is_animation_dependent = True
     texture_coord_modes = [
         ('UV', 'UV coordinates', 'Input UV coordinates to evaluate texture. (0 to 1 as domain)', '', 1),
         ('Object', 'Object', 'Input Object coordinates to evaluate texture. (-1 to 1 as domain)', '', 2),
@@ -145,7 +145,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         else:
             layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         b = layout.split(factor=0.33, align=True)
         b.label(text='Mapping:')
@@ -156,9 +156,8 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         if self.color_channel == 'Color':
             layout.prop(self, 'use_alpha', text="Use Alpha")
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.draw_animatable_buttons(layout)
         self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)
 

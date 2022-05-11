@@ -270,7 +270,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, twist, steps):
         spline = self.build_spline(curve, self.bevel_mode, self.is_cyclic)
 
-        t_values = np.linspace(0.0, 1.0, num = steps)
+        t_values = np.linspace(0.0, 1.0, num=int(steps))
         if self.is_cyclic:
             t_values = t_values[:-1]
         if self.flip_curve:

@@ -10,7 +10,7 @@ Given a NURBS Surface object and a knot value, the node reduces the
 multiplicity of this knot in surface's U- or V-knotvector. This procedure can
 not always be performed. In general, this procedure changes the shape of the
 surface. There is "tolerance" parameter, defining how much is it allowed to
-chagne the shape of the surface.
+change the shape of the surface.
 
 This node can work only with NURBS surfaces.
 

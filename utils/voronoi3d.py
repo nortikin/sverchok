@@ -346,6 +346,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     else: # VOLUME, SURFACE
         all_points = sites[:]
         if do_clip:
+            clipping = float(clipping)
             for site in sites:
                 loc, normal, index, distance = bvh.find_nearest(site)
                 if loc is not None:
@@ -595,6 +596,25 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations, weight_field = Non
     for i in range(n_iterations):
         points = iteration(points)
         uvpoints, points = restrict(points)
+
+    return uvpoints, points
+
+def lloyd_on_surface(surface, uv_sites, thickness, n_iterations, weight_field = None):
+
+    def evaluate(uv_pts):
+        us = uv_pts[:,0]
+        vs = uv_pts[:,1]
+        return surface.evaluate_array(us, vs)
+
+    def iteration(uvpoints, points):
+        us = uv_pts[:,0]
+        vs = uv_pts[:,1]
+        data = surface.derivatives_data_array(us, vs)
+
+    uvpoints = np.asarray(uv_sites)
+    points = evaluate(uvpoints)
+    for i in range(n_iterations):
+        uvpoints, points = iteration(uvpoints, points)
 
     return uvpoints, points
 

@@ -21,7 +21,6 @@ from bpy.props import EnumProperty, BoolProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
                                      iter_list_match_func, no_space)
@@ -74,7 +73,8 @@ mapper_funcs = {
     'Object': lambda v: Vector(v),
 }
 
-class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scene Texture In
     Tooltip: Evaluate Scene texture at input coordinates
@@ -84,6 +84,10 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
     bl_idname = 'SvTextureEvaluateNodeMk2'
     bl_label = 'Texture Evaluate'
     bl_icon = 'FORCE_TEXTURE'
+
+    @property
+    def is_scene_dependent(self):
+        return not self.inputs['Texture'].is_linked and self.texture_pointer
 
     texture_coord_modes = [
         ('UV', 'UV coordinates', 'Input UV coordinates to evaluate texture. (0 to 1 as domain)', '', 1),
@@ -144,8 +148,7 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         else:
             layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         b = layout.split(factor=0.33, align=True)
         b.label(text='Mapping:')
         b.prop(self, 'tex_coord_type', expand=False, text='')
@@ -155,9 +158,8 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         if self.color_channel == 'Color':
             layout.prop(self, 'use_alpha', text="Use Alpha")
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)
 
     def rclick_menu(self, context, layout):

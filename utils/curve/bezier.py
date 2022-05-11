@@ -278,6 +278,9 @@ class SvBezierCurve(SvCurve):
     def get_degree(self):
         return self.degree
 
+    def is_rational(self):
+        return False
+
     def get_control_points(self):
         return self.points
 
@@ -433,6 +436,9 @@ class SvCubicBezierCurve(SvCurve):
 
     def get_degree(self):
         return 3
+
+    def is_rational(self):
+        return False
 
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])

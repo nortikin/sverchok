@@ -17,21 +17,21 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathutils
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Point on Mesh '''
     bl_idname = 'SvPointOnMeshNodeMK2'
     bl_label = 'Object ID Point on Mesh MK2' #new is pointless name
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINT_ON_MESH'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     Mdist: FloatProperty(name='Max_Distance', default=10, update=updateNode)
     mode: BoolProperty(name='for in points', default=False, update=updateNode)
@@ -48,10 +48,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
         so('SvVerticesSocket', "Normal_on_mesh")
         so('SvStringsSocket', "FaceINDEX")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
-    def draw_buttons_ext(self, context, layout):
-        self.draw_animatable_buttons(layout)
+    def sv_draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "mode", text="In Mode")
         row.prop(self, "mode2", text="Out Mode")

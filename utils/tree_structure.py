@@ -8,7 +8,9 @@
 
 from __future__ import annotations
 
-from collections import Mapping, defaultdict
+from collections.abc import Mapping
+from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic, Optional, Union
+from collections import defaultdict
 from contextlib import contextmanager
 from functools import wraps
 from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic, Optional, Union, NewType

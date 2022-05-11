@@ -28,6 +28,7 @@ from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
 from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
 from sverchok.utils.macros.hotswap_macros import swap_vd_mv
+from sverchok.utils.macros.get_objects_data import objdata_macro_one
 
 # pylint: disable=c0301
 
@@ -38,56 +39,34 @@ def simple_macro(description="", term="", macro_handler="verbose_macro_handler")
         'ident': [macro_handler, term]}    
 
 macros = {
-    "> obj vd": simple_macro(
-        description="active_obj into objlite + vdmk2", term='obj vd'),
-    "> objs vd": simple_macro(
-        description="multi obj in + vdmk2", term='objs vd'),
-    "> zen": simple_macro(
-        description="zen of Sverchok", term='zen'),
-    "> nuke python++": simple_macro(
-        description="like f8", term='nuke python++'),        
-    "> sn petal": simple_macro(
-        description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
-    "> Subdiv to quads": simple_macro(
-        description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
-    "> multiply *": simple_macro(
-        description="multiply selected nodes", term='mathMUL'),
-    "> add +": simple_macro(
-        description="add selected nodes", term='mathADD'),
-    "> sub -": simple_macro(
-        description="subtract selected nodes", term='mathSUB'),
-    "> join1": simple_macro(
-        description="selected nodes to List Join", term='join1'),
-    "> join123": simple_macro(
-        description="selected nodes to List Join", term='join123'),
-    "> join12": simple_macro(
-        description="selected nodes to List Join", term='join12'),
-    "> join13": simple_macro(
-        description="selected nodes to List Join", term='join13'),
-    "> rnd col": simple_macro(
-        description="list of n-random colors", term='rndcol'),
-    "> sw1": simple_macro(
-        description="connect nodes to switch", term='switch1'),
-    "> sw12": simple_macro(
-        description="connect nodes to switch", term='switch12'),
-    "> sw13": simple_macro(
-        description="connect nodes to switch", term='switch13'),
-    "> sw123": simple_macro(
-        description="connect nodes to switch", term='switch123'),
-    "> gp +": simple_macro(
-        description="grease pencil setup", term='gp +'),
-    "> gp + 2": simple_macro(
-        description="grease pencil setup", term='gp + 2'),
-    "> hotswap vd mv": simple_macro(
-        description="hotswap vd->meshviewer", term='hotswap'),    
-    "> url": simple_macro(
-        description="download archive from url", term='url'),
-    "> blend 2 zip": simple_macro(
-        description="archive blend as zip", term='blend 2 zip'),
-    "> all numpy True": simple_macro(
-        description="existing nodes to numpy", term='output numpy True'),
-    "> all numpy False": simple_macro(
-        description="existing nodes to python", term='output numpy False')
+    "> obj vd": simple_macro(description="active_obj into objlite + vdmk2", term='obj vd'),
+    "> objs vd": simple_macro(description="multi obj in + vdmk2", term='objs vd'),
+    "> objs socket to get-Obj-Data": simple_macro(description="objsocket -> get objects data", term='objs socket to data'),
+    "> zen": simple_macro(description="zen of Sverchok", term='zen'),
+    "> nuke python++": simple_macro(description="like f8", term='nuke python++'),
+    "> 3d cursor to Vector In": simple_macro(description="makes new node", term="3dcursor_to_vector_in"),
+    "> 3d cursor to Matrix Input": simple_macro(description="makes new node", term="3dcursor_to_matrix"),
+    "> sn petal": simple_macro(description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
+    "> Subdiv to quads": simple_macro(description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
+    "> multiply *": simple_macro(description="multiply selected nodes", term='mathMUL'),
+    "> add +": simple_macro(description="add selected nodes", term='mathADD'),
+    "> sub -": simple_macro(description="subtract selected nodes", term='mathSUB'),
+    "> join1": simple_macro(description="selected nodes to List Join", term='join1'),
+    "> join123": simple_macro(description="selected nodes to List Join", term='join123'),
+    "> join12": simple_macro(description="selected nodes to List Join", term='join12'),
+    "> join13": simple_macro(description="selected nodes to List Join", term='join13'),
+    "> rnd col": simple_macro(description="list of n-random colors", term='rndcol'),
+    "> sw1": simple_macro(description="connect nodes to switch", term='switch1'),
+    "> sw12": simple_macro(description="connect nodes to switch", term='switch12'),
+    "> sw13": simple_macro(description="connect nodes to switch", term='switch13'),
+    "> sw123": simple_macro(description="connect nodes to switch", term='switch123'),
+    "> gp +": simple_macro(description="grease pencil setup", term='gp +'),
+    "> gp + 2": simple_macro(description="grease pencil setup", term='gp + 2'),
+    "> hotswap vd mv": simple_macro(description="hotswap vd->meshviewer", term='hotswap'),    
+    "> url": simple_macro(description="download archive from url", term='url'),
+    "> blend 2 zip": simple_macro(description="archive blend as zip", term='blend 2 zip'),
+    "> all numpy True": simple_macro(description="existing nodes to numpy", term='output numpy True'),
+    "> all numpy False": simple_macro(description="existing nodes to python", term='output numpy False')
 }
 
 
@@ -155,6 +134,30 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
+
+        elif term == "objs socket to data":
+            objdata_macro_one(context, operator, term, nodes, links)
+
+        elif term == "3dcursor_to_vector_in":
+            
+            MOUSE_X, MOUSE_Y = context.space_data.cursor_location
+            cursor = context.scene.cursor.location
+
+            node = nodes.new("GenVectorsNode")
+            node.location = MOUSE_X, MOUSE_Y
+            node.x_, node.y_, node.z_ = tuple(cursor)
+
+        elif term == "3dcursor_to_matrix":
+
+            def flattened(matrix):
+                return list(matrix[0]) + list(matrix[1]) + list(matrix[2]) + list(matrix[3])
+            
+            MOUSE_X, MOUSE_Y = context.space_data.cursor_location
+            matrix = context.scene.cursor.matrix
+
+            node = nodes.new("SvMatrixValueIn") # "SvMatrixInNodeMK4")
+            node.location = MOUSE_X, MOUSE_Y
+            node.matrix = flattened(matrix.transposed())
 
         elif term == 'rndcol':
 

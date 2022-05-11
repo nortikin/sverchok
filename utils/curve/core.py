@@ -13,8 +13,8 @@ from mathutils import Vector, Matrix
 from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import info, error
-from sverchok.utils.math import binomial
-from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.math import binomial, binomial_array
+from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 
 class ZeroCurvatureException(Exception):
@@ -68,15 +68,15 @@ class SvCurve(object):
         lengths = np.linalg.norm(dvs, axis=1)
         return np.sum(lengths)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         v = self.evaluate(t)
-        h = self.tangent_delta
+        h = self.get_tangent_delta(tangent_delta)
         v_h = self.evaluate(t+h)
         return (v_h - v) / h
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         vs = self.evaluate_array(ts)
-        h = self.tangent_delta
+        h = self.get_tangent_delta(tangent_delta)
         u_max = self.get_u_bounds()[1]
         bad_idxs = (ts+h) > u_max
         good_idxs = (ts+h) <= u_max
@@ -464,27 +464,27 @@ class SvConcatCurve(SvCurve):
         points_grouped = [self.curves[i].evaluate_array(np.array(dts)) for i, dts in dts_grouped]
         return np.concatenate(points_grouped)
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        tangents_grouped = [self.curves[i].tangent_array(np.array(dts)) for i, dts in dts_grouped]
+        tangents_grouped = [self.curves[i].tangent_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(tangents_grouped)
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        vectors = [self.curves[i].second_derivative_array(np.array(dts)) for i, dts in dts_grouped]
+        vectors = [self.curves[i].second_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(vectors)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        vectors = [self.curves[i].third_derivative_array(np.array(dts)) for i, dts in dts_grouped]
+        vectors = [self.curves[i].third_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         return np.concatenate(vectors)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         dts_grouped = self._get_ts_grouped(ts)
-        derivs = [self.curves[i].derivatives_array(n, np.array(dts)) for i, dts in dts_grouped]
+        derivs = [self.curves[i].derivatives_array(n, np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
         result = []
         for i in range(n):
             ith_derivs_grouped = [curve_derivs[i] for curve_derivs in derivs]
@@ -735,26 +735,52 @@ class SvLambdaCurve(SvCurve):
         else:
             return np.vectorize(self.function, signature='()->(3)')(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         point = self.function(t)
-        point_h = self.function(t+self.tangent_delta)
-        return (point_h - point) / self.tangent_delta
+        point_h = self.function(t+h)
+        return (point_h - point) / h
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
         points = np.vectorize(self.function, signature='()->(3)')(ts)
-        points_h = np.vectorize(self.function, signature='()->(3)')(ts+self.tangent_delta)
-        return (points_h - points) / self.tangent_delta
+        points_h = np.vectorize(self.function, signature='()->(3)')(ts+h)
+        return (points_h - points) / h
 
 class SvTaylorCurve(SvCurve):
     __description__ = "Taylor"
 
-    def __init__(self, start, derivatives):
+    def __init__(self, start, derivatives, u_bounds=None):
         self.start = start
         self.derivatives = np.array(derivatives)
-        self.u_bounds = (0, 1.0)
+        self.ndim = self.derivatives.shape[1]
+        if u_bounds is None:
+            u_bounds = (0, 1.0)
+        self.u_bounds = u_bounds
+
+    @classmethod
+    def from_coefficients(cls, coefficients):
+        derivatives = np.zeros_like(coefficients)
+        fac = 1.0
+        for i, coeff in enumerate(coefficients):
+            derivatives[i] = coeff * fac
+            fac *= (i+1)
+
+        return SvTaylorCurve(derivatives[0], derivatives[1:])
 
     def get_u_bounds(self):
         return self.u_bounds
+
+    def get_coefficients(self):
+        coeffs = np.zeros((len(self.derivatives)+1, self.ndim))
+        coeffs[0] = self.start
+
+        fac = 1.0
+        for i, deriv in enumerate(self.derivatives):
+            coeffs[i+1] = deriv / fac
+            fac *= (i+2)
+
+        return coeffs
 
     def evaluate(self, t):
         result = self.start
@@ -766,7 +792,7 @@ class SvTaylorCurve(SvCurve):
 
     def evaluate_array(self, ts):
         n = len(ts)
-        result = np.broadcast_to(self.start, (n, 3))
+        result = np.broadcast_to(self.start, (n, self.ndim))
         denom = 1
         ts = ts[np.newaxis].T
         for i, vec in enumerate(self.derivatives):
@@ -774,7 +800,7 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         result = np.array([0, 0, 0])
         denom = 1
         for i, vec in enumerate(self.derivatives):
@@ -782,9 +808,9 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         n = len(ts)
-        result = np.zeros((n, 3))
+        result = np.zeros((n, self.ndim))
         denom = 1
         ts = ts[np.newaxis].T
         for i, vec in enumerate(self.derivatives):
@@ -792,12 +818,12 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         n = len(ts)
-        result = np.zeros((n, 3))
+        result = np.zeros((n, self.ndim))
         denom = 1
         ts = ts[np.newaxis].T
         for k, vec in enumerate(self.derivatives[1:]):
@@ -806,9 +832,9 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+2)
         return result
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         n = len(ts)
-        result = np.zeros((n, 3))
+        result = np.zeros((n, self.ndim))
         denom = 1
         ts = ts[np.newaxis].T
         for k, vec in enumerate(self.derivatives[2:]):
@@ -821,39 +847,36 @@ class SvTaylorCurve(SvCurve):
         return len(self.derivatives)
 
     def get_control_points(self):
-        n = self.get_degree()
-        factorials = np.empty((n,))
-        f = 1
-        for i in range(1, n+1):
-            factorials[i-1] = f
-            f *= (i+1)
+        p = self.get_degree()
+        coeffs = self.get_coefficients()
 
-        A = np.zeros((n+1, n+1))
-        for t_power in range(n+1):
-            for ctrlpt_i in range(t_power+1):
-                sign = 1 if (t_power-ctrlpt_i) % 2 == 0 else -1
-                A[t_power,ctrlpt_i] = binomial(n,ctrlpt_i) * binomial(n-ctrlpt_i, t_power-ctrlpt_i) * sign
+        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M1 = np.linalg.inv(M)
+        R1 = np.linalg.inv(R)
 
-        control_points = np.empty((n+1, 3))
-        for d in range(3):
-
-            B = np.empty((n+1, 1))
-            B[0,0] = self.start[d]
-            B[1:,0] = self.derivatives[:,d] / factorials
-
-            x = np.linalg.solve(A, B)
-            control_points[:,d] = x[:,0]
+        control_points = np.zeros((p+1, self.ndim))
+        for axis in range(self.ndim):
+            control_points[:,axis] = M1 @ R1 @ coeffs[:,axis]
 
         return control_points
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         control_points = self.get_control_points() 
+        if control_points.shape[1] == 4:
+            control_points, weights = from_homogenous(control_points)
+        else:
+            weights = None
         degree = self.get_degree()
         knotvector = sv_knotvector.generate(degree, len(control_points))
+        u1, u2 = self.get_u_bounds()
+        knotvector = (u2-u1) * knotvector + u1
         nurbs = SvNurbsMaths.build_curve(implementation,
                 degree = degree, knotvector = knotvector,
-                control_points = control_points)
-        return nurbs.cut_segment(*self.u_bounds)
+                control_points = control_points,
+                weights = weights)
+        #return nurbs.reparametrize(*self.get_u_bounds())
+        return nurbs
+        #return nurbs.cut_segment(u1, u2)
 
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
@@ -875,4 +898,51 @@ class SvTaylorCurve(SvCurve):
 
     def reverse(self):
         return self.to_nurbs().reverse()
+
+    def square(self, to_axis=0):
+        """
+        Returns a curve which expresses squared distance from origin to points of this curve.
+        """
+        coeffs = self.get_coefficients()
+        p = len(coeffs)
+        square_coeffs = np.zeros(((p-1)*2+1, coeffs.shape[1]))
+
+        for power in range(len(square_coeffs)):
+            for i in range(p):
+                j = power - i
+                if 0 <= j < p:
+                    square_coeffs[power,:] += coeffs[i,:] * coeffs[j,:]
+
+        result_coeffs = np.zeros_like(square_coeffs)
+        result_coeffs[:, to_axis] = square_coeffs[:,:3].sum(axis=1)
+        if result_coeffs.shape[1] == 4:
+            result_coeffs[0][3] = 1.0
+
+        square = SvTaylorCurve.from_coefficients(result_coeffs)
+        square.u_bounds = self.u_bounds
+        return square
+
+def calc_taylor_nurbs_matrices(degree, u_bounds):
+    # Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    p = degree
+    u1, u2 = u_bounds
+    binom = binomial_array(p+1)
+
+    M = np.zeros((p+1, p+1), dtype=np.float64)
+    for k in range(p+1):
+        sign = 1.0
+        for j in range(k, p+1):
+            M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+            sign = - sign
+
+    c = 1.0 / (u2 - u1)
+    d = -u1 / (u2 - u1)
+
+    R = np.zeros((p+1, p+1), dtype=np.float64)
+    for i in range(p+1):
+        for j in range(i, p+1):
+            R[i,j] = binom[j, i] * c**i * d**(j-i)
+
+    return M, R
 

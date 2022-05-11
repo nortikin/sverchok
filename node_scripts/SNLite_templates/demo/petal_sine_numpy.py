@@ -12,9 +12,9 @@ from sverchok.data_structure import get_edge_loop
 TAU = np.pi * 2
 N = n_petals * vp_petal
 
-pi_vals = np.tile(np.linspace(0, TAU, vp_petal, endpoint=False), n_petals)
+pi_vals = np.tile(np.linspace(0, TAU, int(vp_petal), endpoint=False), n_petals)
 amps = np.cos(pi_vals) * amp
-theta = np.linspace(0, TAU, N, endpoint=False)
+theta = np.linspace(0, TAU, int(N), endpoint=False)
 circle_coords = np.array([np.sin(theta), np.cos(theta), np.zeros(N)])
 coords = circle_coords.T * (profile_radius + amps.reshape((-1, 1)))
 
