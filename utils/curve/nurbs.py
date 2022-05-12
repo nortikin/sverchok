@@ -1119,9 +1119,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     control_points, weights)
         return curve
 
-    def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False):
+    def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False, logger=None):
         # Implementation adapted from Geomdl
-        logger = getLogger()
 
         if (count is None) == (target is None):
             raise Exception("Either count or target must be specified")
@@ -1204,7 +1203,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 if dist <= tolerance:
                     can_remove = True
                 else:
-                    logger.debug(f"remove_knot: stop, distance={dist}")
+                    if logger is not None:
+                        logger.debug(f"remove_knot: stop, distance={dist}")
             else:
                 alpha_i = knot_removal_alpha_i(u, knotvector, i)
                 ptn = alpha_i * temp_j[ii + t + 1] + (1.0 - alpha_i)*temp_i[ii - 1]
@@ -1212,7 +1212,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 if dist <= tolerance:
                     can_remove = True
                 else:
-                    logger.debug(f"remove_knot: stop, distance={dist}")
+                    if logger is not None:
+                        logger.debug(f"remove_knot: stop, distance={dist}")
 
             # Check if we can remove the knot and update new control points array
             if can_remove:
