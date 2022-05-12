@@ -185,8 +185,9 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         for socket in self.inputs:
             if socket.is_linked:
                 slots.append(socket.sv_get(deepcopy=False))
-        if len(slots) == 0:
+        if not slots:
             return
+
         if self.match_and_join:
             match_func = list_match_func[self.list_match]
             if self.mix_check:
