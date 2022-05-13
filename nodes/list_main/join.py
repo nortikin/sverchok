@@ -174,19 +174,20 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         if len(self.outputs) > 0:
             multi_socket(self, min=1)
-        self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.links and sock.other])
+        self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.is_linked and sock.other])
 
     def process(self):
 
-        if not self.outputs['data'].links:
+        if not self.outputs['data'].is_linked:
             return
 
         slots = []
         for socket in self.inputs:
-            if socket.is_linked and socket.links:
+            if socket.is_linked:
                 slots.append(socket.sv_get(deepcopy=False))
-        if len(slots) == 0:
+        if not slots:
             return
+
         if self.match_and_join:
             match_func = list_match_func[self.list_match]
             if self.mix_check:
@@ -230,9 +231,8 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         mixing = "M" if self.mix_check else ""
         wrapping = "W" if self.wrap_check and not self.numpy_mode else ""
         numpy_m = "NP " if self.numpy_mode else ""
-        level = str(self.JoinLevel)
-        fstr = " Lv={0} {1}{2}{3}".format(level, numpy_m, mixing, wrapping)
-        return self.name + fstr
+
+        return f"{self.name} Lv={self.JoinLevel} {numpy_m}{mixing}{wrapping}"
 
 
 def register():
