@@ -47,6 +47,8 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
+from sverchok.dependencies import numba
+
 identity_matrix = Matrix()
 
 # constants
@@ -189,6 +191,8 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
+local_numba_storage = {}
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
@@ -231,41 +235,51 @@ class CubicSpline(Spline):
             raise Exception("Cubic spline can't be build from less than 3 vertices")
 
         # a = locs
-        h = tknots[1:] - tknots[:-1]
-        h[h == 0] = 1e-8
-        q = np.zeros((n - 1, 3))
-        q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
-            h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
+        def perform_stage(tknots, n, locs):
+            """
+            returns splines
+            """
+            h = tknots[1:] - tknots[:-1]
+            h[h == 0] = 1e-8
+            q = np.zeros((n - 1, 3))
+            q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
+                h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
 
-        l = np.zeros((n, 3))
-        l[0, :] = 1.0
-        u = np.zeros((n - 1, 3))
-        z = np.zeros((n, 3))
+            l = np.zeros((n, 3))
+            l[0, :] = 1.0
+            u = np.zeros((n - 1, 3))
+            z = np.zeros((n, 3))
 
-        for i in range(1, n - 1):
-            l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
-            l[i, l[i] == 0] = 1e-8
-            u[i] = h[i] / l[i]
-            z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
-        l[-1, :] = 1.0
-        z[-1] = 0.0
+            for i in range(1, n - 1):
+                l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
+                l[i, l[i] == 0] = 1e-8
+                u[i] = h[i] / l[i]
+                z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
+            l[-1, :] = 1.0
+            z[-1] = 0.0
 
-        b = np.zeros((n - 1, 3))
-        c = np.zeros((n, 3))
+            b = np.zeros((n - 1, 3))
+            c = np.zeros((n, 3))
 
-        for i in range(n - 2, -1, -1):
-            c[i] = z[i] - u[i] * c[i + 1]
-        b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
-        d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+            for i in range(n - 2, -1, -1):
+                c[i] = z[i] - u[i] * c[i + 1]
+            b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
+            d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
 
-        splines = np.zeros((n - 1, 5, 3))
-        splines[:, 0] = locs[:-1]
-        splines[:, 1] = b
-        splines[:, 2] = c[:-1]
-        splines[:, 3] = d
-        splines[:, 4] = tknots[:-1, np.newaxis]
+            splines = np.zeros((n - 1, 5, 3))
+            splines[:, 0] = locs[:-1]
+            splines[:, 1] = b
+            splines[:, 2] = c[:-1]
+            splines[:, 3] = d
+            splines[:, 4] = tknots[:-1, np.newaxis]
+            return splines
         
-        self.splines = splines
+        if numba:
+            if 'perform_stage' not in local_numba_storage:
+                local_numba_storage['perform_stage'] = numba.jit(perform_stage)
+            perform_stage = local_numba_storage['perform_stage']
+
+        self.splines = perform_stage(tknots, n, locs)
 
     def eval(self, t_in, tknots = None):
         """
