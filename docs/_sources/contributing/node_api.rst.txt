@@ -5,10 +5,10 @@ Node API
 This page has a claim to define all aspects of node creation. Brief introduction
 to node creation is represented :doc:`on this page <add_new_node>`.
 
-Code of new node should be created in separate file. The file should obtain
-one of the available categories in ``nodes`` folder.
+The Code of a new node should be created in a separate file. The file should be placed in
+one of the available categories in the ``nodes`` folder.
 
-Usually structure of the file looks next:
+Usually the structure of the file looks like:
 
 .. code-block:: python
 
@@ -34,34 +34,34 @@ Usually structure of the file looks next:
 Class Definition
 ----------------
 
-To create a node in Sverchok means to create a node class. Naming convention for
+To create a node in Sverchok means to create a node class. The naming convention for
 node classes is ``SV + name of the node + Node``
 
 Standard Mix-ins for all node classes are
 ``sverchok.node_tree.SverchCustomTreeNode`` and ``bpy.types.Node``
 
-Optional Mix-ins can be found over the next path ``sverchok.utils.nodes_mixins``
+Optional Mix-ins can be found in ``sverchok.utils.nodes_mixins``
 
-Node class documentation string serves to two purposes:
+The Node class documentation string serves two purposes:
 
   1. Adding key words for searching
-  2. Adding tool tip into add node menu
+  2. Adding a tool tip into the "Add Node" menu
 
-There are tow mandatory class variables:
+There are two mandatory class variables:
 
-  1. ``bl_idname`` it should repeat the name of the class
-  2. ``bl_label`` it shows text (name of the node) in the header of the node
+  1. ``bl_idname`` should repeat the name of the class
+  2. ``bl_label`` is the common name of the node, used in the Node header and in the "Add Node" menus 
 
 .. tip::
-   Node label can be defined dynamically in ``draw_label`` method which
+   Node label can be defined dynamically in the ``draw_label`` method which
    should return a string.
 
-Also the class can define optional ``bl_icon`` variable with a string of an
-standard Blender icon for the node. To find all standard icons default Icon
-Viewer add-on can be used.
+Also the class can define an optional ``bl_icon`` variable with a string of a
+standard Blender icon for the node. To find all standard icons the Icon
+Viewer add-on can be used, which is included in Blender by default.
 
-It's possible to define custom icons in ``sv_icon``
-variable. A custom icon should be stored in ``sverchok.ui.icons`` folder in png
+It's possible to define custom icons by including an ``sv_icon``
+variable. All custom icons are stored in the ``sverchok.ui.icons`` folder in png
 format. The variable value should repeat the png file name without extension
 and in upper case.
 
@@ -83,7 +83,7 @@ and in upper case.
 Creating Node Custom Properties
 -------------------------------
 
-Properties are created in standard way similar to other areas of Blender.
+Properties are created in the same way as other areas of Blender.
 `Blender documentation <https://docs.blender.org/api/current/bpy.props.html>`_
 
 After properties are added they can be used as node buttons or socket
@@ -94,16 +94,18 @@ use Custom properties (``node['prop_name']``) instead.
    Using node properties for displaying on sockets is deprecated. Usually
    sockets can define their own properties.
 
-To make a node to react on property changes they should define update argument.
-If not extra logic is required the argument can be define thus
-``update=data_structure.updateNode``. Also in case for example if after
-property changing some sockets should appear it can be done in custom update
-method of a node. The method expects to get the ``self`` and ``context``
-parameters.
+To make a node react to property changes they should define the update argument.
+If no extra logic is required the argument can be defined thus
+``update=data_structure.updateNode``. 
+
+In the case that a property change should cause sockets to be changed (created, removed..etc)
+this can be done by creating a custom update method (usually in the node class) and passing a reference 
+to it in the update argument of the property. 
+The method expects to get the ``self`` and ``context`` parameters.
 
 .. tip::
-   Also there is direct method to update the node but it can't be passed as
-   argument to the update parameter directly. Instead it's possible to use
+   Also there is a direct method to update the node but it can't be passed as
+   an argument to the update parameter directly. Instead it's possible to use
    lambda expression:
    ``update=lambda self, context: self.process_node(context)``
 
@@ -124,7 +126,7 @@ parameters.
 Draft Properties
 ^^^^^^^^^^^^^^^^
 
-Node can has draft properties which will be used instead of normal ones in
+Nodes can have draft properties which will be used instead of normal ones in
 draft mode of a tree. Draft properties are defined in the same way as normal
 ones. Also the node should use ``DraftMode`` mix-in, define
 ``draft_properties_mapping`` class variable with mapping between standard

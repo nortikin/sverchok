@@ -123,9 +123,9 @@
 <h1>Node API<a class="headerlink" href="#node-api" title="Permalink to this headline">¶</a></h1>
 <p>This page has a claim to define all aspects of node creation. Brief introduction
 to node creation is represented <a class="reference internal" href="add_new_node.html"><span class="doc">on this page</span></a>.</p>
-<p>Code of new node should be created in separate file. The file should obtain
-one of the available categories in <code class="docutils literal notranslate"><span class="pre">nodes</span></code> folder.</p>
-<p>Usually structure of the file looks next:</p>
+<p>The Code of a new node should be created in a separate file. The file should be placed in
+one of the available categories in the <code class="docutils literal notranslate"><span class="pre">nodes</span></code> folder.</p>
+<p>Usually the structure of the file looks like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors</span>
 <span class="c1"># recorded in the version control history of the file, available from</span>
 <span class="c1"># its original location https://github.com/nortikin/sverchok/commit/master</span>
@@ -147,35 +147,35 @@ one of the available categories in <code class="docutils literal notranslate"><s
 </div>
 <section id="class-definition">
 <h2>Class Definition<a class="headerlink" href="#class-definition" title="Permalink to this headline">¶</a></h2>
-<p>To create a node in Sverchok means to create a node class. Naming convention for
+<p>To create a node in Sverchok means to create a node class. The naming convention for
 node classes is <code class="docutils literal notranslate"><span class="pre">SV</span> <span class="pre">+</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">node</span> <span class="pre">+</span> <span class="pre">Node</span></code></p>
 <p>Standard Mix-ins for all node classes are
 <code class="docutils literal notranslate"><span class="pre">sverchok.node_tree.SverchCustomTreeNode</span></code> and <code class="docutils literal notranslate"><span class="pre">bpy.types.Node</span></code></p>
-<p>Optional Mix-ins can be found over the next path <code class="docutils literal notranslate"><span class="pre">sverchok.utils.nodes_mixins</span></code></p>
-<p>Node class documentation string serves to two purposes:</p>
+<p>Optional Mix-ins can be found in <code class="docutils literal notranslate"><span class="pre">sverchok.utils.nodes_mixins</span></code></p>
+<p>The Node class documentation string serves two purposes:</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>Adding key words for searching</p></li>
-<li><p>Adding tool tip into add node menu</p></li>
+<li><p>Adding a tool tip into the “Add Node” menu</p></li>
 </ol>
 </div></blockquote>
-<p>There are tow mandatory class variables:</p>
+<p>There are two mandatory class variables:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> it should repeat the name of the class</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bl_label</span></code> it shows text (name of the node) in the header of the node</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> should repeat the name of the class</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bl_label</span></code> is the common name of the node, used in the Node header and in the “Add Node” menus</p></li>
 </ol>
 </div></blockquote>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Node label can be defined dynamically in <code class="docutils literal notranslate"><span class="pre">draw_label</span></code> method which
+<p>Node label can be defined dynamically in the <code class="docutils literal notranslate"><span class="pre">draw_label</span></code> method which
 should return a string.</p>
 </div>
-<p>Also the class can define optional <code class="docutils literal notranslate"><span class="pre">bl_icon</span></code> variable with a string of an
-standard Blender icon for the node. To find all standard icons default Icon
-Viewer add-on can be used.</p>
-<p>It’s possible to define custom icons in <code class="docutils literal notranslate"><span class="pre">sv_icon</span></code>
-variable. A custom icon should be stored in <code class="docutils literal notranslate"><span class="pre">sverchok.ui.icons</span></code> folder in png
+<p>Also the class can define an optional <code class="docutils literal notranslate"><span class="pre">bl_icon</span></code> variable with a string of a
+standard Blender icon for the node. To find all standard icons the Icon
+Viewer add-on can be used, which is included in Blender by default.</p>
+<p>It’s possible to define custom icons by including an <code class="docutils literal notranslate"><span class="pre">sv_icon</span></code>
+variable. All custom icons are stored in the <code class="docutils literal notranslate"><span class="pre">sverchok.ui.icons</span></code> folder in png
 format. The variable value should repeat the png file name without extension
 and in upper case.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SvSetMeshAttributeNode</span><span class="p">(</span><span class="n">SverchCustomTreeNode</span><span class="p">,</span> <span class="n">bpy</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Node</span><span class="p">):</span>
@@ -194,7 +194,7 @@ and in upper case.</p>
 </section>
 <section id="creating-node-custom-properties">
 <h2>Creating Node Custom Properties<a class="headerlink" href="#creating-node-custom-properties" title="Permalink to this headline">¶</a></h2>
-<p>Properties are created in standard way similar to other areas of Blender.
+<p>Properties are created in the same way as other areas of Blender.
 <a class="reference external" href="https://docs.blender.org/api/current/bpy.props.html">Blender documentation</a></p>
 <p>After properties are added they can be used as node buttons or socket
 properties. Also they can be used for internal usage but it’s usually better to
@@ -204,16 +204,17 @@ use Custom properties (<code class="docutils literal notranslate"><span class="p
 <p>Using node properties for displaying on sockets is deprecated. Usually
 sockets can define their own properties.</p>
 </div>
-<p>To make a node to react on property changes they should define update argument.
-If not extra logic is required the argument can be define thus
-<code class="docutils literal notranslate"><span class="pre">update=data_structure.updateNode</span></code>. Also in case for example if after
-property changing some sockets should appear it can be done in custom update
-method of a node. The method expects to get the <code class="docutils literal notranslate"><span class="pre">self</span></code> and <code class="docutils literal notranslate"><span class="pre">context</span></code>
-parameters.</p>
+<p>To make a node react to property changes they should define the update argument.
+If no extra logic is required the argument can be defined thus
+<code class="docutils literal notranslate"><span class="pre">update=data_structure.updateNode</span></code>.</p>
+<p>In the case that a property change should cause sockets to be changed (created, removed..etc)
+this can be done by creating a custom update method (usually in the node class) and passing a reference
+to it in the update argument of the property.
+The method expects to get the <code class="docutils literal notranslate"><span class="pre">self</span></code> and <code class="docutils literal notranslate"><span class="pre">context</span></code> parameters.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Also there is direct method to update the node but it can’t be passed as
-argument to the update parameter directly. Instead it’s possible to use
+<p>Also there is a direct method to update the node but it can’t be passed as
+an argument to the update parameter directly. Instead it’s possible to use
 lambda expression:
 <code class="docutils literal notranslate"><span class="pre">update=lambda</span> <span class="pre">self,</span> <span class="pre">context:</span> <span class="pre">self.process_node(context)</span></code></p>
 </div>
@@ -231,7 +232,7 @@ lambda expression:
 </div>
 <section id="draft-properties">
 <h3>Draft Properties<a class="headerlink" href="#draft-properties" title="Permalink to this headline">¶</a></h3>
-<p>Node can has draft properties which will be used instead of normal ones in
+<p>Nodes can have draft properties which will be used instead of normal ones in
 draft mode of a tree. Draft properties are defined in the same way as normal
 ones. Also the node should use <code class="docutils literal notranslate"><span class="pre">DraftMode</span></code> mix-in, define
 <code class="docutils literal notranslate"><span class="pre">draft_properties_mapping</span></code> class variable with mapping between standard
