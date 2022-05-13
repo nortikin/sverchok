@@ -241,9 +241,9 @@ class CubicSpline(Spline):
             """
             h = tknots[1:] - tknots[:-1]
             h[h == 0] = 1e-8
-            q = np.zeros((n - 1, 3))
-            q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
-                h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
+            # newaxis not supported..
+            nn = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
+            q = np.vstack((np.array([[0.0, 0.0, 0.0]]), nn))
 
             l = np.zeros((n, 3))
             l[0, :] = 1.0
@@ -275,9 +275,11 @@ class CubicSpline(Spline):
             return splines
         
         if numba:
-            if 'perform_stage' not in local_numba_storage:
-                local_numba_storage['perform_stage'] = numba.jit(perform_stage)
-            perform_stage = local_numba_storage['perform_stage']
+           tknots = np.array(tknots)
+           locs = np.array(locs)
+           if 'perform_stage' not in local_numba_storage:
+               local_numba_storage['perform_stage'] = numba.njit(perform_stage)
+           perform_stage = local_numba_storage['perform_stage']
 
         self.splines = perform_stage(tknots, n, locs)
 
