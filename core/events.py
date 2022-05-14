@@ -34,12 +34,21 @@ class TreeEvent:
     FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
     FRAME_CHANGE = 'frame_change'  # unlike other updates this one should be un-cancellable
     SCENE_UPDATE = 'scene_update'  # something was changed in the scene
+    FILE_RELOADED = 'file_reloaded'  # New files was opened
 
-    def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None, cancel=True):
+    def __init__(self,
+                 event_type: str,
+                 tree: SverchCustomTree,
+                 updated_nodes: Iterable[SvNode] = None,
+                 cancel=True,
+                 is_frame_changed: bool = True,
+                 is_animation_playing: bool = False):
         self.type = event_type
         self.tree = tree
         self.updated_nodes = updated_nodes
         self.cancel = cancel
+        self.is_frame_changed = is_frame_changed
+        self.is_animation_playing = is_animation_playing
 
     def __repr__(self):
         return f"<TreeEvent type={self.type}>"

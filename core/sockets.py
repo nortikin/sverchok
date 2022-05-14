@@ -337,6 +337,7 @@ class SvSocketCommon(SvSocketProcessing):
     nesting_level: IntProperty(default=2)
     default_mode: EnumProperty(items=enum_item_4(['NONE', 'EMPTY_LIST', 'MATRIX', 'MASK']), default='EMPTY_LIST')
     pre_processing: EnumProperty(items=enum_item_4(['NONE', 'ONE_ITEM']), default='NONE')
+    s_id: StringProperty(options={'SKIP_SAVE'})
 
     def get_link_parameter_node(self):
         return self.quick_link_to_node
@@ -369,7 +370,11 @@ class SvSocketCommon(SvSocketProcessing):
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.node.node_id + self.identifier + ('o' if self.is_output else 'i')))
+        _id = self.s_id
+        if not _id:
+            self.s_id = str(hash(self.node.node_id + self.identifier + ('o' if self.is_output else 'i')))
+            _id = self.s_id
+        return _id
 
     @property
     def index(self):

@@ -3,6 +3,7 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
+from sverchok.core.events import TreeEvent
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
@@ -95,13 +96,21 @@ def sv_handler_undo_post(scene):
 def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
+    Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+    Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+    Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+    Playing animation: has_frame_changed=True, is_animation_playing=True
+    Playing animation(stop): has_frame_changed=False, is_animation_playing=False
     """
-    if not has_frame_changed(scene):
-        return
+    is_playing = bpy.context.screen.is_animation_playing
+    is_frame_changed = has_frame_changed(scene)
+    # print(f"Frame changed: {is_frame_changed}, Animation is playing: {is_playing}")
 
-    for ng in sverchok_trees():
+    for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
         with catch_log_error():
-            ng.process_ani()
+            ng.process_ani(is_frame_changed, is_playing)
 
 
 @persistent
@@ -150,7 +159,7 @@ def sv_pre_load(scene):
     sv_clean(scene)
 
     import sverchok.core.main_tree_handler as mh
-    mh.ContextTrees.reset_data()
+    mh.TreeHandler.send(TreeEvent(TreeEvent.FILE_RELOADED, tree=None))
 
 
 @persistent
@@ -210,6 +219,12 @@ def update_frame_change_mode():
 
 @persistent
 def update_trees_scene_change(scene):
+    """When the Play Animation is on this trigger is executed once. Such event
+    should be suppressed because it repeats animation trigger. Whe Play
+    animation is on this and user changes something in scene this trigger is
+    only called if frame rate is equal to maximum."""
+    if bpy.context.screen.is_animation_playing:
+        return
     for ng in BlTrees().sv_main_trees:
         ng.scene_update()
 

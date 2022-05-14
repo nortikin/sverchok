@@ -169,7 +169,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.sv_scene_update:
             TreeHandler.send(TreeEvent(TreeEvent.SCENE_UPDATE, self, nodes_to_update(), cancel=False))
 
-    def process_ani(self):
+    def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
@@ -182,18 +182,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 except AttributeError:
                     pass
         if self.sv_animate:
-            TreeHandler.send(TreeEvent(TreeEvent.FRAME_CHANGE, self, animated_nodes()))
+            TreeHandler.send(TreeEvent(
+                TreeEvent.FRAME_CHANGE,
+                self,
+                animated_nodes(),
+                is_frame_changed=frame_changed,
+                is_animation_playing=animation_playing))
 
-    def update_ui(self):
+    def update_ui(self, nodes_errors, update_time):
         """ The method get information about node statistic of last update from the handler to show in view space
         The method is usually called by main handler to reevaluate view of the nodes in the tree
         even if the tree is not in the Live update mode"""
-        nodes_errors = TreeHandler.get_error_nodes(self)
-        if self.sv_show_time_nodes:
-            update_time = (TreeHandler.get_cum_time(self) if self.show_time_mode == "Cumulative"
-                           else TreeHandler.get_update_time(self))
-        else:
-            update_time = cycle([None])
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
             if hasattr(node, 'update_ui'):
                 node.update_ui(error, update)
@@ -227,7 +227,10 @@ class UpdateNodes:
             self.process_node(context)
 
     refresh: BoolProperty(name="Update Node", description="Update Node", update=refresh_node)
-    is_animatable: BoolProperty(name="Animate Node", description="Update Node on frame change", default=True)
+    is_animatable: BoolProperty(name="Animate Node",
+                                description="Update Node on frame change",
+                                default=True,
+                                update=lambda s, c: s.process_node(c))  # it would be better to have special event
     is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
 
     def sv_init(self, context):

@@ -22,6 +22,7 @@ from sverchok.utils.logging import debug, catch_log_error, log_error
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlTree, BlNode
 from sverchok.utils.profile import profile
+import sverchok.core.simple_update_system as sus
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTreeNode
@@ -34,6 +35,7 @@ class TreeHandler:
 
     @staticmethod
     def send(event: TreeEvent):
+        # debug(event.type)
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
         if NodesUpdater.is_running():
@@ -46,8 +48,9 @@ class TreeHandler:
         # This event can't be handled via NodesUpdater during animation rendering because new frame change event
         # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
         if event.type == TreeEvent.FRAME_CHANGE:
-            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-            profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
+            sus.process_nodes(event)
+            # ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+            # profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
             return
 
         # something changed in scene and it duplicates some tree events which should be ignored
@@ -63,16 +66,23 @@ class TreeHandler:
 
         # mark given nodes as outdated
         elif event.type == TreeEvent.NODES_UPDATE:
+            sus.Tree.get(event.tree).reset_walk()
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
 
         # it will find changes in tree topology and mark related nodes as outdated
         elif event.type == TreeEvent.TREE_UPDATE:
+            sus.Tree.reset_tree(event.tree)
             ContextTrees.mark_tree_outdated(event.tree)
 
         # force update
         elif event.type == TreeEvent.FORCE_UPDATE:
             ContextTrees.reset_data(event.tree)
             event.tree['FORCE_UPDATE'] = True
+
+        # new file opened
+        elif event.type == TreeEvent.FILE_RELOADED:
+            sus.Tree.reset_tree()
+            ContextTrees.reset_data()
 
         # Unknown event
         else:
@@ -272,7 +282,7 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
         if was_changed:
             # if "DEBUG":
             #     yield None
-            bl_tree.update_ui()  # this only will update UI of main trees
+            update_ui(bl_tree)  # this only will update UI of main trees
             trees_ui_to_update.discard(bl_tree)  # protection from double updating
 
             # this only need to trigger scene changes handler again
@@ -286,6 +296,13 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
     for bl_tree in trees_ui_to_update:
         args = [bl_tree.get_update_path()] if BlTree(bl_tree).is_group_tree else []
         bl_tree.update_ui(*args)
+
+
+def update_ui(tree):
+    nodes_errors = TreeHandler.get_error_nodes(tree)
+    update_time = (TreeHandler.get_cum_time(tree) if tree.show_time_mode == "Cumulative"
+                   else TreeHandler.get_update_time(tree))
+    tree.update_ui(nodes_errors, update_time)
 
 
 def tree_updater(bl_tree, trees_ui_to_update: set) -> Generator[Node, None, bool]:
