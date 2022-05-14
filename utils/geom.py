@@ -274,7 +274,6 @@ class CubicSpline(Spline):
             b = (locs[1:] - locs[:-1]) / h.reshape((-1, 1)) - h.reshape((-1, 1)) * (c[1:] + 2 * c[:-1]) / 3
             d = (c[1:] - c[:-1]) / (3 * h.reshape((-1, 1)))
 
-
             splines = np.zeros((n - 1, 5, 3))
             splines[:, 0] = locs[:-1]
             splines[:, 1] = b
