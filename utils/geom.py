@@ -256,7 +256,12 @@ class CubicSpline(Spline):
 
             for i in range(1, n - 1):
                 l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
-                l[i, l[i] == 0] = 1e-8
+                # l[i, l[i] == 0] = 1e-8
+                # l[i, np.where(l[i]==0)] = 1e-8
+                for idx in range(len(l[i])):
+                    if l[i][idx] == 0:
+                        l[i][idx] = 1e-8
+
                 u[i] = h[i] / l[i]
                 z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
             l[-1, :] = 1.0
