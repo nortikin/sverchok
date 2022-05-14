@@ -256,8 +256,7 @@ class CubicSpline(Spline):
 
             for i in range(1, n - 1):
                 l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
-                # l[i, l[i] == 0] = 1e-8
-                # l[i, np.where(l[i]==0)] = 1e-8
+
                 for idx in range(len(l[i])):
                     if l[i][idx] == 0:
                         l[i][idx] = 1e-8
@@ -272,20 +271,23 @@ class CubicSpline(Spline):
 
             for i in range(n - 2, -1, -1):
                 c[i] = z[i] - u[i] * c[i + 1]
-            b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
-            d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+            # b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
+            # d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+            b = (locs[1:] - locs[:-1]) / h.reshape((-1, 1)) - h.reshape((-1, 1)) * (c[1:] + 2 * c[:-1]) / 3
+            d = (c[1:] - c[:-1]) / (3 * h.reshape((-1, 1)))
+
 
             splines = np.zeros((n - 1, 5, 3))
             splines[:, 0] = locs[:-1]
             splines[:, 1] = b
             splines[:, 2] = c[:-1]
             splines[:, 3] = d
-            splines[:, 4] = tknots[:-1, np.newaxis]
+            splines[:, 4] = tknots[:-1].reshape((-1, 1))
             return splines
         
         if numba:
            if 'perform_stage' not in local_numba_storage:
-               local_numba_storage['perform_stage'] = numba.jit(perform_stage)
+               local_numba_storage['perform_stage'] = numba.njit(perform_stage)
            perform_stage = local_numba_storage['perform_stage']
 
         self.splines = perform_stage(tknots, n, locs)
