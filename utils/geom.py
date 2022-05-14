@@ -211,7 +211,7 @@ class CubicSpline(Spline):
         if is_cyclic:
 
             #print(describe_data_shape(vertices))
-            locs = np.array(vertices[-4:] + vertices + vertices[:4])
+            locs = np.concatenate((vertices[-4:], vertices, vertices[:4]), axis=0)
             if tknots is None:
                 if metric is None:
                     raise Exception("CubicSpline: either tknots or metric must be specified")
