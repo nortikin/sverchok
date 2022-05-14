@@ -285,7 +285,7 @@ class CubicSpline(Spline):
         
         if numba:
            if 'perform_stage' not in local_numba_storage:
-               local_numba_storage['perform_stage'] = numba.njit(perform_stage)
+               local_numba_storage['perform_stage'] = numba.jit(perform_stage)
            perform_stage = local_numba_storage['perform_stage']
 
         self.splines = perform_stage(tknots, n, locs)
