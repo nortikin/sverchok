@@ -16,7 +16,7 @@ from time import time
 from typing import Generator, TYPE_CHECKING, Union, List, Optional, Iterator, Tuple
 
 from sverchok.core.events import GroupEvent
-from sverchok.core.main_tree_handler import empty_updater, NodesUpdater, ContextTrees, handle_node_data, PathManager
+from sverchok.core.main_tree_handler import empty_updater, Task, ContextTrees, handle_node_data, PathManager
 from sverchok.core.sv_custom_exceptions import CancelError
 from sverchok.utils.tree_structure import Node
 from sverchok.utils.logging import log_error
@@ -42,9 +42,10 @@ class MainHandler:
 
     @classmethod
     def send(cls, event: GroupEvent):
+        current_task = Task.get()
         # this should be first other wise other instructions can spoil the node statistic to redraw
-        if NodesUpdater.is_running():
-            NodesUpdater.cancel_task()
+        if current_task and current_task.is_running():
+            current_task.cancel()
 
         # mark given nodes as outdated
         if event.type == GroupEvent.NODES_UPDATE:
@@ -67,7 +68,7 @@ class MainHandler:
 
         # Add update tusk for the tree
         if event.to_update:
-            NodesUpdater.add_task(event)
+            Task.add(event)
 
     @staticmethod
     def get_error_nodes(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[Exception]]:

@@ -109,8 +109,8 @@ class PressingEscape(bpy.types.Operator):
     bl_label = 'Abort nodes updating'
 
     def execute(self, context):
-        if main_tree_handler.NodesUpdater.is_running():
-            main_tree_handler.NodesUpdater.cancel_task()
+        if (task := main_tree_handler.Task.get()) and task.is_running():
+            task.cancel()
         return {'FINISHED'}
 
     @classmethod

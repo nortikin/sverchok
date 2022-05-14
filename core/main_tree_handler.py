@@ -35,12 +35,14 @@ class TreeHandler:
 
     @staticmethod
     def send(event: TreeEvent):
+        """Control center"""
         # debug(event.type)
+        current_task = Task.get()
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
-        if NodesUpdater.is_running():
+        if current_task and current_task.is_running():
             if event.cancel:
-                NodesUpdater.cancel_task()
+                current_task.cancel()
             else:
                 return  # ignore the event
 
@@ -56,7 +58,7 @@ class TreeHandler:
         # something changed in scene and it duplicates some tree events which should be ignored
         elif event.type == TreeEvent.SCENE_UPDATE:
             # Either the scene handler was triggered by changes in the tree or tree is still in progress
-            if NodesUpdater.has_task():
+            if current_task:
                 return  # ignore the event
             # this event was caused my update system itself and should be ignored
             elif 'SKIP_UPDATE' in event.tree:
@@ -89,7 +91,7 @@ class TreeHandler:
             raise TypeError(f'Detected unknown event - {event}')
 
         # Add update tusk for the tree
-        NodesUpdater.add_task(event)
+        Task.add(event)
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -125,127 +127,103 @@ class TreeHandler:
 def tree_event_loop(delay):
     """Sverchok event handler"""
     with catch_log_error():
-        if NodesUpdater.is_running():
-            NodesUpdater.run_task()
-        elif NodesUpdater.has_task():  # task should be run via timer only https://developer.blender.org/T82318#1053877
-            NodesUpdater.start_task()
-            NodesUpdater.run_task()
+        if task := Task.get():
+            if not task.is_running():
+                task.start()
+            task.run()  # task should be run via timer only https://developer.blender.org/T82318#1053877
     return delay
 
 
 tree_event_loop = partial(tree_event_loop, 0.01)
 
 
-class NodesUpdater:
-    """It can update only one tree at a time"""
-    _event: Union[TreeEvent, GroupEvent] = None
-    _handler: Optional[Generator] = None
+class Task:
+    _task: Optional['Task'] = None  # for now running only one task is supported
 
-    _node_tree_area: Optional[bpy.types.Area] = None
-    _last_node: Optional[Node] = None
-
-    _start_time: float = None
+    __slots__ = ('_event', '_handler', '_node_tree_area', '_start_time', '_last_node')
 
     @classmethod
-    def add_task(cls, event: Union[TreeEvent, GroupEvent]):
-        """It can handle only one tree at a time"""
-        if cls.is_running():
-            raise RuntimeError(f"Can't update tree: {event.tree.name}, already updating tree: {cls._event.tree.name}")
-        cls._event = event
+    def add(cls, event: TreeEvent) -> 'Task':
+        if cls._task and cls._task.is_running():
+            raise RuntimeError(f"Can't update tree: {event.tree.name},"
+                               f" already updating tree: {cls._task._event.tree.name}")
+        cls._task = cls(event)
+        return cls._task
 
     @classmethod
-    def start_task(cls):
-        changed_tree = cls._event.tree
-        if cls.is_running():
+    def get(cls) -> Optional['Task']:
+        return cls._task
+
+    def __init__(self, event):
+        self._event: TreeEvent = event
+        self._handler: Optional[Generator] = None
+        self._node_tree_area: Optional[bpy.types.Area] = None
+        self._start_time: Optional[float] = None
+        self._last_node: Optional[Node] = None
+
+    def start(self):
+        changed_tree = self._event.tree
+        if self.is_running():
             raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        cls._handler = global_updater(cls._event.type)
+        self._handler = global_updater(self._event.type)
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
             if area.ui_type == 'SverchCustomTreeType':
                 path = area.spaces[0].path
                 if path and path[-1].node_tree.name == changed_tree.name:
-                    cls._node_tree_area = area
+                    self._node_tree_area = area
                     break
         gc.disable()
 
-        cls._start_time = time()
+        self._start_time = time()
 
-    @classmethod
     @profile(section="UPDATE")
-    def run_task(cls):
+    def run(self):
         try:
             # handle un-cancellable events
-            if cls._event.type == TreeEvent.FRAME_CHANGE:
+            if self._event.type == TreeEvent.FRAME_CHANGE:
                 while True:
-                    next(cls._handler)
+                    next(self._handler)
 
             #  handler cancellable events
             else:
-                if cls._last_node:
-                    cls._last_node.bl_tween.set_temp_color()
+                if self._last_node:
+                    self._last_node.bl_tween.set_temp_color()
 
                 start_time = time()
                 while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                    node = next(cls._handler)
+                    node = next(self._handler)
 
-                cls._last_node = node
+                self._last_node = node
                 node.bl_tween.set_temp_color((0.7, 1.000000, 0.7))
-                cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+                self._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:
-            cls.finish_task()
+            self.finish_task()
 
-    @classmethod
-    def debug_run_task(cls):
-        """Color updated nodes for a few second after all"""
+    def cancel(self):
         try:
-            start_time = time()
-            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                node = next(cls._handler)
-                if node is not None:
-                    node.bl_tween.set_temp_color((0.7, 1.000000, 0.7))
-                else:
-                    return
-
-            cls._last_node = node
-            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
-
-        except StopIteration:
-            from time import sleep
-            sleep(1)
-            cls.finish_task()
-
-    @classmethod
-    def cancel_task(cls):
-        try:
-            cls._handler.throw(CancelError)
+            self._handler.throw(CancelError)
         except (StopIteration, RuntimeError):
             pass
         finally:  # protection from the task to be stack forever
-            cls.finish_task()
+            self.finish_task()
 
-    @classmethod
-    def finish_task(cls):
+    def finish_task(self):
         try:
             gc.enable()
-            debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
-            cls._report_progress()
+            debug(f'Global update - {int((time() - self._start_time) * 1000)}ms')
+            self._report_progress()
         finally:
-            cls._event, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
+            Task._task = None
 
-    @classmethod
-    def has_task(cls) -> bool:
-        return cls._event is not None
+    def is_running(self) -> bool:
+        return self._handler is not None
 
-    @classmethod
-    def is_running(cls) -> bool:
-        return cls._handler is not None
-
-    @classmethod
-    def _report_progress(cls, text: str = None):
-        if cls._node_tree_area:
-            cls._node_tree_area.header_text_set(text)
+    def _report_progress(self, text: str = None):
+        if self._node_tree_area:
+            self._node_tree_area.header_text_set(text)
 
 
 def global_updater(event_type: str) -> Generator[Node, None, None]:
