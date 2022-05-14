@@ -233,7 +233,7 @@ class CubicSpline(Spline):
 
         n = len(locs)
         if n < 2:
-            raise Exception("Cubic spline can't be build from less than 3 vertices")
+            raise Exception("Cubic spline can't be built from less than 3 vertices")
 
         # a = locs
         def perform_stage(tknots, n, locs):
@@ -246,7 +246,6 @@ class CubicSpline(Spline):
             Dx = (locs[2:] - locs[1:-1])
             Dy = (locs[1:-1] - locs[:-2])
             nn = (3 / h[1:].reshape((-1, 1)) * Dx) - (3 / h[:-1].reshape((-1, 1)) * Dy)
-
             q = np.vstack((np.array([[0.0, 0.0, 0.0]]), nn))
 
             l = np.zeros((n, 3))
@@ -271,8 +270,7 @@ class CubicSpline(Spline):
 
             for i in range(n - 2, -1, -1):
                 c[i] = z[i] - u[i] * c[i + 1]
-            # b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
-            # d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+
             b = (locs[1:] - locs[:-1]) / h.reshape((-1, 1)) - h.reshape((-1, 1)) * (c[1:] + 2 * c[:-1]) / 3
             d = (c[1:] - c[:-1]) / (3 * h.reshape((-1, 1)))
 
