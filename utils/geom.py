@@ -64,7 +64,7 @@ N = identity_matrix
 
 local_numba_storage = {}
 
-def get_fastest_implementation(numba, function_to_compile):
+def gofaster(function_to_compile):
     if numba:
         function_name = function_to_compile.__name__
         if function_name not in local_numba_storage:
@@ -248,6 +248,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
+        @gofaster
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
@@ -294,7 +295,6 @@ class CubicSpline(Spline):
             splines[:, 4] = tknots[:-1].reshape((-1, 1))
             return splines
         
-        calc_cubic_splines = get_fastest_implementation(numba, calc_cubic_splines)
         self.splines = calc_cubic_splines(tknots, n, locs)
 
     def eval(self, t_in, tknots = None):
