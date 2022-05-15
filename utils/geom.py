@@ -59,6 +59,21 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
+
+# ---- testing numba speed ups, so expect to relocate this
+
+local_numba_storage = {}
+
+def get_fastest_implementation(numba, function_to_compile):
+    if numba:
+        function_name = function_to_compile.__name__
+        if function_name not in local_numba_storage:
+            local_numba_storage[function_name] = numba.njit(function_to_compile)
+        return local_numba_storage[function_name]
+    else:
+        return function_to_compile
+
+
 # ----------------- vectorize wrapper ---------------
 
 
@@ -191,8 +206,6 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
-local_numba_storage = {}
-
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
@@ -235,8 +248,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        # a = locs
-        def perform_stage(tknots, n, locs):
+        def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
             """
@@ -282,12 +294,8 @@ class CubicSpline(Spline):
             splines[:, 4] = tknots[:-1].reshape((-1, 1))
             return splines
         
-        if numba:
-           if 'perform_stage' not in local_numba_storage:
-               local_numba_storage['perform_stage'] = numba.njit(perform_stage)
-           perform_stage = local_numba_storage['perform_stage']
-
-        self.splines = perform_stage(tknots, n, locs)
+        calc_cubic_splines = get_fastest_implementation(numba, calc_cubic_splines)
+        self.splines = calc_cubic_splines(tknots, n, locs)
 
     def eval(self, t_in, tknots = None):
         """
