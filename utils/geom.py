@@ -59,8 +59,6 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
-
-
 # ----------------- vectorize wrapper ---------------
 
 
