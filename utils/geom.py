@@ -47,7 +47,7 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
-from sverchok.dependencies import numba
+from sverchok.utils.decorators_warpspeed import gofaster
 
 identity_matrix = Matrix()
 
@@ -59,19 +59,6 @@ TAU = PI * 2
 TWO_PI = TAU
 N = identity_matrix
 
-
-# ---- testing numba speed ups, so expect to relocate this
-
-local_numba_storage = {}
-
-def gofaster(function_to_compile):
-    if numba:
-        function_name = function_to_compile.__name__
-        if function_name not in local_numba_storage:
-            local_numba_storage[function_name] = numba.njit(function_to_compile)
-        return local_numba_storage[function_name]
-    else:
-        return function_to_compile
 
 
 # ----------------- vectorize wrapper ---------------
