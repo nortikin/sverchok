@@ -2,7 +2,7 @@
 Node API
 ========
 
-This page has a claim to define all aspects of node creation. Brief introduction
+This page claims to define all aspects of node creation. A brief introduction
 to node creation is represented :doc:`on this page <add_new_node>`.
 
 The Code of a new node should be created in a separate file. The file should be placed in
@@ -153,15 +153,15 @@ Enum Properties
 
 Enums are created in the same way as in other Blender UI parts. In case Enums
 are generated dynamically they always should be stored somewhere in Python
-memory. There are `known cases`_ when Blender crash during rendering when UI
-expose dynamic enums which does not store their content.
+memory. There are `known cases`_ when Blender crashes during rendering when UI
+expose dynamic enums which do not store their content.
 
 .. _known cases: https://github.com/nortikin/sverchok/issues/4316
 
-Enum items can have custom icons. Custom icons should be stored in
-``sverchok.ui.icons`` folder. To use custom icons ``ui.sv_icons.custom_icon``
-function should be used. It expects name of the file in upper case without
-extension and returns index of the icon.
+Enum items can have custom icons. Custom icons should be stored in the
+``sverchok.ui.icons`` folder. To use custom icons the ``ui.sv_icons.custom_icon``
+function should be used. It expects the name of the file in upper case without
+extension and returns the index of the icon.
 
 
 Dynamic Properties
@@ -169,40 +169,40 @@ Dynamic Properties
 
 There are several nodes which generate dynamic properties - List Levels and
 Switcher nodes. Dynamic properties are properties which are generated
-dependently on the size of input data. Best way to generate dynamic properties
+depending on the size of input data. The best way to generate dynamic properties
 is to use PropertyGroups together with Collection properties. Displaying
-such properties is possible with for loop inside UI code. Right place to upgrade
-properties is ``process`` method.
+such properties is possible with for loop inside UI code. The right place to upgrade
+properties is in the ``process`` method.
 
 .. warning::
 
-   Dynamic properties should always store changed by user values even if they
+   Dynamic properties should always store values changed by the user, even if they
    are not displayed anymore. Otherwise it will lead to degradation of node
-   tree "code". Whenever properties will be removed and restored a user always
-   should repeat his choice what is quite unexpected.
+   tree "code". Otherwise, whenever properties are removed and restored a user would always
+   be forced to repeat choices - this is quite unexpected and time consuming.
 
-   Also in future generation of properties inside ``process`` method should
-   move to some another method because ``process`` method should become an
+   In the future the generation of properties (currently done from inside ``process`` method) should
+   move to some other method because the ``process`` method itself should become an
    abstract method.
 
 
 Creating Node Buttons
 ---------------------
 
-There are 4 places where node can show its properties:
+There are 4 places where a node can show its properties:
 
   1. Node interface
   2. Node tab of the Property panel of the Node editor
-  3. Tool tab of the Property panel of the 3d View port editor
+  3. Tool tab of the Property panel of the 3d Viewport editor
   4. Context menu
 
-Node interface is appropriate place for adding properties which are used
+The Node interface is the appropriate place for adding properties which are used
 regularly during work with a node tree. They should be defined in
 ``sv_draw_buttons`` method which expects ``context`` and ``layout`` arguments.
 
-Property panel of the Node editor is good place for showing properties which
-are rarely changed or should be changed only once. Its possible to do in
-``sv_draw_buttons_ext`` method which expects ``context`` and ``layout``
+The Property panel of the Node editor is a good place for showing properties which
+are rarely changed or should be changed only once. To make properties appear on that panel 
+place them inside a ``sv_draw_buttons_ext`` method, this method also expects ``context`` and ``layout``
 arguments.
 
 
@@ -219,13 +219,13 @@ arguments.
             layout.prop(self, "mode")
 
 
-There are some nodes which properties are useful to have in 3D Viewport editor.
+There are some nodes for which it is useful to see properties from the 3D Viewport editor.
 Node with such properties should use ``utils.nodes_mixins.Show3DProperties``
 mix-in. UI code should be placed in ``draw_buttons_3dpanel`` method. It expects
-``layout`` argument and ``in_menu`` optional argument which is False by default.
+``layout`` argument and the optional ``in_menu`` argument which is False by default.
 UI should obtain only one string. It's possible to show UI on several lines but
 in this case ``utils.node_mixins.Popup3DMenu`` operator should be used. The
-operators calls the same ``draw_buttons_3dpanel`` method but with ``in_menu``
+operator calls the same ``draw_buttons_3dpanel`` method but with ``in_menu``
 argument as True.
 
 .. code-block:: python
@@ -242,9 +242,8 @@ argument as True.
                 row.prop(self, 'mode2')
 
 
-Also optionally nodes can show their properties in context menu. Node should
-override ``rclick_menu`` method which expects ``context`` and ``layout``
-arguments.
+Also optionally nodes can show their properties in the context menu. The Node class should
+override the ``rclick_menu`` method which expects ``context`` and ``layout`` arguments.
 
 
 Node Sockets
