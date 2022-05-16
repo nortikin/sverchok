@@ -241,9 +241,9 @@ class CubicSpline(Spline):
             h = tknots[1:] - tknots[:-1]
             h[h == 0] = 1e-8
 
-            Dx = (locs[2:] - locs[1:-1])
-            Dy = (locs[1:-1] - locs[:-2])
-            nn = (3 / h[1:].reshape((-1, 1)) * Dx) - (3 / h[:-1].reshape((-1, 1)) * Dy)
+            delta_i = (locs[2:] - locs[1:-1])
+            delta_j = (locs[1:-1] - locs[:-2])
+            nn = (3 / h[1:].reshape((-1, 1)) * delta_i) - (3 / h[:-1].reshape((-1, 1)) * delta_j)
             q = np.vstack((np.array([[0.0, 0.0, 0.0]]), nn))
 
             l = np.zeros((n, 3))
@@ -260,12 +260,12 @@ class CubicSpline(Spline):
 
                 u[i] = h[i] / l[i]
                 z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
+
             l[-1, :] = 1.0
             z[-1] = 0.0
 
             b = np.zeros((n - 1, 3))
             c = np.zeros((n, 3))
-
             for i in range(n - 2, -1, -1):
                 c[i] = z[i] - u[i] * c[i + 1]
 
