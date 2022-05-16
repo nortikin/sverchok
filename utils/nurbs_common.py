@@ -11,6 +11,21 @@ from sverchok.utils.math import binomial
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.dependencies import geomdl
 
+
+local_numba_storage = {}
+
+def gofaster(function_to_compile):
+    from sverchok.dependencies import numba
+
+    if numba:
+        function_name = function_to_compile.__name__
+        if function_name not in local_numba_storage:
+            local_numba_storage[function_name] = numba.njit(function_to_compile)
+        return local_numba_storage[function_name]
+    else:
+        return function_to_compile
+
+
 class SvNurbsMaths(object):
     """
     This class allows modules such as curve.primitives and others to
@@ -120,6 +135,7 @@ class SvNurbsBasisFunctions(object):
     def function(self, i, p, reset_cache=True):
         if reset_cache:
             self._cache = dict()
+
         def calc(us):
             value = self._cache.get((i,p, 0))
             if value is not None:
@@ -128,11 +144,9 @@ class SvNurbsBasisFunctions(object):
             u = self.knotvector
             if p <= 0:
                 if i < 0 or i >= len(u):
-
                     value = np.zeros_like(us)
                     self._cache[(i,p,0)] = value
                     return value
-                        
                 else:
 
                     if i+1 >= len(u):
@@ -141,6 +155,7 @@ class SvNurbsBasisFunctions(object):
                     else:
                         u_next = u[i+1]
                         is_last = u_next >= u[-1]
+
                     if is_last:
                         c2 = us <= u_next
                     else:
@@ -180,6 +195,7 @@ class SvNurbsBasisFunctions(object):
                     self._cache[(i,p,0)] = value
                     return value
         return calc
+
 
     def derivative(self, i, p, k, reset_cache=True):
         if reset_cache:
