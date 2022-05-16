@@ -47,7 +47,7 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
-from sverchok.utils.decorators_warpspeed import gofaster
+from sverchok.utils.decorators_compilation import use_numba_if_possible
 
 identity_matrix = Matrix()
 
@@ -235,7 +235,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        @gofaster
+        @use_numba_if_possible
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines

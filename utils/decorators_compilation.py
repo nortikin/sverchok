@@ -11,7 +11,7 @@ from sverchok.dependencies import numba
 
 local_numba_storage = {}
 
-def gofaster(function_to_compile):
+def use_numba_if_possible(function_to_compile):
     if numba:
         function_name = function_to_compile.__name__
         if function_name not in local_numba_storage:
