@@ -46,15 +46,6 @@ class TreeHandler:
             else:
                 return  # ignore the event
 
-        # frame update
-        # This event can't be handled via NodesUpdater during animation rendering because new frame change event
-        # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
-        if event.type == TreeEvent.FRAME_CHANGE:
-            sus.process_nodes(event)
-            # ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-            # profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
-            return
-
         # something changed in scene and it duplicates some tree events which should be ignored
         elif event.type == TreeEvent.SCENE_UPDATE:
             # Either the scene handler was triggered by changes in the tree or tree is still in progress
@@ -64,34 +55,14 @@ class TreeHandler:
             elif 'SKIP_UPDATE' in event.tree:
                 del event.tree['SKIP_UPDATE']
                 return
-            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-
-        # mark given nodes as outdated
-        elif event.type == TreeEvent.NODES_UPDATE:
-            sus.Tree.get(event.tree).reset_walk()
-            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-
-        # it will find changes in tree topology and mark related nodes as outdated
-        elif event.type == TreeEvent.TREE_UPDATE:
-            sus.Tree.reset_tree(event.tree)
-            ContextTrees.mark_tree_outdated(event.tree)
 
         # force update
         elif event.type == TreeEvent.FORCE_UPDATE:
-            ContextTrees.reset_data(event.tree)
             event.tree['FORCE_UPDATE'] = True
 
-        # new file opened
-        elif event.type == TreeEvent.FILE_RELOADED:
-            sus.Tree.reset_tree()
-            ContextTrees.reset_data()
-
-        # Unknown event
-        else:
-            raise TypeError(f'Detected unknown event - {event}')
-
         # Add update tusk for the tree
-        Task.add(event)
+        if sus.control_center(event):
+            Task.add(event)
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -122,6 +93,44 @@ class TreeHandler:
         cum_time_nodes = ContextTrees.calc_cam_update_time(bl_tree)
         for node in bl_tree.nodes:
             yield cum_time_nodes.get(node)
+
+
+def control_center(event: TreeEvent) -> bool:
+    add_tusk = True
+
+    # something changed in scene and it duplicates some tree events which should be ignored
+    if event.type == TreeEvent.SCENE_UPDATE:
+        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+
+    # frame update
+    # This event can't be handled via NodesUpdater during animation rendering because new frame change event
+    # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
+    elif event.type == TreeEvent.FRAME_CHANGE:
+        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+        profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
+        add_tusk = False
+
+    # mark given nodes as outdated
+    elif event.type == TreeEvent.NODES_UPDATE:
+        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+
+    # it will find changes in tree topology and mark related nodes as outdated
+    elif event.type == TreeEvent.TREE_UPDATE:
+        ContextTrees.mark_tree_outdated(event.tree)
+
+    # force update
+    elif event.type == TreeEvent.FORCE_UPDATE:
+        ContextTrees.reset_data(event.tree)
+
+    # new file opened
+    elif event.type == TreeEvent.FILE_RELOADED:
+        ContextTrees.reset_data()
+
+    # Unknown event
+    else:
+        raise TypeError(f'Detected unknown event - {event}')
+
+    return add_tusk
 
 
 def tree_event_loop(delay):
@@ -272,8 +281,9 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
     # this will update all opened trees (in group editors)
     # regardless whether the trees was changed or not, including group nodes
     for bl_tree in trees_ui_to_update:
-        args = [bl_tree.get_update_path()] if BlTree(bl_tree).is_group_tree else []
-        bl_tree.update_ui(*args)
+        update_ui(bl_tree)
+        # args = [bl_tree.get_update_path()] if BlTree(bl_tree).is_group_tree else []
+        # bl_tree.update_ui(*args)
 
 
 def update_ui(tree):
