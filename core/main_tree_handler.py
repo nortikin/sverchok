@@ -11,21 +11,21 @@ import gc
 from contextlib import contextmanager
 from functools import partial
 from time import time
-from typing import Dict, Generator, Optional, Iterator, Tuple, Union, NewType, List, TYPE_CHECKING
+from typing import Dict, Generator, Optional, Iterator, Tuple, NewType, List, TYPE_CHECKING, Callable
 
 import bpy
 from sverchok.core.sv_custom_exceptions import SvNoDataError, CancelError
 from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.data_structure import post_load_call
-from sverchok.core.events import TreeEvent, GroupEvent
+from sverchok.core.events import TreeEvent
 from sverchok.utils.logging import debug, catch_log_error, log_error
 from sverchok.utils.tree_structure import Tree, Node
-from sverchok.utils.handle_blender_data import BlTrees, BlTree, BlNode
+from sverchok.utils.handle_blender_data import BlTrees, BlNode
 from sverchok.utils.profile import profile
 import sverchok.core.simple_update_system as sus
 
 if TYPE_CHECKING:
-    from sverchok.core.node_group import SvGroupTreeNode
+    from sverchok.core.node_group import SvGroupTreeNode as SvNode
 
 
 Path = NewType('Path', str)  # concatenation of group node ids
@@ -61,8 +61,8 @@ class TreeHandler:
             event.tree['FORCE_UPDATE'] = True
 
         # Add update tusk for the tree
-        if sus.control_center(event):
-            Task.add(event)
+        if handler := sus.control_center(event):
+            Task.add(event, handler)
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -149,32 +149,39 @@ tree_event_loop = partial(tree_event_loop, 0.01)
 class Task:
     _task: Optional['Task'] = None  # for now running only one task is supported
 
-    __slots__ = ('_event', '_handler', '_node_tree_area', '_start_time', '_last_node')
+    __slots__ = ('_event',
+                 '_handler_func',
+                 '_handler',
+                 '_node_tree_area',
+                 '_start_time',
+                 '_last_node',
+                 )
 
     @classmethod
-    def add(cls, event: TreeEvent) -> 'Task':
+    def add(cls, event: TreeEvent, handler: Callable) -> 'Task':
         if cls._task and cls._task.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name},"
                                f" already updating tree: {cls._task._event.tree.name}")
-        cls._task = cls(event)
+        cls._task = cls(event, handler)
         return cls._task
 
     @classmethod
     def get(cls) -> Optional['Task']:
         return cls._task
 
-    def __init__(self, event):
+    def __init__(self, event, handler):
         self._event: TreeEvent = event
-        self._handler: Optional[Generator] = None
+        self._handler_func: Callable[[TreeEvent], Generator] = handler
+        self._handler: Optional[Generator[SvNode, None, None]] = None
         self._node_tree_area: Optional[bpy.types.Area] = None
         self._start_time: Optional[float] = None
-        self._last_node: Optional[Node] = None
+        self._last_node: Optional[SvNode] = None
 
     def start(self):
         changed_tree = self._event.tree
         if self.is_running():
             raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        self._handler = global_updater(self._event.type)
+        self._handler = self._handler_func(self._event)
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
@@ -190,23 +197,16 @@ class Task:
     @profile(section="UPDATE")
     def run(self):
         try:
-            # handle un-cancellable events
-            if self._event.type == TreeEvent.FRAME_CHANGE:
-                while True:
-                    next(self._handler)
+            if self._last_node:
+                self._last_node.set_temp_color()
 
-            #  handler cancellable events
-            else:
-                if self._last_node:
-                    self._last_node.bl_tween.set_temp_color()
+            start_time = time()
+            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
+                node = next(self._handler)
 
-                start_time = time()
-                while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                    node = next(self._handler)
-
-                self._last_node = node
-                node.bl_tween.set_temp_color((0.7, 1.000000, 0.7))
-                self._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+            self._last_node = node
+            node.set_temp_color((0.7, 1.000000, 0.7))
+            self._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:
             self.finish_task()
@@ -421,7 +421,7 @@ class ContextTrees:
         return cum_time_nodes
 
     @classmethod
-    def calc_cam_update_time_group(cls, bl_tree, group_nodes: List[SvGroupTreeNode]) -> dict:
+    def calc_cam_update_time_group(cls, bl_tree, group_nodes: List[SvNode]) -> dict:
         cum_time_nodes = dict()
         if bl_tree.tree_id not in cls._trees:
             return cum_time_nodes
@@ -472,7 +472,7 @@ class ContextTrees:
 
 class PathManager:
     @staticmethod
-    def generate_path(group_nodes: List[SvGroupTreeNode]) -> Path:
+    def generate_path(group_nodes: List[SvNode]) -> Path:
         """path is ordered collection group node ids
         max length of path should be no more then number of base trees of most nested group node + 1"""
         return Path('.'.join(n.node_id for n in group_nodes))

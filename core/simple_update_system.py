@@ -1,9 +1,8 @@
 from collections import defaultdict
-from contextlib import contextmanager
 from functools import lru_cache
 from graphlib import TopologicalSorter
 from time import perf_counter
-from typing import TYPE_CHECKING, TypeVar, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional, Generator, Callable
 
 from bpy_types import Node, NodeSocket, NodeTree
 from sverchok.core.events import TreeEvent
@@ -20,18 +19,14 @@ UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
 TIME_KEY = "US_time"
 
-T = TypeVar('T')
 
-
-def control_center(event: TreeEvent) -> bool:
-    add_tusk = True
-
+def control_center(event: TreeEvent) -> Optional[Callable[[TreeEvent], Generator]]:
     # frame update
     # This event can't be handled via NodesUpdater during animation rendering because new frame change event
     # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
     if event.type == TreeEvent.FRAME_CHANGE:
-        Tree.get(event.tree).update(event)
-        add_tusk = False
+        Tree.update_animation(event)
+        return
 
     # something changed in scene and it duplicates some tree events which should be ignored
     elif event.type == TreeEvent.SCENE_UPDATE:
@@ -40,7 +35,7 @@ def control_center(event: TreeEvent) -> bool:
 
     # mark given nodes as outdated
     elif event.type == TreeEvent.NODES_UPDATE:
-        pass # todo add to outdated_nodes?
+        pass  # todo add to outdated_nodes?
 
     # it will find changes in tree topology and mark related nodes as outdated
     elif event.type == TreeEvent.TREE_UPDATE:
@@ -59,7 +54,7 @@ def control_center(event: TreeEvent) -> bool:
         raise TypeError(f'Detected unknown event - {event}')
 
     # Add update tusk for the tree
-    return add_tusk
+    return Tree.update
 
 
 class Tree:
@@ -76,13 +71,24 @@ class Tree:
             cls._tree_catch[tree.tree_id] = _tree
         return cls._tree_catch[tree.tree_id]
 
+    @classmethod
     @profile(section="UPDATE")
-    def update(self, event: TreeEvent):
+    def update_animation(cls, event: TreeEvent):
+        try:
+            g = cls.update(event)
+            while True:
+                next(g)
+        except StopIteration:
+            pass
+
+    @classmethod
+    def update(cls, event: TreeEvent) -> Generator['SvNode', None, None]:
         if event.is_frame_changed:
-            tree = Tree.get(event.tree)
-            for node, prev_socks in tree._walk(list(event.updated_nodes)):
+            tree = cls.get(event.tree)
+            for node, prev_socks in tree._walk(list(event.updated_nodes or [])):
                 # node.set_temp_color([1, 1, 1])  # execution debug
-                with add_statistic(node):
+                with AddStatistic(node):
+                    yield node
                     prepare_input_data(prev_socks, node.inputs)
                     node.process()
 
@@ -185,18 +191,27 @@ class Tree:
         self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
 
 
-@contextmanager
-def add_statistic(node):
-    try:
-        t = perf_counter()
-        yield None
-        node[UPDATE_KEY] = True
-        node[ERROR_KEY] = None
-        node[TIME_KEY] = perf_counter() - t
-    except Exception as e:
-        log_error(e)
-        node[UPDATE_KEY] = False
-        node[ERROR_KEY] = repr(e)
+class AddStatistic:
+    # using context manager from contextlib has big overhead
+    # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
+    def __init__(self, node: 'SvNode'):
+        self._node = node
+        self._start = perf_counter()
+
+    def __enter__(self):
+        return None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self._node[UPDATE_KEY] = True
+            self._node[ERROR_KEY] = None
+            self._node[TIME_KEY] = perf_counter() - self._start
+        else:
+            log_error(exc_type)
+            self._node[UPDATE_KEY] = False
+            self._node[ERROR_KEY] = repr(exc_type)
+
+        return isinstance(exc_type, Exception)
 
 
 def prepare_input_data(prev_socks, input_socks):
