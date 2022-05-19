@@ -145,6 +145,7 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
             row = row.row()
             row.scale_x = 0.5
             row.prop(self, 'close', toggle=True)
+        row.prop(self, "preview_resolution_u")
 
     def draw_object_props(self, socket, context, layout):
         row = layout.row(align=True)
