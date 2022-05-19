@@ -496,13 +496,16 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         for socket_name in requirements:
             if self.inputs.get(socket_name):
                 obtained_data = self.inputs[socket_name].sv_get(default=None)
-                # print(f"{obtained_data} from {socket_name}")
                 if obtained_data is None:
                     continue
                 try:
+                    # this will fail on numpy arrays
+                    # The truth value of an array with more than one 
+                    # element is ambiguous. Use a.any() or a.all()
                     if obtained_data and obtained_data[0]:
                         required_count += 1
-                except:
+                except Exception as err:
+                    # print("ending early 2", err)
                     ...
         
         requirements_met = required_count == len(requirements)
