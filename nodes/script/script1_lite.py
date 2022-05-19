@@ -499,11 +499,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 if obtained_data is None:
                     continue
                 try:
-                    # this will fail on numpy arrays
-                    # The truth value of an array with more than one 
-                    # element is ambiguous. Use a.any() or a.all()
-                    if obtained_data and obtained_data[0]:
-                        required_count += 1
+                    if obtained_data:
+                        if isinstance(obtained_data[0], np.ndarray) and obtained_data[0].any():
+                            required_count += 1
+                            continue
+                        if obtained_data[0]:
+                            required_count += 1
                 except Exception as err:
                     # print("ending early 2", err)
                     ...
