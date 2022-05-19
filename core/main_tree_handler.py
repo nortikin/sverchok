@@ -221,6 +221,14 @@ class Task:
 
     def finish_task(self):
         try:
+            # this only need to trigger scene changes handler again
+            if self._event.tree.nodes:
+                status = self._event.tree.nodes[-1].use_custom_color
+                self._event.tree.nodes[-1].use_custom_color = not status
+                self._event.tree.nodes[-1].use_custom_color = status
+                # this indicates that process of the tree is finished and next scene event can be skipped
+                self._event.tree['SKIP_UPDATE'] = True
+
             gc.enable()
             debug(f'Global update - {int((time() - self._start_time) * 1000)}ms')
             self._report_progress()

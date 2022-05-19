@@ -2,9 +2,9 @@ from collections import defaultdict
 from functools import lru_cache
 from graphlib import TopologicalSorter
 from time import perf_counter
-from typing import TYPE_CHECKING, Literal, Optional, Generator, Callable
+from typing import TYPE_CHECKING, Optional, Generator, Callable
 
-from bpy_types import Node, NodeSocket, NodeTree
+from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 from sverchok.core.events import TreeEvent
 from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.utils.profile import profile
@@ -39,7 +39,7 @@ def control_center(event: TreeEvent) -> Optional[Callable[[TreeEvent], Generator
 
     # it will find changes in tree topology and mark related nodes as outdated
     elif event.type == TreeEvent.TREE_UPDATE:
-        Tree.reset_tree(event.tree)  # todo should detect difference
+        Tree.mark_outdated(event.tree)
 
     # force update
     elif event.type == TreeEvent.FORCE_UPDATE:
@@ -48,6 +48,7 @@ def control_center(event: TreeEvent) -> Optional[Callable[[TreeEvent], Generator
     # new file opened
     elif event.type == TreeEvent.FILE_RELOADED:
         Tree.reset_tree()
+        return
 
     # Unknown event
     else:
@@ -62,54 +63,68 @@ class Tree:
     tree data structure"""
     _tree_catch: dict[str, 'Tree'] = dict()  # the module should be auto-reloaded to prevent crashes
 
-    WALK_MODE = Literal['animation', 'all']
-
     @classmethod
-    def get(cls, tree: NodeTree):
+    def get(cls, tree: NodeTree) -> 'Tree':
         if tree.tree_id not in cls._tree_catch:
             _tree = cls(tree)
-            cls._tree_catch[tree.tree_id] = _tree
-        return cls._tree_catch[tree.tree_id]
+        else:
+            _tree = cls._tree_catch[tree.tree_id]
+            if not _tree._is_updated:
+                old = _tree
+                _tree = cls(tree)
+                if old._outdated_nodes is not None:
+                    _tree._outdated_nodes = old._outdated_nodes.copy()
+                    _tree._outdated_nodes.extend(_tree._update_difference(old))
+        return _tree
 
     @classmethod
     @profile(section="UPDATE")
     def update_animation(cls, event: TreeEvent):
         try:
-            g = cls.update(event)
+            g = cls.update(event, event.is_frame_changed, not event.is_animation_playing)
             while True:
                 next(g)
         except StopIteration:
             pass
 
     @classmethod
-    def update(cls, event: TreeEvent) -> Generator['SvNode', None, None]:
-        if event.is_frame_changed:
+    def update(cls, event: TreeEvent, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
+        if update_nodes:
             tree = cls.get(event.tree)
-            for node, prev_socks in tree._walk(list(event.updated_nodes or [])):
-                # node.set_temp_color([1, 1, 1])  # execution debug
+            walker = tree._walk(list(event.updated_nodes or []))
+            # walker = tree._debug_color(walker)
+            for node, prev_socks in walker:
                 with AddStatistic(node):
                     yield node
                     prepare_input_data(prev_socks, node.inputs)
                     node.process()
 
-        if not event.is_animation_playing:
+        if update_interface:
             update_ui(event.tree)
 
     @classmethod
     def reset_tree(cls, tree: NodeTree = None):
-        """It can be called when the tree changed its topology with the tree
-        parameter or when Undo event has happened without arguments"""
+        """Remove tree data or data of all trees"""
         if tree is not None and tree.tree_id in cls._tree_catch:
             del cls._tree_catch[tree.tree_id]
         else:
             cls._tree_catch.clear()
 
+    @classmethod
+    def mark_outdated(cls, tree: NodeTree):
+        if _tree := cls._tree_catch.get(tree.tree_id):
+            _tree._is_updated = False
+
     def __init__(self, tree: NodeTree):
+        self._tree_catch[tree.tree_id] = self
         self._tree = tree
-        self._from_nodes: dict[SvNode, set[SvNode]] = defaultdict(set)
-        self._to_nodes: dict[SvNode, set[SvNode]] = defaultdict(set)
-        self._from_sock: dict[NodeSocket, NodeSocket] = dict()
-        self._sock_node: dict[NodeSocket, Node] = dict()
+        self._from_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
+        self._to_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
+        self._from_sock: dict[NodeSocket, NodeSocket] = dict()  # only connected
+        self._sock_node: dict[NodeSocket, Node] = dict()  # only connected sockets
+        self._links: set[tuple[NodeSocket, NodeSocket]] = set()  # from to socket
+
+        self._is_updated = True  # False if topology was changed
         self._outdated_nodes: Optional[list[SvNode]] = None  # None means outdated all
 
         for link in (li for li in tree.links if not li.is_muted):
@@ -117,6 +132,8 @@ class Tree:
             self._to_nodes[link.from_node].add(link.to_node)
             self._from_sock[link.to_socket] = link.from_socket
             self._sock_node[link.from_socket] = link.from_node
+            self._sock_node[link.to_socket] = link.to_node
+            self._links.add((link.from_socket, link.to_socket))
 
         self._remove_reroutes()
 
@@ -161,6 +178,20 @@ class Tree:
                 nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
         return nodes
 
+    def _update_difference(self, old: 'Tree') -> set['SvNode']:
+        nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
+        new_links = self._links - old._links
+        for from_sock, to_sock in new_links:
+            if from_sock not in old._sock_node:  # socket was not connected
+                # protect from if not self.outputs[0].is_linked: return
+                nodes_to_update.add(self._sock_node[from_sock])
+            else:
+                nodes_to_update.add(self._sock_node[to_sock])
+        removed_links = old._links - self._links
+        for from_sock, to_sock in removed_links:
+            nodes_to_update.add(old._sock_node[to_sock])
+        return nodes_to_update
+
     def _remove_reroutes(self):
         for _node in self._from_nodes:
             if _node.bl_idname == "NodeReroute":
@@ -189,6 +220,34 @@ class Tree:
 
         self._from_nodes = {n: k for n, k in self._from_nodes.items() if n.bl_idname != 'NodeReroute'}
         self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
+
+    def _debug_color(self, walker: Generator, use_color: bool = True):
+        def _set_color(node: 'SvNode', _use_color: bool):
+            use_key = "DEBUG_use_user_color"
+            color_key = "DEBUG_user_color"
+
+            # set temporary color
+            if _use_color:
+                # save overridden color (only once)
+                if color_key not in node:
+                    node[use_key] = node.use_custom_color
+                    node[color_key] = node.color
+                node.use_custom_color = True
+                node.color = (1, 1, 1)
+
+            else:
+                if color_key in node:
+                    node.use_custom_color = node[use_key]
+                    del node[use_key]
+                    node.color = node[color_key]
+                    del node[color_key]
+
+        for n in self._tree.nodes:
+            _set_color(n, False)
+
+        for node, *args in walker:
+            _set_color(node, use_color)
+            yield node, *args
 
 
 class AddStatistic:
