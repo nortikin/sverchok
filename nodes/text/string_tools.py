@@ -68,10 +68,12 @@ def find_all_slice(text, chars, start, end):
 def number_to_string(data, precision):
     return ("{:." + str(precision) + "f}").format(float(data))
 
+
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
     "to_string":  (0,   str,                                 ('t t'),    "To String"),
     "to_number":  (1,   eval,                                ('t s'),    "To Number"),
+    "simple_mode":(2,   str,                                 ('x t'),    "Simple Mode"),
     "num_to_str": (3,   number_to_string ,                   ('ss t'),   "Number To String", ('Precision',)),
     "join":       (5,   lambda x, y: ''.join([x,y]),         ('tt t'),   "Join"),
     "join_all":   (6,   join,                                ('tb t'),   "Join All",         ('Add Break Lines',)),
@@ -210,6 +212,8 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             return str(self.bl_label)
 
     def draw_buttons(self, ctx, layout):
+        if self.current_op == "simple_mode":
+            return
         row = layout.row(align=True)
         row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
         if self.current_op == 'to_string':
@@ -234,16 +238,34 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             layout.label(text=socket.label)
 
+    def draw_simple_output(self, socket, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"), icon_only=True)
+        row.prop(socket, "default_property", text="")
+        # column = layout.column()
+        # column.prop(socket, "default_property", text="")
+        # column.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"), icon_only=True)
+
+
     def update_sockets(self):
         data =  func_dict.get(self.current_op)
         socket_info = func_dict.get(self.current_op)[2]
         if self.sockets_signature == socket_info:
             return
+        
+        # desired new state of the node's sockets
         t_inputs, t_outputs = socket_info.split(' ')
+
+        # the current state of the node's sockets
         old_inputs, old_outputs = self.sockets_signature.split(' ')
         self.sockets_signature = socket_info
+
         for s in range(len(self.inputs[1:])):
             self.inputs.remove(self.inputs[-1])
+
+        # enable / disable first socket if it is 'x'
+        self.inputs[0].enabled = not (t_inputs[0] == "x")
+
         for idx, s in enumerate(t_inputs[1:]):
             if s=="t":
                 socket = self.inputs.new('SvTextSocket', 'Text 2')
@@ -257,7 +279,6 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             elif s=="s":
                 socket = self.inputs.new('SvStringsSocket', 'Number')
                 socket.prop_name = 'xi_'
-
             elif s=="n":
                 socket = self.inputs.new('SvStringsSocket', 'Number 2')
                 socket.prop_name = 'yi_'
@@ -266,8 +287,13 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             elif s=="b":
                 socket = self.inputs.new('SvTextSocket', 'Keep Breaks')
                 socket.prop_name = 'keep_brakes'
+            elif s=="x":
+                continue
+
+            # if t == "_" , socket is not defined, continue
             socket.custom_draw = 'draw_prop_socket'
-            if len(data)>4:
+
+            if len(data) > 4:
                 print(data[4], idx)
                 socket.label = data[4][idx]
             else:
@@ -279,6 +305,11 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs.new('SvTextSocket', "Out")
             else:
                 self.outputs.new('SvStringsSocket', 'Out')
+
+        if self.current_op == "simple_mode":
+            self.outputs["Out"].custom_draw = "draw_simple_output"
+        else:
+            self.outputs["Out"].custom_draw = ""
 
     def process(self):
 
