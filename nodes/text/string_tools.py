@@ -242,10 +242,6 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"), icon_only=True)
         row.prop(socket, "default_property", text="")
-        # column = layout.column()
-        # column.prop(socket, "default_property", text="")
-        # column.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"), icon_only=True)
-
 
     def update_sockets(self):
         data =  func_dict.get(self.current_op)
@@ -314,6 +310,12 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         if self.outputs[0].is_linked:
+
+            if self.current_op == "simple_mode":
+                socket = self.outputs[0]
+                socket.sv_set([[socket.default_property]])
+                return
+
             current_func = func_from_mode(self.current_op)
             params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
             matching_f = list_match_func[self.list_match]
