@@ -66,7 +66,7 @@ def find_all_slice(text, chars, start, end):
     return out
 
 def number_to_string(data, precision):
-    return ("{:." + str(precision) + "f}").format(float(data))
+    return f"{float(data):.{precision}f}"
 
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
@@ -239,11 +239,14 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
         socket_info = func_dict.get(self.current_op)[2]
         if self.sockets_signature == socket_info:
             return
+
         t_inputs, t_outputs = socket_info.split(' ')
         old_inputs, old_outputs = self.sockets_signature.split(' ')
         self.sockets_signature = socket_info
+
         for s in range(len(self.inputs[1:])):
             self.inputs.remove(self.inputs[-1])
+
         for idx, s in enumerate(t_inputs[1:]):
             if s=="t":
                 socket = self.inputs.new('SvTextSocket', 'Text 2')
@@ -257,16 +260,17 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             elif s=="s":
                 socket = self.inputs.new('SvStringsSocket', 'Number')
                 socket.prop_name = 'xi_'
-
             elif s=="n":
                 socket = self.inputs.new('SvStringsSocket', 'Number 2')
                 socket.prop_name = 'yi_'
-                socket.custom_draw = 'draw_prop_socket'
                 socket.label = socket.name
             elif s=="b":
                 socket = self.inputs.new('SvTextSocket', 'Keep Breaks')
                 socket.prop_name = 'keep_brakes'
+
+            # all sockets will receive custom_draw
             socket.custom_draw = 'draw_prop_socket'
+
             if len(data)>4:
                 print(data[4], idx)
                 socket.label = data[4][idx]
