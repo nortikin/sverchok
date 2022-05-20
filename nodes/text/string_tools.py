@@ -66,7 +66,6 @@ def find_all_slice(text, chars, start, end):
     return out
 
 def number_to_string(data, precision):
-    # return ("{:." + str(precision) + "f}").format(float(data))
     return f"{float(data):.{precision}f}"
 
 
