@@ -15,3 +15,4 @@ Text
    stethoscope_v28
    gtext
    string_tools
+   simple_text
