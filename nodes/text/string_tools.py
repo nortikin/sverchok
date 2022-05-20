@@ -66,6 +66,7 @@ def find_all_slice(text, chars, start, end):
     return out
 
 def number_to_string(data, precision):
+    precision = max(0, precision)  # can't have negative, and abs() might be confusing
     return f"{float(data):.{precision}f}"
 
 func_dict = {
