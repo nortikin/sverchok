@@ -66,14 +66,15 @@ def find_all_slice(text, chars, start, end):
     return out
 
 def number_to_string(data, precision):
-    return ("{:." + str(precision) + "f}").format(float(data))
+    # return ("{:." + str(precision) + "f}").format(float(data))
+    return f"{float(data):.{precision}f}"
 
 
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
     "to_string":  (0,   str,                                 ('t t'),    "To String"),
     "to_number":  (1,   eval,                                ('t s'),    "To Number"),
-    "simple_mode":(2,   str,                                 ('x t'),    "Simple Mode"),
+    "simple_mode":(2,   str,                                 ('_ t'),    "Simple Mode"),
     "num_to_str": (3,   number_to_string ,                   ('ss t'),   "Number To String", ('Precision',)),
     "join":       (5,   lambda x, y: ''.join([x,y]),         ('tt t'),   "Join"),
     "join_all":   (6,   join,                                ('tb t'),   "Join All",         ('Add Break Lines',)),
@@ -260,7 +261,7 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         # enable / disable first socket if it is 'x'
-        self.inputs[0].enabled = not (t_inputs[0] == "x")
+        self.inputs[0].enabled = not (t_inputs[0] == "_")
 
         for idx, s in enumerate(t_inputs[1:]):
             if s=="t":
@@ -283,10 +284,9 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             elif s=="b":
                 socket = self.inputs.new('SvTextSocket', 'Keep Breaks')
                 socket.prop_name = 'keep_brakes'
-            elif s=="x":
+            elif s=="_":
                 continue
 
-            # if t == "_" , socket is not defined, continue
             socket.custom_draw = 'draw_prop_socket'
 
             if len(data) > 4:
