@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Debug Print &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Simple Text &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -19,8 +19,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Datetime Strings" href="datetime_strings.html" />
-    <link rel="prev" title="Text" href="text_index.html" /> 
+    <link rel="next" title="Script" href="../script/script_index.html" />
+    <link rel="prev" title="Strings Tools" href="string_tools.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,15 +74,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="text_index.html">Text</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Debug Print</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="debug_print.html">Debug Print</a></li>
 <li class="toctree-l3"><a class="reference internal" href="datetime_strings.html">Datetime Strings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="note.html">Note</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shape.html">Data Shape</a></li>
@@ -92,7 +84,10 @@
 <li class="toctree-l3"><a class="reference internal" href="stethoscope_v28.html">Stethoscope</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gtext.html">GText</a></li>
 <li class="toctree-l3"><a class="reference internal" href="string_tools.html">Strings Tools</a></li>
-<li class="toctree-l3"><a class="reference internal" href="simple_text.html">Simple Text</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Simple Text</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
@@ -125,9 +120,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="text_index.html">Text</a> &raquo;</li>
-      <li>Debug Print</li>
+      <li>Simple Text</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/text/debug_print.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/text/simple_text.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -135,33 +130,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="debug-print">
-<h1>Debug Print<a class="headerlink" href="#debug-print" title="Permalink to this headline">¶</a></h1>
+  <section id="simple-text">
+<h1>Simple Text<a class="headerlink" href="#simple-text" title="Permalink to this headline">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
-<p>Prints raw socket data to console, useful for debug.</p>
-<img alt="https://cloud.githubusercontent.com/assets/6241382/4299489/bccdcd88-3e37-11e4-80a8-443537dc37f6.png" src="https://cloud.githubusercontent.com/assets/6241382/4299489/bccdcd88-3e37-11e4-80a8-443537dc37f6.png" />
-</section>
-<section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
-<p>Dynamic number of inputs named Data 0, Data 1, … , Data N that will be printed in order if linked.</p>
-</section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>Active or not, turn off printing of individual node.
-In the N-panel control printing of individual sockets.</p>
-</section>
-<section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<p>None</p>
-</section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
-<p>Mostly useful for development. For usage see above.</p>
-</section>
-<section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<p>Note that printing will be system console and not the blender console, for information about how to use the system console see blender documentation for your system.</p>
+<p>This node can be used to pass a single string into the Node Tree, through a Text socket.</p>
+<img alt="https://user-images.githubusercontent.com/619340/169515003-bb510280-686b-407d-a7a4-af1d8a633e56.png" src="https://user-images.githubusercontent.com/619340/169515003-bb510280-686b-407d-a7a4-af1d8a633e56.png" />
 </section>
 </section>
 
@@ -169,8 +143,8 @@ In the N-panel control printing of individual sockets.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="text_index.html" class="btn btn-neutral float-left" title="Text" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="datetime_strings.html" class="btn btn-neutral float-right" title="Datetime Strings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="string_tools.html" class="btn btn-neutral float-left" title="Strings Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../script/script_index.html" class="btn btn-neutral float-right" title="Script" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
