@@ -26,7 +26,7 @@ def eejit(**kwargs):
                 jitted_func = numba.njit(function_to_compile)
                 local_numba_storage[function_name] = jitted_func
                 #
-                # --- compilse/write to disk here
+                # --- compile/write to disk here
                 #
                 #if kwargs['sig']:
                 #    cc.export(kwargs['name'], kwargs['sig'])(jitted_func)
