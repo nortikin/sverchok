@@ -7,6 +7,7 @@
 
 from sverchok.dependencies import numba
 
+
 local_numba_storage = {}
 
 # further reading
@@ -26,8 +27,9 @@ def use_numba_if_possible(**kwargs):
                 #
                 # --- compilse/write to disk here
                 #
-                cc.export(kwargs['name'], kwargs['sig'])(jitted_func)
-                cc.compile()
+                if kwargs['sig']:
+                    cc.export(kwargs['name'], kwargs['sig'])(jitted_func)
+                    cc.compile()
             # elif function_name in disk_numba_storoage
             #
             # --- read from disk, store in local_numba_storage
