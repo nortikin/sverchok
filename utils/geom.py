@@ -239,7 +239,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        @use_numba_if_possible
+        @use_numba_if_possible(name="calc_cubic_splines", sig="f8[:](f8[:], i2, f8[:])")
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
