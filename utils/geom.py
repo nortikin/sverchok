@@ -47,8 +47,11 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
-from sverchok.utils.decorators_compilation import use_numba_if_possible
-from sverchok.dependencies import numba # used for signature 
+from sverchok.dependencies import numba
+if not numba:
+    from sverchok.utils.decorators_compilation import njit
+else:
+    from sverchok.utils.decorators_compilation import eejit as njit
 
 
 identity_matrix = Matrix()
@@ -248,7 +251,7 @@ class CubicSpline(Spline):
         else:
             signature = None
 
-        @use_numba_if_possible(name="calc_cubic_splines", sig=signature)
+        @njit(cache=True, fastmath=True)
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
