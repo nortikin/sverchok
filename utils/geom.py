@@ -48,6 +48,8 @@ from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
 from sverchok.utils.decorators_compilation import use_numba_if_possible
+from sverchok.dependencies import numba # used for signature 
+
 
 identity_matrix = Matrix()
 
@@ -239,7 +241,10 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        @use_numba_if_possible(name="calc_cubic_splines", sig="f8[:](f8[:], i2, f8[:])")
+
+        @use_numba_if_possible(
+            name="calc_cubic_splines", 
+            sig="(array(float32, 2d, A), int32, array(float32, 2d, A))")
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
@@ -251,7 +256,6 @@ class CubicSpline(Spline):
             delta_j = (locs[1:-1] - locs[:-2])
             nn = (3 / h[1:].reshape((-1, 1)) * delta_i) - (3 / h[:-1].reshape((-1, 1)) * delta_j)
             q = np.vstack((np.array([[0.0, 0.0, 0.0]]), nn))
-
             l = np.zeros((n, 3))
             l[0, :] = 1.0
             u = np.zeros((n - 1, 3))
