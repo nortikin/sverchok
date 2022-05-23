@@ -156,7 +156,7 @@ class Tree(SearchTree):
                 _tree = cls(tree)
                 if old._outdated_nodes is not None:
                     _tree._outdated_nodes = old._outdated_nodes.copy()
-                    _tree._outdated_nodes.extend(_tree._update_difference(old))
+                    _tree._outdated_nodes.update(_tree._update_difference(old))
         return _tree
 
     @classmethod
@@ -173,8 +173,13 @@ class Tree(SearchTree):
     def update(cls, event: TreeEvent, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
         if update_nodes:
             tree = cls.get(event.tree)
+
+            if not event.tree.sv_process and event.type in {event.TREE_UPDATE, event.NODES_UPDATE, event.SCENE_UPDATE}:
+                tree._outdated_nodes.update(event.updated_nodes)
+                return
+
             walker = tree._walk(list(event.updated_nodes or []))
-            # walker = tree._debug_color(walker)
+            walker = tree._debug_color(walker)
             for node, prev_socks in walker:
                 with AddStatistic(node):
                     yield node
@@ -201,13 +206,13 @@ class Tree(SearchTree):
         super().__init__(tree)
         self._tree_catch[tree.tree_id] = self
         self._is_updated = True  # False if topology was changed
-        self._outdated_nodes: Optional[list[SvNode]] = None  # None means outdated all
+        self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
 
     def _walk(self, outdated: list['SvNode'] = None) -> tuple[Node, list[NodeSocket]]:
         # walk all nodes in the tree
         if self._outdated_nodes is None:
             outdated = None
-            self._outdated_nodes = []
+            self._outdated_nodes = set()
         # walk triggered nodes and error nodes from previous updates
         else:
             outdated.extend(self._outdated_nodes)
@@ -219,7 +224,7 @@ class Tree(SearchTree):
             if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
                 yield node, other_socks
                 if node.get(ERROR_KEY, False):
-                    self._outdated_nodes.append(node)
+                    self._outdated_nodes.add(node)
             else:
                 node[UPDATE_KEY] = False
 
