@@ -28,7 +28,7 @@ def eejit(**kwargs):
                 if kwargs.get('export'):
                     # it is not necessary to supply the compilation name explicitly
                     compiled_name = kwargs.get("name", function_name)
-                    cc.export(kwargs['name'], kwargs['sig'])(jitted_func)
+                    cc.export(compiled_name, kwargs['sig'])(jitted_func)
                     cc.compile()
 
             # elif function_name in disk_numba_storoage
