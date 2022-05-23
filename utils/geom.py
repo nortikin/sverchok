@@ -243,12 +243,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        if numba:
-            autosig = numba.typeof(tknots), numba.typeof(n), numba.typeof(locs)
-        else:
-            autosig = None
-
-        @njit(name="calc_cubic_splines", sig=autosig, export=True)
+        @njit()
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines
