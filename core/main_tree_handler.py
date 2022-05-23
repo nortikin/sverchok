@@ -8,7 +8,7 @@
 import gc
 from collections import defaultdict
 from functools import partial
-from time import time
+from time import time, perf_counter
 from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple, Union
 
 import bpy
@@ -285,9 +285,9 @@ def tree_updater(bl_tree) -> Generator[Node, None, bool]:
             updater = empty_updater(node, error=None)
 
         # update node with sub update system, catch statistic
-        start_time = time()
+        start_time = perf_counter()
         node_error = yield from updater
-        update_time = (time() - start_time)
+        update_time = (perf_counter() - start_time)
 
         if node.is_output_changed or node_error:
             stat = NodeStatistic(node_error, None if node_error else update_time)
