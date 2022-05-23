@@ -51,7 +51,8 @@ from sverchok.dependencies import numba
 if not numba:
     from sverchok.utils.decorators_compilation import njit
 else:
-    from sverchok.utils.decorators_compilation import eejit as njit
+    from sverchok.utils.decorators_compilation import eejit as njit  #<--- somehow faster
+    #from numba import njit
 
 
 identity_matrix = Matrix()
@@ -243,7 +244,7 @@ class CubicSpline(Spline):
         if n < 2:
             raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        @njit()
+        @njit(cache=True)
         def calc_cubic_splines(tknots, n, locs):
             """
             returns splines

@@ -18,7 +18,7 @@ def eejit(**kwargs):
         if numba:
             function_name = function_to_compile.__name__
             if function_name not in local_numba_storage:
-                jitted_func = numba.njit(cache=True)(function_to_compile)
+                jitted_func = numba.njit(**kwargs)(function_to_compile)
                 local_numba_storage[function_name] = jitted_func
 
             return local_numba_storage[function_name]
