@@ -214,7 +214,6 @@ class CubicSpline(Spline):
         if is_cyclic:
 
             #print(describe_data_shape(vertices))
-
             if len(vertices) == 3:
                 va, vb, vc = vertices[0], vertices[1], vertices[2]
                 locs = np.array([vc, va, vb, vc, va, vb, vc, va, vb, vc, va])

@@ -629,6 +629,7 @@
     SvGTextNode
     ---
     SvStringsToolsNode
+    SvSimpleTextNode
 
 ## BPY Data
     SvGetPropNode
