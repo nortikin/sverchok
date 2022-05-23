@@ -399,7 +399,7 @@ class SvSocketCommon(SvSocketProcessing):
 
         self.hide = value
 
-    def sv_get(self, default=..., deepcopy=True):  # todo should be removed, data should path directly to process method
+    def sv_get(self, default=..., deepcopy=True):
         """
         The method is used for getting socket data
         In most cases the method should not be overridden
@@ -434,7 +434,7 @@ class SvSocketCommon(SvSocketProcessing):
 
         raise SvNoDataError(self)
 
-    def sv_set(self, data):  # todo should be removed
+    def sv_set(self, data):
         """Set data, provide context in case the node can be evaluated several times in different context"""
         if self.is_output:
             data = self.postprocess_output(data)
@@ -447,6 +447,7 @@ class SvSocketCommon(SvSocketProcessing):
     def replace_socket(self, new_type, new_name=None):
         """Replace a socket with a socket of new_type and keep links,
         return the new socket, the old reference might be invalid"""
+        self.sv_forget()
         return replace_socket(self, new_type, new_name)
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):

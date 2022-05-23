@@ -2,7 +2,7 @@ from collections import defaultdict
 from functools import lru_cache
 from graphlib import TopologicalSorter
 from time import perf_counter
-from typing import TYPE_CHECKING, Optional, Generator, Callable
+from typing import TYPE_CHECKING, Optional, Generator, Callable, Iterable
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 from sverchok.core.events import TreeEvent
@@ -58,7 +58,89 @@ def control_center(event: TreeEvent) -> Optional[Callable[[TreeEvent], Generator
     return Tree.update
 
 
-class Tree:
+class SearchTree:
+    def __init__(self, tree: NodeTree):
+        self._tree = tree
+        self._from_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
+        self._to_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
+        self._from_sock: dict[NodeSocket, NodeSocket] = dict()  # only connected
+        self._sock_node: dict[NodeSocket, Node] = dict()  # only connected sockets
+        self._links: set[tuple[NodeSocket, NodeSocket]] = set()  # from to socket
+
+        for link in (li for li in tree.links if not li.is_muted):
+            self._from_nodes[link.to_node].add(link.from_node)
+            self._to_nodes[link.from_node].add(link.to_node)
+            self._from_sock[link.to_socket] = link.from_socket
+            self._sock_node[link.from_socket] = link.from_node
+            self._sock_node[link.to_socket] = link.to_node
+            self._links.add((link.from_socket, link.to_socket))
+
+        self._remove_reroutes()
+
+    def nodes_from(self, from_nodes: Iterable['SvNode']) -> set['SvNode']:
+        def node_walker_to(node_: 'SvNode'):
+            for nn in self._to_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(from_nodes, node_walker_to))
+
+    def nodes_to(self, to_nodes: Iterable['SvNode']) -> set['SvNode']:
+        def node_walker_from(node_: 'SvNode'):
+            for nn in self._from_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(to_nodes, node_walker_from))
+
+    def sort_nodes(self, nodes: Iterable['SvNode']) -> list['SvNode']:
+        walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+        for n in nodes:
+            if n in self._from_nodes:
+                walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                     if _n in nodes}
+        nodes = []
+        for node in TopologicalSorter(walk_structure).static_order():
+            nodes.append(node)
+        return nodes
+
+    def previous_sockets(self, node: 'SvNode') -> list[NodeSocket]:
+        return [self._from_sock.get(s) for s in node.inputs]
+
+    def update_node(self, node: 'SvNode', supress=True):
+        with AddStatistic(node, supress):
+            prepare_input_data(self.previous_sockets(node), node.inputs)
+            node.process()
+
+    def _remove_reroutes(self):
+        for _node in self._from_nodes:
+            if _node.bl_idname == "NodeReroute":
+
+                # relink nodes
+                from_n = self._from_nodes[_node].pop()
+                self._to_nodes[from_n].remove(_node)  # remove from
+                to_ns = self._to_nodes[_node]
+                for _next in to_ns:
+                    self._from_nodes[_next].remove(_node)  # remove to
+                    self._from_nodes[_next].add(from_n)  # add link from
+                    self._to_nodes[from_n].add(_next)  # add link to
+
+                    # relink sockets
+                    for sock in _next.inputs:
+                        from_s = self._from_sock.get(sock)
+                        if from_s is None:
+                            continue
+                        from_s_node = self._sock_node[from_s]
+                        if from_s_node == _node:
+                            from_from_s = self._from_sock.get(from_s_node.inputs[0])
+                            if from_from_s is not None:
+                                self._from_sock[sock] = from_from_s
+                            else:
+                                del self._from_sock[sock]
+
+        self._from_nodes = {n: k for n, k in self._from_nodes.items() if n.bl_idname != 'NodeReroute'}
+        self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
+
+
+class Tree(SearchTree):
     """It catches some data for more efficient searches compare to Blender
     tree data structure"""
     _tree_catch: dict[str, 'Tree'] = dict()  # the module should be auto-reloaded to prevent crashes
@@ -116,26 +198,10 @@ class Tree:
             _tree._is_updated = False
 
     def __init__(self, tree: NodeTree):
+        super().__init__(tree)
         self._tree_catch[tree.tree_id] = self
-        self._tree = tree
-        self._from_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
-        self._to_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
-        self._from_sock: dict[NodeSocket, NodeSocket] = dict()  # only connected
-        self._sock_node: dict[NodeSocket, Node] = dict()  # only connected sockets
-        self._links: set[tuple[NodeSocket, NodeSocket]] = set()  # from to socket
-
         self._is_updated = True  # False if topology was changed
         self._outdated_nodes: Optional[list[SvNode]] = None  # None means outdated all
-
-        for link in (li for li in tree.links if not li.is_muted):
-            self._from_nodes[link.to_node].add(link.from_node)
-            self._to_nodes[link.from_node].add(link.to_node)
-            self._from_sock[link.to_socket] = link.from_socket
-            self._sock_node[link.from_socket] = link.from_node
-            self._sock_node[link.to_socket] = link.to_node
-            self._links.add((link.from_socket, link.to_socket))
-
-        self._remove_reroutes()
 
     def _walk(self, outdated: list['SvNode'] = None) -> tuple[Node, list[NodeSocket]]:
         # walk all nodes in the tree
@@ -178,6 +244,36 @@ class Tree:
                 nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
         return nodes
 
+    def __sort_nodes(self,
+                    from_nodes: frozenset['SvNode'] = None,
+                    to_nodes: frozenset['SvNode'] = None)\
+                    -> list[tuple['SvNode', list[NodeSocket]]]:
+        nodes_to_walk = set()
+        walk_structure = None
+        if not from_nodes and not to_nodes:
+            walk_structure = self._from_nodes
+        elif from_nodes and to_nodes:
+            from_ = self.nodes_from(from_nodes)
+            to_ = self.nodes_to(to_nodes)
+            nodes_to_walk = from_.intersection(to_)
+        elif from_nodes:
+            nodes_to_walk = self.nodes_from(from_nodes)
+        else:
+            nodes_to_walk = self.nodes_to(from_nodes)
+
+        if nodes_to_walk:
+            walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+            for n in nodes_to_walk:
+                if n in self._from_nodes:
+                    walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                         if _n in nodes_to_walk}
+
+        nodes = []
+        if walk_structure:
+            for node in TopologicalSorter(walk_structure).static_order():
+                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
+        return nodes
+
     def _update_difference(self, old: 'Tree') -> set['SvNode']:
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
@@ -191,35 +287,6 @@ class Tree:
         for from_sock, to_sock in removed_links:
             nodes_to_update.add(old._sock_node[to_sock])
         return nodes_to_update
-
-    def _remove_reroutes(self):
-        for _node in self._from_nodes:
-            if _node.bl_idname == "NodeReroute":
-
-                # relink nodes
-                from_n = self._from_nodes[_node].pop()
-                self._to_nodes[from_n].remove(_node)  # remove from
-                to_ns = self._to_nodes[_node]
-                for _next in to_ns:
-                    self._from_nodes[_next].remove(_node)  # remove to
-                    self._from_nodes[_next].add(from_n)  # add link from
-                    self._to_nodes[from_n].add(_next)  # add link to
-
-                    # relink sockets
-                    for sock in _next.inputs:
-                        from_s = self._from_sock.get(sock)
-                        if from_s is None:
-                            continue
-                        from_s_node = self._sock_node[from_s]
-                        if from_s_node == _node:
-                            from_from_s = self._from_sock.get(from_s_node.inputs[0])
-                            if from_from_s is not None:
-                                self._from_sock[sock] = from_from_s
-                            else:
-                                del self._from_sock[sock]
-
-        self._from_nodes = {n: k for n, k in self._from_nodes.items() if n.bl_idname != 'NodeReroute'}
-        self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
 
     def _debug_color(self, walker: Generator, use_color: bool = True):
         def _set_color(node: 'SvNode', _use_color: bool):
@@ -253,9 +320,10 @@ class Tree:
 class AddStatistic:
     # using context manager from contextlib has big overhead
     # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
-    def __init__(self, node: 'SvNode'):
+    def __init__(self, node: 'SvNode', supress=True):
         self._node = node
         self._start = perf_counter()
+        self._supress = supress
 
     def __enter__(self):
         return None
@@ -268,9 +336,10 @@ class AddStatistic:
         else:
             log_error(exc_type)
             self._node[UPDATE_KEY] = False
-            self._node[ERROR_KEY] = repr(exc_type)
+            self._node[ERROR_KEY] = repr(exc_val)
 
-        return isinstance(exc_type, Exception)
+        if self._supress and exc_type is not None:
+            return issubclass(exc_type, Exception)
 
 
 def prepare_input_data(prev_socks, input_socks):

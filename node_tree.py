@@ -285,7 +285,7 @@ class UpdateNodes:
         self.sv_free()
 
         # free sockets memory
-        for s in self.outputs:
+        for s in chain(self.inputs, self.outputs):
             s.sv_forget()
 
         # remove tree space drawings
@@ -294,6 +294,8 @@ class UpdateNodes:
     def copy(self, original):
         """Called upon the node being copied"""
         self.n_id = ""
+        for sock in chain(self.inputs, self.outputs):
+            sock.s_id = ''
         self.sv_copy(original)
 
     def update(self):
