@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import graphlib
+from collections import defaultdict
 
 import bgl
 import blf
@@ -18,9 +20,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
 
-# todo the module should be rewritten according new update system
-
-
+storage = {'order': tuple()}
 display_dict = {} # 'sverchok': None}
 
 def get_drawing_state(ng):
@@ -61,20 +61,42 @@ def get_preferences():
     from sverchok.settings import get_dpi_factor
     return get_dpi_factor()
 
-def get_time_graph(): # tree_name):
-    # m = sverchok.core.update_system.graph_dicts.get(tree_name)
-    # return {idx: event for idx, event in enumerate(m)} if m else {}
-    m = sverchok.core.update_system.graphs
-    if len(m) == 1:
-        return {idx: event for idx, event in enumerate(m[0])}
-    else:
-        cumulative_dict = {}
-        counter = 0
-        for graph in m:
-            for event in graph:
-                cumulative_dict[counter] = event
-                counter += 1
-        return cumulative_dict
+def make_input_graph_for_toposort(tree_name):
+    """
+    this is merely a suggestion of the possible evaluation order
+    """
+    tree = bpy.data.node_groups[tree_name]
+    graph = defaultdict(set) # {"D": {"B", "C"}, "C": {"A"}, "B": {"A"}}
+    for node in tree.nodes:
+        if hasattr(node, 'inputs') and any(s.is_linked for s in node.inputs):
+            for socket_in in node.inputs:
+                if socket_in.is_linked:
+                    other_node = socket_in.other.node
+                    if other_node:
+                        graph[node.name].add(other_node.name)
+    return graph
+
+def get_time_graph(tree_name):
+    from sverchok.core.main_tree_handler import TreeHandler
+
+    graph = make_input_graph_for_toposort(tree_name)
+    ts = graphlib.TopologicalSorter(graph)
+    order = tuple(ts.static_order())
+
+    self = bpy.data.node_groups[tree_name]
+    # self.force_update()
+    
+    nodes_errors = TreeHandler.get_error_nodes(self)
+    update_time = TreeHandler.get_update_time(self)
+    short_time_dict = {node.name: time for node, time in zip(self.nodes, list(update_time))}
+    time_graph = {}
+    start_time = 0.0
+    for idx, node_name in enumerate(order):
+        time_graph[idx] = dict(name: node_name, start: start_time, duration: time)
+        start_time += time
+
+    return time_graph
+
 
 def draw_text(font_id, location, text, color):
 
@@ -94,7 +116,7 @@ def draw_node_time_infos(*data):
 
     location_theta = data[1]
     tree_name = data[2]
-    data_tree = get_time_graph() # tree_name)
+    data_tree = get_time_graph(tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
 
     if not node_tree.sv_show_time_nodes:
