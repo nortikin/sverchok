@@ -179,7 +179,7 @@ class Tree(SearchTree):
                 return
 
             walker = tree._walk(list(event.updated_nodes or []))
-            walker = tree._debug_color(walker)
+            # walker = tree._debug_color(walker)
             for node, prev_socks in walker:
                 with AddStatistic(node):
                     yield node

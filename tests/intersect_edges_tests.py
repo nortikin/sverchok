@@ -1,4 +1,3 @@
-from sverchok.core.update_system import process_tree
 from sverchok.utils.testing import *
 
 
