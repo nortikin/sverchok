@@ -100,6 +100,8 @@ class DebugMemory(UserDict):
         for tree in BlTrees().sv_trees:
             for node in tree.nodes:
                 for sock in chain(node.inputs, node.outputs):
+                    if sock.bl_idname == 'NodeSocketVirtual':
+                        continue
                     if sock.socket_id in self._id_sock:
                         ds = self._id_sock[sock.socket_id]
                         debug(f"SOCKET ID DUPLICATION: "
@@ -144,7 +146,7 @@ class DebugMemory(UserDict):
 
 
 socket_data_cache: dict[SockId, list] = dict()
-# socket_data_cache = DebugMemory(socket_data_cache, False)
+# socket_data_cache = DebugMemory(socket_data_cache)
 
 
 def sv_deep_copy(lst):

@@ -18,7 +18,7 @@ from mathutils.noise import seed_set, random
 from bpy.props import (
     BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty)
 
-from sverchok.core.simple_update_system import Tree
+from sverchok.core.update_system import Tree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator

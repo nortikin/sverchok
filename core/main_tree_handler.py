@@ -22,7 +22,7 @@ from sverchok.utils.logging import debug, catch_log_error, log_error
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlNode
 from sverchok.utils.profile import profile
-import sverchok.core.simple_update_system as sus
+import sverchok.core.update_system as sus
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTreeNode as SvNode
@@ -36,7 +36,7 @@ class TreeHandler:
     @staticmethod
     def send(event: TreeEvent):
         """Control center"""
-        # debug(event.type)
+        # print(f"{event.type=}, {event.tree=}")
         current_task = Task.get()
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
@@ -226,8 +226,11 @@ class Task:
                 status = self._event.tree.nodes[-1].use_custom_color
                 self._event.tree.nodes[-1].use_custom_color = not status
                 self._event.tree.nodes[-1].use_custom_color = status
+
                 # this indicates that process of the tree is finished and next scene event can be skipped
-                self._event.tree['SKIP_UPDATE'] = True
+                # the scene trigger will try to update all trees, so they all should be marked
+                for t in BlTrees().sv_main_trees:
+                    t['SKIP_UPDATE'] = True
 
             gc.enable()
             debug(f'Global update - {int((time() - self._start_time) * 1000)}ms')

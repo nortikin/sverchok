@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import EnumProperty
-from sverchok.core.simple_update_system import Tree
+from sverchok.core.update_system import Tree
 
 from sverchok.node_tree import SverchCustomTreeNode
 

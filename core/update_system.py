@@ -55,17 +55,25 @@ def control_center(event: TreeEvent) -> Optional[Callable[[TreeEvent], Generator
         raise TypeError(f'Detected unknown event - {event}')
 
     # Add update tusk for the tree
-    return Tree.update
+    return Tree.main_update
 
 
 class SearchTree:
+    _from_nodes: dict['SvNode', set['SvNode']]
+    _to_nodes: dict['SvNode', set['SvNode']]
+    _from_sock: dict[NodeSocket, NodeSocket]
+    _sock_node: dict[NodeSocket, Node]
+    _links: set[tuple[NodeSocket, NodeSocket]]
+
     def __init__(self, tree: NodeTree):
         self._tree = tree
-        self._from_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
-        self._to_nodes: dict[SvNode, set[SvNode]] = {n: set() for n in tree.nodes}
-        self._from_sock: dict[NodeSocket, NodeSocket] = dict()  # only connected
-        self._sock_node: dict[NodeSocket, Node] = dict()  # only connected sockets
-        self._links: set[tuple[NodeSocket, NodeSocket]] = set()  # from to socket
+        self._from_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != 'NodeFrame'}
+        self._to_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != 'NodeFrame'}
+        self._from_sock = dict()  # only connected
+        self._sock_node = dict()  # only connected sockets
+        self._links = set()  # from to socket
 
         for link in (li for li in tree.links if not li.is_muted):
             self._from_nodes[link.to_node].add(link.from_node)
@@ -163,19 +171,22 @@ class Tree(SearchTree):
     @profile(section="UPDATE")
     def update_animation(cls, event: TreeEvent):
         try:
-            g = cls.update(event, event.is_frame_changed, not event.is_animation_playing)
+            g = cls.main_update(event, event.is_frame_changed, not event.is_animation_playing)
             while True:
                 next(g)
         except StopIteration:
             pass
 
     @classmethod
-    def update(cls, event: TreeEvent, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
+    def main_update(cls, event: TreeEvent, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
+        """Only for main trees"""
+        # print(f"UPDATE NODES {event.type=}, {event.tree.name=}")
         if update_nodes:
             tree = cls.get(event.tree)
 
             if not event.tree.sv_process and event.type in {event.TREE_UPDATE, event.NODES_UPDATE, event.SCENE_UPDATE}:
-                tree._outdated_nodes.update(event.updated_nodes)
+                if tree._outdated_nodes is not None:
+                    tree._outdated_nodes.update(event.updated_nodes)
                 return
 
             walker = tree._walk(list(event.updated_nodes or []))
@@ -202,11 +213,22 @@ class Tree(SearchTree):
         if _tree := cls._tree_catch.get(tree.tree_id):
             _tree._is_updated = False
 
+    def update(self, updated_nodes: list['SvNode']):
+        walker = self._walk(list(updated_nodes or []))
+        # walker = tree._debug_color(walker)
+        for node, prev_socks in walker:
+            with AddStatistic(node):
+                prepare_input_data(prev_socks, node.inputs)
+                node.process()
+
     def __init__(self, tree: NodeTree):
         super().__init__(tree)
         self._tree_catch[tree.tree_id] = self
         self._is_updated = True  # False if topology was changed
         self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
+
+        # https://stackoverflow.com/a/68550238
+        self._sort_nodes = lru_cache(maxsize=1)(self._sort_nodes)
 
     def _walk(self, outdated: list['SvNode'] = None) -> tuple[Node, list[NodeSocket]]:
         # walk all nodes in the tree
@@ -228,9 +250,8 @@ class Tree(SearchTree):
             else:
                 node[UPDATE_KEY] = False
 
-    @lru_cache(maxsize=1)
     def _sort_nodes(self, outdated_nodes: frozenset['SvNode'] = None) -> list[tuple['SvNode', list[NodeSocket]]]:
-
+        # print(f"Sort nodes {self._tree.name}")
         def node_walker(node_: 'SvNode'):
             for nn in self._to_nodes.get(node_, []):
                 yield nn
