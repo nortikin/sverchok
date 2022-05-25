@@ -52,7 +52,11 @@ def processed(str_in):
 def parse_socket_line(node, line):
     lsp = line.strip().split()
     if not len(lsp) in {3, 5}:
-        self.info(f"{line} -> is malformed")
+        node.error(
+            f'directive: (socket line) "{line}" -> is malformed '
+            f'(too little information, probably forgot to specify the socket-kind'
+            f': {sock_dict.keys()}'
+        )
         return UNPARSABLE
     else:
         socket_type = sock_dict.get(lsp[2])
@@ -78,7 +82,7 @@ def parse_required_socket_line(node, line):
             return UNPARSABLE
         return socket_type, socket_name, None, None
 
-    self.info(f"{line} -> is malformed")
+    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type?')
     return UNPARSABLE
 
 
