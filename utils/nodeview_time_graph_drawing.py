@@ -93,7 +93,7 @@ def get_time_graph(tree_name):
     time_graph = {}
     start_time = 0.0
     for idx, node_name in enumerate(order):
-        time_graph[idx] = dict(name: node_name, start: start_time, duration: time)
+        time_graph[idx] = dict(name=node_name, start=start_time, duration=time)
         start_time += time
 
     return time_graph
