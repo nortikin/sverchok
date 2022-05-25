@@ -55,7 +55,7 @@ def parse_socket_line(node, line):
         node.error(
             f'directive: (socket line) "{line}" -> is malformed '
             f'(too little information, probably forgot to specify the socket-kind'
-            f': {socket_dict.keys()}'
+            f': {sock_dict.keys()}'
         )
         return UNPARSABLE
     else:
@@ -82,7 +82,7 @@ def parse_required_socket_line(node, line):
             return UNPARSABLE
         return socket_type, socket_name, None, None
 
-    node.error(f'directive: (socket line) "{line}" -> is malformed')
+    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type?')
     return UNPARSABLE
 
 
