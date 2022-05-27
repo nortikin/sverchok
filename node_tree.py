@@ -14,7 +14,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.core.events import TreeEvent
+from sverchok.core.events import TreeEvent, ForceEvent, PropertyEvent, SceneEvent, AnimationEvent
 from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
@@ -111,7 +111,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Process",
         default=True,
         description='Update upon tree and node property changes',
-        update=lambda s, c: TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, s)),
+        update=lambda s, c: TreeHandler.send(TreeEvent(s)),
         options=set(),
     )
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
@@ -144,50 +144,29 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
-        TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
+        TreeHandler.send(TreeEvent(self))
 
     def force_update(self):
         """Update whole tree from scratch"""
         # ideally we would never like to use this method but we live in the real world
-        TreeHandler.send(TreeEvent(TreeEvent.FORCE_UPDATE, self))
+        TreeHandler.send(ForceEvent(self))
 
     def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes, cancel))
+        return TreeHandler.send(PropertyEvent(self, nodes))
 
     def scene_update(self):
         """This method should be called by scene changes handler
         it ignores events related with S
         sverchok trees in other cases it updates nodes which read data from Blender"""
-        def nodes_to_update():
-            for node in self.nodes:
-                try:
-                    if node.is_scene_dependent and node.is_interactive:
-                        yield node
-                except AttributeError:
-                    pass
-        if self.sv_scene_update:
-            TreeHandler.send(TreeEvent(TreeEvent.SCENE_UPDATE, self, nodes_to_update(), cancel=False))
+        TreeHandler.send(SceneEvent(self))
 
     def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        def animated_nodes():
-            for node in self.nodes:
-                try:
-                    if node.is_animation_dependent and node.is_animatable:
-                        yield node
-                except AttributeError:
-                    pass
-        if self.sv_animate:
-            TreeHandler.send(TreeEvent(
-                TreeEvent.FRAME_CHANGE,
-                self,
-                animated_nodes(),
-                is_frame_changed=frame_changed,
-                is_animation_playing=animation_playing))
+        TreeHandler.send(AnimationEvent(self, frame_changed, animation_playing))
 
     def update_ui(self, nodes_errors, update_time):
         """ The method get information about node statistic of last update from the handler to show in view space

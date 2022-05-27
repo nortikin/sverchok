@@ -17,18 +17,59 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 from __future__ import annotations
 
 from collections.abc import Iterable
-from enum import Enum, auto
 from typing import Union, List, TYPE_CHECKING
 
 from bpy.types import Node
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
-    from sverchok.node_tree import SverchCustomTreeNode, SverchCustomTree
+    from sverchok.node_tree import SverchCustomTreeNode, SverchCustomTree as SvTree
     SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
 
 
 class TreeEvent:
+    """Keeps information about what was changed during the even"""
+    # task should be run via timer only https://developer.blender.org/T82318#1053877
+    tree: SvTree
+
+    def __init__(self, tree):
+        self.tree = tree
+
+    def __repr__(self):
+        return f"<{type(self).__name__} {self.tree.name=}>"
+
+
+class ForceEvent(TreeEvent):
+    pass
+
+
+class AnimationEvent(TreeEvent):
+    is_frame_changed: bool
+    is_animation_playing: bool
+
+    def __init__(self, tree, is_frame_change, is_animation_laying):
+        super().__init__(tree)
+        self.is_frame_changed = is_frame_change
+        self.is_animation_playing = is_animation_laying
+
+
+class SceneEvent(TreeEvent):
+    pass
+
+
+class PropertyEvent(TreeEvent):
+    updated_nodes: Iterable[SvNode]
+
+    def __init__(self, tree, updated_nodes):
+        super().__init__(tree)
+        self.updated_nodes = updated_nodes
+
+
+class FileEvent:
+    pass
+
+
+class _TreeEvent:  # todo to remove
     TREE_UPDATE = 'tree_update'  # some changed in a tree topology
     NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
     FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
@@ -38,7 +79,7 @@ class TreeEvent:
 
     def __init__(self,
                  event_type: str,
-                 tree: SverchCustomTree,
+                 tree: SvTree,
                  updated_nodes: Iterable[SvNode] = None,
                  cancel=True,
                  is_frame_changed: bool = True,
@@ -77,23 +118,3 @@ class GroupEvent:
     def __repr__(self):
         return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.tree.name}' \
                + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
-
-
-class BlenderEventsTypes(Enum):
-    tree_update = auto()  # this updates is calling last with exception of creating new node
-    node_update = auto()  # it can be called last during creation new node event
-    add_node = auto()   # it is called first in update wave
-    copy_node = auto()  # it is called first in update wave
-    free_node = auto()  # it is called first in update wave
-    add_link_to_node = auto()  # it can detects only manually created links
-    node_property_update = auto()  # can be in correct in current implementation
-    undo = auto()  # changes in tree does not call any other update events
-    frame_change = auto()
-
-    def print(self, updated_element=None):
-        event_name = f"EVENT: {self.name: <30}"
-        if updated_element is not None:
-            element_data = f"IN: {updated_element.bl_idname: <25} INSTANCE: {updated_element.name: <25}"
-        else:
-            element_data = ""
-        print(event_name + element_data)

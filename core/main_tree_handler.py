@@ -16,8 +16,7 @@ from typing import Dict, Generator, Optional, Iterator, Tuple, NewType, List, TY
 import bpy
 from sverchok.core.sv_custom_exceptions import SvNoDataError, CancelError
 from sverchok.core.socket_conversions import ConversionPolicies
-from sverchok.data_structure import post_load_call
-from sverchok.core.events import TreeEvent
+from sverchok.core.events import TreeEvent, SceneEvent
 from sverchok.utils.logging import debug, catch_log_error, log_error
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlNode
@@ -34,35 +33,21 @@ Path = NewType('Path', str)  # concatenation of group node ids
 class TreeHandler:
 
     @staticmethod
-    def send(event: TreeEvent):
-        """Control center"""
+    def send(event):
+        """Main control center
+        1. preprocess the event
+        2. Pass the event to update system(s)"""
         # print(f"{event.type=}, {event.tree=}")
-        current_task = Task.get()
-
-        # this should be first other wise other instructions can spoil the node statistic to redraw
-        if current_task and current_task.is_running():
-            if event.cancel:
-                current_task.cancel()
-            else:
-                return  # ignore the event
 
         # something changed in scene and it duplicates some tree events which should be ignored
-        elif event.type == TreeEvent.SCENE_UPDATE:
-            # Either the scene handler was triggered by changes in the tree or tree is still in progress
-            if current_task:
-                return  # ignore the event
-            # this event was caused my update system itself and should be ignored
-            elif 'SKIP_UPDATE' in event.tree:
+        if isinstance(event, SceneEvent):
+            # this event was caused by update system itself and should be ignored
+            if 'SKIP_UPDATE' in event.tree:
                 del event.tree['SKIP_UPDATE']
                 return
 
-        # force update
-        elif event.type == TreeEvent.FORCE_UPDATE:
-            event.tree['FORCE_UPDATE'] = True
-
         # Add update tusk for the tree
-        if handler := sus.control_center(event):
-            Task.add(event, handler)
+        sus.control_center(event)
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -133,23 +118,10 @@ def control_center(event: TreeEvent) -> bool:
     return add_tusk
 
 
-def tree_event_loop(delay):
-    """Sverchok event handler"""
-    with catch_log_error():
-        if task := Task.get():
-            if not task.is_running():
-                task.start()
-            task.run()  # task should be run via timer only https://developer.blender.org/T82318#1053877
-    return delay
-
-
-tree_event_loop = partial(tree_event_loop, 0.01)
-
-
 class Task:
     _task: Optional['Task'] = None  # for now running only one task is supported
 
-    __slots__ = ('_event',
+    __slots__ = ('event',
                  '_handler_func',
                  '_handler',
                  '_node_tree_area',
@@ -161,7 +133,7 @@ class Task:
     def add(cls, event: TreeEvent, handler: Callable) -> 'Task':
         if cls._task and cls._task.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name},"
-                               f" already updating tree: {cls._task._event.tree.name}")
+                               f" already updating tree: {cls._task.event.tree.name}")
         cls._task = cls(event, handler)
         return cls._task
 
@@ -170,7 +142,7 @@ class Task:
         return cls._task
 
     def __init__(self, event, handler):
-        self._event: TreeEvent = event
+        self.event: TreeEvent = event
         self._handler_func: Callable[[TreeEvent], Generator] = handler
         self._handler: Optional[Generator[SvNode, None, None]] = None
         self._node_tree_area: Optional[bpy.types.Area] = None
@@ -178,10 +150,10 @@ class Task:
         self._last_node: Optional[SvNode] = None
 
     def start(self):
-        changed_tree = self._event.tree
+        changed_tree = self.event.tree
         if self.is_running():
             raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        self._handler = self._handler_func(self._event)
+        self._handler = self._handler_func(self.event)
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
@@ -222,10 +194,10 @@ class Task:
     def finish_task(self):
         try:
             # this only need to trigger scene changes handler again
-            if self._event.tree.nodes:
-                status = self._event.tree.nodes[-1].use_custom_color
-                self._event.tree.nodes[-1].use_custom_color = not status
-                self._event.tree.nodes[-1].use_custom_color = status
+            if self.event.tree.nodes:
+                status = self.event.tree.nodes[-1].use_custom_color
+                self.event.tree.nodes[-1].use_custom_color = not status
+                self.event.tree.nodes[-1].use_custom_color = status
 
                 # this indicates that process of the tree is finished and next scene event can be skipped
                 # the scene trigger will try to update all trees, so they all should be marked
@@ -574,23 +546,3 @@ def handle_node_data(node: Node):
                 out_sock.data = out_sock.bl_tween.sv_get()
         except SvNoDataError:
             pass
-
-
-@post_load_call
-def post_load_register():
-    # when new file is loaded all timers are unregistered
-    # to make them persistent the post load handler should be used
-    # but it's also is possible that the timer was registered during registration of the add-on
-    if not bpy.app.timers.is_registered(tree_event_loop):
-        bpy.app.timers.register(tree_event_loop)
-
-
-def register():
-    """Registration of Sverchok event handler"""
-    # it appeared that the timers can be registered during the add-on initialization
-    # The timer should be registered here because post_load_register won't be called when an add-on is enabled by user
-    bpy.app.timers.register(tree_event_loop)
-
-
-def unregister():
-    bpy.app.timers.unregister(tree_event_loop)

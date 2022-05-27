@@ -401,7 +401,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             out_s.sv_set(in_s.sv_get(deepcopy=False))
 
         tree = UpdateTree.get(self.node_tree)
-        tree.update([input_node])
+        if tree.outdated_nodes is not None:
+            tree.outdated_nodes.add(input_node)
+        tree.update()
 
         for node in self.node_tree.nodes:
             if err := node.get(ERROR_KEY):

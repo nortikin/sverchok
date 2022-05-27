@@ -13,7 +13,8 @@ core_modules = [
     "sv_custom_exceptions", "update_system",
     "sockets", "socket_data",
     "handlers", "main_tree_handler",
-    "events", "node_group", "group_handlers"
+    "events", "node_group", "group_handlers",
+    "tasks",
 ]
 
 def sv_register_modules(modules):
