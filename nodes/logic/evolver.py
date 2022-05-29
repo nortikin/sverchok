@@ -18,7 +18,7 @@ from mathutils.noise import seed_set, random
 from bpy.props import (
     BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty)
 
-from sverchok.core.update_system import Tree
+from sverchok.core.update_system import UpdateTree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
@@ -356,7 +356,7 @@ class DNA:
                 agent_gene = gene.init_val
                 self.genes.append(agent_gene)
 
-    def evaluate_fitness(self, tree, node, s_tree: Tree, exec_order):
+    def evaluate_fitness(self, tree, node, s_tree: UpdateTree, exec_order):
         try:
             tree.sv_process = False
             for gen_data, agent_gene in zip(self.genes_def, self.genes):
@@ -410,7 +410,7 @@ class Population:
         self.population_g: list[DNA] = []
         self.init_population(node.population_n)
 
-        self._tree = Tree.get(tree)
+        self._tree = UpdateTree.get(tree)
         exec_order = self._tree.nodes_from([tree.nodes[g.name] for g in self.genes])
         self.exec_order = self._tree.sort_nodes(exec_order)
 

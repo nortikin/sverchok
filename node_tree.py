@@ -14,7 +14,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.core.events import TreeEvent, ForceEvent, PropertyEvent, SceneEvent, AnimationEvent
+import sverchok.core.events as ev
 from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
@@ -31,6 +31,11 @@ from sverchok.ui import bgl_callback_nodeview as sv_bgl
 class SvNodeTreeCommon:
     """Common class for all Sverchok trees (regular trees and group ones)"""
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
+    sv_show_time_nodes: BoolProperty(
+        name="Node times",
+        default=False,
+        options=set(),
+        update=lambda s, c: TreeHandler.send(ev.TreeEvent(s)))
 
     @property
     def tree_id(self):
@@ -68,6 +73,15 @@ class SvNodeTreeCommon:
                 yield self
             finally:
                 del self['init_tree']
+
+    def update_ui(self, nodes_errors, update_time):
+        """ The method get information about node statistic of last update from the handler to show in view space
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode"""
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update)
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -111,13 +125,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Process",
         default=True,
         description='Update upon tree and node property changes',
-        update=lambda s, c: TreeHandler.send(TreeEvent(s)),
+        update=lambda s, c: TreeHandler.send(ev.TreeEvent(s)),
         options=set(),
     )
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
     show_time_mode: EnumProperty(
         items=[(n, n, '') for n in ["Per node", "Cumulative"]],
         options=set(),
@@ -144,38 +156,29 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
-        TreeHandler.send(TreeEvent(self))
+        TreeHandler.send(ev.TreeEvent(self))
 
     def force_update(self):
         """Update whole tree from scratch"""
         # ideally we would never like to use this method but we live in the real world
-        TreeHandler.send(ForceEvent(self))
+        TreeHandler.send(ev.ForceEvent(self))
 
     def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        return TreeHandler.send(PropertyEvent(self, nodes))
+        return TreeHandler.send(ev.PropertyEvent(self, nodes))
 
     def scene_update(self):
         """This method should be called by scene changes handler
         it ignores events related with S
         sverchok trees in other cases it updates nodes which read data from Blender"""
-        TreeHandler.send(SceneEvent(self))
+        TreeHandler.send(ev.SceneEvent(self))
 
     def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        TreeHandler.send(AnimationEvent(self, frame_changed, animation_playing))
-
-    def update_ui(self, nodes_errors, update_time):
-        """ The method get information about node statistic of last update from the handler to show in view space
-        The method is usually called by main handler to reevaluate view of the nodes in the tree
-        even if the tree is not in the Live update mode"""
-        update_time = update_time if self.sv_show_time_nodes else cycle([None])
-        for node, error, update in zip(self.nodes, nodes_errors, update_time):
-            if hasattr(node, 'update_ui'):
-                node.update_ui(error, update)
+        TreeHandler.send(ev.AnimationEvent(self, frame_changed, animation_playing))
 
 
 class UpdateNodes:

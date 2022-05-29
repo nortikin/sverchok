@@ -3,7 +3,7 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.events import FileEvent
+import sverchok.core.events as ev
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
@@ -159,7 +159,7 @@ def sv_pre_load(scene):
     sv_clean(scene)
 
     import sverchok.core.main_tree_handler as mh
-    mh.TreeHandler.send(FileEvent())
+    mh.TreeHandler.send(ev.FileEvent())
 
 
 @persistent

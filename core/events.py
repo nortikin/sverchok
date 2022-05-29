@@ -17,14 +17,15 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import Union, List, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING
 
 from bpy.types import Node
 
 if TYPE_CHECKING:
-    from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
+    from sverchok.core.node_group import SvGroupTree as GrTree, \
+        SvGroupTreeNode as GrNode
     from sverchok.node_tree import SverchCustomTreeNode, SverchCustomTree as SvTree
-    SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
+    SvNode = Union[SverchCustomTreeNode, GrNode, Node]
 
 
 class TreeEvent:
@@ -65,56 +66,26 @@ class PropertyEvent(TreeEvent):
         self.updated_nodes = updated_nodes
 
 
+class GroupTreeEvent(TreeEvent):
+    tree: GrTree
+    update_path: list[GrNode]
+
+    def __init__(self, tree, update_path):
+        super().__init__(tree)
+        self.update_path = update_path
+
+
+class GroupPropertyEvent(GroupTreeEvent):
+    updated_nodes: Iterable[SvNode]
+
+    def __init__(self, tree, update_path, update_nodes):
+        super().__init__(tree, update_path)
+        self.updated_nodes = update_nodes
+
+
 class FileEvent:
     pass
 
 
-class _TreeEvent:  # todo to remove
-    TREE_UPDATE = 'tree_update'  # some changed in a tree topology
-    NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
-    FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
-    FRAME_CHANGE = 'frame_change'  # unlike other updates this one should be un-cancellable
-    SCENE_UPDATE = 'scene_update'  # something was changed in the scene
-    FILE_RELOADED = 'file_reloaded'  # New files was opened
-
-    def __init__(self,
-                 event_type: str,
-                 tree: SvTree,
-                 updated_nodes: Iterable[SvNode] = None,
-                 cancel=True,
-                 is_frame_changed: bool = True,
-                 is_animation_playing: bool = False):
-        self.type = event_type
-        self.tree = tree
-        self.updated_nodes = updated_nodes
-        self.cancel = cancel
-        self.is_frame_changed = is_frame_changed
-        self.is_animation_playing = is_animation_playing
-
-    def __repr__(self):
-        return f"<TreeEvent type={self.type}>"
-
-
-class GroupEvent:
-    GROUP_NODE_UPDATE = 'group_node_update'
-    GROUP_TREE_UPDATE = 'group_tree_update'
-    NODES_UPDATE = 'nodes_update'
-    EDIT_GROUP_NODE = 'edit_group_node'  # upon pressing edit button or Tab
-
-    def __init__(self,
-                 event_type: str,
-                 group_nodes_path: List[SvGroupTreeNode],
-                 updated_nodes: List[SvNode] = None):
-        self.type = event_type
-        self.group_node = group_nodes_path[-1]
-        self.group_nodes_path = group_nodes_path
-        self.updated_nodes = updated_nodes
-        self.to_update = group_nodes_path[-1].is_active
-
-    @property
-    def tree(self) -> SvGroupTree:
-        return self.group_node.node_tree
-
-    def __repr__(self):
-        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.tree.name}' \
-               + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
+class TreesGraphEvent:
+    pass

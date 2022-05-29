@@ -9,22 +9,22 @@
 import time
 from collections import namedtuple
 from functools import reduce
-from itertools import cycle
-from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
+from typing import Tuple, List, Set, Dict, Iterator, Optional
 
 import bpy
-from sverchok.core.main_tree_handler import empty_updater
+from bpy.props import BoolProperty
+from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler
 from sverchok.core.sockets import socket_type_names
-from sverchok.core.events import GroupEvent
-from sverchok.core.update_system import ERROR_KEY, Tree as UpdateTree
-from sverchok.utils.tree_structure import Tree, Node
+import sverchok.core.events as ev
+import sverchok.core.group_update_system as gus
+from sverchok.core.update_system import ERROR_KEY
+from sverchok.utils.tree_structure import Tree
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlNode, BlTrees
-from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon, SverchCustomTreeNode
+from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
 
 
 class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
@@ -33,14 +33,14 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     bl_icon = 'NODETREE'
     bl_label = 'Group tree'
 
-    handler = MainHandler
-    sv_process = True  # for consistency with main tree
+    handler = TreeHandler
 
     # should be updated by "Go to edit group tree" operator
     group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
+    sv_show_time_nodes: BoolProperty(default=False, options={'SKIP_SAVE'})
 
     @classmethod
     def poll(cls, context):
@@ -116,7 +116,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.get_update_path()))
+        self.handler.send(ev.GroupTreeEvent(self, self.get_update_path()))
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -205,7 +205,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
         if not self.group_node_name:  # initialization tree
             return
 
-        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=nodes))
+        self.handler.send(ev.GroupPropertyEvent(self, self.get_update_path(), nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -214,20 +214,6 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
             for node in tree.nodes:
                 if hasattr(node, 'node_tree') and node.node_tree and node.node_tree.name == self.name:
                     yield node
-
-    def update_ui(self, group_nodes_path: List['SvGroupTreeNode']):
-        """updating tree contextual information -> node colors, objects number in sockets"""
-        nodes_errors = self.handler.get_error_nodes(group_nodes_path)
-        to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
-        time_mode = group_nodes_path[0].id_data.show_time_mode
-        if to_show_update_time:
-            update_time = (self.handler.get_cum_time(group_nodes_path) if time_mode == "Cumulative"
-                           else self.handler.get_nodes_update_time(group_nodes_path))
-        else:
-            update_time = cycle([None])
-        for node, error, update in zip(self.nodes, nodes_errors, update_time):
-            if hasattr(node, 'update_ui'):
-                node.update_ui(error, update)
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
@@ -289,7 +275,7 @@ class BaseNode:
         return recursive_framed_location_finder(self, self.location[:])
 
 
-class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
+class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
     bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (Alpha)'
@@ -307,6 +293,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     def update_group_tree(self, context):
         """Apply filtered tree to `node_tree` attribute.
         By this attribute Blender is aware of linking between the node and nested tree."""
+        TreeHandler.send(ev.TreesGraphEvent())
         self.node_tree: SvGroupTree = self.group_tree
         # also default values should be fixed
         if self.node_tree:
@@ -390,6 +377,10 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             return
 
         self.node_tree: SvGroupTree
+
+        # most simple way to pass data about whether node group should show timings
+        self.node_tree.sv_show_time_nodes = self.id_data.sv_show_time_nodes
+
         input_node = self.active_input()
         output_node = self.active_output()
         if not input_node or not output_node:
@@ -400,10 +391,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 break
             out_s.sv_set(in_s.sv_get(deepcopy=False))
 
-        tree = UpdateTree.get(self.node_tree)
-        if tree.outdated_nodes is not None:
-            tree.outdated_nodes.add(input_node)
-        tree.update()
+        tree = gus.GroupUpdateTree.get(self.node_tree, refresh_tree=True)
+        tree.add_outdated([input_node])
+        tree.update(self)
 
         for node in self.node_tree.nodes:
             if err := node.get(ERROR_KEY):
@@ -413,32 +403,6 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 if in_s.identifier == '__extend__':  # virtual socket
                     break
                 out_s.sv_set(in_s.sv_get(deepcopy=False))
-
-    def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
-                is_input_changed: bool = True,
-                trees_ui_to_update: set = None) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
-        """
-        This method should be called by group tree handler
-        is_input_changed should be False if update is called just for inspection of inner changes
-        """
-        # todo what if the node is disabled?
-        # there is nothing to update, return empty iterator
-        if self.node_tree is None:
-            return empty_updater(is_output_changed=False, error=None)
-
-        if group_nodes_path is None:
-            group_nodes_path = []
-        else:
-            # copy the path otherwise if base tree has several group nodes second and next nodes will get wrong path
-            group_nodes_path = group_nodes_path.copy()
-        group_nodes_path.append(self)
-
-        self.node_tree: SvGroupTree
-        input_node = self.active_input() if is_input_changed else None
-        return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
-                                                        group_nodes_path,
-                                                        [input_node] if input_node else []),
-                                             trees_ui_to_update or set())
 
     def active_input(self) -> Optional[bpy.types.Node]:
         # https://developer.blender.org/T82350
@@ -451,10 +415,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             if node.bl_idname == 'NodeGroupOutput':
                 return node
 
-    def update(self):
-        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
-            return
-
+    def sv_update(self):
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -464,10 +425,11 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
 
-    update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
+    def sv_copy(self, original):
+        TreeHandler.send(ev.TreesGraphEvent())
 
-    def free(self):
-        self.update_ui()
+    def sv_free(self):
+        TreeHandler.send(ev.TreesGraphEvent())
 
 
 class PlacingNodeOperator:
@@ -848,9 +810,8 @@ class EditGroupTree(bpy.types.Operator):
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
-        group_nodes_path = sub_tree.get_update_path()
-        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path,
-                                         (n for n in sub_tree.nodes if BlNode(n).is_debug_node)))
+        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+        sub_tree.handler.send(event)
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator
         return {'FINISHED'}
@@ -941,12 +902,6 @@ class NodeGroupInput(BaseNode):
 class NodeReroute(BaseNode):
     """Add sv logic"""
     # `copy` attribute can't be overridden for this class
-    # current sv_get method of sockets jump from reroute to reroute until get to normal node to get data
-    # def process(self):
-    #     try:
-    #         self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
-    #     except AttributeError:
-    #         pass  # in main tree reroutes still have color sockets
 
 
 @extend_blender_class

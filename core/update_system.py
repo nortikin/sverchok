@@ -6,16 +6,16 @@ from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
-from sverchok.core.events import TreeEvent, AnimationEvent, SceneEvent, PropertyEvent, ForceEvent, FileEvent
+import sverchok.core.events as ev
 import sverchok.core.tasks as ts
 from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
 from sverchok.utils.tree_walk import bfs_walk
-from sverchok.utils.handle_blender_data import BlTrees
 
 if TYPE_CHECKING:
-    from sverchok.node_tree import SverchCustomTreeNode as SvNode
+    from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
+                                    SverchCustomTree as SvTree)
 
 
 UPDATE_KEY = "US_is_updated"
@@ -23,53 +23,57 @@ ERROR_KEY = "US_error"
 TIME_KEY = "US_time"
 
 
-def control_center(event: TreeEvent):
+def control_center(event):
     """
     1. Update tree model lazily
     2. Check whether the event should be processed
     3. Process event or create task to process via timer"""
+    was_executed = False
 
     # frame update
     # This event can't be handled via NodesUpdater during animation rendering
     # because new frame change event can arrive before timer finishes its tusk.
     # Or timer can start working before frame change is handled.
-    if isinstance(event, AnimationEvent):
+    if type(event) is ev.AnimationEvent:
+        was_executed = True
         if event.tree.sv_animate:
-            Tree.get(event.tree).is_animation_updated = False
-            Tree.update_animation(event)
+            UpdateTree.get(event.tree).is_animation_updated = False
+            UpdateTree.update_animation(event)
 
     # something changed in the scene
-    elif isinstance(event, SceneEvent):
+    elif type(event) is ev.SceneEvent:
+        was_executed = True
         if event.tree.sv_scene_update and event.tree.sv_process:
-            Tree.get(event.tree).is_scene_updated = False
-            ts.tasks.add(ts.Task(event.tree, Tree.main_update(event.tree)))
+            UpdateTree.get(event.tree).is_scene_updated = False
+            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # nodes changed properties
-    elif isinstance(event, PropertyEvent):
-        tree = Tree.get(event.tree)
-        if tree.outdated_nodes is not None:
-            tree.outdated_nodes.update(event.updated_nodes)
+    elif type(event) is ev.PropertyEvent:
+        was_executed = True
+        tree = UpdateTree.get(event.tree)
+        tree.add_outdated(event.updated_nodes)
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, Tree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # update the whole tree anyway
-    elif isinstance(event, ForceEvent):
-        Tree.reset_tree(event.tree)
-        ts.tasks.add(ts.Task(event.tree, Tree.main_update(event.tree)))
+    elif type(event) is ev.ForceEvent:
+        was_executed = True
+        UpdateTree.reset_tree(event.tree)
+        ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # mark that the tree topology has changed
-    elif isinstance(event, TreeEvent):
-        Tree.get(event.tree).is_updated = False
+    elif type(event) is ev.TreeEvent:
+        was_executed = True
+        UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, Tree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # new file opened
-    elif isinstance(event, FileEvent):
-        Tree.reset_tree()
+    elif type(event) is ev.FileEvent:
+        was_executed = True
+        UpdateTree.reset_tree()
 
-    # Unknown event
-    else:
-        raise TypeError(f'Detected unknown {event=}')
+    return was_executed
 
 
 class SearchTree:
@@ -164,13 +168,13 @@ class SearchTree:
     # todo add links between wifi nodes
 
 
-class Tree(SearchTree):
+class UpdateTree(SearchTree):
     """It catches some data for more efficient searches compare to Blender
     tree data structure"""
-    _tree_catch: dict[str, 'Tree'] = dict()  # the module should be auto-reloaded to prevent crashes
+    _tree_catch: dict[str, 'UpdateTree'] = dict()  # the module should be auto-reloaded to prevent crashes
 
     @classmethod
-    def get(cls, tree: NodeTree, refresh_tree=False) -> 'Tree':
+    def get(cls, tree: "SvTree", refresh_tree=False) -> "UpdateTree":
         """
         :refresh_tree: if True it will convert update flags into outdated
         nodes. This can be expensive so it should be called only before tree
@@ -188,13 +192,13 @@ class Tree(SearchTree):
                     _tree = old.copy()
 
                 # update outdated nodes list
-                if _tree.outdated_nodes is not None:
+                if _tree._outdated_nodes is not None:
                     if not _tree.is_updated:
-                        _tree.outdated_nodes.update(_tree._update_difference(old))
+                        _tree._outdated_nodes.update(_tree._update_difference(old))
                     if not _tree.is_animation_updated:
-                        _tree.outdated_nodes.update(_tree._animation_nodes())
+                        _tree._outdated_nodes.update(_tree._animation_nodes())
                     if not _tree.is_scene_updated:
-                        _tree.outdated_nodes.update(_tree._scene_nodes())
+                        _tree._outdated_nodes.update(_tree._scene_nodes())
 
                 _tree.is_updated = True
                 _tree.is_animation_updated = True
@@ -204,7 +208,7 @@ class Tree(SearchTree):
 
     @classmethod
     @profile(section="UPDATE")
-    def update_animation(cls, event: AnimationEvent):
+    def update_animation(cls, event: ev.AnimationEvent):
         try:
             g = cls.main_update(event.tree, event.is_frame_changed, not event.is_animation_playing)
             while True:
@@ -239,21 +243,17 @@ class Tree(SearchTree):
         else:
             cls._tree_catch.clear()
 
-    def update(self):
-        walker = self._walk()
-        # walker = tree._debug_color(walker)
-        for node, prev_socks in walker:
-            with AddStatistic(node):
-                prepare_input_data(prev_socks, node.inputs)
-                node.process()
-
-    def copy(self) -> 'Tree':
+    def copy(self) -> 'UpdateTree':
         """They copy will be with new topology if original tree was changed
         since berth of the first tree. Other attributes copied as is."""
         copy_ = type(self)(self._tree)
         for attr in self._copy_attrs:
             setattr(copy_, attr, copy(getattr(self, attr)))
         return copy_
+
+    def add_outdated(self, nodes: Iterable):
+        if self._outdated_nodes is not None:
+            self._outdated_nodes.update(nodes)
 
     def __init__(self, tree: NodeTree):
         super().__init__(tree)
@@ -262,7 +262,7 @@ class Tree(SearchTree):
         self.is_updated = True  # False if topology was changed
         self.is_animation_updated = True
         self.is_scene_updated = True
-        self.outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
+        self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
 
         # https://stackoverflow.com/a/68550238
         self._sort_nodes = lru_cache(maxsize=1)(self._sort_nodes)
@@ -271,7 +271,7 @@ class Tree(SearchTree):
             'is_updated',
             'is_animation_updated',
             'is_scene_updated',
-            'outdated_nodes',
+            '_outdated_nodes',
         ]
 
     def _animation_nodes(self) -> set['SvNode']:
@@ -294,50 +294,30 @@ class Tree(SearchTree):
 
     def _walk(self) -> tuple[Node, list[NodeSocket]]:
         # walk all nodes in the tree
-        if self.outdated_nodes is None:
+        if self._outdated_nodes is None:
             outdated = None
-            self.outdated_nodes = set()
+            self._outdated_nodes = set()
         # walk triggered nodes and error nodes from previous updates
         else:
-            outdated = frozenset(self.outdated_nodes)
-            self.outdated_nodes.clear()  # todo what if execution was canceled?
+            outdated = frozenset(self._outdated_nodes)
+            self._outdated_nodes.clear()  # todo what if execution was canceled?
 
         for node, other_socks in self._sort_nodes(outdated):
             # execute node only if all previous nodes are updated
             if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
                 yield node, other_socks
                 if node.get(ERROR_KEY, False):
-                    self.outdated_nodes.add(node)
+                    self._outdated_nodes.add(node)
             else:
                 node[UPDATE_KEY] = False
 
-    def _sort_nodes(self, outdated_nodes: frozenset['SvNode'] = None) -> list[tuple['SvNode', list[NodeSocket]]]:
-        # print(f"Sort nodes {self._tree.name}")
-        def node_walker(node_: 'SvNode'):
-            for nn in self._to_nodes.get(node_, []):
-                yield nn
-
-        nodes = []
-        if outdated_nodes is None:
-            for node in TopologicalSorter(self._from_nodes).static_order():
-                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
-        else:
-            outdated_nodes = set(bfs_walk(outdated_nodes, node_walker))
-            from_outdated: dict[SvNode, set[SvNode]] = defaultdict(set)
-            for n in outdated_nodes:
-                if n in self._from_nodes:
-                    from_outdated[n] = {_n for _n in self._from_nodes[n] if _n in outdated_nodes}
-            for node in TopologicalSorter(from_outdated).static_order():
-                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
-        return nodes
-
-    def __sort_nodes(self,
+    def _sort_nodes(self,
                     from_nodes: frozenset['SvNode'] = None,
                     to_nodes: frozenset['SvNode'] = None)\
                     -> list[tuple['SvNode', list[NodeSocket]]]:
         nodes_to_walk = set()
         walk_structure = None
-        if not from_nodes and not to_nodes:
+        if from_nodes is None and to_nodes is None:
             walk_structure = self._from_nodes
         elif from_nodes and to_nodes:
             from_ = self.nodes_from(from_nodes)
@@ -361,7 +341,7 @@ class Tree(SearchTree):
                 nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
         return nodes
 
-    def _update_difference(self, old: 'Tree') -> set['SvNode']:
+    def _update_difference(self, old: 'UpdateTree') -> set['SvNode']:
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
         for from_sock, to_sock in new_links:
@@ -444,6 +424,7 @@ def prepare_input_data(prev_socks, input_socks):
 
 
 def update_ui(tree: NodeTree):
+    # todo cumulative time
     errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
     times = (n.get(TIME_KEY, 0) for n in tree.nodes)
     tree.update_ui(errors, times)

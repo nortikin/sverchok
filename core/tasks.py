@@ -41,6 +41,7 @@ class Tasks:
         while self.current:
             if duration > max_duration:
                 return
+            # print(f"Run task: {self.current}")
             duration += self.current.run(max_duration-duration)
             if self.current.last_node:
                 msg = f'Pres "ESC" to abort, updating node "{self.current.last_node.name}"'
@@ -165,6 +166,9 @@ class Task:
 
     def __hash__(self):
         return hash(self.tree.tree_id)
+
+    def __repr__(self):
+        return f"<Task: {self.tree.name}>"
 
 
 @post_load_call

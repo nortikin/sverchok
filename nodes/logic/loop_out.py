@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import EnumProperty
-from sverchok.core.update_system import Tree
+from sverchok.core.update_system import UpdateTree
 
 from sverchok.node_tree import SverchCustomTreeNode
 
@@ -214,7 +214,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                 for outp in self.outputs:
                     outp.sv_set([])
         else:
-            tree = Tree.get(self.id_data)
+            tree = UpdateTree.get(self.id_data)
             from_nodes = tree.nodes_from([loop_in_node])
             to_nodes = tree.nodes_to([self])
             loop_nodes = from_nodes.intersection(to_nodes)
@@ -281,7 +281,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
             for inp, outp in zip(self.inputs[2:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
         else:
-            tree = Tree.get(self.id_data)
+            tree = UpdateTree.get(self.id_data)
             from_nodes = tree.nodes_from([loop_in_node])
             to_nodes = tree.nodes_to([self])
             loop_nodes = from_nodes.intersection(to_nodes)

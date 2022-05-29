@@ -9,25 +9,27 @@ from __future__ import annotations
 
 import gc
 from contextlib import contextmanager
-from functools import partial
 from time import time
 from typing import Dict, Generator, Optional, Iterator, Tuple, NewType, List, TYPE_CHECKING, Callable
 
 import bpy
 from sverchok.core.sv_custom_exceptions import SvNoDataError, CancelError
 from sverchok.core.socket_conversions import ConversionPolicies
-from sverchok.core.events import TreeEvent, SceneEvent
-from sverchok.utils.logging import debug, catch_log_error, log_error
+import sverchok.core.events as ev
+from sverchok.utils.logging import debug, log_error
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlNode
 from sverchok.utils.profile import profile
-import sverchok.core.update_system as sus
+import sverchok.core.update_system as us
+import sverchok.core.group_update_system as gus
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTreeNode as SvNode
 
 
 Path = NewType('Path', str)  # concatenation of group node ids
+
+update_systems = [us.control_center, gus.control_center]
 
 
 class TreeHandler:
@@ -37,17 +39,26 @@ class TreeHandler:
         """Main control center
         1. preprocess the event
         2. Pass the event to update system(s)"""
-        # print(f"{event.type=}, {event.tree=}")
+        # print(f"{event=}")
 
         # something changed in scene and it duplicates some tree events which should be ignored
-        if isinstance(event, SceneEvent):
+        if isinstance(event, ev.SceneEvent):
             # this event was caused by update system itself and should be ignored
             if 'SKIP_UPDATE' in event.tree:
                 del event.tree['SKIP_UPDATE']
                 return
 
+        was_handled = dict()
         # Add update tusk for the tree
-        sus.control_center(event)
+        for handler in update_systems:
+            res = handler(event)
+            was_handled[handler] = res
+
+        if (results := sum(was_handled.values())) > 1:
+            duplicates = [f.__module__ for f, r in was_handled if r == 1]
+            raise RuntimeError(f"{event=} was executed more than one time, {duplicates=}")
+        elif results == 0:
+            raise RuntimeError(f"{event} was not handled")
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -80,44 +91,6 @@ class TreeHandler:
             yield cum_time_nodes.get(node)
 
 
-def control_center(event: TreeEvent) -> bool:
-    add_tusk = True
-
-    # something changed in scene and it duplicates some tree events which should be ignored
-    if event.type == TreeEvent.SCENE_UPDATE:
-        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-
-    # frame update
-    # This event can't be handled via NodesUpdater during animation rendering because new frame change event
-    # can arrive before timer finishes its tusk. Or timer can start working before frame change is handled.
-    elif event.type == TreeEvent.FRAME_CHANGE:
-        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-        profile(section="UPDATE")(lambda: list(global_updater(event.type)))()
-        add_tusk = False
-
-    # mark given nodes as outdated
-    elif event.type == TreeEvent.NODES_UPDATE:
-        ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
-
-    # it will find changes in tree topology and mark related nodes as outdated
-    elif event.type == TreeEvent.TREE_UPDATE:
-        ContextTrees.mark_tree_outdated(event.tree)
-
-    # force update
-    elif event.type == TreeEvent.FORCE_UPDATE:
-        ContextTrees.reset_data(event.tree)
-
-    # new file opened
-    elif event.type == TreeEvent.FILE_RELOADED:
-        ContextTrees.reset_data()
-
-    # Unknown event
-    else:
-        raise TypeError(f'Detected unknown event - {event}')
-
-    return add_tusk
-
-
 class Task:
     _task: Optional['Task'] = None  # for now running only one task is supported
 
@@ -130,7 +103,7 @@ class Task:
                  )
 
     @classmethod
-    def add(cls, event: TreeEvent, handler: Callable) -> 'Task':
+    def add(cls, event: ev.TreeEvent, handler: Callable) -> 'Task':
         if cls._task and cls._task.is_running():
             raise RuntimeError(f"Can't update tree: {event.tree.name},"
                                f" already updating tree: {cls._task.event.tree.name}")
@@ -142,8 +115,8 @@ class Task:
         return cls._task
 
     def __init__(self, event, handler):
-        self.event: TreeEvent = event
-        self._handler_func: Callable[[TreeEvent], Generator] = handler
+        self.event: ev.TreeEvent = event
+        self._handler_func: Callable[[ev.TreeEvent], Generator] = handler
         self._handler: Optional[Generator[SvNode, None, None]] = None
         self._node_tree_area: Optional[bpy.types.Area] = None
         self._start_time: Optional[float] = None
@@ -234,12 +207,12 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
     for bl_tree in BlTrees().sv_main_trees:
         was_changed = False
         # update only trees which should be animated (for performance improvement in case of many trees)
-        if event_type == TreeEvent.FRAME_CHANGE:
+        if event_type == ev.TreeEvent.FRAME_CHANGE:
             if bl_tree.sv_animate:
                 was_changed = yield from tree_updater(bl_tree, trees_ui_to_update)
 
         # tree should be updated any way
-        elif event_type == TreeEvent.FORCE_UPDATE and 'FORCE_UPDATE' in bl_tree:
+        elif event_type == ev.TreeEvent.FORCE_UPDATE and 'FORCE_UPDATE' in bl_tree:
             del bl_tree['FORCE_UPDATE']
             was_changed = yield from tree_updater(bl_tree, trees_ui_to_update)
 

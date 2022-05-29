@@ -100,7 +100,7 @@ class DebugMemory(UserDict):
         for tree in BlTrees().sv_trees:
             for node in tree.nodes:
                 for sock in chain(node.inputs, node.outputs):
-                    if sock.bl_idname == 'NodeSocketVirtual':
+                    if sock.bl_idname in {'NodeSocketVirtual', 'NodeSocketColor'}:
                         continue
                     if sock.socket_id in self._id_sock:
                         ds = self._id_sock[sock.socket_id]
