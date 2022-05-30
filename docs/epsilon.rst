@@ -57,3 +57,4 @@ Further Reading
 ~~~~~~~~~~~~~~~
 
 Floating Point Arithmetic:  https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+Alex Januszkiewicz's explanation (rip) https://web.archive.org/web/20070105015750/http://www.intelcad.com/pages/autocad/index.htm
