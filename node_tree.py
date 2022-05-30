@@ -15,7 +15,7 @@ from bpy.types import NodeTree
 
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 import sverchok.core.events as ev
-from sverchok.core.main_tree_handler import TreeHandler
+from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -35,7 +35,13 @@ class SvNodeTreeCommon:
         name="Node times",
         default=False,
         options=set(),
-        update=lambda s, c: TreeHandler.send(ev.TreeEvent(s)))
+        update=lambda s, c: handle_event(ev.TreeEvent(s)))
+    show_time_mode: EnumProperty(
+        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        description="Mode of showing node update timings",
+    )
 
     @property
     def tree_id(self):
@@ -125,17 +131,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Process",
         default=True,
         description='Update upon tree and node property changes',
-        update=lambda s, c: TreeHandler.send(ev.TreeEvent(s)),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
         options=set(),
     )
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
-    show_time_mode: EnumProperty(
-        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
-        options=set(),
-        update=lambda s, c: s.update_ui(),
-        description="Mode of showing node update timings",
-    )
 
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
@@ -156,29 +156,29 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
-        TreeHandler.send(ev.TreeEvent(self))
+        handle_event(ev.TreeEvent(self))
 
     def force_update(self):
         """Update whole tree from scratch"""
         # ideally we would never like to use this method but we live in the real world
-        TreeHandler.send(ev.ForceEvent(self))
+        handle_event(ev.ForceEvent(self))
 
     def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        return TreeHandler.send(ev.PropertyEvent(self, nodes))
+        return handle_event(ev.PropertyEvent(self, nodes))
 
     def scene_update(self):
         """This method should be called by scene changes handler
         it ignores events related with S
         sverchok trees in other cases it updates nodes which read data from Blender"""
-        TreeHandler.send(ev.SceneEvent(self))
+        handle_event(ev.SceneEvent(self))
 
     def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        TreeHandler.send(ev.AnimationEvent(self, frame_changed, animation_playing))
+        handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))
 
 
 class UpdateNodes:

@@ -12,8 +12,8 @@ from functools import reduce
 from typing import Tuple, List, Set, Dict, Iterator, Optional
 
 import bpy
-from bpy.props import BoolProperty
-from sverchok.core.main_tree_handler import TreeHandler
+from bpy.props import BoolProperty, EnumProperty
+from sverchok.core.event_system import handle_event
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
@@ -33,14 +33,16 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     bl_icon = 'NODETREE'
     bl_label = 'Group tree'
 
-    handler = TreeHandler
-
     # should be updated by "Go to edit group tree" operator
     group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
     sv_show_time_nodes: BoolProperty(default=False, options={'SKIP_SAVE'})
+    show_time_mode: EnumProperty(
+        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
+        options={'SKIP_SAVE'},
+    )
 
     @classmethod
     def poll(cls, context):
@@ -116,7 +118,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        self.handler.send(ev.GroupTreeEvent(self, self.get_update_path()))
+        handle_event(ev.GroupTreeEvent(self, self.get_update_path()))
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -205,7 +207,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
         if not self.group_node_name:  # initialization tree
             return
 
-        self.handler.send(ev.GroupPropertyEvent(self, self.get_update_path(), nodes))
+        handle_event(ev.GroupPropertyEvent(self, self.get_update_path(), nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -293,7 +295,7 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
     def update_group_tree(self, context):
         """Apply filtered tree to `node_tree` attribute.
         By this attribute Blender is aware of linking between the node and nested tree."""
-        TreeHandler.send(ev.TreesGraphEvent())
+        handle_event(ev.TreesGraphEvent())
         self.node_tree: SvGroupTree = self.group_tree
         # also default values should be fixed
         if self.node_tree:
@@ -380,6 +382,7 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
 
         # most simple way to pass data about whether node group should show timings
         self.node_tree.sv_show_time_nodes = self.id_data.sv_show_time_nodes
+        self.node_tree.show_time_mode = self.id_data.show_time_mode
 
         input_node = self.active_input()
         output_node = self.active_output()
@@ -426,10 +429,10 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
                     n_in_s.default_property_type = t_in_s.default_type
 
     def sv_copy(self, original):
-        TreeHandler.send(ev.TreesGraphEvent())
+        handle_event(ev.TreesGraphEvent())
 
     def sv_free(self):
-        TreeHandler.send(ev.TreesGraphEvent())
+        handle_event(ev.TreesGraphEvent())
 
 
 class PlacingNodeOperator:
@@ -811,7 +814,7 @@ class EditGroupTree(bpy.types.Operator):
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
         event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
-        sub_tree.handler.send(event)
+        handle_event(event)
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator
         return {'FINISHED'}

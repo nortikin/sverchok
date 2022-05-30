@@ -70,7 +70,11 @@ class GroupUpdateTree(us.UpdateTree):
                     node.process()
 
             if is_opened_tree:
-                us.update_ui(self._tree)
+                if self._tree.show_time_mode == "Cumulative":
+                    times = self.calc_cam_update_time()
+                else:
+                    times = None
+                us.update_ui(self._tree, times)
 
         except Exception:
             raise

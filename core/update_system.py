@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
                                     SverchCustomTree as SvTree)
 
+# todo check #4229
 
 UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
@@ -221,10 +222,9 @@ class UpdateTree(SearchTree):
     def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
         """Only for main trees
         1. Whe it called the tree should have information of what is outdated"""
-        # todo add cancelling
         # print(f"UPDATE NODES {event.type=}, {event.tree.name=}")
+        up_tree = cls.get(tree, refresh_tree=True)
         if update_nodes:
-            up_tree = cls.get(tree, refresh_tree=True)
             walker = up_tree._walk()
             # walker = up_tree._debug_color(walker)
             try:
@@ -237,7 +237,11 @@ class UpdateTree(SearchTree):
                 pass
 
         if update_interface:
-            update_ui(tree)
+            if up_tree._tree.show_time_mode == "Cumulative":
+                times = up_tree.calc_cam_update_time()
+            else:
+                times = None
+            update_ui(tree, times)
 
     @classmethod
     def reset_tree(cls, tree: NodeTree = None):
@@ -259,6 +263,18 @@ class UpdateTree(SearchTree):
         if self._outdated_nodes is not None:
             self._outdated_nodes.update(nodes)
 
+    def calc_cam_update_time(self) -> Iterable['SvNode']:
+        cum_time_nodes = dict()  # don't have frame nodes
+        for node, prev_socks in self.__sort_nodes():
+            prev_nodes = self._from_nodes[node]
+            if len(prev_nodes) > 1:
+                cum_time = sum(n.get(TIME_KEY, 0) for n in self.nodes_to([node]))
+            else:
+                cum_time = sum(cum_time_nodes.get(n, 0) for n in prev_nodes)
+                cum_time += node.get(TIME_KEY, 0)
+            cum_time_nodes[node] = cum_time
+        return (cum_time_nodes.get(n) for n in self._tree.nodes)
+
     def __init__(self, tree: NodeTree):
         super().__init__(tree)
         self._tree_catch[tree.tree_id] = self
@@ -269,7 +285,7 @@ class UpdateTree(SearchTree):
         self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
 
         # https://stackoverflow.com/a/68550238
-        self._sort_nodes = lru_cache(maxsize=1)(self._sort_nodes)
+        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
 
         self._copy_attrs = [
             'is_updated',
@@ -315,10 +331,10 @@ class UpdateTree(SearchTree):
             else:
                 node[UPDATE_KEY] = False
 
-    def _sort_nodes(self,
-                    from_nodes: frozenset['SvNode'] = None,
-                    to_nodes: frozenset['SvNode'] = None)\
-                    -> list[tuple['SvNode', list[NodeSocket]]]:
+    def __sort_nodes(self,
+                     from_nodes: frozenset['SvNode'] = None,
+                     to_nodes: frozenset['SvNode'] = None)\
+                     -> list[tuple['SvNode', list[NodeSocket]]]:
         nodes_to_walk = set()
         walk_structure = None
         if from_nodes is None and to_nodes is None:
@@ -429,8 +445,7 @@ def prepare_input_data(prev_socks, input_socks):
         ns.sv_set(data)
 
 
-def update_ui(tree: NodeTree):
-    # todo cumulative time
+def update_ui(tree: NodeTree, times: Iterable[float] = None):
     errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
-    times = (n.get(TIME_KEY, 0) for n in tree.nodes)
+    times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
     tree.update_ui(errors, times)

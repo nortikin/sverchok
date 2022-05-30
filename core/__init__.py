@@ -12,11 +12,13 @@ root_modules = [
 core_modules = [
     "sv_custom_exceptions", "update_system",
     "sockets", "socket_data",
-    "handlers", "main_tree_handler",
+    "handlers",
     "events", "node_group",
     "tasks",
     "group_update_system",
+    "event_system",
 ]
+
 
 def sv_register_modules(modules):
     for m in modules:
