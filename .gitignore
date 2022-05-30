@@ -34,6 +34,7 @@ pip-log.txt
 .tox
 nosetests.xml
 tests/sverchok_tests.log
+tests/log_files
 
 # Translations
 *.mo
