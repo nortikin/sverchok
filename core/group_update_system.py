@@ -63,7 +63,7 @@ class GroupUpdateTree(us.UpdateTree):
                 self._viewer_nodes = {node.active_output()}
 
             walker = self._walk()
-            walker = self._debug_color(walker)
+            # walker = self._debug_color(walker)
             for node, prev_socks in walker:
                 with us.AddStatistic(node):
                     us.prepare_input_data(prev_socks, node.inputs)

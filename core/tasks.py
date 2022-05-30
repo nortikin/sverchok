@@ -83,6 +83,7 @@ class Tasks:
 
     def _finish(self):
         self._report_progress()
+        del self._main_area
 
         # this only need to trigger scene changes handler again
         # todo should be proved that this is right location to call from

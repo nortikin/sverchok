@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Optional, Generator, Iterable
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
+from sverchok.core.sv_custom_exceptions import CancelError
 from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
@@ -226,11 +227,14 @@ class UpdateTree(SearchTree):
             up_tree = cls.get(tree, refresh_tree=True)
             walker = up_tree._walk()
             # walker = up_tree._debug_color(walker)
-            for node, prev_socks in walker:
-                with AddStatistic(node):
-                    yield node
-                    prepare_input_data(prev_socks, node.inputs)
-                    node.process()
+            try:
+                for node, prev_socks in walker:
+                    with AddStatistic(node):
+                        yield node
+                        prepare_input_data(prev_socks, node.inputs)
+                        node.process()
+            except CancelError:
+                pass
 
         if update_interface:
             update_ui(tree)
@@ -406,6 +410,8 @@ class AddStatistic:
             self._node[ERROR_KEY] = repr(exc_val)
 
         if self._supress and exc_type is not None:
+            if issubclass(exc_type, CancelError):
+                return False
             return issubclass(exc_type, Exception)
 
 
