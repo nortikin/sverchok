@@ -29,6 +29,15 @@ Features
 - You must declare an input socket, but outputs are optional.
 - You can set defaults for input numbers, vectors, and list sockets.
 - You can set the level of nestedness; means you don't need to unwrap/index stuff via code
+- You can use a dictionary per node instance, to store states using these functions ::
+
+   # here self refers to the node and will be available at runtime.
+   dict = self.get_user_dict()
+   self.reset_user_dict()   # takes a boolean parameter "hard" to wipe the 
+                            # dictionaries at the class-level (all instances)
+                            # hard=True is useful for debugging. 
+this allows you to store any data that can be produced at runtime.
+
 - You can append a UI drawing function to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
 - has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
