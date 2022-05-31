@@ -161,8 +161,23 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_name: StringProperty()
     script_str: StringProperty()
     node_dict = {}
+    user_dict = {}
 
     halt_updates: BoolProperty(name="snlite halting token")
+
+    def get_user_dict(self):
+        if not self.user_dict.get(hash(self)):
+            self.user_dict[hash(self)] = {}
+        return self.user_dict[hash(self)]
+
+    def reset_user_dict(self, hard=False):
+        if hard:
+            # will reset all user_dicts in all instances of snlite.
+            # you probably don't want to do this, but for debugging it can be useful.
+            self.user_dict = {}
+
+        self.user_dict[hash(self)] = {}
+
 
     def updateNode2(self, context):
         if not self.halt_updates:
@@ -287,9 +302,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.node_dict[hash(self)]['sockets'] = socket_info
 
         return True
-
-
-
 
     def sv_init(self, context):
         self.use_custom_color = False
