@@ -194,7 +194,7 @@ def get_output_socket_data(node, output_socket_name):
     Get data that the node has written to the output socket.
     Raises SvNoDataError if it hasn't written any.
     """
-    socket = node.inputs[output_socket_name]  # todo why output?
+    socket = node.outputs[output_socket_name]
     sock_address = socket.socket_id
     if sock_address in socket_data_cache:
         return socket_data_cache[sock_address]
