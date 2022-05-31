@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -132,17 +133,17 @@
            <div itemprop="articleBody">
              
   <section id="polygon-sort">
-<h1>Polygon Sort<a class="headerlink" href="#polygon-sort" title="Permalink to this headline">¶</a></h1>
+<h1>Polygon Sort<a class="headerlink" href="#polygon-sort" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Polygon Sort node sorts the input polygons by various criteria: distance, area and normal angle.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except <strong>Mode</strong> and <strong>Descending</strong> are vectorized and can take single of multiple input values.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except <strong>Mode</strong> and <strong>Descending</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -203,7 +204,7 @@ ND : Sort by the normal angle relative to direction D</p>
 [1] : “Point P” is shown in P and NP mode and “Direction” is shown in D and ND mode. These are used for distance and normal angle calculation. The area mode (A) does not use the input sorting vector.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Indices</strong>
 The indices of the sorted polygons.</p>
 <p><strong>Vertices</strong>
@@ -215,7 +216,7 @@ The quantity by which the polygons are sorted. Depending on the selected mode th
 <p>Note: The output will be generated when the output sockets are connected.</p>
 </section>
 <section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h2>
+<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
 <p>The modes correspond to different sorting criteria and each one has a quanitity by which the polygons are sorted.
 * P : In this mode the polygons are sorted by the distance from the center of each polygon to the given point P.
 * D : In this mode the polygons are sorted by the projection component of polygon center vector along the given direction D.
@@ -224,7 +225,7 @@ The quantity by which the polygons are sorted. Depending on the selected mode th
 * NP : In this mode the polygons are sorted by the angle between the polygon normal and the vector pointing form the center of the polygon to the given point P.</p>
 </section>
 <section id="presets">
-<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this headline">¶</a></h2>
+<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this heading">¶</a></h2>
 <p>The node provides a set of predefined sort directions: along X, Y and Z. These buttons will set the mode to “D” and the sorting vector (Direction) to one of the X, Y or Z directions: (1,0,0), (0,1,0) and (0,0,1) respectively. The preset buttons are only visible as long as the sorting vector socket is not connected.</p>
 <p>References:
 The algorithm to compute the area is based on descriptions found at this address: <a class="reference external" href="http://geomalgorithms.com/a01-_area.html#3D%20Polygons">http://geomalgorithms.com/a01-_area.html#3D%20Polygons</a></p>

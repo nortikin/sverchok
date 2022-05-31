@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,9 +164,9 @@
            <div itemprop="articleBody">
              
   <section id="raycast">
-<h1>Raycast<a class="headerlink" href="#raycast" title="Permalink to this headline">¶</a></h1>
+<h1>Raycast<a class="headerlink" href="#raycast" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Functionality is almost completely analogous to the two built-in blender operators
 <code class="docutils literal notranslate"><span class="pre">bpy.context.scene.ray_cast</span></code> and <code class="docutils literal notranslate"><span class="pre">object.ray_cast</span></code>.
 Ray is casted from “start” vector to “end” vector and can hit polygons of input objects.</p>
@@ -174,14 +175,14 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Scene.html#bpy.types.Scene.ray_cast">bpy.types.Scene.ray_cast</a></p>
 </section>
 <section id="input-sockets">
-<h2>Input sockets<a class="headerlink" href="#input-sockets" title="Permalink to this headline">¶</a></h2>
+<h2>Input sockets<a class="headerlink" href="#input-sockets" title="Permalink to this heading">¶</a></h2>
 <p><strong>Verts</strong> - Vectors of objects receiving rays</p>
 <p><strong>Faces</strong> - Faces of objects receiving rays</p>
 <p><strong>Start</strong> - Start position of raytracing</p>
 <p><strong>Direction</strong> - Direction of raytracing</p>
 </section>
 <section id="output-sockets">
-<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Permalink to this headline">¶</a></h2>
+<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
@@ -212,12 +213,12 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 </table>
 </section>
 <section id="advanced-parameters-n-panel">
-<h2>Advanced parameters (N-Panel)<a class="headerlink" href="#advanced-parameters-n-panel" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced parameters (N-Panel)<a class="headerlink" href="#advanced-parameters-n-panel" title="Permalink to this heading">¶</a></h2>
 <p><strong>Safe Check</strong>: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)</p>
 <p><strong>All Triangles</strong>: Enable if all the incoming faces are triangles to improve the performance of the algorithm</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/28003269/38853137-5a0b6e50-422d-11e8-97bc-8d5046387e25.png" src="https://user-images.githubusercontent.com/28003269/38853137-5a0b6e50-422d-11e8-97bc-8d5046387e25.png" />
 <img alt="https://user-images.githubusercontent.com/28003269/38853349-08514386-422e-11e8-8444-72101d9b0ade.png" src="https://user-images.githubusercontent.com/28003269/38853349-08514386-422e-11e8-8444-72101d9b0ade.png" />
 <img alt="https://user-images.githubusercontent.com/28003269/38853243-b2dc87a8-422d-11e8-96df-7d27735a5b67.gif" src="https://user-images.githubusercontent.com/28003269/38853243-b2dc87a8-422d-11e8-96df-7d27735a5b67.gif" />

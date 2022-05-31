@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -171,13 +172,13 @@
            <div itemprop="articleBody">
              
   <section id="implicit-surface-raycast">
-<h1>Implicit Surface Raycast<a class="headerlink" href="#implicit-surface-raycast" title="Permalink to this headline">¶</a></h1>
+<h1>Implicit Surface Raycast<a class="headerlink" href="#implicit-surface-raycast" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node implements ray <a class="reference external" href="https://en.wikipedia.org/wiki/Ray_casting">casting</a> onto an arbitrary implicit surface; in other words,
 given a point in 3D space and ray direction vector, it will find a point where
 this ray intersects the given surface first time.</p>
@@ -187,7 +188,7 @@ not very fast. If you happen to know how to find the intersection point for
 your specific surface by some formula, that will be faster and more precise.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. Scalar field, which defines the iso-surface to find the intersection with. This input is mandatory.</p></li>
@@ -197,7 +198,7 @@ your specific surface by some formula, that will be faster and more precise.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Intersection points in 3D space.</p></li>
@@ -205,7 +206,7 @@ your specific surface by some formula, that will be faster and more precise.</p>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" src="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" />
 </section>
 </section>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,7 +77,7 @@
            <div itemprop="articleBody">
              
   <section id="profile-parametric-node">
-<h1>Profile Parametric Node<a class="headerlink" href="#profile-parametric-node" title="Permalink to this headline">¶</a></h1>
+<h1>Profile Parametric Node<a class="headerlink" href="#profile-parametric-node" title="Permalink to this heading">¶</a></h1>
 <p><strong>Profile Node</strong> implements a useful subset of the SVG path section commands. Currently the following segment types are available:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -151,7 +152,7 @@ Mode 1 is restrictive and only allows addition and subtraction</p>
 </div>
 <p>To use Mode 2, you must enable the <em>extended parsing</em> switch in the N-panel for the Profile node.</p>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Axis</strong>. Available values are <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong>. This parameter specifies
@@ -170,7 +171,7 @@ above). Default value is 20. This parameter is available only in the N panel.</p
 </ul>
 </section>
 <section id="operators">
-<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
 <p>As you know there are three types of curves in Blender - Polylines, Bezier curves and NURBS curves.
 This node has one operator button: <strong>from selection</strong>. This operator works only with Bezier curves.
 It takes an active Curve object, generates profile description from it and sets up the node
@@ -181,7 +182,7 @@ More information about conversion looks <a class="reference external" href="http
 <img alt="https://user-images.githubusercontent.com/28003269/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" src="https://user-images.githubusercontent.com/28003269/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png" />
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>If you have experience with SVG paths most of this will be familiar. The biggest difference is that only the
 LineTo command accepts many points, and we always start the profile with a M &lt;pos&gt;,&lt;pos&gt;.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
@@ -215,14 +216,14 @@ doesn’t let you specify such things, but it makes sense to allow it for the cr
 </div>
 </section>
 <section id="more-info">
-<h2>More Info<a class="headerlink" href="#more-info" title="Permalink to this headline">¶</a></h2>
+<h2>More Info<a class="headerlink" href="#more-info" title="Permalink to this heading">¶</a></h2>
 <p>The node started out as a thought experiment and turned into something quite useful, you can see how it evolved in the <a class="reference external" href="https://github.com/nortikin/sverchok/issues/350">github thread</a></p>
 <p>Example usage:</p>
 <img alt="https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-11e4-93e5-724863a30bbc.png" src="https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-11e4-93e5-724863a30bbc.png" />
 <img alt="https://cloud.githubusercontent.com/assets/619340/3895396/81f3b96c-224d-11e4-9ca7-f07756f40a0e.png" src="https://cloud.githubusercontent.com/assets/619340/3895396/81f3b96c-224d-11e4-9ca7-f07756f40a0e.png" />
 </section>
 <section id="gotchas">
-<h2>Gotchas<a class="headerlink" href="#gotchas" title="Permalink to this headline">¶</a></h2>
+<h2>Gotchas<a class="headerlink" href="#gotchas" title="Permalink to this heading">¶</a></h2>
 <p>The update mechanism doesn’t process inputs or anything until the following conditions are satisfied:</p>
 <blockquote>
 <div><ul class="simple">
@@ -232,7 +233,7 @@ doesn’t let you specify such things, but it makes sense to allow it for the cr
 </div></blockquote>
 </section>
 <section id="keyboard-shortcut-to-refresh-profile-node">
-<h2>Keyboard Shortcut to refresh Profile Node<a class="headerlink" href="#keyboard-shortcut-to-refresh-profile-node" title="Permalink to this headline">¶</a></h2>
+<h2>Keyboard Shortcut to refresh Profile Node<a class="headerlink" href="#keyboard-shortcut-to-refresh-profile-node" title="Permalink to this heading">¶</a></h2>
 <p>Updates made to the profile path text file are not propagated automatically to any nodes that might be reading that file.
 To refresh a Profile Node simply hit <code class="docutils literal notranslate"><span class="pre">Ctrl+Enter</span></code> In TextEditor while you are editing the file, or click one of the
 inputs or output sockets of Profile Node. There are other ways to refresh (change a value on one of the incoming nodes,

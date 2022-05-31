@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -142,36 +143,36 @@
            <div itemprop="articleBody">
              
   <section id="a-number">
-<h1>A Number<a class="headerlink" href="#a-number" title="Permalink to this headline">¶</a></h1>
+<h1>A Number<a class="headerlink" href="#a-number" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node lets you output a number, either Int or Float. It also lets you set the Min and Max of the slider to ensure that the node never outputs beyond a certain range.</p>
 </section>
 <section id="warning">
-<h2>Warning<a class="headerlink" href="#warning" title="Permalink to this headline">¶</a></h2>
+<h2>Warning<a class="headerlink" href="#warning" title="Permalink to this heading">¶</a></h2>
 <p>Currently:</p>
 <p>The node will pass any input directly to the output, it will not first recast ints to floats if you feed it integers while the node is in Integer mode. The reverse is also true. When the node’s input socket is connected it will not limit the values of the incoming data. (you probably want to use a Remap Range node in that case anyway)</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>float or integer</strong></p>
 </section>
 <section id="extended-parameters">
-<h2>Extended parameters<a class="headerlink" href="#extended-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Extended parameters<a class="headerlink" href="#extended-parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>Show Limits</strong> - boolean switch will show the Min and Max sliders on the UI when pressed. Unpressed the node only shows the choice between Integer and Float mode.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>float or integer</strong> - only one digit. when unlinked</p>
 </section>
 <section id="d-panel">
-<h2>3D panel<a class="headerlink" href="#d-panel" title="Permalink to this headline">¶</a></h2>
+<h2>3D panel<a class="headerlink" href="#d-panel" title="Permalink to this heading">¶</a></h2>
 <p>The node can show its properties on 3D panel.
 For this parameter <cite>to 3d</cite> should be enabled, output should be linked and input should not be linked.
 After that you can press <cite>scan for props</cite> button on 3D panel for showing the node properties on 3D panel.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>see <a class="reference external" href="https://github.com/nortikin/sverchok/pull/1450">https://github.com/nortikin/sverchok/pull/1450</a> for examples</p>
 </section>
 </section>

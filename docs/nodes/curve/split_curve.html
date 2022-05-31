@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,9 +190,9 @@
            <div itemprop="articleBody">
              
   <section id="split-curve">
-<h1>Split Curve<a class="headerlink" href="#split-curve" title="Permalink to this headline">¶</a></h1>
+<h1>Split Curve<a class="headerlink" href="#split-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits one Curve object into several Curves, by dividing it at some
 values of curve’s T parameter. The values of T parameter, at which the split
 should be made, can be either specified manually or calculated automatically by
@@ -201,7 +202,7 @@ curve length. To split a curve into parts of equal length, you can use “Curve
 Length Parameter” node to calculate corresponding values of the T parameter.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be split. This input is mandatory.</p></li>
@@ -215,7 +216,7 @@ default value is 0.5.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Mode</strong>. This defines how the values of curve’s T parameter, at which the
@@ -239,14 +240,14 @@ separate list of pieces for each provided Curve object. Unchecked by default.</p
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. The generated Curve objects.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Split a Circle (which has domain <code class="docutils literal notranslate"><span class="pre">[0;</span> <span class="pre">2*pi]</span></code>) at point T = 0.5:</p>
 <img alt="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" src="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" />
 <p>Split a Circle into 5 pieces:</p>

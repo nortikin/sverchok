@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -142,19 +143,19 @@
            <div itemprop="articleBody">
              
   <section id="vector-rewire">
-<h1>Vector Rewire<a class="headerlink" href="#vector-rewire" title="Permalink to this headline">¶</a></h1>
+<h1>Vector Rewire<a class="headerlink" href="#vector-rewire" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Use this node to swap Vector components, for instance pass X to Y (and Y to X ). Or completely filter out a component by switching to the Scalar option. it will default to <em>0.0</em> when the Scalar socket is unconnected, when connected it will replace the component with the values from the socket. If the content of the Scalar input lists don’t match the length of the Vectors list, the node will repeat the last value in the list or sublist (expected Sverchok behaviour).</p>
 <img alt="with vector rewire" src="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png" />
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vectors</strong> - Any list of Vector/Vertex lists
 <strong>Scalar</strong> - value or series of values, will auto repeat last valid value to match Vector count.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vector</strong> - Vertex or series of vertices</p>
 </section>
 </section>

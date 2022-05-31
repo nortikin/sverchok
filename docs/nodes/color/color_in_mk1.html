@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -131,16 +132,16 @@
            <div itemprop="articleBody">
              
   <section id="color-in">
-<h1>Color In<a class="headerlink" href="#color-in" title="Permalink to this headline">¶</a></h1>
+<h1>Color In<a class="headerlink" href="#color-in" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Creates color data from ranges or number values either integer of floats.</p>
 <p>With the NumPy implementation the node will accept regular lists or lists of NumPy arrays if the arrays have two axis arrays with shape [n,3]</p>
 <p>It can also output Numpy arrays (flat arrays) when using the activating the “Output NumPy” parameter.
 (See advanced parameters)</p>
 </section>
 <section id="inputs-and-parameters">
-<h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>Use Alpha</strong> - Include alpha (transparency) data in the outputs.</p>
 <p><strong>Color space</strong> - RGB, HSV and HSL inputs are available.</p>
 <ul class="simple">
@@ -169,17 +170,17 @@
 <p><strong>A</strong> - Alpha value or series of values</p>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Implementation</strong>: Python or NumPy. Numpy is the default. Python implementation is usually faster if you input regular lists and want to get regular list in RGB mode. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays or in HSV and HSL mode</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Colors</strong> - Color or series of colors (in RGB or RGBA values)</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Differences between HSV and HSL:</p>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png" />
 <p>Tuning noise into color data:</p>

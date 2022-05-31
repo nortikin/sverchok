@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,16 +190,16 @@
            <div itemprop="articleBody">
              
   <section id="bezier-spline-curve">
-<h1>Bezier Spline (Curve)<a class="headerlink" href="#bezier-spline-curve" title="Permalink to this headline">¶</a></h1>
+<h1>Bezier Spline (Curve)<a class="headerlink" href="#bezier-spline-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bezier</a> Curve object. It is possible to generate curves
 of second order (quadratic), third order (cubic), or arbitrary order (generic).
 For cubic curves, there are several ways to define the control points.</p>
 <p>Curve parametrization: from 0 to 1.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>Start</strong>. Starting point of the curve. This node is not available if
@@ -231,7 +232,7 @@ it in general does not pass through all other control points.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Mode</strong>. This defines how the control points will be provided, as well as
@@ -267,7 +268,7 @@ point.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. Generated Bezier curve.</p></li>
@@ -275,7 +276,7 @@ point.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Cubic Bezier curve by four control points:</p>
 <img alt="https://user-images.githubusercontent.com/284644/82762154-dd741f00-9e18-11ea-875b-ed3a59c3b76c.png" src="https://user-images.githubusercontent.com/284644/82762154-dd741f00-9e18-11ea-875b-ed3a59c3b76c.png" />
 <p>Cubic Bezier curve by two points and two tangents (Hermite spline):</p>

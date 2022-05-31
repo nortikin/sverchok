@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,13 +164,13 @@
            <div itemprop="articleBody">
              
   <section id="calculate-normals">
-<h1>Calculate Normals<a class="headerlink" href="#calculate-normals" title="Permalink to this headline">¶</a></h1>
+<h1>Calculate Normals<a class="headerlink" href="#calculate-normals" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates normals for faces and edges of given mesh. Normals can be calculated even for meshes without faces, i.e. curves.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -177,7 +178,7 @@
 </ul>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <dl class="simple">
 <dt>Offers different calculation methods:</dt><dd><p>Bmesh (standard Blender, slowest),
 Mean Weighted Equally (Fastest),
@@ -188,7 +189,7 @@ Mean Weighted by Sine</p>
 </dl>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Face Normals</strong>. Normals of faces. This output will be empty if <strong>Polygons</strong> input is empty.</p></li>
@@ -196,7 +197,7 @@ Mean Weighted by Sine</p>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Move each face of cube along its normal:</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/5989203/f86367f2-a9a0-11e4-9292-d303838d561d.png" src="https://cloud.githubusercontent.com/assets/284644/5989203/f86367f2-a9a0-11e4-9292-d303838d561d.png" />
 <p>Visualization of vertex normals for bezier curve:</p>

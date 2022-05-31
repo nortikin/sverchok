@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -128,7 +129,7 @@
            <div itemprop="articleBody">
              
   <section id="quaternion-math-node">
-<h1>Quaternion Math Node<a class="headerlink" href="#quaternion-math-node" title="Permalink to this headline">¶</a></h1>
+<h1>Quaternion Math Node<a class="headerlink" href="#quaternion-math-node" title="Permalink to this heading">¶</a></h1>
 <p>The Quaternion Math node performs various artithmetic operations on quaternions.</p>
 <p>The available arithmetic operations and their corresponding inputs/outputs are:</p>
 <table class="docutils align-default">
@@ -216,12 +217,12 @@ S  = scalar value</p>
 PRE  = A op B
 POST = B op A</p>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>The input to the node are lists of quaternions as well as control parameters (like scale etc). For certain operations the node takes arbitrary number of quaternion input lists, for others it takes only two quaternion input lists and for some only one quaternion input list.</p>
 <p>The inputs accept single value quaternions or a list of quaternions. The node is vectorized so it will extend the quaternion lists to match the longest input.</p>
 </section>
 <section id="operations">
-<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
+<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>ADD : adds the components of two or more quaternions</p></li>
 </ul>
@@ -304,7 +305,7 @@ sf = (sw, sx, sy, sz) - (array of bools) filters which component is scaled</p>
 <p>Note: this is essentially the square root of the quadrance (the length of the quaternion).</p>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
 <p><strong>Quaternions</strong> or <strong>Values</strong>
 Depending on the operation the output to the node is either a quaternion list or scalar value list.</p>
 <p>The node computes the results (quaternions or scalar values) only when the output socket is connected.</p>

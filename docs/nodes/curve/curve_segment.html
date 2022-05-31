@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,9 +190,9 @@
            <div itemprop="articleBody">
              
   <section id="curve-segment">
-<h1>Curve Segment<a class="headerlink" href="#curve-segment" title="Permalink to this headline">¶</a></h1>
+<h1>Curve Segment<a class="headerlink" href="#curve-segment" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a curve which is defined as a subset of the input curve
 with a smaller range of allowed T parameter values. In other words, the output
 curve is the same as input one, but with restricted range of T values allowed.</p>
@@ -199,7 +200,7 @@ curve is the same as input one, but with restricted range of T values allowed.</
 <p>Output curve parametrization: the same as of input curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be cut. This input is mandatory.</p></li>
@@ -208,7 +209,7 @@ curve is the same as input one, but with restricted range of T values allowed.</
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Rescale to 0..1</strong>. If checked, then the generated curve will have the
@@ -218,14 +219,14 @@ the domain of generated curve will be defined by node’s inputs, i.e. <cite>[TM
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Segment</strong>. The resulting curve segment.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate some random curve (green) and take a subset from it with T values from 0.2 to 0.8 (red):</p>
 <img alt="https://user-images.githubusercontent.com/284644/78508073-99ac5400-779d-11ea-9a01-1d8824934ae4.png" src="https://user-images.githubusercontent.com/284644/78508073-99ac5400-779d-11ea-9a01-1d8824934ae4.png" />
 <p>Generate several segments of the same curve with different ranges of T parameter, to generate a dashed line:</p>

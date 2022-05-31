@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -145,13 +146,13 @@
            <div itemprop="articleBody">
              
   <section id="vector-interpolation">
-<h1>Vector Interpolation<a class="headerlink" href="#vector-interpolation" title="Permalink to this headline">¶</a></h1>
+<h1>Vector Interpolation<a class="headerlink" href="#vector-interpolation" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Performs linear or cubic spline interpolation based on input points by creating a function <code class="docutils literal notranslate"><span class="pre">x,y,z</span> <span class="pre">=</span> <span class="pre">f(t)</span></code> with <code class="docutils literal notranslate"><span class="pre">t=[0,1]</span></code>. The interpolation is based on the distance between the input points.</p>
 </section>
 <section id="input-output">
-<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 12%" />
@@ -189,7 +190,7 @@
 </table>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
 <li><p><em>Mode</em> : Interpolation method. Can be Linear or Cubic</p></li>
@@ -200,7 +201,7 @@
 </div></blockquote>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
 <li><p><em>Knot Mode</em>: Used for different cubic interpolations. Can be ‘Manhattan’, ‘Euclidan’, ‘Points’ and ‘Chebyshev’</p></li>
@@ -210,14 +211,14 @@
 </div></blockquote>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="interpol-simple.png" src="https://cloud.githubusercontent.com/assets/619340/4185874/ca99927c-375b-11e4-8cc8-451456bfb194.png" />
 <p>Sine interpolated from 5 points. The input points are shown with numbers.</p>
 <img alt="interpol-surface.png" src="https://cloud.githubusercontent.com/assets/619340/4185875/ca9f56ee-375b-11e4-83fd-a746c8cc690b.png" />
 <p>An interpolated surface between sine and cosine.</p>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
 <p>The node doesn’t extrapolate. Values outside of <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> are ignored.</p>
 </section>
 </section>

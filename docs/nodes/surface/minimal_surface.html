@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -172,13 +173,13 @@
            <div itemprop="articleBody">
              
   <section id="minimal-surface">
-<h1>Minimal Surface<a class="headerlink" href="#minimal-surface" title="Permalink to this headline">¶</a></h1>
+<h1>Minimal Surface<a class="headerlink" href="#minimal-surface" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface, based on provided points, by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method.
 Depending on node parameters, the curve can be either interpolating (go through
 all points) or only approximating.</p>
@@ -192,7 +193,7 @@ In other cases, you will want to provide a set of (X, Y, Z) points and a set of
 corresponding (U, V) coordinate pairs.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The points to build minimal surface for. This input is mandatory.</p></li>
@@ -211,7 +212,7 @@ The default is identity matrix.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Surface type</strong>. This defines which type of function the node will try to find. The available values are:</p>
@@ -252,14 +253,14 @@ automatically. Checked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated Surface object.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example of <strong>XY -&gt; Z</strong> mode usage:</p>
 <img alt="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" src="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" />
 <p>An example of Matrix input usage; rotated and deformed plane is used as input:</p>

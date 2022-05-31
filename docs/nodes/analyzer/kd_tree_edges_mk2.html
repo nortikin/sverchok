@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -165,22 +166,22 @@
            <div itemprop="articleBody">
              
   <section id="kdt-closest-edges">
-<h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Permalink to this headline">¶</a></h1>
+<h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Permalink to this heading">¶</a></h1>
 <p><em>Alias: KDTree Edges</em></p>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree.
 It will return the Edges it can make between those vertices pairs that satisfy the constraints
 imposed by the 4 parameters.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Verts, a pool of vertices to iterate through</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 15%" />
@@ -214,22 +215,22 @@ imposed by the 4 parameters.</p>
 </table>
 </section>
 <section id="fast-mode">
-<h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Permalink to this headline">¶</a></h2>
+<h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Permalink to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. It can be from 3 to 10 times faster but lacks of ‘maxNum’ and ‘Skip’ properties</p>
 <img alt="https://user-images.githubusercontent.com/10011941/101905604-017e2e80-3bb8-11eb-894d-67a3c6c51e93.png" src="https://user-images.githubusercontent.com/10011941/101905604-017e2e80-3bb8-11eb-894d-67a3c6c51e93.png" />
 </section>
 <section id="max-queries-mode">
-<h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Permalink to this headline">¶</a></h2>
+<h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Permalink to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. In this mode the maxNum property is used to determine how many points will be verified so it will produce less connections that the complete mode</p>
 <img alt="https://user-images.githubusercontent.com/10011941/101905663-15c22b80-3bb8-11eb-8625-4e48085a2dfe.png" src="https://user-images.githubusercontent.com/10011941/101905663-15c22b80-3bb8-11eb-8625-4e48085a2dfe.png" />
 </section>
 <section id="no-skip-mode">
-<h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Permalink to this headline">¶</a></h2>
+<h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Permalink to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. This is similar to the existing mode but the way the maximum connections is coded produces different results sorting the filter by minimum vertex index</p>
 <img alt="https://user-images.githubusercontent.com/10011941/101906167-d3e5b500-3bb8-11eb-9b71-e11b3fb5c316.png" src="https://user-images.githubusercontent.com/10011941/101906167-d3e5b500-3bb8-11eb-9b71-e11b3fb5c316.png" />
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Edges, which can connect the pool of incoming Verts to each other.</p></li>
 </ul>

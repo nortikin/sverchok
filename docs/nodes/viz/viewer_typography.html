@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -148,32 +149,32 @@
            <div itemprop="articleBody">
              
   <section id="typography-viewer">
-<h1>Typography Viewer<a class="headerlink" href="#typography-viewer" title="Permalink to this headline">¶</a></h1>
+<h1>Typography Viewer<a class="headerlink" href="#typography-viewer" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/619340/127733727-0d8299e7-ab20-4a33-b3ff-923276f09f5c.png" src="https://user-images.githubusercontent.com/619340/127733727-0d8299e7-ab20-4a33-b3ff-923276f09f5c.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The Blender Font (Text) object has many features, this node hopes to allow the user to create renderable Text. Convenience is paid for by only making a subset of features available. This might change in the future.</p>
 <p>Each element of Text can be positioned using a Matrix. If you want to place individual Glyphs/letters arbitrarily in 3d/2d space then you must split the incoming text by letter. The String Tools node is very useful for this, and the List Item node is also commonly used.</p>
 </section>
 <section id="basic-properties">
-<h2>Basic properties<a class="headerlink" href="#basic-properties" title="Permalink to this headline">¶</a></h2>
+<h2>Basic properties<a class="headerlink" href="#basic-properties" title="Permalink to this heading">¶</a></h2>
 <p>Some configuration features are in the options dropdown (the precise arrangement of these UI elements will likely change):</p>
 <img alt="https://user-images.githubusercontent.com/619340/127733963-9ba1da4e-e3ac-4b6d-838e-3ef5315d3c8e.png" src="https://user-images.githubusercontent.com/619340/127733963-9ba1da4e-e3ac-4b6d-838e-3ef5315d3c8e.png" />
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>a <code class="docutils literal notranslate"><span class="pre">Text</span></code> socket and a <code class="docutils literal notranslate"><span class="pre">Matrix</span></code> socket</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>A Blender Text object directly into the scene.</p>
 </section>
 <section id="caution">
-<h2>Caution<a class="headerlink" href="#caution" title="Permalink to this headline">¶</a></h2>
+<h2>Caution<a class="headerlink" href="#caution" title="Permalink to this heading">¶</a></h2>
 <p>You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok node tree again by moving upstream sliders etc.</p>
 </section>
 <section id="further-reading">
-<h2>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h2>
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this heading">¶</a></h2>
 <p>it might be useful to search the Sverchok issue tracker for mentions and examples of of Typography Viewer.</p>
 </section>
 </section>

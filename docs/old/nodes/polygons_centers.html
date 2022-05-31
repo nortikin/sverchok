@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,28 +77,28 @@
            <div itemprop="articleBody">
              
   <section id="centers-polygons">
-<h1>Centers Polygons<a class="headerlink" href="#centers-polygons" title="Permalink to this headline">¶</a></h1>
+<h1>Centers Polygons<a class="headerlink" href="#centers-polygons" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Analizing geometry and finding centers of polygons, normals (from global zero), normals from local centers of polygons and matrices that find polygons rotation. Not works with edges.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong> and <strong>Polygons</strong> from object that we analizing.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Normals</strong> is normals from global zero coordinates, vector. <strong>Norm_abs</strong> is normals shifted to centers of polygons. <strong>Origins</strong> centers of polygons. <strong>Centers</strong> matrices that has rotation and location of polygons.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="Centers_of_polygons_normals.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222939/b86a1d3e-3917-11e4-8e03-c24980672404.jpg" />
 <img alt="Centers_of_polygons_normalsabs.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222936/b863cb46-3917-11e4-9cfe-0d863c4850b6.jpg" />
 <img alt="Centers_of_polygons_locations.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222937/b864c8fc-3917-11e4-9368-b5260703e4c5.jpg" />
 <img alt="Centers_of_polygons_matrices.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222949/c5874906-3917-11e4-9c9c-94c016560f98.jpg" />
 </section>
 <section id="problems">
-<h2>Problems<a class="headerlink" href="#problems" title="Permalink to this headline">¶</a></h2>
+<h2>Problems<a class="headerlink" href="#problems" title="Permalink to this heading">¶</a></h2>
 <p>The code of matrix rotation based on Euler rotation, so when you rotate to plane X-oriented, it makes wrong. We need spherical coordinates and quaternion rotation here, needed help or something</p>
 </section>
 </section>

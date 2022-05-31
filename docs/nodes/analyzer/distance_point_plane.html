@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,10 +164,10 @@
            <div itemprop="articleBody">
              
   <section id="distance-point-plane">
-<h1>Distance Point Plane<a class="headerlink" href="#distance-point-plane" title="Permalink to this headline">¶</a></h1>
+<h1>Distance Point Plane<a class="headerlink" href="#distance-point-plane" title="Permalink to this heading">¶</a></h1>
 <img alt="Distance_point_plane_procedural.PNG" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_plane/distance_point_plane_sverchok_blender_nodes.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed to find the distance between a point and one plane.</p>
 <p>The plane is defined by three points.</p>
 <p>As extra results you can get from the node:</p>
@@ -178,7 +179,7 @@
 </ul>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 17%" />
@@ -208,7 +209,7 @@
 </table>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Implementation</strong>: Choose between MathUtils and NumPy (Usually faster)</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.</p>
@@ -216,7 +217,7 @@
 <p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching of tolerances and vertices</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Distance</strong>: Distance to the line.</p>
 <p><strong>In Triangle</strong>: Returns True if the point  coplanar and inside the triangle formed by the input vertices</p>
 <p><strong>In Plane</strong>: Returns True if point is in the same plane as with input vertices.</p>
@@ -224,7 +225,7 @@
 <p><strong>Closest in Triangle</strong>”: Returns true if the closest point is in the same plane as with input vertices.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>In this example the node is used to split the points depending of the side of the plane. Also the ones that are near to the plane (under intersection tolerance).</p>
 <img alt="distance_point_plane_sverchok_blender_parametric_plane_split.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_plane/distance_point_plane_sverchok_blender_parametric_plane_split.png" />
 <p>It can be used to project the geometry over a plane.</p>

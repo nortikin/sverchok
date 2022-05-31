@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -140,15 +141,15 @@
            <div itemprop="articleBody">
              
   <section id="pulga-vortex-force">
-<h1>Pulga Vortex Force<a class="headerlink" href="#pulga-vortex-force" title="Permalink to this headline">¶</a></h1>
+<h1>Pulga Vortex Force<a class="headerlink" href="#pulga-vortex-force" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.
 The vortex force is defined with a “Line” with Location and Direction.
 It has three components, rotation around the line, attraction towards the line (Inflow) and a movement in the line direction (Forward).</p>
 </section>
 <section id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
 <p><strong>Location</strong>: A point of the line.</p>
 <p><strong>Direction</strong>: Direction of the line.</p>
 <p><strong>Rotation Strength</strong>: Multiplier of the rotation force.</p>
@@ -158,7 +159,7 @@ It has three components, rotation around the line, attraction towards the line (
 <p><strong>Decay</strong>: How the force will decay with distance. 0= no decay, 1= linear, 2= cubic, 4= quadratic…</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Constant vector force:</p>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_01.png" />
 <p>Noise Vector Field as vector force:</p>

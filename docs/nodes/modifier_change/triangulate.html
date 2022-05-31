@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -165,15 +166,15 @@
            <div itemprop="articleBody">
              
   <section id="triangulate-mesh">
-<h1>Triangulate Mesh<a class="headerlink" href="#triangulate-mesh" title="Permalink to this headline">¶</a></h1>
+<h1>Triangulate Mesh<a class="headerlink" href="#triangulate-mesh" title="Permalink to this heading">¶</a></h1>
 <p><em>This node testing is in progress, so it can be found under Beta menu</em></p>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node applies Triangulate operator (Ctrl+T in normal mode) to the mesh. It can triangulate all faces or only selected ones.
 This node is useful mainly when other node generates ngons, especially not-convex ones.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -186,7 +187,7 @@ mesh faces. Optional input.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Quads mode</strong>. Method of quads processing. Available modes are:</p>
@@ -212,7 +213,7 @@ mesh faces. Optional input.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. This is just a copy of input vertices for convenience.</p></li>
@@ -225,7 +226,7 @@ contains one item for each output mesh face.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Triangulated cube:</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/6314915/4fb6a9c0-ba12-11e4-9600-4d08a5d67f86.png" src="https://cloud.githubusercontent.com/assets/284644/6314915/4fb6a9c0-ba12-11e4-9600-4d08a5d67f86.png" />
 <p>Triangulate only two faces of extruded polygon:</p>

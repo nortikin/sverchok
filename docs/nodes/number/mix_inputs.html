@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -139,14 +140,14 @@
            <div itemprop="articleBody">
              
   <section id="mix-inputs">
-<h1>Mix Inputs<a class="headerlink" href="#mix-inputs" title="Permalink to this headline">¶</a></h1>
+<h1>Mix Inputs<a class="headerlink" href="#mix-inputs" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node mixes two values of different types using a given factor, a selected interpolation and easing function.</p>
 <p>For a factor of 0.0 it outputs the first value, for the factor of 1.0 it outputs the last value and for any other factor in between 0-1 it outputs an interpolated value between the first and second input value. An exception to this are the “Back” and “Elastic” interpolations which generate output values that are not strictly confined to the first-second value interval, but they will output values that start at first and end at second value.</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except for <strong>Mode</strong>, <strong>Interpolation</strong>, <strong>Easing</strong>, <strong>Mirror</strong> and <strong>Swap</strong> can be given by the node or an external input.</p>
 <p>Based on the selected <strong>Mode</strong> the node changes the input and output socket types to match the corresponding type.</p>
 <p>The node is vectorized so the inputs values (A/B) take either a single or a list of values. The node will extend the shortest list to match the longest list before mixing the values in the two lists.</p>
@@ -259,7 +260,7 @@ Ease In-Out = slowly departs and approaches values</p>
 </table>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
 <p>For certain interpolation types the node provides extra parameters on the Property Panel.</p>
 <ul class="simple">
 <li><p>Exponential
@@ -273,7 +274,7 @@ Extra parameters to adjust the base and the exponent of the damping oscillation 
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Based on the selected <strong>Mode</strong> the node outputs the corresponding type value.</p>
 </section>
 </section>

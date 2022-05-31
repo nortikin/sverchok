@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -153,16 +154,16 @@
            <div itemprop="articleBody">
              
   <section id="scalar-field-formula">
-<h1>Scalar Field Formula<a class="headerlink" href="#scalar-field-formula" title="Permalink to this headline">¶</a></h1>
+<h1>Scalar Field Formula<a class="headerlink" href="#scalar-field-formula" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Scalar Field, defined by some user-provided formula.</p>
 <p>The formula should map the coordinates of the point in 3D space (in one of supported coordinate systems) into some number.</p>
 <p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
 <p>It is also possible to use the value of some other Scalar Field in the same point in the formula.</p>
 </section>
 <section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this headline">¶</a></h2>
+<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
 <p>Syntax being used for formulas is standard Python’s syntax for expressions.
 For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
 <p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite> for power), numbers, variables, parenthesis, and function call, such as <cite>sin(x)</cite>.</p>
@@ -194,7 +195,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. A scalar field, whose values can be used in the formula. This input is required only if the formula involves the <strong>V</strong> variable. (see example below)</p></li>
@@ -208,7 +209,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Input</strong>. This defines the coordinate system being used. The available
@@ -227,14 +228,14 @@ disable this parameter.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The generated scalar field.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Use the scalar field, defined by formula in in cylindrical coordinates, to scale some spheres:</p>
 <img alt="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" src="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" />
 <p>The same formula in spherical coordinates:</p>

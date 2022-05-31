@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -148,9 +149,9 @@
            <div itemprop="articleBody">
              
   <section id="adaptive-polygons-mk2">
-<h1>Adaptive Polygons Mk2<a class="headerlink" href="#adaptive-polygons-mk2" title="Permalink to this headline">¶</a></h1>
+<h1>Adaptive Polygons Mk2<a class="headerlink" href="#adaptive-polygons-mk2" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node puts a (transformed) copy of one object, called <strong>donor</strong>, along each
 face of another object, called <strong>recipient</strong>. Copies of donor objects are
 deformed (adapted) to match the shape and normals of recipient’s face.</p>
@@ -170,7 +171,7 @@ Doubles</strong> node.</p>
 Alessandro.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>Vertices Recipient</strong>. Vertices of the recipient object. This input is mandatory.</p></li>
@@ -231,7 +232,7 @@ meshes. It will only work if <strong>Custom Normals</strong> is set to <strong>N
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has some number of parameters, and most of them are accessible only in the N panel:</p>
 <ul>
 <li><p><strong>Join</strong>. If checked, then all procuced copies of donor object will be merged
@@ -416,7 +417,7 @@ be different for triangular faces, Quads and Ngons. Available values are:</p>
 </ul>
 </section>
 <section id="base-area-illustrations">
-<h2>Base area illustrations<a class="headerlink" href="#base-area-illustrations" title="Permalink to this headline">¶</a></h2>
+<h2>Base area illustrations<a class="headerlink" href="#base-area-illustrations" title="Permalink to this heading">¶</a></h2>
 <p>The following illustration demonstrates the meaning of “bounding rectangle” term (it is used for Quads when <strong>Coordinates</strong> is set to <strong>Bounds</strong>):</p>
 <img alt="https://user-images.githubusercontent.com/284644/70073275-5e94eb00-161a-11ea-8bee-4166313f4cab.png" src="https://user-images.githubusercontent.com/284644/70073275-5e94eb00-161a-11ea-8bee-4166313f4cab.png" />
 <p>The following is the unit square (which is used for Quads when <strong>Coordinates</strong> is set to <strong>As Is</strong>):</p>
@@ -431,7 +432,7 @@ be different for triangular faces, Quads and Ngons. Available values are:</p>
 <img alt="https://user-images.githubusercontent.com/284644/70073442-bcc1ce00-161a-11ea-84f1-1b544c4ab3dd.png" src="https://user-images.githubusercontent.com/284644/70073442-bcc1ce00-161a-11ea-84f1-1b544c4ab3dd.png" />
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -447,7 +448,7 @@ recipient object face, which was used to construct this output face.</p></li>
 per recipient object face, otherwise.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Example of <strong>Z coeff</strong> input usage:</p>
 <img alt="https://user-images.githubusercontent.com/284644/68081971-5473a700-fe38-11e9-8f8a-dbd204bafadd.png" src="https://user-images.githubusercontent.com/284644/68081971-5473a700-fe38-11e9-8f8a-dbd204bafadd.png" />
 <p>Demonstration of how this node works with Tris recipient faces by default (in <strong>Quads / Tris Auto</strong> mode):</p>

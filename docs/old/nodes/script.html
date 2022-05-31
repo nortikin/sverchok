@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,7 +77,7 @@
            <div itemprop="articleBody">
              
   <section id="scripted-node-generator">
-<h1>Scripted Node (Generator)<a class="headerlink" href="#scripted-node-generator" title="Permalink to this headline">¶</a></h1>
+<h1>Scripted Node (Generator)<a class="headerlink" href="#scripted-node-generator" title="Permalink to this heading">¶</a></h1>
 <p>aka Script Node or SN. (iteration 1)</p>
 <ul class="simple">
 <li><p>Introduction</p></li>
@@ -90,7 +91,7 @@
 <li><p>Future</p></li>
 </ul>
 <section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
 <p>When you want to express an idea in written form and the concept is suitable
 for a one line Python expression then often you can use a Formula node. If you
 need access to imports, classes, temporary variables, and functions then you can
@@ -103,7 +104,7 @@ with algorithms. Scripts written for SN are easily converted to full PyNodes.</p
 <p>Here’s a short tutorial to SN1, see <a class="reference internal" href="scripted_intro.html#scripted-tutorial"><span class="std std-ref">An introduction and tutorial for the Scripted Nodes</span></a></p>
 </section>
 <section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
 <p>allows:</p>
 <ul class="simple">
 <li><p>Loading/Reloading scripts currently in TextEditor</p></li>
@@ -114,7 +115,7 @@ with algorithms. Scripts written for SN are easily converted to full PyNodes.</p
 </ul>
 </section>
 <section id="structure">
-<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this heading">¶</a></h2>
 <p>At present all scripts for SN must (strict list - general):</p>
 <ul class="simple">
 <li><p>have 1 <cite>sv_main</cite> function as the main workhorse</p></li>
@@ -207,12 +208,12 @@ For simplicity it must be a unique and valid python variable name</p>
 </div>
 </section>
 <section id="templates">
-<h2>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
+<h2>Templates<a class="headerlink" href="#templates" title="Permalink to this heading">¶</a></h2>
 <p>Sverchok includes a list of easily accessible examples and templates. They can be accessed
 from the SN node if nothing is loaded, or from the <cite>Template Menu</cite> in <cite>TextEditor</cite> as <code class="docutils literal notranslate"><span class="pre">sv</span> <span class="pre">NodeScripts</span></code>.</p>
 </section>
 <section id="conveniences">
-<h2>Conveniences<a class="headerlink" href="#conveniences" title="Permalink to this headline">¶</a></h2>
+<h2>Conveniences<a class="headerlink" href="#conveniences" title="Permalink to this heading">¶</a></h2>
 <p>We vale our time, i’m sure you do too, so features have been added to help speed up the
 script creation process.</p>
 <p><strong>Text Editor</strong></p>
@@ -236,7 +237,7 @@ valid ScriptNode ready python. Example <a class="reference external" href="https
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>The best way to get familiarity with SN is to go through the templates folder.
 They are intended to be lightweight and educational, but some of them will show
 advanced use cases. The images and animations on this <a class="reference external" href="https://github.com/nortikin/sverchok/issues/85">thread on github</a>.
@@ -354,7 +355,7 @@ you to how you might access the socket content of other nodes. Experiment :)</p>
 </div>
 </section>
 <section id="breakout-scripts">
-<h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Permalink to this headline">¶</a></h2>
+<h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Permalink to this heading">¶</a></h2>
 <p>For lack of a better term, SN scripts written in this style let you pass
 variables to a script located in <code class="docutils literal notranslate"><span class="pre">/sverchok-master/..</span></code> or
 <code class="docutils literal notranslate"><span class="pre">/sverchok-master/your_module_name/some_library</span></code>. To keep your sverchok-master
@@ -397,7 +398,7 @@ the algorithm inside <cite>loft</cite>.</p>
 </div>
 </section>
 <section id="techniques-to-improve-python-performance">
-<h2>Techniques to improve Python performance<a class="headerlink" href="#techniques-to-improve-python-performance" title="Permalink to this headline">¶</a></h2>
+<h2>Techniques to improve Python performance<a class="headerlink" href="#techniques-to-improve-python-performance" title="Permalink to this heading">¶</a></h2>
 <p>There are many ways to speed up python code. Some slowness will be down to
 innefficient algorithm design, other slowness is caused purely by how much
 processing is minimally required to solve a problem. A decent read regarding
@@ -409,11 +410,11 @@ if your efforts to optimize will have any significant impact.</p>
 <a class="reference external" href="http://users.ece.utexas.edu/~adnan/pike.html">http://users.ece.utexas.edu/~adnan/pike.html</a></p>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
 <p>Most limitations are voided by increasing your Python and <code class="docutils literal notranslate"><span class="pre">bpy</span></code> skills.</p>
 </section>
 <section id="future">
-<h2>Future<a class="headerlink" href="#future" title="Permalink to this headline">¶</a></h2>
+<h2>Future<a class="headerlink" href="#future" title="Permalink to this heading">¶</a></h2>
 <p>SN iteration 1 is itself a prototype and is a testing ground for iteration 2.
 The intention was always to provide multiple programming language interfaces,
 initially coffeescript because it’s a lightweight language with crazy expressive

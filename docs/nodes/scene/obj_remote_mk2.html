@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -132,7 +133,7 @@
            <div itemprop="articleBody">
              
   <section id="object-remote">
-<h1>Object Remote<a class="headerlink" href="#object-remote" title="Permalink to this headline">¶</a></h1>
+<h1>Object Remote<a class="headerlink" href="#object-remote" title="Permalink to this heading">¶</a></h1>
 <p>This node is a convenience node.</p>
 <blockquote>
 <div><img alt="https://cloud.githubusercontent.com/assets/619340/11479731/ce5109e2-9793-11e5-861b-70b23705dda7.png" src="https://cloud.githubusercontent.com/assets/619340/11479731/ce5109e2-9793-11e5-861b-70b23705dda7.png" />
@@ -145,7 +146,7 @@
 <p>That’s it.</p>
 </section>
 <section id="implementation-details">
-<h1>Implementation details<a class="headerlink" href="#implementation-details" title="Permalink to this headline">¶</a></h1>
+<h1>Implementation details<a class="headerlink" href="#implementation-details" title="Permalink to this heading">¶</a></h1>
 <p>It’s a nice short node, one thing it does to avoid setting your Object’s scale to 0,0,0 is to detect if 0,0,0 is passed. If 0,0,0 is passed it turns it into 0.00001, 0.00001, 0.00001. The reason for this is that an Object’s scale can not be set to 0,0,0 in Blender, it seems to wreck the internal transform matrix.</p>
 </section>
 

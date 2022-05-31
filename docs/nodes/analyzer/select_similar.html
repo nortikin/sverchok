@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,14 +164,14 @@
            <div itemprop="articleBody">
              
   <section id="select-similar">
-<h1>Select similar<a class="headerlink" href="#select-similar" title="Permalink to this headline">¶</a></h1>
+<h1>Select similar<a class="headerlink" href="#select-similar" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node allows to select mesh elements (vertices, edges and faces), which are similar to elements already selected in some aspect.
 This is the implementation of Blender’s own “Select similar” (Shift+G) feature. So fo additional information, please refer to the Blender’s documentation on this feature.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -181,7 +182,7 @@ This is the implementation of Blender’s own “Select similar” (Shift+G) fea
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Select</strong>. This parameter defines what elements are you selecting: Vertices, Edges or Faces.</p></li>
@@ -218,7 +219,7 @@ This is the implementation of Blender’s own “Select similar” (Shift+G) fea
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Mask</strong>. This indicates elements selected by the node. This mask is to be applied to vertices, edges or faces, depending on selected mode.</p></li>
@@ -228,7 +229,7 @@ This is the implementation of Blender’s own “Select similar” (Shift+G) fea
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Select faces with similar normal vector. Originally selected faces are marked with red color.</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" src="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" />
 <p>Select faces with similar area. Originally selected faces are marked with red color.</p>

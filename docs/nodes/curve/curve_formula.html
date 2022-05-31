@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -190,16 +191,16 @@
            <div itemprop="articleBody">
              
   <section id="curve-formula">
-<h1>Curve Formula<a class="headerlink" href="#curve-formula" title="Permalink to this headline">¶</a></h1>
+<h1>Curve Formula<a class="headerlink" href="#curve-formula" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a curve, defined by some user-provided formula.</p>
 <p>The formula should map the curve’s T parameters into one of supported 3D coordinate systems: (X, Y, Z), (Rho, Phi, Z) or (Rho, Phi, Theta).</p>
 <p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
 <p>Curve domain / parametrization specifics: defined by node settings.</p>
 </section>
 <section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this headline">¶</a></h2>
+<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
 <p>Syntax being used for formulas is standard Python’s syntax for expressions.
 For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
 <p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite> for power), numbers, variables, parenthesis, and function call, such as <cite>sin(x)</cite>.</p>
@@ -231,7 +232,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>TMin</strong>. Minimum value of the curve’s T parameter (corresponding to the beginning of the curve). The default value is 0.0.</p></li>
@@ -240,7 +241,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 <p>Each variable used in formulas, except for <cite>t</cite>, also becomes an additional input.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Formula 1</strong>, <strong>Formula 2</strong>, <strong>Formula 3</strong>. Formulas for 3 components
@@ -268,14 +269,14 @@ disable this parameter.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated curve.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>The default example - a helix:</p>
 <img alt="https://user-images.githubusercontent.com/284644/77849062-473dc700-71e2-11ea-9722-c07fc32fda2c.png" src="https://user-images.githubusercontent.com/284644/77849062-473dc700-71e2-11ea-9722-c07fc32fda2c.png" />
 <p>Another example - Viviani’s curve (an intersection of a sphere with a cylinder):</p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -130,9 +131,9 @@
            <div itemprop="articleBody">
              
   <section id="list-mask-in">
-<h1>List Mask In<a class="headerlink" href="#list-mask-in" title="Permalink to this headline">¶</a></h1>
+<h1>List Mask In<a class="headerlink" href="#list-mask-in" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node use the mask list i.e. 1,0,0,0 as switch to mix two data list together.</p>
 <p><strong>0</strong> means false, an item from the <strong>Data False</strong> will be appended to the output data;</p>
 <p><strong>1</strong> will be considered as true (actually any value that evaluate as true in python), an item from the <strong>Data True</strong> will be appended to the output data. If the mask list is not long enough to cover all the inputs, it will be repeated as the mask for the rest of inputs.</p>
@@ -140,22 +141,22 @@
 <p>The main design reason behind this node is to be able to conditionally apply operations to one a masked list, for example select vertices based on location and move them or as shown below, select numbers and negate them.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Mask:</strong> Input socket for mask list.</p>
 <p><strong>Data True:</strong> Input socket for True Data list.</p>
 <p><strong>Data False:</strong> Input socket for False Data list.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>Level:</strong> Set the level at which the items to be masked.</p>
 <p><strong>Choice:</strong> Make length of out list the same as length of input list</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Data:</strong> Mixed data of the incoming data, the length of Outputs depends on the  <strong>Data True</strong> and  <strong>Data False</strong> list length.</p>
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
 <img alt="ListMaskDemo.PNG" src="https://cloud.githubusercontent.com/assets/5409756/11457323/e7af5960-96e0-11e5-86e0-a9401f5e059e.png" />
 <img alt="Masked apply" src="https://cloud.githubusercontent.com/assets/6241382/11584560/2604eebe-9a65-11e5-9aff-8eb123167a6a.png" />
 </section>

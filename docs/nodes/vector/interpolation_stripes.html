@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -144,15 +145,15 @@
            <div itemprop="articleBody">
              
   <section id="vector-interpolation-stripes">
-<h1>Vector Interpolation Stripes<a class="headerlink" href="#vector-interpolation-stripes" title="Permalink to this headline">¶</a></h1>
+<h1>Vector Interpolation Stripes<a class="headerlink" href="#vector-interpolation-stripes" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Performs cubic spline STRIPES interpolation based on input points by creating a function <code class="docutils literal notranslate"><span class="pre">x,y,z</span> <span class="pre">=</span> <span class="pre">f(t)</span></code> with <code class="docutils literal notranslate"><span class="pre">tU=[0,1]</span></code>, <code class="docutils literal notranslate"><span class="pre">tU=[0,1]</span></code> and attractor vertex.
 The interpolation is based on the distance between the input points.
 Stripes outputs as two lines of points for each object, so UVconnect node can handle it and make polygons for stripes.</p>
 </section>
 <section id="input-output">
-<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 13%" />
@@ -200,18 +201,18 @@ Stripes outputs as two lines of points for each object, so UVconnect node can ha
 </table>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>Factor</strong> - is multiplyer after produce function as sinus/cosinus/etc.
 <strong>Scale</strong> - is multiplyer before produce function as sinus/cosinus/etc.
 <strong>Function</strong> - popup function between Simple/Multiplyed/Sinus/Cosinus/Power/Square</p>
 </section>
 <section id="parameters-extended">
-<h2>Parameters extended<a class="headerlink" href="#parameters-extended" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters extended<a class="headerlink" href="#parameters-extended" title="Permalink to this heading">¶</a></h2>
 <p><strong>minimum</strong> - minimum value of stripe width (0.0 to 0.5)
 <strong>maximum</strong> - maximum value of stripe width (0.5 to 1.0)</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Making surface with stripes separated in two groups of nodes for UVconnect node to process:</p>
 <img alt="interpolation stripes" src="https://cloud.githubusercontent.com/assets/5783432/20041842/bc459a26-a488-11e6-98ec-345e58bbcdc9.png" />
 </section>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -171,9 +172,9 @@
            <div itemprop="articleBody">
              
   <section id="ruled-surface">
-<h1>Ruled Surface<a class="headerlink" href="#ruled-surface" title="Permalink to this headline">¶</a></h1>
+<h1>Ruled Surface<a class="headerlink" href="#ruled-surface" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface as a linear interpolation of two Curve objects.
 Such surface is widely known as a ruled surface, or a linear surface.</p>
 <p>Along U parameter, such surface forms a curve calculated as a linear interpolation of two curves.
@@ -181,7 +182,7 @@ Along V parameter, such surface is always a straight line.</p>
 <p>Surface domain: In U direction - from 0 to 1. In V direction - defined by node inputs, by default from 0 to 1. V = 0 corresponds to the first curve; V = 1 corresponds to the second curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve1</strong>. The first curve to interpolate. This input is mandatory.</p></li>
@@ -191,7 +192,7 @@ Along V parameter, such surface is always a straight line.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Native</strong>. This parameter is available in the N panel only. If checked, then
@@ -207,14 +208,14 @@ API usage. Checked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated surface.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate a linear surface between a triangle and a hexagon:</p>
 <img alt="https://user-images.githubusercontent.com/284644/79353388-6e232980-7f54-11ea-87a8-b08d78ea34ff.png" src="https://user-images.githubusercontent.com/284644/79353388-6e232980-7f54-11ea-87a8-b08d78ea34ff.png" />
 <p>Generate a linear surface between two cubic splines:</p>

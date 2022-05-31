@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -142,16 +143,16 @@
            <div itemprop="articleBody">
              
   <section id="pulga-physics-lite">
-<h1>Pulga Physics Lite<a class="headerlink" href="#pulga-physics-lite" title="Permalink to this headline">¶</a></h1>
+<h1>Pulga Physics Lite<a class="headerlink" href="#pulga-physics-lite" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
 It creates the simulation using the inputted vertices as spherical particles that react to applied forces.</p>
 <p>The node is a basic NumPy implementation of basic physics system heavily inspired in “The Nature of Code” by Daniel Shiffman
 and the Kangoroo Plug-in for Grasshopper. Due the nature of the algorithm it can get very intensive, handle with responsibility</p>
 </section>
 <section id="input-output">
-<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 28%" />
@@ -312,7 +313,7 @@ bounding box of the given vectors (min. two)</p></td>
 </table>
 </section>
 <section id="accumulative">
-<h2>Accumulative:<a class="headerlink" href="#accumulative" title="Permalink to this headline">¶</a></h2>
+<h2>Accumulative:<a class="headerlink" href="#accumulative" title="Permalink to this heading">¶</a></h2>
 <p>When activated every nodeTree update will use the previous update as the starting point. The update can be triggered by the Update button or by any other event that triggers regular updates (like playing animation or changing any value).</p>
 <p>It offers some options:</p>
 <p><strong>Reset</strong>: Takes back the system to the initial state.</p>
@@ -320,7 +321,7 @@ bounding box of the given vectors (min. two)</p></td>
 <p><strong>Pause</strong>: Pauses nodes calculations and ignores ui changes.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Arranging circles with attraction and collision.</p>
 <img alt="circle_fitting_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png" />
 <p>Tensile structures can be studied with collisions and pinned points.</p>
@@ -340,7 +341,7 @@ bounding box of the given vectors (min. two)</p></td>
 <img alt="pin_reactions_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png" />
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
 <p>When using accumulative mode the node uses one text-block (called pulga_memory + NodeTree name + Node name .txt) to save the current state when you hit pause in order to be maintained in case of closing the program.</p>
 </section>
 </section>

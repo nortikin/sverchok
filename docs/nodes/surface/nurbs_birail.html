@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -172,14 +173,14 @@
            <div itemprop="articleBody">
              
   <section id="nurbs-birail">
-<h1>NURBS Birail<a class="headerlink" href="#nurbs-birail" title="Permalink to this headline">¶</a></h1>
+<h1>NURBS Birail<a class="headerlink" href="#nurbs-birail" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library; it can also optionally use
 <a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a NURBS Surface object by sweeping one NURBS curve (called
 “profile”) along two other NURBS curves (called paths or rails), so that the
 starting point of the profile goes along the first path, and the ending point
@@ -216,7 +217,7 @@ example, “Rounded rectangle”), have <strong>NURBS output</strong> parameter;
 checked, such nodes output NURBS curves, so “NURBS Birail” can work with them.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Path1</strong>. The first path curve, along which profile curves must be swept.
@@ -246,7 +247,7 @@ will create more smooth surfaces. The default value is 3.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Implementation</strong>. This defines the implementation of NURBS mathematics to
@@ -326,7 +327,7 @@ used for interpolation along V direction. The available values are:</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated NURBS surface.</p></li>
@@ -338,7 +339,7 @@ calculate surface’s control points during skinning process.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>1:</p>
 <img alt="https://user-images.githubusercontent.com/284644/98482006-30535e80-2220-11eb-9e4d-e1779e852abf.png" src="https://user-images.githubusercontent.com/284644/98482006-30535e80-2220-11eb-9e4d-e1779e852abf.png" />
 <img alt="https://user-images.githubusercontent.com/284644/98482008-31848b80-2220-11eb-876a-3ca5c3aae985.png" src="https://user-images.githubusercontent.com/284644/98482008-31848b80-2220-11eb-876a-3ca5c3aae985.png" />

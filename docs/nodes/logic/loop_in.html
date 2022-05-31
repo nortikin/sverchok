@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -136,40 +137,40 @@
            <div itemprop="articleBody">
              
   <section id="loop-in">
-<h1>Loop In<a class="headerlink" href="#loop-in" title="Permalink to this headline">¶</a></h1>
+<h1>Loop In<a class="headerlink" href="#loop-in" title="Permalink to this heading">¶</a></h1>
 <p>This node in conjunction with the Loop out node can create loops with nodes</p>
 <p>Offers two different modes ‘Range’ and ‘For Each’</p>
 <section id="range">
-<h2>Range<a class="headerlink" href="#range" title="Permalink to this headline">¶</a></h2>
+<h2>Range<a class="headerlink" href="#range" title="Permalink to this heading">¶</a></h2>
 <p>In this mode the all the data inputted to the Loop In node will be processed every iteration.</p>
 </section>
 <section id="for-each">
-<h2>For Each<a class="headerlink" href="#for-each" title="Permalink to this headline">¶</a></h2>
+<h2>For Each<a class="headerlink" href="#for-each" title="Permalink to this heading">¶</a></h2>
 <p>In this mode the inputted data will be split before being processed and there will be one loop per every level 1 object.</p>
 </section>
 <section id="operators">
-<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
 <p><strong>Create Loop Out</strong>: creates a Loop out node and links the Loop In - Loop Out socket.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Iterations</strong>: Number of repetitions (only in Range mode).</p>
 <p>Data0, Data1… inputs will be created when the last one is linked</p>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <p><strong>Max Iterations</strong>: Maximum iterations (in N-panel and Contextual Sverchok Menu)
 <strong>Socket Labels</strong>: To change sockets names (in N-panel)</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Loop Out</strong>: Socket to link with the Loop Out node.</p>
 <p><strong>Loop Number / Item Number</strong>: Actual Repetition / Item.</p>
 <p><strong>Total Loops / Total Items</strong>: Total Repetitions / Items.</p>
 <p>Data0, Data1… output sockets will be created when the last input is linked</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Range mode example, Break used to control the maximum vertices.</p>
 <img alt="https://user-images.githubusercontent.com/10011941/101332093-22234d00-3875-11eb-819a-68e86ef8c2c2.png" src="https://user-images.githubusercontent.com/10011941/101332093-22234d00-3875-11eb-819a-68e86ef8c2c2.png" />
 <p>For Each mode example, Skip input used to mask the results.</p>

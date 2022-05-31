@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -165,9 +166,9 @@
            <div itemprop="articleBody">
              
   <section id="duplicate-along-edge">
-<h1>Duplicate along Edge<a class="headerlink" href="#duplicate-along-edge" title="Permalink to this headline">¶</a></h1>
+<h1>Duplicate along Edge<a class="headerlink" href="#duplicate-along-edge" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates an array of copies of one (donor) mesh and aligns it along
 given recipient segment (edge). Count of objects in array can be specified by
 user or detected automatically, based on size of donor mesh and length of
@@ -187,7 +188,7 @@ applies that matrices to donor object; but you can turn this off, and apply
 matrices to donor object in another node, or apply them to different objects.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of the donor mesh. The node will produce nothing if
@@ -210,7 +211,7 @@ from both sides. Default value of zero means fill whole available length.</p></l
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -328,7 +329,7 @@ available. Maximum value 0.49 means use only central 1% of edge.</p></td>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -341,7 +342,7 @@ matrices, so you do not need to do it second time.</p></li>
 <p>This node will output something only when <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> or <code class="docutils literal notranslate"><span class="pre">Matrices</span></code> output is connected.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Cylinders duplicated along the segment between two specified points:</p>
 <img alt="https://user-images.githubusercontent.com/284644/33512207-00a41ef2-d74d-11e7-9ce2-e8f21b6342c8.png" src="https://user-images.githubusercontent.com/284644/33512207-00a41ef2-d74d-11e7-9ce2-e8f21b6342c8.png" />
 <p>Suzannes duplicated along the edges of Box:</p>

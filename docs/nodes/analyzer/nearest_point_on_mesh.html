@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,19 +164,19 @@
            <div itemprop="articleBody">
              
   <section id="nearest-point-on-mesh">
-<h1>Nearest Point on Mesh<a class="headerlink" href="#nearest-point-on-mesh" title="Permalink to this headline">¶</a></h1>
+<h1>Nearest Point on Mesh<a class="headerlink" href="#nearest-point-on-mesh" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Finds the closest point in a specified mesh.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>Vertices, Faces: Base mesh for the search
 Points: Points to query
 Distance: Maximum query distance (only for Nearest in Range mode)</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <dl class="simple">
 <dt><em>Mode</em>:</dt><dd><ul class="simple">
 <li><p>Nearest: Nearest point on the mesh surface</p></li>
@@ -187,14 +188,14 @@ Distance: Maximum query distance (only for Nearest in Range mode)</p>
 <p><em>Safe Check</em>: (in N-Panel) When disabled polygon indices referring to unexisting points will crash Blender. Not performing this check makes node faster</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><em>Location</em>: Position of the closest point in the mesh</p>
 <p><em>Normal</em>: mesh normal at closets point</p>
 <p><em>Index</em>: Face index of the closest point</p>
 <p><em>Distance</em>: Distance from the queried point to the closest point</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Used as skin-wrap modifier:</p>
 <img alt="https://user-images.githubusercontent.com/10011941/111774583-f3733480-88af-11eb-9559-78392166b00c.png" src="https://user-images.githubusercontent.com/10011941/111774583-f3733480-88af-11eb-9559-78392166b00c.png" />
 <p>Determine which polygons are nearer than a distance:</p>

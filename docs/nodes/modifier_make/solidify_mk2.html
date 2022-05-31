@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -146,10 +147,10 @@
            <div itemprop="articleBody">
              
   <section id="solidify">
-<h1>Solidify<a class="headerlink" href="#solidify" title="Permalink to this headline">¶</a></h1>
+<h1>Solidify<a class="headerlink" href="#solidify" title="Permalink to this heading">¶</a></h1>
 <p>Extrudes a mesh along its normal. Used usually to get a thick mesh from a planar mesh.</p>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong>: Mesh Vertices (mandatory)</p>
 <p><strong>Edges</strong>: Mesh Edges (optional, if you want to output edges makes the algorithm faster)</p>
 <p><strong>Polygons</strong>: Mesh Polygons (mandatory)</p>
@@ -157,7 +158,7 @@
 <p><strong>Offset</strong>: Relative offset from original mesh</p>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <p><strong>Even</strong>: adjust thickness in sharp corners to have a even thickness.</p>
 <dl class="simple">
 <dt><strong>Implementation</strong>: Algorithm used to compute.</dt><dd><ul class="simple">
@@ -168,7 +169,7 @@
 </dl>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong>: Modified mesh</p>
 <p><strong>New Pols</strong>: New opposite polygons (in the same order as the originals)</p>
 <p><strong>Rim Pols</strong>: Side Polygons created in the boundaries of the mesh</p>
@@ -181,7 +182,7 @@
 <p><strong>New Verts Mask</strong>: To split old vertices form new vertices</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Using variable thickness:</p>
 <img alt="https://user-images.githubusercontent.com/10011941/105902112-80bbaa80-601e-11eb-902b-5bd3797f257d.png" src="https://user-images.githubusercontent.com/10011941/105902112-80bbaa80-601e-11eb-902b-5bd3797f257d.png" />
 <p>Splitting Data: New Vertices in white, Old vertices in black, New Polys in grey, Rim Polys in white…</p>

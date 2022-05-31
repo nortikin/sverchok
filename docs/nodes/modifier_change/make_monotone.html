@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -166,10 +167,10 @@
            <div itemprop="articleBody">
              
   <section id="make-monotone">
-<h1>Make monotone<a class="headerlink" href="#make-monotone" title="Permalink to this headline">¶</a></h1>
+<h1>Make monotone<a class="headerlink" href="#make-monotone" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/67477849-eb3ba900-f66b-11e9-9892-392d5fb9a0c3.png" src="https://user-images.githubusercontent.com/28003269/67477849-eb3ba900-f66b-11e9-9892-392d5fb9a0c3.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node split polygon into monotone pieces.</p>
 <p>What is monotone polygon look here: <a class="reference external" href="https://en.wikipedia.org/wiki/Monotone_polygon">https://en.wikipedia.org/wiki/Monotone_polygon</a></p>
 <p>Prefix 2D means that the node expects from input any kind of flatten mesh
@@ -180,11 +181,11 @@ Input mesh can below or above XY surface or even can be tilted relative one.</p>
 according that the node does not make any tests like is hole inside polygon or not</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>Modifiers -&gt; Modifier change -&gt; Make monotone</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Polygon</strong> - vertices of polygon (should be ordered)</p></li>
 <li><p><strong>Hole vectors</strong> (optionally) - vertices of hole(s)</p></li>
@@ -192,14 +193,14 @@ according that the node does not make any tests like is hole inside polygon or n
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Vertices</strong> - vertices of main polygon and its holes</p></li>
 <li><p><strong>Polygons</strong> - monotone polygons</p></li>
 </ul>
 </section>
 <section id="n-panel">
-<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this headline">¶</a></h2>
+<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
@@ -224,7 +225,7 @@ but there is some cases when the node can stuck in error and playing with the pa
 This parameter does not have any affect to performance in spite of its name.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/28003269/62184789-93451d00-b370-11e9-8d2c-839fae4b8f5c.gif" src="https://user-images.githubusercontent.com/28003269/62184789-93451d00-b370-11e9-8d2c-839fae4b8f5c.gif" />
 <img alt="https://user-images.githubusercontent.com/28003269/66397537-162bc900-e9ed-11e9-9935-11eeab63cc40.png" src="https://user-images.githubusercontent.com/28003269/66397537-162bc900-e9ed-11e9-9935-11eeab63cc40.png" />
 <img alt="https://user-images.githubusercontent.com/28003269/62115051-d77ce280-b2c8-11e9-8121-ab8af75090d5.gif" src="https://user-images.githubusercontent.com/28003269/62115051-d77ce280-b2c8-11e9-8121-ab8af75090d5.gif" />

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -153,15 +154,15 @@
            <div itemprop="articleBody">
              
   <section id="evaluate-vector-field">
-<h1>Evaluate Vector Field<a class="headerlink" href="#evaluate-vector-field" title="Permalink to this headline">¶</a></h1>
+<h1>Evaluate Vector Field<a class="headerlink" href="#evaluate-vector-field" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates the values of the provided Vector Field at the given
 points. More precisely, given the field VF (which is a function from vectors to
 vectors), and point X, it calculates the vector VF(X).</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The vector field to be evaluated. This input is mandatory.</p></li>
@@ -169,24 +170,24 @@ vectors), and point X, it calculates the vector VF(X).</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Output NumPy</strong>. Outputs NumPy arrays in stead of regular python lists. Improves performance</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Vectors</strong>. The vectors calculated at the provided points.</p></li>
 </ul>
 </section>
 <section id="performance-notes">
-<h2>Performance Notes<a class="headerlink" href="#performance-notes" title="Permalink to this headline">¶</a></h2>
+<h2>Performance Notes<a class="headerlink" href="#performance-notes" title="Permalink to this heading">¶</a></h2>
 <p>This node works faster when the vertices list are NumPy Arrays</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Replace each point of straight line segment with the result of noise vector field evaluation at that point:</p>
 <img alt="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" src="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" />
 <p>Visualize vector field vectors by connecting original points of the line segment and the points obtained by moving the original points by the results of vector field evaluation:</p>

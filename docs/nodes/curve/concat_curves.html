@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,23 +190,23 @@
            <div itemprop="articleBody">
              
   <section id="concatenate-curves">
-<h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Permalink to this headline">¶</a></h1>
+<h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node composes one Curve object from several Curve objects, by “glueing”
 their ends. It assumes that end points of the curves being concatenated are
 already coinciding. You can make the node check this fact additionally.</p>
 <p>Curve domain: summed up from domains of curves being concatenated.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. A list of curves to be concatenated. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Check coincidence</strong>. If enabled, then the node will check that the end points of curves being concatenated do actually coincide (within threshold). If they do not, the node will give an error (become red), and the processing will stop.</p></li>
@@ -217,14 +218,14 @@ convert one of input curves, or join resulting NURBS curves.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The resulting concatenated curve.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Make single curve from two segments of line and an arc:</p>
 <img alt="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" src="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" />
 </section>

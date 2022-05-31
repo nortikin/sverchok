@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -144,13 +145,13 @@
            <div itemprop="articleBody">
              
   <section id="turbulence">
-<h1>Turbulence<a class="headerlink" href="#turbulence" title="Permalink to this headline">¶</a></h1>
+<h1>Turbulence<a class="headerlink" href="#turbulence" title="Permalink to this heading">¶</a></h1>
 <p>This Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 May output scalars or vectors.
 For some noise types, if your output goes to the texture viewer you need to remap them, otherwise your texture
 will be supersaturated or undersaturated. See below ‘range table’ for a detailed description.</p>
 <section id="inputs-parameters">
-<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 18%" />
@@ -201,7 +202,7 @@ is hard (sharp transitions) or soft (smooth transitions).</p></td>
 </table>
 </section>
 <section id="range-table">
-<h2>Range table<a class="headerlink" href="#range-table" title="Permalink to this headline">¶</a></h2>
+<h2>Range table<a class="headerlink" href="#range-table" title="Permalink to this heading">¶</a></h2>
 <p>Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=3, amplitude=0.5, frequency=2.0, random seed=0.
 Plug a map range node in the scalar output and map it to the desired range (min=0, max=1) as in the image below.</p>
 <table class="docutils align-default">
@@ -274,16 +275,16 @@ Plug a map range node in the scalar output and map it to the desired range (min=
 <img alt="https://cloud.githubusercontent.com/assets/1275858/23551043/81474db0-0014-11e7-9a40-233c30f75ce7.png" src="https://cloud.githubusercontent.com/assets/1275858/23551043/81474db0-0014-11e7-9a40-233c30f75ce7.png" />
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/1275858/22593143/744dbdae-ea1d-11e6-8945-16a8be9f597c.png" src="https://cloud.githubusercontent.com/assets/1275858/22593143/744dbdae-ea1d-11e6-8945-16a8be9f597c.png" />
 <p>Basic example with a Scalar output and Vector rewire node.</p>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
 <p>This documentation doesn’t do the full world of fractals any justice, feel free to send us layouts that you’ve made which rely on this node.</p>
 </section>
 <section id="links">
-<h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
+<h2>Links<a class="headerlink" href="#links" title="Permalink to this heading">¶</a></h2>
 <p>Fractals description from wikipedia: <a class="reference external" href="https://en.wikipedia.org/wiki/Fractal">https://en.wikipedia.org/wiki/Fractal</a></p>
 <p>A Perlin Noise and Turbulence description by Prof. Paul Bourke: <a class="reference external" href="http://paulbourke.net/texture_colour/perlin/">http://paulbourke.net/texture_colour/perlin/</a></p>
 <p>An introduction on Noise and Turbulence by Dr. Matthew O. Ward:  <a class="reference external" href="https://web.cs.wpi.edu/~matt/courses/cs563/talks/noise/noise.html">https://web.cs.wpi.edu/~matt/courses/cs563/talks/noise/noise.html</a></p>

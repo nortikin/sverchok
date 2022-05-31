@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,9 +190,9 @@
            <div itemprop="articleBody">
              
   <section id="offset-curve-on-surface">
-<h1>Offset Curve on Surface<a class="headerlink" href="#offset-curve-on-surface" title="Permalink to this headline">¶</a></h1>
+<h1>Offset Curve on Surface<a class="headerlink" href="#offset-curve-on-surface" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node does the following:</p>
 <ul class="simple">
 <li><p>Takes a Surface and a Curve, which is supposed to be in UV space of the surface;</p></li>
@@ -209,7 +210,7 @@ amount with good precision.</p>
 <p>Curve domain and parametrization: the same as of original curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve (in surface’s UV space) to be offsetted. The curve is
@@ -229,7 +230,7 @@ set to <strong>Variable</strong>.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Curve plane</strong>. The coordinate plane where original curve is supposed to
@@ -272,7 +273,7 @@ but the slower. The default value is 50.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The offsetted curve (in 3D space).</p></li>
@@ -281,7 +282,7 @@ YOZ or XOZ coordinate plane, depending on <strong>Curve plane</strong> parameter
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Constant offset of a curve on a surface:</p>
 <img alt="https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png" src="https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png" />
 <p>Similar setup, but with variable offset amount, controlled by a curve from “Curve mapper” node:</p>

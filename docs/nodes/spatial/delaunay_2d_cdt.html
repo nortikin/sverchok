@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -148,10 +149,10 @@
            <div itemprop="articleBody">
              
   <section id="random-points-on-mesh">
-<h1>Random points on mesh<a class="headerlink" href="#random-points-on-mesh" title="Permalink to this headline">¶</a></h1>
+<h1>Random points on mesh<a class="headerlink" href="#random-points-on-mesh" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/70866264-f088e600-1f80-11ea-91b2-f8b785c597a3.png" src="https://user-images.githubusercontent.com/28003269/70866264-f088e600-1f80-11ea-91b2-f8b785c597a3.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Computes the Constrained Delaunay Triangulation of a set of vertices,
 with edges and faces that must appear in the triangulation. Some triangles may be eaten away,
 or combined with other triangles, according to output type.
@@ -159,11 +160,11 @@ The returned verts may be in a different order from input verts, may be moved sl
 and may be merged with other nearby verts.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>Modifiers -&gt; Modifier make -&gt; Delaunay 2D cdt</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Verts</strong> - vertices of given mesh(es)</p></li>
 <li><p><strong>Edges</strong> - edges of given mesh(es)</p></li>
@@ -172,7 +173,7 @@ and may be merged with other nearby verts.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Verts</strong> - vertices, some can be deleted</p></li>
 <li><p><strong>Edges</strong> - new and old edges</p></li>
@@ -181,20 +182,20 @@ and may be merged with other nearby verts.</p>
 </ul>
 </section>
 <section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h2>
+<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Convex</strong> - given mesh will be triangulated into bounding convex face</p></li>
 <li><p><strong>Inside</strong> - all parts outside given faces or closed edge loops will be ignored by triangulation algorithm</p></li>
 </ul>
 </section>
 <section id="n-panel">
-<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this headline">¶</a></h2>
+<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Epsilon</strong> - For nearness tests; number of figures after coma</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p><strong>Combine of a line and random points into Delaunay triangulation:</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/70866163-b10dca00-1f7f-11ea-9fb3-5af27c211b4a.png" src="https://user-images.githubusercontent.com/28003269/70866163-b10dca00-1f7f-11ea-9fb3-5af27c211b4a.png" />
 <p><strong>Triangulation of points inside given face:</strong></p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -145,7 +146,7 @@
            <div itemprop="articleBody">
              
   <section id="csg-boolean-mk2">
-<h1>csg boolean mk2<a class="headerlink" href="#csg-boolean-mk2" title="Permalink to this headline">¶</a></h1>
+<h1>csg boolean mk2<a class="headerlink" href="#csg-boolean-mk2" title="Permalink to this heading">¶</a></h1>
 <p>This node implements the 3 boolean <em>3d Mesh</em> functions; Intersect, Join, Difference.</p>
 <p>There are switches and modes.</p>
 <ul class="simple">
@@ -154,7 +155,7 @@
 </ul>
 <p>::<img alt="csg demo" src="https://user-images.githubusercontent.com/619340/99914900-b7b0cf80-2d00-11eb-81a2-562d131e82a3.png" /></p>
 <section id="warnings">
-<h2>warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h2>
+<h2>warnings<a class="headerlink" href="#warnings" title="Permalink to this heading">¶</a></h2>
 <p>This Boolean implementation is by no means fast, nor does it generate optimal output geometry. It is however often “correct”. There are operational limitations to be aware of.</p>
 <ul class="simple">
 <li><p>Boolean algorithms are computationally expensive.</p></li>
@@ -172,12 +173,12 @@
 </div>
 </section>
 <section id="why-add-it-if-it-s-flawed">
-<h2>Why add it if it’s flawed?<a class="headerlink" href="#why-add-it-if-it-s-flawed" title="Permalink to this headline">¶</a></h2>
+<h2>Why add it if it’s flawed?<a class="headerlink" href="#why-add-it-if-it-s-flawed" title="Permalink to this heading">¶</a></h2>
 <p>Because when we omit such a node purely because it has a set of unfavorable edge cases, then we ignore the much larger parameter space in which such a node is adequate and sufficient for our needs. Here is the pullrequest that introduced this version of the node</p>
 <p><a class="reference external" href="https://github.com/nortikin/sverchok/pull/1575">https://github.com/nortikin/sverchok/pull/1575</a></p>
 </section>
 <section id="alternatives">
-<h2>Alternatives<a class="headerlink" href="#alternatives" title="Permalink to this headline">¶</a></h2>
+<h2>Alternatives<a class="headerlink" href="#alternatives" title="Permalink to this heading">¶</a></h2>
 <p>Consider booleans as “beta” in Sverchok. You might be interested in the FreeCAD implementation discussed here. <a class="reference external" href="https://github.com/nortikin/sverchok/issues/3430">https://github.com/nortikin/sverchok/issues/3430</a></p>
 </section>
 </section>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -131,13 +132,13 @@
            <div itemprop="articleBody">
              
   <section id="combinatorics">
-<h1>Combinatorics<a class="headerlink" href="#combinatorics" title="Permalink to this headline">¶</a></h1>
+<h1>Combinatorics<a class="headerlink" href="#combinatorics" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Combinatorics node performs various combinatoric operations like: <strong>Product</strong>, <strong>Permutations</strong> and <strong>Combinations</strong>.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>The inputs to the node are a set of lists of any type and a set of control parameters.</p>
 <p>The list inputs in combination to the control parameter inputs (Repeat / Length) are vectorized and the control parameters accept either single or multiple values for vectorization.</p>
 <p>List inputs to the node:
@@ -149,7 +150,7 @@
 [1] : The multiple list inputs are available for the <strong>Product</strong> operation, all the other operations take one list input. For the <strong>Product</strong> operation as the last list input is connected a new empty input socket will appear to allow other lists to be connected.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The <strong>Operation</strong> parameter allows to select one of following operations: Product, Permutations and Combinations.</p>
 <p>All parameters except <strong>Operation</strong> can be given as an external input.</p>
 <table class="docutils align-default">
@@ -207,7 +208,7 @@ operate on [2]</p></td>
 [3] : Additional lists inputs are available only for the <strong>Product</strong> operation.</p>
 </section>
 <section id="operations">
-<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
+<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
 <p><strong>Product</strong></p>
 <p>For this operation the node allows an arbitrary number of input lists to be product together as: A x B x .. x Z. The result of the product operation is a list of elements each of size equal to the number of input lists and has all the combinations of elements from the first list, followed by all elements in the second list etc.</p>
 <p>e.g. for two connected list inputs:</p>
@@ -261,7 +262,7 @@ L : 2</p>
 </div>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Result</strong>
 The list of product, permutations or combinations.</p>
 <p>The results will be generated only when the <strong>Result</strong> output is connected.</p>

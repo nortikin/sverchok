@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,9 +92,9 @@
            <div itemprop="articleBody">
              
   <section id="testing">
-<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h1>
 <section id="preface">
-<h2>Preface<a class="headerlink" href="#preface" title="Permalink to this headline">¶</a></h2>
+<h2>Preface<a class="headerlink" href="#preface" title="Permalink to this heading">¶</a></h2>
 <p>This document describes (for developers mainly) our approach to testing the code of Sverchok.</p>
 <p>The main ideas are:</p>
 <ul class="simple">
@@ -111,7 +112,7 @@
 </ul>
 </section>
 <section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
 <p>Automated testing of Sverchok is implemented based on standard Python’s <a class="reference external" href="https://docs.python.org/3/library/unittest.html">unittest</a> module.
 In <code class="docutils literal notranslate"><span class="pre">sverchok.utils.testing</span></code> module there is a number of utility methods and some base classes for test cases. Please refer to docstrings in that module for more detailed information.
 Test cases themselves are under <code class="docutils literal notranslate"><span class="pre">tests/</span></code> directory. The files have to be named <code class="docutils literal notranslate"><span class="pre">*_tests.py</span></code>. Feel free to use existing test cases as examples to create your own.
@@ -124,7 +125,7 @@ Test data files are located under <code class="docutils literal notranslate"><sp
 <p>Please do run the tests at least before making a pull request.</p>
 </section>
 <section id="continuous-integration">
-<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this headline">¶</a></h2>
+<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading">¶</a></h2>
 <p>GitHub actions are used for executing tests. You can see current status of Sverchok tests
 <a class="reference external" href="https://github.com/nortikin/sverchok/actions">here</a>.
 GitHub action is configured to trigger automatically on the following events:</p>
@@ -136,7 +137,7 @@ GitHub action is configured to trigger automatically on the following events:</p
 <p>Moreover, it is a good idea to add some automated tests with each pull request. For example, if you added a new feature, add a test for it (in case it is not too hard to write such a test; otherwise just do manual testing).</p>
 </section>
 <section id="testing-documentation">
-<h2>Testing Documentation<a class="headerlink" href="#testing-documentation" title="Permalink to this headline">¶</a></h2>
+<h2>Testing Documentation<a class="headerlink" href="#testing-documentation" title="Permalink to this heading">¶</a></h2>
 <p>For building Sverchok docs <a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">Sphinx</a> documentation generator is used.
 If in a pul request there are changed files located in <code class="docutils literal notranslate"><span class="pre">sverchok/docs</span></code> folder it will trigger testing of building
 the documentation. Before pushing changes you can build docs on your computer.

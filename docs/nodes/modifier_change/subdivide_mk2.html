@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -166,13 +167,13 @@
            <div itemprop="articleBody">
              
   <section id="subdivide-node">
-<h1>Subdivide Node<a class="headerlink" href="#subdivide-node" title="Permalink to this headline">¶</a></h1>
+<h1>Subdivide Node<a class="headerlink" href="#subdivide-node" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node applies Blender’s Subdivide operation to the input mesh. Please note that of options available differs from usual editing operator.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertrices</strong></p></li>
@@ -190,7 +191,7 @@ mesh faces. Optional input.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Show Old</strong>. If checked, then outputs with “old” geometry will be shown. By default not checked.</p></li>
@@ -217,12 +218,12 @@ mesh faces. Optional input.</p></li>
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node slower but can make faster the next nodes). Available for Vertices, Edges and Pols</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. All vertices of resulting mesh.</p></li>
@@ -240,7 +241,7 @@ contains one item for each output mesh face.</p></li>
 <p><strong>Note</strong>: Indicies in <strong>NewEdges</strong>, <strong>NewFaces</strong>, <strong>OldEdges</strong>, <strong>OldFaces</strong> outputs relate to vertices in <strong>Vertices</strong> output.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>The simplest example, subdivide a cube:</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/25096716/476682dc-23c3-11e7-8788-624be2573d3b.png" src="https://cloud.githubusercontent.com/assets/284644/25096716/476682dc-23c3-11e7-8788-624be2573d3b.png" />
 <p>Subdivide one face of a cube, with smoothing:</p>

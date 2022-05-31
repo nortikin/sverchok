@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -140,9 +141,9 @@
            <div itemprop="articleBody">
              
   <section id="get-property-set-property">
-<h1>Get Property / Set Property<a class="headerlink" href="#get-property-set-property" title="Permalink to this headline">¶</a></h1>
+<h1>Get Property / Set Property<a class="headerlink" href="#get-property-set-property" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>These nodes can be used to control almost anything in Blender once you know the python path. For instance if you want to <code class="docutils literal notranslate"><span class="pre">Set</span></code> the location of a scene object called <code class="docutils literal notranslate"><span class="pre">Cube</span></code>, the python path is <code class="docutils literal notranslate"><span class="pre">`bpy.data.objects['Cube'].location`</span></code>.</p>
 <p>By default these nodes don’t expose their input / output sockets, but they will appear if the node was able to find a compatible property in the path you provided. The Socket types that the node generates depend on the kind of data path you gave it. It knows about Matrices and Vectors and Numbers etc..</p>
 <p>There are also convenience aliases. Instead of writing <code class="docutils literal notranslate"><span class="pre">`bpy.data.objects['Cube'].location`</span></code> you can write <code class="docutils literal notranslate"><span class="pre">`objs['Cube'].location`</span></code> . The aliases are as follows:</p>
@@ -161,7 +162,7 @@
 </div>
 </section>
 <section id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">Set</span></code> mode</p>
 <table class="docutils align-default">
 <colgroup>
@@ -181,7 +182,7 @@
 </table>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">Get</span></code> mode</p>
 <table class="docutils align-default">
 <colgroup>
@@ -201,15 +202,15 @@
 </table>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The only parameter is the python path to the property you want to set or get. Usually we search this manually using Blender’s Python console.</p>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
 <p>(todo?)</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/619340/11468741/2a1aa3c4-9752-11e5-85d9-13cd8478c0d2.png" src="https://cloud.githubusercontent.com/assets/619340/11468741/2a1aa3c4-9752-11e5-85d9-13cd8478c0d2.png" />
 <img alt="https://cloud.githubusercontent.com/assets/619340/11468834/a9eaa342-9752-11e5-8ea9-76a0b678c2a4.png" src="https://cloud.githubusercontent.com/assets/619340/11468834/a9eaa342-9752-11e5-8ea9-76a0b678c2a4.png" />
 <p>Using aliases <code class="docutils literal notranslate"><span class="pre">objs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">bpy.data.objects</span></code></p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -138,13 +139,13 @@
            <div itemprop="articleBody">
              
   <section id="matrix-math">
-<h1>Matrix Math<a class="headerlink" href="#matrix-math" title="Permalink to this headline">¶</a></h1>
+<h1>Matrix Math<a class="headerlink" href="#matrix-math" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Matrix Math node allows for various matrix operations to be performed on the input matrices, such as: Multiply, Invert, Filter, Basis.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>A</strong></p></li>
@@ -157,7 +158,7 @@
 [2] : For multiple input operation (e.g. Multiply) the input sockets extend to allow arbitrary number of input matrices and their socket name progress alphabetically.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The <strong>Operation</strong> parameter allows to select one of following operations: Multiply, Invert, Filter, Basis.</p>
 <p>All parameters except <strong>Operation</strong>, <strong>PrePost</strong> and <strong>Filter T/R/S</strong> can be given as an external input.</p>
 <table class="docutils align-default">
@@ -239,7 +240,7 @@ Post</p>
 </dl>
 </section>
 <section id="operations">
-<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
+<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
 <p><strong>Multiply</strong>
 The multiplication of the 4x4 homogeneous matrices result in a composite 4x4 homogeneous matrix having a composed Translation, a composed Rotation and a composed Scale. The order of multiplication is given by the PrePost setting, which is set to PRE-multiplication by default (C = A*B). The POST multiplication reverses the order of multiplication (C = B*A).</p>
 <p>Note: When using a PRE multiply composition A*B to transform a mesh, essentially the overall operation is equivalent to applying the matrix B to the mesh first, then matrix A.</p>
@@ -253,7 +254,7 @@ The inversion of a 4x4 homogeneous matrix A is a 4x4 homogeneous matrix A’ for
 This operation extacts the basis vector from the rotation part of the 4x4 homogeneous matrix. Essentially these are the vectors the XYZ ortho-normal axes of a coordinate system would be if transformed by the 4x4 homogeneous matrix.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Matrix</strong>
 Outputs will be generated when connected.</p>
 <p><strong>X</strong>
@@ -262,7 +263,7 @@ Outputs will be generated when connected.</p>
 These outputs are available only for the Basis operation and will be generated when connected.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 

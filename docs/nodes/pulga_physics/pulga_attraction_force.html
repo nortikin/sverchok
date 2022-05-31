@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -141,22 +142,22 @@
            <div itemprop="articleBody">
              
   <section id="pulga-attraction-force">
-<h1>Pulga Attraction Force<a class="headerlink" href="#pulga-attraction-force" title="Permalink to this headline">¶</a></h1>
+<h1>Pulga Attraction Force<a class="headerlink" href="#pulga-attraction-force" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force will be applied when de particles (vertices) are farer than the sum of particle radius.</p>
 <p>The force direction will be the difference of the vertices location</p>
 <p>The force magnitude will be:  1/(Distance to the power of Decay) * Masses product * Force Strength</p>
 </section>
 <section id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
 <p><strong>Strength</strong>: Multiplier of the force, if multiple values are given the will be use as strength per particle.</p>
 <p><strong>Decay</strong>: How the force decays with distance (regular gravity will have a decay value of 2)</p>
 <p><strong>Max Distance</strong>: Distance under the force will be applied.</p>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <p><strong>Mode</strong>: Algorithm used to calculate attractions. Offers ‘Brute Force’ and ‘Kd-tree’</p>
 <ul class="simple">
 <li><p>Kd-tree: this is the fastest mode but in order to work it needs ‘Scipy’ and ‘Cython’ dependencies to be installed. In this mode the attraction continues even if the vertices are colliding</p></li>
@@ -165,7 +166,7 @@
 <p><strong>Stop on Collision</strong>: When enabled the attraction force will be disabled when particles are colliding, preventing overlapping.</p>
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_attraction_force/blender_sverchok_pulga_attraction_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_attraction_force/blender_sverchok_pulga_attraction_force_example_01.png" />
 </section>
 </section>

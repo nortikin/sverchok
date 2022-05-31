@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -136,9 +137,9 @@
            <div itemprop="articleBody">
              
   <section id="list-levels">
-<h1>List Levels<a class="headerlink" href="#list-levels" title="Permalink to this headline">¶</a></h1>
+<h1>List Levels<a class="headerlink" href="#list-levels" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node allows the user to manipulate with nesting structure of data by setting checkboxes. It allows to:</p>
 <ul class="simple">
 <li><p>Remove a level of nesting by concatenating nested lists of some level, or</p></li>
@@ -148,7 +149,7 @@
 <p>This node works with nested lists or tuples. Numpy arrays are considered to be atomic objects.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Data</strong>. Input data. This node supports data of any standard type (numbers,
@@ -157,7 +158,7 @@ mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>When <strong>Data</strong> input is connected, the interface of the node presents a table.
 Each row of the table describes one nesting level of input data, and defines
 what do you want to do with data at this nesting level. The table has the
@@ -205,7 +206,7 @@ several “List Levels” nodes to do even more complex manipulations with data
 structure.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>By default, all checkboxes are disabled, so the node does nothing:</p>
 <img alt="https://user-images.githubusercontent.com/9460236/129511959-8e17fe20-ce5e-4127-a88b-bb1dc84b916e.png" src="https://user-images.githubusercontent.com/9460236/129511959-8e17fe20-ce5e-4127-a88b-bb1dc84b916e.png" />
 <p>Let’s wrap each number into a separate list (this is what “Graft” option of output socket menus does as well):</p>

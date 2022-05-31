@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -147,13 +148,13 @@
            <div itemprop="articleBody">
              
   <section id="voronoi-on-solid">
-<h1>Voronoi on Solid<a class="headerlink" href="#voronoi-on-solid" title="Permalink to this headline">¶</a></h1>
+<h1>Voronoi on Solid<a class="headerlink" href="#voronoi-on-solid" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires both <a class="reference external" href="https://scipy.org/">SciPy</a> and <a class="reference external" href="../../solids.rst">FreeCAD</a> libraries to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates Voronoi diagram on a given Solid object. The result can be
 output as either series of fragments of the shell of Solid object (series of
 faces), or as a series of solid bodies.</p>
@@ -164,7 +165,7 @@ please be warned that this functionality is known to cause Blender crashes on
 some setups.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Solid</strong>. The solid object, on which the Voronoi diagram is to be generated.
@@ -179,7 +180,7 @@ In the later case, each value will be used for corresponding cell.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Mode</strong>. The available options are available:</p>
@@ -199,7 +200,7 @@ calculations (number of digits after decimal point). The default value is 6.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>InnerSolid</strong>. Solid objects (or their shells, if <strong>Surface</strong> mode is used)
@@ -210,7 +211,7 @@ is left between the regions of Voronoi diagram. This object will be empty if
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Inner solids with <strong>Surface</strong> mode:</p>
 <img alt="https://user-images.githubusercontent.com/284644/103175519-411d6980-488c-11eb-86bf-151a4776f6ac.png" src="https://user-images.githubusercontent.com/284644/103175519-411d6980-488c-11eb-86bf-151a4776f6ac.png" />
 <p>Outer solid for the same setup:</p>

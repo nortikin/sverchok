@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -93,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="output-socket-menus">
-<h1>Output Socket Menus<a class="headerlink" href="#output-socket-menus" title="Permalink to this headline">¶</a></h1>
+<h1>Output Socket Menus<a class="headerlink" href="#output-socket-menus" title="Permalink to this heading">¶</a></h1>
 <p>Most of output sockets in Sverchok’s nodes have a button to call a dropdown menu:</p>
 <img alt="https://user-images.githubusercontent.com/284644/97477490-83e8c100-1971-11eb-982a-ad729dd29ec7.png" src="https://user-images.githubusercontent.com/284644/97477490-83e8c100-1971-11eb-982a-ad729dd29ec7.png" />
 <p>These dropdown menu buttons are only shown when <strong>Show socket menus</strong> option in
@@ -123,7 +124,7 @@ the order in which they are listed in the menu.</p>
 disable the <strong>Show socket menus</strong> checkbox in the N panel, enabled options will
 still be applied.</p>
 <section id="flatten">
-<h2>Flatten<a class="headerlink" href="#flatten" title="Permalink to this headline">¶</a></h2>
+<h2>Flatten<a class="headerlink" href="#flatten" title="Permalink to this heading">¶</a></h2>
 <p>If this option is enabled, it flattens all data in this output, from however
 deep it’s nesting level was, to a simple list (by concatenating all nested
 lists). For example, if this output contains <code class="docutils literal notranslate"><span class="pre">[[[1],</span> <span class="pre">[2],</span> <span class="pre">[3,4]]]</span></code>, then with
@@ -131,7 +132,7 @@ Flatten option checked you will have simply  <code class="docutils literal notra
 <p>The same effect can be achieved by use of a separate “List Join” node.</p>
 </section>
 <section id="simplify">
-<h2>Simplify<a class="headerlink" href="#simplify" title="Permalink to this headline">¶</a></h2>
+<h2>Simplify<a class="headerlink" href="#simplify" title="Permalink to this heading">¶</a></h2>
 <p>This option is similar to Flatten, but it leaves minimal nesting. This is
 actual, for example, for Vertices sockets - one usually does not want to
 concatenate coordinates of different vertices into one big list. For example,
@@ -141,7 +142,7 @@ then with this option enabled you will have <code class="docutils literal notran
 <p>Flatten and Simplify options can not be enabled simultaneously.</p>
 </section>
 <section id="graft">
-<h2>Graft<a class="headerlink" href="#graft" title="Permalink to this headline">¶</a></h2>
+<h2>Graft<a class="headerlink" href="#graft" title="Permalink to this heading">¶</a></h2>
 <p>If this option is enabled, it puts each atomic object in the output data
 (however nested it was) into additionally nested list. Examples:</p>
 <ul class="simple">
@@ -158,7 +159,7 @@ enabled you will have <code class="docutils literal notranslate"><span class="pr
 input set to 1.</p>
 </section>
 <section id="graft-topology">
-<h2>Graft Topology<a class="headerlink" href="#graft-topology" title="Permalink to this headline">¶</a></h2>
+<h2>Graft Topology<a class="headerlink" href="#graft-topology" title="Permalink to this heading">¶</a></h2>
 <p>This option is available for Strings outputs only (Edges, Faces and similar).
 This is basically the same as Graft, with only difference being that this
 option considers lists of nesting level 1 (lists of numbers, for example), as
@@ -167,7 +168,7 @@ list. For example, if Edges output contains <code class="docutils literal notran
 with this option enabled you will have <code class="docutils literal notranslate"><span class="pre">[[[0,1]],</span> <span class="pre">[[2,</span> <span class="pre">3]],</span> <span class="pre">[[3,</span> <span class="pre">4]]]</span></code>.</p>
 </section>
 <section id="unwrap">
-<h2>Unwrap<a class="headerlink" href="#unwrap" title="Permalink to this headline">¶</a></h2>
+<h2>Unwrap<a class="headerlink" href="#unwrap" title="Permalink to this heading">¶</a></h2>
 <p>This option removes one pair of square brackets from a nested list, if it is
 possible. If output data is empty, or output data is a list with more than one
 item, this will raise an exception, and processing will stop. For example, if
@@ -176,7 +177,7 @@ have <code class="docutils literal notranslate"><span class="pre">[1,</span> <sp
 will have an exception.</p>
 </section>
 <section id="wrap">
-<h2>Wrap<a class="headerlink" href="#wrap" title="Permalink to this headline">¶</a></h2>
+<h2>Wrap<a class="headerlink" href="#wrap" title="Permalink to this heading">¶</a></h2>
 <p>This option simply puts the whole output of the socket into a list, to add
 another nesting level. For example, if the socket contains <code class="docutils literal notranslate"><span class="pre">[[1],</span> <span class="pre">[2],</span> <span class="pre">[3]]</span></code>,
 then with this option enabled you will have <code class="docutils literal notranslate"><span class="pre">[[[1],</span> <span class="pre">[2],</span> <span class="pre">[3]]</span></code>.</p>

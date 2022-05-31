@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,9 +164,9 @@
            <div itemprop="articleBody">
              
   <section id="compass-3d">
-<h1>Compass 3D<a class="headerlink" href="#compass-3d" title="Permalink to this headline">¶</a></h1>
+<h1>Compass 3D<a class="headerlink" href="#compass-3d" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed to get the intersection between a sphere and one endless straight line.</p>
 <p>This problem has three possible solutions:</p>
 <blockquote>
@@ -176,7 +177,7 @@
 <p>The line by two vector creating one segment.</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 20%" />
@@ -210,14 +211,14 @@
 </table>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Output NumPy</strong>: to get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.</p>
 <p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups (one line per group)</p>
 <p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching of tolerances and vertices</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Intersect Line</strong>: Returns True if the there is valid intersection.</p>
 <p><strong>Intersection A</strong>: Returns the intersection nearer to the end point of the segment. In case of no intersection returns the closest point on the line.</p>
 <p><strong>Intersection B</strong>: Returns the intersection nearer to the start point of the segment. In case of no intersection returns the closest point on the line.</p>
@@ -228,7 +229,7 @@
 <p><strong>All Segment int.</strong>: Returns a flat list of all the intersections.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Basic explanation of Compass 3d intersections.</p>
 <img alt="compass_3d_sverchok_blender_example.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_example.png" />
 <p>In this example the node is used to join one arc with one line with segments of 6 units.</p>

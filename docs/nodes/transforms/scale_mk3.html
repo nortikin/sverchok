@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -143,13 +144,13 @@
            <div itemprop="articleBody">
              
   <section id="scale">
-<h1>Scale<a class="headerlink" href="#scale" title="Permalink to this headline">¶</a></h1>
+<h1>Scale<a class="headerlink" href="#scale" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node will allow you to scale any king of geometry. It works directly with vertices, not with matrixes, so the output will be just scaled geometry from your original vertices.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is three inputs:</p>
 <ul class="simple">
@@ -160,7 +161,7 @@ There is three inputs:</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except <strong>Vertices</strong> has a default value. <strong>Factor</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -201,18 +202,18 @@ There is three inputs:</p>
 </table>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Output NumPy</strong>: Output NumPy arrays in stead of regular lists (makes the node faster)</p>
 <p><strong>List Match</strong>: Define how list with different lengths should be matched</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Only <strong>Vertices</strong> will be generated. Depending on the type of the inputs, if more than one factor or centers are set, then more objects will be outputted.
 If you generate more outputs than inputs were given, then is probably that you need to use list Repeater with your edges or polygons.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Creating a spiral from a Circle:</p>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_1.png" />
 <p>The node will match different data structures, in this case this mechanism is used to create surface is generated from a line:</p>

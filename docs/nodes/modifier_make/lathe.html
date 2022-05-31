@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -147,17 +148,17 @@
            <div itemprop="articleBody">
              
   <section id="lathe">
-<h1>Lathe<a class="headerlink" href="#lathe" title="Permalink to this headline">¶</a></h1>
+<h1>Lathe<a class="headerlink" href="#lathe" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Analogous to the <cite>spin</cite> operator and the Screw modifier. It takes a profile shape as input in the form of <em>vertices</em> and <em>edges</em> and produces <em>vertices</em> and <em>faces</em> based on a rotation axis, angle, center, delta and step count. Internally the node is powered by the <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_2_71_release/bmesh.ops.html#bmesh.ops.spin">bmesh.spin</a>  operator.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>It’s vectorized, meaning it accepts nested and multiple inputs and produces multiple sets of output</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>All Vector parameters (except axis) default to (0,0,0) if no input is given.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -202,11 +203,11 @@ profile copy. Default <cite>off</cite>.</p></td>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong> and <strong>Poly</strong>. Verts and Polys will be generated. The <code class="docutils literal notranslate"><span class="pre">bmesh.spin</span></code> operator doesn’t consider the ordering of the Vertex and Face indices that it outputs. This might make additional processing complicated, use IndexViewer to better understand the generated geometry. Faces will however have consistent Normals.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/619340/3172893/08952296-ebdd-11e3-8e9b-574495b1a92c.png" src="https://cloud.githubusercontent.com/assets/619340/3172893/08952296-ebdd-11e3-8e9b-574495b1a92c.png" />
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/203">here</a> (gifs, screenshots)</p>
 <p>Glass, Vase.</p>

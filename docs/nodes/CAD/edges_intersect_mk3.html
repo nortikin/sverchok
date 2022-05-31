@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -132,10 +133,10 @@
            <div itemprop="articleBody">
              
   <section id="intersect-edges">
-<h1>Intersect Edges<a class="headerlink" href="#intersect-edges" title="Permalink to this headline">¶</a></h1>
+<h1>Intersect Edges<a class="headerlink" href="#intersect-edges" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/70894030-a7c74080-2005-11ea-8594-dced40b05c03.png" src="https://user-images.githubusercontent.com/28003269/70894030-a7c74080-2005-11ea-8594-dced40b05c03.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed for finding intersections of inputs edges and returns mesh based on intersection result.</p>
 <p>This node contains several algorithm of finding edge intersections:</p>
 <p><strong>3D algorithm:</strong></p>
@@ -173,7 +174,7 @@ Also it is not design for such cases where one edge is intersect with all or mos
 It’s available only with Blender 2.81+</p>
 </section>
 <section id="benchmark-of-2d-algorithms">
-<h2>Benchmark of 2D algorithms<a class="headerlink" href="#benchmark-of-2d-algorithms" title="Permalink to this headline">¶</a></h2>
+<h2>Benchmark of 2D algorithms<a class="headerlink" href="#benchmark-of-2d-algorithms" title="Permalink to this heading">¶</a></h2>
 <p>Three different test to determine the efficiency of the algorithms.
 - Random Segments: Segments between random vectors
 - Star Segments: Rotated segments from a center point (every segments intersects with the rest of segments in the center)
@@ -300,11 +301,11 @@ Intersec.</p></td>
 <em>SC = Blender Crash + Partial System Crash</em></p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>Verts and Edges only. Warning: Does not support faces</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <dl class="simple">
 <dt><strong>Include ‘On touch’</strong><span class="classifier">consider a valid intersection when one end of the edge lays on another edge.</span></dt><dd><p>Generates double points so if active “remove doubles” switch is recommended. Only for Np and 3d mode</p>
 </dd>
@@ -312,16 +313,16 @@ Intersec.</p></td>
 <p><strong>Doubles</strong>: Merges points that are closer than the defined distance. Only for Alg_1, Np and 3d mode</p>
 </section>
 <section id="parameters-n-panel">
-<h2>Parameters N-panel<a class="headerlink" href="#parameters-n-panel" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters N-panel<a class="headerlink" href="#parameters-n-panel" title="Permalink to this heading">¶</a></h2>
 <p>Epsilon - For comparing float figures. Does not effect on performance.</p>
 <p>Big data Limit - Number of incoming edges where the node will switch to a slower-but-safer implementation of the algorithm (for Alg_1)</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Vertices and Edges, the mesh does not preserve any old vertex or edge index ordering due to the Hashing algorithm used for fast intersection lookups.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" src="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" />
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/109">here</a> (gifs, screenshots)</p>
 </section>

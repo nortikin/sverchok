@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -165,13 +166,13 @@
            <div itemprop="articleBody">
              
   <section id="polygons-to-edges">
-<h1>Polygons to Edges<a class="headerlink" href="#polygons-to-edges" title="Permalink to this headline">¶</a></h1>
+<h1>Polygons to Edges<a class="headerlink" href="#polygons-to-edges" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Each polygon is defined by a closed chain of vertices which form the edges of the polygon. The edges of each polygon can be extracted. If a polygon is defined by a list of vertex indices (keys) as <code class="docutils literal notranslate"><span class="pre">[3,5,11,23]</span></code> then automatically the edge keys can be inferred as <code class="docutils literal notranslate"><span class="pre">[[3,5],[5,11],[11,23],[23,3]]</span></code>. Note here that the last key closes the edge loop and reconnects with the first key in the sequence.</p>
 </section>
 <section id="input-output">
-<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 14%" />
@@ -197,18 +198,18 @@
 </table>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Unique Edges</strong> : When active the node will remove the doubled edges</p></li>
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster)</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="Polygon_to_Edges_example" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/polygons_to_edges/blender_sverchok_parametric_polygons_to_edges.png" />
 </section>
 </section>

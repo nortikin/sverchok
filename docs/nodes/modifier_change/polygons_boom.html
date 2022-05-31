@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,17 +164,17 @@
            <div itemprop="articleBody">
              
   <section id="polygon-boom">
-<h1>Polygon Boom<a class="headerlink" href="#polygon-boom" title="Permalink to this headline">¶</a></h1>
+<h1>Polygon Boom<a class="headerlink" href="#polygon-boom" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The vertices of each polygon will be placed into separate lists. If polygons share vertices then the coordinates are duplicates into new vertices. The end result will be a nested list of polygons with each their own unique vertices. This facilitates rotation of a polygon around an arbitrary points without affecting the vertices of other polygons in the list.</p>
 </section>
 <section id="inputs-outputs">
-<h2>Inputs &amp; Outputs<a class="headerlink" href="#inputs-outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs &amp; Outputs<a class="headerlink" href="#inputs-outputs" title="Permalink to this heading">¶</a></h2>
 <p>Lists of Vertices and Edge/Polygon lists. The type of data in the <em>edg_pol</em> output socket content depends on the what kind of input is passed to <em>edge_pol</em> input socket. If you input edges only, that’s what the output will be.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>The Box on default settings is a Cube with 6 polygons and each vertex is shared by three polygons. Polygon Boom separates the polygons into separate coordinate lists (vertices).</p>
 <img alt="PolygonBoomDemo1.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186234/1ef77fb6-375f-11e4-8e45-4ce14df9fd94.PNG" />
 </section>

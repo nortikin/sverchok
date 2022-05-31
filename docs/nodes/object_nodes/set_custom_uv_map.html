@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -140,21 +141,21 @@
            <div itemprop="articleBody">
              
   <section id="set-custom-uv-map">
-<h1>Set custom UV map<a class="headerlink" href="#set-custom-uv-map" title="Permalink to this headline">¶</a></h1>
+<h1>Set custom UV map<a class="headerlink" href="#set-custom-uv-map" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/72145465-04730c80-33b4-11ea-830a-1ce9ba114b7d.png" src="https://user-images.githubusercontent.com/28003269/72145465-04730c80-33b4-11ea-830a-1ce9ba114b7d.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node creates custom UV layer and apply given uv coordinates to given Blender mesh object.
 For usability the node has matrix input socket but the same can be done applying the same matrix
 to input UV coordinates outside of the node.
 UV coordinates should be prepared by other nodes.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>BPY Data -&gt; Set custom UV map</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Objects</strong> - Blender mesh objects</p></li>
 <li><p><strong>UV verts</strong> - just usual vertices (3D dimensional )</p></li>
@@ -163,13 +164,13 @@ UV coordinates should be prepared by other nodes.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Objects</strong> - Blender mesh objects</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 23%" />
@@ -191,7 +192,7 @@ UV coordinates should be prepared by other nodes.</p>
 </table>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>First of all own mesh of a mesh can be used as UV data. In this case flat projection will be get:</p>
 <img alt="https://user-images.githubusercontent.com/28003269/71992782-68c88b80-324f-11ea-8cdc-0312d2dac19e.png" src="https://user-images.githubusercontent.com/28003269/71992782-68c88b80-324f-11ea-8cdc-0312d2dac19e.png" />
 <p>This is analog of this set of nodes in material editor:</p>

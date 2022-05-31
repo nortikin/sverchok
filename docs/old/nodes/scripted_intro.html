@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,14 +77,14 @@
            <div itemprop="articleBody">
              
   <section id="an-introduction-and-tutorial-for-the-scripted-nodes">
-<span id="scripted-tutorial"></span><h1>An introduction and tutorial for the Scripted Nodes<a class="headerlink" href="#an-introduction-and-tutorial-for-the-scripted-nodes" title="Permalink to this headline">¶</a></h1>
+<span id="scripted-tutorial"></span><h1>An introduction and tutorial for the Scripted Nodes<a class="headerlink" href="#an-introduction-and-tutorial-for-the-scripted-nodes" title="Permalink to this heading">¶</a></h1>
 <p>&gt; Dealga Mcardle | 2014 | October</p>
 <p>In my opinion new users should avoid the Script Nodes until they understand a majority of the existing nodes and the Sverchok <cite>Eco-system</cite> as a concept. This suggestion applies to everyone, even competent coders.</p>
 <p>Script Nodes are great when you want to encapsulate a behaviour which may not be easy to achieve with existing nodes alone. They are my prefered way to either 1) prototype code, or 2) write custom nodes that are too specific to be submitted as regular nodes.</p>
 <p>At the moment Sverchok has 2 Scripted Node implementations: SN and SN2. Exactly how they differ from eachother will be shown later. Both offer <cite>practical shorthand</cite> ways to define what a node does, which sliders and sane defaults it might have, and what socket types can connect to it. These scripts have a minimal interface, are stored inside the <cite>.blend</cite> file as plain text python, and can be shared easily.</p>
 <p>If you’ve ever written code for a Blender addon or script, you will be familiar with registration of classes. Nodes normally also need to be registered so Blender can find them, but Script Nodes don’t because they are in essence a shell for your code – and the shell is already registered, all you have to do is write code to process input into output.</p>
 <section id="scripted-node-1-an-informal-introduction">
-<h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Permalink to this headline">¶</a></h2>
+<h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Permalink to this heading">¶</a></h2>
 <p>Here is a classic ‘Hello World’ style example used to demonstrate graphics coding. It’s called a Lorenz Attractor.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
     <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
@@ -121,11 +122,11 @@
 <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>, two of the elements are strings (socket type and socket name), and the third element is the Python variable that we automatically bind to those sockets.</p>
 </section>
 <section id="brief-guided-explanation">
-<h2>Brief Guided Explanation<a class="headerlink" href="#brief-guided-explanation" title="Permalink to this headline">¶</a></h2>
+<h2>Brief Guided Explanation<a class="headerlink" href="#brief-guided-explanation" title="Permalink to this heading">¶</a></h2>
 <p>You’ve probably got a fair idea already from the example script. SN1 has a few conventions which let you quickly define sockets and defaults. What follows are short remarks about the elements that make up these scripts, aimed at someone who is about to write their first script for SN1.</p>
 </section>
 <section id="sockets">
-<h2>Sockets<a class="headerlink" href="#sockets" title="Permalink to this headline">¶</a></h2>
+<h2>Sockets<a class="headerlink" href="#sockets" title="Permalink to this heading">¶</a></h2>
 <p>Sverchok at present has 3 main socket types: SvVerticesSocket, SvStringsSocket and SvMatrixSocket. Script Nodes refer to these socket types with only their first letter in lowercase. ‘s’,’v’,’m’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;s&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">floats</span><span class="p">,</span> <span class="n">ints</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">strings</span>
 <span class="s1">&#39;v&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span>
@@ -134,20 +135,20 @@
 </div>
 </section>
 <section id="socket-names">
-<h2>Socket Names<a class="headerlink" href="#socket-names" title="Permalink to this headline">¶</a></h2>
+<h2>Socket Names<a class="headerlink" href="#socket-names" title="Permalink to this heading">¶</a></h2>
 <p>Each socket has a name. Take a minute to think about a good descriptive name for each. Socket names can always be changed later, but my advice is to use clear names from the very beginning.</p>
 </section>
 <section id="variable-names">
-<h2>Variable names<a class="headerlink" href="#variable-names" title="Permalink to this headline">¶</a></h2>
+<h2>Variable names<a class="headerlink" href="#variable-names" title="Permalink to this heading">¶</a></h2>
 <p>Variable names are used to expose the values of the associated socket to your script. If the socket is unconnected then the value of the variable will be taken from the specified default.</p>
 </section>
 <section id="node-function-sv-main">
-<h2>node function <cite>(sv_main)</cite><a class="headerlink" href="#node-function-sv-main" title="Permalink to this headline">¶</a></h2>
+<h2>node function <cite>(sv_main)</cite><a class="headerlink" href="#node-function-sv-main" title="Permalink to this heading">¶</a></h2>
 <p>The main function for SN1 is <code class="docutils literal notranslate"><span class="pre">sv_main</span></code>, in the body of this function is where we declare socket types, socket names, and variable names for input and output sockets. These are declared in two arrays <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>.</p>
 <p>The argument list of <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> is where you provide defaults values or the nestedness of an incoming datatype. (don’t worry if this makes no sense, read it again later).</p>
 </section>
 <section id="that-s-great-show-me">
-<h2>That’s great, show me!<a class="headerlink" href="#that-s-great-show-me" title="Permalink to this headline">¶</a></h2>
+<h2>That’s great, show me!<a class="headerlink" href="#that-s-great-show-me" title="Permalink to this heading">¶</a></h2>
 <p>The easiest way to get started is to first load an existing script. Here are some steps:</p>
 <ul class="simple">
 <li><p>Go to <cite>Generators / Scripted Node</cite> and add it to the NodeView.</p></li>
@@ -160,7 +161,7 @@
 <p>That’s pretty much all there is to loading a script. All you do now is hook the output Verts to a Viewer Node and you’ll see a classic Lorenz Attractor point set.</p>
 </section>
 <section id="study-the-sv-main">
-<h2>Study the sv_main<a class="headerlink" href="#study-the-sv-main" title="Permalink to this headline">¶</a></h2>
+<h2>Study the sv_main<a class="headerlink" href="#study-the-sv-main" title="Permalink to this heading">¶</a></h2>
 <p>If you look carefully in <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> there’s not a lot to the whole process. <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> has two <strong>required</strong> lists; <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>. sv_main also has a argument list which you must fill with defaults, here the only variable is N so the argument list was <code class="docutils literal notranslate"><span class="pre">sv_main(N=1000)</span></code>.</p>
 <p>The lorenz function takes 2 arguments:</p>
 <ul class="simple">
@@ -172,7 +173,7 @@
 <a class="reference external" href="https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py">https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py</a></p>
 </section>
 <section id="lastly">
-<h2>Lastly<a class="headerlink" href="#lastly" title="Permalink to this headline">¶</a></h2>
+<h2>Lastly<a class="headerlink" href="#lastly" title="Permalink to this heading">¶</a></h2>
 <p>If none of this makes sense, spend time learning about Python and dig through the <code class="docutils literal notranslate"><span class="pre">node_scripts/templates</span></code> directory.</p>
 </section>
 </section>

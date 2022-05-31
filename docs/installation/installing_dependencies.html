@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -92,7 +93,7 @@
            <div itemprop="articleBody">
              
   <section id="installing-dependencies">
-<h1>Installing dependencies<a class="headerlink" href="#installing-dependencies" title="Permalink to this headline">¶</a></h1>
+<h1>Installing dependencies<a class="headerlink" href="#installing-dependencies" title="Permalink to this heading">¶</a></h1>
 <p>Sverchok can use several external libraries, that provide some mathematical or other functions.
 We call such libraries “Dependencies”. When these libraries are available, you will be able to
 use much more nodes in Sverchok. If you do not need all these features, you can skip installation
@@ -112,7 +113,7 @@ output.</p>
 button which opens the browser on an official web site of corresponding
 library, so you can find installation instructions.</p>
 <section id="install-pip">
-<h2>Install pip<a class="headerlink" href="#install-pip" title="Permalink to this headline">¶</a></h2>
+<h2>Install pip<a class="headerlink" href="#install-pip" title="Permalink to this heading">¶</a></h2>
 <p>In some cases, it may appear that Blender’s python already knows about your
 system’s installation of python (python is usually installed by default on most
 Linux distros). In such cases, you may use just <cite>pip install something</cite> to
@@ -144,9 +145,9 @@ $ /path/to/blender/2.xx/python/bin/python3 -m pip install --upgrade pip setuptoo
 <p>Please refer to <a class="reference external" href="https://pip.pypa.io/en/stable/installing/">official pip site</a> for official installation instructions.</p>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading">¶</a></h2>
 <section id="i-can-t-install-dependencies-on-windows">
-<h3>I can’t install dependencies on Windows<a class="headerlink" href="#i-can-t-install-dependencies-on-windows" title="Permalink to this headline">¶</a></h3>
+<h3>I can’t install dependencies on Windows<a class="headerlink" href="#i-can-t-install-dependencies-on-windows" title="Permalink to this heading">¶</a></h3>
 <p>It can appear that the problem is in filesystem permissions. Try running Blender from an administrator
 account and install dependencies in this mode.</p>
 <p>Another possibility is to use a prepared archive with Python libraries, for Blender 2.91
@@ -160,13 +161,13 @@ use the 2.91 archive, and for 2.93, use the 2.92 archive.</p>
 <p>If you experience some problems with use of this Zip archive, please report them in a github issue.</p>
 </section>
 <section id="i-can-t-install-dependencies-on-linux-while-using-blender-installed-from-snap">
-<h3>I can’t install dependencies on Linux, while using Blender installed from Snap<a class="headerlink" href="#i-can-t-install-dependencies-on-linux-while-using-blender-installed-from-snap" title="Permalink to this headline">¶</a></h3>
+<h3>I can’t install dependencies on Linux, while using Blender installed from Snap<a class="headerlink" href="#i-can-t-install-dependencies-on-linux-while-using-blender-installed-from-snap" title="Permalink to this heading">¶</a></h3>
 <p>Snap creates readonly file system, so you can’t put dependencies into it. The only way known to work
 reliably is to not use Blender from Snap for Sverchok, if you want to use dependencies.
 The recommended way is to just download Blender’s <cite>tar.xz</cite> from blender.org and unpack it.</p>
 </section>
 <section id="pip-install-says-that-the-package-is-already-installed-but-sverchok-can-t-see-it">
-<h3>Pip install says that the package is already installed, but Sverchok can’t see it<a class="headerlink" href="#pip-install-says-that-the-package-is-already-installed-but-sverchok-can-t-see-it" title="Permalink to this headline">¶</a></h3>
+<h3>Pip install says that the package is already installed, but Sverchok can’t see it<a class="headerlink" href="#pip-install-says-that-the-package-is-already-installed-but-sverchok-can-t-see-it" title="Permalink to this heading">¶</a></h3>
 <p>It can appear that you have the package installed into your system-wide or user-wide
 Python installation, for example into <code class="docutils literal notranslate"><span class="pre">~/.local/lib/python/...</span></code>. In this case Pip will
 see that the package is installed, but Sverchok will not be able to access it. Try to run:</p>
@@ -180,7 +181,7 @@ see that the package is installed, but Sverchok will not be able to access it. T
 <p>This time you should see that pip is actually installing package.</p>
 </section>
 <section id="other-troubles-with-pip">
-<h3>Other troubles with pip<a class="headerlink" href="#other-troubles-with-pip" title="Permalink to this headline">¶</a></h3>
+<h3>Other troubles with pip<a class="headerlink" href="#other-troubles-with-pip" title="Permalink to this heading">¶</a></h3>
 <p>If you admit some kind of errors with pip, you can try:
 Wipe all versions of pip from <cite>2.90pythonlibsite-packages</cite> and then
 run <cite>2.90pythonbin&gt; ./python.exe -m ensurepip -U</cite></p>

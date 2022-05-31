@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -96,7 +97,7 @@
            <div itemprop="articleBody">
              
   <section id="node-tree-evaluation-system">
-<h1>Node tree evaluation system<a class="headerlink" href="#node-tree-evaluation-system" title="Permalink to this headline">¶</a></h1>
+<h1>Node tree evaluation system<a class="headerlink" href="#node-tree-evaluation-system" title="Permalink to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <img alt="https://user-images.githubusercontent.com/28003269/125029133-3b55db80-e09a-11eb-8bea-3e631ad763eb.gif" src="https://user-images.githubusercontent.com/28003269/125029133-3b55db80-e09a-11eb-8bea-3e631ad763eb.gif" />
 <figcaption>
@@ -108,7 +109,7 @@ Typically, in the left side a tree has nodes which generate some data. In the mi
 which manipulate with data. And in the right side there are output nodes which save/show the result.
 The role of the evaluation system is to combine work of every single node into a meaningful work of an algorithm.</p>
 <section id="control-flow">
-<h2>Control flow<a class="headerlink" href="#control-flow" title="Permalink to this headline">¶</a></h2>
+<h2>Control flow<a class="headerlink" href="#control-flow" title="Permalink to this heading">¶</a></h2>
 <p>In general execution process of a tree is happening from left to right. There is a rule that a node can be executed
 before all previous nodes are executed. However it does not make execution process fully ordered. Consider next example.</p>
 <figure class="align-center" id="id2">
@@ -128,19 +129,19 @@ But now Sverchok can use only one processor.</p>
 </div>
 <p>There are nodes which can change control flow in some way.</p>
 <section id="group-nodes">
-<h3>Group nodes<a class="headerlink" href="#group-nodes" title="Permalink to this headline">¶</a></h3>
+<h3>Group nodes<a class="headerlink" href="#group-nodes" title="Permalink to this heading">¶</a></h3>
 <p>If there is a pattern of nodes which is repeated several times in a tree it can be converted into a group node.
 Group node encapsulates bunch of nodes inside a subtree. Evaluation system of main tree evaluate group nodes
 in the same way as regular nodes except that their work can be cancelled. Cancelling of group nodes happen between
 execution of its nodes.</p>
 </section>
 <section id="loop-nodes">
-<h3><a class="reference internal" href="nodes/logic/loop_out.html"><span class="doc">Loop nodes</span></a><a class="headerlink" href="#loop-nodes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="reference internal" href="nodes/logic/loop_out.html"><span class="doc">Loop nodes</span></a><a class="headerlink" href="#loop-nodes" title="Permalink to this heading">¶</a></h3>
 <p>Loop nodes can evaluate the same nodes multiple times. In current state the loop node takes control of the flow and
 return it to evaluation system after their part is done.</p>
 </section>
 <section id="wifi-nodes">
-<h3><a class="reference internal" href="nodes/layout/wifi_in.html"><span class="doc">Wifi nodes</span></a><a class="headerlink" href="#wifi-nodes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="reference internal" href="nodes/layout/wifi_in.html"><span class="doc">Wifi nodes</span></a><a class="headerlink" href="#wifi-nodes" title="Permalink to this heading">¶</a></h3>
 <figure class="align-right" id="id3" style="width: 400px">
 <img alt="https://user-images.githubusercontent.com/28003269/125024249-6f78ce80-e091-11eb-836f-1f8a9fcad205.png" src="https://user-images.githubusercontent.com/28003269/125024249-6f78ce80-e091-11eb-836f-1f8a9fcad205.png" />
 <figcaption>
@@ -152,16 +153,16 @@ to hide the links by using wifi nodes. <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">in</span></code> can be connected to multiple <code class="docutils literal notranslate"><span class="pre">Wifi</span> <span class="pre">out</span></code> nodes.</p>
 </section>
 <section id="reroute-nodes">
-<h3>Reroute nodes<a class="headerlink" href="#reroute-nodes" title="Permalink to this headline">¶</a></h3>
+<h3>Reroute nodes<a class="headerlink" href="#reroute-nodes" title="Permalink to this heading">¶</a></h3>
 <p>This is <img alt="reroute" src="https://user-images.githubusercontent.com/28003269/125025744-4574db80-e094-11eb-9f1a-16f8f9191ef0.png" /> <a class="reference external" href="https://docs.blender.org/manual/en/latest/interface/controls/nodes/reroute.html">standard Blender nodes</a> which are used for links organization. They just pass data to next nodes.</p>
 </section>
 <section id="other-nodes">
-<h3>Other nodes<a class="headerlink" href="#other-nodes" title="Permalink to this headline">¶</a></h3>
+<h3>Other nodes<a class="headerlink" href="#other-nodes" title="Permalink to this heading">¶</a></h3>
 <p>Also there are other nodes which can evaluate nodes on their own accord. Here is at least one of them
 <a class="reference internal" href="nodes/logic/evolver.html"><span class="doc">Evolver node</span></a>.</p>
 </section>
 <section id="muting-links">
-<h3>Muting links<a class="headerlink" href="#muting-links" title="Permalink to this headline">¶</a></h3>
+<h3>Muting links<a class="headerlink" href="#muting-links" title="Permalink to this heading">¶</a></h3>
 <figure class="align-right" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/125027738-c681a200-e097-11eb-9033-8b8924a76661.gif" src="https://user-images.githubusercontent.com/28003269/125027738-c681a200-e097-11eb-9033-8b8924a76661.gif" />
 </figure>
@@ -175,7 +176,7 @@ Sverchok. However Sverchok is moving slowly in the direction to make it possible
 </section>
 </section>
 <section id="triggers">
-<span id="sv-triggers"></span><h2>Triggers<a class="headerlink" href="#triggers" title="Permalink to this headline">¶</a></h2>
+<span id="sv-triggers"></span><h2>Triggers<a class="headerlink" href="#triggers" title="Permalink to this heading">¶</a></h2>
 <p>Each evaluation starts with update event (trigger). Each event has information about what was previously changed.
 Evaluation system use this information to evaluate only those nodes which have been effected by the change.
 Evaluation process is next. The evaluation system scans nodes from left to right. If it finds outdated nodes
@@ -220,7 +221,7 @@ objects, changing edit / object mode, mesh editing, assign materials etc.</p>
 </dd>
 </dl>
 <section id="modes-active-tree-panel">
-<h3>Modes (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this headline">¶</a></h3>
+<h3>Modes (<a class="reference internal" href="user_interface/panels.html#active-tree-panel"><span class="std std-ref">Active Tree Properties</span></a>)<a class="headerlink" href="#modes-active-tree-panel" title="Permalink to this heading">¶</a></h3>
 <dl class="simple">
 <dt>Live update</dt><dd><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -239,7 +240,7 @@ property enabled.</p>
 </section>
 </section>
 <section id="animation">
-<h2>Animation<a class="headerlink" href="#animation" title="Permalink to this headline">¶</a></h2>
+<h2>Animation<a class="headerlink" href="#animation" title="Permalink to this heading">¶</a></h2>
 <figure class="align-right" id="id4" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/124884635-83fe8d80-dfe3-11eb-903d-e6c2922e41ca.gif" src="https://user-images.githubusercontent.com/28003269/124884635-83fe8d80-dfe3-11eb-903d-e6c2922e41ca.gif" />
 <figcaption>
@@ -264,7 +265,7 @@ they won’t react upon actual frame changes and you won’t find them in the gr
 </div>
 </section>
 <section id="handling-errors">
-<h2>Handling errors<a class="headerlink" href="#handling-errors" title="Permalink to this headline">¶</a></h2>
+<h2>Handling errors<a class="headerlink" href="#handling-errors" title="Permalink to this heading">¶</a></h2>
 <figure class="align-right" id="id5" style="width: 300px">
 <img alt="https://user-images.githubusercontent.com/28003269/124915446-9805b780-e002-11eb-8df0-b0b9e53d91dc.png" src="https://user-images.githubusercontent.com/28003269/124915446-9805b780-e002-11eb-8df0-b0b9e53d91dc.png" />
 <figcaption>
@@ -297,7 +298,7 @@ of next nodes.</p>
 </div>
 </section>
 <section id="progress-message">
-<h2>Progress message<a class="headerlink" href="#progress-message" title="Permalink to this headline">¶</a></h2>
+<h2>Progress message<a class="headerlink" href="#progress-message" title="Permalink to this heading">¶</a></h2>
 <figure class="align-right" id="id6" style="width: 350px">
 <img alt="https://user-images.githubusercontent.com/28003269/124924441-84f7e500-e00c-11eb-9b5f-c91329f635cd.gif" src="https://user-images.githubusercontent.com/28003269/124924441-84f7e500-e00c-11eb-9b5f-c91329f635cd.gif" />
 <figcaption>

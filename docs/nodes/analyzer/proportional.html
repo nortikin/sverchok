@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -163,14 +164,14 @@
            <div itemprop="articleBody">
              
   <section id="proportional-edit-falloff">
-<h1>Proportional Edit Falloff<a class="headerlink" href="#proportional-edit-falloff" title="Permalink to this headline">¶</a></h1>
+<h1>Proportional Edit Falloff<a class="headerlink" href="#proportional-edit-falloff" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node implements Blender’s concept of “proportional edit mode” in Sverchok. It converts vertex selection mask into selection coefficients. Vertices selected by mask get the coefficient of 1.0. Vertices that are farther than specified radius from selection, get the coefficient of 0.0.</p>
 <p>Supported falloff modes are basically the same as Blender’s.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -179,7 +180,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Falloff type</strong>. Proportional edit falloff type. Supported values are:</p>
@@ -198,11 +199,11 @@
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has one output: <strong>Coeffs</strong>. It contains one real value for each input vertex. All values are between 0.0 and 1.0.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Drag a circle on one side of the box, with Smooth falloff:</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/24107714/ae5db56a-0db5-11e7-860e-0156b8b10283.png" src="https://cloud.githubusercontent.com/assets/284644/24107714/ae5db56a-0db5-11e7-860e-0156b8b10283.png" />
 <p>All the same, but with Const falloff:</p>

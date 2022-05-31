@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -189,9 +190,9 @@
            <div itemprop="articleBody">
              
   <section id="blend-curves">
-<h1>Blend Curves<a class="headerlink" href="#blend-curves" title="Permalink to this headline">¶</a></h1>
+<h1>Blend Curves<a class="headerlink" href="#blend-curves" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node takes two or more Curve objects, and connects them by adding new
 curve(s) in the middle, to generate a smooth blending. For example, the end of
 the first curve is connected to the beginning of the second curve. Generated
@@ -199,7 +200,7 @@ blending curves are Bezier curves. It is possible to define how smooth the
 connection between initial curves and blending curve(s) should be.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve1</strong>. First curve to be blended. This input is available and mandatory
@@ -224,7 +225,7 @@ set to <strong>BiArc</strong>. This defines the value of P parameter of the fami
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Continuity</strong>. This defines how smooth the connection between initial curves
@@ -280,7 +281,7 @@ curves only. Checked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated curve (or list of curves).</p></li>
@@ -288,7 +289,7 @@ curves only. Checked by default.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate two cubic curves from mesh objects (one of them is white - selected,
 another is black - unselected); and blend them together with a smooth curve:</p>
 <img alt="https://user-images.githubusercontent.com/284644/82763139-eb2ca300-9e1e-11ea-9e21-a11232adc29c.png" src="https://user-images.githubusercontent.com/284644/82763139-eb2ca300-9e1e-11ea-9e21-a11232adc29c.png" />

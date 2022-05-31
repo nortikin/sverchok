@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -144,7 +145,7 @@
            <div itemprop="articleBody">
              
   <section id="join-tris">
-<h1>join tris<a class="headerlink" href="#join-tris" title="Permalink to this headline">¶</a></h1>
+<h1>join tris<a class="headerlink" href="#join-tris" title="Permalink to this heading">¶</a></h1>
 <p>The workhorse code of this node is essentially a bmesh.operator (bmesh.ops):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">join_tris</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">verts</span><span class="p">:</span>
@@ -171,12 +172,12 @@
 </div>
 <img alt="https://user-images.githubusercontent.com/619340/78026930-bccda280-735c-11ea-809e-b60a51b9938d.png" src="https://user-images.githubusercontent.com/619340/78026930-bccda280-735c-11ea-809e-b60a51b9938d.png" />
 <section id="params">
-<h2>params<a class="headerlink" href="#params" title="Permalink to this headline">¶</a></h2>
+<h2>params<a class="headerlink" href="#params" title="Permalink to this heading">¶</a></h2>
 <p>Face Threshold.
 Shape Threshold.</p>
 </section>
 <section id="the-inputs-and-outputs">
-<h2>The inputs and outputs<a class="headerlink" href="#the-inputs-and-outputs" title="Permalink to this headline">¶</a></h2>
+<h2>The inputs and outputs<a class="headerlink" href="#the-inputs-and-outputs" title="Permalink to this heading">¶</a></h2>
 <p>Verts and Polygons</p>
 </section>
 </section>

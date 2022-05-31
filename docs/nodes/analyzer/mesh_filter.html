@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -164,14 +165,14 @@
            <div itemprop="articleBody">
              
   <section id="mesh-filter">
-<h1>Mesh Filter<a class="headerlink" href="#mesh-filter" title="Permalink to this headline">¶</a></h1>
+<h1>Mesh Filter<a class="headerlink" href="#mesh-filter" title="Permalink to this heading">¶</a></h1>
 <p><em>destination after Beta: Analyzers</em></p>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node sorts vertices, edges or faces of input mesh by several available criteria: boundary vs interior, convex vs concave and so on. For each criteria, it puts “good” and “bad” mesh elements to different outputs. Also mask output is available for each criteria.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -180,7 +181,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Mode</strong>. Which sort of mesh elements to operate on. There are three modes available: Vertices, Edges and Faces.</p></li>
@@ -188,13 +189,13 @@
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Set of outputs depends on selected mode. See description of modes below.</p>
 </section>
 <section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this headline">¶</a></h2>
+<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
 <section id="vertices">
-<h3>Vertices<a class="headerlink" href="#vertices" title="Permalink to this headline">¶</a></h3>
+<h3>Vertices<a class="headerlink" href="#vertices" title="Permalink to this heading">¶</a></h3>
 <p>The following filtering criteria are available for the <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> mode:</p>
 <dl class="simple">
 <dt>Wire.</dt><dd><p>Vertices that are not connected to any faces.</p>
@@ -217,7 +218,7 @@
 <p>Note that since in this mode the node filters vertices, the indicies of vertices in input list are not valid for lists in <code class="docutils literal notranslate"><span class="pre">YesVertices</span></code> and <code class="docutils literal notranslate"><span class="pre">NoVertices</span></code> outputs. So in edges and faces outputs, this node takes this filtering into account. Indicies in <code class="docutils literal notranslate"><span class="pre">YesEdges</span></code> output are valid for list of vertices in <code class="docutils literal notranslate"><span class="pre">YesVertices</span></code> output, and so on.</p>
 </section>
 <section id="edges">
-<h3>Edges<a class="headerlink" href="#edges" title="Permalink to this headline">¶</a></h3>
+<h3>Edges<a class="headerlink" href="#edges" title="Permalink to this heading">¶</a></h3>
 <p>The following filtering criteria are available for the <code class="docutils literal notranslate"><span class="pre">Edges</span></code> mode:</p>
 <dl class="simple">
 <dt>Wire.</dt><dd><p>Edges that are not connected to any faces.</p>
@@ -241,7 +242,7 @@
 </ul>
 </section>
 <section id="faces">
-<h3>Faces<a class="headerlink" href="#faces" title="Permalink to this headline">¶</a></h3>
+<h3>Faces<a class="headerlink" href="#faces" title="Permalink to this heading">¶</a></h3>
 <p>For this mode, only one filtering criteria is available: interior faces vs boundary faces. Boundary face is a face, any edge of which is boundary. All other faces are considered interior.</p>
 <p>The following outputs are used in this mode:</p>
 <ul class="simple">
@@ -252,7 +253,7 @@
 </section>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Move only boundary vertices of plane grid:</p>
 <img alt="https://cloud.githubusercontent.com/assets/284644/6081558/53b7ea70-ae3c-11e4-9c32-b147be11af5b.png" src="https://cloud.githubusercontent.com/assets/284644/6081558/53b7ea70-ae3c-11e4-9c32-b147be11af5b.png" />
 <p>Bevel only concave edges:</p>

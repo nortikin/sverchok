@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -143,9 +144,9 @@
            <div itemprop="articleBody">
              
   <section id="circle">
-<h1>Circle<a class="headerlink" href="#circle" title="Permalink to this headline">¶</a></h1>
+<h1>Circle<a class="headerlink" href="#circle" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Circle generator creates circles based on the radius and the number of vertices. What does that mean? It means that if the number of vertices is too low, ir will stop being a circle and will be a regular polygon, in example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="mi">3</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">triangle</span><span class="o">.</span>
 <span class="o">-</span> <span class="mi">4</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">square</span>
@@ -158,7 +159,7 @@
 <p>This node will also create sector or segment of circles using the <strong>Degrees</strong> option. See the examples below to see it working also with the <strong>mode</strong> option.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is three inputs:</p>
 <ul class="simple">
@@ -174,7 +175,7 @@ There is three inputs:</p>
 </div>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except <strong>Mode</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -215,7 +216,7 @@ There is three inputs:</p>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong>, <strong>Edges</strong> and <strong>Polygons</strong>.
 All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent circles. In example:</p>
 <img alt="CircleDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4187227/07366302-3768-11e4-8e9c-4068c9ce6773.png" />
@@ -224,7 +225,7 @@ All outputs will be generated. Depending on the type of the inputs, the node wil
 <p>If <strong>Degrees</strong> is minor than 0, depending of the <strong>mode</strong> state, will be generated a sector or a segment of a circle with that degrees angle.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="CircleDemo3.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4186877/ab2f2e98-3764-11e4-9cd6-502228eec31c.png" />
 <p>In this first example we see that circle generator can be a circle but also any regular polygon that you want.</p>
 <img alt="CircleDemo4.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4186876/ab2edf4c-3764-11e4-980e-d9beb10b16d8.png" />

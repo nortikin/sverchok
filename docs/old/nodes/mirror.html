@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,9 +77,9 @@
            <div itemprop="articleBody">
              
   <section id="mirror">
-<h1>Mirror<a class="headerlink" href="#mirror" title="Permalink to this headline">¶</a></h1>
+<h1>Mirror<a class="headerlink" href="#mirror" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node is used to make general mirroring over geometry. It works directly over vertices, not with matrixes. It offers 3 different types of mirror:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -102,10 +103,10 @@ Mirror over a plane given by a matrix</p></td>
 </table>
 </section>
 <section id="vertex-mirror">
-<h2>Vertex Mirror<a class="headerlink" href="#vertex-mirror" title="Permalink to this headline">¶</a></h2>
+<h2>Vertex Mirror<a class="headerlink" href="#vertex-mirror" title="Permalink to this heading">¶</a></h2>
 <p>This mode let us define a center point and a make mirror of the incoming Vertices</p>
 <section id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is two inputs:</p>
 <ul class="simple">
@@ -114,7 +115,7 @@ There is two inputs:</p>
 </ul>
 </section>
 <section id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h3>
 <p>Defult value for <strong>Vert A</strong> is equal to <code class="docutils literal notranslate"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></code>. Vertices need an input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -145,20 +146,20 @@ There is two inputs:</p>
 </table>
 </section>
 <section id="outputs">
-<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h3>
 <p>Only <strong>Vertices</strong> will be generated. Depending on the type of the inputs, if they have more than one object, then more objects will be outputted.</p>
 </section>
 <section id="example-of-usage">
-<h3>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h3>
 <img alt="VertexMirrorDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4220321/a14a9c58-3900-11e4-8f98-a30dbe7a8b34.png" />
 <p>In this example we use Vertex mirror to mirroring an arbitrary shape. As you can see every point goes through the center point.</p>
 </section>
 </section>
 <section id="axis-mirror">
-<h2>Axis Mirror<a class="headerlink" href="#axis-mirror" title="Permalink to this headline">¶</a></h2>
+<h2>Axis Mirror<a class="headerlink" href="#axis-mirror" title="Permalink to this heading">¶</a></h2>
 <p>This mode is used to make mirroring around an axis defined by two vertices.</p>
 <section id="id1">
-<h3>Inputs<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is three inputs:</p>
 <ul class="simple">
@@ -168,7 +169,7 @@ There is three inputs:</p>
 </ul>
 </section>
 <section id="id2">
-<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
 <p>There is default values for <strong>Vert A</strong> and <strong>vert B</strong>. <strong>Vertices</strong> need an input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -204,20 +205,20 @@ There is three inputs:</p>
 </table>
 </section>
 <section id="id3">
-<h3>Outputs<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
 <p>Only <strong>Vertices</strong> will be generated. Depending on the type of the inputs, if one or more inputs have multiple values, then more objects will be mirrored.</p>
 </section>
 <section id="id4">
-<h3>Example of usage<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
 <img alt="AxisMirrorDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4220319/a1340b8c-3900-11e4-93f6-d78e458c77d4.png" />
 <p>We define an axis with two vertices and use them to make a mirror. All the points reflect through the chosen axis.</p>
 </section>
 </section>
 <section id="plane-mirror">
-<h2>Plane Mirror<a class="headerlink" href="#plane-mirror" title="Permalink to this headline">¶</a></h2>
+<h2>Plane Mirror<a class="headerlink" href="#plane-mirror" title="Permalink to this heading">¶</a></h2>
 <p>This is the most common method of mirroring. We’ll use a plane defined by a matrix.</p>
 <section id="id5">
-<h3>Inputs<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is two inputs:</p>
 <ul class="simple">
@@ -226,7 +227,7 @@ There is two inputs:</p>
 </ul>
 </section>
 <section id="id6">
-<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
 <p>Plane has a defult value, but Vertices need an input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -257,11 +258,11 @@ There is two inputs:</p>
 </table>
 </section>
 <section id="id7">
-<h3>Outputs<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
 <p>Only <strong>Vertices</strong> will be generated. Depending on the type of the inputs, if one or more planes are defined, then more objects will be mirrored.</p>
 </section>
 <section id="id8">
-<h3>Example of usage<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
 <img alt="PlaneMirrorDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4220320/a13edcd8-3900-11e4-9ae6-088583f7560c.png" />
 <p>In this last case we just mirror the shape over the selected plane, defined by a matrix.</p>
 </section>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -131,12 +132,12 @@
            <div itemprop="articleBody">
              
   <section id="datetime-strings">
-<h1>Datetime Strings<a class="headerlink" href="#datetime-strings" title="Permalink to this headline">¶</a></h1>
+<h1>Datetime Strings<a class="headerlink" href="#datetime-strings" title="Permalink to this heading">¶</a></h1>
 <p>This is a beta node. Please visit  <a class="reference external" href="https://github.com/nortikin/sverchok/pull/2137">https://github.com/nortikin/sverchok/pull/2137</a></p>
 <p>This node processes dates formatted as text, and lets you convert them into an ordinal (a day indication, an integer). It also supports the subordinal (float, what percent into the day, <em>seconds / total_seconds_in_day</em> ).</p>
 <p>If you intend to use this node it is important that you absorb the documentation that accompanies the Python datetime module. Especially of interest should be <em>strptime</em> and <em>strftime</em> and the examples that demonstrate how to interact with string representations of dates.</p>
 <section id="features">
-<h2>Features:<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<h2>Features:<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><em>Ordinal</em> is an integer representing a day, this is the kind of precision that is useful if you are working on the scale of months, years or decades.</p></li>
 <li><p><em>Subordinal</em> is more precise and gives the ratio (using seconds) of how far into the day it is. This date information needs hours/minutes/seconds to be provided. Useful for timescales of hours, days or weeks..</p></li>

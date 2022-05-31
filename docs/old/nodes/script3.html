@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,7 +77,7 @@
            <div itemprop="articleBody">
              
   <section id="scripted-node-2-generator">
-<h1>Scripted Node 2(Generator)<a class="headerlink" href="#scripted-node-2-generator" title="Permalink to this headline">¶</a></h1>
+<h1>Scripted Node 2(Generator)<a class="headerlink" href="#scripted-node-2-generator" title="Permalink to this heading">¶</a></h1>
 <p>aka Script Node MK2</p>
 <ul class="simple">
 <li><p>Introduction</p></li>
@@ -89,7 +90,7 @@
 <li><p>Limitations</p></li>
 </ul>
 <section id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
 <p>When you want to express an idea in written form and the concept is suitable
 for a one line Python expression then often you can use a Formula node. If you
 need access to imports, classes, temporary variables, and functions then you can
@@ -101,7 +102,7 @@ on the function. Scripts using the templates automatically becomes more powerful
 <p>It’s a prototype so bug reports, questions and feature request are very welcome.</p>
 </section>
 <section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
 <p>allows:</p>
 <ul class="simple">
 <li><p>Loading/Reloading scripts currently in TextEditor</p></li>
@@ -112,7 +113,7 @@ on the function. Scripts using the templates automatically becomes more powerful
 </ul>
 </section>
 <section id="structure">
-<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this heading">¶</a></h2>
 <p>At present all scripts for SN2 must:</p>
 <ul class="simple">
 <li><p>be subclasses SvScript</p></li>
@@ -176,11 +177,11 @@ avoid as class attributes or only used for the intended meaning. To be described
 <code class="docutils literal notranslate"><span class="pre">node</span></code>, <code class="docutils literal notranslate"><span class="pre">draw_buttons</span></code>, <code class="docutils literal notranslate"><span class="pre">update</span></code>, <code class="docutils literal notranslate"><span class="pre">process</span></code>, <code class="docutils literal notranslate"><span class="pre">enum_func</span></code>, <code class="docutils literal notranslate"><span class="pre">inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">outputs</span></code></p>
 </section>
 <section id="templates">
-<h2>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
+<h2>Templates<a class="headerlink" href="#templates" title="Permalink to this heading">¶</a></h2>
 <p>Sverchok includes a series of examples for the different templates.</p>
 </section>
 <section id="conveniences">
-<h2>Conveniences<a class="headerlink" href="#conveniences" title="Permalink to this headline">¶</a></h2>
+<h2>Conveniences<a class="headerlink" href="#conveniences" title="Permalink to this heading">¶</a></h2>
 <p>We value our time, we are sure you do too, so features have been added to help speed up the
 script creation process.</p>
 <p><strong>Text Editor</strong></p>
@@ -197,7 +198,7 @@ script creation process.</p>
 </div></blockquote>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
 <p>Using <code class="docutils literal notranslate"><span class="pre">SvScriptSimpleGenerator</span></code> and <code class="docutils literal notranslate"><span class="pre">SvScriptSimpleFunction</span></code> you limit inputs to deal with one object.
 For plane, for example, you’ll get next data:</p>
 <blockquote>
@@ -207,7 +208,7 @@ For plane, for example, you’ll get next data:</p>
 class and <code class="docutils literal notranslate"><span class="pre">self.node.inputs[0].sv_get()</span></code> function.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>The best way to get familiarity with Script Node 2 is to go through the templates folder.
 They are intended to be lightweight and educational, but some of them will show
 advanced use cases. The images and animations on this <a class="reference external" href="https://github.com/nortikin/sverchok/issues/439">thread on github</a>.
@@ -315,7 +316,7 @@ but in general it is good practice to keep them free from side effects.:</p>
 </div>
 </section>
 <section id="breakout-scripts">
-<h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Permalink to this headline">¶</a></h2>
+<h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Permalink to this heading">¶</a></h2>
 <p>Scripts that needs to access the node can do so via the <code class="docutils literal notranslate"><span class="pre">`self.node`</span></code> variable
 that is automatically set.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Breakout</span><span class="p">(</span><span class="n">SvScript</span><span class="p">):</span>
@@ -335,7 +336,7 @@ that is automatically set.:</p>
 And other <code class="docutils literal notranslate"><span class="pre">`self.node.`</span></code> operations possible from this class.</p>
 </section>
 <section id="techniques-to-improve-python-performance">
-<h2>Techniques to improve Python performance<a class="headerlink" href="#techniques-to-improve-python-performance" title="Permalink to this headline">¶</a></h2>
+<h2>Techniques to improve Python performance<a class="headerlink" href="#techniques-to-improve-python-performance" title="Permalink to this heading">¶</a></h2>
 <p>There are many ways to speed up python code. Some slowness will be down to
 innefficient algorithm design, other slowness is caused purely by how much
 processing is minimally required to solve a problem. A decent read regarding
@@ -347,7 +348,7 @@ if your efforts to optimize will have any significant impact.</p>
 <a class="reference external" href="http://users.ece.utexas.edu/~adnan/pike.html">http://users.ece.utexas.edu/~adnan/pike.html</a></p>
 </section>
 <section id="id1">
-<h2>Limitations<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <p>Most limitations are voided by increasing your Python and <code class="docutils literal notranslate"><span class="pre">bpy</span></code> skills. But
 one should also realize what is approriate for a node script to do.</p>
 <p>That’s it for now.</p>

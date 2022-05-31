@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -138,15 +139,15 @@
            <div itemprop="articleBody">
              
   <section id="matrix-track-to">
-<h1>Matrix Track To<a class="headerlink" href="#matrix-track-to" title="Permalink to this headline">¶</a></h1>
+<h1>Matrix Track To<a class="headerlink" href="#matrix-track-to" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates the transformation <strong>matrix</strong> given a location, a scale and a rotation defined by the given set of Track &amp; Up vectors.</p>
 <p>The “Track/Up Axes” and the “Track/Up Mapping” settings allow to set any two of the X, Y, Z axes to be the <strong>Track</strong> axis and the <strong>Up</strong> axis and to map them to any of the two input vectors A and B (or to their negatives). The first axis listed in these dropdown lists is the Track axis/vector and the second is the Up axis/vector.</p>
 <p>The axis selected to be the Track axis (the first letter in “Track/Up Axes” selection) will be precisely oriented along the Track vector (whichever the Track vector is mapped to, based on the “Track/Up mapping”), while the axis selected to be the Up axis (the second letter the “Track/Up Axes” selection) will be approximately oriented along the Up vector (whichever the Up vector is mapped to, based on the “Track/Up mapping” selection). If the A and B inputs happen to be orthogonal to eachother then the Track and Up axes will be precisely oriented along the selected Track/Up vectors, otherwise the Up axis will only approximately be oriented towards the Up vector, perpendicular to the Track axis, and reside within the AB plane. The third axis (X, Y or Z) is determined via cross product from the other two as to provide an ortho-normal, right handed, XYZ coordinate system.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>Location</strong></p></li>
@@ -156,7 +157,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Track/Up Axes</strong></p></li>
 <li><p><strong>Track/Up Mapping</strong></p></li>
@@ -237,7 +238,7 @@ axis and the Up axis.</p></td>
 </table>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
 <p>A set of extra parameters are available on the property panel. These parameters do not receive external input.</p>
 <ul class="simple">
 <li><p><strong>Normalize Vectors</strong></p></li>
@@ -281,7 +282,7 @@ matrix lists ([[M,M,..],[M,M,..],..]).</p></td>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Matrix</strong>, <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong>.
 All outputs will be generated when connected.</p>
 <p>The <strong>Matrix</strong> is the homogeneous 4x4 matrix composed by the given location, rotation and scale : m = T * R * S. [1]</p>
@@ -291,7 +292,7 @@ All outputs will be generated when connected.</p>
 [2] : The axes are ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel), otherwise the vectors are only orthogonal.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 

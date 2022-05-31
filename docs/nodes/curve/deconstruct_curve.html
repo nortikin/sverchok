@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -188,9 +189,9 @@
            <div itemprop="articleBody">
              
   <section id="deconstruct-curve">
-<h1>Deconstruct Curve<a class="headerlink" href="#deconstruct-curve" title="Permalink to this headline">¶</a></h1>
+<h1>Deconstruct Curve<a class="headerlink" href="#deconstruct-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node deconstructs any NURBS or NURBS-like curve into it’s main components:
 control points, weights and so on.</p>
 <p>At the moment, this node can effectively work with the following types of curves:</p>
@@ -210,14 +211,14 @@ them.</p>
 points, for example), so outputs will be empty.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be decomposed. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Degree</strong>. Curve degree. If the curve is not NURBS-like, this output will
@@ -234,7 +235,7 @@ NURBS-like, this output will contain an empty list.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>NURBS components of interpolating cubic spline:</p>
 <img alt="https://user-images.githubusercontent.com/284644/90808602-b8b91600-e339-11ea-9a1c-ff7b15009c00.png" src="https://user-images.githubusercontent.com/284644/90808602-b8b91600-e339-11ea-9a1c-ff7b15009c00.png" />
 <p>Circular arc can also be represented as a NURBS curve:</p>

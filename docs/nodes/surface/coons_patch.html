@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -171,9 +172,9 @@
            <div itemprop="articleBody">
              
   <section id="surface-from-four-curves">
-<h1>Surface from Four Curves<a class="headerlink" href="#surface-from-four-curves" title="Permalink to this headline">¶</a></h1>
+<h1>Surface from Four Curves<a class="headerlink" href="#surface-from-four-curves" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object from exactly four Curve object, that
 define the boundary of the surface. For example, it can build a plane square
 from four edges of that square.</p>
@@ -194,7 +195,7 @@ node will create a generic Coons surface.</p>
 <p>Surface domain: from 0 to 1 in both directions.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. The list of curves to build a surface form. This input can accept
@@ -208,7 +209,7 @@ to <strong>4 Curves</strong>.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Input</strong>. This defines how the curves are provided. The following options are available:</p>
@@ -247,14 +248,14 @@ another reason, the node will create a generic Surface object.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated surface.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build four curves and generate a Coons patch from them:</p>
 <img alt="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" src="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" />
 <p>Similar example with “filleted polylines” as curves instead of cubic splines:</p>

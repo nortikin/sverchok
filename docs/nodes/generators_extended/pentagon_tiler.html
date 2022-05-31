@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -141,21 +142,21 @@
            <div itemprop="articleBody">
              
   <section id="pentagon-tiler">
-<h1>Pentagon Tiler<a class="headerlink" href="#pentagon-tiler" title="Permalink to this headline">¶</a></h1>
+<h1>Pentagon Tiler<a class="headerlink" href="#pentagon-tiler" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The Pentagon Tiler node creates a pentagon array assembled to fill the plane. It can work with different types of pentagons</p>
 <p>The generated lattice points and tiles are confined to one of the selected layouts: rectangle, triangle, diamond and hexagon.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The <strong>Type</strong> parameter allows to select the type of pentagon.</p>
 <p>The <strong>Rotation</strong> parameter allows to select the base angle, aligned with X axis, Y axis or aligned with the pentagon tile</p>
 <p>The <strong>Center</strong> parameter allows to center the grid around the origin.</p>
 <p>The <strong>Separate</strong> parameter allows for the individual primitive tiles (vertices, edges &amp; polygons) to be separated into individual lists in the corresponding outputs.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>Angle</strong> : Rotate the grid around origin by this amount</p></li>
@@ -166,7 +167,7 @@
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Angle Units</strong>: Choose if the input angles will be interpreted as Degrees or Radians</p>
 <p><strong>Flat output</strong>: Flatten output by list-joining level 1 and unwarping it (default set to True)</p>
@@ -174,7 +175,7 @@
 <p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching inside groups (level 2)</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Outputs will be generated when connected.</p>
 <p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong>
 These are the vertices, edges and polygons of the pentagonal tiles centered on the lattice points of the selected layout.</p>
@@ -183,7 +184,7 @@ These are the vertices, edges and polygons of the pentagonal tiles centered on t
 - If <strong>Separate</strong> is OFF (joined tiles),  the overlapping vertices will be merged.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/10011941/71754304-df4b3f00-2e85-11ea-8feb-99e375ffca8d.png" src="https://user-images.githubusercontent.com/10011941/71754304-df4b3f00-2e85-11ea-8feb-99e375ffca8d.png" />
 <img alt="https://user-images.githubusercontent.com/10011941/71755025-15d68900-2e89-11ea-83e0-3328446fa47d.png" src="https://user-images.githubusercontent.com/10011941/71755025-15d68900-2e89-11ea-83e0-3328446fa47d.png" />
 <img alt="https://user-images.githubusercontent.com/10011941/71755215-e1af9800-2e89-11ea-9ba9-d23de15b2dbb.png" src="https://user-images.githubusercontent.com/10011941/71755215-e1af9800-2e89-11ea-9ba9-d23de15b2dbb.png" />

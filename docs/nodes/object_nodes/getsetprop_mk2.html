@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -142,9 +143,9 @@
            <div itemprop="articleBody">
              
   <section id="get-property-set-property">
-<h1>Get Property / Set Property<a class="headerlink" href="#get-property-set-property" title="Permalink to this headline">¶</a></h1>
+<h1>Get Property / Set Property<a class="headerlink" href="#get-property-set-property" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>These nodes can be used to control almost anything in Blender once you know the python path. For instance if you want to <code class="docutils literal notranslate"><span class="pre">Set</span></code> the location of a scene object called <code class="docutils literal notranslate"><span class="pre">Cube</span></code>, the python path is <code class="docutils literal notranslate"><span class="pre">bpy.data.objects['Cube'].location</span></code>.</p>
 <p>By default these nodes don’t expose their input / output sockets, but they will appear if the node was able to find a compatible property in the path you provided.  If you are trying a path and it’s not wortking and no socket is appearing, please let us know in the issue tracker and we’ll try to fix it.</p>
 <p>The Socket types that the node generates depend on the kind of data path you gave it. It knows about Matrices and Vectors and Numbers etc..</p>
@@ -174,18 +175,18 @@
 <p>this is not the full path, you will need to add the path to the <code class="docutils literal notranslate"><span class="pre">node_tree</span></code>, something like: <code class="docutils literal notranslate"><span class="pre">bpy.data.materials['Material'].node_tree.nodes[&quot;ColorRamp&quot;].color_ramp.elements[0].color</span></code>, then the node will know what your intention is.</p>
 </section>
 <section id="alias-nodes">
-<h2>Alias <code class="docutils literal notranslate"><span class="pre">nodes</span></code><a class="headerlink" href="#alias-nodes" title="Permalink to this headline">¶</a></h2>
+<h2>Alias <code class="docutils literal notranslate"><span class="pre">nodes</span></code><a class="headerlink" href="#alias-nodes" title="Permalink to this heading">¶</a></h2>
 <p>The alias <code class="docutils literal notranslate"><span class="pre">nodes</span></code> allows you to reference nodes in the current node tree (ie, a sverchok node tree) by writing:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;your node&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">default_int_property</span>
 </pre></div>
 </div>
 </section>
 <section id="alias-ng">
-<h2>Alias <code class="docutils literal notranslate"><span class="pre">ng</span></code><a class="headerlink" href="#alias-ng" title="Permalink to this headline">¶</a></h2>
+<h2>Alias <code class="docutils literal notranslate"><span class="pre">ng</span></code><a class="headerlink" href="#alias-ng" title="Permalink to this heading">¶</a></h2>
 <p>If you are referencing a different sverchok nodetree, you write <code class="docutils literal notranslate"><span class="pre">ng[&quot;NodeTreeName&quot;].nodes[&quot;NodeName]..etc</span></code></p>
 </section>
 <section id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this headline">¶</a></h2>
+<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">Set</span></code> mode</p>
 <table class="docutils align-default">
 <colgroup>
@@ -205,7 +206,7 @@
 </table>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
 <p>In <code class="docutils literal notranslate"><span class="pre">Get</span></code> mode</p>
 <table class="docutils align-default">
 <colgroup>
@@ -225,16 +226,16 @@
 </table>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The only parameter is the python path to the property you want to set or get. Usually we search this manually using Blender’s Python console.</p>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
 <p>Because this is a generic set/get nodeset, the backend is relatively heavy on logic to provide the simplest user interface. This means sometimes we’ll encounter new properties that aren’t yet matched in our internal logic, and won’t result in a socket or expected behaviour. Let us know when you find such properties and we can adjust our code.</p>
 <p>When piping values into our nodetree from a property of a material or some other Blend object, that value will not update automatically in the Sverchok nodetree until the nodetree is told specifically to update. You can update the nodetree manually several ways, but the handiest is usually a simple framechange (kb left/right). Another way is to have animation running.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/619340/11468741/2a1aa3c4-9752-11e5-85d9-13cd8478c0d2.png" src="https://cloud.githubusercontent.com/assets/619340/11468741/2a1aa3c4-9752-11e5-85d9-13cd8478c0d2.png" />
 <img alt="https://cloud.githubusercontent.com/assets/619340/11468834/a9eaa342-9752-11e5-8ea9-76a0b678c2a4.png" src="https://cloud.githubusercontent.com/assets/619340/11468834/a9eaa342-9752-11e5-8ea9-76a0b678c2a4.png" />
 <p>Using aliases <code class="docutils literal notranslate"><span class="pre">objs</span></code> instead of <code class="docutils literal notranslate"><span class="pre">bpy.data.objects</span></code></p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -139,14 +140,14 @@
            <div itemprop="articleBody">
              
   <section id="apply-matrix-to-mesh">
-<h1>Apply Matrix to Mesh<a class="headerlink" href="#apply-matrix-to-mesh" title="Permalink to this headline">¶</a></h1>
+<h1>Apply Matrix to Mesh<a class="headerlink" href="#apply-matrix-to-mesh" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Applies a Transform Matrix to a list or nested lists of vertices, edges and faces. If several matrices are provided on the input, then this node will produce several meshes.</p>
 <p><strong>Note</strong>. Unless there is further processing going on which explicitly require the duplicated topology, then letting the <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> or <code class="docutils literal notranslate"><span class="pre">BMesh</span> <span class="pre">Viewer</span></code> nodes automatically repeat the index lists for the edges and faces is slightly more efficient than use of this node.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Represents vertices or intermediate vectors used for further vector math.</p></li>
@@ -156,19 +157,19 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <p><strong>Join</strong>. If set, then this node will join output meshes into one mesh, the same way as <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Join</span></code> node does.
 Otherwise, if N matrices are provided at the input, this node will produce N lists of vertices, N lists of edges and N lists of faces.</p>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Implementation</strong>: ‘NumPy’ or ‘Python’. As a general rule in this node the Numpy implementation will be faster if any input is a NumPy array or you want to get NumPy arrays from the outputs. If the surrounding nodes are using python list the performance of both implementations will depend on many factors. With a light geometry but many matrices the Python implementation will be faster, as heavier gets the input geometry and less the matrices number the NumPy implementation will start being a better choice. Also if the incoming topology of polygons is regular the NumPy implementation will increase its performance while the Python implementation will not be affected by that parameter.</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Polygons in the NumPy implementation</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>.  Nested list of vectors / vertices, matching the number nested incoming <em>matrices</em>.</p></li>
@@ -177,7 +178,7 @@ Otherwise, if N matrices are provided at the input, this node will produce N lis
 </ul>
 </section>
 <section id="usage-of-nested-lists-of-matrices">
-<h2>Usage of nested lists of matrices<a class="headerlink" href="#usage-of-nested-lists-of-matrices" title="Permalink to this headline">¶</a></h2>
+<h2>Usage of nested lists of matrices<a class="headerlink" href="#usage-of-nested-lists-of-matrices" title="Permalink to this heading">¶</a></h2>
 <p>The node can handle with list of lists of matrices.
 It means that each object mesh has it’s own list of matrices to apply.
 Applying list of matrices to a mesh creates its copies inside an object and transform its.
@@ -185,7 +186,7 @@ Usage case is when there are bunch of separate meshes which should be copied ins
 In this mode and with numpy implementation mode you will get numpy output for vertices and edges anyway.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/284644/6096652/ac13659e-afbf-11e4-83c9-e13b75c0e346.png" src="https://cloud.githubusercontent.com/assets/284644/6096652/ac13659e-afbf-11e4-83c9-e13b75c0e346.png" />
 <img alt="https://cloud.githubusercontent.com/assets/284644/6096654/b300fbfa-afbf-11e4-901b-1361a44238c2.png" src="https://cloud.githubusercontent.com/assets/284644/6096654/b300fbfa-afbf-11e4-901b-1361a44238c2.png" />
 <p><strong>Example of usage of nested list of matrices (list of lists of matrices):</strong></p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -135,9 +136,9 @@
            <div itemprop="articleBody">
              
   <section id="list-join">
-<h1>List Join<a class="headerlink" href="#list-join" title="Permalink to this headline">¶</a></h1>
+<h1>List Join<a class="headerlink" href="#list-join" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node joins different list into a single one.</p>
 <p>level 1:
 [ [ (1,2,3), (4,5,6) ] ] + [ [ (7,8,9), (10,11,12) ] ] = [ [ (1,2,3), (4,5,6), (7,8,9), (10,11,12) ] ]</p>
@@ -167,11 +168,11 @@
 [[1, 2, 3], [4, 5, 6]] + [[7, 8, 9]] = [[(1, 7), (2, 8), (3, 9)], [(4, 7), (5, 8), (6, 9)]]</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>data</strong> multisocket</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p><strong>Match</strong>: length of lists will be matched before joining
 <strong>Match mode</strong>: how length of lists should be matched (Repeat Last, Cycle, Match Short…)
 <strong>Mix</strong> to mix (not zip) data inside
@@ -179,12 +180,12 @@
 <strong>Levels</strong> level of joining</p>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>NumPy Mode</strong>: When enabled the node will expect and produce lists of NumPy arrays. It will be faster when joining NumPy Arrays but due the nature of the implementation it will fail when trying to join arrays with different axis number.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>data</strong> adaptable socket</p>
 </section>
 </section>

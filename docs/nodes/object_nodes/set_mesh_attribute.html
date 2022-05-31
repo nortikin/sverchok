@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -140,10 +141,10 @@
            <div itemprop="articleBody">
              
   <section id="set-mesh-attribute">
-<h1>Set mesh attribute<a class="headerlink" href="#set-mesh-attribute" title="Permalink to this headline">¶</a></h1>
+<h1>Set mesh attribute<a class="headerlink" href="#set-mesh-attribute" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/118392568-5e8c7d80-b64b-11eb-9e0b-34fe624174cb.png" src="https://user-images.githubusercontent.com/28003269/118392568-5e8c7d80-b64b-11eb-9e0b-34fe624174cb.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node can add an attribute to a mesh elements which can be used in Geometry nodes or shader editors (probably not only).
 At the moment of writing the documentation the node can’t change build in attributes
 such as <cite>position</cite>, <cite>normal</cite>, <cite>material_index</cite> etc. If you will try to do this there will be no any effect.
@@ -157,11 +158,11 @@ It means that it’s possible to use format of string values like this <cite>[[�
 or like this <cite>[[‘attr_name’], [‘attr_name’]]</cite>. In both cases the names will be applied to the first and second objects.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>BPY Data -&gt; Set mesh attribute</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Object</strong> - Blender data blocks</p></li>
 <li><p><strong>Attribute name</strong> - any strings</p></li>
@@ -169,20 +170,20 @@ or like this <cite>[[‘attr_name’], [‘attr_name’]]</cite>. In both cases 
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Object</strong> - Blender data blocks</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Domain</strong> - Type of the mesh element to which the attribute should be added. It can be <cite>Point</cite>, <cite>Face</cite> etc.</p></li>
 <li><p><strong>Type</strong> - Type of the attribute to create.</p></li>
 </ul>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>Adding a color attribute to the mesh corners to use in a shader editor.</p>
 <img alt="https://user-images.githubusercontent.com/28003269/111040947-32882c80-844f-11eb-9ac2-e61eabdc2ee1.png" src="https://user-images.githubusercontent.com/28003269/111040947-32882c80-844f-11eb-9ac2-e61eabdc2ee1.png" />
 </section>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -76,15 +77,15 @@
            <div itemprop="articleBody">
              
   <section id="spiral">
-<h1>Spiral<a class="headerlink" href="#spiral" title="Permalink to this headline">¶</a></h1>
+<h1>Spiral<a class="headerlink" href="#spiral" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates various types of spirals: Archimedean, Logarithmic, Spherical, Cornu (Euler), Ovoidal, Exo (to coin the term) and Spirangle.</p>
 <p>All spirals are defined as smooth curves (given enough curve resolution per turn) except the Spirangle spiral, which is a polygonal type of spiral.</p>
 <p>Most of the spirals are 2D and some are 3D, but any of the 2D spirals can be turned into 3D by setting the height parameter to a non-zero value.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>Exterior Radius</strong> [1]</p></li>
@@ -104,7 +105,7 @@
 [4] : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>All settings except <strong>Type</strong>, <strong>Flip</strong> and <strong>Preset</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -191,7 +192,7 @@ for details).</p></td>
 </dl>
 </section>
 <section id="spiral-types">
-<h2>Spiral Types<a class="headerlink" href="#spiral-types" title="Permalink to this headline">¶</a></h2>
+<h2>Spiral Types<a class="headerlink" href="#spiral-types" title="Permalink to this heading">¶</a></h2>
 <p><strong>Archimedean</strong>
 The general Archimedean spirals are given by the formula:</p>
 <blockquote>
@@ -251,13 +252,13 @@ y = y + r * sin(phi)</p>
 <p>see: <a class="reference external" href="https://en.wikipedia.org/wiki/Spirangle">https://en.wikipedia.org/wiki/Spirangle</a></p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong> and <strong>Edges</strong>
 All outputs will be generated when connected.</p>
 <p>Note: for spirals with multiple arms the outputs consist of disjoint lists defining each arm.</p>
 </section>
 <section id="presets">
-<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this headline">¶</a></h2>
+<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this heading">¶</a></h2>
 <p>A set of spiral configuration presets is available for convenience. Once a preset is selected the spiral settings are updated with the preset values and the user can modify the settings to further alter the spiral shape.</p>
 <p>Note: once a setting is altered (after selecting a preset) the preset selection is cleared from the preset drop-down indicating that the new setting configuration is no longer the one corresponding to the previously selected preset.</p>
 <table class="docutils align-default">
@@ -425,7 +426,7 @@ All outputs will be generated when connected.</p>
 <p>The preset settings were selected for each type such that when switching from one preset to another the generated spirals are relatively the same size.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 

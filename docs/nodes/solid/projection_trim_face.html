@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -168,9 +169,9 @@
            <div itemprop="articleBody">
              
   <section id="face-from-surface-solid">
-<h1>Face from Surface (Solid)<a class="headerlink" href="#face-from-surface-solid" title="Permalink to this headline">¶</a></h1>
+<h1>Face from Surface (Solid)<a class="headerlink" href="#face-from-surface-solid" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Solid Face object, i.e. a Surface trimmed with an edge,
 from a Surface and optional cutting curve.</p>
 <p>To define where exactly the provided Curve must trim the Surface, it is
@@ -180,7 +181,7 @@ U/V space of the Surface.</p>
 <p><strong>NOTE</strong>: this node supports only NURBS and NURBS-like curves and surfaces.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to make a Face from. This input is mandatory.</p></li>
@@ -197,7 +198,7 @@ if <strong>Projection</strong> parameter is set to <strong>Perspective</strong>.
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Projection</strong>. This defines what sort of projection will be used to
@@ -220,7 +221,7 @@ that ends of curves must coincide with better precision. The default value is
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>SolidFace</strong>. The generated Solid Face object.</p></li>
@@ -229,7 +230,7 @@ that ends of curves must coincide with better precision. The default value is
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Make a surface from a Bezier curve; make a Face from it, by cutting it with a projected Circle; then make a solid from that face:</p>
 <img alt="https://user-images.githubusercontent.com/284644/92300804-4bcb9000-ef77-11ea-9a39-5b87f8e354b9.png" src="https://user-images.githubusercontent.com/284644/92300804-4bcb9000-ef77-11ea-9a39-5b87f8e354b9.png" />
 </section>

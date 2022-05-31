@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -172,20 +173,20 @@
            <div itemprop="articleBody">
              
   <section id="surface-from-curves">
-<h1>Surface from Curves<a class="headerlink" href="#surface-from-curves" title="Permalink to this headline">¶</a></h1>
+<h1>Surface from Curves<a class="headerlink" href="#surface-from-curves" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> and / or <a class="reference external" href="https://scipy.org/">SciPy</a> libraries.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object by interpolating several Curves. This
 operation is also known as “Loft”. Several interpolation modes are supported.</p>
 <p>See also “NURBS Loft” node.</p>
 <p>Surface domain: from 0 to 1 in both directions.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. The list of curves to interpolate between. For Linear
@@ -194,7 +195,7 @@ least three curves are required.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Interpolation mode</strong>. The available values are:</p>
@@ -238,14 +239,14 @@ default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated surface.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Linear interpolation between several polylines:</p>
 <img alt="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" src="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" />
 <p>The same but with Cubic interpolation:</p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -172,21 +173,21 @@
            <div itemprop="articleBody">
              
   <section id="marching-cubes">
-<h1>Marching Cubes<a class="headerlink" href="#marching-cubes" title="Permalink to this headline">¶</a></h1>
+<h1>Marching Cubes<a class="headerlink" href="#marching-cubes" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://scikit-image.org/">SkImage</a> or <a class="reference external" href="https://github.com/pmneila/PyMCubes">PyMCubes</a> library to work. It can also
 work without any dependencies, but slower.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node uses Marching <a class="reference external" href="https://en.wikipedia.org/wiki/Marching_cubes">Cubes</a> algorithm to find iso-surfaces of given scalar
 field, i.e. such surfaces, that for each point on a surface the scalar field
 has the given value. Such surfaces are also known as “implicit surfaces”.</p>
 <p>Surfaces are generated as mesh - vertices and faces.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. Scalar field to find the iso-surfaces for. This input is mandatory.</p></li>
@@ -207,7 +208,7 @@ input is used instead of <strong>SamplesX</strong>, <strong>SamplesY</strong> an
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Implementation</strong>. This allows to select the algorithm implementation. The following options are possible:</p>
@@ -230,7 +231,7 @@ axes, in <strong>SamplesX</strong>, <strong>SamplesY</strong>, <strong>SamplesZ<
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices of generated mesh.</p></li>
@@ -241,7 +242,7 @@ output will always contain only tris.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>This node can be used to generate metaball-like structures:</p>
 <img alt="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" src="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" />
 <p>Or it is possible to generate mathematically-specified implicit surfaces. The following is known as “Saddle Tower”:</p>

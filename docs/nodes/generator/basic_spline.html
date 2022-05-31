@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -143,13 +144,13 @@
            <div itemprop="articleBody">
              
   <section id="point-spline">
-<h1>2 Point Spline<a class="headerlink" href="#point-spline" title="Permalink to this headline">¶</a></h1>
+<h1>2 Point Spline<a class="headerlink" href="#point-spline" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Single section Bezier Spline. Creates a <em>Spline Curve</em> from 2 sets of points. Analogue to the Blender native Curve object, but limited to 2 pairs of <em>knots</em> and <em>control points</em> per curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 14%" />
@@ -188,14 +189,14 @@ the curve is mathematically attracted</p></td>
 The node will adjust to make sure the length of</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The Node is vectorized in the following way. If any of the <em>knots</em> or <em>control points</em> are given in a list that doesn’t match the length of the other lists, then the last value of that shorter list is repeated to match the length of the longest.</p>
 <p>This means; if <em>knot1, control1, knot2</em> are length 3, 4 and 8 and control2 is length 20 then
 <em>knot1, control1, knot2</em> will all get their last value repeated till the full list matches 20 values.</p>
 <p>The same <em>filling</em> procedure is applied to the <em>Num Verts</em> parameter.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>(verts, edges) : A set of each of these that correspond with a packet of commands like ‘knot1, ctrl1, ctrl2, knot2’</p></li>
 <li><p>verts needs to be connected to get output</p></li>
@@ -209,7 +210,7 @@ The node will adjust to make sure the length of</p>
 <p>Passing hnd.Verts and hnd.Edges to a ViewerDraw node helps visualize the Handles that operate on your Spline curve.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://cloud.githubusercontent.com/assets/619340/3362071/c3b7f346-fb05-11e3-9af7-35dfda973712.png" src="https://cloud.githubusercontent.com/assets/619340/3362071/c3b7f346-fb05-11e3-9af7-35dfda973712.png" />
 <img alt="https://cloud.githubusercontent.com/assets/619340/3362910/c18e4eea-fb0e-11e3-9a80-4624d30c65e9.gif" src="https://cloud.githubusercontent.com/assets/619340/3362910/c18e4eea-fb0e-11e3-9a80-4624d30c65e9.gif" />
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/247">here</a> (gifs, screenshots)</p>

@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -149,20 +150,20 @@
            <div itemprop="articleBody">
              
   <section id="mesh-viewer">
-<h1>Mesh viewer<a class="headerlink" href="#mesh-viewer" title="Permalink to this headline">¶</a></h1>
+<h1>Mesh viewer<a class="headerlink" href="#mesh-viewer" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/91057173-ec48b880-e637-11ea-9933-b9cef83aac65.png" src="https://user-images.githubusercontent.com/28003269/91057173-ec48b880-e637-11ea-9933-b9cef83aac65.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Similar to ViewerDraw but instead of using OpenGL calls to display geometry this Node <em>writes</em> or <em>updates</em> Blender Meshes on every geometry update. The bonus is that this geometry is renderable without an extra bake step. We can use Blender’s Modifier stack to affect the mesh. The only exception to the modifiers is the Skin Modifier but we aren’t entirely sure why, maybe because BMview invalidates the BMesh between updates.</p>
 <p><em>Note:</em> The performance of the node can be increased significantly by putting vertices in <cite>numpy.float32</cite> format
 in case if topology of the mesh remains unchanged.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>Viz -&gt; Mesh viewer</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Verts</p></li>
 <li><p>Edges</p></li>
@@ -172,7 +173,7 @@ in case if topology of the mesh remains unchanged.</p>
 </ul>
 </section>
 <section id="parameters-features">
-<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Permalink to this headline">¶</a></h2>
+<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 18%" />
@@ -242,19 +243,19 @@ cases. So it should be disabled</p></td>
 <p><em>Note: Some features are placed in the `N-Panel` / `Properties Panel`.</em></p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Objects</p></li>
 </ul>
 </section>
 <section id="d-panel">
-<h2>3D panel<a class="headerlink" href="#d-panel" title="Permalink to this headline">¶</a></h2>
+<h2>3D panel<a class="headerlink" href="#d-panel" title="Permalink to this heading">¶</a></h2>
 <p>The node can show its properties on 3D panel.
 For this parameter <cite>Show in 3D panel</cite> should be enabled.
 After that you can press <cite>scan for props</cite> button on 3D panel for showing the node properties on 3D panel.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/28003269/91072892-4141fa00-e64b-11ea-8f6a-0a59e9c1b61e.png" src="https://user-images.githubusercontent.com/28003269/91072892-4141fa00-e64b-11ea-8f6a-0a59e9c1b61e.png" />
 <p><strong>Unlock origin feature:</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/91182715-93425880-e6fb-11ea-9ff5-393bbcb41490.gif" src="https://user-images.githubusercontent.com/28003269/91182715-93425880-e6fb-11ea-9ff5-393bbcb41490.gif" />

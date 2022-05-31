@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -143,9 +144,9 @@
            <div itemprop="articleBody">
              
   <section id="plane">
-<h1>Plane<a class="headerlink" href="#plane" title="Permalink to this headline">¶</a></h1>
+<h1>Plane<a class="headerlink" href="#plane" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Plane generator creates a grid in the plane XY/YZ or ZX, the node offers different methods to define the size of the grid and the spacing between the points.</p>
 <p><strong>Size Mode</strong>: the planar grid is defined by its total size and the number of vertices in both axis
 <strong>Number</strong>: the planar grid is defined by the spacing of the vertices and the number of them
@@ -153,7 +154,7 @@
 <strong>Size + Steps</strong>: similar to the Steps mode but normalizes the list to fit a defined size</p>
 </section>
 <section id="inputs-and-parameters">
-<h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this heading">¶</a></h2>
 <p>All parameters except <strong>Direction</strong>, <strong>Center</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
@@ -219,7 +220,7 @@
 </table>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <dl class="simple">
 <dt><strong>Simplify Output</strong>: Method to keep output data suitable for most of the rest of the Sverchok nodes</dt><dd><ul class="simple">
@@ -234,12 +235,12 @@
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Polygons</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong>, <strong>Edges</strong> and <strong>Polygons</strong>.
 All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent grids.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generating the same grid with different modes:</p>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" />
 <p>Using the ‘Steps’ mode to control the grid spacing</p>

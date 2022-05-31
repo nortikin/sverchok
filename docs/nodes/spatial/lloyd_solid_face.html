@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -145,13 +146,13 @@
            <div itemprop="articleBody">
              
   <section id="lloyd-on-solid-face">
-<h1>Lloyd on Solid Face<a class="headerlink" href="#lloyd-on-solid-face" title="Permalink to this headline">¶</a></h1>
+<h1>Lloyd on Solid Face<a class="headerlink" href="#lloyd-on-solid-face" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires both <a class="reference external" href="https://scipy.org/">SciPy</a> and <a class="reference external" href="../../solids.rst">FreeCAD</a> libraries to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node uses <a class="reference external" href="https://en.wikipedia.org/wiki/Lloyd%27s_algorithm">Lloyd</a> algorithm to redistribute a set of points on the Solid
 Face object (i.e. a Surface trimmed by some Curve). If provided points do not
 lie in / on the Solid Face object, they will be projected to it first.</p>
@@ -166,7 +167,7 @@ places to which higher weight is assigned.</p>
 Face.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>SolidFace</strong>. Solid Face object, on which the points are to be distributed.
@@ -183,7 +184,7 @@ algorithm will be used.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Sites</strong>. Redisrtibuted points in 3D space.</p></li>

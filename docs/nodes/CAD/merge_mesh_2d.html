@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -133,10 +134,10 @@
            <div itemprop="articleBody">
              
   <section id="merge-mesh-2d">
-<h1>Merge mesh 2d<a class="headerlink" href="#merge-mesh-2d" title="Permalink to this headline">¶</a></h1>
+<h1>Merge mesh 2d<a class="headerlink" href="#merge-mesh-2d" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" src="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" />
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node merging to input meshes in one with finding intersections and providing extra information about faces.</p>
 <p>Prefix 2D means that the node expects from input any kind of flatten mesh
 but it does not mean that the mesh should only lay on XY surface.
@@ -151,7 +152,7 @@ The algorithm will split polygon with holes into some pieces so holes lay on bou
 <p>The node can use information related with faces of initial meshes for assign them to new mesh.</p>
 </section>
 <section id="performance">
-<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this heading">¶</a></h2>
 <p>The node can handle with heavy meshes but there is important parameter as number of intersections
 to which the algorithm is sensitive.</p>
 <p>It is probably better to avoid using the node with heavy meshes when most parts of first mesh intersects
@@ -161,11 +162,11 @@ It is okay when most edges have several overlapping with each other,but performa
 if there is at least one edge which has a lot of overlapping with other edges.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
 <p>CAD -&gt; Merge mesh 2D</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>VertsA</strong> - vertices of mesh 1</p></li>
 <li><p><strong>FacesA</strong> - faces of mesh 1</p></li>
@@ -174,7 +175,7 @@ if there is at least one edge which has a lot of overlapping with other edges.</
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Verts</strong> - vertices of merged mesh</p></li>
 <li><p><strong>Faces</strong> - faces of merged mesh</p></li>
@@ -185,7 +186,7 @@ if there is at least one edge which has a lot of overlapping with other edges.</
 </ul>
 </section>
 <section id="n-panel">
-<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this headline">¶</a></h2>
+<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
@@ -218,7 +219,7 @@ but there is some cases when the node can stuck in error and playing with the pa
 This parameter does not have any affect to performance in spite of its name.</p>
 </section>
 <section id="masks-usage">
-<h2>Masks usage<a class="headerlink" href="#masks-usage" title="Permalink to this headline">¶</a></h2>
+<h2>Masks usage<a class="headerlink" href="#masks-usage" title="Permalink to this heading">¶</a></h2>
 <p>For understanding what sockets maskA and maskB returns imagine merging of two squares.
 Result of merging will be 3 faces. MaskA will show result as on the picture below.
 Zero value means that the face  lays outside of the mesh A and one means inside.</p>
@@ -246,7 +247,7 @@ According with the fact that algorithm can handle with overlapping of faces even
 but for simplicity it returns only first face from list of overlapping faces inside one mesh (A or B).</p>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p><strong>First of all it is possible just crop some mesh by contours of another:</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/66644275-93478000-ec31-11e9-975d-d00276ec1d56.png" src="https://user-images.githubusercontent.com/28003269/66644275-93478000-ec31-11e9-975d-d00276ec1d56.png" />
 <p><strong>Or in a more complex way:</strong></p>
