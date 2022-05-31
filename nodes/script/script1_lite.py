@@ -450,6 +450,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'bpy': bpy,
             'np': np,
             'ddir': ddir,
+            'get_user_dict': self.get_user_dict,
+            'reset_user_dict': self.reset_user_dict,
             'sv_njit': sv_njit,
             'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
