@@ -217,8 +217,8 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
             matrix_list, x_list, y_list, z_list = self.matrix_track_to(match_long_repeat(par), mT, mU, orthogonalize, gates)
             m_add(matrix_list)
             x_add([x_list])
-            y_add(y_list)
-            z_add(z_list)
+            y_add([y_list])
+            z_add([z_list])
 
         outputs["Matrix"].sv_set(matrix_lists)
         outputs["X"].sv_set(x_lists)

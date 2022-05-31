@@ -8,6 +8,7 @@
 
 import math
 import random
+import numpy as np
 
 def interp_v3_v3v3(a, b, t=0.5):
     """
@@ -166,6 +167,35 @@ def random_pt_between(v1, v2, v3):
     return sum_v3_v3l([v1, A, B])
 
 
+def ccw_angle(v1, v2, normal):
+    """
+    you want to know the counter-clockwise angle between 3 vertices.
+           v1
+         / 
+       / 
+    v0         
+       \
+         \
+           v2
+    input:          # all must be numpy arrays
+    input: v1, v2   # are vectors positioned in respect to an origin (v0)
+    input: normal   # this determines the direction of ccw. (relative to which axis)
+    output: angle in radians
+
+    https://uk.mathworks.com/matlabcentral/answers/461410
+    'how-to-get-direction-for-3d-angles-between-2-vectors'
+
+    if v0 is not already at [0, 0, 0] then you must translate the v1 and v2 locations first.
+
+        ccw_angle(v1-v0, v2-v0, normal)
+
+    """
+    ang = np.arctan2(np.linalg.norm(np.cross(v1, v2)), np.dot(v1, v2))
+    if np.dot(np.cross(v1, v2), normal) < 0:
+        ang = 2*np.pi - ang
+    return ang
+
+
 def mul_v3_f1v3(a, v):
     return a*v[0], a*v[1], a*v[2]
 
@@ -186,3 +216,4 @@ def sum_v3_v3l(lvtx):
         vy += v[1]
         vz += v[2]
     return vx, vy, vz
+

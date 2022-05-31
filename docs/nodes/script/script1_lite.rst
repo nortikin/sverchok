@@ -64,6 +64,9 @@ you make them visible on the ui by doing::
     def ui(self, context, layout):
         layout.prop(self, 'custom_enum', expand=True)
         layout.prop(self, 'custom_enum_2', expand=True)
+        pass
+
+When adding a custom UI drawing function (as above) it's sometimes necessary to add an explicit ``pass`` or ``return`` "terminator" statement at the end, this is down to a bug i've not had time to track down yet. If you get unexplainable/illogical python errors with a `def ui`, then add a "terminator".
 
 in your code you might use them this way::
 

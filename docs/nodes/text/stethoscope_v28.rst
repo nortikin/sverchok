@@ -1,7 +1,6 @@
 Stethoscope
 ===========
 
-*destination after Beta: basic data*
 
 Functionality
 -------------
