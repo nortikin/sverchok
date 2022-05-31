@@ -104,6 +104,7 @@ class SearchTree:
             self._links.add((link.from_socket, link.to_socket))
 
         self._remove_reroutes()
+        self._remove_wifi_nodes()
 
     def nodes_from(self, from_nodes: Iterable['SvNode']) -> set['SvNode']:
         def node_walker_to(node_: 'SvNode'):
@@ -158,8 +159,11 @@ class SearchTree:
                             continue
                         from_s_node = self._sock_node[from_s]
                         if from_s_node == _node:
-                            from_from_s = self._from_sock.get(from_s_node.inputs[0])
+                            from_from_s = self._from_sock.get(_node.inputs[0])
+                            self._links.discard((from_s, sock))
                             if from_from_s is not None:
+                                self._links.discard((from_from_s, _node.inputs[0]))
+                                self._links.add((from_from_s, sock))
                                 self._from_sock[sock] = from_from_s
                             else:
                                 del self._from_sock[sock]
@@ -167,7 +171,83 @@ class SearchTree:
         self._from_nodes = {n: k for n, k in self._from_nodes.items() if n.bl_idname != 'NodeReroute'}
         self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
 
-    # todo add links between wifi nodes
+    def _remove_wifi_nodes(self):
+        wifi_in: dict[str, 'SvNode'] = dict()
+        wifi_out: dict[str, set['SvNode']] = defaultdict(set)
+        for node in self._tree.nodes:
+            if var := getattr(node, 'var_name', ''):
+                if node.bl_idname == 'WifiInNode':
+                    wifi_in[var] = node
+                elif node.bl_idname == 'WifiOutNode':
+                    wifi_out[var].add(node)
+
+        to_socks: dict[NodeSocket, set[NodeSocket]] = defaultdict(set)
+        for link in (li for li in self._tree.links if not li.is_muted):
+            to_socks[link.from_socket].add(link.to_socket) 
+
+        for var, in_ in wifi_in.items():
+            for out in wifi_out[var]:
+                for in_sock, out_sock in zip(in_.inputs, out.outputs):
+                    if from_s := self._from_sock.get(in_sock):
+                        from_n = self._sock_node[from_s]
+                        self._to_nodes[from_n].discard(in_)
+                        del self._from_sock[in_sock]
+                        self._links.discard((from_s, in_sock))
+                    if to_ss := to_socks.get(out_sock):
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].discard(out)
+                            self._links.discard((out_sock, to_s))
+                    if from_s and to_ss:
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].add(from_n)
+                            self._to_nodes[from_n].add(to_n)
+                            self._from_sock[to_s] = from_s
+                            self._links.add((from_s, to_s))
+
+        self._from_nodes = {n: k for n, k in self._from_nodes.items()
+                            if n.bl_idname not in {'WifiInNode', 'WifiOutNode'}}
+        self._to_nodes = {n: k for n, k in self._to_nodes.items()
+                          if n.bl_idname not in {'WifiInNode', 'WifiOutNode'}}
+
+    def __repr__(self):
+        def from_nodes_str():
+            for tn, fns in self._from_nodes.items():
+                yield f"   {tn.name}"
+                for fn in fns:
+                    yield f"      {fn.name}"
+
+        def to_nodes_str():
+            for fn, tns in self._to_nodes.items():
+                yield f"   {fn.name}"
+                for tn in tns:
+                    yield f"      {tn.name}"
+
+        def from_sock_str():
+            for tso, fso in self._from_sock.items():
+                yield f"   From='{fso.node.name}|{fso.name}'" \
+                      f" to='{tso.node.name}|{tso.name}'"
+
+        def links_str():
+            for from_, to in self._links:
+                yield f"   From='{from_.node.name}|{from_.name}'" \
+                      f" to='{to.node.name}|{to.name}'"
+
+        from_nodes = "\n".join(from_nodes_str())
+        to_nodes = "\n".join(to_nodes_str())
+        from_sock = "\n".join(from_sock_str())
+        links = "\n".join(links_str())
+        msg = f"<{type(self).__name__}\n" \
+              f"from_nodes:\n" \
+              f"{from_nodes}\n" \
+              f"to_nodes:\n" \
+              f"{to_nodes}\n" \
+              f"from sockets:\n" \
+              f"{from_sock}\n" \
+              f"links:\n" \
+              f"{links}"
+        return msg
 
 
 class UpdateTree(SearchTree):
@@ -320,7 +400,7 @@ class UpdateTree(SearchTree):
         # walk triggered nodes and error nodes from previous updates
         else:
             outdated = frozenset(self._outdated_nodes)
-            self._outdated_nodes.clear()  # todo what if execution was canceled?
+            self._outdated_nodes.clear()
 
         for node, other_socks in self._sort_nodes(outdated):
             # execute node only if all previous nodes are updated
