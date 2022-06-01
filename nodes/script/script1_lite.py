@@ -46,6 +46,34 @@ defaults = [0] * 32
 
 template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
 
+
+last_print = {}
+
+def console_print(node, message, kind='OUTPUT'):
+    """
+    this function finds an open console in Blender and writes to it, useful for debugging small stuff.
+    but beware what you throw at it.
+    """
+    
+    if (previously_printed_text := last_print.get(hash(node))):
+        # i do not need to see repeat text
+        if message == previously_printed_text: return
+
+    last_print[hash(node)] = message
+
+    AREA = 'CONSOLE'
+    for window in bpy.context.window_manager.windows:
+        screen = window.screen
+        for area in window.screen.areas:
+            if not area.type == AREA: continue
+
+            for region in area.regions:
+                if region.type == 'WINDOW': 
+                    override = {'window': window, 'screen': screen, 'area': area, 'region': region}
+                    bpy.ops.console.scrollback_append(override, text=f"{message}", type=kind)
+                    break        
+
+
 class SNLITE_EXCEPTION(Exception): pass
 
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
@@ -452,6 +480,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'ddir': ddir,
             'get_user_dict': self.get_user_dict,
             'reset_user_dict': self.reset_user_dict,
+            'cprint': lambda message: console_print(self, message),
             'sv_njit': sv_njit,
             'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
