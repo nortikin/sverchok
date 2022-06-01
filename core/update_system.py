@@ -18,8 +18,6 @@ if TYPE_CHECKING:
     from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
                                     SverchCustomTree as SvTree)
 
-# todo check #4229
-
 UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
 TIME_KEY = "US_time"
