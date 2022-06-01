@@ -58,6 +58,9 @@ def control_center(event):
         ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # mark that the tree topology has changed
+    # also this can be called (by Blender) during undo event in this case all
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won't be able to detect changes, and will update all
     elif type(event) is ev.TreeEvent:
         UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
@@ -279,7 +282,7 @@ class UpdateTree(SearchTree):
                 # update topology
                 if not _tree.is_updated:
                     old = _tree
-                    _tree = old.copy()
+                    _tree = old.copy(tree)
 
                 # update outdated nodes list
                 if _tree._outdated_nodes is not None:
@@ -343,10 +346,12 @@ class UpdateTree(SearchTree):
         else:
             cls._tree_catch.clear()
 
-    def copy(self) -> 'UpdateTree':
+    def copy(self, new_tree: NodeTree) -> 'UpdateTree':
         """They copy will be with new topology if original tree was changed
-        since instancing of the first tree. Other attributes copied as is."""
-        copy_ = type(self)(self._tree)
+        since instancing of the first tree. Other attributes copied as is.
+        :new_tree: it's import to pass fresh tree object because during undo
+        events all previous tree objects invalidates"""
+        copy_ = type(self)(new_tree)
         for attr in self._copy_attrs:
             setattr(copy_, attr, copy(getattr(self, attr)))
         return copy_

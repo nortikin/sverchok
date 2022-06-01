@@ -84,14 +84,6 @@ def sv_handler_undo_post(scene):
 
     undo_handler_node_count['sv_groups'] = 0
 
-    # ideally we would like to recalculate all from scratch
-    # but with heavy trees user can be scared of pressing undo button
-    # I consider changes in tree topology as most common case
-    # but if properties or work of some viewer node (removing generated objects) was effected by undo
-    # only recalculating of all can restore the adequate state of a tree
-    for tree in BlTrees().sv_main_trees:
-        tree.update()  # the tree could changed by undo event
-
 
 @persistent
 def sv_update_handler(scene):
