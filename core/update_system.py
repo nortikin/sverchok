@@ -30,28 +30,25 @@ def control_center(event):
     1. Update tree model lazily
     2. Check whether the event should be processed
     3. Process event or create task to process via timer"""
-    was_executed = False
+    was_executed = True
 
     # frame update
     # This event can't be handled via NodesUpdater during animation rendering
     # because new frame change event can arrive before timer finishes its tusk.
     # Or timer can start working before frame change is handled.
     if type(event) is ev.AnimationEvent:
-        was_executed = True
         if event.tree.sv_animate:
             UpdateTree.get(event.tree).is_animation_updated = False
             UpdateTree.update_animation(event)
 
     # something changed in the scene
     elif type(event) is ev.SceneEvent:
-        was_executed = True
         if event.tree.sv_scene_update and event.tree.sv_process:
             UpdateTree.get(event.tree).is_scene_updated = False
             ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # nodes changed properties
     elif type(event) is ev.PropertyEvent:
-        was_executed = True
         tree = UpdateTree.get(event.tree)
         tree.add_outdated(event.updated_nodes)
         if event.tree.sv_process:
@@ -59,26 +56,29 @@ def control_center(event):
 
     # update the whole tree anyway
     elif type(event) is ev.ForceEvent:
-        was_executed = True
         UpdateTree.reset_tree(event.tree)
         ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # mark that the tree topology has changed
     elif type(event) is ev.TreeEvent:
-        was_executed = True
         UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
             ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
 
     # new file opened
     elif type(event) is ev.FileEvent:
-        was_executed = True
         UpdateTree.reset_tree()
 
+    else:
+        was_executed = False
     return was_executed
 
 
 class SearchTree:
+    """Data structure which represents Blender node trees but with ability
+    of efficient search tree elements. Also it keeps tree state so it can be
+    compared with new one to define differences."""
+
     _from_nodes: dict['SvNode', set['SvNode']]
     _to_nodes: dict['SvNode', set['SvNode']]
     _from_sock: dict[NodeSocket, NodeSocket]
@@ -107,6 +107,7 @@ class SearchTree:
         self._remove_wifi_nodes()
 
     def nodes_from(self, from_nodes: Iterable['SvNode']) -> set['SvNode']:
+        """Returns all next nodes from given ones"""
         def node_walker_to(node_: 'SvNode'):
             for nn in self._to_nodes.get(node_, []):
                 yield nn
@@ -114,6 +115,7 @@ class SearchTree:
         return set(bfs_walk(from_nodes, node_walker_to))
 
     def nodes_to(self, to_nodes: Iterable['SvNode']) -> set['SvNode']:
+        """Returns all previous nodes from given ones"""
         def node_walker_from(node_: 'SvNode'):
             for nn in self._from_nodes.get(node_, []):
                 yield nn
@@ -121,6 +123,7 @@ class SearchTree:
         return set(bfs_walk(to_nodes, node_walker_from))
 
     def sort_nodes(self, nodes: Iterable['SvNode']) -> list['SvNode']:
+        """Returns nodes in order of their correct execution"""
         walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
         for n in nodes:
             if n in self._from_nodes:
@@ -131,11 +134,17 @@ class SearchTree:
             nodes.append(node)
         return nodes
 
-    def previous_sockets(self, node: 'SvNode') -> list[NodeSocket]:
+    def previous_sockets(self, node: 'SvNode') -> list[Optional[NodeSocket]]:
+        """Return output sockets connected to input ones of given node
+        If input socket is not linked the output socket will be None"""
         return [self._from_sock.get(s) for s in node.inputs]
 
-    def update_node(self, node: 'SvNode', supress=True):
-        with AddStatistic(node, supress):
+    def update_node(self, node: 'SvNode', suppress=True):
+        """Fetches data from previous node, makes data conversion if connected
+        sockets have different types, calls process method of the given node
+        records nodes statistics
+        If suppress is True an error during node execution will be suppressed"""
+        with AddStatistic(node, suppress):
             prepare_input_data(self.previous_sockets(node), node.inputs)
             node.process()
 
@@ -251,15 +260,16 @@ class SearchTree:
 
 
 class UpdateTree(SearchTree):
-    """It catches some data for more efficient searches compare to Blender
-    tree data structure"""
+    """It caches the trees to keep outdated nodes and to perform tree updating
+    efficiently."""
     _tree_catch: dict[str, 'UpdateTree'] = dict()  # the module should be auto-reloaded to prevent crashes
 
     @classmethod
     def get(cls, tree: "SvTree", refresh_tree=False) -> "UpdateTree":
         """
+        Get cached tree. If tree was not cached it will be.
         :refresh_tree: if True it will convert update flags into outdated
-        nodes. This can be expensive so it should be called only before tree
+        nodes. This can be expensive, so it should be called only before tree
         reevaluation
         """
         if tree.tree_id not in cls._tree_catch:
@@ -291,6 +301,7 @@ class UpdateTree(SearchTree):
     @classmethod
     @profile(section="UPDATE")
     def update_animation(cls, event: ev.AnimationEvent):
+        """Should be called to updated animated nodes"""
         try:
             g = cls.main_update(event.tree, event.is_frame_changed, not event.is_animation_playing)
             while True:
@@ -300,8 +311,11 @@ class UpdateTree(SearchTree):
 
     @classmethod
     def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
-        """Only for main trees
-        1. Whe it called the tree should have information of what is outdated"""
+        """Thi generator is for the triggers. It can update outdated nodes and
+        update UI. Should be used only with main trees, the group trees should
+        use different method to separate profiling statistics. Whe it called the
+        tree should have information of what is outdated"""
+
         # print(f"UPDATE NODES {event.type=}, {event.tree.name=}")
         up_tree = cls.get(tree, refresh_tree=True)
         if update_nodes:
@@ -318,14 +332,14 @@ class UpdateTree(SearchTree):
 
         if update_interface:
             if up_tree._tree.show_time_mode == "Cumulative":
-                times = up_tree.calc_cam_update_time()
+                times = up_tree._calc_cam_update_time()
             else:
                 times = None
             update_ui(tree, times)
 
     @classmethod
     def reset_tree(cls, tree: NodeTree = None):
-        """Remove tree data or data of all trees"""
+        """Remove tree data or data of all trees from the cache"""
         if tree is not None and tree.tree_id in cls._tree_catch:
             del cls._tree_catch[tree.tree_id]
         else:
@@ -333,29 +347,29 @@ class UpdateTree(SearchTree):
 
     def copy(self) -> 'UpdateTree':
         """They copy will be with new topology if original tree was changed
-        since berth of the first tree. Other attributes copied as is."""
+        since instancing of the first tree. Other attributes copied as is."""
         copy_ = type(self)(self._tree)
         for attr in self._copy_attrs:
             setattr(copy_, attr, copy(getattr(self, attr)))
         return copy_
 
     def add_outdated(self, nodes: Iterable):
+        """Add outdated nodes explicitly. Animation and scene dependent nodes
+        can be marked as outdated via dedicated flags for performance."""
         if self._outdated_nodes is not None:
             self._outdated_nodes.update(nodes)
 
-    def calc_cam_update_time(self) -> Iterable['SvNode']:
-        cum_time_nodes = dict()  # don't have frame nodes
-        for node, prev_socks in self.__sort_nodes():
-            prev_nodes = self._from_nodes[node]
-            if len(prev_nodes) > 1:
-                cum_time = sum(n.get(TIME_KEY, 0) for n in self.nodes_to([node]))
-            else:
-                cum_time = sum(cum_time_nodes.get(n, 0) for n in prev_nodes)
-                cum_time += node.get(TIME_KEY, 0)
-            cum_time_nodes[node] = cum_time
-        return (cum_time_nodes.get(n) for n in self._tree.nodes)
-
     def __init__(self, tree: NodeTree):
+        """Should not use be used directly, only via the get class method
+        :is_updated: Should be False if topology of the tree was changed
+        :is_animation_updated: Should be False animation dependent nodes should
+        be updated
+        :is_scene_updated: Should be False if scene dependent nodes should be
+        updated
+        :_outdated_nodes: Keeps nodes which properties were changed or which
+        have errors. Can be None when what means that all nodes are outdated
+        :_copy_attrs: list of attributes which should be copied by the copy
+        method"""
         super().__init__(tree)
         self._tree_catch[tree.tree_id] = self
 
@@ -375,6 +389,7 @@ class UpdateTree(SearchTree):
         ]
 
     def _animation_nodes(self) -> set['SvNode']:
+        """Returns nodes which are animation dependent"""
         an_nodes = set()
         if not self.is_animation_updated:
             for node in self._tree.nodes:
@@ -384,6 +399,7 @@ class UpdateTree(SearchTree):
         return an_nodes
 
     def _scene_nodes(self) -> set['SvNode']:
+        """Returns nodes which are scene dependent"""
         sc_nodes = set()
         if not self.is_scene_updated:
             for node in self._tree.nodes:
@@ -393,6 +409,13 @@ class UpdateTree(SearchTree):
         return sc_nodes
 
     def _walk(self) -> tuple[Node, list[NodeSocket]]:
+        """Yields nodes in order of their proper execution. It starts yielding
+        from outdated nodes. It keeps the outdated_nodes storage in proper
+        state. It checks after yielding the error status of the node. If the
+        node has error it goes into outdated_nodes. It uses cached walker, so
+        it works more efficient when outdated nodes are the same between the
+        method calls."""
+
         # walk all nodes in the tree
         if self._outdated_nodes is None:
             outdated = None
@@ -415,6 +438,12 @@ class UpdateTree(SearchTree):
                      from_nodes: frozenset['SvNode'] = None,
                      to_nodes: frozenset['SvNode'] = None)\
                      -> list[tuple['SvNode', list[NodeSocket]]]:
+        """Sort nodes of the tree in proper execution order. Whe all given
+        parameters are None it uses all tree nodes
+        :from_nodes: if given it sorts only next nodes from given ones
+        :to_nodes: if given it sorts only previous nodes from given
+        If from_nodes and to_nodes are given it uses only intersection of next
+        nodes from from_nodes and previous nodes from to_nodes"""
         nodes_to_walk = set()
         walk_structure = None
         if from_nodes is None and to_nodes is None:
@@ -442,6 +471,9 @@ class UpdateTree(SearchTree):
         return nodes
 
     def _update_difference(self, old: 'UpdateTree') -> set['SvNode']:
+        """Returns nodes which should be updated according to changes in the
+        tree topology
+        :old: previous state of the tree to compare with"""
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
         for from_sock, to_sock in new_links:
@@ -455,7 +487,22 @@ class UpdateTree(SearchTree):
             nodes_to_update.add(old._sock_node[to_sock])
         return nodes_to_update
 
+    def _calc_cam_update_time(self) -> Iterable['SvNode']:
+        """Return cumulative update time in order of node_group.nodes collection"""
+        cum_time_nodes = dict()  # don't have frame nodes
+        for node, prev_socks in self.__sort_nodes():
+            prev_nodes = self._from_nodes[node]
+            if len(prev_nodes) > 1:
+                cum_time = sum(n.get(TIME_KEY, 0) for n in self.nodes_to([node]))
+            else:
+                cum_time = sum(cum_time_nodes.get(n, 0) for n in prev_nodes)
+                cum_time += node.get(TIME_KEY, 0)
+            cum_time_nodes[node] = cum_time
+        return (cum_time_nodes.get(n) for n in self._tree.nodes)
+
     def _debug_color(self, walker: Generator, use_color: bool = True):
+        """Colorize nodes which were previously executed. Before execution, it
+        resets all dbug colors"""
         def _set_color(node: 'SvNode', _use_color: bool):
             use_key = "DEBUG_use_user_color"
             color_key = "DEBUG_user_color"
@@ -485,9 +532,14 @@ class UpdateTree(SearchTree):
 
 
 class AddStatistic:
+    """It caches errors during execution of process method of a node and saves
+    update time, update status and error"""
+
+    # this probably can be inside the Node class as an update method
     # using context manager from contextlib has big overhead
     # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
     def __init__(self, node: 'SvNode', supress=True):
+        """:supress: if True any errors during node execution will be suppressed"""
         self._node = node
         self._start = perf_counter()
         self._supress = supress
@@ -511,7 +563,11 @@ class AddStatistic:
             return issubclass(exc_type, Exception)
 
 
-def prepare_input_data(prev_socks, input_socks):
+def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
+                       input_socks: list[NodeSocket]):
+    """Reads data from given outputs socket make it conversion if necessary and
+    put data into input given socket"""
+    # this can be a socket method
     for ps, ns in zip(prev_socks, input_socks):
         if ps is None:
             continue
@@ -526,6 +582,9 @@ def prepare_input_data(prev_socks, input_socks):
 
 
 def update_ui(tree: NodeTree, times: Iterable[float] = None):
+    """Updates UI of the given tree
+    :times: optional node timing in order of group_tree.nodes collection"""
+    # probably this can be moved to tree.update_ui method
     errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
     times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
     tree.update_ui(errors, times)

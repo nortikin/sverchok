@@ -6,12 +6,8 @@
 # License-Filename: LICENSE
 
 """
-Purpose of this module is centralization of update events.
-
-For now it can be used in debug mode for understanding which event method are triggered by Blender
-during evaluation of Python code.
-
-Details: https://github.com/nortikin/sverchok/issues/3077
+Events keep information about which Blender trigger was executed and with which
+context
 """
 
 from __future__ import annotations
@@ -29,8 +25,8 @@ if TYPE_CHECKING:
 
 
 class TreeEvent:
-    """Keeps information about what was changed during the even"""
-    # task should be run via timer only https://developer.blender.org/T82318#1053877
+    """Adding removing nodes or links but not necessarily"""
+    # the event should be run via timer only https://developer.blender.org/T82318#1053877
     tree: SvTree
 
     def __init__(self, tree):
@@ -41,10 +37,12 @@ class TreeEvent:
 
 
 class ForceEvent(TreeEvent):
+    """Indicates the whole tree should be recalculated"""
     pass
 
 
 class AnimationEvent(TreeEvent):
+    """Frame was changed. Last event can be with the same frame"""
     is_frame_changed: bool
     is_animation_playing: bool
 
@@ -55,10 +53,12 @@ class AnimationEvent(TreeEvent):
 
 
 class SceneEvent(TreeEvent):
+    """Something was changed in the scene"""
     pass
 
 
 class PropertyEvent(TreeEvent):
+    """Property of the node(s) was changed"""
     updated_nodes: Iterable[SvNode]
 
     def __init__(self, tree, updated_nodes):
@@ -67,6 +67,7 @@ class PropertyEvent(TreeEvent):
 
 
 class GroupTreeEvent(TreeEvent):
+    """The same as Tree event but inside a group tree"""
     tree: GrTree
     update_path: list[GrNode]
 
@@ -76,6 +77,7 @@ class GroupTreeEvent(TreeEvent):
 
 
 class GroupPropertyEvent(GroupTreeEvent):
+    """Property of a node(s) inside a group tree was changed"""
     updated_nodes: Iterable[SvNode]
 
     def __init__(self, tree, update_path, update_nodes):
@@ -84,8 +86,11 @@ class GroupPropertyEvent(GroupTreeEvent):
 
 
 class FileEvent:
+    """It indicates that new file was loaded"""
     pass
 
 
 class TreesGraphEvent:
+    """It indicates that something was changed in trees relations defined via
+    group nodes"""
     pass

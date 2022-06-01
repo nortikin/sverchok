@@ -251,7 +251,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                     print(f"Looping Object Number {idx}")
                 for node in sort_loop_nodes[1:-1]:
                     try:
-                        tree.update_node(node, supress=False)
+                        tree.update_node(node, suppress=False)
                     except Exception:
                         raise Exception(f"Element: {idx}")
 
@@ -308,7 +308,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                     print(f"Looping iteration Number {i+1}")
                 for node in sort_loop_nodes[1:-1]:
                     try:
-                        tree.update_node(node, supress=False)
+                        tree.update_node(node, suppress=False)
                     except Exception:
                         raise Exception(f"Iteration number: {i+1}")
 

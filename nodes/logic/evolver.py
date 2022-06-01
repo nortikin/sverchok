@@ -365,7 +365,7 @@ class DNA:
             tree.sv_process = True
             for node in exec_order:
                 try:
-                    s_tree.update_node(node, supress=False)
+                    s_tree.update_node(node, suppress=False)
                 except Exception:
                     raise
 
