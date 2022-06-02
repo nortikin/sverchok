@@ -24,21 +24,18 @@ class SvCopyModifiersNode(SverchCustomTreeNode, bpy.types.Node):
 
     @property
     def is_scene_dependent(self):
-        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
-                                                           or self.object_names)
+        return self.inputs['Object To'].is_linked \
+               or self.inputs['Object To'].object_ref_pointer
 
     @property
     def is_animation_dependent(self):
-        return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
-                                                           or self.object_names)
+        return self.inputs['Object To'].is_linked \
+               or self.inputs['Object To'].object_ref_pointer
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object To')
         self.inputs.new('SvObjectSocket', 'Object From')
         self.outputs.new('SvObjectSocket', 'Object')
-
-    def sv_draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout)
 
     def process(self):
         obj_to = self.inputs['Object To'].sv_get(deepcopy=False, default=[])
