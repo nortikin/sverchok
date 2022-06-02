@@ -1,7 +1,6 @@
 import importlib
 import sverchok
-from sverchok.utils.logging import debug, exception
-from sverchok.core.update_system import clear_system_cache
+from sverchok.core.socket_data import clear_all_socket_cache
 
 reload_event = False
 
@@ -11,11 +10,15 @@ root_modules = [
 ]
 
 core_modules = [
-    "sv_custom_exceptions",
-    "sockets",
-    "handlers", "update_system", "main_tree_handler",
-    "events", "node_group", "group_handlers"
+    "sv_custom_exceptions", "update_system",
+    "sockets", "socket_data",
+    "handlers",
+    "events", "node_group",
+    "tasks",
+    "group_update_system",
+    "event_system",
 ]
+
 
 def sv_register_modules(modules):
     for m in modules:
@@ -25,7 +28,7 @@ def sv_register_modules(modules):
                 m.register()
 
 def sv_unregister_modules(modules):
-    clear_system_cache()
+    clear_all_socket_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             try:

@@ -21,7 +21,6 @@ from bpy.props import EnumProperty, BoolProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
                                      iter_list_match_func, no_space)
@@ -147,7 +146,7 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             c.prop_search(self, "texture_pointer", bpy.data, 'textures', text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
     def sv_draw_buttons(self, context, layout):
         b = layout.split(factor=0.33, align=True)

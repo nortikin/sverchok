@@ -74,14 +74,14 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
 
             if out_item.is_linked:
                 if self.level-1:
-                    out = self.get(data, self.level-1, indexes, self.get_items)
+                    out = self.get_(data, self.level-1, indexes, self.get_items)
                 else:
                     out = self.get_items(data, indexes[0])
                 out_item.sv_set(out)
 
             if out_other.is_linked:
                 if self.level-1:
-                    out = self.get(data, self.level-1, indexes, self.get_other)
+                    out = self.get_(data, self.level-1, indexes, self.get_other)
                 else:
                     out = self.get_other(data, indexes[0])
                 out_other.sv_set(out)
@@ -125,13 +125,13 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return None
 
-    def get(self, data, level, indexes, func):
+    def get_(self, data, level, indexes, func):  # get is build-in method of Node class
         '''iterative function to get down to the requested level'''
         if level == 1:
             index_iter = repeat_last(indexes)
-            return [self.get(obj, level-1, next(index_iter), func) for obj in data]
+            return [self.get_(obj, level-1, next(index_iter), func) for obj in data]
         elif level:
-            return [self.get(obj, level-1, indexes, func) for obj in data]
+            return [self.get_(obj, level-1, indexes, func) for obj in data]
         else:
             return func(data, indexes)
 

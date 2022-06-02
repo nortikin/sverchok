@@ -11,7 +11,44 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
 from itertools import count
-from typing import Generator, List, TypeVar, Generic
+from typing import Generator, List, TypeVar, Generic, Callable, Iterable, Iterator
+
+T = TypeVar('T')
+NextFunc = Callable[[T], Iterable[T]]
+
+
+def bfs_walk(nodes: Iterable[T], next_: NextFunc) -> Iterator[T]:
+    """
+    Walk from the current node, it will visit all next nodes
+    First will be visited children nodes than children of children nodes etc.
+    https://en.wikipedia.org/wiki/Breadth-first_search
+    """
+    waiting_nodes = deque(nodes)
+    discovered = set(nodes)
+
+    for i in range(20000):
+        if not waiting_nodes:
+            break
+        n = waiting_nodes.popleft()
+        yield n
+        for next_node in next_(n):
+            if next_node not in discovered:
+                waiting_nodes.append(next_node)
+                discovered.add(next_node)
+    else:
+        raise RecursionError(f'The tree has either more then={20000} nodes '
+                             f'or most likely it is circular')
+
+
+def recursion_dfs_walk(nodes: Iterable[T], next_: NextFunc, _count=None) -> Iterator[T]:
+    if _count is None:
+        _count = count(1)
+    for node in nodes:
+        yield node
+        yield from recursion_dfs_walk(next_(node), next_, _count)
+    if (i := next(_count)) and i > 20000:
+        raise RecursionError(f'The tree has either more then={20000} nodes '
+                             f'or most likely it is circular')
 
 
 class Node(ABC):

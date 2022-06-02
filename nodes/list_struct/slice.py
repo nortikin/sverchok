@@ -66,14 +66,14 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.outputs['Slice'].is_linked:
             if self.level:
-                out = self.get(data, start, stop, self.level, self.slice)
+                out = self.get_(data, start, stop, self.level, self.slice)
             else:
                 out = self.slice(data, start[0], stop[0])
             self.outputs['Slice'].sv_set(out)
 
         if self.outputs['Other'].is_linked:
             if self.level:
-                out = self.get(data, start, stop, self.level, self.other)
+                out = self.get_(data, start, stop, self.level, self.other)
             else:
                 out = self.other(data, start[0], stop[0])
             self.outputs['Other'].sv_set(out)
@@ -92,9 +92,9 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return None
 
-    def get(self, data, start, stop, level, f):
+    def get_(self, data, start, stop, level, f):
         if level > 1:  # find level to work on
-                return [self.get(obj, start, stop, level - 1, f) for obj in data]
+                return [self.get_(obj, start, stop, level - 1, f) for obj in data]
         elif level == 1:  # execute the chosen function
             data, start, stop = match_long_repeat([data, start, stop])
             out = []

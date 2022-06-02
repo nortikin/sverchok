@@ -26,9 +26,8 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.socket_conversions import ConversionPolicies
-from sverchok.core.socket_data import (
-    SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
-    SvNoDataError, sentinel)
+from sverchok.core.socket_data import sv_get_socket, sv_set_socket, sv_forget_socket
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 
 from sverchok.data_structure import (
     enum_item_4,
@@ -53,8 +52,6 @@ STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
 if FreeCAD is not None:
     import Part
     STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
-
-DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
 
 def process_from_socket(self, context):
@@ -321,6 +318,7 @@ class SvSocketCommon(SvSocketProcessing):
     """
 
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+    default_conversion_name = ConversionPolicies.DEFAULT.conversion_name
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
     link_menu_handler : StringProperty(default='') # To specify additional entries in the socket link menu
@@ -339,6 +337,7 @@ class SvSocketCommon(SvSocketProcessing):
     nesting_level: IntProperty(default=2)
     default_mode: EnumProperty(items=enum_item_4(['NONE', 'EMPTY_LIST', 'MATRIX', 'MASK']), default='EMPTY_LIST')
     pre_processing: EnumProperty(items=enum_item_4(['NONE', 'ONE_ITEM']), default='NONE')
+    s_id: StringProperty(options={'SKIP_SAVE'})
 
     def get_link_parameter_node(self):
         return self.quick_link_to_node
@@ -371,7 +370,11 @@ class SvSocketCommon(SvSocketProcessing):
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.node.node_id + self.identifier))
+        _id = self.s_id
+        if not _id:
+            self.s_id = str(hash(self.node.node_id + self.identifier + ('o' if self.is_output else 'i')))
+            _id = self.s_id
+        return _id
 
     @property
     def index(self):
@@ -396,11 +399,10 @@ class SvSocketCommon(SvSocketProcessing):
 
         self.hide = value
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+    def sv_get(self, default=..., deepcopy=True):
         """
-        The method is used for getting input socket data
+        The method is used for getting socket data
         In most cases the method should not be overridden
-        If socket uses custom implicit_conversion it should implements default_conversion_name attribute
         Also a socket can use its default_property
         Order of getting data (if available):
         1. written socket data
@@ -410,19 +412,13 @@ class SvSocketCommon(SvSocketProcessing):
         5. Raise no data error
         :param default: script default property
         :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
-        :param implicit_conversions: if needed automatic conversion data from one socket type to another
         :return: data bound to the socket
         """
+        if self.is_output:
+            return sv_get_socket(self, False)
 
-        if self.is_linked and not self.is_output:
-            other = self.other
-            if implicit_conversions is None:
-                if hasattr(self, 'default_conversion_name'):
-                    implicit_conversions = ConversionPolicies.get_conversion(self.default_conversion_name)
-                else:
-                    implicit_conversions = DEFAULT_CONVERSION
-
-            return self.convert_data(SvGetSocket(self, other, deepcopy), implicit_conversions, other)
+        if self.is_linked:
+            return sv_get_socket(self, deepcopy)
 
         prop_name = self.get_prop_name()
         if prop_name:
@@ -433,23 +429,25 @@ class SvSocketCommon(SvSocketProcessing):
             default_property = self.default_property
             return format_bpy_property(default_property)
 
-        if default is not sentinel:
+        if default is not ...:
             return default
 
         raise SvNoDataError(self)
 
     def sv_set(self, data):
-        """Set output data"""
-        data = self.postprocess_output(data)
-        SvSetSocket(self, data)
+        """Set data, provide context in case the node can be evaluated several times in different context"""
+        if self.is_output:
+            data = self.postprocess_output(data)
+        sv_set_socket(self, data)
 
     def sv_forget(self):
         """Delete socket memory"""
-        SvForgetSocket(self)
+        sv_forget_socket(self)
 
     def replace_socket(self, new_type, new_name=None):
         """Replace a socket with a socket of new_type and keep links,
         return the new socket, the old reference might be invalid"""
+        self.sv_forget()
         return replace_socket(self, new_type, new_name)
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
@@ -550,31 +548,20 @@ class SvSocketCommon(SvSocketProcessing):
     def draw_color(self, context, node):
         return self.color
 
-    def convert_data(self, source_data, implicit_conversions=DEFAULT_CONVERSION, other=None):
-
-        if other.bl_idname == self.bl_idname:
-            return source_data
-
-        return implicit_conversions.convert(self, other, source_data)
-
-    def update_objects_number(self):
+    def update_objects_number(self):  # todo should be the method here?
         """
         Should be called each time after process method of the socket owner
         It will update number of objects to show in socket labels
         """
         try:
-            if self.is_output:
-                objects_info = SvGetSocketInfo(self)
-                self.objects_number = int(objects_info) if objects_info else 0
-            else:
-                data = self.sv_get(deepcopy=False, default=[])
-                self.objects_number = len(data) if data else 0
+            self.objects_number = len(self.sv_get(deepcopy=False, default=[]))
         except LookupError:
-            pass
+            self.objects_number = 0
         except Exception as e:
             warning(f"Socket='{self.name}' of node='{self.node.name}' can't update number of objects on the label. "
                     f"Cause is '{e}'")
             self.objects_number = 0
+            raise e
 
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
@@ -653,9 +640,10 @@ class SvFormulaSocket(NodeSocket, SvSocketCommon):
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name
 
     def draw(self, context, layout, node, text):
-        layout.label(text=self.name+ '. ' + SvGetSocketInfo(self))
+        layout.label(text=self.name+ '. ' + str(self.objects_number))
         layout.prop(self,'depth',text='Depth')
         layout.prop(self,'transform',text='')
+
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"

@@ -7,7 +7,7 @@ from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
 from sverchok import data_structure
-from sverchok.core import main_tree_handler  # don't remove this should fix #4229 (temp solution)
+from sverchok.core import tasks # don't remove this should fix #4229 (temp solution)
 from sverchok.core import handlers
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL

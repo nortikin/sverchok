@@ -20,7 +20,7 @@
 import bpy
 
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core import main_tree_handler
+import sverchok.core.tasks as ts
 
 
 class SvToggleProcess(bpy.types.Operator):
@@ -109,8 +109,8 @@ class PressingEscape(bpy.types.Operator):
     bl_label = 'Abort nodes updating'
 
     def execute(self, context):
-        if main_tree_handler.NodesUpdater.is_running():
-            main_tree_handler.NodesUpdater.cancel_task()
+        if ts.tasks:
+            ts.tasks.cancel()
         return {'FINISHED'}
 
     @classmethod

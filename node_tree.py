@@ -13,10 +13,9 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
-from sverchok.core.socket_data import SvNoDataError
-from sverchok.core.events import TreeEvent
-from sverchok.core.main_tree_handler import TreeHandler
-from sverchok.core.group_handlers import NodeIdManager
+from sverchok.core.sv_custom_exceptions import SvNoDataError
+import sverchok.core.events as ev
+from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -27,12 +26,22 @@ from sverchok.utils.logging import debug, catch_log_error
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui import bgl_callback_nodeview as sv_bgl
-from sverchok.utils.handle_blender_data import BlTree
 
 
 class SvNodeTreeCommon:
     """Common class for all Sverchok trees (regular trees and group ones)"""
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
+    sv_show_time_nodes: BoolProperty(
+        name="Node times",
+        default=False,
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)))
+    show_time_mode: EnumProperty(
+        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        description="Mode of showing node update timings",
+    )
 
     @property
     def tree_id(self):
@@ -70,6 +79,15 @@ class SvNodeTreeCommon:
                 yield self
             finally:
                 del self['init_tree']
+
+    def update_ui(self, nodes_errors, update_time):
+        """ The method get information about node statistic of last update from the handler to show in view space
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode"""
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update)
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -113,19 +131,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Process",
         default=True,
         description='Update upon tree and node property changes',
-        update=lambda s, c: TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, s)),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
         options=set(),
     )
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
-    show_time_mode: EnumProperty(
-        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
-        options=set(),
-        update=lambda s, c: s.update_ui(),
-        description="Mode of showing node update timings",
-    )
 
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
@@ -146,59 +156,29 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
-        TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
+        handle_event(ev.TreeEvent(self))
 
     def force_update(self):
         """Update whole tree from scratch"""
         # ideally we would never like to use this method but we live in the real world
-        TreeHandler.send(TreeEvent(TreeEvent.FORCE_UPDATE, self))
+        handle_event(ev.ForceEvent(self))
 
     def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes, cancel))
+        return handle_event(ev.PropertyEvent(self, nodes))
 
     def scene_update(self):
         """This method should be called by scene changes handler
         it ignores events related with S
         sverchok trees in other cases it updates nodes which read data from Blender"""
-        def nodes_to_update():
-            for node in self.nodes:
-                try:
-                    if node.is_scene_dependent and node.is_interactive:
-                        yield node
-                except AttributeError:
-                    pass
-        if self.sv_scene_update:
-            TreeHandler.send(TreeEvent(TreeEvent.SCENE_UPDATE, self, nodes_to_update(), cancel=False))
+        handle_event(ev.SceneEvent(self))
 
-    def process_ani(self):
+    def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        def animated_nodes():
-            for node in self.nodes:
-                try:
-                    if node.is_animation_dependent and node.is_animatable:
-                        yield node
-                except AttributeError:
-                    pass
-        if self.sv_animate:
-            TreeHandler.send(TreeEvent(TreeEvent.FRAME_CHANGE, self, animated_nodes()))
-
-    def update_ui(self):
-        """ The method get information about node statistic of last update from the handler to show in view space
-        The method is usually called by main handler to reevaluate view of the nodes in the tree
-        even if the tree is not in the Live update mode"""
-        nodes_errors = TreeHandler.get_error_nodes(self)
-        if self.sv_show_time_nodes:
-            update_time = (TreeHandler.get_cum_time(self) if self.show_time_mode == "Cumulative"
-                           else TreeHandler.get_update_time(self))
-        else:
-            update_time = cycle([None])
-        for node, error, update in zip(self.nodes, nodes_errors, update_time):
-            if hasattr(node, 'update_ui'):
-                node.update_ui(error, update)
+        handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))
 
 
 class UpdateNodes:
@@ -229,7 +209,10 @@ class UpdateNodes:
             self.process_node(context)
 
     refresh: BoolProperty(name="Update Node", description="Update Node", update=refresh_node)
-    is_animatable: BoolProperty(name="Animate Node", description="Update Node on frame change", default=True)
+    is_animatable: BoolProperty(name="Animate Node",
+                                description="Update Node on frame change",
+                                default=True,
+                                update=lambda s, c: s.process_node(c))  # it would be better to have special event
     is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
 
     def sv_init(self, context):
@@ -280,18 +263,21 @@ class UpdateNodes:
 
     def free(self):
         """Called upon the node removal"""
+        # custom free function
         self.sv_free()
 
-        for s in self.outputs:
+        # free sockets memory
+        for s in chain(self.inputs, self.outputs):
             s.sv_forget()
 
-        # This is inevitable evil cause of flexible nature of node_ids inside group trees
-        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
-        self.update_ui(node_id=node_id)
+        # remove tree space drawings
+        self.update_ui()
 
     def copy(self, original):
         """Called upon the node being copied"""
         self.n_id = ""
+        for sock in chain(self.inputs, self.outputs):
+            sock.s_id = ''
         self.sv_copy(original)
 
     def update(self):
@@ -304,7 +290,7 @@ class UpdateNodes:
 
         self.sv_update()
 
-    def update_ui(self, error=None, update_time=None, node_id=None):
+    def update_ui(self, error=None, update_time=None):
         """updating tree contextual information -> node colors, text
         node_id only for usage of a group tree"""
         sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
@@ -312,23 +298,22 @@ class UpdateNodes:
         no_data_color = sv_settings.no_data_color
         error_pref = "error"
         update_pref = "update_time"
-        node_id = node_id or self.node_id  # inevitable evil
 
         # update error colors
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, repr(error), error_pref + node_id, color, 1.3, "UP")
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, "UP")
         else:
-            sv_bgl.callback_disable(error_pref + node_id)
+            sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
 
         # show update timing
         if update_time is not None:
             update_time = int(update_time * 1000)
-            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + node_id, align="UP", dynamic_location=False)
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP", dynamic_location=False)
         else:
-            sv_bgl.callback_disable(update_pref + node_id)
+            sv_bgl.callback_disable(update_pref + self.node_id)
 
         # update object numbers
         for s in chain(self.inputs, self.outputs):

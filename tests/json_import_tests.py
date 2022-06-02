@@ -1,3 +1,4 @@
+from sverchok.old_nodes import is_old
 from sverchok.utils.dummy_nodes import is_dependent
 from sverchok.utils.testing import *
 from sverchok.ui.sv_examples_menu import example_categories_names
@@ -7,6 +8,7 @@ class ScriptUvImportTest(SverchokTestCase):
 
     def test_script_uv_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
+            new_tree.sv_process = False
             path = self.get_reference_file_path("script_uv.json")
             importer = JSONImporter.init_from_path(path)
             importer.import_into_tree(new_tree, print_log=False)
@@ -27,6 +29,7 @@ class ProfileImportTest(SverchokTestCase):
 
     def test_profile_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
+            new_tree.sv_process = False
             importer = JSONImporter.init_from_path(self.get_reference_file_path("profile.json"))
             importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:
@@ -37,6 +40,7 @@ class MeshExprImportTest(SverchokTestCase):
 
     def test_mesh_expr_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
+            new_tree.sv_process = False
             importer = JSONImporter.init_from_path(self.get_reference_file_path("mesh.json"))
             importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:

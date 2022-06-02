@@ -9,7 +9,7 @@
 from itertools import cycle
 
 from mathutils import Vector, Matrix
-from mathutils.geometry import tessellate_polygon as tessellate, normal
+from mathutils.geometry import tessellate_polygon as tessellate
 from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
@@ -17,10 +17,7 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-import sverchok
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
@@ -757,7 +754,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def draw_property_socket(self, socket, context, layout):
         drawing_verts = socket.name == "Vertices"
         prop_to_show = "point_size" if drawing_verts else "line_width"
-        text = f"{socket.name}. {SvGetSocketInfo(socket)}"
+        text = f"{socket.name}. {str(socket.objects_number)}"
         layout.label(text=text)
         layout.prop(self, prop_to_show, text="px")
 
@@ -784,7 +781,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         else:
             if draw_name:
                 reduced_name = socket.name[:2] + ". Col"
-                layout.label(text=reduced_name+ '. ' + SvGetSocketInfo(socket))
+                layout.label(text=reduced_name+ '. ' + str(socket.objects_number))
 
     def create_config(self):
         config = lambda: None
