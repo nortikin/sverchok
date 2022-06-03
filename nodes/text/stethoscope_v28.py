@@ -16,11 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
 import pprint
 import re
-
 import bpy
 import blf
+import gpu
+from gpu_extras.batch import batch_for_shader
+
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
 from mathutils import Vector
@@ -29,6 +32,10 @@ from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
+from sverchok.utils.sv_nodeview_draw_helper import get_console_grid
+from sverchok.nodes.viz.console_node import (
+    simple_console_xy, terminal_text_to_uv, syntax_highlight_basic
+)
 
 
 # status colors
@@ -40,15 +47,15 @@ def adjust_location(_x, _y, location_theta):
     return _x * location_theta, _y * location_theta
 
 def get_xy_for_bgl_drawing(node):
-        # adjust proposed text location in case node is framed.
-        # take into consideration the hidden state
-        node_width = node.width
-        _x, _y = node.absolute_location
-        _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
+    # adjust proposed text location in case node is framed.
+    # take into consideration the hidden state
+    node_width = node.width
+    _x, _y = node.absolute_location
+    _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 
-        # this alters location based on DPI/Scale settings.
-        draw_location = adjust_location(_x, _y, node.location_theta)
-        return draw_location
+    # this alters location based on DPI/Scale settings.
+    draw_location = adjust_location(_x, _y, node.location_theta)
+    return draw_location
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
@@ -128,7 +135,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical"])]
+    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical", "sv++"])]
     selected_mode: bpy.props.EnumProperty(
         items=mode_options,
         description="offers....",
@@ -144,6 +151,13 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     depth: IntProperty(default=5, min=0, update=updateNode)
     location_theta: FloatProperty(name='location_theta')
 
+    texture_dict = {}
+    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
+
+    def prepare_for_grid(self):
+        char_width = int(15 * self.local_scale)
+        char_height = int(32 * self.local_scale)
+        return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
     def get_theme_colors_for_contrast(self):
         try:
@@ -222,8 +236,28 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     self.view_by_element,
                     props
                 )
+            elif self.selected_mode == "sv++":
+
+                faux_node = lambda: None
+                faux_node.terminal_text =  ...
+                faux_node.terminal_width = ...
+                faux_node.num_rows = ...
+
+                syntax_highlight_basic(faux_node)
+
+                draw_data = {
+                  'tree_name': self.id_data.name[:],
+                  'node_name': self.name[:],
+                  'loc': get_xy_for_bgl_drawing, #get_desired_xy,
+                  'mode': 'custom_function_context', 
+                  'custom_function': simple_console_xy,
+                  'args': (texture, config)
+                }
+                nvBGL.callback_enable(n_id, draw_data)
+                return
+
             else:
-                #                # implement another nvBGL parses for gfx
+                # display the __repr__ version of the incoming data
                 processed_data = data
 
 
