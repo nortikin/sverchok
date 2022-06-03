@@ -168,7 +168,7 @@ class SvExtraSearch(bpy.types.Operator):
         if self.my_enum.isnumeric():
             macro_bl_idname = self.bl_idname_from_bl_label(self)
             DefaultMacros.ensure_nodetree(self, context)
-            bpy.ops.node.sv_macro_interpretter(macro_bl_idname=macro_bl_idname)
+            bpy.ops.node.sv_macro_interpreter(macro_bl_idname=macro_bl_idname)
         else:
             macro_reference = macros.get(self.my_enum)
 

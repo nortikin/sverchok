@@ -42,9 +42,9 @@ def convert_string_to_settings(arguments):
     return [(varname, unsorted_dict[varname]) for varname in results]
 
 
-class SvMacroInterpretter(bpy.types.Operator):
+class SvMacroInterpreter(bpy.types.Operator):
     """ Launch menu item as a macro """
-    bl_idname = "node.sv_macro_interpretter"
+    bl_idname = "node.sv_macro_interpreter"
     bl_label = "Sverchok check for new minor version"
     bl_options = {'REGISTER'}
 
@@ -82,7 +82,7 @@ class SvMacroInterpretter(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classes = (SvMacroInterpretter,)
+classes = (SvMacroInterpreter,)
 
 
 def register():
