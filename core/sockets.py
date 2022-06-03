@@ -438,6 +438,10 @@ class SvSocketCommon(SvSocketProcessing):
         """Set data, provide context in case the node can be evaluated several times in different context"""
         if self.is_output:
             data = self.postprocess_output(data)
+
+        # it's expensive to call sv_get method to update the number in other places
+        self.objects_number = len(data)
+
         sv_set_socket(self, data)
 
     def sv_forget(self):
@@ -547,21 +551,6 @@ class SvSocketCommon(SvSocketProcessing):
 
     def draw_color(self, context, node):
         return self.color
-
-    def update_objects_number(self):  # todo should be the method here?
-        """
-        Should be called each time after process method of the socket owner
-        It will update number of objects to show in socket labels
-        """
-        try:
-            self.objects_number = len(self.sv_get(deepcopy=False, default=[]))
-        except LookupError:
-            self.objects_number = 0
-        except Exception as e:
-            warning(f"Socket='{self.name}' of node='{self.node.name}' can't update number of objects on the label. "
-                    f"Cause is '{e}'")
-            self.objects_number = 0
-            raise e
 
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
