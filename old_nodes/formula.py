@@ -16,11 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import parser
 
 import bpy
 from bpy.props import StringProperty
 
+from sverchok.utils.modules.parser_subset import parser
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from math import cos, sin, pi, tan

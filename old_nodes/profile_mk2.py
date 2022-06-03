@@ -22,7 +22,7 @@ import re
 import json
 from string import ascii_lowercase
 
-import parser
+from sverchok.utils.modules.parser_subset import parser
 from ast import literal_eval
 
 import bpy
