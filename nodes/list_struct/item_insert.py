@@ -94,7 +94,7 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
         new_item = si['Item'].sv_get(deepcopy=False)
         indexes = si['Index'].sv_get(default=[[self.index]], deepcopy=False)
         if self.level-1:
-            out = self.get(data, new_item, self.level-1, indexes, self.set_items)
+            out = self.get_(data, new_item, self.level-1, indexes, self.set_items)
         else:
             out = self.set_items(data, new_item, indexes[0])
         out_socket.sv_set(out)
@@ -130,13 +130,13 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             return out_data
         return None
 
-    def get(self, data, new_items, level, items, f):
+    def get_(self, data, new_items, level, items, f):
         if level == 1:
             item_iter = repeat_last(items)
             new_item_iter = repeat_last(new_items)
-            return [self.get(obj, next(new_item_iter), level-1, next(item_iter), f) for obj in data]
+            return [self.get_(obj, next(new_item_iter), level-1, next(item_iter), f) for obj in data]
         elif level:
-            return [self.get(obj, new_items, level-1, items, f) for obj in data]
+            return [self.get_(obj, new_items, level-1, items, f) for obj in data]
         else:
             return f(data, new_items, items)
 
