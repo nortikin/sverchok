@@ -1,6 +1,6 @@
 from sverchok.core.update_system import prepare_input_data
 from mathutils import Matrix
-from sverchok.core.socket_conversions import ImplicitConversionProhibited
+from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
 

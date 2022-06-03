@@ -9,7 +9,7 @@ from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
 from sverchok.core.sv_custom_exceptions import CancelError
-from sverchok.core.socket_conversions import ConversionPolicies
+from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
 from sverchok.utils.tree_walk import bfs_walk
@@ -578,7 +578,7 @@ def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
 
         # cast data
         if ps.bl_idname != ns.bl_idname:
-            implicit_conversion = ConversionPolicies.get_conversion(ns.default_conversion_name)
+            implicit_conversion = conversions[ns.default_conversion_name]
             data = implicit_conversion.convert(ns, ps, data)
 
         ns.sv_set(data)
