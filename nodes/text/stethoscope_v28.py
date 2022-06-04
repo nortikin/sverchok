@@ -20,8 +20,7 @@ import numpy as np
 import pprint
 import re
 import bpy
-import blf
-import gpu
+import blf, bgl, gpu
 from gpu_extras.batch import batch_for_shader
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
@@ -35,7 +34,8 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 from sverchok.nodes.viz.console_node import (
     simple_console_xy, terminal_text_to_uv, syntax_highlight_basic, make_color, text_decompose,
-    process_grid_for_shader, process_uvs_for_shader, vertex_shader, lexed_fragment_shader, lexed_colors
+    process_grid_for_shader, process_uvs_for_shader, vertex_shader, lexed_fragment_shader, lexed_colors,
+    random_color_chars, get_font_pydata_location
 )
 
 
@@ -159,6 +159,21 @@ class LexMixin():
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
+
+    def get_font_texture(self):
+        if not self.texture_dict:
+            filepath = get_font_pydata_location()
+            # this is a compressed npz, which we can dict lookup.
+            found_data = np.load(filepath)
+            data = found_data['a']
+
+            dsize = data.size
+            data = data.repeat(3).reshape(-1, 3)
+            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
+            name = bgl.Buffer(bgl.GL_INT, 1)
+            bgl.glGenTextures(1, name)
+            self.texture_dict['texture'] = name[0]
+            self.texture_dict['texture_data'] = data # bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())        
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -323,20 +338,29 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
                 self.set_node_props(processed_data)
 
-                faux_node = lambda: None
-                faux_node.terminal_text = self.terminal_text
-                faux_node.terminal_width = self.terminal_width
-                faux_node.num_rows = self.num_rows
+                # faux_node = lambda: None
+                # faux_node.terminal_text = self.terminal_text
+                # faux_node.terminal_width = self.terminal_width
+                # faux_node.num_rows = self.num_rows
 
-                lexer = syntax_highlight_basic(faux_node)
+                lexer = random_color_chars(self) #
+                # lexer = syntax_highlight_basic(self).repeat(6).tolist()
+
+                self.get_font_texture()
+                self.init_texture(256, 256)
+
                 grid = self.prepare_for_grid()
 
                 self.adjust_position_and_dimensions(*self.dims)
                 verts = process_grid_for_shader(grid)
                 uv_indices = process_uvs_for_shader(self)
 
+                texture = lambda: None
+                texture.texture_dict = self.texture_dict
+
                 shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
                 batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+                config = lambda: None
                 config.batch = batch
                 config.shader = shader
                 config.syntax_mode = "Code"
