@@ -32,9 +32,10 @@ from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-from sverchok.utils.sv_nodeview_draw_helper import get_console_grid
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 from sverchok.nodes.viz.console_node import (
-    simple_console_xy, terminal_text_to_uv, syntax_highlight_basic
+    simple_console_xy, terminal_text_to_uv, syntax_highlight_basic, make_color, text_decompose,
+    process_grid_for_shader, process_uvs_for_shader, vertex_shader, lexed_fragment_shader, lexed_colors
 )
 
 
@@ -107,9 +108,83 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
+def process_uvs_for_shader(node):
+    uv_indices = terminal_text_to_uv(node.terminal_text)
+    uvs = []
+    add_uv = uvs.append
+    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
+    return uvs
 
 
-class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+l1 = r" ______ _    _ _______  ______ _______ _     _  _____  _     _"
+l2 = r"/______  \  /  |______ |_____/ |       |_____| |     | |____/ "
+l3 = r"______/   \/   |______ |    \_ |_____  |     | |_____| |    \_"
+default_console_width = len(l1)
+
+class LexMixin():
+
+    texture_dict = {}
+
+    name1Color: make_color("name1 color",      (0.83, 0.91, 1.00, 1.0))  # 1
+    numberColor: make_color("number color",    (0.08, 0.70, 0.98, 1.0))  # 2
+    stringColor: make_color("Strings",         (0.96, 0.85, 0.00, 1.0))  # 3
+    parenColor: make_color("parenthesis"  ,    (0.70, 0.07, 0.01, 1.0))  # 7, 8
+    bracketColor: make_color("Brackets color", (0.65, 0.68, 0.70, 1.0))  # 9, 10
+    equalsColor: make_color("Equals",          (0.90, 0.70, 0.60, 1.0))  # 22
+    braceColor: make_color("Braces",           (0.40, 0.50, 0.70, 1.0))  # 25, 26
+    opColor: make_color("Operators",           (1.00, 0.18, 0.00, 1.0))  # 53, 54
+    commentColor: make_color("Comments",       (0.49, 0.49, 0.49, 1.0))  # 55, 60
+    name2Color: make_color("Main syntax",      (0.90, 0.01, 0.02, 1.0))  # 90
+    name3Color: make_color("Bool etc,..",      (0.30, 0.90, 0.40, 1.0))  # 91
+    qualifierColor: make_color("Qualifiers",   (0.18, 0.77, 0.01, 1.0))  # 92
+    bgColor: make_color("Background",          (0.06, 0.06, 0.06, 1.0))  # there are nicer ways to calculate the background overlay.
+
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
+    terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA") #f"{l1}\n{l2}\n{l3}")
+    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
+
+
+    def init_texture(self, width, height):
+        clr = bgl.GL_RGBA
+        texname = self.texture_dict['texture']
+        data = self.texture_dict['texture_data']
+
+        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+        bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
+
+    def get_lexed_colors(self):
+        return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
+
+    def prepare_for_grid(self):
+        char_width = int(15 * self.local_scale)
+        char_height = int(32 * self.local_scale)
+        return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
+
+    @property
+    def dims(self):
+        x, y = self.xy_offset
+        width = self.terminal_width * 15
+        height = self.num_rows * 32
+        return (x, y, width, height)
+
+    def set_node_props(self, socket_data):
+        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), len(socket_data))
+        valid_multiline = '\n'.join(multiline)
+        self.terminal_text = valid_multiline
+        self.num_rows = chars_y
+        self.terminal_width = chars_x
+
+
+
+class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNodeViewDrawMixin):
     """
         Triggers: scope 
         Tooltip: Display data output of a node in nodeview
@@ -149,15 +224,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
-    location_theta: FloatProperty(name='location_theta')
 
-    texture_dict = {}
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
 
-    def prepare_for_grid(self):
-        char_width = int(15 * self.local_scale)
-        char_height = int(32 * self.local_scale)
-        return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
     def get_theme_colors_for_contrast(self):
         try:
@@ -236,14 +305,42 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     self.view_by_element,
                     props
                 )
+
             elif self.selected_mode == "sv++":
 
-                faux_node = lambda: None
-                faux_node.terminal_text =  ...
-                faux_node.terminal_width = ...
-                faux_node.num_rows = ...
+                props = lambda: None
+                props.line_width = self.line_width
+                props.compact = self.compact
+                props.depth = None                
 
-                syntax_highlight_basic(faux_node)
+                processed_data = parse_socket(
+                    inputs[0],
+                    self.rounding,
+                    self.element_index,
+                    self.view_by_element,
+                    props
+                )
+
+                self.set_node_props(processed_data)
+
+                faux_node = lambda: None
+                faux_node.terminal_text = self.terminal_text
+                faux_node.terminal_width = self.terminal_width
+                faux_node.num_rows = self.num_rows
+
+                lexer = syntax_highlight_basic(faux_node)
+                grid = self.prepare_for_grid()
+
+                self.adjust_position_and_dimensions(*self.dims)
+                verts = process_grid_for_shader(grid)
+                uv_indices = process_uvs_for_shader(self)
+
+                shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
+                batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+                config.batch = batch
+                config.shader = shader
+                config.syntax_mode = "Code"
+                config.colors = {color_name: getattr(self, color_name)[:] for color_name in lexed_colors}
 
                 draw_data = {
                   'tree_name': self.id_data.name[:],
