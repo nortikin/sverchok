@@ -272,7 +272,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
     def draw_buttons(self, context, layout):
         row = layout.row()
         icon = 'RESTRICT_VIEW_OFF' if self.activate else 'RESTRICT_VIEW_ON'
-        row.separator()
         row.prop(self, "activate", icon=icon, text='')
 
         layout.prop(self, 'selected_mode', expand=True)
@@ -349,7 +348,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
                     inputs[0],
                     self.rounding,
                     self.element_index,
-                    self.view_by_element,
                     props
                 )
 

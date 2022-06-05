@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-
+import re
 import numpy as np
 from mathutils import Matrix
 
@@ -72,13 +72,17 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
     return coords, cfaces
  
-def advanced_parse_socket(socket, rounding, element_index, view_by_element, props):
+def advanced_parse_socket(socket, rounding, element_index, props):
 
     out = "...."
     prefix = f"data[{element_index}] = "
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
+
+                # could potentially chop up fulldata here before turning it
+                # into nparray. maybe it's faster?
+
                 a = np.array(fulldata[element_index])
                 str_array = np.array2string(
                     a, 
@@ -89,7 +93,8 @@ def advanced_parse_socket(socket, rounding, element_index, view_by_element, prop
                     threshold=30,
                     edgeitems=10)
                 
-                print("success")
+                if "list" in str_array:
+                    str_array = re.sub("list\((?P<list>.+)\)", "\g<list>", str_array)
                 print(str_array)
                 return (prefix + str_array).split("\n")
             except:
