@@ -75,7 +75,7 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
 def advanced_parse_socket(socket, rounding, element_index, view_by_element, props):
 
     out = "...."
-
+    prefix = f"data[{element_index}] = "
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
@@ -84,11 +84,12 @@ def advanced_parse_socket(socket, rounding, element_index, view_by_element, prop
                     a, 
                     max_line_width=props.line_width, 
                     precision=rounding or None, 
-                    separator=' ', prefix='', threshold=50)
+                    prefix=prefix, 
+                    separator=' ', threshold=50)
                 
                 print("success")
                 print(str_array)
-                return str_array.split("\n")
+                return (prefix + str_array).split("\n")
             except:
                 ...
     return out
