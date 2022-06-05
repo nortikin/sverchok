@@ -31,11 +31,25 @@ from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
+
+from sverchok.utils.sv_nodeview_draw_helper import (
+    SvNodeViewDrawMixin, 
+    get_console_grid, 
+    advanced_parse_socket,
+    advanced_text_decompose,
+    )
 from sverchok.nodes.viz.console_node import (
-    simple_console_xy, terminal_text_to_uv, syntax_highlight_basic, make_color, text_decompose,
-    process_grid_for_shader, process_uvs_for_shader, vertex_shader, lexed_fragment_shader, lexed_colors,
-    random_color_chars, get_font_pydata_location
+    simple_console_xy, 
+    terminal_text_to_uv, 
+    syntax_highlight_basic, 
+    make_color, 
+    process_grid_for_shader, 
+    process_uvs_for_shader, 
+    vertex_shader, 
+    lexed_fragment_shader, 
+    lexed_colors,
+    random_color_chars, 
+    get_font_pydata_location,
 )
 
 
@@ -191,12 +205,11 @@ class LexMixin():
         return (x, y, width, height)
 
     def set_node_props(self, socket_data):
-        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), len(socket_data))
+        multiline, (chars_x, chars_y) = advanced_text_decompose('\n'.join(socket_data))
         valid_multiline = '\n'.join(multiline)
         self.terminal_text = valid_multiline
         self.num_rows = chars_y
         self.terminal_width = chars_x
-
 
 
 class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNodeViewDrawMixin):
@@ -328,7 +341,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
                 props.compact = self.compact
                 props.depth = None                
 
-                processed_data = parse_socket(
+                processed_data = advanced_parse_socket(
                     inputs[0],
                     self.rounding,
                     self.element_index,
@@ -343,8 +356,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
                 # faux_node.terminal_width = self.terminal_width
                 # faux_node.num_rows = self.num_rows
 
-                lexer = random_color_chars(self) #
-                # lexer = syntax_highlight_basic(self).repeat(6).tolist()
+                # lexer = random_color_chars(self) #
+                lexer = syntax_highlight_basic(self).repeat(6).tolist()
 
                 self.get_font_texture()
                 self.init_texture(256, 256)

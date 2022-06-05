@@ -72,3 +72,60 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
     return coords, cfaces
  
+def advanced_parse_socket(socket, rounding, element_index, view_by_element, props):
+
+    out = "...."
+
+    if (fulldata := socket.sv_get()):
+        if len(fulldata) > 0:
+            try:
+                a = np.array(fulldata[element_index])
+                str_array = np.array2string(
+                    a, 
+                    max_line_width=props.line_width, 
+                    precision=rounding or None, 
+                    separator=' ', prefix='', threshold=50)
+                
+                print("success")
+                print(str_array)
+                return str_array.split("\n")
+            except:
+                ...
+    return out
+
+
+
+def find_longest_linelength(lines):
+    return len(max(lines, key=len))
+
+
+def ensure_line_padding(text, filler=" "):
+    """ expects a single string, with newlines """
+    lines = text.split('\n')
+    longest_line = find_longest_linelength(lines)
+    
+    new_lines = []
+    new_line = new_lines.append
+    for line in lines:
+        new_line(line.ljust(longest_line, filler))
+    
+    return new_lines, longest_line
+
+def advanced_text_decompose(content):
+    """
+    input:
+        expects to receive a newline separated string, to indicate multiline text
+        if anything else is received a "no valid text found..." message is passed.
+    return:
+        return_str : a list of strings, padded with " " to match the longest line
+        dims       : 1. number of lines high, 
+                     2. length of longest line (its char count)
+    """
+    return_str = ""
+    if isinstance(content, str):
+        return_str, width = ensure_line_padding(content)
+    else:
+        return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
+
+    dims = width, len(return_str)
+    return return_str, dims
