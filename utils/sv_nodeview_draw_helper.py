@@ -94,8 +94,8 @@ def advanced_parse_socket(socket, rounding, element_index, props):
                     edgeitems=10)
                 
                 if "list" in str_array:
-                    str_array = re.sub("list\((?P<list>.+)\)", "\g<list>", str_array)
-                print(str_array)
+                    str_array = re.sub("list\((?P<list>.+?)\)", "\g<list>", str_array)
+                #print(str_array)
                 return (prefix + str_array).split("\n")
             except:
                 ...
