@@ -130,11 +130,6 @@ def process_uvs_for_shader(node):
     return uvs
 
 
-l1 = r" ______ _    _ _______  ______ _______ _     _  _____  _     _"
-l2 = r"/______  \  /  |______ |_____/ |       |_____| |     | |____/ "
-l3 = r"______/   \/   |______ |    \_ |_____  |     | |_____| |    \_"
-default_console_width = len(l1)
-
 class LexMixin():
 
     texture_dict = {}
@@ -154,7 +149,7 @@ class LexMixin():
     bgColor: make_color("Background",          (0.06, 0.06, 0.06, 1.0))  # there are nicer ways to calculate the background overlay.
 
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
-    terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA") #f"{l1}\n{l2}\n{l3}")
+    terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
 
 
@@ -296,6 +291,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
             if self.num_elements > 0 and self.view_by_element:
                 layout.prop(self, 'element_index', text='get index')
 
+        elif self.selected_mode == "sv++":
+            row1 = layout.row(align=True)
+            row1.prop(self, "line_width")
+            row1.prop(self, "rounding")
+            layout.prop(self, 'element_index', text='get index')
+            layout.prop(self, "local_scale")
         else:
             pass
 
@@ -337,6 +338,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
             elif self.selected_mode == "sv++":
 
                 props = lambda: None
+                texture = lambda: None
+                config = lambda: None
+
                 props.line_width = self.line_width
                 props.compact = self.compact
                 props.depth = None                
@@ -353,22 +357,17 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
                 # lexer = random_color_chars(self) # <-- this can be used for a much lighter lexer.
                 lexer = syntax_highlight_basic(self).repeat(6).tolist()
-
                 self.get_font_texture()
                 self.init_texture(256, 256)
-
                 grid = self.prepare_for_grid()
 
                 self.adjust_position_and_dimensions(*self.dims)
                 verts = process_grid_for_shader(grid)
                 uv_indices = process_uvs_for_shader(self)
 
-                texture = lambda: None
                 texture.texture_dict = self.texture_dict
-
                 shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
                 batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
-                config = lambda: None
                 config.batch = batch
                 config.shader = shader
                 config.syntax_mode = "Code"
@@ -377,7 +376,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
                 draw_data = {
                   'tree_name': self.id_data.name[:],
                   'node_name': self.name[:],
-                  'loc': get_xy_for_bgl_drawing, #get_desired_xy,
+                  'loc': get_xy_for_bgl_drawing,
                   'mode': 'custom_function_context', 
                   'custom_function': simple_console_xy,
                   'args': (texture, config)
