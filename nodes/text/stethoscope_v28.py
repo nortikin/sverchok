@@ -351,12 +351,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
                 self.set_node_props(processed_data)
 
-                # faux_node = lambda: None
-                # faux_node.terminal_text = self.terminal_text
-                # faux_node.terminal_width = self.terminal_width
-                # faux_node.num_rows = self.num_rows
-
-                # lexer = random_color_chars(self) #
+                # lexer = random_color_chars(self) # <-- this can be used for a much lighter lexer.
                 lexer = syntax_highlight_basic(self).repeat(6).tolist()
 
                 self.get_font_texture()
