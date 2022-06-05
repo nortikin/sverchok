@@ -85,7 +85,9 @@ def advanced_parse_socket(socket, rounding, element_index, view_by_element, prop
                     max_line_width=props.line_width, 
                     precision=rounding or None, 
                     prefix=prefix, 
-                    separator=' ', threshold=50)
+                    separator=' ', 
+                    threshold=30,
+                    edgeitems=10)
                 
                 print("success")
                 print(str_array)
