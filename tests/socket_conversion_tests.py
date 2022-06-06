@@ -19,7 +19,7 @@ class SocketConversionTests(EmptyTreeTestCase):
 
         # Trigger processing of NGon node
         ngon.process()
-        prepare_input_data([ngon.outputs['Vertices']], [matrix_apply.inputs['Matrixes']])
+        prepare_input_data([ngon.outputs['Vertices']], matrix_apply)
         # Read what MatrixApply node sees
         data =[[v[:] for v in m] for m in matrix_apply.inputs['Matrixes'].sv_get()]
 

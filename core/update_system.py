@@ -13,6 +13,7 @@ from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
 from sverchok.utils.tree_walk import bfs_walk
+from sverchok.utils.socket_utils import format_bpy_property
 
 if TYPE_CHECKING:
     from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
@@ -146,7 +147,7 @@ class SearchTree:
         records nodes statistics
         If suppress is True an error during node execution will be suppressed"""
         with AddStatistic(node, suppress):
-            prepare_input_data(self.previous_sockets(node), node.inputs)
+            prepare_input_data(self.previous_sockets(node), node)
             node.process()
 
     def _remove_reroutes(self):
@@ -326,7 +327,7 @@ class UpdateTree(SearchTree):
                 for node, prev_socks in walker:
                     with AddStatistic(node):
                         yield node
-                        prepare_input_data(prev_socks, node.inputs)
+                        prepare_input_data(prev_socks, node)
                         node.process()
             except CancelError:
                 pass
@@ -566,22 +567,49 @@ class AddStatistic:
             return issubclass(exc_type, Exception)
 
 
-def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
-                       input_socks: list[NodeSocket]):
+def prepare_input_data(prev_socks: list[Optional[NodeSocket]], to_node: Node):
     """Reads data from given outputs socket make it conversion if necessary and
     put data into input given socket"""
-    # this can be a socket method
-    for ps, ns in zip(prev_socks, input_socks):
+    # this can be a socket/node method?
+    for ps, ns in zip(prev_socks, to_node.inputs):
+
+        # extract default value if available
         if ps is None:
-            continue
-        data = ps.sv_get()
 
-        # cast data
-        if ps.bl_idname != ns.bl_idname:
-            implicit_conversion = conversions[ns.default_conversion_name]
-            data = implicit_conversion.convert(ns, ps, data)
+            if hasattr(to_node, 'missing_dependency'):
+                prop_name = []
+            elif to_node and hasattr(to_node, 'does_support_draft_mode') and to_node.does_support_draft_mode() and hasattr(
+                    to_node.id_data, 'sv_draft') and to_node.id_data.sv_draft:
+                prop_name_draft = to_node.draft_properties_mapping.get(ns.prop_name, None)
+                if prop_name_draft:
+                    prop_name = prop_name_draft
+                else:
+                    prop_name = ns.prop_name
+            else:
+                prop_name = ns.prop_name
 
-        ns.sv_set(data)
+            data = None
+            if prop_name:
+                prop = getattr(to_node, prop_name)
+                data = format_bpy_property(prop)
+
+            elif ns.use_prop and hasattr(ns, 'default_property') and ns.default_property is not None:
+                default_property = ns.default_property
+                data = format_bpy_property(default_property)
+
+            if data is not None:
+                ns.sv_set(data)
+
+        # extract data from connected socket
+        else:
+            data = ps.sv_get()
+
+            # cast data
+            if ps.bl_idname != ns.bl_idname:
+                implicit_conversion = conversions[ns.default_conversion_name]
+                data = implicit_conversion.convert(ns, ps, data)
+
+            ns.sv_set(data)
 
 
 def update_ui(tree: NodeTree, times: Iterable[float] = None):

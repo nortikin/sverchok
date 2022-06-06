@@ -73,7 +73,7 @@ class GroupUpdateTree(us.UpdateTree):
             # walker = self._debug_color(walker)
             for node, prev_socks in walker:
                 with us.AddStatistic(node):
-                    us.prepare_input_data(prev_socks, node.inputs)
+                    us.prepare_input_data(prev_socks, node)
                     node.process()
 
             if is_opened_tree:
