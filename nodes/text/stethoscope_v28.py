@@ -346,19 +346,19 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
             elif self.selected_mode == "sv++":
 
+                self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
+
                 texture = lambda: None
                 config = lambda: None
 
                 processed_data = advanced_parse_socket(inputs[0], self)
                 self.set_node_props(processed_data)
 
-                # lexer = random_color_chars(self) # <-- this can be used for a much lighter lexer.
                 lexer = syntax_highlight_basic(self).repeat(6).tolist()
-                self.get_font_texture()  # this is cached after 1st run
+                self.get_font_texture()  # [x] this is cached after 1st run
                 self.init_texture(256, 256)  # this must be done each redraw
-                grid = self.prepare_for_grid()  # could be cached, certainly if width/numrows dont change   
+                grid = self.prepare_for_grid()  # [x] is cached   
 
-                self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
                 verts = process_grid_for_shader(grid)  # [ ] ? cacheable?
                 uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
