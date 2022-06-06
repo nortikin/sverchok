@@ -161,6 +161,7 @@ class LexMixin():
         texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
+        
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
         bgl.glActiveTexture(bgl.GL_TEXTURE0)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
@@ -336,32 +337,21 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
             elif self.selected_mode == "sv++":
 
-                props = lambda: None
                 texture = lambda: None
                 config = lambda: None
 
-                props.line_width = self.line_width
-                props.compact = self.compact
-                props.depth = None                
-
-                processed_data = advanced_parse_socket(
-                    inputs[0],
-                    self.rounding,
-                    self.element_index,
-                    props
-                )
-
+                processed_data = advanced_parse_socket(inputs[0], self)
                 self.set_node_props(processed_data)
 
                 # lexer = random_color_chars(self) # <-- this can be used for a much lighter lexer.
                 lexer = syntax_highlight_basic(self).repeat(6).tolist()
-                self.get_font_texture()
-                self.init_texture(256, 256)
-                grid = self.prepare_for_grid()
+                self.get_font_texture()  # this is cached after 1st run
+                self.init_texture(256, 256)  # this must be done each redraw
+                grid = self.prepare_for_grid()  # could be cached, certainly if width/numrows dont change   
 
-                self.adjust_position_and_dimensions(*self.dims)
-                verts = process_grid_for_shader(grid)
-                uv_indices = process_uvs_for_shader(self)
+                self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
+                verts = process_grid_for_shader(grid)  # [ ] ? cacheable?
+                uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
                 texture.texture_dict = self.texture_dict
                 shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)

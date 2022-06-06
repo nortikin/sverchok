@@ -391,7 +391,7 @@ def simple_console_xy(context, args, loc):
     texture, config = args
     act_tex = bgl.Buffer(bgl.GL_INT, 1)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
-    
+
     config.shader.bind()
     
     # if not config.syntax_mode == "None":

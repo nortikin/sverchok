@@ -72,10 +72,10 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
     return coords, cfaces
  
-def advanced_parse_socket(socket, rounding, element_index, props):
+def advanced_parse_socket(socket, node):
 
     out = "...."
-    prefix = f"data[{element_index}] = "
+    prefix = f"data[{node.element_index}] = "
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
@@ -83,11 +83,11 @@ def advanced_parse_socket(socket, rounding, element_index, props):
                 # could potentially chop up fulldata here before turning it
                 # into nparray. maybe it's faster?
 
-                a = np.array(fulldata[element_index])
+                a = np.array(fulldata[node.element_index])
                 str_array = np.array2string(
                     a, 
-                    max_line_width=props.line_width, 
-                    precision=rounding or None, 
+                    max_line_width=node.line_width, 
+                    precision=node.rounding or None, 
                     prefix=prefix, 
                     separator=' ', 
                     threshold=30,
