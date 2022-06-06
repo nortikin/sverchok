@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import re
+
 import bpy
 import numpy as np
 import bgl, gpu

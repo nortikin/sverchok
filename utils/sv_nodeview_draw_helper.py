@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import bpy
-import re
 import numpy as np
 from mathutils import Matrix
 
