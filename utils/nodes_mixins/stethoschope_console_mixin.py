@@ -7,7 +7,7 @@
 
 import bpy
 import numpy as np
-import blf, bgl, gpu
+import bgl, gpu
 from mathutils import Vector
 from gpu_extras.batch import batch_for_shader
 

@@ -20,8 +20,7 @@ import numpy as np
 import pprint
 import re
 import bpy
-import blf, bgl, gpu
-from gpu_extras.batch import batch_for_shader
+import blf
 
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
