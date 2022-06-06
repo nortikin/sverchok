@@ -139,3 +139,4 @@ def advanced_text_decompose(content):
 
     dims = width, len(return_str)
     return return_str, dims
+
