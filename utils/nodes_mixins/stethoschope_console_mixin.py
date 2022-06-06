@@ -10,10 +10,7 @@ import re
 import bpy
 import numpy as np
 import bgl, gpu
-from mathutils import Vector
 from gpu_extras.batch import batch_for_shader
-
-import sverchok
 
 from sverchok.utils.sv_nodeview_draw_helper import get_console_grid
 from sverchok.nodes.viz.console_node import (
@@ -39,7 +36,7 @@ def get_xy_for_bgl_drawing(node):
     # take into consideration the hidden state
     node_width = node.width
     _x, _y = node.absolute_location
-    _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
+    _x, _y = (_x + node_width + 20), _y
 
     # this alters location based on DPI/Scale settings.
     draw_location = adjust_location(_x, _y, node.location_theta)
