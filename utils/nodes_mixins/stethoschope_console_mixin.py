@@ -27,20 +27,15 @@ from sverchok.nodes.viz.console_node import (
     get_font_pydata_location,
 )
 
-def adjust_location(_x, _y, location_theta):
-    return _x * location_theta, _y * location_theta
-
 # yep, this is a repeat function.
 def get_xy_for_bgl_drawing(node):
     # adjust proposed text location in case node is framed.
     # take into consideration the hidden state
-    node_width = node.width
     _x, _y = node.absolute_location
-    _x, _y = (_x + node_width + 20), _y
+    _x, _y = (_x + node.width + 20), _y
 
     # this alters location based on DPI/Scale settings.
-    draw_location = adjust_location(_x, _y, node.location_theta)
-    return draw_location
+    return _x * node.location_theta, _y * node.location_theta
 
 def advanced_parse_socket(socket, node):
 
@@ -131,6 +126,7 @@ class LexMixin():
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
+    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=lambda self, context: self.process_node(context))
 
 
     def init_texture(self, width, height):

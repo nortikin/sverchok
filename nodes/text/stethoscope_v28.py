@@ -39,19 +39,14 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
-def adjust_location(_x, _y, location_theta):
-    return _x * location_theta, _y * location_theta
-
 def get_xy_for_bgl_drawing(node):
     # adjust proposed text location in case node is framed.
     # take into consideration the hidden state
-    node_width = node.width
     _x, _y = node.absolute_location
-    _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
+    _x, _y = (_x + node.width + 20), _y
 
     # this alters location based on DPI/Scale settings.
-    draw_location = adjust_location(_x, _y, node.location_theta)
-    return draw_location
+    return _x * node.location_theta, _y * node.location_theta
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
@@ -153,8 +148,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
-
-    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
 
 
     def get_theme_colors_for_contrast(self):
