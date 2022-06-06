@@ -77,15 +77,15 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
 def advanced_parse_socket(socket, node):
 
     out = "...."
-    prefix = f"data[{node.element_index}] = "
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
 
                 # could potentially chop up fulldata here before turning it
                 # into nparray. maybe it's faster?
-
-                a = np.array(fulldata[node.element_index])
+                index = abs(node.element_index) % len(fulldata)
+                prefix = f"data[{index}] = "
+                a = np.array(fulldata[index])
                 str_array = np.array2string(
                     a, 
                     max_line_width=node.line_width, 
