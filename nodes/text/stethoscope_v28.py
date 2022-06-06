@@ -83,8 +83,15 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     str_width = props.line_width
 
-    # okay, here we should be more clever and extract part of the list
-    # to avoid the amount of time it take to format it.
+    """
+    if data is large (either due to many small lists or n big lists) here it is sliced up
+    remember the user is already comfortable with seeing their data being abbreviated when big
+    
+    if len(data) == 0:
+        data = data[0][:10] + data[0][-10:]
+    elif
+        data = data[0][:10] + data[n][-10:]
+    """
     
     content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
     content_array = content_str.split('\n')
