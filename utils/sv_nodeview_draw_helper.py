@@ -74,69 +74,9 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     
     return coords, cfaces
  
-def advanced_parse_socket(socket, node):
-
-    out = "...."
-    if (fulldata := socket.sv_get()):
-        if len(fulldata) > 0:
-            try:
-
-                # could potentially chop up fulldata here before turning it
-                # into nparray. maybe it's faster?
-                index = abs(node.element_index) % len(fulldata)
-                prefix = f"data[{index}] = "
-                a = np.array(fulldata[index])
-                str_array = np.array2string(
-                    a, 
-                    max_line_width=node.line_width, 
-                    precision=node.rounding or None, 
-                    prefix=prefix, 
-                    separator=' ', 
-                    threshold=30,
-                    edgeitems=10)
-                
-                if "list" in str_array:
-                    str_array = re.sub("list\((?P<list>.+?)\)", "\g<list>", str_array)
-                #print(str_array)
-                return (prefix + str_array).split("\n")
-            except:
-                ...
-    return out
-
-
-
-def find_longest_linelength(lines):
-    return len(max(lines, key=len))
-
-
-def ensure_line_padding(text, filler=" "):
-    """ expects a single string, with newlines """
-    lines = text.split('\n')
-    longest_line = find_longest_linelength(lines)
-    
-    new_lines = []
-    new_line = new_lines.append
-    for line in lines:
-        new_line(line.ljust(longest_line, filler))
-    
-    return new_lines, longest_line
-
-def advanced_text_decompose(content):
-    """
-    input:
-        expects to receive a newline separated string, to indicate multiline text
-        if anything else is received a "no valid text found..." message is passed.
-    return:
-        return_str : a list of strings, padded with " " to match the longest line
-        dims       : 1. number of lines high, 
-                     2. length of longest line (its char count)
-    """
-    return_str = ""
-    if isinstance(content, str):
-        return_str, width = ensure_line_padding(content)
-    else:
-        return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
-
-    dims = width, len(return_str)
-    return return_str, dims
-
+def process_uvs_for_shader(node):
+    uv_indices = terminal_text_to_uv(node.terminal_text)
+    uvs = []
+    add_uv = uvs.append
+    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
+    return uvs
