@@ -346,13 +346,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
             elif self.selected_mode == "sv++":
 
-                self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
-
                 texture = lambda: None
                 config = lambda: None
 
                 processed_data = advanced_parse_socket(inputs[0], self)
                 self.set_node_props(processed_data)
+                self.adjust_position_and_dimensions(*self.dims)  # low impact i think..
 
                 lexer = syntax_highlight_basic(self).repeat(6).tolist()
                 self.get_font_texture()  # [x] this is cached after 1st run
