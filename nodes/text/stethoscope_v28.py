@@ -75,6 +75,7 @@ def get_xy_for_bgl_drawing(node):
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     data = socket.sv_get(deepcopy=False)
+
     num_data_items = len(data)
     if num_data_items > 0 and view_by_element:
         if element_index < num_data_items:
