@@ -133,6 +133,7 @@ def process_uvs_for_shader(node):
 class LexMixin():
 
     texture_dict = {}
+    console_grid_dict = {}
 
     name1Color: make_color("name1 color",      (0.83, 0.91, 1.00, 1.0))  # 1
     numberColor: make_color("number color",    (0.08, 0.70, 0.98, 1.0))  # 2
@@ -191,7 +192,15 @@ class LexMixin():
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
         char_height = int(32 * self.local_scale)
-        return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
+
+        params = tuple(char_width, char_height, self.terminal_width, self.num_rows)
+        if params in console_grid_dict:
+            coords, cfaces = console_grid_dict.get(params)
+        else:
+            coords, cfaces = get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
+            console_grid_dict[params] = coords, cfaces
+
+        return coords, cfaces
 
     @property
     def dims(self):
