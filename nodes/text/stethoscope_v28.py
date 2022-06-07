@@ -198,7 +198,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
         return get_params({
             'stethoscope_view_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
-    @profile
     def process(self):
         inputs = self.inputs
         n_id = node_id(self)
