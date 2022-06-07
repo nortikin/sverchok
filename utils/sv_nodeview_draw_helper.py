@@ -69,12 +69,18 @@ def faces_from_xy(ncx, ncy):
             add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
     return faces
 
-#@njit(cache=True)
+@njit(cache=True)
 def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     num_verts_x = num_chars_x + 1
     num_verts_y = num_chars_y + 1
+
     X = np.linspace(0, num_chars_x*char_width, num_verts_x)
     Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
-    coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
+    #coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
+    xdir = np.tile(X, num_verts_y).T
+    ydir = np.repeat(Y, num_verts_x).T
+    zdir = np.zeros(xdir.size)  # i think this axis can be dropped for 2d drawing.
+    coords = np.vstack((xdir, ydir, zdir)).T    
+
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
     return coords, cfaces
