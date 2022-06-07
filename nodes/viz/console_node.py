@@ -23,6 +23,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
+#from sverchok.utils.decorators_compilation import njit
 
 def get_desired_xy(node):
     x, y = node.xy_offset
