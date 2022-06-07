@@ -48,7 +48,7 @@ from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
 # njit is a light-wrapper aroudn numba.njit, if found
-from sverchok.dependencies import numba
+from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
 
