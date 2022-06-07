@@ -26,17 +26,8 @@ from sverchok.nodes.viz.console_node import (
     lexed_colors,
     random_color_chars, 
     get_font_pydata_location,
+    get_xy_for_bgl_drawing,
 )
-
-# yep, this is a repeat function.
-def get_xy_for_bgl_drawing(node):
-    # adjust proposed text location in case node is framed.
-    # take into consideration the hidden state
-    _x, _y = node.absolute_location
-    _x, _y = (_x + node.width + 20), _y
-
-    # this alters location based on DPI/Scale settings.
-    return _x * node.location_theta, _y * node.location_theta
 
 def advanced_parse_socket(socket, node):
 
