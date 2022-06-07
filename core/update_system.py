@@ -9,7 +9,7 @@ from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
 from sverchok.core.sv_custom_exceptions import CancelError
-from sverchok.core.socket_conversions import ConversionPolicies
+from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
 from sverchok.utils.tree_walk import bfs_walk
@@ -83,6 +83,7 @@ class SearchTree:
     _from_nodes: dict['SvNode', set['SvNode']]
     _to_nodes: dict['SvNode', set['SvNode']]
     _from_sock: dict[NodeSocket, NodeSocket]
+    _to_socks: dict[NodeSocket, set[NodeSocket]]
     _sock_node: dict[NodeSocket, Node]
     _links: set[tuple[NodeSocket, NodeSocket]]
 
@@ -93,6 +94,7 @@ class SearchTree:
         self._to_nodes = {
             n: set() for n in tree.nodes if n.bl_idname != 'NodeFrame'}
         self._from_sock = dict()  # only connected
+        self._to_socks = defaultdict(set)  # only connected
         self._sock_node = dict()  # only connected sockets
         self._links = set()  # from to socket
 
@@ -100,6 +102,7 @@ class SearchTree:
             self._from_nodes[link.to_node].add(link.from_node)
             self._to_nodes[link.from_node].add(link.to_node)
             self._from_sock[link.to_socket] = link.from_socket
+            self._to_socks[link.from_socket].add(link.to_socket)
             self._sock_node[link.from_socket] = link.from_node
             self._sock_node[link.to_socket] = link.to_node
             self._links.add((link.from_socket, link.to_socket))
@@ -150,50 +153,57 @@ class SearchTree:
             node.process()
 
     def _remove_reroutes(self):
-        for _node in self._from_nodes:
-            if _node.bl_idname == "NodeReroute":
+        for r in self._tree.nodes:
+            if r.bl_idname != "NodeReroute":
+                continue
 
-                # relink nodes
-                from_n = self._from_nodes[_node].pop()
-                self._to_nodes[from_n].remove(_node)  # remove from
-                to_ns = self._to_nodes[_node]
-                for _next in to_ns:
-                    self._from_nodes[_next].remove(_node)  # remove to
-                    self._from_nodes[_next].add(from_n)  # add link from
-                    self._to_nodes[from_n].add(_next)  # add link to
+            # relink nodes
+            from_n = None
+            if self._from_nodes[r]:
+                from_n = self._from_nodes[r].pop()
+                self._to_nodes[from_n].remove(r)  # remove from
+            del self._from_nodes[r]
 
-                    # relink sockets
-                    for sock in _next.inputs:
-                        from_s = self._from_sock.get(sock)
-                        if from_s is None:
-                            continue
-                        from_s_node = self._sock_node[from_s]
-                        if from_s_node == _node:
-                            from_from_s = self._from_sock.get(_node.inputs[0])
-                            self._links.discard((from_s, sock))
-                            if from_from_s is not None:
-                                self._links.discard((from_from_s, _node.inputs[0]))
-                                self._links.add((from_from_s, sock))
-                                self._from_sock[sock] = from_from_s
-                            else:
-                                del self._from_sock[sock]
+            to_ns = self._to_nodes[r]
+            for to_n in to_ns:
+                self._from_nodes[to_n].remove(r)  # remove to
+                if from_n:
+                    self._from_nodes[to_n].add(from_n)  # add link from
+                    self._to_nodes[from_n].add(to_n)  # add link to
+            del self._to_nodes[r]
 
-        self._from_nodes = {n: k for n, k in self._from_nodes.items() if n.bl_idname != 'NodeReroute'}
-        self._to_nodes = {n: k for n, k in self._to_nodes.items() if n.bl_idname != 'NodeReroute'}
+            # relink sockets
+            if from_s := self._from_sock.get(r.inputs[0]):
+                self._links.discard((from_s, r.inputs[0]))
+                self._to_socks[from_s].remove(r.inputs[0])
+                del self._from_sock[r.inputs[0]]
+
+            if to_ss := self._to_socks.get(r.outputs[0]):
+                for to_s in to_ss:
+                    self._links.discard((r.outputs[0], to_s))
+                    if from_s is not None:
+                        self._links.add((from_s, to_s))
+                        self._from_sock[to_s] = from_s
+                        self._to_socks[from_s].add(to_s)
+                    else:
+                        del self._from_sock[to_s]
+                del self._to_socks[r.outputs[0]]
 
     def _remove_wifi_nodes(self):
         wifi_in: dict[str, 'SvNode'] = dict()
         wifi_out: dict[str, set['SvNode']] = defaultdict(set)
+        disconnected = []
         for node in self._tree.nodes:
-            if var := getattr(node, 'var_name', ''):
-                if node.bl_idname == 'WifiInNode':
+            if (var := getattr(node, 'var_name', None)) is not None:
+                if not var:
+                    disconnected.append(node)
+                elif node.bl_idname == 'WifiInNode':
                     wifi_in[var] = node
                 elif node.bl_idname == 'WifiOutNode':
                     wifi_out[var].add(node)
 
-        to_socks: dict[NodeSocket, set[NodeSocket]] = defaultdict(set)
-        for link in (li for li in self._tree.links if not li.is_muted):
-            to_socks[link.from_socket].add(link.to_socket) 
+        for n in disconnected:
+            self._remove_node(n)
 
         for var, in_ in wifi_in.items():
             for out in wifi_out[var]:
@@ -201,12 +211,13 @@ class SearchTree:
                     if from_s := self._from_sock.get(in_sock):
                         from_n = self._sock_node[from_s]
                         self._to_nodes[from_n].discard(in_)
-                        del self._from_sock[in_sock]
+                        self._to_socks[from_s].discard(in_sock)
                         self._links.discard((from_s, in_sock))
-                    if to_ss := to_socks.get(out_sock):
+                    if to_ss := self._to_socks.get(out_sock):
                         for to_s in to_ss:
                             to_n = self._sock_node[to_s]
                             self._from_nodes[to_n].discard(out)
+                            del self._from_sock[to_s]
                             self._links.discard((out_sock, to_s))
                     if from_s and to_ss:
                         for to_s in to_ss:
@@ -214,12 +225,40 @@ class SearchTree:
                             self._from_nodes[to_n].add(from_n)
                             self._to_nodes[from_n].add(to_n)
                             self._from_sock[to_s] = from_s
+                            self._to_socks[from_s].add(to_s)
                             self._links.add((from_s, to_s))
 
-        self._from_nodes = {n: k for n, k in self._from_nodes.items()
-                            if n.bl_idname not in {'WifiInNode', 'WifiOutNode'}}
-        self._to_nodes = {n: k for n, k in self._to_nodes.items()
-                          if n.bl_idname not in {'WifiInNode', 'WifiOutNode'}}
+                for out_s in out.outputs:
+                    if out_s in self._to_socks:
+                        del self._to_socks[out_s]
+                del self._from_nodes[out]
+                del self._to_nodes[out]
+
+            for in_s in in_.inputs:
+                if in_s in self._from_sock:
+                    del self._from_sock[in_s]
+            del self._from_nodes[in_]
+            del self._to_nodes[in_]
+
+    def _remove_node(self, node: Node):
+        for in_s in node.inputs:
+            if from_s := self._from_sock.get(in_s):
+                self._to_socks[from_s].discard(in_s)
+                self._links.discard((from_s, in_s))
+                del self._from_sock[in_s]
+        for from_n in self._from_nodes[node]:
+            self._to_nodes[from_n].discard(node)
+        del self._from_nodes[node]
+
+        for out_s in node.outputs:
+            if to_ss := self._to_socks.get(out_s):
+                for to_s in to_ss:
+                    del self._from_sock[to_s]
+                    self._links.discard((out_s, to_s))
+                del self._to_socks[out_s]
+        for to_n in self._to_nodes[node]:
+            self._from_nodes[to_n].discard(node)
+        del self._to_nodes[node]
 
     def __repr__(self):
         def from_nodes_str():
@@ -578,7 +617,7 @@ def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
 
         # cast data
         if ps.bl_idname != ns.bl_idname:
-            implicit_conversion = ConversionPolicies.get_conversion(ns.default_conversion_name)
+            implicit_conversion = conversions[ns.default_conversion_name]
             data = implicit_conversion.convert(ns, ps, data)
 
         ns.sv_set(data)

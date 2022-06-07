@@ -57,3 +57,21 @@ class SvNotFullyConnected(SvProcessingError):
 
     def __str__(self):
         return self.message
+
+
+class ImplicitConversionProhibited(Exception):
+    def __init__(self, socket, msg=None):
+        super().__init__()
+        self.socket = socket
+        self.node = socket.node
+        self.from_socket_type = socket.other.bl_idname
+        self.to_socket_type = socket.bl_idname
+        if msg is None:
+            msg = f"Implicit conversion from socket type {self.from_socket_type}" \
+                  f" to socket type {self.to_socket_type} is not supported for" \
+                  f" socket {socket.name} of node {socket.node.name}. Please" \
+                  f" use explicit conversion nodes."
+        self.message = msg
+
+    def __str__(self):
+        return self.message

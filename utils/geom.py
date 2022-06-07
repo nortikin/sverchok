@@ -47,6 +47,11 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
+# njit is a light-wrapper aroudn numba.njit, if found
+from sverchok.dependencies import numba  # not strictly needed i think...
+from sverchok.utils.decorators_compilation import njit
+
+
 identity_matrix = Matrix()
 
 # constants
@@ -203,6 +208,7 @@ class CubicSpline(Spline):
 
         super().__init__()
 
+
         if is_cyclic:
 
             #print(describe_data_shape(vertices))
@@ -210,7 +216,7 @@ class CubicSpline(Spline):
                 va, vb, vc = vertices[0], vertices[1], vertices[2]
                 locs = np.array([vc, va, vb, vc, va, vb, vc, va, vb, vc, va])
             else:
-                locs = np.array(vertices[-4:] + vertices + vertices[:4])            
+                locs = np.concatenate((vertices[-4:], vertices, vertices[:4]), axis=0)
 
             if tknots is None:
                 if metric is None:
@@ -233,44 +239,54 @@ class CubicSpline(Spline):
 
         n = len(locs)
         if n < 2:
-            raise Exception("Cubic spline can't be build from less than 3 vertices")
+            raise Exception("Cubic spline can't be built from less than 3 vertices")
 
-        # a = locs
-        h = tknots[1:] - tknots[:-1]
-        h[h == 0] = 1e-8
-        q = np.zeros((n - 1, 3))
-        q[1:] = 3 / h[1:, np.newaxis] * (locs[2:] - locs[1:-1]) - 3 / \
-            h[:-1, np.newaxis] * (locs[1:-1] - locs[:-2])
+        @njit(cache=True)
+        def calc_cubic_splines(tknots, n, locs):
+            """
+            returns splines
+            """
+            h = tknots[1:] - tknots[:-1]
+            h[h == 0] = 1e-8
 
-        l = np.zeros((n, 3))
-        l[0, :] = 1.0
-        u = np.zeros((n - 1, 3))
-        z = np.zeros((n, 3))
+            delta_i = (locs[2:] - locs[1:-1])
+            delta_j = (locs[1:-1] - locs[:-2])
+            nn = (3 / h[1:].reshape((-1, 1)) * delta_i) - (3 / h[:-1].reshape((-1, 1)) * delta_j)
+            q = np.vstack((np.array([[0.0, 0.0, 0.0]]), nn))
+            l = np.zeros((n, 3))
+            l[0, :] = 1.0
+            u = np.zeros((n - 1, 3))
+            z = np.zeros((n, 3))
 
-        for i in range(1, n - 1):
-            l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
-            l[i, l[i] == 0] = 1e-8
-            u[i] = h[i] / l[i]
-            z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
-        l[-1, :] = 1.0
-        z[-1] = 0.0
+            for i in range(1, n - 1):
+                l[i] = 2 * (tknots[i + 1] - tknots[i - 1]) - h[i - 1] * u[i - 1]
+                for idx in range(len(l[i])):  # range(l[i].shape[0]):
+                    if l[i][idx] == 0:
+                        l[i][idx] = 1e-8
+                u[i] = h[i] / l[i]
+                z[i] = (q[i] - h[i - 1] * z[i - 1]) / l[i]
 
-        b = np.zeros((n - 1, 3))
-        c = np.zeros((n, 3))
+            l[-1, :] = 1.0
+            z[-1] = 0.0
 
-        for i in range(n - 2, -1, -1):
-            c[i] = z[i] - u[i] * c[i + 1]
-        b = (locs[1:] - locs[:-1]) / h[:, np.newaxis] - h[:, np.newaxis] * (c[1:] + 2 * c[:-1]) / 3
-        d = (c[1:] - c[:-1]) / (3 * h[:, np.newaxis])
+            b = np.zeros((n - 1, 3))
+            c = np.zeros((n, 3))
+            for i in range(n - 2, -1, -1):
+                c[i] = z[i] - u[i] * c[i + 1]
 
-        splines = np.zeros((n - 1, 5, 3))
-        splines[:, 0] = locs[:-1]
-        splines[:, 1] = b
-        splines[:, 2] = c[:-1]
-        splines[:, 3] = d
-        splines[:, 4] = tknots[:-1, np.newaxis]
+            h_flat = h.reshape((-1, 1))
+            b = (locs[1:] - locs[:-1]) / h_flat - h_flat * (c[1:] + 2 * c[:-1]) / 3
+            d = (c[1:] - c[:-1]) / (3 * h_flat)
+
+            splines = np.zeros((n - 1, 5, 3))
+            splines[:, 0] = locs[:-1]
+            splines[:, 1] = b
+            splines[:, 2] = c[:-1]
+            splines[:, 3] = d
+            splines[:, 4] = tknots[:-1].reshape((-1, 1))
+            return splines
         
-        self.splines = splines
+        self.splines = calc_cubic_splines(tknots, n, locs)
 
     def eval(self, t_in, tknots = None):
         """

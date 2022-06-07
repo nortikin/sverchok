@@ -72,7 +72,7 @@ def create_dummy_class(bl_id):
     label, dependency_name = dummy_nodes_dict[bl_id]
     return type(
         bl_id,
-        (bpy.types.Node, SverchCustomTreeNode, SvDummyNode),
+        (SvDummyNode, SverchCustomTreeNode, bpy.types.Node),
         {
             'bl_idname': bl_id,
             'bl_label': label,
