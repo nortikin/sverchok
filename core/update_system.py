@@ -365,6 +365,7 @@ class UpdateTree(SearchTree):
         can be marked as outdated via dedicated flags for performance."""
         if self._outdated_nodes is not None:
             self._outdated_nodes.update(nodes)
+            self._update_default_values(nodes)  # todo is it best place?
 
     def __init__(self, tree: NodeTree):
         """Should not use be used directly, only via the get class method
@@ -394,7 +395,8 @@ class UpdateTree(SearchTree):
 
         # https://stackoverflow.com/a/68550238
         self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
-        self._socket_default = SocketDefaultValue(self._sock_node)
+
+        self._update_default_values(self._from_nodes.keys())
 
     def _animation_nodes(self) -> set['SvNode']:
         """Returns nodes which are animation dependent"""
@@ -485,7 +487,7 @@ class UpdateTree(SearchTree):
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
         for from_sock, to_sock in new_links:
-            if from_sock not in old._sock_node:  # socket was not connected
+            if from_sock not in old._from_sock:  # socket was not connected
                 # protect from if not self.outputs[0].is_linked: return
                 nodes_to_update.add(self._sock_node[from_sock])
             else:
@@ -498,10 +500,9 @@ class UpdateTree(SearchTree):
     def _fill_input(self, node: Node):
         for ps, ns in zip(self.previous_sockets(node), node.inputs):
 
-            # extract default value if available
+            # default values already should be in socket_data cache dictionary
             if ps is None:
-                if default := self._socket_default.get_value(ns):
-                    ns.sv_set(default)
+                continue
 
             # extract data from connected socket
             else:
@@ -513,6 +514,37 @@ class UpdateTree(SearchTree):
                     data = implicit_conversion.convert(ns, ps, data)
 
                 ns.sv_set(data)
+
+    def _update_default_values(self, nodes: Iterable[Node]):
+        for node in nodes:
+            for from_s, in_s in zip(self.previous_sockets(node), node.inputs):
+                if from_s is not None:
+                    continue
+                elif (default := self._search_default_value(in_s)) is not None:
+                    in_s.sv_set(default)
+
+    def _search_default_value(self, socket: NodeSocket) -> Optional[list]:
+        node = self._sock_node[socket]
+        if hasattr(node, 'missing_dependency'):
+            prop_name = None
+        elif node.id_data.sv_draft:
+            draft = None
+            if hasattr(node, 'draft_properties_mapping'):
+                draft = node.draft_properties_mapping.get(socket.prop_name, None)
+            if draft is not None:
+                prop_name = draft
+            else:
+                prop_name = socket.prop_name
+        else:
+            prop_name = socket.prop_name
+
+        if prop_name:
+            prop = getattr(node, prop_name)
+            return format_bpy_property(prop)
+
+        elif socket.use_prop:
+            default_property = socket.default_property
+            return format_bpy_property(default_property)
 
     def _calc_cam_update_time(self) -> Iterable['SvNode']:
         """Return cumulative update time in order of node_group.nodes collection"""
@@ -556,50 +588,6 @@ class UpdateTree(SearchTree):
         for node, *args in walker:
             _set_color(node, use_color)
             yield node, *args
-
-
-class SocketDefaultValue:
-    _cache: dict[NodeSocket, list]
-    _sock_node: dict[NodeSocket, Node]
-
-    def __init__(self, sock_node):
-        self._cache = dict()
-        self._sock_node = sock_node  # for fast search
-
-    def get_value(self, socket: NodeSocket) -> Optional[list]:
-        try:
-            return self._cache[socket]
-        except KeyError:
-            default = self._search(socket)
-            self._cache[socket] = default
-            return default
-
-    def clear(self, socket: NodeSocket):
-        if socket in self._cache:
-            del self._cache[socket]
-
-    def _search(self, socket: NodeSocket) -> Optional[list]:
-        node = self._sock_node[socket]
-        if hasattr(node, 'missing_dependency'):
-            prop_name = None
-        elif node.id_data.sv_draft:
-            draft = None
-            if hasattr(node, 'draft_properties_mapping'):
-                draft = node.draft_properties_mapping.get(socket.prop_name, None)
-            if draft is not None:
-                prop_name = draft
-            else:
-                prop_name = socket.prop_name
-        else:
-            prop_name = socket.prop_name
-
-        if prop_name:
-            prop = getattr(node, prop_name)
-            return format_bpy_property(prop)
-
-        elif socket.use_prop:
-            default_property = socket.default_property
-            return format_bpy_property(default_property)
 
 
 class AddStatistic:
