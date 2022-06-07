@@ -72,7 +72,6 @@ def faces_from_xy(ncx, ncy):
 def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     num_verts_x = num_chars_x + 1
     num_verts_y = num_chars_y + 1
-
     X = np.linspace(0, num_chars_x*char_width, num_verts_x)
     Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
     coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
