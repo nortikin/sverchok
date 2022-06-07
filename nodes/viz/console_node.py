@@ -415,7 +415,7 @@ def process_grid_for_shader(grid):
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
-            verts.append(positions[v_idx][:2])
+            verts.append(positions[v_idx])
     return verts
 
 def process_uvs_for_shader(node):

@@ -65,7 +65,7 @@ def faces_from_xy(ncx, ncy):
     for row in range(ncy):
         for col in range(ncx):
             x_offset = ((ncx+1) * row) + col
-            quad = (pattern + x_offset) # .tolist()
+            quad = (pattern + x_offset)
             add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
     return faces
 
@@ -74,13 +74,12 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     num_verts_x = num_chars_x + 1
     num_verts_y = num_chars_y + 1
 
+    # njit doesn't allow np.tile or np.meshgrid, requiring a short rewrite.
     X = np.linspace(0, num_chars_x*char_width, num_verts_x)
     Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
-    #coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
-    xdir = np.tile(X, num_verts_y).T
+    xdir = np.repeat(X, num_verts_y).reshape(-1, num_verts_y).T.flatten()
     ydir = np.repeat(Y, num_verts_x).T
-    zdir = np.zeros(xdir.size)  # i think this axis can be dropped for 2d drawing.
-    coords = np.vstack((xdir, ydir, zdir)).T    
+    coords = np.vstack((xdir, ydir)).T
 
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
     return coords, cfaces
