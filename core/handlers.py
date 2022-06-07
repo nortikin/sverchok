@@ -126,6 +126,15 @@ def sv_main_handler(scene):
 
     pre_running = False
 
+    # When the Play Animation is on this trigger is executed once. Such event
+    # should be suppressed because it repeats animation trigger. When Play
+    # animation is on and user changes something in the scene this trigger is
+    # only called if frame rate is equal to maximum.
+    if bpy.context.screen.is_animation_playing:
+        return
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()
+
 
 @persistent
 def sv_clean(scene):
@@ -209,25 +218,12 @@ def update_frame_change_mode():
     set_frame_change(mode)
 
 
-@persistent
-def update_trees_scene_change(scene):
-    """When the Play Animation is on this trigger is executed once. Such event
-    should be suppressed because it repeats animation trigger. Whe Play
-    animation is on this and user changes something in scene this trigger is
-    only called if frame rate is equal to maximum."""
-    if bpy.context.screen.is_animation_playing:
-        return
-    for ng in BlTrees().sv_main_trees:
-        ng.scene_update()
-
-
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
     'depsgraph_update_pre': sv_main_handler,
-    'depsgraph_update_post': update_trees_scene_change,
 }
 
 
