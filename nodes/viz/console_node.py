@@ -409,7 +409,7 @@ def simple_console_xy(context, args, loc):
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
-
+#@njit(cache=True)
 def process_grid_for_shader(grid):
     positions, poly_indices = grid
     verts = []

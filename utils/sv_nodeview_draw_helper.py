@@ -9,6 +9,7 @@ import bpy
 import numpy as np
 from mathutils import Matrix
 
+from sverchok.utils.decorators_compilation import njit
 from sverchok.settings import get_params
 
 # pylint: disable=c0111
@@ -45,7 +46,7 @@ class SvNodeViewDrawMixin():
         scale, multiplier = self.get_preferences()
         self.location_theta = multiplier
 
-
+@njit(cache=True)
 def faces_from_xy(ncx, ncy):
     r"""
     this splits up the quad from geom.grid to triangles
@@ -64,7 +65,7 @@ def faces_from_xy(ncx, ncy):
     for row in range(ncy):
         for col in range(ncx):
             x_offset = ((ncx+1) * row) + col
-            quad = (pattern + x_offset).tolist()
+            quad = (pattern + x_offset) # .tolist()
             add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
     return faces
 
