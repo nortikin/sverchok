@@ -9,6 +9,7 @@
 
 import os
 import numpy as np
+import itertools
 
 import bpy
 import bgl
@@ -419,10 +420,7 @@ def process_grid_for_shader(grid):
 
 def process_uvs_for_shader(node):
     uv_indices = terminal_text_to_uv(node.terminal_text)
-    uvs = []
-    add_uv = uvs.append
-    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
-    return uvs
+    return list(itertools.chain.from_iterable(uv_indices))
 
 
 def generate_batch_shader(node, data):

@@ -73,9 +73,10 @@ def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     
     return coords, cfaces
  
-def process_uvs_for_shader(node):
-    uv_indices = terminal_text_to_uv(node.terminal_text)
-    uvs = []
-    add_uv = uvs.append
-    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
-    return uvs
+# def process_uvs_for_shader(node):
+#     uv_indices = terminal_text_to_uv(node.terminal_text)
+#     uvs = []
+#     add_uv = uvs.append
+#     _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
+#     print(f"{uv_indices=} ..\n..{uvs}")
+#     return uvs

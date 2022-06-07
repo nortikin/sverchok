@@ -12,14 +12,15 @@ import numpy as np
 import bgl, gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.sv_nodeview_draw_helper import get_console_grid
+from sverchok.utils.sv_nodeview_draw_helper import get_console_grid 
+
 from sverchok.nodes.viz.console_node import (
     simple_console_xy, 
     terminal_text_to_uv, 
+    process_uvs_for_shader,
     syntax_highlight_basic, 
     make_color, 
     process_grid_for_shader, 
-    process_uvs_for_shader, 
     vertex_shader,
     lexed_fragment_shader, 
     lexed_colors,
@@ -76,12 +77,7 @@ def ensure_line_padding(text, filler=" "):
     """ expects a single string, with newlines """
     lines = text.split('\n')
     longest_line = find_longest_linelength(lines)
-    
-    new_lines = []
-    new_line = new_lines.append
-    for line in lines:
-        new_line(line.ljust(longest_line, filler))
-    
+    new_lines = [line.ljust(longest_line, filler) for line in lines]
     return new_lines, longest_line
 
 def advanced_text_decompose(content):
@@ -205,7 +201,7 @@ class LexMixin():
         self.init_texture(256, 256)  # this must be done each redraw
         grid = self.prepare_for_grid()  # [x] is cached   
 
-        verts = process_grid_for_shader(grid)  # [ ] ? cacheable?
+        verts = process_grid_for_shader(grid)  # not worth caching (tried!)
         uv_indices = process_uvs_for_shader(self)  # could cache if terminal text is unchanged.
 
         texture.texture_dict = self.texture_dict
