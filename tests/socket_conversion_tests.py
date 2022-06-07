@@ -1,4 +1,4 @@
-from sverchok.core.update_system import prepare_input_data
+from sverchok.core.update_system import UpdateTree
 from mathutils import Matrix
 from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
@@ -18,8 +18,10 @@ class SocketConversionTests(EmptyTreeTestCase):
         self.tree.links.new(ngon.outputs['Vertices'], matrix_apply.inputs['Matrixes'])
 
         # Trigger processing of NGon node
-        ngon.process()
-        prepare_input_data([ngon.outputs['Vertices']], matrix_apply)
+        tree = UpdateTree.get(ngon.id_data)
+        tree.update_node(ngon)
+        tree.update_node(matrix_apply)
+        UpdateTree.reset_tree()
         # Read what MatrixApply node sees
         data =[[v[:] for v in m] for m in matrix_apply.inputs['Matrixes'].sv_get()]
 

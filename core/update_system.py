@@ -2,6 +2,7 @@ from collections import defaultdict
 from copy import copy
 from functools import lru_cache
 from graphlib import TopologicalSorter
+from itertools import chain
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
 
@@ -84,8 +85,8 @@ class SearchTree:
     _from_nodes: dict['SvNode', set['SvNode']]
     _to_nodes: dict['SvNode', set['SvNode']]
     _from_sock: dict[NodeSocket, NodeSocket]
-    _sock_node: dict[NodeSocket, Node]
     _links: set[tuple[NodeSocket, NodeSocket]]
+    _sock_node: dict[NodeSocket, Node]
 
     def __init__(self, tree: NodeTree):
         self._tree = tree
@@ -94,16 +95,18 @@ class SearchTree:
         self._to_nodes = {
             n: set() for n in tree.nodes if n.bl_idname != 'NodeFrame'}
         self._from_sock = dict()  # only connected
-        self._sock_node = dict()  # only connected sockets
         self._links = set()  # from to socket
+        self._sock_node = dict()
 
         for link in (li for li in tree.links if not li.is_muted):
             self._from_nodes[link.to_node].add(link.from_node)
             self._to_nodes[link.from_node].add(link.to_node)
             self._from_sock[link.to_socket] = link.from_socket
-            self._sock_node[link.from_socket] = link.from_node
-            self._sock_node[link.to_socket] = link.to_node
             self._links.add((link.from_socket, link.to_socket))
+
+        for node in tree.nodes:
+            for sock in chain(node.inputs, node.outputs):
+                self._sock_node[sock] = node
 
         self._remove_reroutes()
         self._remove_wifi_nodes()
@@ -140,15 +143,6 @@ class SearchTree:
         """Return output sockets connected to input ones of given node
         If input socket is not linked the output socket will be None"""
         return [self._from_sock.get(s) for s in node.inputs]
-
-    def update_node(self, node: 'SvNode', suppress=True):
-        """Fetches data from previous node, makes data conversion if connected
-        sockets have different types, calls process method of the given node
-        records nodes statistics
-        If suppress is True an error during node execution will be suppressed"""
-        with AddStatistic(node, suppress):
-            prepare_input_data(self.previous_sockets(node), node)
-            node.process()
 
     def _remove_reroutes(self):
         for _node in self._from_nodes:
@@ -327,7 +321,7 @@ class UpdateTree(SearchTree):
                 for node, prev_socks in walker:
                     with AddStatistic(node):
                         yield node
-                        prepare_input_data(prev_socks, node)
+                        up_tree._fill_input(node)
                         node.process()
             except CancelError:
                 pass
@@ -338,6 +332,15 @@ class UpdateTree(SearchTree):
             else:
                 times = None
             update_ui(tree, times)
+
+    def update_node(self, node: 'SvNode', suppress=True):
+        """Fetches data from previous node, makes data conversion if connected
+        sockets have different types, calls process method of the given node
+        records nodes statistics
+        If suppress is True an error during node execution will be suppressed"""
+        with AddStatistic(node, suppress):
+            self._fill_input(node)
+            node.process()
 
     @classmethod
     def reset_tree(cls, tree: NodeTree = None):
@@ -382,15 +385,16 @@ class UpdateTree(SearchTree):
         self.is_scene_updated = True
         self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
 
-        # https://stackoverflow.com/a/68550238
-        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
-
         self._copy_attrs = [
             'is_updated',
             'is_animation_updated',
             'is_scene_updated',
             '_outdated_nodes',
         ]
+
+        # https://stackoverflow.com/a/68550238
+        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
+        self._socket_default = SocketDefaultValue(self._sock_node)
 
     def _animation_nodes(self) -> set['SvNode']:
         """Returns nodes which are animation dependent"""
@@ -491,6 +495,25 @@ class UpdateTree(SearchTree):
             nodes_to_update.add(old._sock_node[to_sock])
         return nodes_to_update
 
+    def _fill_input(self, node: Node):
+        for ps, ns in zip(self.previous_sockets(node), node.inputs):
+
+            # extract default value if available
+            if ps is None:
+                if default := self._socket_default.get_value(ns):
+                    ns.sv_set(default)
+
+            # extract data from connected socket
+            else:
+                data = ps.sv_get()
+
+                # cast data
+                if ps.bl_idname != ns.bl_idname:
+                    implicit_conversion = conversions[ns.default_conversion_name]
+                    data = implicit_conversion.convert(ns, ps, data)
+
+                ns.sv_set(data)
+
     def _calc_cam_update_time(self) -> Iterable['SvNode']:
         """Return cumulative update time in order of node_group.nodes collection"""
         cum_time_nodes = dict()  # don't have frame nodes
@@ -535,6 +558,50 @@ class UpdateTree(SearchTree):
             yield node, *args
 
 
+class SocketDefaultValue:
+    _cache: dict[NodeSocket, list]
+    _sock_node: dict[NodeSocket, Node]
+
+    def __init__(self, sock_node):
+        self._cache = dict()
+        self._sock_node = sock_node  # for fast search
+
+    def get_value(self, socket: NodeSocket) -> Optional[list]:
+        try:
+            return self._cache[socket]
+        except KeyError:
+            default = self._search(socket)
+            self._cache[socket] = default
+            return default
+
+    def clear(self, socket: NodeSocket):
+        if socket in self._cache:
+            del self._cache[socket]
+
+    def _search(self, socket: NodeSocket) -> Optional[list]:
+        node = self._sock_node[socket]
+        if hasattr(node, 'missing_dependency'):
+            prop_name = None
+        elif node.id_data.sv_draft:
+            draft = None
+            if hasattr(node, 'draft_properties_mapping'):
+                draft = node.draft_properties_mapping.get(socket.prop_name, None)
+            if draft is not None:
+                prop_name = draft
+            else:
+                prop_name = socket.prop_name
+        else:
+            prop_name = socket.prop_name
+
+        if prop_name:
+            prop = getattr(node, prop_name)
+            return format_bpy_property(prop)
+
+        elif socket.use_prop:
+            default_property = socket.default_property
+            return format_bpy_property(default_property)
+
+
 class AddStatistic:
     """It caches errors during execution of process method of a node and saves
     update time, update status and error"""
@@ -565,51 +632,6 @@ class AddStatistic:
             if issubclass(exc_type, CancelError):
                 return False
             return issubclass(exc_type, Exception)
-
-
-def prepare_input_data(prev_socks: list[Optional[NodeSocket]], to_node: Node):
-    """Reads data from given outputs socket make it conversion if necessary and
-    put data into input given socket"""
-    # this can be a socket/node method?
-    for ps, ns in zip(prev_socks, to_node.inputs):
-
-        # extract default value if available
-        if ps is None:
-
-            if hasattr(to_node, 'missing_dependency'):
-                prop_name = []
-            elif to_node and hasattr(to_node, 'does_support_draft_mode') and to_node.does_support_draft_mode() and hasattr(
-                    to_node.id_data, 'sv_draft') and to_node.id_data.sv_draft:
-                prop_name_draft = to_node.draft_properties_mapping.get(ns.prop_name, None)
-                if prop_name_draft:
-                    prop_name = prop_name_draft
-                else:
-                    prop_name = ns.prop_name
-            else:
-                prop_name = ns.prop_name
-
-            data = None
-            if prop_name:
-                prop = getattr(to_node, prop_name)
-                data = format_bpy_property(prop)
-
-            elif ns.use_prop and hasattr(ns, 'default_property') and ns.default_property is not None:
-                default_property = ns.default_property
-                data = format_bpy_property(default_property)
-
-            if data is not None:
-                ns.sv_set(data)
-
-        # extract data from connected socket
-        else:
-            data = ps.sv_get()
-
-            # cast data
-            if ps.bl_idname != ns.bl_idname:
-                implicit_conversion = conversions[ns.default_conversion_name]
-                data = implicit_conversion.convert(ns, ps, data)
-
-            ns.sv_set(data)
 
 
 def update_ui(tree: NodeTree, times: Iterable[float] = None):

@@ -71,9 +71,9 @@ class GroupUpdateTree(us.UpdateTree):
 
             walker = self._walk()
             # walker = self._debug_color(walker)
-            for node, prev_socks in walker:
+            for node, prev_socks in walker:  # todo remove prev socks
                 with us.AddStatistic(node):
-                    us.prepare_input_data(prev_socks, node)
+                    self._fill_input(node)
                     node.process()
 
             if is_opened_tree:

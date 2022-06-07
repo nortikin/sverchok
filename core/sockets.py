@@ -413,14 +413,14 @@ class SvSocketCommon(SvSocketProcessing):
         :return: data bound to the socket
         """
         if self.is_output:
-            return sv_get_socket(self, False)
+            deepcopy = False
 
         try:
             return sv_get_socket(self, deepcopy)
-        except SvNoDataError:
+        except KeyError:
             if default is not ...:
                 return default
-            raise
+            raise SvNoDataError(self)
 
     def sv_set(self, data):
         """Set data, provide context in case the node can be evaluated several times in different context"""

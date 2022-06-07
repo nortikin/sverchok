@@ -181,11 +181,8 @@ def sv_get_socket(socket, deepcopy=True):
     to increase performance if the node doesn't mutate input
     set to False and increase performance substanstilly
     """
-    data = socket_data_cache.get(socket.socket_id)
-    if data is not None:
-        return sv_deep_copy(data) if deepcopy else data
-    else:
-        raise SvNoDataError(socket)
+    data = socket_data_cache[socket.socket_id]
+    return sv_deep_copy(data) if deepcopy else data
 
 
 def get_output_socket_data(node, output_socket_name):
