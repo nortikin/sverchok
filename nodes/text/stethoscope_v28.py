@@ -31,22 +31,13 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 
-from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_xy_for_bgl_drawing
 from sverchok.utils.nodes_mixins.stethoschope_console_mixin import LexMixin
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
-
-def get_xy_for_bgl_drawing(node):
-    # adjust proposed text location in case node is framed.
-    # take into consideration the hidden state
-    _x, _y = node.absolute_location
-    _x, _y = (_x + node.width + 20), _y
-
-    # this alters location based on DPI/Scale settings.
-    return _x * node.location_theta, _y * node.location_theta
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 

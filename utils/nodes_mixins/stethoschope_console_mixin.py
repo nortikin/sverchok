@@ -12,7 +12,7 @@ import numpy as np
 import bgl, gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.sv_nodeview_draw_helper import get_console_grid 
+from sverchok.utils.sv_nodeview_draw_helper import get_console_grid, get_xy_for_bgl_drawing 
 
 from sverchok.nodes.viz.console_node import (
     simple_console_xy, 
@@ -24,9 +24,7 @@ from sverchok.nodes.viz.console_node import (
     vertex_shader,
     lexed_fragment_shader, 
     lexed_colors,
-    random_color_chars, 
     get_font_pydata_location,
-    get_xy_for_bgl_drawing,
 )
 
 def advanced_parse_socket(socket, node):

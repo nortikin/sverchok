@@ -14,6 +14,14 @@ from sverchok.settings import get_params
 # pylint: disable=c0111
 # pylint: disable=c0103
 
+def get_xy_for_bgl_drawing(node):
+    # adjust proposed text location in case node is framed.
+    # take into consideration the hidden state
+    _x, _y = node.absolute_location
+    _x, _y = (_x + node.width + 20), _y
+
+    # this alters location based on DPI/Scale settings.
+    return _x * node.location_theta, _y * node.location_theta
 
 class SvNodeViewDrawMixin():
 
@@ -62,13 +70,11 @@ def faces_from_xy(ncx, ncy):
 
 
 def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
-    
     num_verts_x = num_chars_x + 1
     num_verts_y = num_chars_y + 1
+
     X = np.linspace(0, num_chars_x*char_width, num_verts_x)
     Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
     coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
-
     cfaces = faces_from_xy(num_chars_x, num_chars_y)
-    
     return coords, cfaces
