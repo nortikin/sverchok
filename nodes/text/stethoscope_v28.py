@@ -28,7 +28,7 @@ from mathutils import Vector
 
 from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, updateNode
+from sverchok.data_structure import node_id, updateNode, enum_item_5
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_xy_for_bgl_drawing
@@ -125,10 +125,10 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
         default=True,
         update=updateNode)
 
-    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical", "sv++"])]
+    #mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical", "sv++"])]
     selected_mode: bpy.props.EnumProperty(
-        items=mode_options,
-        description="offers....",
+        items=enum_item_5(["text-based", "graphical", "sv++"], ['ALIGN_LEFT', 'ALIGN_TOP', 'SCRIPTPLUGINS']),
+        description="select the kind of display, text/graphical/sv++",
         default="text-based", update=updateNode
     )
 
@@ -160,11 +160,11 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        row = layout.row(align=True)
         icon = 'RESTRICT_VIEW_OFF' if self.activate else 'RESTRICT_VIEW_ON'
         row.prop(self, "activate", icon=icon, text='')
-
-        layout.prop(self, 'selected_mode', expand=True)
+        row.separator()
+        row.prop(self, 'selected_mode', expand=True, icon_only=True)
         if self.selected_mode == 'text-based':
 
             row.prop(self, "text_color", text='')
@@ -182,11 +182,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
 
         elif self.selected_mode == "sv++":
             row1 = layout.row(align=True)
-            row1.prop(self, "line_width")
+            row1.prop(self, "line_width", text='Columns')
             row1.prop(self, "rounding")
-            layout.prop(self, 'element_index', text='get index')
+            layout.prop(self, 'element_index', text="index")
             layout.prop(self, "local_scale")
         else:
+            row.prop(self, "text_color", text='')
             pass
 
     def draw_buttons_ext(self, context, layout):
