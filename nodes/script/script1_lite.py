@@ -70,7 +70,11 @@ def console_print(node, message, kind='OUTPUT'):
             for region in area.regions:
                 if region.type == 'WINDOW': 
                     override = {'window': window, 'screen': screen, 'area': area, 'region': region}
-                    bpy.ops.console.scrollback_append(override, text=f"{message}", type=kind)
+                    if not "\n" in f"{message}":
+                        bpy.ops.console.scrollback_append(override, text=f"{message}", type=kind)
+                    else:
+                        for line in f"{message}".split("\n"):
+                            bpy.ops.console.scrollback_append(override, text=line, type=kind)
                     break        
 
 

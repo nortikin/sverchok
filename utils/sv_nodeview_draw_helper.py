@@ -69,7 +69,7 @@ def faces_from_xy(ncx, ncy):
             add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
     return faces
 
-
+#@njit(cache=True)
 def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
     num_verts_x = num_chars_x + 1
     num_verts_y = num_chars_y + 1
