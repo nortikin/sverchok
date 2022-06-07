@@ -120,11 +120,11 @@ class LexMixin():
         clr = bgl.GL_RGBA
 
         if not 'texture_buffer' in self.texture_dict:
-            print('initializing texture longform')
+            #print('initializing texture longform')
             texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
             self.texture_dict['texture_buffer'] = texture
         else:
-            print("reusing")
+            #print("reusing")
             texture = self.texture_dict['texture_buffer'] 
 
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
