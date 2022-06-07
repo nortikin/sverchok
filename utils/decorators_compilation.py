@@ -13,20 +13,19 @@ local_numba_storage = {}
 # # further reading
 # # https://stackoverflow.com/a/54024922/1243487
 
-def eejit(**kwargs):
-    def wrapper(function_to_compile):
-        if numba:
+def njit(**kwargs):
+    if numba:
+
+        def wrapper(function_to_compile):
             function_name = function_to_compile.__name__
             if function_name not in local_numba_storage:
                 jitted_func = numba.njit(**kwargs)(function_to_compile)
                 local_numba_storage[function_name] = jitted_func
-
             return local_numba_storage[function_name]
-        else:
-            return function_to_compile
-    return wrapper
 
-def njit(**kwargs):
-    def wrapper(function_to_compile):
-        return function_to_compile
+    else:
+
+        def wrapper(function_to_compile):
+            return function_to_compile
+
     return wrapper

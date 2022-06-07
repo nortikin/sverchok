@@ -47,12 +47,9 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
+# njit is a light-wrapper aroudn numba.njit, if found
 from sverchok.dependencies import numba
-if not numba:
-    from sverchok.utils.decorators_compilation import njit
-else:
-    from sverchok.utils.decorators_compilation import eejit as njit  #<--- somehow faster
-    #from numba import njit
+from sverchok.utils.decorators_compilation import njit
 
 
 identity_matrix = Matrix()
