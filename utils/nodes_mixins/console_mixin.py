@@ -115,11 +115,18 @@ class LexMixin():
 
 
     def init_texture(self, width, height):
-        clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
+        clr = bgl.GL_RGBA
 
-        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+        if not 'texture_buffer' in self.texture_dict:
+            print('initializing texture longform')
+            texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+            self.texture_dict['texture_buffer'] = texture
+        else:
+            print("reusing")
+            texture = self.texture_dict['texture_buffer'] 
+
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         

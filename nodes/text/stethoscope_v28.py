@@ -33,6 +33,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_xy_for_bgl_drawing
 from sverchok.utils.nodes_mixins.console_mixin import LexMixin
+from sverchok.utils.profile import profile
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
@@ -197,6 +198,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
         return get_params({
             'stethoscope_view_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
+    @profile
     def process(self):
         inputs = self.inputs
         n_id = node_id(self)
