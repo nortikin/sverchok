@@ -27,6 +27,10 @@ def console_print(message, node=None, kind='OUTPUT', allow_repeats=False, pretty
             # i do not need to see repeat text
             if message == previously_printed_text: return
 
+    if compact:
+        # first ten + ... + last ten
+        pass
+
     if pretty:
         message = pprint.pformat(message, width=width, depth=5, compact=compact)
 
