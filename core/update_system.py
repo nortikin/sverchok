@@ -43,19 +43,25 @@ def control_center(event):
     elif type(event) is ev.SceneEvent:
         if event.tree.sv_scene_update and event.tree.sv_process:
             UpdateTree.get(event.tree).is_scene_updated = False
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=True))
 
     # nodes changed properties
     elif type(event) is ev.PropertyEvent:
         tree = UpdateTree.get(event.tree)
         tree.add_outdated(event.updated_nodes)
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
 
     # update the whole tree anyway
     elif type(event) is ev.ForceEvent:
         UpdateTree.reset_tree(event.tree)
-        ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+        ts.tasks.add(ts.Task(event.tree,
+                             UpdateTree.main_update(event.tree),
+                             is_scene_update=False))
 
     # mark that the tree topology has changed
     # also this can be called (by Blender) during undo event in this case all
@@ -64,7 +70,9 @@ def control_center(event):
     elif type(event) is ev.TreeEvent:
         UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
 
     # new file opened
     elif type(event) is ev.FileEvent:
