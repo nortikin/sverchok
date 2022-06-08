@@ -8,7 +8,7 @@ import pprint
 import bpy
 last_print = {}
 
-def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80):
+def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0):
     """
     this function finds an open console in Blender and writes to it, useful for debugging small stuff.
     but beware what you throw at it.
@@ -26,8 +26,20 @@ def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=Fals
     if pretty:
         message = pprint.pformat(message, width=width, depth=5)
 
+        if rounding > 0:
+            rounded_vals = re.compile(r"\d*\.\d+")
+
+            def mround(match): return f"{float(match.group()):.{rounding}g}"
+
+            out = []
+            for line in message.split("\n"):
+                passthru = ("bpy." in line)
+                out.append(line if passthru else re.sub(rounded_vals, mround, line))
+            message = "\n".join(out)
+
 
     last_print[hash(node)] = message
+
 
     AREA = 'CONSOLE'
     for window in bpy.context.window_manager.windows:
