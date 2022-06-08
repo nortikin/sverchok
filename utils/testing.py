@@ -1,7 +1,9 @@
 from itertools import chain
 from pathlib import Path
+from typing import Iterator
 
 import bpy
+from bpy.types import NodeTree
 import os
 from os.path import dirname, basename, join
 import unittest
@@ -284,6 +286,15 @@ class SverchokTestCase(unittest.TestCase):
             yield new_tree
         finally:
             remove_node_tree(new_tree_name)
+
+    @contextmanager
+    def tree_from_file(self, file_name: str, tree_name: str) -> Iterator[NodeTree]:
+        path = join(get_tests_path(), "references", file_name)
+        link_node_tree(path, tree_name)
+        try:
+            yield get_node_tree(tree_name)
+        finally:
+            remove_node_tree(tree_name)
 
     def serialize_json(self, data):
         """
