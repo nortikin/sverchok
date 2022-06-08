@@ -10,7 +10,7 @@ import re
 
 last_print = {}
 
-def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0, compact=True):
+def console_print(message, node=None, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0, compact=True, print_origin=False):
     """
     this function finds an open console in Blender and writes to it, useful for debugging small stuff.
     but beware what you throw at it.
@@ -19,6 +19,8 @@ def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=Fals
     "message" can be text or data
     "kind" can be any of the accepted types known by scrollback_append operator.
     """
+    if node is None:
+        node = "generic"
     
     if not allow_repeats:
         if (previously_printed_text := last_print.get(hash(node))):
@@ -52,6 +54,10 @@ def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=Fals
             for region in area.regions:
                 if region.type == 'WINDOW': 
                     override = {'window': window, 'screen': screen, 'area': area, 'region': region}
+                    
+                    if print_origin:
+                        bpy.ops.console.scrollback_append(override, text=f"{node}", type=kind)
+
                     if not "\n" in f"{message}":
                         bpy.ops.console.scrollback_append(override, text=f"{message}", type=kind)
                     else:
