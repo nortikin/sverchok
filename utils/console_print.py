@@ -6,9 +6,11 @@
 # License-Filename: LICENSE
 import pprint
 import bpy
+import re
+
 last_print = {}
 
-def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0):
+def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0, compact=True):
     """
     this function finds an open console in Blender and writes to it, useful for debugging small stuff.
     but beware what you throw at it.
@@ -24,7 +26,7 @@ def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=Fals
             if message == previously_printed_text: return
 
     if pretty:
-        message = pprint.pformat(message, width=width, depth=5)
+        message = pprint.pformat(message, width=width, depth=5, compact=compact)
 
         if rounding > 0:
             rounded_vals = re.compile(r"\d*\.\d+")
