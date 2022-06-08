@@ -8,7 +8,7 @@ import pprint
 import bpy
 last_print = {}
 
-def console_print(node, message, kind='OUTPUT', allow_repeats=False, pprint=False, width=80):
+def console_print(node, message, kind='OUTPUT', allow_repeats=False, pretty=False, width=80):
     """
     this function finds an open console in Blender and writes to it, useful for debugging small stuff.
     but beware what you throw at it.
@@ -23,7 +23,7 @@ def console_print(node, message, kind='OUTPUT', allow_repeats=False, pprint=Fals
             # i do not need to see repeat text
             if message == previously_printed_text: return
 
-    if pprint:
+    if pretty:
         message = pprint.pformat(message, width=width, depth=5)
 
 
