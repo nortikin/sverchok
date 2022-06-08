@@ -80,7 +80,10 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
     # http://stackoverflow.com/a/7584567/1243487
     rounded_vals = re.compile(r"\d*\.\d+")
 
-    def mround(match): f"{float(match.group()):.{rounding}g}"
+    # def mround(match): f"{float(match.group()):.{rounding}g}"
+    def mround(match):
+        format_string = "{{:.{0}g}}".format(rounding)
+        return format_string.format(float(match.group()))
 
     out = []
     for line in display_text:
