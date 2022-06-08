@@ -456,7 +456,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'ddir': ddir,
             'get_user_dict': self.get_user_dict,
             'reset_user_dict': self.reset_user_dict,
-            'cprint': lambda message: console_print(self, message),
+            'cprint': lambda message: console_print(message, self),
             'console_print': console_print,
             'sv_njit': sv_njit,
             'sv_njit_clear': sv_njit_clear,
