@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 import pprint
-
+import bpy
 last_print = {}
 
 def console_print(node, message, kind='OUTPUT', allow_repeats=False, pprint=False, width=80):
