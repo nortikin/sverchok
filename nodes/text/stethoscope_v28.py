@@ -84,10 +84,8 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     out = []
     for line in display_text:
-        if (rounding == 0) or ("bpy." in line):
-            out.append(line)
-        else:
-            out.append(re.sub(rounded_vals, mround, line))
+        passthru = (rounding == 0) or ("bpy." in line)
+        out.append(line if passthru else re.sub(rounded_vals, mround, line))
     return out
 
 
