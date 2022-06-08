@@ -318,7 +318,7 @@ class UpdateTree(SearchTree):
             walker = up_tree._walk()
             # walker = up_tree._debug_color(walker)
             try:
-                for node, prev_socks in walker:
+                for node in walker:
                     with AddStatistic(node):
                         yield node
                         up_tree._fill_input(node)
@@ -394,6 +394,7 @@ class UpdateTree(SearchTree):
         ]
 
         # https://stackoverflow.com/a/68550238
+        self.previous_sockets = lru_cache(maxsize=None)(self.previous_sockets)
         self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
 
         self._update_default_values(self._from_nodes.keys())
@@ -435,10 +436,10 @@ class UpdateTree(SearchTree):
             outdated = frozenset(self._outdated_nodes)
             self._outdated_nodes.clear()
 
-        for node, other_socks in self._sort_nodes(outdated):
+        for node in self._sort_nodes(outdated):
             # execute node only if all previous nodes are updated
-            if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
-                yield node, other_socks
+            if all(n.get(UPDATE_KEY, True) for n in self._from_nodes[node]):
+                yield node
                 if node.get(ERROR_KEY, False):
                     self._outdated_nodes.add(node)
             else:
@@ -446,8 +447,7 @@ class UpdateTree(SearchTree):
 
     def __sort_nodes(self,
                      from_nodes: frozenset['SvNode'] = None,
-                     to_nodes: frozenset['SvNode'] = None)\
-                     -> list[tuple['SvNode', list[NodeSocket]]]:
+                     to_nodes: frozenset['SvNode'] = None) -> list['SvNode']:
         """Sort nodes of the tree in proper execution order. Whe all given
         parameters are None it uses all tree nodes
         :from_nodes: if given it sorts only next nodes from given ones
@@ -477,7 +477,7 @@ class UpdateTree(SearchTree):
         nodes = []
         if walk_structure:
             for node in TopologicalSorter(walk_structure).static_order():
-                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
+                nodes.append(node)
         return nodes
 
     def _update_difference(self, old: 'UpdateTree') -> set['SvNode']:
