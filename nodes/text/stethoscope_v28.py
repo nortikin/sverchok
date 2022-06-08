@@ -80,9 +80,7 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
     # http://stackoverflow.com/a/7584567/1243487
     rounded_vals = re.compile(r"\d*\.\d+")
 
-    def mround(match):
-        format_string = "{{:.{0}g}}".format(rounding)
-        return format_string.format(float(match.group()))
+    def mround(match): f"{float(match.group()):.{rounding}g}"
 
     out = []
     for line in display_text:
@@ -176,7 +174,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
             row2.prop(self, "line_width")
             row2.prop(self, "depth")
             # layout.prop(self, "socket_name")
-            layout.label(text='input has {0} elements'.format(self.num_elements))
+            layout.label(text=f'input has {self.num_elements} elements')
             layout.prop(self, 'view_by_element', toggle=True)
             if self.num_elements > 0 and self.view_by_element:
                 layout.prop(self, 'element_index', text='get index')

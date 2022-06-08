@@ -33,6 +33,11 @@ def advanced_parse_socket(socket, node):
     if (fulldata := socket.sv_get()):
         if len(fulldata) > 0:
             try:
+                # this is to handle data, which can be turned into np.array
+                # np.array can handle a lot, but it will get things wrong - the tricky part is
+                # to introspect and 
+                # - pass to array2string for syntax highlighter (mostly non strings)   or 
+                # - pass unchanged to lamelexer for character based colouring (strings)
 
                 # could potentially chop up fulldata here before turning it
                 # into nparray. maybe it's faster?
