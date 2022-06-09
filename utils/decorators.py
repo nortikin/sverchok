@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import time
 import functools
 import inspect
 import warnings
@@ -100,6 +101,13 @@ def deprecated(argument):
         return wrapped
 
         
-
-
-
+def duration(func):
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        msg = f"{(time.time() - start_time) * 1000} ms \n{args=}\n{kwargs=}" 
+        print(msg)
+        #warnings.warn(format_message(func, reason), category=DeprecationWarning, stacklevel=2)
+        return result  
+    return wrapped
