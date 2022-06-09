@@ -121,9 +121,11 @@ def duration(func):
             func_name = f"\033[1;31m{func_name}\033[0m"
 
         if color_terminal:
-            duration = f"\033[1;32m{duration}\033[0m"
+            duration = f"\033[1;32m{duration:.5g} ms\033[0m"
+        else:
+            duration = f"{duration:.5g} ms" 
         
-        msg = f"\n{func_name}: {duration:.5g} ms" + display_args + display_kwargs
+        msg = f"\n{func_name}: {duration}" + display_args + display_kwargs
         # print(msg)
         info(msg)
         return result
