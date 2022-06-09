@@ -153,7 +153,7 @@ lexed_fragment_shader = '''
         else if (cIndex == 22) { test_tint = equalsColor; }
         else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
         else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
-        else if (cIndex == 55 || cIndex == 60) { test_tint = commentColor; }
+        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = commentColor; }
         else if (cIndex == 90) { test_tint = name2Color; }
         else if (cIndex == 91) { test_tint = name3Color; }
         else if (cIndex == 92) { test_tint = qualifierColor; }
