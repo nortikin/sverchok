@@ -105,9 +105,13 @@ def duration(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         start_time = time.time()
+        
         result = func(*args, **kwargs)
-        msg = f"{func.__name__}: {(time.time() - start_time) * 1000} ms \n    {args=}\n    {kwargs=}" 
+
+        display_args = (f"\n    {args=}" if args else "")
+        display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
+        msg = f"{func.__name__}: {(time.time() - start_time) * 1000} ms" + display_args + display_kwargs
         print(msg)
         #warnings.warn(format_message(func, reason), category=DeprecationWarning, stacklevel=2)
-        return result  
+        return result
     return wrapped
