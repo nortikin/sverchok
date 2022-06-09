@@ -1,7 +1,7 @@
 import os
 import sys
 from sverchok.utils.development import get_version_string
-
+import sverchok
 # pylint: disable=c0304
 # pylint: disable=c0326
 # pylint: disable=w1401
@@ -21,6 +21,8 @@ def logo():
                 can_paint = True
     except:
         ...
+
+    sverchok.core.color_terminal = can_paint
 
     with_color = "\033[1;31m{0}\033[0m" if can_paint else "{0}"
     for line in lines:

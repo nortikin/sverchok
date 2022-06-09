@@ -21,7 +21,7 @@ import functools
 import inspect
 import warnings
 from sverchok.utils.logging import info
-
+from sverchok.core import color_terminal
 
 string_types = (type(b''), type(u''))
 
@@ -104,6 +104,9 @@ def deprecated(argument):
 
         
 def duration(func):
+
+    from sverchok.core import color_terminal
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         start_time = time.time()
@@ -113,6 +116,8 @@ def duration(func):
         display_args = (f"\n    {args=}" if args else "")
         display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
         func_name = func.__name__
+        func_name = f"\033[1;31m{func_name}\033[0m" if color_terminal else f"{func_name}"
+
         duration = (time.time() - start_time) * 1000
         msg = f"\n{func_name}: {duration} ms" + display_args + display_kwargs
         # print(msg)

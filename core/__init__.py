@@ -2,6 +2,7 @@ import importlib
 import sverchok
 from sverchok.core.socket_data import clear_all_socket_cache
 
+color_terminal = False
 reload_event = False
 
 root_modules = [
