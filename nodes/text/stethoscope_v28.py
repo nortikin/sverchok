@@ -39,6 +39,19 @@ from sverchok.utils.profile import profile
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
+def chop_up_data(data):
+
+    """
+    if data is large (either due to many small lists or n big lists) here it is sliced up
+    remember the user is already comfortable with seeing their data being abbreviated when big
+    
+    if len(data) == 0:
+        data = data[0][:10] + data[0][-10:]
+    elif
+        data = data[0][:10] + data[n][-10:]
+
+    """
+    return data
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
@@ -49,19 +62,10 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
         if element_index < num_data_items:
             data = data[element_index]
 
-    str_width = props.line_width
+    if props.chop_up:
+        data = chop_up_data(data)
 
-    """
-    if data is large (either due to many small lists or n big lists) here it is sliced up
-    remember the user is already comfortable with seeing their data being abbreviated when big
-    
-    if len(data) == 0:
-        data = data[0][:10] + data[0][-10:]
-    elif
-        data = data[0][:10] + data[n][-10:]
-    """
-    
-    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
+    content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
@@ -132,11 +136,13 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
     view_by_element: BoolProperty(update=updateNode)
     num_elements: IntProperty(default=0)
     element_index: IntProperty(default=0, update=updateNode)
-    rounding: IntProperty(min=0, max=5, default=3, update=updateNode)
+    rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
+        description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits")
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
-    compact: BoolProperty(default=False, update=updateNode)
+    compact: BoolProperty(default=False, update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
     depth: IntProperty(default=5, min=0, update=updateNode)
-
+    chop_up: BoolProperty(default=False, update=updateNode, 
+        description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
 
     def get_theme_colors_for_contrast(self):
         try:
@@ -167,7 +173,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
             row.prop(self, "text_color", text='')
             row1 = layout.row(align=True)
             row1.prop(self, "rounding")
-            row1.prop(self, "compact", toggle=True)
+            row1.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
+            row1.prop(self, "chop_up", icon="FILTER", text='')
             row2 = layout.row(align=True)
             row2.prop(self, "line_width")
             row2.prop(self, "depth")
@@ -213,6 +220,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNod
                 props.line_width = self.line_width
                 props.compact = self.compact
                 props.depth = self.depth or None
+                props.chop_up = self.chop_up
 
                 processed_data = parse_socket(
                     inputs[0],

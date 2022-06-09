@@ -116,7 +116,7 @@ class LexMixin():
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
-    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=lambda self, context: self.process_node(context))
+    local_scale: bpy.props.FloatProperty(default=0.6, min=0.2, name="scale", update=lambda self, context: self.process_node(context))
 
 
     def init_texture(self, width, height):
