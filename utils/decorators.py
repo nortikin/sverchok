@@ -110,15 +110,19 @@ def duration(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         start_time = time.time()
-        
         result = func(*args, **kwargs)
+        duration = (time.time() - start_time) * 1000
 
         display_args = (f"\n    {args=}" if args else "")
         display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
         func_name = func.__name__
-        func_name = f"\033[1;31m{func_name}\033[0m" if color_terminal else f"{func_name}"
 
-        duration = (time.time() - start_time) * 1000
+        if color_terminal:
+            func_name = f"\033[1;31m{func_name}\033[0m"
+
+        if color_terminal:
+            duration = f"\033[1;32m{duration}\033[0m"
+        
         msg = f"\n{func_name}: {duration:.5g} ms" + display_args + display_kwargs
         # print(msg)
         info(msg)
