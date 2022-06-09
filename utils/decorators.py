@@ -112,7 +112,9 @@ def duration(func):
 
         display_args = (f"\n    {args=}" if args else "")
         display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
-        msg = f"{func.__name__}: {(time.time() - start_time) * 1000} ms" + display_args + display_kwargs
+        func_name = func.__name__
+        duration = (time.time() - start_time) * 1000
+        msg = f"\n{func_name}: {duration} ms" + display_args + display_kwargs
         # print(msg)
         info(msg)
         return result
