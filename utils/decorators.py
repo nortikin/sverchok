@@ -20,6 +20,8 @@ import time
 import functools
 import inspect
 import warnings
+from sverchok.utils.logging import info
+
 
 string_types = (type(b''), type(u''))
 
@@ -111,7 +113,7 @@ def duration(func):
         display_args = (f"\n    {args=}" if args else "")
         display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
         msg = f"{func.__name__}: {(time.time() - start_time) * 1000} ms" + display_args + display_kwargs
-        print(msg)
-        #warnings.warn(format_message(func, reason), category=DeprecationWarning, stacklevel=2)
+        # print(msg)
+        info(msg)
         return result
     return wrapped
