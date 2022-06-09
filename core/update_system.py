@@ -109,6 +109,7 @@ class SearchTree:
 
         self._remove_reroutes()
         self._remove_wifi_nodes()
+        self._remove_muted_nodes()
 
     def nodes_from(self, from_nodes: Iterable['SvNode']) -> set['SvNode']:
         """Returns all next nodes from given ones"""
@@ -240,10 +241,56 @@ class SearchTree:
             del self._from_nodes[in_]
             del self._to_nodes[in_]
 
+    def _remove_muted_nodes(self):
+        for node in self._tree.nodes:
+            if not node.mute:
+                continue
+            for in_s, out_s in node.sv_internal_links:
+                from_s = self._from_sock.get(in_s)
+                to_ss = self._to_socks.get(out_s)
+                if from_s and to_ss:
+                    for to_s in to_ss.copy():
+                        self._add_link(from_s, to_s)
+            self._remove_node(node)
+
+    def _add_link(self, from_s, to_s):
+        """If to_s is already connected the link will be removed and new one
+        will be added"""
+        if f_s := self._from_sock.get(to_s):
+            self._remove_link(f_s, to_s)
+        self._to_socks[from_s].add(to_s)
+        self._from_sock[to_s] = from_s
+        self._links.add((from_s, to_s))
+        from_node = self._sock_node[from_s]
+        to_node = self._sock_node[to_s]
+        self._to_nodes[from_node].add(to_node)
+        self._from_nodes[to_node].add(from_node)
+
+    def _remove_link(self, from_s, to_s):
+        del self._from_sock[to_s]
+        if len(self._to_socks[from_s]) == 1:
+            del self._to_socks[from_s]
+        else:
+            self._to_socks[from_s].discard(to_s)
+        self._links.discard((from_s, to_s))
+
+        to_node = self._sock_node[to_s]
+        from_node = self._sock_node[from_s]
+        for in_s in to_node.inputs:
+            if f_s := self._from_sock.get(in_s):
+                if self._sock_node[f_s] == from_node:
+                    break
+        else:
+            self._from_nodes[to_node].discard(from_node)
+            self._to_nodes[from_node].discard(to_node)
+
     def _remove_node(self, node: Node):
+        """Remove node with all its links"""
         for in_s in node.inputs:
             if from_s := self._from_sock.get(in_s):
                 self._to_socks[from_s].discard(in_s)
+                if not self._to_socks[from_s]:
+                    del self._to_socks[from_s]
                 self._links.discard((from_s, in_s))
                 del self._from_sock[in_s]
         for from_n in self._from_nodes[node]:

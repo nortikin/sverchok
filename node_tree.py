@@ -8,10 +8,11 @@ import inspect
 import time
 from contextlib import contextmanager
 from itertools import chain, cycle
+from typing import Iterable
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
-from bpy.types import NodeTree
+from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 import sverchok.core.events as ev
@@ -463,6 +464,11 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     def sv_draw_buttons_ext(self, context, layout):
         self.sv_draw_buttons(context, layout)
+
+    @property
+    def sv_internal_links(self) -> Iterable[tuple[NodeSocket, NodeSocket]]:
+        for link in self.internal_links:
+            yield link.from_socket, link.to_socket
 
     @classproperty
     def docstring(cls):
