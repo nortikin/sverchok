@@ -44,13 +44,17 @@ def chop_up_data(data):
     """
     if data is large (either due to many small lists or n big lists) here it is sliced up
     remember the user is already comfortable with seeing their data being abbreviated when big
-    
-    if len(data) == 0:
-        data = data[0][:10] + data[0][-10:]
-    elif
-        data = data[0][:10] + data[n][-10:]
-
     """
+    if len(data) == 1:
+        if len(data[0]) > 24:
+            data = [data[0][:12] + data[0][-12:]]
+    elif len(data) > 1:
+        n = -1
+        if len(data[0]) > 12 and len(data[n]) > 12:
+            data = [data[0][:12], data[n][-12:]]
+    
+    # could be cleverer, because this is now optimized for the above scenarios only. they are common.
+
     return data
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
