@@ -114,9 +114,7 @@ def duration(func):
 
         # display_args = (f"\n    {args=}" if args else "")
         # display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
-        func_name = func.__name__
-
-        func_name = str_color(func_name, 31)
+        func_name = str_color(func.__name__, 31)
         duration = str_color(f"{duration:.5g} ms", 32)
         
         msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
