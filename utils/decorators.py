@@ -105,7 +105,7 @@ def deprecated(argument):
         
 def duration(func):
 
-    from sverchok.core import color_terminal
+    from sverchok.utils.ascii_print import color_terminal
 
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
