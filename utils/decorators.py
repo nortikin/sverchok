@@ -21,7 +21,7 @@ import functools
 import inspect
 import warnings
 from sverchok.utils.logging import info
-from sverchok.utils.ascii_print import color_terminal
+from sverchok.utils.ascii_print import str_color
 
 string_types = (type(b''), type(u''))
 
@@ -108,26 +108,18 @@ def duration(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
 
-        display_color = color_terminal['displays_colors']
-
         start_time = time.time()
         result = func(*args, **kwargs)
         duration = (time.time() - start_time) * 1000
 
-        display_args = (f"\n    {args=}" if args else "")
-        display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
+        # display_args = (f"\n    {args=}" if args else "")
+        # display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
         func_name = func.__name__
 
-        if display_color:
-            func_name = f"\033[1;31m{func_name}\033[0m"
-
-        if display_color:
-            duration = f"\033[1;32m{duration:.5g} ms\033[0m"
-        else:
-            duration = f"{duration:.5g} ms" 
+        func_name = str_color(func_name, 31)
+        duration = str_color(f"{duration:.5g} ms", 32)
         
-        msg = f"\n{func_name}: {duration}" + display_args + display_kwargs
-        # print(msg)
+        msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
         info(msg)
         return result
     return wrapped

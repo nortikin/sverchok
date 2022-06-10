@@ -19,6 +19,18 @@ def is_terminal_color_capable():
 
     color_terminal['displays_colors'] = can_paint
 
+def str_color(text, color):
+    """
+    text must be a string
+    color must be any of https://github.com/nortikin/sverchok/pull/4511#issuecomment-1151478312
+    30 = black, 31 = red, 32 = green, 33 = yellow, 34 = blue, 35 = purple, 36 = ilghtblue, 37 = white-ish
+    90 = grey,  91 = red+,92 = green+,93 = yellow+,94 = blue+,95 = purple+,96 = lightblue+,97 = white
+    """
+    if color_terminal['displays_colors']:
+        return f"\033[1;{color}m{text}\033[0m"
+    return text
+
+
 def logo():
 
     l1 = r" ______ _    _ _______  ______ _______ _     _  _____  _     _"
@@ -27,9 +39,7 @@ def logo():
     l4 = r"initialized."
     lines = [l1, l2, l3, l4]
 
-    with_color = "\033[1;31m{0}\033[0m" if color_terminal['displays_colors'] else "{0}"
-    for line in lines:
-        print(with_color.format(line))
+    for line in lines: print(str_color(line, 31))
 
 def show_welcome():
     is_terminal_color_capable()
