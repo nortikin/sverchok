@@ -21,7 +21,7 @@ import functools
 import inspect
 import warnings
 from sverchok.utils.logging import info
-from sverchok.core import color_terminal
+from sverchok.utils.ascii_print import color_terminal
 
 string_types = (type(b''), type(u''))
 
@@ -104,8 +104,6 @@ def deprecated(argument):
 
         
 def duration(func):
-
-    from sverchok.utils.ascii_print import color_terminal
 
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
