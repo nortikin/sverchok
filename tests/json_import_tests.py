@@ -56,7 +56,7 @@ UNITTEST_SKIPLIST = [
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
     # "Genetic_algorithm.blend.json",  # looks like script node is trying to update via import_from_json method
-    "Genetic_algorythm_scripted_node.json",
+    "Genetic_algorithm_scripted_node.json",
     "Elfnor_topology_nodes.json",
     "l-systems.json",
     "ABCnaming.json",
