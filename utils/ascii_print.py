@@ -21,11 +21,17 @@ def is_terminal_color_capable():
 
 def str_color(text, color):
     """
-    text must be a string
-    color must be any of https://github.com/nortikin/sverchok/pull/4511#issuecomment-1151478312
-    30 = black, 31 = red, 32 = green, 33 = yellow, 34 = blue, 35 = purple, 36 = ilghtblue, 37 = white-ish
-    90 = grey,  91 = red+,92 = green+,93 = yellow+,94 = blue+,95 = purple+,96 = lightblue+,97 = white
-    """
+    input:
+    - text  : should be a string
+    - color : must be any of https://github.com/nortikin/sverchok/pull/4511#issuecomment-1151478312
+    output:
+    - a str : the text is returned with additional color-markup if the terminal can display colors.
+ 
+    available colors:
+        30 = black, 31 = red, 32 = green, 33 = yellow, 34 = blue, 35 = purple, 36 = ilghtblue, 37 = white-ish
+        90 = grey,  91 = red+,92 = green+,93 = yellow+,94 = blue+,95 = purple+,96 = lightblue+,97 = white
+    
+       """
     if color_terminal['displays_colors']:
         return f"\033[1;{color}m{text}\033[0m"
     return text
