@@ -20,6 +20,8 @@ import time
 import functools
 import inspect
 import warnings
+from sverchok.utils.logging import info
+from sverchok.utils.ascii_print import str_color
 
 string_types = (type(b''), type(u''))
 
@@ -102,12 +104,20 @@ def deprecated(argument):
 
         
 def duration(func):
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
+
         start_time = time.time()
         result = func(*args, **kwargs)
-        msg = f"{func.__name__}: {(time.time() - start_time) * 1000} ms \n    {args=}\n    {kwargs=}" 
-        print(msg)
-        #warnings.warn(format_message(func, reason), category=DeprecationWarning, stacklevel=2)
-        return result  
+        duration = (time.time() - start_time) * 1000
+
+        # display_args = (f"\n    {args=}" if args else "")
+        # display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
+        func_name = str_color(func.__name__, 31)
+        duration = str_color(f"{duration:.5g} ms", 32)
+        
+        msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
+        info(msg)
+        return result
     return wrapped
