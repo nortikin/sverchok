@@ -153,8 +153,9 @@ else:
                         if obj.Module in obj_mask or obj.TypeId in obj_mask:
                             labels.append( (obj.Label, obj.Label, obj.Label) )
                     
-                except:
-                    info('FCStd label read error')
+                except Exception as err:
+                    info(f'FCStd label read error: {Fname=}')
+                    info(err)
                 finally:
                     F.closeDocument(Fname)
 
@@ -183,7 +184,7 @@ else:
             return {'FINISHED'}
    
 
-def LoadSolid(fc_file,part_filter,obj_mask,tool_parts, inv_filter):
+def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
     objs= set()
     outList = set()
     solids = set()
