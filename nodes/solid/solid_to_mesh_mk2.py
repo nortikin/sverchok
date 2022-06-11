@@ -14,6 +14,7 @@ else:
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
     from sverchok.utils.solid import mesh_from_solid_faces
     from sverchok.utils.sv_bmesh_utils import recalc_normals
+    from sverchok.utils.sv_mesh_utils import non_redundant_faces_indices_np
 
     import MeshPart
 
@@ -116,10 +117,16 @@ else:
             soft_min=0.1,
             precision=4,
             update=updateNode)
+        remove_degenerate: BoolProperty(
+            default=False,
+            description="removes degenerate triangles produced by these meshing algorithms under certain conditions",
+            update=updateNode)
 
         def draw_buttons(self, context, layout):
             layout.prop(self, "shape_type", expand=True)
-            layout.prop(self, "mode")
+            row = layout.row(align=True)
+            row.prop(self, "mode")
+            row.prop(self, "remove_degenerate", text='', icon='FILTER')
             if self.mode == 'Standard':
                 layout.prop(self, "relative_surface_deviation")
 
@@ -233,6 +240,9 @@ else:
                 verts, faces = self.mefisto_mesher()
             else: # Trivial
                 verts, faces = self.trivial_mesher()
+
+            if self.remove_degenerate:
+                faces = [non_redundant_faces_indices_np(f).tolist() for f in faces]
 
             self.outputs['Verts'].sv_set(verts)
             self.outputs['Faces'].sv_set(faces)
