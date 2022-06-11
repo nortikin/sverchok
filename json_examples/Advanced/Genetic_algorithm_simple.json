@@ -804,7 +804,7 @@
         "properties": {
           "n_id": "-7232173939781669232",
           "show_text": false,
-          "text": "nikitron 2022 | Genetic Algorythm looking for optimal edges length in triangle (in current case). It can be replaced with many floats/integers and so on."
+          "text": "nikitron 2022 | Genetic Algorithm looking for optimal edges length in triangle (in current case). It can be replaced with many floats/integers and so on."
         },
         "inputs": {
           "Text In": {
