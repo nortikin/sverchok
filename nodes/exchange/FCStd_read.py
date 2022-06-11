@@ -135,6 +135,7 @@ else:
             tree = bpy.data.node_groups[self.tree_name]
             node = tree.nodes[self.node_name]
             fc_file_list = node.inputs['File Path'].sv_get()[0]
+
             obj_mask = []
             if  node.read_features: 
                 obj_mask.append('PartDesign')
@@ -145,25 +146,18 @@ else:
 
             for f in fc_file_list:
                 try:
-                    temp_doc = F.open(f) 
-
-                    if temp_doc.Name:
-                        Fname = temp_doc.Name
-                    else:
-                        # try soemthing!
-                        Fname = bpy.path.display_name_from_filepath(f)
-
-                    F.setActiveDocument(Fname)
+                    doc = F.open(f)
+                    Fname = doc.Name or bpy.path.display_name_from_filepath(f)
                     
-                    for obj in F.ActiveDocument.Objects:
+                    for obj in doc.Objects:
                         if obj.Module in obj_mask or obj.TypeId in obj_mask:
-                            labels.append( (obj.Label, obj.Label, obj.Label) )
+                            labels.append( (obj.Label, obj.Label, obj.Label) )  # TODO, identifier [A-Za-z0-9_]
                     
                 except Exception as err:
                     info(f'FCStd label read error: {Fname=}')
                     info(err)
                 finally:
-                    F.closeDocument(Fname)
+                    del doc
 
             return labels
             
@@ -197,11 +191,10 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
     
     try:    
 
-        F.open(fc_file) 
-        Fname = bpy.path.display_name_from_filepath(fc_file)
-        F.setActiveDocument(Fname)
-
-        for obj in F.ActiveDocument.Objects:
+        doc = F.open(fc_file)
+        Fname = doc.Name or bpy.path.display_name_from_filepath(f)
+                    
+        for obj in doc.Objects:
 
             if obj.Module in obj_mask or obj.TypeId in obj_mask:
                 objs.add (obj)
@@ -225,15 +218,15 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
                         
     except:
         info('FCStd read error')
-
     finally:
-        F.closeDocument(Fname)
+        del doc
 
     return solids
 
+# unused?
 def open_fc_file(fc_file):
     F.open(fc_file) 
-    Fname = bpy.path.display_name_from_filepath(fc_file)
+    Fname = doc.Name or bpy.path.display_name_from_filepath(f)
     F.setActiveDocument(Fname)
 
 def register():
