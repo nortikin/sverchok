@@ -145,18 +145,15 @@ else:
 
             for f in fc_file_list:
                 try:
-                    F.open(f) 
-                    """
-                    >>> from pathlib import Path
-                    >>> Path(doc.FileName).stem   (same as display_name_from_filepath)
-                    'RaspPi4random_5 - Copy'
+                    temp_doc = F.open(f) 
 
-                    >>> doc.Name
-                    'RaspPi4random_5___Copy'
-                    """
-                    Fname = bpy.path.display_name_from_filepath(f)
+                    if temp_doc.Name:
+                        Fname = temp_doc.Name
+                    else:
+                        # try soemthing!
+                        Fname = bpy.path.display_name_from_filepath(f)
+
                     F.setActiveDocument(Fname)
-
                     
                     for obj in F.ActiveDocument.Objects:
                         if obj.Module in obj_mask or obj.TypeId in obj_mask:
