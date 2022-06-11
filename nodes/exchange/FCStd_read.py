@@ -192,7 +192,7 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
     try:    
 
         doc = F.open(fc_file)
-        Fname = doc.Name or bpy.path.display_name_from_filepath(f)
+        Fname = doc.Name or bpy.path.display_name_from_filepath(fc_file)
                     
         for obj in doc.Objects:
 
@@ -226,7 +226,7 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
 # unused?
 def open_fc_file(fc_file):
     F.open(fc_file) 
-    Fname = doc.Name or bpy.path.display_name_from_filepath(f)
+    Fname = doc.Name or bpy.path.display_name_from_filepath(fc_file)
     F.setActiveDocument(Fname)
 
 def register():
