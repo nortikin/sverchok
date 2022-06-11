@@ -7,10 +7,11 @@
 import pprint
 import bpy
 import re
+import numpy as np
 
 last_print = {}
 
-def console_print(message, node=None, kind='OUTPUT', allow_repeats=False, pretty=False, width=80, rounding=0, compact=True, print_origin=False):
+def console_print(message, node=None, kind='OUTPUT', allow_repeats=True, pretty=False, width=80, rounding=0, compact=True, print_origin=False):
     """
     this function finds an open console in Blender and writes to it, useful for debugging small stuff.
     but beware what you throw at it.
@@ -23,8 +24,14 @@ def console_print(message, node=None, kind='OUTPUT', allow_repeats=False, pretty
         node = "generic"
     
     if not allow_repeats:
-        if (previously_printed_text := last_print.get(hash(node))):
-            # i do not need to see repeat text
+        
+        previously_printed_text = last_print.get(hash(node))
+        
+        # or  (np.ndarray, np.generic)
+        if previously_printed_text is None: pass
+        elif all([isinstance(obj, np.ndarray) for obj in [previously_printed_text, message]]):
+            if np.array_equal(previously_printed_text, message): return
+        else:  
             if message == previously_printed_text: return
 
     if compact:
