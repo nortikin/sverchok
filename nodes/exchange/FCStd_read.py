@@ -151,7 +151,7 @@ else:
                     
                     for obj in doc.Objects:
                         if obj.Module in obj_mask or obj.TypeId in obj_mask:
-                            labels.append( (obj.Label, obj.Label, obj.Label) )  # TODO, identifier [A-Za-z0-9_]
+                            labels.append( (obj.Label, obj.Label, obj.Label) )
                     
                 except Exception as err:
                     info(f'FCStd label read error: {Fname=}')

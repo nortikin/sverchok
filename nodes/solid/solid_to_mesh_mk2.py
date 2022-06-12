@@ -3,6 +3,10 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
+def is_triangles_only(faces):
+    if has_element(faces): return all((len(f) == 3 for f in faces))
+
+
 if FreeCAD is None:
     add_dummy('SvSolidToMeshNode', 'Solid to Mesh', 'FreeCAD')
 else:
@@ -11,10 +15,10 @@ else:
     from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr
+    from sverchok.data_structure import updateNode, has_element, match_long_repeat as mlr
     from sverchok.utils.solid import mesh_from_solid_faces
     from sverchok.utils.sv_bmesh_utils import recalc_normals
-    from sverchok.utils.sv_mesh_utils import non_redundant_faces_indices_np
+    from sverchok.utils.sv_mesh_utils import non_redundant_faces_indices_np as clean
 
     import MeshPart
 
@@ -117,16 +121,10 @@ else:
             soft_min=0.1,
             precision=4,
             update=updateNode)
-        remove_degenerate: BoolProperty(
-            default=False,
-            description="removes degenerate triangles produced by these meshing algorithms under certain conditions",
-            update=updateNode)
 
         def draw_buttons(self, context, layout):
             layout.prop(self, "shape_type", expand=True)
-            row = layout.row(align=True)
-            row.prop(self, "mode")
-            row.prop(self, "remove_degenerate", text='', icon='FILTER')
+            layout.prop(self, "mode")
             if self.mode == 'Standard':
                 layout.prop(self, "relative_surface_deviation")
 
@@ -162,6 +160,8 @@ else:
                 for f in rawdata[1]:
                     b_faces.append(f)
                 verts.append(b_verts)
+
+                b_faces = clean(b_faces).tolist() if is_triangles_only(b_faces) else b_faces
                 faces.append(b_faces)
 
             return verts, faces
@@ -185,7 +185,10 @@ else:
                     Relative=self.relative_surface_deviation)
 
                 verts.append([v[:] for v in mesh.Topology[0]])
-                faces.append(mesh.Topology[1])
+
+                b_faces = mesh.Topology[1]
+                b_faces = clean(b_faces).tolist() if is_triangles_only(b_faces) else b_faces
+                faces.append(b_faces)
 
             return verts, faces
 
@@ -211,11 +214,14 @@ else:
             return verts, faces
 
         def trivial_mesher(self):
+            """
+            this mode will produce a variety of polygon types (tris, quads, ngons...)
+            """
             solids = self.inputs[self["shape_type"]].sv_get()
 
             verts = []
             faces = []
-            for solid in solids:
+            for idx, solid in enumerate(solids):
                 if self.shape_type == 'Solid':
                     shape = solid
                 else:
@@ -240,9 +246,6 @@ else:
                 verts, faces = self.mefisto_mesher()
             else: # Trivial
                 verts, faces = self.trivial_mesher()
-
-            if self.remove_degenerate:
-                faces = [non_redundant_faces_indices_np(f).tolist() for f in faces]
 
             self.outputs['Verts'].sv_set(verts)
             self.outputs['Faces'].sv_set(faces)
