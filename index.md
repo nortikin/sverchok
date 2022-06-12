@@ -678,6 +678,7 @@
     SvReceiveFromSorcarNode
     SvExportGcodeNode
     SvReadFCStdNode
+    SvReadFCStdModNode
     SvWriteFCStdNode
     SvReadFCStdSketchNode
     SvFCStdSpreadsheetNode
