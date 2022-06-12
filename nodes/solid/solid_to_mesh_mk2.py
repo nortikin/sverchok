@@ -221,7 +221,7 @@ else:
 
             verts = []
             faces = []
-            for idx, solid in enumerate(solids):
+            for solid in solids:
                 if self.shape_type == 'Solid':
                     shape = solid
                 else:
