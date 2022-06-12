@@ -3,8 +3,6 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
-def is_triangles_only(faces):
-    if has_element(faces): return all((len(f) == 3 for f in faces))
 
 
 if FreeCAD is None:
@@ -22,6 +20,8 @@ else:
 
     import MeshPart
 
+    def is_triangles_only(faces):
+        if has_element(faces): return all((len(f) == 3 for f in faces))
 
     class SvSolidToMeshNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         """
