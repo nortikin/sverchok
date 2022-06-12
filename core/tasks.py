@@ -51,7 +51,8 @@ class Tasks:
     def run(self):
         """Run given tasks to update trees and report execution process in the
         header of a node tree editor"""
-        max_duration = 0.15  # 0.15 is max timer frequency
+        # 0.15 is max timer frequency
+        max_duration = 10 if self.current.is_scene_update else 0.15
         duration = 0
 
         while self.current:
