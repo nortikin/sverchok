@@ -98,29 +98,23 @@ else:
             label_1_tags = []
             label_2_tags = []
 
-            if node.inputs['Label1 Filter'].is_linked:
-                raw_filter = node.inputs['Label1 Filter'].sv_get()[0]
+            if (L1_Filter := node.inputs['Label1 Filter']).is_linked:
+                raw_filter = L1_Filter.sv_get()[0]
 
                 if len(raw_filter) == 1 and ',' in raw_filter[0]:
                     raw_filter = raw_filter[0].split(',')
                 
                 for i in raw_filter:
-                    if '#' in i:
-                        label_1_tags.append(i)
-                    else:
-                        label_1_filter.append(i)
+                    label_1_tags.append(i) if '#' in i else label_1_filter.append(i)
 
-            if node.inputs['Label2 Filter'].is_linked:
-                raw_filter = node.inputs['Label2 Filter'].sv_get()[0]
+            if (L2_Filter := node.inputs['Label2 Filter']).is_linked:
+                raw_filter = L2_Filter.sv_get()[0]
 
                 if len(raw_filter) == 1 and ',' in raw_filter[0]:
                     raw_filter = raw_filter[0].split(',')
 
                 for i in raw_filter:
-                    if '#' in i:
-                        label_2_tags.append(i)
-                    else:
-                        label_2_filter.append(i)
+                    label_2_tags.append(i) if '#' in i else label_2_filter.append(i)
 
             #ADD TO LABEL 1 FILTER THE DROPDOWN ENTRY IF SELECTED
             if node.selected_part != '' and not node.selected_part in label_1_filter:
@@ -130,12 +124,9 @@ else:
             identifiers = []
             module_filter = []
 
-            if node.read_features:
-                module_filter.append('PartDesign')
-            if node.read_part:
-                module_filter.append('Part')
-            if node.read_body: 
-                module_filter.append('PartDesign::Body')
+            if node.read_features: module_filter.append('PartDesign')
+            if node.read_part: module_filter.append('Part')
+            if node.read_body: module_filter.append('PartDesign::Body')
 
             for fname in files:
                 S = LoadSolid(
@@ -171,17 +162,13 @@ else:
         bl_property = "option"
 
         def LabelReader(self, context):
-            node = self.get_node(context)
-
             module_filter = []
-            if  node.read_features:
-                module_filter.append('PartDesign')
-            if  node.read_part:
-                module_filter.append('Part')
-            if  node.read_body:
-                module_filter.append('PartDesign::Body')
-            if  node.merge_linked:
-                module_filter.append('App::Link')
+
+            node = self.get_node(context)
+            if node.read_features: module_filter.append('PartDesign')
+            if node.read_part: module_filter.append('Part')
+            if node.read_body: module_filter.append('PartDesign::Body')
+            if node.merge_linked: module_filter.append('App::Link')
 
             labels = [('', '', '')]
 
