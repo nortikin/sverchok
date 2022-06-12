@@ -79,8 +79,13 @@ else:
             self.inputs.new('SvFilePathSocket', "File Path")
             self.inputs.new('SvStringsSocket', "Part Filter")   
             self.outputs.new('SvSolidSocket', "Solid")
+            self.outputs.new('SvTextSocket', "Names")
 
-        def read_FCStd(self,node):
+        def ensure_name_socket_exists(self):
+            if not "Names" in self.outputs:
+                self.outputs.new('SvTextSocket', "Names")
+
+        def read_FCStd(self, node):
             
             files = node.inputs['File Path'].sv_get()[0]
 
@@ -93,6 +98,7 @@ else:
 
             solids = []
             obj_mask = []
+            names = []
 
             if node.read_features:
                 obj_mask.append('PartDesign')
@@ -104,10 +110,13 @@ else:
             for f in files:
                 S = LoadSolid(f, part_filter, obj_mask, node.tool_parts, node.inv_filter)
 
-                for s in S:
+                for s, n in S:
                     solids.append(s)
+                    names.append(list(n))
             
             node.outputs['Solid'].sv_set(solids)
+            self.ensure_name_socket_exists()
+            node.outputs['Names'].sv_set(names)
 
 
         def process(self):
@@ -210,11 +219,11 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
 
             if not inv_filter:
                 if obj.Label in part_filter or len(part_filter)==0:
-                    solids.add(obj.Shape)
+                    solids.add((obj.Shape, (obj.FullName, obj.Name, obj.Label)))
 
             else:
                 if not obj.Label in part_filter:
-                    solids.add(obj.Shape)  
+                    solids.add((obj.Shape, (obj.FullName, obj.Name, obj.Label)))  
                         
     except:
         info('FCStd read error')
@@ -223,11 +232,6 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
 
     return solids
 
-# unused?
-def open_fc_file(fc_file):
-    F.open(fc_file) 
-    Fname = doc.Name or bpy.path.display_name_from_filepath(fc_file)
-    F.setActiveDocument(Fname)
 
 def register():
     if FreeCAD is not None:
