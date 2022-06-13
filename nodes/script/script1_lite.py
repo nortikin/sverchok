@@ -317,11 +317,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
         if text and hasattr(text, "as_string"):
-            if self.script_str == text.as_string():
-                self.process_node(None)
-                return
-
             self.script_str = text.as_string()
+            self.process_node(None)
+
         else:
             self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
