@@ -25,6 +25,69 @@ def fuzzy_compare(named_seeker, named_current):
     except Exception as err:
         print(f"Refresh Current Script called but encountered error {err}")
 
+def get_first_sverchok_nodetree():
+
+    AREA = 'NODE_EDITOR'
+    for window in bpy.context.window_manager.windows:
+        screen = window.screen
+        for area in screen.areas:
+            if not area.type == AREA: continue
+
+            for space in area.spaces:
+                if hasattr(space, "edit_tree"):
+                    if space.tree_type in {'SverchCustomTreeType', 'SvGroupTree'}:
+                        ng = space.edit_tree
+                        for region in area.regions:
+                            if region.type == 'WINDOW': 
+                                override = {
+                                    'window': window,
+                                    'screen': screen,
+                                    'area': area,
+                                    'region': region
+                                }
+                                return ng, override
+
+
+
+class SvSNLiteAddFromTextEditor(bpy.types.Operator):
+    """
+    you want to create an snlite from the current edit_text in TextEditor
+    this will create the node, load it with the text, and center the nodeview on that node.
+    """
+    bl_label = "Make SNlite from Current Script"
+    bl_idname = "text.nodenew_from_texteditor"
+
+    def execute(self, context):
+        self.report({'INFO'}, f"Triggered: {self.bl_idname}")
+
+        ngs = bpy.data.node_groups
+        if not ngs:
+            self.report({'INFO'}, "No NodeGroups")
+            return {'FINISHED'}
+
+        edit_text = bpy.context.edit_text
+        text_file_name = edit_text.name
+        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', }
+        ngs = list(filter(is_sv_tree, ngs))
+
+        if not ngs:
+            self.report({'INFO'}, "No Sverchok NodeGroups")
+            return {'CANCELLED'}
+
+        if (result := get_first_sverchok_nodetree()):
+            ng, override = result
+            snlite = ng.nodes.new('SvScriptNodeLite')
+            # --- position to center of the view would be nice.
+
+            snlite.script_name = text_file_name
+            snlite.load()
+
+            ng.nodes.active = snlite
+            snlite.select = True
+            bpy.ops.node.view_selected(override)
+
+        return {'FINISHED'}
+
 
 class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
@@ -33,7 +96,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
     def execute(self, context):
 
-        self.report({'INFO'}, "Triggered: text.noderefresh_from_texteditor")
+        self.report({'INFO'}, f"Triggered: {self.bl_idname}")
 
         ngs = bpy.data.node_groups
         if not ngs:
@@ -119,9 +182,14 @@ def add_keymap():
 
     if 'noderefresh_from_texteditor' in dir(bpy.ops.text):
         ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
-        ident_str = 'text.noderefresh_from_texteditor'
+        ident_str = SvNodeRefreshFromTextEditor.bl_idname
         if not (ident_str in keymaps):
             new_shortcut = keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+            addon_keymaps.append((km, new_shortcut))
+
+        ident_str = SvSNLiteAddFromTextEditor.bl_idname 
+        if not (ident_str in keymaps):
+            new_shortcut = keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, shift=1, head=0)
             addon_keymaps.append((km, new_shortcut))
 
         logger.debug('Sverchok added keyboard items to Text Editor.')
@@ -136,6 +204,7 @@ def remove_keymap():
 
 def register():
     global logger
+    bpy.utils.register_class(SvSNLiteAddFromTextEditor)
     bpy.utils.register_class(SvNodeRefreshFromTextEditor)
     logger = getLogger("text_editor_plugins")
     add_keymap()
@@ -143,4 +212,4 @@ def register():
 def unregister():
     remove_keymap()
     bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
-
+    bpy.utils.unregister_class(SvSNLiteAddFromTextEditor)
