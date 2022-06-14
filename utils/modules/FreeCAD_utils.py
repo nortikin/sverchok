@@ -7,13 +7,11 @@ reproduced large parts with generous permission, includes modifications for conv
 from types import SimpleNamespace
 import sys, bpy, xml.sax, zipfile, os
 from bpy_extras.node_shader_utils import PrincipledBSDFWrapper
-
+from mathutils import Quaternion, Matrix 
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD:
     import Part
-
-    TRIANGULATE = False # set to True to triangulate all faces (will loose multimaterial info)
 
     class FreeCAD_xml_handler(xml.sax.ContentHandler):
 
@@ -142,7 +140,6 @@ if FreeCAD:
             edges = []
             faces = []
             matindex = [] # face to material relationship
-            # plac = None  <-- not used..?
             faceedges = [] # a placeholder to store edges that belong to a face
             name = "Unnamed"
 
@@ -155,52 +152,42 @@ if FreeCAD:
                     shape.Placement = placement.inverse().multiply(shape.Placement)
                 if shape.Faces:
 
-                    if TRIANGULATE:
-                        # triangulate and make faces
-                        rawdata = shape.tessellate(tessellation)
-                        for v in rawdata[0]:
-                            verts.append([v.x, v.y, v.z])
-                        for f in rawdata[1]:
+                    # write FreeCAD faces as polygons when possible
+                    for face in shape.Faces:
+                        if (len(face.Wires) > 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face):
+                            # face has holes or is curved, so we need to triangulate it
+                            rawdata = face.tessellate(tessellation)
+                            for v in rawdata[0]:
+                                vl = [v.x, v.y, v.z]
+                                if not vl in verts:
+                                    verts.append(vl)
+                            for f in rawdata[1]:
+                                nf = []
+                                for vi in f:
+                                    nv = rawdata[0][vi]
+                                    nf.append(verts.index([nv.x, nv.y, nv.z]))
+                                faces.append(nf)
+                            matindex.append(len(rawdata[1]))
+                        else:
+                            f = []
+                            ov = face.OuterWire.OrderedVertexes
+                            for v in ov:
+                                vl = [v.X,v.Y,v.Z]
+                                if not vl in verts:
+                                    verts.append(vl)
+                                f.append(verts.index(vl))
+                            # FreeCAD doesn't care about verts order. Make sure our loop goes clockwise
+                            c = face.CenterOfMass
+                            v1 = ov[0].Point.sub(c)
+                            v2 = ov[1].Point.sub(c)
+                            n = face.normalAt(0,0)
+                            if (v1.cross(v2)).getAngle(n) > 1.57:
+                                f.reverse() # inverting verts order if the direction is couterclockwise
                             faces.append(f)
-                        for face in shape.Faces:
-                            for e in face.Edges:
-                                faceedges.append(e.hashCode())
-                    else:
-                        # write FreeCAD faces as polygons when possible
-                        for face in shape.Faces:
-                            if (len(face.Wires) > 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face):
-                                # face has holes or is curved, so we need to triangulate it
-                                rawdata = face.tessellate(tessellation)
-                                for v in rawdata[0]:
-                                    vl = [v.x, v.y, v.z]
-                                    if not vl in verts:
-                                        verts.append(vl)
-                                for f in rawdata[1]:
-                                    nf = []
-                                    for vi in f:
-                                        nv = rawdata[0][vi]
-                                        nf.append(verts.index([nv.x, nv.y, nv.z]))
-                                    faces.append(nf)
-                                matindex.append(len(rawdata[1]))
-                            else:
-                                f = []
-                                ov = face.OuterWire.OrderedVertexes
-                                for v in ov:
-                                    vl = [v.X,v.Y,v.Z]
-                                    if not vl in verts:
-                                        verts.append(vl)
-                                    f.append(verts.index(vl))
-                                # FreeCAD doesn't care about verts order. Make sure our loop goes clockwise
-                                c = face.CenterOfMass
-                                v1 = ov[0].Point.sub(c)
-                                v2 = ov[1].Point.sub(c)
-                                n = face.normalAt(0,0)
-                                if (v1.cross(v2)).getAngle(n) > 1.57:
-                                    f.reverse() # inverting verts order if the direction is couterclockwise
-                                faces.append(f)
-                                matindex.append(1)
-                            for e in face.Edges:
-                                faceedges.append(e.hashCode())
+                            matindex.append(1)
+                        for e in face.Edges:
+                            faceedges.append(e.hashCode())
+
                 for edge in shape.Edges:
                     # Treat remaining edges (that are not in faces)
                     if not (edge.hashCode() in faceedges):
@@ -235,7 +222,27 @@ if FreeCAD:
                 faces = t[1]
 
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
+            current_obj.matrix = Matrix()
+            current_obj.loc = (0.0, 0.0, 0.0)
             obj_data.append(current_obj)
+
+            if placement:            
+                # current_obj.location = placement.Base.multiply(scale)
+                # current_obj.rotation_mode = 'QUATERNION'
+                # m = bobj.rotation_mode
+                if placement.Rotation.Angle:
+                    # FreeCAD Quaternion is XYZW while Blender is WXYZ
+                    # q = (placement.Rotation.Q[3],) + placement.Rotation.Q[:3]
+                    # current_obj.rotation_quaternion = (q)
+                    # current_obj.rotation_mode = m
+                    # current_obj.scale = (scale, scale, scale)
+                    x, y, z, w = placement.Rotation.Q
+                    print(x, y, z, w)
+                    new_quaternion = Quaternion((w, x, y, z))
+                    current_obj.matrix = new_quaternion.to_matrix().to_4x4()
+                    print("here")
+                    current_obj.loc = placement.Base.multiply(scale)
+    
             # if verts and (faces or edges):
             
             #     # create or update object with mesh and material data
