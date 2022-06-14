@@ -2,13 +2,14 @@ from collections import defaultdict
 from copy import copy
 from functools import lru_cache
 from graphlib import TopologicalSorter
+from itertools import chain
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
-from sverchok.core.sv_custom_exceptions import CancelError
+from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
@@ -92,8 +93,8 @@ class SearchTree:
     _to_nodes: dict['SvNode', set['SvNode']]
     _from_sock: dict[NodeSocket, NodeSocket]
     _to_socks: dict[NodeSocket, set[NodeSocket]]
-    _sock_node: dict[NodeSocket, Node]
     _links: set[tuple[NodeSocket, NodeSocket]]
+    _sock_node: dict[NodeSocket, Node]
 
     def __init__(self, tree: NodeTree):
         self._tree = tree
@@ -103,17 +104,19 @@ class SearchTree:
             n: set() for n in tree.nodes if n.bl_idname != 'NodeFrame'}
         self._from_sock = dict()  # only connected
         self._to_socks = defaultdict(set)  # only connected
-        self._sock_node = dict()  # only connected sockets
         self._links = set()  # from to socket
+        self._sock_node = dict()
 
         for link in (li for li in tree.links if not li.is_muted):
             self._from_nodes[link.to_node].add(link.from_node)
             self._to_nodes[link.from_node].add(link.to_node)
             self._from_sock[link.to_socket] = link.from_socket
             self._to_socks[link.from_socket].add(link.to_socket)
-            self._sock_node[link.from_socket] = link.from_node
-            self._sock_node[link.to_socket] = link.to_node
             self._links.add((link.from_socket, link.to_socket))
+
+        for node in tree.nodes:
+            for sock in chain(node.inputs, node.outputs):
+                self._sock_node[sock] = node
 
         self._remove_reroutes()
         self._remove_wifi_nodes()
@@ -334,7 +337,15 @@ class UpdateTree(SearchTree):
                 # update outdated nodes list
                 if _tree._outdated_nodes is not None:
                     if not _tree.is_updated:
-                        _tree._outdated_nodes.update(_tree._update_difference(old))
+                        changed_nodes = _tree._update_difference(old)
+
+                        # disconnected input sockets can remember previous data
+                        # a node can be laizy and don't recalculate output
+                        for node in changed_nodes:
+                            for in_s in chain(node.inputs, node.outputs):
+                                in_s.sv_forget()
+
+                        _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
                         _tree._outdated_nodes.update(_tree._animation_nodes())
                     if not _tree.is_scene_updated:
@@ -527,14 +538,16 @@ class UpdateTree(SearchTree):
         nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
         new_links = self._links - old._links
         for from_sock, to_sock in new_links:
-            if from_sock not in old._sock_node:  # socket was not connected
+            if from_sock not in old._from_sock:  # socket was not connected
                 # protect from if not self.outputs[0].is_linked: return
                 nodes_to_update.add(self._sock_node[from_sock])
             else:
                 nodes_to_update.add(self._sock_node[to_sock])
         removed_links = old._links - self._links
         for from_sock, to_sock in removed_links:
-            nodes_to_update.add(old._sock_node[to_sock])
+            if to_sock not in self._sock_node:
+                continue  # the link was removed together with the node
+            nodes_to_update.add(self._sock_node[to_sock])
         return nodes_to_update
 
     def _calc_cam_update_time(self) -> Iterable['SvNode']:
@@ -621,14 +634,18 @@ def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
     for ps, ns in zip(prev_socks, input_socks):
         if ps is None:
             continue
-        data = ps.sv_get()
+        try:
+            data = ps.sv_get()
+        except SvNoDataError:
+            # let to the node handle No Data error
+            ns.sv_forget()
+        else:
+            # cast data
+            if ps.bl_idname != ns.bl_idname:
+                implicit_conversion = conversions[ns.default_conversion_name]
+                data = implicit_conversion.convert(ns, ps, data)
 
-        # cast data
-        if ps.bl_idname != ns.bl_idname:
-            implicit_conversion = conversions[ns.default_conversion_name]
-            data = implicit_conversion.convert(ns, ps, data)
-
-        ns.sv_set(data)
+            ns.sv_set(data)
 
 
 def update_ui(tree: NodeTree, times: Iterable[float] = None):
