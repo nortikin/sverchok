@@ -127,7 +127,7 @@ if FreeCAD:
             return
 
         matdatabase = {} # to store reusable materials
-        obj_data = {}
+        obj_data = []
 
         for obj in doc.Objects:
 
@@ -235,7 +235,7 @@ if FreeCAD:
                 faces = t[1]
 
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
-            obj_data.add(current_obj)
+            obj_data.append(current_obj)
             # if verts and (faces or edges):
             
             #     # create or update object with mesh and material data
