@@ -45,7 +45,7 @@ def get_first_sverchok_nodetree():
                                     'area': area,
                                     'region': region
                                 }
-                                return ng, override
+                                return ng, override, space
 
 
 
@@ -75,10 +75,16 @@ class SvSNLiteAddFromTextEditor(bpy.types.Operator):
             return {'CANCELLED'}
 
         if (result := get_first_sverchok_nodetree()):
-            ng, override = result
-            snlite = ng.nodes.new('SvScriptNodeLite')
-            # --- position to center of the view would be nice.
+            ng, override, space = result
 
+            for n in ng.nodes:
+                if n.bl_idname == "SvScriptNodeLite":
+                    if fuzzy_compare(n.script_name, text_file_name):
+                        n.load()
+                        return {'CANCELLED'}
+
+            snlite = ng.nodes.new('SvScriptNodeLite')
+            snlite.location = ng.view_center
             snlite.script_name = text_file_name
             snlite.load()
 
