@@ -9,6 +9,7 @@
 
 import os
 import numpy as np
+import itertools
 
 import bpy
 import bgl
@@ -22,6 +23,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
+#from sverchok.utils.decorators_compilation import njit
 
 def get_desired_xy(node):
     x, y = node.xy_offset
@@ -151,7 +153,7 @@ lexed_fragment_shader = '''
         else if (cIndex == 22) { test_tint = equalsColor; }
         else if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
         else if (cIndex == 53 || cIndex == 54) { test_tint = opColor; }
-        else if (cIndex == 55 || cIndex == 60) { test_tint = commentColor; }
+        else if (cIndex == 55 || cIndex == 61 || cIndex == 58) { test_tint = commentColor; }
         else if (cIndex == 90) { test_tint = name2Color; }
         else if (cIndex == 91) { test_tint = name3Color; }
         else if (cIndex == 92) { test_tint = qualifierColor; }
@@ -391,7 +393,6 @@ def simple_console_xy(context, args, loc):
     texture, config = args
     act_tex = bgl.Buffer(bgl.GL_INT, 1)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
-    
     config.shader.bind()
     
     # if not config.syntax_mode == "None":
@@ -409,21 +410,18 @@ def simple_console_xy(context, args, loc):
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
-
+#@njit(cache=True)
 def process_grid_for_shader(grid):
     positions, poly_indices = grid
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
-            verts.append(positions[v_idx][:2])
+            verts.append(positions[v_idx])
     return verts
 
 def process_uvs_for_shader(node):
     uv_indices = terminal_text_to_uv(node.terminal_text)
-    uvs = []
-    add_uv = uvs.append
-    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
-    return uvs
+    return list(itertools.chain.from_iterable(uv_indices))
 
 
 def generate_batch_shader(node, data):

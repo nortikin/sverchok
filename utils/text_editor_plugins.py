@@ -72,7 +72,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     if fuzzy_compare(n.script_name, text_file_name):
                         try:
                             n.load()
-                            n.process_node(context)
+                            # n.process_node(context)
                             return {'FINISHED'}
                         except SyntaxError as err:
                             msg = "SyntaxError : {0}".format(err)

@@ -16,54 +16,60 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
 import pprint
 import re
-
 import bpy
 import blf
+
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, updateNode
+from sverchok.data_structure import node_id, updateNode, enum_item_5
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_xy_for_bgl_drawing
+from sverchok.utils.nodes_mixins.console_mixin import LexMixin
+from sverchok.utils.profile import profile
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
+def chop_up_data(data):
 
-def adjust_location(_x, _y, location_theta):
-    return _x * location_theta, _y * location_theta
+    """
+    if data is large (either due to many small lists or n big lists) here it is sliced up
+    remember the user is already comfortable with seeing their data being abbreviated when big
+    """
+    if len(data) == 1:
+        if len(data[0]) > 24:
+            data = [data[0][:12] + data[0][-12:]]
+    elif len(data) > 1:
+        n = -1
+        if len(data[0]) > 12 and len(data[n]) > 12:
+            data = [data[0][:12], data[n][-12:]]
+    
+    # could be cleverer, because this is now optimized for the above scenarios only. they are common.
 
-def get_xy_for_bgl_drawing(node):
-        # adjust proposed text location in case node is framed.
-        # take into consideration the hidden state
-        node_width = node.width
-        _x, _y = node.absolute_location
-        _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
-
-        # this alters location based on DPI/Scale settings.
-        draw_location = adjust_location(_x, _y, node.location_theta)
-        return draw_location
+    return data
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     data = socket.sv_get(deepcopy=False)
+
     num_data_items = len(data)
     if num_data_items > 0 and view_by_element:
         if element_index < num_data_items:
             data = data[element_index]
 
-    str_width = props.line_width
+    if props.chop_up:
+        data = chop_up_data(data)
 
-    # okay, here we should be more clever and extract part of the list
-    # to avoid the amount of time it take to format it.
-    
-    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
+    content_str = pprint.pformat(data, width=props.line_width, depth=props.depth, compact=props.compact)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
@@ -82,16 +88,12 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
     # http://stackoverflow.com/a/7584567/1243487
     rounded_vals = re.compile(r"\d*\.\d+")
 
-    def mround(match):
-        format_string = "{{:.{0}g}}".format(rounding)
-        return format_string.format(float(match.group()))
+    def mround(match): return f"{float(match.group()):.{rounding}g}"
 
     out = []
     for line in display_text:
-        if (rounding == 0) or ("bpy." in line):
-            out.append(line)
-        else:
-            out.append(re.sub(rounded_vals, mround, line))
+        passthru = (rounding == 0) or ("bpy." in line)
+        out.append(line if passthru else re.sub(rounded_vals, mround, line))
     return out
 
 
@@ -102,7 +104,7 @@ def high_contrast_color(c):
 
 
 
-class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNodeViewDrawMixin):
     """
         Triggers: scope 
         Tooltip: Display data output of a node in nodeview
@@ -128,22 +130,23 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical"])]
+    #mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical", "sv++"])]
     selected_mode: bpy.props.EnumProperty(
-        items=mode_options,
-        description="offers....",
+        items=enum_item_5(["text-based", "graphical", "sv++"], ['ALIGN_LEFT', 'ALIGN_TOP', 'SCRIPTPLUGINS']),
+        description="select the kind of display, text/graphical/sv++",
         default="text-based", update=updateNode
     )
 
     view_by_element: BoolProperty(update=updateNode)
     num_elements: IntProperty(default=0)
     element_index: IntProperty(default=0, update=updateNode)
-    rounding: IntProperty(min=0, max=5, default=3, update=updateNode)
+    rounding: IntProperty(min=0, max=5, default=3, update=updateNode,
+        description="range 0 to 5\n : 0 performs no rounding\n : 5 rounds to 5 digits")
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
-    compact: BoolProperty(default=False, update=updateNode)
+    compact: BoolProperty(default=False, update=updateNode, description="this tries to show as much data per line as the linewidth will allow")
     depth: IntProperty(default=5, min=0, update=updateNode)
-    location_theta: FloatProperty(name='location_theta')
-
+    chop_up: BoolProperty(default=False, update=updateNode, 
+        description="perform extra data examination to reduce size of data before pprint (pretty printing, pformat)")
 
     def get_theme_colors_for_contrast(self):
         try:
@@ -164,28 +167,35 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        row = layout.row(align=True)
         icon = 'RESTRICT_VIEW_OFF' if self.activate else 'RESTRICT_VIEW_ON'
-        row.separator()
         row.prop(self, "activate", icon=icon, text='')
-
-        layout.prop(self, 'selected_mode', expand=True)
+        row.separator()
+        row.prop(self, 'selected_mode', expand=True, icon_only=True)
         if self.selected_mode == 'text-based':
 
             row.prop(self, "text_color", text='')
             row1 = layout.row(align=True)
             row1.prop(self, "rounding")
-            row1.prop(self, "compact", toggle=True)
+            row1.prop(self, "compact", icon="ALIGN_JUSTIFY", text='', toggle=True)
+            row1.prop(self, "chop_up", icon="FILTER", text='')
             row2 = layout.row(align=True)
             row2.prop(self, "line_width")
             row2.prop(self, "depth")
             # layout.prop(self, "socket_name")
-            layout.label(text='input has {0} elements'.format(self.num_elements))
+            layout.label(text=f'input has {self.num_elements} elements')
             layout.prop(self, 'view_by_element', toggle=True)
             if self.num_elements > 0 and self.view_by_element:
                 layout.prop(self, 'element_index', text='get index')
 
+        elif self.selected_mode == "sv++":
+            row1 = layout.row(align=True)
+            row1.prop(self, "line_width", text='Columns')
+            row1.prop(self, "rounding")
+            layout.prop(self, 'element_index', text="index")
+            layout.prop(self, "local_scale")
         else:
+            row.prop(self, "text_color", text='')
             pass
 
     def draw_buttons_ext(self, context, layout):
@@ -214,6 +224,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 props.line_width = self.line_width
                 props.compact = self.compact
                 props.depth = self.depth or None
+                props.chop_up = self.chop_up
 
                 processed_data = parse_socket(
                     inputs[0],
@@ -222,10 +233,14 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     self.view_by_element,
                     props
                 )
-            else:
-                #                # implement another nvBGL parses for gfx
-                processed_data = data
 
+            elif self.selected_mode == "sv++":
+                nvBGL.callback_enable(n_id, self.draw_data)
+                return
+
+            else:
+                # display the __repr__ version of the incoming data
+                processed_data = data
 
             draw_data = {
                 'tree_name': self.id_data.name[:],

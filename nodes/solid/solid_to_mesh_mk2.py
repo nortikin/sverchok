@@ -3,6 +3,8 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
+
+
 if FreeCAD is None:
     add_dummy('SvSolidToMeshNode', 'Solid to Mesh', 'FreeCAD')
 else:
@@ -11,12 +13,15 @@ else:
     from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr
+    from sverchok.data_structure import updateNode, has_element, match_long_repeat as mlr
     from sverchok.utils.solid import mesh_from_solid_faces
     from sverchok.utils.sv_bmesh_utils import recalc_normals
+    from sverchok.utils.sv_mesh_utils import non_redundant_faces_indices_np as clean
 
     import MeshPart
 
+    def is_triangles_only(faces):
+        if has_element(faces): return all((len(f) == 3 for f in faces))
 
     class SvSolidToMeshNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -155,6 +160,8 @@ else:
                 for f in rawdata[1]:
                     b_faces.append(f)
                 verts.append(b_verts)
+
+                b_faces = clean(b_faces).tolist() if is_triangles_only(b_faces) else b_faces
                 faces.append(b_faces)
 
             return verts, faces
@@ -178,7 +185,10 @@ else:
                     Relative=self.relative_surface_deviation)
 
                 verts.append([v[:] for v in mesh.Topology[0]])
-                faces.append(mesh.Topology[1])
+
+                b_faces = mesh.Topology[1]
+                b_faces = clean(b_faces).tolist() if is_triangles_only(b_faces) else b_faces
+                faces.append(b_faces)
 
             return verts, faces
 
@@ -204,6 +214,9 @@ else:
             return verts, faces
 
         def trivial_mesher(self):
+            """
+            this mode will produce a variety of polygon types (tris, quads, ngons...)
+            """
             solids = self.inputs[self["shape_type"]].sv_get()
 
             verts = []

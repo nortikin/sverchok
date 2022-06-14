@@ -32,6 +32,7 @@ from sverchok.utils.snlite_importhelper import (
 
 from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.console_print import console_print
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -47,31 +48,6 @@ defaults = [0] * 32
 template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
 
 
-last_print = {}
-
-def console_print(node, message, kind='OUTPUT'):
-    """
-    this function finds an open console in Blender and writes to it, useful for debugging small stuff.
-    but beware what you throw at it.
-    """
-    
-    if (previously_printed_text := last_print.get(hash(node))):
-        # i do not need to see repeat text
-        if message == previously_printed_text: return
-
-    last_print[hash(node)] = message
-
-    AREA = 'CONSOLE'
-    for window in bpy.context.window_manager.windows:
-        screen = window.screen
-        for area in window.screen.areas:
-            if not area.type == AREA: continue
-
-            for region in area.regions:
-                if region.type == 'WINDOW': 
-                    override = {'window': window, 'screen': screen, 'area': area, 'region': region}
-                    bpy.ops.console.scrollback_append(override, text=f"{message}", type=kind)
-                    break        
 
 
 class SNLITE_EXCEPTION(Exception): pass
@@ -342,6 +318,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
         if text and hasattr(text, "as_string"):
             self.script_str = text.as_string()
+            self.process_node(None)
+
         else:
             self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
@@ -349,7 +327,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         if self.update_sockets():
             self.injected_state = False
-            self.process()
+            self.process_node(None)
 
 
     def nuke_me(self):
@@ -480,7 +458,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'ddir': ddir,
             'get_user_dict': self.get_user_dict,
             'reset_user_dict': self.reset_user_dict,
-            'cprint': lambda message: console_print(self, message),
+            'cprint': lambda message: console_print(message, self),
+            'console_print': console_print,
             'sv_njit': sv_njit,
             'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
