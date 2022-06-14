@@ -20,6 +20,7 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
@@ -49,7 +50,7 @@ def get_bevel_verts(bm, mask):
     return b_verts
 
 
-class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBevelNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bevel, Round, Smooth
     Tooltip: Bevel vertices, edges and faces. Create rounded corners.
