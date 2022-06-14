@@ -4,9 +4,10 @@ https://gist.github.com/yorikvanhavre/680156f59e2b42df8f5f5391cae2660b
 
 reproduced large parts with generous permission, includes modifications for convenience
 """
-
+from types import SimpleNamespace
 import sys, bpy, xml.sax, zipfile, os
 from bpy_extras.node_shader_utils import PrincipledBSDFWrapper
+
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD:
@@ -109,7 +110,7 @@ if FreeCAD:
         return False
 
     def import_fcstd(filename,
-                     update=True,
+                     update=False,
                      placement=True,
                      tessellation=1.0,
                      skiphidden=True,
@@ -126,19 +127,22 @@ if FreeCAD:
             return
 
         matdatabase = {} # to store reusable materials
-        
+        obj_data = {}
+
         for obj in doc.Objects:
+
             if skiphidden:
                 if obj.Name in guidata:
                     if "Visibility" in guidata[obj.Name]:
                         if guidata[obj.Name]["Visibility"] == False:
                             continue
 
+
             verts = []
             edges = []
             faces = []
             matindex = [] # face to material relationship
-            plac = None
+            # plac = None  <-- not used..?
             faceedges = [] # a placeholder to store edges that belong to a face
             name = "Unnamed"
 
@@ -150,11 +154,12 @@ if FreeCAD:
                     shape = obj.Shape.copy()
                     shape.Placement = placement.inverse().multiply(shape.Placement)
                 if shape.Faces:
+
                     if TRIANGULATE:
                         # triangulate and make faces
                         rawdata = shape.tessellate(tessellation)
                         for v in rawdata[0]:
-                            verts.append([v.x,v.y,v.z])
+                            verts.append([v.x, v.y, v.z])
                         for f in rawdata[1]:
                             faces.append(f)
                         for face in shape.Faces:
@@ -163,18 +168,18 @@ if FreeCAD:
                     else:
                         # write FreeCAD faces as polygons when possible
                         for face in shape.Faces:
-                            if (len(face.Wires) > 1) or (not isinstance(face.Surface,Part.Plane)) or hascurves(face):
+                            if (len(face.Wires) > 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face):
                                 # face has holes or is curved, so we need to triangulate it
                                 rawdata = face.tessellate(tessellation)
                                 for v in rawdata[0]:
-                                    vl = [v.x,v.y,v.z]
+                                    vl = [v.x, v.y, v.z]
                                     if not vl in verts:
                                         verts.append(vl)
                                 for f in rawdata[1]:
                                     nf = []
                                     for vi in f:
                                         nv = rawdata[0][vi]
-                                        nf.append(verts.index([nv.x,nv.y,nv.z]))
+                                        nf.append(verts.index([nv.x, nv.y, nv.z]))
                                     faces.append(nf)
                                 matindex.append(len(rawdata[1]))
                             else:
@@ -229,115 +234,123 @@ if FreeCAD:
                 verts = [[v.x,v.y,v.z] for v in t[0]]
                 faces = t[1]
 
-            if verts and (faces or edges):
-                # create or update object with mesh and material data
-                bobj = None
-                bmat = None
-                if update:
-                    # locate existing object (mesh with same name)
-                    for o in bpy.data.objects:
-                        if o.data.name == obj.Name:
-                            bobj = o
-                            print("Replacing existing object:",obj.Label)
-                bmesh = bpy.data.meshes.new(name=obj.Name)
-                bmesh.from_pydata(verts, edges, faces)
-                bmesh.update()
-                if bobj:
-                    # update only the mesh of existing object. Don't touch materials
-                    bobj.data = bmesh
-                else:
-                    # create new object
-                    bobj = bpy.data.objects.new(obj.Label, bmesh)
-                    if placement:
-                        #print ("placement:",placement)
-                        bobj.location = placement.Base.multiply(scale)
-                        m = bobj.rotation_mode
-                        bobj.rotation_mode = 'QUATERNION'
-                        if placement.Rotation.Angle:
-                            # FreeCAD Quaternion is XYZW while Blender is WXYZ
-                            q = (placement.Rotation.Q[3],)+placement.Rotation.Q[:3]
-                            bobj.rotation_quaternion = (q)
-                            bobj.rotation_mode = m
-                        bobj.scale = (scale,scale,scale)
-                    if obj.Name in guidata:
-                        if matindex and ("DiffuseColor" in guidata[obj.Name]) and (len(matindex) == len(guidata[obj.Name]["DiffuseColor"])):
-                            # we have per-face materials. Create new mats and attribute faces to them
-                            fi = 0
-                            objmats = []
-                            for i in range(len(matindex)):
-                                # DiffuseColor stores int values, Blender use floats
-                                rgba = tuple([float(x)/255.0 for x in guidata[obj.Name]["DiffuseColor"][i]])
-                                # FreeCAD stores transparency, not alpha
-                                alpha = 1.0
-                                if rgba[3] > 0:
-                                    alpha = 1.0-rgba[3]
-                                rgba = rgba[:3]+(alpha,)
-                                bmat = None
-                                if sharemats:
-                                    if rgba in matdatabase:
-                                        bmat = matdatabase[rgba]
-                                        if not rgba in objmats:
-                                            objmats.append(rgba)
-                                            bobj.data.materials.append(bmat)
-                                if not bmat:
-                                    if rgba in objmats:
-                                        bmat = bobj.data.materials[objmats.index(rgba)]
-                                if not bmat:
-                                    bmat = bpy.data.materials.new(name=obj.Name+str(len(objmats)))
-                                    bmat.use_nodes = True
-                                    principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
-                                    principled.base_color = rgba[:3]
-                                    if alpha < 1.0:
-                                        bmat.diffuse_color = rgba
-                                        principled.alpha = alpha
-                                        bmat.blend_method = "BLEND"
-                                    objmats.append(rgba)
-                                    bobj.data.materials.append(bmat)
-                                    if sharemats:
-                                        matdatabase[rgba] = bmat
-                                for fj in range(matindex[i]):
-                                    bobj.data.polygons[fi+fj].material_index = objmats.index(rgba)
-                                fi += matindex[i]
-                        else:
-                            # one material for the whole object
-                            alpha = 1.0
-                            rgb = (0.5,0.5,0.5)
-                            if "Transparency" in guidata[obj.Name]:
-                                if guidata[obj.Name]["Transparency"] > 0:
-                                    alpha = (100-guidata[obj.Name]["Transparency"])/100.0
-                            if "ShapeColor" in guidata[obj.Name]:
-                                rgb = guidata[obj.Name]["ShapeColor"]
-                            rgba = rgb+(alpha,)
-                            bmat = None
-                            if sharemats:
-                                if rgba in matdatabase:
-                                    bmat = matdatabase[rgba]
-                                else:
-                                    #print("not found in db:",rgba,"in",matdatabase)
-                                    pass
-                            if not bmat:
-                                bmat = bpy.data.materials.new(name=obj.Name)
-                                # no more internal engine!
-                                # bmat.diffuse_color = rgb
-                                # bmat.alpha = alpha
-                                #if enablenodes:
-                                bmat.use_nodes = True
-                                principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
-                                principled.base_color = rgb
-                                if alpha < 1.0:
-                                    bmat.diffuse_color = rgba
-                                if sharemats:
-                                    matdatabase[rgba] = bmat
-                            bobj.data.materials.append(bmat)
+            current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
+            obj_data.add(current_obj)
+            # if verts and (faces or edges):
+            
+            #     # create or update object with mesh and material data
+            #     bobj = None
+            #     bmat = None
+            #     if update:
+            #         # locate existing object (mesh with same name)
+            #         for o in bpy.data.objects:
+            #             if o.data.name == obj.Name:
+            #                 bobj = o
+            #                 print("Replacing existing object:", obj.Label)
+            
+            #     bmesh = bpy.data.meshes.new(name=obj.Name)
+            #     bmesh.from_pydata(verts, edges, faces)
+            #     bmesh.update()
+            
+            #     if bobj:
+            #         # update only the mesh of existing object. Don't touch materials
+            #         bobj.data = bmesh
+            #     else:
+            #         # create new object
+            #         bobj = bpy.data.objects.new(obj.Label, bmesh)
+                    
+            #         if placement:
+                    
+            #             #print ("placement:",placement)
+            #             bobj.location = placement.Base.multiply(scale)
+            #             m = bobj.rotation_mode
+            #             bobj.rotation_mode = 'QUATERNION'
+            #             if placement.Rotation.Angle:
+            #                 # FreeCAD Quaternion is XYZW while Blender is WXYZ
+            #                 q = (placement.Rotation.Q[3],) + placement.Rotation.Q[:3]
+            #                 bobj.rotation_quaternion = (q)
+            #                 bobj.rotation_mode = m
+            #             bobj.scale = (scale, scale, scale)
 
-                fcstd_collection.objects.link(bobj)
-                #bpy.context.scene.objects.active = obj
-                #obj.select = True
+            #         if obj.Name in guidata:
+            #             if matindex and ("DiffuseColor" in guidata[obj.Name]) and (len(matindex) == len(guidata[obj.Name]["DiffuseColor"])):
+            #                 # we have per-face materials. Create new mats and attribute faces to them
+            #                 fi = 0
+            #                 objmats = []
+            #                 for i in range(len(matindex)):
+            #                     # DiffuseColor stores int values, Blender use floats
+            #                     rgba = tuple([float(x)/255.0 for x in guidata[obj.Name]["DiffuseColor"][i]])
+            #                     # FreeCAD stores transparency, not alpha
+            #                     alpha = 1.0
+            #                     if rgba[3] > 0:
+            #                         alpha = 1.0-rgba[3]
+            #                     rgba = rgba[:3]+(alpha,)
+            #                     bmat = None
+            #                     if sharemats:
+            #                         if rgba in matdatabase:
+            #                             bmat = matdatabase[rgba]
+            #                             if not rgba in objmats:
+            #                                 objmats.append(rgba)
+            #                                 bobj.data.materials.append(bmat)
+            #                     if not bmat:
+            #                         if rgba in objmats:
+            #                             bmat = bobj.data.materials[objmats.index(rgba)]
+            #                     if not bmat:
+            #                         bmat = bpy.data.materials.new(name=obj.Name+str(len(objmats)))
+            #                         bmat.use_nodes = True
+            #                         principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
+            #                         principled.base_color = rgba[:3]
+            #                         if alpha < 1.0:
+            #                             bmat.diffuse_color = rgba
+            #                             principled.alpha = alpha
+            #                             bmat.blend_method = "BLEND"
+            #                         objmats.append(rgba)
+            #                         bobj.data.materials.append(bmat)
+            #                         if sharemats:
+            #                             matdatabase[rgba] = bmat
+            #                     for fj in range(matindex[i]):
+            #                         bobj.data.polygons[fi+fj].material_index = objmats.index(rgba)
+            #                     fi += matindex[i]
+
+            #             else:
+
+            #                 # one material for the whole object
+            #                 alpha = 1.0
+            #                 rgb = (0.5,0.5,0.5)
+
+            #                 if "Transparency" in guidata[obj.Name]:
+            #                     if guidata[obj.Name]["Transparency"] > 0:
+            #                         alpha = (100-guidata[obj.Name]["Transparency"])/100.0
+
+            #                 if "ShapeColor" in guidata[obj.Name]:
+            #                     rgb = guidata[obj.Name]["ShapeColor"]
+
+            #                 rgba = rgb + (alpha,)
+            #                 bmat = None
+            #                 if sharemats:
+            #                     if rgba in matdatabase:
+            #                         bmat = matdatabase[rgba]
+
+            #                 if not bmat:
+
+            #                     bmat = bpy.data.materials.new(name=obj.Name)
+                                
+            #                     bmat.use_nodes = True
+            #                     principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
+            #                     principled.base_color = rgb
+            #                     if alpha < 1.0:
+            #                         bmat.diffuse_color = rgba
+                                
+            #                     if sharemats:
+            #                         matdatabase[rgba] = bmat
+
+            #                 bobj.data.materials.append(bmat)
+
 
         FreeCAD.closeDocument(docname)
 
         print("Import finished without errors")
-
+        return obj_data
 
 
 class SVFreeCADImporterProps(bpy.types.PropertyGroup):
@@ -347,9 +360,9 @@ class SVFreeCADImporterProps(bpy.types.PropertyGroup):
     option_skiphidden : bpy.props.BoolProperty(name="Skip hidden objects", default=True,
         description="Only import objects that where visible in FreeCAD"
     )
-    option_update : bpy.props.BoolProperty(name="Update existing objects", default=True,
-        description="Keep objects with same names in current scene and their materials, only replace the geometry"
-    )
+    # option_update : bpy.props.BoolProperty(name="Update existing objects", default=True,
+    #     description="Keep objects with same names in current scene and their materials, only replace the geometry"
+    # )
     option_placement : bpy.props.BoolProperty(name="Use Placements", default=True,
         description="Set Blender pivot points to the FreeCAD placements"
     )

@@ -182,6 +182,7 @@ else:
                 except:
                     info('FCStd label read error')
                 finally:
+                    # F.closeDocument(doc.Name)
                     del doc
 
             return labels
@@ -312,6 +313,7 @@ def LoadSolid(
         info('FCStd read error')
 
     finally:
+        # F.closeDocument(doc.Name)
         del doc
 
     return solids
@@ -327,5 +329,7 @@ def unitCheck(solid, scale_factor):
 classes = [SvReadFCStdModNode, SvShowFcstdNamesModOp, SvReadFCStdModOperator]
 _register, _unregister = bpy.utils.register_classes_factory(classes)
 
-def register(): if FreeCAD: _register()
-def unregister(): if FreeCAD: _unregister()
+def register():
+    if FreeCAD: _register()
+def unregister():
+    if FreeCAD: _unregister()
