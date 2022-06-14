@@ -61,6 +61,25 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
                 "Group trees are using its own update system\n"
                 "This system supports canceling processing next nodes by pressing escape during group tree editing")
 
+    @property
+    def sv_show_socket_menus(self):
+        """It searches root tree and returns its eponymous attribute"""
+        for area in bpy.context.screen.areas:
+            # this is not Sverchok editor
+            if area.ui_type != BlTrees.MAIN_TREE_ID:
+                continue
+
+            # editor does not have any active tree
+            if not area.spaces[0].node_tree:
+                continue
+
+            # this editor edits another trees, What!?
+            if self not in (p.node_tree for p in area.spaces[0].path):
+                continue
+
+            return area.spaces[0].path[0].node_tree.sv_show_socket_menus
+        return False
+
     def upstream_trees(self) -> List['SvGroupTree']:
         """
         It will try to return all the tree sub trees (in case if there is group nodes)
