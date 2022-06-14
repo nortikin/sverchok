@@ -224,10 +224,9 @@ if FreeCAD:
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
             current_obj.matrix = Matrix()
             current_obj.loc = (0.0, 0.0, 0.0)
-            obj_data.append(current_obj)
 
             if placement:            
-                # current_obj.location = placement.Base.multiply(scale)
+                current_obj.loc = placement.Base.multiply(scale)
                 # current_obj.rotation_mode = 'QUATERNION'
                 # m = bobj.rotation_mode
                 if placement.Rotation.Angle:
@@ -243,17 +242,13 @@ if FreeCAD:
                     print("here")
                     current_obj.loc = placement.Base.multiply(scale)
     
+            obj_data.append(current_obj)
+
             # if verts and (faces or edges):
             
             #     # create or update object with mesh and material data
             #     bobj = None
             #     bmat = None
-            #     if update:
-            #         # locate existing object (mesh with same name)
-            #         for o in bpy.data.objects:
-            #             if o.data.name == obj.Name:
-            #                 bobj = o
-            #                 print("Replacing existing object:", obj.Label)
             
             #     bmesh = bpy.data.meshes.new(name=obj.Name)
             #     bmesh.from_pydata(verts, edges, faces)
