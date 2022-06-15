@@ -226,7 +226,7 @@ if FreeCAD:
             current_obj.loc = (0.0, 0.0, 0.0)
 
             if placement:            
-                current_obj.loc = placement.Base.multiply(scale)
+                current_obj.loc = placement.Base.multiply(scale)[:]
                 # current_obj.rotation_mode = 'QUATERNION'
                 # m = bobj.rotation_mode
                 if placement.Rotation.Angle:
@@ -240,7 +240,7 @@ if FreeCAD:
                     new_quaternion = Quaternion((w, x, y, z))
                     current_obj.matrix = new_quaternion.to_matrix().to_4x4()
                     print("here")
-                    current_obj.loc = placement.Base.multiply(scale)
+                    current_obj.loc = placement.Base.multiply(scale)[:]
     
             obj_data.append(current_obj)
 

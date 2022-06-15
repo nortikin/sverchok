@@ -37,6 +37,57 @@ else:
             updateNode(node, context)
             return {'FINISHED'}
 
+    def LabelReader(operator):
+        tree = bpy.data.node_groups[operator.tree_name]
+        node = tree.nodes[operator.node_name]
+
+        module_filter = []
+
+        # node = self.get_node(context)
+        if node.read_features: module_filter.append('PartDesign')
+        if node.read_part: module_filter.append('Part')
+        if node.read_body: module_filter.append('PartDesign::Body')
+        if node.merge_linked: module_filter.append('App::Link')
+
+        labels = [('', '', '')]
+
+        fc_file_list = node.inputs['File Path'].sv_get()[0]
+        for fc_file in fc_file_list:
+            try:
+                doc = F.open(fc_file)
+                for obj in doc.Objects:
+                    if obj.Module in module_filter or obj.TypeId in module_filter:
+                        labels.append( (obj.Label, obj.Label, obj.Label) )
+            except:
+                info('FCStd label read error')
+            finally:
+                # F.closeDocument(doc.Name)
+                del doc
+
+        return labels
+
+    class SvShowFcstdNamesModOp(bpy.types.Operator, SvGenericNodeLocator):
+
+        bl_idname = "node.sv_show_fcstd_names_mod"
+        bl_label = "Show parts list"
+        bl_options = {'INTERNAL', 'REGISTER'}
+        bl_property = "option"
+
+        option: EnumProperty(items=lambda s, c: LabelReader(s))
+
+        def sv_execute(self, context, node):
+            node.name_filter = self.option
+            node.selected_label = self.option
+            node.selected_part = self.option
+            bpy.context.area.tag_redraw()
+            return {'FINISHED'}
+
+        def invoke(self, context, event):
+            context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+            wm = context.window_manager
+            wm.invoke_search_popup(self)
+            return {'FINISHED'}
+
 
     class SvReadFCStdModNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -66,9 +117,10 @@ else:
             col = layout.column(align=True)
             if self.inputs['File Path'].is_linked:
                 self.wrapper_tracked_ui_draw_op(
-                    col, SvShowFcstdNamesModOp.bl_idname,
+                    col, "node.sv_show_fcstd_names_mod",
                     icon= 'TRIA_DOWN',
                     text= self.selected_label )
+
             col.prop(self, 'read_update', text='global update')
             col.prop(self, 'read_body')
             col.prop(self, 'read_part')
@@ -79,7 +131,7 @@ else:
             col.prop(self, 'merge_linked')
             col.prop(self,'READ_ALL')
             col.prop(self, 'scale_factor')
-            self.wrapper_tracked_ui_draw_op(layout, SvReadFCStdModOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")
+            self.wrapper_tracked_ui_draw_op(layout, "node.sv_read_fcstd_operator_mod", icon='FILE_REFRESH', text="UPDATE")
 
         def sv_init(self, context):
 
@@ -154,53 +206,6 @@ else:
                 return
 
 
-    class SvShowFcstdNamesModOp(bpy.types.Operator, SvGenericNodeLocator):
-
-        bl_idname = "node.sv_show_fcstd_names_mod"
-        bl_label = "Show parts list"
-        bl_options = {'INTERNAL', 'REGISTER'}
-        bl_property = "option"
-
-        def LabelReader(self, context):
-            module_filter = []
-
-            node = self.get_node(context)
-            if node.read_features: module_filter.append('PartDesign')
-            if node.read_part: module_filter.append('Part')
-            if node.read_body: module_filter.append('PartDesign::Body')
-            if node.merge_linked: module_filter.append('App::Link')
-
-            labels = [('', '', '')]
-
-            fc_file_list = node.inputs['File Path'].sv_get()[0]
-            for fc_file in fc_file_list:
-                try:
-                    doc = F.open(fc_file)
-                    for obj in doc.Objects:
-                        if obj.Module in module_filter or obj.TypeId in module_filter:
-                            labels.append( (obj.Label, obj.Label, obj.Label) )
-                except:
-                    info('FCStd label read error')
-                finally:
-                    # F.closeDocument(doc.Name)
-                    del doc
-
-            return labels
-
-        option: EnumProperty(items=LabelReader)
-
-        def sv_execute(self, context, node):
-            node.name_filter = self.option
-            node.selected_label = self.option
-            node.selected_part = self.option
-            bpy.context.area.tag_redraw()
-            return {'FINISHED'}
-
-        def invoke(self, context, event):
-            context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-            wm = context.window_manager
-            wm.invoke_search_popup(self)
-            return {'FINISHED'}
 
 
 def LoadSolid(
@@ -300,17 +305,17 @@ def LoadSolid(
                 new_shape.Placement = obj.Placement
                 solids.add( new_shape ) 
             ''' 
-
+            obj_info = [obj.FullName, obj.Name, obj.Label]
             if scale_factor != 1:
                 if len(obj.Shape.Solids) > 0:
                     M = F.Matrix()
                     M.scale(scale_factor, scale_factor, scale_factor)
-                    solids.add( obj.Shape.transformGeometry(M) )
+                    solids.add(( obj.Shape.transformGeometry(M), obj_info ))
             else:
-                solids.add( obj.Shape, list((obj.FullName, obj.Name, obj.Label)) )
+                solids.add(( obj.Shape, obj_info ))
 
-    except:
-        info('FCStd read error')
+    except Exception as err:
+        info(f"FCStd read error {err}")
 
     finally:
         # F.closeDocument(doc.Name)
