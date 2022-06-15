@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length, numpy_full_list
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, numpy_data_from_bmesh, get_partial_result_pydata
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 socket_names = ['Vertices', 'Edges', 'Faces', 'FaceData']
 def get_selected_edges(use_mask, masks, bm_edges):

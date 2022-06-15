@@ -27,7 +27,7 @@ from sverchok.data_structure import match_long_repeat, cycle_for_length, updateN
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, remove_doubles
 from sverchok.utils.intersect_edges import intersect_edges_3d
-from sverchok.utils.nodes_mixins.mixn import EdgeGeneratorNode
+from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorNode
 
 
 def distance_z(idx, v1, v2):

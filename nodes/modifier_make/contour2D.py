@@ -28,7 +28,7 @@ from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.intersect_edges import (remove_doubles_from_edgenet, intersect_edges_2d)
-from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 mode_items = [
     ("Constant", "Constant", "Many contours on many distances", 0),

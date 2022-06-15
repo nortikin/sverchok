@@ -19,7 +19,7 @@ from sverchok.utils.geom import autorotate_householder, autorotate_track, autoro
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvBevelCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

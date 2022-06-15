@@ -19,7 +19,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 class PolygonBoomNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):

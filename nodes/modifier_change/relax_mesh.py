@@ -11,7 +11,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.relax_mesh import *
-from sverchok.utils.nodes_mixins.mixn import TransformNode
+from sverchok.utils.nodes_mixins.sockets_config import TransformNode
 
 
 class SvRelaxMeshNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):

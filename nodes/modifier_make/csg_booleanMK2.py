@@ -22,7 +22,7 @@ from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.csg_core import CSG
-from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 def Boolean(VA, PA, VB, PB, operation):

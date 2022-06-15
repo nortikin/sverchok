@@ -49,7 +49,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)

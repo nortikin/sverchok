@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, updateNode,
                                      match_long_repeat)
 from sverchok.utils.geom import autorotate_diff
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvFractalCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

@@ -26,7 +26,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Vector_generate, Vector_degenerate
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 all_axes = [

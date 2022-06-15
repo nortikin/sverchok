@@ -22,7 +22,7 @@ from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 class SvEdgeBoomNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """

@@ -22,7 +22,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 class SvSeparateMeshNodeMK2(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):

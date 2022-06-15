@@ -26,7 +26,7 @@ from bmesh.ops import spin
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.utils.nodes_mixins.mixn import EdgeGeneratorLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorLiteNode
 
 
 def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):

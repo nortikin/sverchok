@@ -22,7 +22,7 @@ from itertools import cycle
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # by Linus Yng
 
 def create_edges(bm, edges, v_len):

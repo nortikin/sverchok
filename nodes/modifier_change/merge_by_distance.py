@@ -23,7 +23,7 @@ import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, face_data_from_bmesh_faces, vert_data_from_bmesh_verts
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):

@@ -21,7 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, truncate_vertices
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvClipVertsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

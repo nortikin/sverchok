@@ -22,7 +22,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle
 from math import sin, cos, radians, sqrt
-from sverchok.utils.nodes_mixins.mixn import EdgeGeneratorLiteNode
+from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorLiteNode
 
 
 class SvPipeNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):

@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last_for_length
 from sverchok.data_structure import match_long_repeat as mlrepeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def flip_from_mask(mask, geom, reverse):

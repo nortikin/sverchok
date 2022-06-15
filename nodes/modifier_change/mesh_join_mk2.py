@@ -21,7 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def mesh_join(vertices, edges, polygons):

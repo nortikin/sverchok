@@ -25,7 +25,7 @@ from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.mesh.subdivide import subdiv_mesh_to_quads_np
 from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def check_numpy(new_dict, old_dict):

@@ -21,7 +21,7 @@ import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
-from sverchok.utils.nodes_mixins.mixn import TransformNode
+from sverchok.utils.nodes_mixins.sockets_config import TransformNode
 
 
 def ortho_projection(verts_in, plane_in):

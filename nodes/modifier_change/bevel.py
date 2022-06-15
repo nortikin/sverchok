@@ -20,7 +20,7 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
-from sverchok.utils.nodes_mixins.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
