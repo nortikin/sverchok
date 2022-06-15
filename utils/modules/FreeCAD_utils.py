@@ -220,13 +220,14 @@ if FreeCAD:
                             e = []
                             for vert in edge.Vertexes:
                                 # TODO discretize non-linear edges
-                                # v = (vert.X,vert.Y,vert.Z)
-                                # if not v in vdict: vdict[v] = len(vdict)
-                                # e.append(vdict[v])
-
-                                if not (v := (vert.X,vert.Y,vert.Z)) in vdict:
-                                    vdict[v] = len(vdict)
+                                v = (vert.X,vert.Y,vert.Z)
+                                if not v in vdict: vdict[v] = len(vdict)
                                 e.append(vdict[v])
+
+                                # using walrus :=
+                                # if not (v := (vert.X,vert.Y,vert.Z)) in vdict:
+                                #     vdict[v] = len(vdict)
+                                # e.append(vdict[v])
 
 
                             edges.append(e)
