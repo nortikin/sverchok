@@ -12,6 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 try:
     from mathutils.geometry import delaunay_2d_cdt as bl_merge_mesh
@@ -34,7 +35,7 @@ def get_bl_merge_mesh(verts, faces, epsilon):
            [min(fi) for fi in face_indexes if fi], [len(fi) - 1 for fi in face_indexes if fi]
 
 
-class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeMesh2DLite(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Merge 2D mesh into one
     Tooltip: Takes in account intersections and holes

@@ -14,6 +14,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges, crop_mesh_delaunay
 from sverchok.utils.decorators import deprecated
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
+
 
 @deprecated("Use sverchok.utils.geom_2d.merge_mesh.crop_mesh_delaunay")
 def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
@@ -29,7 +31,7 @@ def get_bl_crop_mesh_edges(verts, edges, verts_crop, faces_crop, mode, epsilon):
     return [v.to_3d() for v in verts_new], edges_new
 
 
-class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
+class SvCropMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Crop mesh by another mesh
     Tooltip: Can create holes or crop mesh by boundary contours

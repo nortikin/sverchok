@@ -11,8 +11,10 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
-class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
+
+class SvMergeMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Merge two 2d meshes
 

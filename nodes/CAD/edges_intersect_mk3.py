@@ -23,6 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.intersections import intersect_sv_edges
 from sverchok.utils.intersect_edges import intersect_edges_3d_np, intersect_edges_2d, remove_doubles_from_edgenet, intersect_edges_2d_np, intersect_edges_2d_np_big
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 try:
     from mathutils.geometry import delaunay_2d_cdt as bl_intersect
@@ -33,7 +34,9 @@ modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
 
 ''' helpers '''
 
-class SvIntersectEdgesNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+
+class SvIntersectEdgesNodeMK3(
+        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvIntersectEdgesNodeMK3'
     bl_label = 'Intersect Edges'
