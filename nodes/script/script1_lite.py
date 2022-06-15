@@ -38,7 +38,7 @@ from sverchok.data_structure import updateNode
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
-READY_COLOR = (0, 0.8, 0.95)
+READY_COLOR = (0, 0.6, 0.8)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
