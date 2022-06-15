@@ -91,7 +91,7 @@ if FreeCAD:
                         with zdoc.open(diffuse_file) as df:
                             buf = df.read()
                             # overwrite file reference with color data.
-                            cols = [(buf[i*4+3],buf[i*4+2],buf[i*4+1],buf[i*4]) for i in range(1,int(len(buf)/4))]
+                            cols = [(buf[i*4+3], buf[i*4+2], buf[i*4+1], buf[i*4]) for i in range(1,int(len(buf)/4))]
                             guidata[key]["DiffuseColor"] = cols
 
             zdoc.close()
