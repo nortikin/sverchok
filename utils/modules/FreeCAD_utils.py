@@ -135,6 +135,7 @@ if FreeCAD:
                             continue
 
             verts = []
+            vdict = dict() # maybe we gain some speed in lookups.
             edges = []
             faces = []
             matindex = [] # face to material relationship
@@ -160,15 +161,15 @@ if FreeCAD:
                             rawdata = face.tessellate(tessellation)
                             
                             for v in rawdata[0]:
-                                vl = [v.x, v.y, v.z]
-                                if not vl in verts:
-                                    verts.append(vl)
+                                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                                    vdict[v1] = len(vdict)
                             
                             for f in rawdata[1]:
+                                
                                 nf = []
                                 for vi in f:
                                     nv = rawdata[0][vi]
-                                    nf.append(verts.index([nv.x, nv.y, nv.z]))
+                                    nf.append(vdict[(nv.x, nv.y, nv.z)])
                                 faces.append(nf)
 
                             matindex.append(len(rawdata[1]))
@@ -179,10 +180,9 @@ if FreeCAD:
                             ov = face.OuterWire.OrderedVertexes
                         
                             for v in ov:
-                                vl = [v.X,v.Y,v.Z]
-                                if not vl in verts:
-                                    verts.append(vl)
-                                f.append(verts.index(vl))
+                                if not (vl := (v.X,v.Y,v.Z)) in vdict:
+                                    vdict[v1] = len(vdict)
+                                f.append(vdict[(v.X,v.Y,v.Z)])
                         
                             # FreeCAD doesn't care about verts order. Make sure our loop goes clockwise
                             c = face.CenterOfMass
@@ -205,24 +205,26 @@ if FreeCAD:
                         if hascurves(edge):
                             dv = edge.discretize(9) #TODO use tessellation value
                             for i in range(len(dv)-1):
-                                dv1 = [dv[i].x,dv[i].y,dv[i].z]
-                                dv2 = [dv[i+1].x,dv[i+1].y,dv[i+1].z]
-                                if not dv1 in verts:
-                                    verts.append(dv1)
-                                if not dv2 in verts:
-                                    verts.append(dv2)
-                                edges.append([verts.index(dv1),verts.index(dv2)])
+                                dv1 = (dv[i].x,   dv[i].y,   dv[i].z)
+                                dv2 = (dv[i+1].x, dv[i+1].y, dv[i+1].z)
+                                if not dv1 in vdict:
+                                    vdict[dv1] = len(vdict)
+                                if not dv2 in vdict:
+                                    vdict[dv2] = len(vdict)
+                                edges.append([vdict[dv1], vdict[dv2]])
                         
                         else:
                         
                             e = []
                             for vert in edge.Vertexes:
                                 # TODO discretize non-linear edges
-                                v = [vert.X,vert.Y,vert.Z]
-                                if not v in verts:
-                                    verts.append(v)
-                                e.append(verts.index(v))
+                                v = (vert.X,vert.Y,vert.Z)
+                                if not v in vdict: vdict[v] = len(vdict)
+
+                                e.append(vdict[v])
                             edges.append(e)
+
+                verts = list(vdict.keys())
 
             elif obj.isDerivedFrom("Mesh::Feature"):
                 # convert freecad mesh to blender mesh
@@ -231,7 +233,7 @@ if FreeCAD:
                     placement = obj.Placement
                     mesh = obj.Mesh.copy() # in meshes, this zeroes the placement
                 t = mesh.Topology
-                verts = [[v.x, v.y, v.z] for v in t[0]]
+                verts = [(v.x, v.y, v.z) for v in t[0]]
                 faces = t[1]
 
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
