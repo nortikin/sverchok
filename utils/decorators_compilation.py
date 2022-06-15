@@ -29,3 +29,21 @@ def njit(**kwargs):
             return function_to_compile
 
     return wrapper
+
+
+def jit(**kwargs):
+    if numba:
+
+        def wrapper(function_to_compile):
+            function_name = function_to_compile.__name__
+            if function_name not in local_numba_storage:
+                jitted_func = numba.jit(**kwargs)(function_to_compile)
+                local_numba_storage[function_name] = jitted_func
+            return local_numba_storage[function_name]
+
+    else:
+
+        def wrapper(function_to_compile):
+            return function_to_compile
+
+    return wrapper

@@ -30,7 +30,9 @@ def control_center(event):
         for main_tree in trees_graph[event.tree]:
             us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
             if main_tree.sv_process:
-                ts.tasks.add(ts.Task(main_tree, us.UpdateTree.main_update(main_tree)))
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
 
     # topology of a group tree was changed
     elif type(event) is ev.GroupTreeEvent:
@@ -40,7 +42,9 @@ def control_center(event):
         for main_tree in trees_graph[event.tree]:
             us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
             if main_tree.sv_process:
-                ts.tasks.add(ts.Task(main_tree, us.UpdateTree.main_update(main_tree)))
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
 
     # Connections between trees were changed
     elif type(event) is ev.TreesGraphEvent:

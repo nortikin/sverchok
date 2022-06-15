@@ -71,7 +71,7 @@ class DebugMemory(UserDict):
                 text = f"\t{self._to_address(id_, type_ != 'DELETE')}: {data},"
                 if type_ == 'NEW':
                     print(self._colorize(text, "GREEN"))
-                elif type == 'DELETE':
+                elif type_ == 'DELETE':
                     print(self._colorize(text, "RED"))
                 else:
                     print(text)

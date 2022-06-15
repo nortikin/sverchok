@@ -216,16 +216,16 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
             return is_ultimately(source_data, expected_type)
 
 
-class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
+def check_nesting_level(func):
+    def the_check(source_data):
+        level = get_data_nesting_level(source_data)
+        if level > 2:
+            raise TypeError("Too high data nesting level for Number -> Scalar Field conversion: %s" % level)
+        return func(source_data)
+    return the_check
 
-    @staticmethod
-    def check_nesting_level(func):
-        def the_check(source_data):
-            level = get_data_nesting_level(source_data)
-            if level > 2:
-                raise TypeError("Too high data nesting level for Number -> Scalar Field conversion: %s" % level)
-            return func(source_data)
-        return the_check
+
+class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
 
     default_conversions = {
         ('SvMatrixSocket', 'SvVectorFieldSocket'): matrices_to_vfield,

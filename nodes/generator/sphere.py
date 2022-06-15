@@ -13,15 +13,35 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_modes, list_match_func
+from sverchok.utils.decorators_compilation import jit, njit
 
+# from numba.typed import List
+# @njit(cache=True)
+def make_sphere_verts_combined(U, V, Radius):
+    theta = radians(360 / U)
+    phi = radians(180 / (V-1))
 
-def sphere_verts(U, V, Radius, Separate):
+    pts = []
+    pts = [[0, 0, Radius]]
+    for i in range(1, V-1):
+        pts_u = []
+        sin_phi_i = sin(phi * i)
+        for j in range(U):
+            X = Radius * cos(theta * j) * sin_phi_i
+            Y = Radius * sin(theta * j) * sin_phi_i
+            Z = Radius * cos(phi * i)
+            pts_u.append([X, Y, Z])
+        pts.extend(pts_u)
+
+    pts.append([0, 0, -Radius])
+    return pts
+
+def make_sphere_verts_separate(U, V, Radius):
     theta = radians(360/U)
     phi = radians(180/(V-1))
-    if Separate:
-        pts = [[[0, 0, Radius] for i in range(U)]]
-    else:
-        pts = [[0, 0, Radius]]
+
+    pts = []
+    pts = [[[0, 0, Radius] for i in range(U)]]
     for i in range(1, V-1):
         pts_u = []
         sin_phi_i = sin(phi*i)
@@ -30,18 +50,21 @@ def sphere_verts(U, V, Radius, Separate):
             Y = Radius*sin(theta*j)*sin_phi_i
             Z = Radius*cos(phi*i)
             pts_u.append([X, Y, Z])
-        if Separate:
-            pts.append(pts_u)
-        else:
-            pts.extend(pts_u)
-    if Separate:
-        points_top = [[0, 0, -Radius] for i in range(U)]
-        pts.append(points_top)
-    else:
-        pts.append([0, 0, -Radius])
+        pts.append(pts_u)
+
+    points_top = [[0, 0, -Radius] for i in range(U)]
+    pts.append(points_top)
     return pts
 
 
+# @jit(cache=True)
+def sphere_verts(U, V, Radius, Separate):
+    if Separate:
+        return make_sphere_verts_separate(U, V, Radius)
+    else:
+        return make_sphere_verts_combined(U, V, Radius)
+
+# @njit(cache=True)
 def sphere_edges(U, V):
     nr_pts = U*V-(U-1)*2
     listEdg = []
@@ -54,7 +77,7 @@ def sphere_edges(U, V):
     listEdg.reverse()
     return listEdg
 
-
+# @njit(cache=True)
 def sphere_faces(U, V):
     nr_pts = U*V-(U-1)*2
     listPln = []

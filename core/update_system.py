@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Optional, Generator, Iterable
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
-from sverchok.core.sv_custom_exceptions import CancelError
+from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
@@ -45,19 +45,25 @@ def control_center(event):
     elif type(event) is ev.SceneEvent:
         if event.tree.sv_scene_update and event.tree.sv_process:
             UpdateTree.get(event.tree).is_scene_updated = False
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=True))
 
     # nodes changed properties
     elif type(event) is ev.PropertyEvent:
         tree = UpdateTree.get(event.tree)
         tree.add_outdated(event.updated_nodes)
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
 
     # update the whole tree anyway
     elif type(event) is ev.ForceEvent:
         UpdateTree.reset_tree(event.tree)
-        ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+        ts.tasks.add(ts.Task(event.tree,
+                             UpdateTree.main_update(event.tree),
+                             is_scene_update=False))
 
     # mark that the tree topology has changed
     # also this can be called (by Blender) during undo event in this case all
@@ -66,7 +72,9 @@ def control_center(event):
     elif type(event) is ev.TreeEvent:
         UpdateTree.get(event.tree).is_updated = False
         if event.tree.sv_process:
-            ts.tasks.add(ts.Task(event.tree, UpdateTree.main_update(event.tree)))
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
 
     # new file opened
     elif type(event) is ev.FileEvent:
@@ -321,7 +329,15 @@ class UpdateTree(SearchTree):
                 # update outdated nodes list
                 if _tree._outdated_nodes is not None:
                     if not _tree.is_updated:
-                        _tree._outdated_nodes.update(_tree._update_difference(old))
+                        changed_nodes = _tree._update_difference(old)
+
+                        # disconnected input sockets can remember previous data
+                        # a node can be laizy and don't recalculate output
+                        for node in changed_nodes:
+                            for in_s in chain(node.inputs, node.outputs):
+                                in_s.sv_forget()
+
+                        _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
                         _tree._outdated_nodes.update(_tree._animation_nodes())
                     if not _tree.is_scene_updated:
@@ -533,7 +549,9 @@ class UpdateTree(SearchTree):
                 nodes_to_update.add(self._sock_node[to_sock])
         removed_links = old._links - self._links
         for from_sock, to_sock in removed_links:
-            nodes_to_update.add(old._sock_node[to_sock])
+            if to_sock not in self._sock_node:
+                continue  # the link was removed together with the node
+            nodes_to_update.add(self._sock_node[to_sock])
         return nodes_to_update
 
     def _fill_input(self, node: Node):

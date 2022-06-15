@@ -362,6 +362,17 @@ def clean_meshes(vertices, edges, faces,
 
     return verts_out, edges_out, faces_out, verts_removed_out, edges_removed_out, faces_removed_out
 
+
+def non_redundant_faces_indices_np(faces):
+    F = np.array(faces)
+    M = np.sort(F, axis=-1, order=None)
+
+    # from https://stackoverflow.com/a/16973510/1243487
+    K = np.ascontiguousarray(M).view(np.dtype((np.void, M.dtype.itemsize * M.shape[1])))
+    _, idx = np.unique(K, return_index=True)
+    return F[idx]    
+
+
 def point_inside_mesh(bvh, point):
     point = Vector(point)
     axis = Vector((1, 0, 0))
