@@ -75,26 +75,25 @@ if FreeCAD:
 
         # check if we have a GUI document
         guidata = {}
-        zdoc = zipfile.ZipFile(filename)
-        if zdoc:
-            if "GuiDocument.xml" in zdoc.namelist():
-                gf = zdoc.open("GuiDocument.xml")
-                guidata = gf.read()
-                gf.close()
-                Handler = FreeCAD_xml_handler()
-                xml.sax.parseString(guidata, Handler)
-                guidata = Handler.guidata
-                for key, properties in guidata.items():
-                    # open each diffusecolor files and retrieve values
-                    # first 4 bytes are the array length, then each group of 4 bytes is abgr
-                    if (diffuse_file := properties.get("DiffuseColor")):
-                        with zdoc.open(diffuse_file) as df:
-                            buf = df.read()
-                            # overwrite file reference with color data.
-                            cols = [(buf[i*4+3], buf[i*4+2], buf[i*4+1], buf[i*4]) for i in range(1,int(len(buf)/4))]
-                            guidata[key]["DiffuseColor"] = cols
+        with zipfile.ZipFile(filename) as zdoc:
 
-            zdoc.close()
+            if "GuiDocument.xml" in zdoc.namelist():
+
+                with zdoc.open("GuiDocument.xml") as gf:
+ 
+                    guidata = gf.read()
+                    Handler = FreeCAD_xml_handler()
+                    xml.sax.parseString(guidata, Handler)
+                    guidata = Handler.guidata
+                    for key, properties in guidata.items():
+                        if (diffuse_file := properties.get("DiffuseColor")):
+                            with zdoc.open(diffuse_file) as df:
+                                buf = df.read()
+                                # first 4 bytes are the array length, then each group of 4 bytes is abgr
+                                # overwrite file reference with color data.
+                                cols = [(buf[i*4+3], buf[i*4+2], buf[i*4+1], buf[i*4]) for i in range(1,int(len(buf)/4))]
+                                guidata[key]["DiffuseColor"] = cols
+
 
         return guidata
 
