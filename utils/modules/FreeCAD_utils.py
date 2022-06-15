@@ -179,8 +179,8 @@ if FreeCAD:
                             ov = face.OuterWire.OrderedVertexes
                         
                             for v in ov:
-                                vec = (v.X, v.Y, v.Z)
-                                if not vec in vdict:
+
+                                if not (vec := (v.X, v.Y, v.Z)) in vdict:
                                     vdict[vec] = len(vdict)
                                     f.append(len(vdict) - 1)
                                 else:
@@ -220,9 +220,14 @@ if FreeCAD:
                             e = []
                             for vert in edge.Vertexes:
                                 # TODO discretize non-linear edges
-                                v = (vert.X,vert.Y,vert.Z)
-                                if not v in vdict: vdict[v] = len(vdict)
+                                # v = (vert.X,vert.Y,vert.Z)
+                                # if not v in vdict: vdict[v] = len(vdict)
+                                # e.append(vdict[v])
+
+                                if not (v := (vert.X,vert.Y,vert.Z)) in vdict:
+                                    vdict[v] = len(vdict)
                                 e.append(vdict[v])
+
 
                             edges.append(e)
 
