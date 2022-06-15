@@ -36,7 +36,7 @@ if FreeCAD:
                 self.current = attributes["name"]
             elif tag == "Property":
                 name = attributes["name"]
-                if name in ["Visibility","ShapeColor","Transparency","DiffuseColor"]:
+                if name in ["Visibility", "ShapeColor", "Transparency", "DiffuseColor"]:
                     self.currentprop = name
             elif tag == "Bool":
                 if attributes["value"] == "true":
@@ -86,7 +86,9 @@ if FreeCAD:
                     xml.sax.parseString(guidata, Handler)
                     guidata = Handler.guidata
                     for key, properties in guidata.items():
+
                         if (diffuse_file := properties.get("DiffuseColor")):
+                        
                             with zdoc.open(diffuse_file) as df:
                                 buf = df.read()
                                 # first 4 bytes are the array length, then each group of 4 bytes is abgr
@@ -129,7 +131,6 @@ if FreeCAD:
                     if "Visibility" in guidata[obj.Name]:
                         if guidata[obj.Name]["Visibility"] == False:
                             continue
-
 
             verts = []
             edges = []
@@ -291,14 +292,18 @@ if FreeCAD:
 
                     # one material for the whole object
                     alpha = 1.0
-                    rgb = (0.5,0.5,0.5)
+                    # rgb = (0.5,0.5,0.5)
 
-                    if "Transparency" in guidata[obj.Name]:
-                        if guidata[obj.Name]["Transparency"] > 0:
-                            alpha = (100 - guidata[obj.Name]["Transparency"]) / 100.0
+                    # if "Transparency" in guidata[obj.Name]:
+                    #     if guidata[obj.Name]["Transparency"] > 0:
+                    #         alpha = (100 - guidata[obj.Name]["Transparency"]) / 100.0
+                    if (transparency := guidata[obj.Name].get("Transparency", 1.0)) > 0:
+                        alpha = (100 - transparency) / 100.0
 
-                    if "ShapeColor" in guidata[obj.Name]:
-                        rgb = guidata[obj.Name]["ShapeColor"]
+                    # if "ShapeColor" in guidata[obj.Name]:
+                    #     rgb = guidata[obj.Name]["ShapeColor"]
+                    rgb = guidata[obj.Name].get("ShapeColor", (0.5, 0.5, 0.5))
+
 
                     rgba = rgb + (alpha,)
                     bmat = None
