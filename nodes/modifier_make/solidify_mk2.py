@@ -15,16 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh
 from itertools import cycle
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4, numpy_full_list_cycle
+from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-import numpy as np
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 # by Linus Yng
 
 def create_edges(bm, edges, v_len):

@@ -17,13 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Matrix, Vector
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, diamond_mesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvDiamondMeshNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

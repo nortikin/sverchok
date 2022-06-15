@@ -22,15 +22,13 @@ from random import gauss
 from math import radians
 
 import bpy
-import bmesh
-from bpy.types import Operator
 from mathutils import Euler, Vector
 from bpy.props import FloatProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
 
 
 sv_info = {

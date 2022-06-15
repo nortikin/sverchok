@@ -15,15 +15,13 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from functools import reduce
-from itertools import cycle, chain
 
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 def mesh_join(vertices, edges, polygons):

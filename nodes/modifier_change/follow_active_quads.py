@@ -14,7 +14,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 Modes = namedtuple('Modes', ['even', 'length', 'average'])

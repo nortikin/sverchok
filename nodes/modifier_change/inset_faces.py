@@ -13,7 +13,7 @@ from bmesh.ops import inset_individual, remove_doubles, inset_region
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, make_repeaters
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None,

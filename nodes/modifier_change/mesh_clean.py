@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.sv_mesh_utils import clean_meshes
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvMeshCleanNode(

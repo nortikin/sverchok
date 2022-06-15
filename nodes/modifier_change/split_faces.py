@@ -19,13 +19,13 @@
 from math import radians
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, face_data_from_bmesh_faces
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 def get_bm_geom(geom):

@@ -13,7 +13,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.make_monotone import monotone_sv_face_with_holes
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvMakeMonotone(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

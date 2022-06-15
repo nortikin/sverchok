@@ -21,7 +21,7 @@ from itertools import chain
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat
-from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
 
 
 class SvDeleteLooseNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):

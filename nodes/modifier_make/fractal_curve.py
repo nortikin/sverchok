@@ -16,17 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
 from mathutils import Matrix, Vector
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, updateNode,
                                      match_long_repeat)
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.geom import autorotate_diff
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvFractalCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

@@ -21,7 +21,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
 
 class Limit(NamedTuple):
     v_index: int

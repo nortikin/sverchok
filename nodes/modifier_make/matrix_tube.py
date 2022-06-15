@@ -19,8 +19,8 @@
 import bpy
 from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, Matrix_generate, updateNode)
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.data_structure import (Vector_generate, Matrix_generate)
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvMatrixTubeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

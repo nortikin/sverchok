@@ -18,7 +18,6 @@
 
 import bpy
 import bmesh
-import mathutils
 
 from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
@@ -26,7 +25,7 @@ from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, Vector_degenerate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
+from sverchok.utils.nodes_mixins.mixn import ModifierLiteNode
 
 
 def normal_consistent(bm, direction):

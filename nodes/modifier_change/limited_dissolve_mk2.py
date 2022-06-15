@@ -23,7 +23,7 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, second_as_first_cycle as safc
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvLimitedDissolveMK2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

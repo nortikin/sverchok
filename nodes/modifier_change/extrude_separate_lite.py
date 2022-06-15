@@ -18,14 +18,13 @@
 
 from math import pi
 import bpy
-import bmesh
 from bmesh.ops import transform, extrude_discrete_faces
 from mathutils import Matrix, Vector
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvExtrudeSeparateLiteNode(

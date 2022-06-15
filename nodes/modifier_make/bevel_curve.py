@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 
-from math import pi, degrees, floor, ceil, copysign
 from mathutils import Vector, Matrix
 import numpy as np
 
@@ -15,13 +14,12 @@ import bmesh
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
+from sverchok.data_structure import updateNode, match_long_repeat, ensure_nesting_level
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.geom import LinearSpline, CubicSpline
-from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvBevelCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

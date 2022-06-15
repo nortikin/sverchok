@@ -24,9 +24,8 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 TWO_PI = 2 * pi

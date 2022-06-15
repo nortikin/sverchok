@@ -24,9 +24,9 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import normal
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
-from sverchok.nodes.modifier_change.mixn import EdgeGeneratorLiteNode
+from sverchok.utils.nodes_mixins.mixn import EdgeGeneratorLiteNode
 
 TWO_PI = 2 * pi
 

@@ -17,14 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
-import mathutils
 from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.data_structure import match_long_repeat
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 """
 

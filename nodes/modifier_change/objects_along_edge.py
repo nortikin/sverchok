@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, degrees, floor, ceil, copysign
+from math import floor, ceil
 from mathutils import Vector, Matrix
 import numpy as np
 
@@ -24,9 +24,9 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
+from sverchok.data_structure import updateNode, match_long_repeat, Vector_generate, Vector_degenerate
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 all_axes = [

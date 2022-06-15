@@ -16,17 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
-from mathutils import Matrix, Vector
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, updateNode,
-                                     match_long_repeat)
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, dual_mesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.data_structure import (match_long_repeat)
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvDualMeshNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

@@ -17,14 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bmesh
 from bmesh.ops import unsubdivide
 import numpy as np
 from bpy.props import IntProperty, BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvUnsubdivideNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

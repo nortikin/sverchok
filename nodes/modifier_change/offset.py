@@ -29,7 +29,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     repeat_last_for_length, updateNode, Vector_generate
 )
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class SvOffsetNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

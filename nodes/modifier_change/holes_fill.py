@@ -21,9 +21,9 @@ from bpy.props import IntProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last, dataCorrect, zip_long_repeat
+from sverchok.data_structure import updateNode, dataCorrect, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 def fill_holes(vertices, edges, s):

@@ -17,16 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntVectorProperty
+from bpy.props import BoolProperty
 import bmesh
-from mathutils import Vector, Matrix
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
+from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.mesh_functions import mesh_join
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 # based on CrossSectionNode
 # but using python bmesh code for driving

@@ -12,7 +12,7 @@ import bmesh
 from sverchok.data_structure import updateNode, fixed_iter
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, mesh_indexes_from_bmesh
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 modes = [(n, n, '', ic, i) for i, (n, ic) in
          enumerate(zip(('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]

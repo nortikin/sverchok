@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.rigid_origami_utils import ObjectParams, \
 		CreaseLines, InsideVertex, FoldAngleCalculator, FaceRotation
-from sverchok.nodes.modifier_change.mixn import TransformNode
+from sverchok.utils.nodes_mixins.mixn import TransformNode
 
 
 class SvRigidOrigamiNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):

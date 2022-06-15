@@ -21,7 +21,7 @@ from bpy.props import IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist)
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 class LineConnectNodeMK2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):

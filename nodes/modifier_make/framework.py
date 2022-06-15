@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from collections import defaultdict
-
 import bpy
 import bmesh
 from mathutils import Vector
@@ -27,10 +25,9 @@ from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.data_structure import match_long_repeat, cycle_for_length, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, remove_doubles
 from sverchok.utils.intersect_edges import intersect_edges_3d
-from sverchok.nodes.modifier_change.mixn import EdgeGeneratorNode
+from sverchok.utils.nodes_mixins.mixn import EdgeGeneratorNode
 
 
 def distance_z(idx, v1, v2):

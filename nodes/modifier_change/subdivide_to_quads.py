@@ -16,18 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from itertools import product
 import numpy as np
 import bpy
-from bpy.props import IntProperty, BoolVectorProperty, FloatProperty, EnumProperty
-from mathutils import Matrix
+from bpy.props import IntProperty, BoolVectorProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.mesh.subdivide import subdiv_mesh_to_quads_np
-from sverchok.data_structure import dataCorrect, updateNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
-from sverchok.nodes.modifier_change.mixn import ModifierNode
+from sverchok.utils.nodes_mixins.mixn import ModifierNode
 
 
 def check_numpy(new_dict, old_dict):
