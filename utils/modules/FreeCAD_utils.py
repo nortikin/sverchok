@@ -11,6 +11,7 @@ from mathutils import Quaternion, Matrix
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD:
+    from sverchok.utils.decorators import duration
     import Part
 
     class FreeCAD_xml_handler(xml.sax.ContentHandler):
@@ -104,6 +105,7 @@ if FreeCAD:
             if not isinstance(e.Curve, (Part.Line, Part.LineSegment)): return True
         return False
 
+    @duration
     def import_fcstd(filename,
                      update=False,
                      placement=True,
@@ -140,12 +142,14 @@ if FreeCAD:
             name = "Unnamed"
 
             if obj.isDerivedFrom("Part::Feature"):
+
                 # create mesh from shape
                 shape = obj.Shape
                 if placement:
                     placement = obj.Placement
                     shape = obj.Shape.copy()
                     shape.Placement = placement.inverse().multiply(shape.Placement)
+
                 if shape.Faces:
 
                     # write FreeCAD faces as polygons when possible
@@ -166,6 +170,7 @@ if FreeCAD:
                                     nv = rawdata[0][vi]
                                     nf.append(verts.index([nv.x, nv.y, nv.z]))
                                 faces.append(nf)
+
                             matindex.append(len(rawdata[1]))
                         
                         else:
@@ -226,7 +231,7 @@ if FreeCAD:
                     placement = obj.Placement
                     mesh = obj.Mesh.copy() # in meshes, this zeroes the placement
                 t = mesh.Topology
-                verts = [[v.x,v.y,v.z] for v in t[0]]
+                verts = [[v.x, v.y, v.z] for v in t[0]]
                 faces = t[1]
 
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
@@ -250,18 +255,21 @@ if FreeCAD:
                 if not obj.Name in guidata: continue
 
                 if matindex and ("DiffuseColor" in guidata[obj.Name]) and (len(matindex) == len(guidata[obj.Name]["DiffuseColor"])):
+
                     # we have per-face materials. Create new mats and attribute faces to them
                     fi = 0
                     objmats = []
                     for i in range(len(matindex)):
+                        
                         # DiffuseColor stores int values, Blender use floats
                         rgba = tuple([float(x)/255.0 for x in guidata[obj.Name]["DiffuseColor"][i]])
                         # FreeCAD stores transparency, not alpha
                         alpha = 1.0
                         if rgba[3] > 0:
-                            alpha = 1.0-rgba[3]
+                            alpha = 1.0 - rgba[3]
                         rgba = rgba[:3]+(alpha,)
                         bmat = None
+
                         if sharemats:
                             if rgba in matdatabase:
                                 bmat = matdatabase[rgba]
@@ -291,7 +299,7 @@ if FreeCAD:
                 else:
 
                     # one material for the whole object
-                    alpha = 1.0
+                    # alpha = 1.0
                     # rgb = (0.5,0.5,0.5)
 
                     # if "Transparency" in guidata[obj.Name]:
@@ -299,11 +307,12 @@ if FreeCAD:
                     #         alpha = (100 - guidata[obj.Name]["Transparency"]) / 100.0
                     if (transparency := guidata[obj.Name].get("Transparency", 1.0)) > 0:
                         alpha = (100 - transparency) / 100.0
+                    else:
+                        alpha = 1.0
 
                     # if "ShapeColor" in guidata[obj.Name]:
                     #     rgb = guidata[obj.Name]["ShapeColor"]
                     rgb = guidata[obj.Name].get("ShapeColor", (0.5, 0.5, 0.5))
-
 
                     rgba = rgb + (alpha,)
                     bmat = None
