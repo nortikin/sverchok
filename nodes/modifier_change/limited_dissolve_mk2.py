@@ -23,9 +23,10 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, second_as_first_cycle as safc
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvLimitedDissolveMK2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Limited Dissolve MK2 '''
     bl_idname = 'SvLimitedDissolveMK2'
     bl_label = 'Limited Dissolve MK2'
@@ -48,6 +49,15 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Polys')
         self.outputs.new('SvStringsSocket', 'bm region')
         self.outputs.new('SvStringsSocket', 'bmesh_list')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs['bm region']),
+            (self.inputs[1], self.outputs[0]),
+            (self.inputs[2], self.outputs[1]),
+            (self.inputs[3], self.outputs[2]),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "use_dissolve_boundaries")

@@ -30,6 +30,7 @@ from bpy.props import FloatProperty, IntProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
 
 
 sv_info = {
@@ -254,8 +255,8 @@ def perform_mextrude(self, bm, sel):
     return (out_verts, out_faces) or None
 
 
-
-class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
+class SvMultiExtrudeAlt(
+        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
     bl_label = 'MultiExtrude Alt from addons'

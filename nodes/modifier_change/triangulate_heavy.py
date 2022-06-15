@@ -24,7 +24,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 """
 
@@ -33,7 +33,8 @@ out the bug in the original node.
 
 """
 
-class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvHeavyTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh (Heavy)'''
     bl_idname = 'SvHeavyTriangulateNode'
     bl_label = 'Triangulate mesh (heavy)'
@@ -46,6 +47,13 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.ouputs[0]),
+            (self.inputs[1], self.ouputs[2]),
+        ]
 
     def process(self):
 

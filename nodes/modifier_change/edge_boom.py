@@ -22,8 +22,9 @@ from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
-class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEdgeBoomNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Edge Boom
     Tooltip: decompose a mesh into list of edge objects
@@ -73,6 +74,13 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.update_sockets(context)
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs['Vertices']),
+            (self.inputs[1], self.outputs['Edges']),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.label(text="Output mode:")

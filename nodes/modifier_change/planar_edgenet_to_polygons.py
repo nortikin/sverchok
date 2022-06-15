@@ -26,6 +26,8 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.nodes.modifier_change.mixn import ModifierNode
+
 
 TWO_PI = 2 * pi
 
@@ -326,7 +328,8 @@ def get_filled_graph(data_in):
     
     return verts_out, polys_out
 
-class SvPlanarEdgenetToPolygons(bpy.types.Node, SverchCustomTreeNode):
+
+class SvPlanarEdgenetToPolygons(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Planar edgenet to polygons
     Tooltip: Something like fill holes node
@@ -343,6 +346,10 @@ class SvPlanarEdgenetToPolygons(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Edgs")
         self.outputs.new('SvVerticesSocket', 'Vers')
         self.outputs.new('SvStringsSocket', "Faces")
+
+    @property
+    def sv_internal_links(self):
+        return [(self.inputs[0], self.outputs[0])]
 
     def process(self):
 

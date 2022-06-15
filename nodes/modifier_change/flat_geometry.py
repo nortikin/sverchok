@@ -21,6 +21,7 @@ import bpy
 from bpy.props import  FloatVectorProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
+from sverchok.nodes.modifier_change.mixn import TransformNode
 
 
 def ortho_projection(verts_in, plane_in):
@@ -73,7 +74,7 @@ def perspective_projection(verts_in, plane_in, distance):
     return verts_out, z_coord_out
 
 
-class SvFlatGeometryNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFlatGeometryNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: 3D to 2D
     Tooltip: Projection of 3d vertices into defined plane

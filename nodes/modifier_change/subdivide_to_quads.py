@@ -27,6 +27,8 @@ from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.mesh.subdivide import subdiv_mesh_to_quads_np
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.dictionary import SvDict
+from sverchok.nodes.modifier_change.mixn import ModifierNode
+
 
 def check_numpy(new_dict, old_dict):
     for key in old_dict:
@@ -34,7 +36,9 @@ def check_numpy(new_dict, old_dict):
             new_dict[key] = new_dict[key].tolist()
     return new_dict
 
-class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+
+class SvSubdivideToQuadsNode(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: Mesh Subdivision Surface
     Tooltip: Subdivide polygon to quads, similar to subdivision surface modifier.
@@ -110,6 +114,14 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
         son('SvDictionarySocket', 'Vert Data Dict')
         son('SvDictionarySocket', 'Face Data Dict')
 
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+            (self.inputs['Vert Data Dict'], self.outputs['Vert Data Dict']),
+            (self.inputs['Face Data Dict'], self.outputs['Face Data Dict']),
+        ]
 
     def process_data(self, params):
         result = [[] for s in self.outputs]

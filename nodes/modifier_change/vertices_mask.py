@@ -22,9 +22,10 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (dataCorrect, repeat_last)
+from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
 
 
-class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVertMaskNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Delete verts from mesh'''
     bl_idname = 'SvVertMaskNode'
     bl_label = 'Mask Vertices'
@@ -38,6 +39,13 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Poly Egde')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Vertices'], self.outputs['Vertices']),
+            (self.inputs['Poly Egde'], self.outputs['Poly Egde']),
+        ]
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):

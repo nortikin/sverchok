@@ -11,8 +11,10 @@ import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.data_structure import enum_item_4, updateNode
+from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
 
-class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
+
+class SvMeshBeautify(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: beauty existing fill

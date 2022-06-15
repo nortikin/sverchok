@@ -25,6 +25,8 @@ import bmesh.ops
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, face_data_from_bmesh_faces
+from sverchok.nodes.modifier_change.mixn import ModifierNode
+
 
 def get_bm_geom(geom):
     bm_edges = geom['edges']
@@ -33,7 +35,8 @@ def get_bm_geom(geom):
     faces = [[vert.index for vert in face.verts] for face in bm_faces]
     return edges, faces
 
-class SvSplitFacesNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvSplitFacesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: split nonplanar concave faces
     Tooltip: Split non-planar / concave faces

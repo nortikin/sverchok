@@ -29,10 +29,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     repeat_last_for_length, updateNode, Vector_generate
 )
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-
-class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
+class SvOffsetNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Doing offset of polygons '''
     bl_idname = 'SvOffsetNode'
     bl_label = 'Offset'
@@ -61,6 +61,14 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Edgs")
         self.outputs.new('SvStringsSocket', "OutPols")
         self.outputs.new('SvStringsSocket', "InPols")
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+            (self.inputs[1], self.outputs[3]),
+        ]
 
     def process(self):
 

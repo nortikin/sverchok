@@ -24,9 +24,10 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSubdivideLiteNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     '''Subdivide Fast'''
 
     bl_idname = 'SvSubdivideLiteNode'
@@ -160,6 +161,13 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         son('SvStringsSocket',  'OldEdges')
         son('SvStringsSocket',  'OldFaces')
         self.update_mode(context)
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+        ]
 
     def process(self):
         if not any(output.is_linked for output in self.outputs):

@@ -23,9 +23,10 @@ import bmesh.ops
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRecalcNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Recalc face normals '''
     bl_idname = 'SvRecalcNormalsNode'
     bl_label = 'Recalc normals'
