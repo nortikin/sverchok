@@ -43,7 +43,9 @@ else:
 
         module_filter = []
 
+        # \/ does not appear to be available from the items= func 
         # node = self.get_node(context)
+        #
         if node.read_features: module_filter.append('PartDesign')
         if node.read_part: module_filter.append('Part')
         if node.read_body: module_filter.append('PartDesign::Body')
