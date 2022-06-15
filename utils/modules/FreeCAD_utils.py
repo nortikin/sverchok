@@ -222,8 +222,8 @@ if FreeCAD:
                                 # TODO discretize non-linear edges
                                 v = (vert.X,vert.Y,vert.Z)
                                 if not v in vdict: vdict[v] = len(vdict)
-
                                 e.append(vdict[v])
+
                             edges.append(e)
 
                 verts = list(vdict.keys())
