@@ -26,9 +26,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, updateNode,
                                      match_long_repeat)
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFractalCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Fractal Curve
     Tooltip: Generate fractal (self-repeating) curve
@@ -151,6 +152,10 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'Vertices')
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
+
+    @property
+    def sv_internal_links(self):
+        return [(self.inputs['Vertices'], self.outputs[0])]
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):

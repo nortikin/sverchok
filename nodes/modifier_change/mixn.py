@@ -32,3 +32,20 @@ class TransformNode:
     @property
     def sv_internal_links(self):
         return [(self.inputs[0], self.outputs[0])]
+
+
+class EdgeGeneratorNode:
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[1]),
+        ]
+
+
+class EdgeGeneratorLiteNode:
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+        ]

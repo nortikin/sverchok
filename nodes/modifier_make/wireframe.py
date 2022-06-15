@@ -23,6 +23,8 @@ import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, repeat_last
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.nodes.modifier_change.mixn import ModifierNode
+
 
 def wireframe(vertices, faces, t, self):
     if not faces or not vertices:
@@ -44,7 +46,7 @@ def wireframe(vertices, faces, t, self):
     return pydata_from_bmesh(bm)
 
 
-class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvWireframeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     '''wf Wireframe Modif.'''
     bl_idname = 'SvWireframeNode'
     bl_label = 'Wireframe'
@@ -83,6 +85,13 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket', 'edges')
         self.outputs.new('SvStringsSocket', 'polygons')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['vertices'], self.outputs[0]),
+            (self.inputs['polygons'], self.outputs[2]),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'boundary', text="Boundary")

@@ -49,6 +49,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)
@@ -265,7 +266,7 @@ class DonorData():
         self.face_data_i = []
 
 
-class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptivePolygonsNodeMk3(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Tessellate (Tissue)
     Tooltip: Generate an adapted copy of donor object along each face of recipient object.
@@ -566,6 +567,15 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FaceRecptIdx")
 
         self.update_sockets(context)
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Vertices Donor'], self.outputs[0]),
+            (self.inputs['Edges Donor'], self.outputs[1]),
+            (self.inputs['Polygons Donor'], self.outputs[2]),
+            (self.inputs['FaceData Donor'], self.outputs[3]),
+        ]
 
     def draw_enum_socket(self, socket, context, layout):
 

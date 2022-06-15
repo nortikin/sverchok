@@ -24,6 +24,7 @@ from bpy.props import FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
 
 
 def join_tris(verts, faces, self):
@@ -49,7 +50,7 @@ def join_tris(verts, faces, self):
     return (verts_out, faces_out)
 
 
-class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvJoinTrianglesNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: join tris to quads

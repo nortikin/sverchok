@@ -22,9 +22,10 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle
 from math import sin, cos, radians, sqrt
+from sverchok.nodes.modifier_change.mixn import EdgeGeneratorLiteNode
 
 
-class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPipeNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Pipe from edges '''
     bl_idname = 'SvPipeNode'
     bl_label = 'Pipe'

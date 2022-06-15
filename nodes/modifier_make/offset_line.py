@@ -26,6 +26,7 @@ from mathutils.geometry import normal
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
 from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
+from sverchok.nodes.modifier_change.mixn import EdgeGeneratorLiteNode
 
 TWO_PI = 2 * pi
 
@@ -180,7 +181,8 @@ def offset_edges(verts_in, edges_in, shift_in):
     verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
     return verts_out, faces_out, outer_edges, vers_mask
 
-class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvOffsetLineNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Offset Line 2D
     Tooltip: Offsetting a Line into 2D space

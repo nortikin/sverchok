@@ -26,6 +26,7 @@ from bmesh.ops import spin
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
+from sverchok.nodes.modifier_change.mixn import EdgeGeneratorLiteNode
 
 
 def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
@@ -44,7 +45,7 @@ def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
     return v, p
 
 
-class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLatheNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Spin, Screw, Revol.'''
     bl_idname = 'SvLatheNode'
     bl_label = 'Lathe'

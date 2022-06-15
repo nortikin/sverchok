@@ -23,8 +23,10 @@ from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, truncate_vertices
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
-class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvClipVertsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Clip / Truncate Vertices
     Tooltip: Clip all vertices of the mesh

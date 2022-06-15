@@ -28,6 +28,8 @@ from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.intersect_edges import (remove_doubles_from_edgenet, intersect_edges_2d)
+from sverchok.nodes.modifier_change.mixn import ModifierLiteNode
+
 mode_items = [
     ("Constant", "Constant", "Many contours on many distances", 0),
     ("Weighted", "Weighted", "One distance per each vertex  ", 1)]
@@ -420,7 +422,7 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
     return list_vert_x, list_vert_y, list_vert_z, edg_list
 
 
-class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
+class SvContourNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''C2 Offset vert_line'''
     bl_idname = 'SvContourNode'
     bl_label = 'Contour 2D'
@@ -479,6 +481,13 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Verts_in'], self.outputs[0]),
+            (self.inputs['Edges_in'], self.outputs[1]),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "modeI", expand=True)

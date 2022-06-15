@@ -21,9 +21,10 @@ from bpy.props import IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsOflist)
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
 
-class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class LineConnectNodeMK2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' uv Edges/Surfaces '''
     bl_idname = 'LineConnectNodeMK2'
     bl_label = 'UV Connection'
@@ -56,6 +57,9 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket', 'data')
+
+    def sv_internal_links(self):
+        return [self.inputs[0], self.outputs[0]]
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

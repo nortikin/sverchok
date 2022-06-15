@@ -21,8 +21,10 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.nodes.modifier_change.mixn import ModifierNode
 
-class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvBevelCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bevel Curve
     Tooltip: Bevel a Curve (a.k.a. Extrude along Path) - mesh
@@ -150,6 +152,14 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['BevelVerts'], self.outputs[0]),
+            (self.inputs['BevelEdges'], self.outputs[1]),
+            (self.inputs['BevelFaces'], self.outputs[2]),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "orient_axis", expand=True)
