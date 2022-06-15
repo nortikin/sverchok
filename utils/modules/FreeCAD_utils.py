@@ -167,13 +167,6 @@ if FreeCAD:
                                     vdict[v1] = len(vdict)
                             
                             for f in rawdata[1]:
-                                
-                                # nf = []
-                                # for vi in f:
-                                #    nv = rawdata[0][vi]
-                                #    nf.append(vdict[(nv.x, nv.y, nv.z)])
-
-                                # not significantly faster..
                                 raw = rawdata[0]
                                 nf = [vdict[(nv.x, nv.y, nv.z)] for nv in [raw[vi] for vi in f]]
                                 add_face(nf)
