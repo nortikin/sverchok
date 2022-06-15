@@ -245,7 +245,7 @@ if FreeCAD:
                 verts = [(v.x, v.y, v.z) for v in t[0]]
                 faces = t[1]
 
-            current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=[], name=obj.Name)
+            current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=faceedges, name=obj.Name)
             current_obj.matrix = Matrix()
             current_obj.loc = (0.0, 0.0, 0.0)
 
