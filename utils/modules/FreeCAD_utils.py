@@ -106,14 +106,15 @@ if FreeCAD:
         return False
 
     @duration
-    def import_fcstd(filename,
-                     update=False,
-                     placement=True,
-                     tessellation=1.0,
-                     skiphidden=True,
-                     scale=1.0,
-                     sharemats=True,
-                     report=None):
+    def import_fcstd(
+        filename,
+        update=False,
+        placement=True,
+        tessellation=1.0,
+        skiphidden=True,
+        scale=1.0,
+        sharemats=True,
+        report=None):
 
         guidata = get_guidata(filename)
 
@@ -180,9 +181,12 @@ if FreeCAD:
                             ov = face.OuterWire.OrderedVertexes
                         
                             for v in ov:
-                                if not (vl := (v.X,v.Y,v.Z)) in vdict:
-                                    vdict[v1] = len(vdict)
-                                f.append(vdict[(v.X,v.Y,v.Z)])
+                                vec = (v.X, v.Y, v.Z)
+                                if not vec in vdict:
+                                    vdict[vec] = len(vdict)
+                                    f.append(len(vdict) - 1)
+                                else:
+                                    f.append(vdict[(v.X, v.Y, v.Z)])
                         
                             # FreeCAD doesn't care about verts order. Make sure our loop goes clockwise
                             c = face.CenterOfMass
