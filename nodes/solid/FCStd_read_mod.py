@@ -187,7 +187,7 @@ else:
                     module_filter, node.tool_parts,
                     node.inv_filter, self.READ_ALL, self.merge_linked )
 
-                for s, idents in S:
+                for s, ident in S:
                     solids.append(s)
                     identifiers.append(ident)
 
@@ -305,7 +305,7 @@ def LoadSolid(
                 new_shape.Placement = obj.Placement
                 solids.add( new_shape ) 
             ''' 
-            obj_info = [obj.FullName, obj.Name, obj.Label]
+            obj_info = obj.FullName, obj.Name, obj.Label
             if scale_factor != 1:
                 if len(obj.Shape.Solids) > 0:
                     M = F.Matrix()
