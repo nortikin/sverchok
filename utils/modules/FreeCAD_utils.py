@@ -169,15 +169,14 @@ if FreeCAD:
                                 
                                 nf = []
                                 for vi in f:
-                                    nv = rawdata[0][vi]
-                                    nf.append(vdict[(nv.x, nv.y, nv.z)])
-                                
-                                # ??
+                                   nv = rawdata[0][vi]
+                                   nf.append(vdict[(nv.x, nv.y, nv.z)])
+
+                                # this does not appear to be significantly faster..
                                 # raw = rawdata[0]
                                 # nf = [vdict[(nv.x, nv.y, nv.z)] for nv in [raw[vi] for vi in f]]
 
                                 faces.append(nf)
-
 
                             matindex.append(len(rawdata[1]))
                         
