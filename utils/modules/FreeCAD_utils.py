@@ -84,19 +84,16 @@ if FreeCAD:
                 Handler = FreeCAD_xml_handler()
                 xml.sax.parseString(guidata, Handler)
                 guidata = Handler.guidata
-                for key,properties in guidata.items():
+                for key, properties in guidata.items():
                     # open each diffusecolor files and retrieve values
                     # first 4 bytes are the array length, then each group of 4 bytes is abgr
-                    if "DiffuseColor" in properties:
-                        #print ("opening:",guidata[key]["DiffuseColor"])
-                        df = zdoc.open(guidata[key]["DiffuseColor"])
-                        buf = df.read()
-                        #print (buf," length ",len(buf))
-                        df.close()
-                        cols = []
-                        for i in range(1,int(len(buf)/4)):
-                            cols.append((buf[i*4+3],buf[i*4+2],buf[i*4+1],buf[i*4]))
-                        guidata[key]["DiffuseColor"] = cols
+                    if (diffuse_file := properties.get("DiffuseColor")):
+                        with zdoc.open(diffuse_file) as df:
+                            buf = df.read()
+                            # overwrite file reference with color data.
+                            cols = [(buf[i*4+3],buf[i*4+2],buf[i*4+1],buf[i*4]) for i in range(1,int(len(buf)/4))]
+                            guidata[key]["DiffuseColor"] = cols
+
             zdoc.close()
 
         return guidata
