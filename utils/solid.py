@@ -555,7 +555,7 @@ def hascurves(shape):
 
 def drop_existing_faces(faces):
     """
-    this avoid the following bmesh exception:
+    this avoids the following bmesh exception:
 
        faces.new(verts): face already exists
 
