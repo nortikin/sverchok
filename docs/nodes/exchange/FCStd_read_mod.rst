@@ -18,7 +18,7 @@ Parameters
 
 - **global update**:, when this is enabled, any updates upstream into this node will trigger an update and the file is read again. Useful if your file is changing externally.
 
-- **read body**:, add ``PartDesign::Body items to the seek list``
+- **read body**:, add ``PartDesign::Body`` items to the seek list
 
 - **read part**:, add ``Part`` items to the seek list.
 
