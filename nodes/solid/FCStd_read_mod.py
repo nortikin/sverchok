@@ -333,11 +333,15 @@ def unitCheck(solid, scale_factor):
     else:
         return solid
 
-if FreeCAD:
-    classes = [SvReadFCStdModNode, SvShowFcstdNamesModOp, SvReadFCStdModOperator]
-    _register, _unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
-    if FreeCAD: _register()
+    if FreeCAD:
+        bpy.utils.register_class(SvReadFCStdModNode)
+        bpy.utils.register_class(SvShowFcstdNamesModOp)
+        bpy.utils.register_class(SvReadFCStdModOperator)
+
 def unregister():
-    if FreeCAD: _unregister()
+    if FreeCAD:
+        bpy.utils.unregister_class(SvReadFCStdModOperator)
+        bpy.utils.unregister_class(SvShowFcstdNamesModOp)
+        bpy.utils.unregister_class(SvReadFCStdModNode)
