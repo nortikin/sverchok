@@ -168,11 +168,13 @@ sun_position.py""".split("\n")
                     else:
                         bad_files.append(module_file)
 
+            category = dir_name
+            
             if known:
-                info("Category %s: Tolerating unexistance of the documentation for the following nodes for now:\n%s", dir_name, "\n".join(known))
+                explicitly_missing = "\n".join(known)
+                info(f"{category=}: Tolerating missing documentation for the following nodes for now:\n{explicitly_missing=}")
 
             if bad_files:
-                category = dir_name
                 missing = "\n".join(bad_files)
                 self.fail(f"Not all nodes of {category=} have corresponding documentation; \n{missing=}")
 
