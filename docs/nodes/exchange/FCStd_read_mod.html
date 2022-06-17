@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FCStd Write (Exchange) &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>FCStd Read Mod (Exchange) &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="FCStd Read (Exchange)" href="FCStd_read.html" />
-    <link rel="prev" title="FCStd Spreadsheet (Exchange)" href="FCStd_spreadsheet.html" /> 
+    <link rel="next" title="G-code exporter" href="gcode_exporter.html" />
+    <link rel="prev" title="FCStd Read (Exchange)" href="FCStd_read.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -89,7 +89,9 @@
 <li class="toctree-l3"><a class="reference internal" href="receive_from_sorcar.html">Receive From Sorcar</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCStd_sketch.html">FCStd Sketch (Exchange)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCStd_spreadsheet.html">FCStd Spreadsheet (Exchange)</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">FCStd Write (Exchange)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="FCStd_write.html">FCStd Write (Exchange)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="FCStd_read.html">FCStd Read (Exchange)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">FCStd Read Mod (Exchange)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -97,8 +99,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="FCStd_read.html">FCStd Read (Exchange)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="FCStd_read_mod.html">FCStd Read Mod (Exchange)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gcode_exporter.html">G-code exporter</a></li>
 </ul>
 </li>
@@ -125,9 +125,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="exchange_index.html">Exchange</a> &raquo;</li>
-      <li>FCStd Write (Exchange)</li>
+      <li>FCStd Read Mod (Exchange)</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/exchange/FCStd_write.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/exchange/FCStd_read_mod.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -135,19 +135,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="fcstd-write-exchange">
-<h1>FCStd Write (Exchange)<a class="headerlink" href="#fcstd-write-exchange" title="Permalink to this heading">¶</a></h1>
+  <section id="fcstd-read-mod-exchange">
+<h1>FCStd Read Mod (Exchange)<a class="headerlink" href="#fcstd-read-mod-exchange" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<p>This node is an experimental modification of the original FCStd Read node.
+This node reads one or more FCStd files, and</p>
+<ul class="simple">
+<li><p>intputs: Labels can be used to narrow down which objects you wish retrieve from the files.</p></li>
+<li><p>outputs: the <cite>obj.Shape</cite> as a Solid socket, it also</p></li>
+<li><p>outputs: <cite>obj.FullName, obj.Name, obj.Label</cite> in the Names socket.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>global update</strong>:, when this is enabled, any updates upstream into this node will trigger an update and the file is read again. Useful if your file is changing externally.</p></li>
+<li><p><strong>read body</strong>:, add <code class="docutils literal notranslate"><span class="pre">PartDesign</span>&#160; <span class="pre">Body</span></code> items to the seek list</p></li>
+<li><p><strong>read part</strong>:, add <code class="docutils literal notranslate"><span class="pre">Part</span></code> items to the seek list.</p></li>
+<li><p><strong>tool parts</strong>:, (todo)</p></li>
+<li><p><strong>inverse filter</strong>:, this will produce only the items listed in the Filter labels.</p></li>
+<li><p><strong>merge linked</strong>:, this will pull in objects that are linked from other FreeCAD files. ( <code class="docutils literal notranslate"><span class="pre">App</span>&#160; <span class="pre">Link</span></code> )</p></li>
+<li><p><strong>read all</strong>:, this “greedy mode” tells the node to ignore any filter labels and instead all possible shapes.</p></li>
+<li><p><strong>unit factor</strong>: selected object shapes will be scaled locally by this factor, unchanged if 1.0</p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<p>filepath, label1 filter, label2 filter</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<p>solids, names</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
@@ -158,8 +177,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="FCStd_spreadsheet.html" class="btn btn-neutral float-left" title="FCStd Spreadsheet (Exchange)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="FCStd_read.html" class="btn btn-neutral float-right" title="FCStd Read (Exchange)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="FCStd_read.html" class="btn btn-neutral float-left" title="FCStd Read (Exchange)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gcode_exporter.html" class="btn btn-neutral float-right" title="G-code exporter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
