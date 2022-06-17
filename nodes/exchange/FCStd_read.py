@@ -166,7 +166,8 @@ else:
                     info(f'FCStd label read error: {Fname=}')
                     info(err)
                 finally:
-                    del doc
+                    # del doc
+                    F.closeDocument(doc.Name)
 
             return labels
             
@@ -228,7 +229,8 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
     except:
         info('FCStd read error')
     finally:
-        del doc
+        # del doc
+        F.closeDocument(doc.Name)
 
     return solids
 

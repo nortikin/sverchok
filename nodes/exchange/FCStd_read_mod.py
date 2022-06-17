@@ -63,8 +63,8 @@ else:
             except:
                 info('FCStd label read error')
             finally:
-                # F.closeDocument(doc.Name)
-                del doc
+                #del doc
+                F.closeDocument(doc.Name)
 
         return labels
 
@@ -320,8 +320,8 @@ def LoadSolid(
         info(f"FCStd read error {err}")
 
     finally:
-        # F.closeDocument(doc.Name)
-        del doc
+        #del doc
+        F.closeDocument(doc.Name)
 
     return solids
 
