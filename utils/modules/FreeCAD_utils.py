@@ -311,9 +311,3 @@ if FreeCAD:
 
         print("Import finished without errors")
         return obj_data
-
-
-
-
-classes = [SVFreeCADImporterProps]
-register, unregister = bpy.utils.register_classes_factory(classes)
