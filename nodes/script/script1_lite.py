@@ -52,6 +52,21 @@ template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
 
 class SNLITE_EXCEPTION(Exception): pass
 
+class SCRIPT_UL_scriptexamples(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        layout.label(text=data.script_name)
+        # action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
+
+class ScScriptItemProperty(bpy.types.PropertyGroup):
+    name: StringProperty()
+    path: StringProperty()
+    directive: StringProperty()
+    icon: StringProperty(default="BLANK1")
+
+
+def populate_script_UIlist():
+    ...
+
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
     bl_idname = "SV_MT_ScriptNodeLitePyMenu"
@@ -71,13 +86,15 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
                 self.path_menu(searchpaths=[final_path], **args)
                 self.layout.row().separator()
 
+            self.layout.template_list("SCRIPT_UL_scriptexamples", "compact", obj, "material_slots",
+                             obj, "selected_script_index", type='COMPACT')
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_ui_callback"
     bl_label = "SNLite callback"
     bl_options = {'INTERNAL'}
-    fn_name: bpy.props.StringProperty(default='')
+    fn_name: StringProperty(default='')
 
     def execute(self, context):
         getattr(context.node, self.fn_name)()
@@ -89,7 +106,7 @@ class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
     bl_idname = "node.scriptlite_custom_callback"
     bl_label = "custom SNLite callback"
     bl_options = {'INTERNAL'}
-    cb_name: bpy.props.StringProperty(default='')
+    cb_name: StringProperty(default='')
 
     def execute(self, context):
         context.node.custom_callback(context, self)
@@ -100,7 +117,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
     bl_label = "SNLite load"
-    filepath: bpy.props.StringProperty()
+    filepath: StringProperty()
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
@@ -309,7 +326,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.use_custom_color = False
-
+        populate_script_UIlist()
 
     def load(self):
         if not self.script_name:
@@ -672,4 +689,11 @@ classes = [
     SvScriptNodeLite
 ]
 
-register, unregister = bpy.utils.register_classes_factory(classes)
+_register, _unregister = bpy.utils.register_classes_factory(classes)
+
+def register():
+    _register()
+
+def unregister():
+    _unregister()
+

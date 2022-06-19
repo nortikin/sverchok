@@ -11,6 +11,10 @@ from mathutils import Quaternion, Matrix
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD:
+
+    def rounded(rgba, level=5):
+        return tuple(round(c, level) for c in rgba)
+
     from sverchok.utils.decorators import duration
     import Part
 
@@ -125,6 +129,9 @@ if FreeCAD:
             return
 
         matdatabase = {} # to store reusable materials
+                         #
+                         # {(r, g, b, a): {}}
+                         #
         obj_data = []
 
         for obj in doc.Objects:
@@ -143,6 +150,7 @@ if FreeCAD:
             matindex = [] # face to material relationship
             faceedges = [] # a placeholder to store edges that belong to a face
             name = "Unnamed"
+            polycolors = []
 
             if obj.isDerivedFrom("Part::Feature"):
 
@@ -247,6 +255,7 @@ if FreeCAD:
             current_obj = SimpleNamespace(verts=verts, edges=edges, faces=faces, matindex=matindex, plac=None, faceedges=faceedges, name=obj.Name)
             current_obj.matrix = Matrix()
             current_obj.loc = (0.0, 0.0, 0.0)
+            current_obj.polycolors = polycolors
 
             if placement:            
                 current_obj.loc = placement.Base.multiply(scale)[:]
@@ -261,89 +270,41 @@ if FreeCAD:
 
             if verts and (faces or edges):
 
-                continue # this is here so the code below can be syntax highlighted while not being run :)
                 if not obj.Name in guidata: continue
 
                 if matindex and ("DiffuseColor" in guidata[obj.Name]) and (len(matindex) == len(guidata[obj.Name]["DiffuseColor"])):
 
                     # we have per-face materials. Create new mats and attribute faces to them
                     fi = 0
-                    objmats = []
                     for i in range(len(matindex)):
                         
                         # DiffuseColor stores int values, Blender use floats
-                        rgba = tuple([float(x)/255.0 for x in guidata[obj.Name]["DiffuseColor"][i]])
+                        guid_objname_diffcol = guidata[obj.Name]["DiffuseColor"]
+                        rgba = tuple([float(x) / 255.0 for x in guid_objname_diffcol[i]])
+                        
                         # FreeCAD stores transparency, not alpha
                         alpha = 1.0
-                        if rgba[3] > 0:
-                            alpha = 1.0 - rgba[3]
-                        rgba = rgba[:3]+(alpha,)
-                        bmat = None
+                        if rgba[3] > 0: alpha = 1.0 - rgba[3]
+                        rgba = rgba[:3] + (alpha,)
+                        rgba = rounded(rgba)
 
-                        if sharemats:
-                            if rgba in matdatabase:
-                                bmat = matdatabase[rgba]
-                                if not rgba in objmats:
-                                    objmats.append(rgba)
-                                    bobj.data.materials.append(bmat)
-                        if not bmat:
-                            if rgba in objmats:
-                                bmat = bobj.data.materials[objmats.index(rgba)]
-                        if not bmat:
-                            bmat = bpy.data.materials.new(name=obj.Name+str(len(objmats)))
-                            bmat.use_nodes = True
-                            principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
-                            principled.base_color = rgba[:3]
-                            if alpha < 1.0:
-                                bmat.diffuse_color = rgba
-                                principled.alpha = alpha
-                                bmat.blend_method = "BLEND"
-                            objmats.append(rgba)
-                            bobj.data.materials.append(bmat)
-                            if sharemats:
-                                matdatabase[rgba] = bmat
                         for fj in range(matindex[i]):
-                            bobj.data.polygons[fi+fj].material_index = objmats.index(rgba)
+                            polycolors.append(rgba)
+
                         fi += matindex[i]
 
                 else:
 
                     # one material for the whole object
-                    # alpha = 1.0
-                    # rgb = (0.5,0.5,0.5)
-
-                    # if "Transparency" in guidata[obj.Name]:
-                    #     if guidata[obj.Name]["Transparency"] > 0:
-                    #         alpha = (100 - guidata[obj.Name]["Transparency"]) / 100.0
                     if (transparency := guidata[obj.Name].get("Transparency", 1.0)) > 0:
                         alpha = (100 - transparency) / 100.0
                     else:
                         alpha = 1.0
 
-                    # if "ShapeColor" in guidata[obj.Name]:
-                    #     rgb = guidata[obj.Name]["ShapeColor"]
                     rgb = guidata[obj.Name].get("ShapeColor", (0.5, 0.5, 0.5))
-
                     rgba = rgb + (alpha,)
-                    bmat = None
-                    if sharemats:
-                        if rgba in matdatabase:
-                            bmat = matdatabase[rgba]
-
-                    if not bmat:
-
-                        bmat = bpy.data.materials.new(name=obj.Name)
-                        
-                        bmat.use_nodes = True
-                        principled = PrincipledBSDFWrapper(bmat, is_readonly=False)
-                        principled.base_color = rgb
-                        if alpha < 1.0:
-                            bmat.diffuse_color = rgba
-                        
-                        if sharemats:
-                            matdatabase[rgba] = bmat
-
-                    bobj.data.materials.append(bmat)
+                    rgba = rounded(rgba)
+                    polycolors.append(rgba)
 
 
         FreeCAD.closeDocument(docname)
@@ -352,28 +313,6 @@ if FreeCAD:
         return obj_data
 
 
-class SVFreeCADImporterProps(bpy.types.PropertyGroup):
-    # usage : 
-    #     props: bpy.props.CollectionProperty(type=SVFreeCADImporterProps)
-
-    option_skiphidden : bpy.props.BoolProperty(name="Skip hidden objects", default=True,
-        description="Only import objects that where visible in FreeCAD"
-    )
-    # option_update : bpy.props.BoolProperty(name="Update existing objects", default=True,
-    #     description="Keep objects with same names in current scene and their materials, only replace the geometry"
-    # )
-    option_placement : bpy.props.BoolProperty(name="Use Placements", default=True,
-        description="Set Blender pivot points to the FreeCAD placements"
-    )
-    option_tessellation : bpy.props.FloatProperty(name="Tessellation value", default=1.0,
-        description="The tessellation value to apply when triangulating shapes"
-    )
-    option_scale : bpy.props.FloatProperty(name="Scaling value", default=0.001,
-        description="A scaling value to apply to imported objects. Default value of 0.001 means one Blender unit = 1 meter"
-    )
-    option_sharemats : bpy.props.BoolProperty(name="Share similar materials", default=True,
-        description="Objects with same color/transparency will use the same material"
-    )
 
 
 classes = [SVFreeCADImporterProps]
