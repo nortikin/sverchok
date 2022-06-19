@@ -71,8 +71,6 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
                 self.path_menu(searchpaths=[final_path], **args)
                 self.layout.row().separator()
 
-            self.layout.template_list("SCRIPT_UL_scriptexamples", "compact", obj, "material_slots",
-                             obj, "selected_script_index", type='COMPACT')
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
