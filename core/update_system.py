@@ -332,10 +332,11 @@ class UpdateTree(SearchTree):
                         changed_nodes = _tree._update_difference(old)
 
                         # disconnected input sockets can remember previous data
+                        _tree._update_default_values(changed_nodes)
                         # a node can be laizy and don't recalculate output
                         for node in changed_nodes:
-                            for in_s in chain(node.inputs, node.outputs):
-                                in_s.sv_forget()
+                            for out_s in node.outputs:
+                                out_s.sv_forget()
 
                         _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
@@ -420,7 +421,9 @@ class UpdateTree(SearchTree):
         can be marked as outdated via dedicated flags for performance."""
         if self._outdated_nodes is not None:
             self._outdated_nodes.update(nodes)
-            self._update_default_values(nodes)  # todo is it best place?
+
+            # todo is it best place?
+            self._update_default_values(n for n in nodes if n in self._from_nodes)
 
     def __init__(self, tree: NodeTree):
         """Should not use be used directly, only via the get class method
@@ -547,12 +550,18 @@ class UpdateTree(SearchTree):
                 nodes_to_update.add(self._sock_node[from_sock])
             else:
                 nodes_to_update.add(self._sock_node[to_sock])
+        for to_sock in self._disconnected_inputs(old):
+            nodes_to_update.add(self._sock_node[to_sock])
+        return nodes_to_update
+
+    def _disconnected_inputs(self, old: 'UpdateTree') -> set[NodeSocket]:
+        inputs = set()
         removed_links = old._links - self._links
         for from_sock, to_sock in removed_links:
             if to_sock not in self._sock_node:
                 continue  # the link was removed together with the node
-            nodes_to_update.add(self._sock_node[to_sock])
-        return nodes_to_update
+            inputs.add(to_sock)
+        return inputs
 
     def _fill_input(self, node: Node):
         for ps, ns in zip(self.previous_sockets(node), node.inputs):
@@ -563,14 +572,18 @@ class UpdateTree(SearchTree):
 
             # extract data from connected socket
             else:
-                data = ps.sv_get()
+                try:
+                    data = ps.sv_get()
+                except SvNoDataError:
+                    # let to the node handle No Data error
+                    ns.sv_forget()
+                else:
+                    # cast data
+                    if ps.bl_idname != ns.bl_idname:
+                        implicit_conversion = conversions[ns.default_conversion_name]
+                        data = implicit_conversion.convert(ns, ps, data)
 
-                # cast data
-                if ps.bl_idname != ns.bl_idname:
-                    implicit_conversion = conversions[ns.default_conversion_name]
-                    data = implicit_conversion.convert(ns, ps, data)
-
-                ns.sv_set(data)
+                    ns.sv_set(data)
 
     def _update_default_values(self, nodes: Iterable[Node]):
         for node in nodes:
@@ -579,6 +592,8 @@ class UpdateTree(SearchTree):
                     continue
                 elif (default := self._search_default_value(in_s)) is not None:
                     in_s.sv_set(default)
+                else:
+                    in_s.sv_forget()
 
     def _search_default_value(self, socket: NodeSocket) -> Optional[list]:
         node = self._sock_node[socket]
