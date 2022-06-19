@@ -309,7 +309,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.use_custom_color = False
-        populate_script_UIlist()
 
     def load(self):
         if not self.script_name:
