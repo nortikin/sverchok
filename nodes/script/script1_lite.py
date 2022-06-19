@@ -52,21 +52,6 @@ template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
 
 class SNLITE_EXCEPTION(Exception): pass
 
-class SCRIPT_UL_scriptexamples(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        layout.label(text=data.script_name)
-        # action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
-
-class ScScriptItemProperty(bpy.types.PropertyGroup):
-    name: StringProperty()
-    path: StringProperty()
-    directive: StringProperty()
-    icon: StringProperty(default="BLANK1")
-
-
-def populate_script_UIlist():
-    ...
-
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
     bl_idname = "SV_MT_ScriptNodeLitePyMenu"
