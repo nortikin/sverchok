@@ -89,7 +89,7 @@ class SV_PT_TreeTimingsPanel(SverchokPanels, bpy.types.Panel):
         row.prop(tree, 'show_time_mode', text="Update time", expand=True)
 
 
-class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):
+class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):  # todo remove UI in the name
     bl_idname = "SV_PT_ExtrTreeUserInterfaceOptions"
     bl_label = "Tree UI options"
     bl_options = {'DEFAULT_CLOSED'}
@@ -108,6 +108,7 @@ class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):
         col.prop(sv_settings, 'over_sized_buttons', text="Big buttons")
         col.prop(sv_settings, 'show_icons', text="Menu icons")
         col.prop(sv_settings, 'show_input_menus', text="Quick link")
+        col.prop(sv_settings, 'is_parallel')
 
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):

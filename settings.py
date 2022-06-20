@@ -14,6 +14,7 @@ from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.utils.sv_extra_addons import draw_extra_addons
 from sverchok.ui import color_def
 from sverchok.ui.utils import message_on_layout
+import sverchok.core.event_system as es
 
 if bpy.app.version >= (2, 91, 0):
     PYPATH = sys.executable
@@ -419,6 +420,15 @@ class SverchokPreferences(AddonPreferences):
             name="FreeCAD python 3.7 folder",
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
+
+    def is_parallel_mode(self, context):
+        es.is_parallel = self.is_parallel
+
+    is_parallel: BoolProperty(
+        name='Parallel execution',
+        description="Using multiple cores to execute Sverchok node trees",
+        update=is_parallel_mode,
+    )
 
     def general_tab(self, layout):
         col = layout.row().column()

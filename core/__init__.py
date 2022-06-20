@@ -17,6 +17,7 @@ core_modules = [
     "tasks",
     "group_update_system",
     "event_system",
+    "concurrent_update_system",
 ]
 
 
