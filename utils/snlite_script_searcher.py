@@ -10,6 +10,7 @@
 import bpy
 import os
 import sverchok
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 loop = dict()
 script_lookup = dict()
@@ -34,7 +35,7 @@ def item_cb(self, context):
     return loop.get('results') or [("A","A", '', 0),]
 
 
-class SvSnliteScriptSearch(bpy.types.Operator):
+class SvSnliteScriptSearch(bpy.types.Operator, SvGenericNodeLocator):
     """ SNLite Search Script Library """
     bl_idname = "node.sv_snlite_script_search"
     bl_label = "SN lite Script Search"
@@ -48,10 +49,15 @@ class SvSnliteScriptSearch(bpy.types.Operator):
         if tree_type in {'SverchCustomTreeType', }:
             return True
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
         if self.my_enum.isnumeric():
             print(script_lookup[self.my_enum])
-            pass
+            script_name = os.path.basename(script_lookup[self.my_enum])
+            text_block = bpy.data.texts.new(script_name)
+            with open(script_lookup[self.my_enum]) as f:
+                text_block.from_string(f.read())
+            node.script_name = text_block.name
+            node.load()
 
         return {'FINISHED'}
 
