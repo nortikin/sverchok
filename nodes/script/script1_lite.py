@@ -563,6 +563,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
+            self.wrapper_tracked_ui_draw_op(row, "node.sv_snlite_script_search", text="", icon="VIEWZOOM")
         else:
             col = layout.column(align=True)
             row = col.row()
