@@ -171,7 +171,7 @@ if FreeCAD:
                             rawdata = face.tessellate(tessellation)
                             
                             for v in rawdata[0]:
-                                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                                if (v1 := (v.x, v.y, v.z)) not in vdict:
                                     vdict[v1] = len(vdict)
                             
                             for f in rawdata[1]:
@@ -188,7 +188,7 @@ if FreeCAD:
                         
                             for v in ov:
 
-                                if not (vec := (v.X, v.Y, v.Z)) in vdict:
+                                if (vec := (v.X, v.Y, v.Z)) not in vdict:
                                     vdict[vec] = len(vdict)
                                     f.append(len(vdict) - 1)
                                 else:
@@ -217,9 +217,9 @@ if FreeCAD:
                             for i in range(len(dv)-1):
                                 dv1 = (dv[i].x,   dv[i].y,   dv[i].z)
                                 dv2 = (dv[i+1].x, dv[i+1].y, dv[i+1].z)
-                                if not dv1 in vdict:
+                                if dv1 not in vdict:
                                     vdict[dv1] = len(vdict)
-                                if not dv2 in vdict:
+                                if dv2 not in vdict:
                                     vdict[dv2] = len(vdict)
                                 edges.append([vdict[dv1], vdict[dv2]])
                         
@@ -227,16 +227,9 @@ if FreeCAD:
                         
                             e = []
                             for vert in edge.Vertexes:
-                                # TODO discretize non-linear edges
                                 v = (vert.X,vert.Y,vert.Z)
-                                if not v in vdict: vdict[v] = len(vdict)
+                                if v not in vdict: vdict[v] = len(vdict)
                                 e.append(vdict[v])
-
-                                # using walrus :=
-                                # if not (v := (vert.X,vert.Y,vert.Z)) in vdict:
-                                #     vdict[v] = len(vdict)
-                                # e.append(vdict[v])
-
 
                             edges.append(e)
 
