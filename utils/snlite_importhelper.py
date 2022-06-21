@@ -28,6 +28,7 @@ sock_dict = {
     's': 'SvStringsSocket',
     'm': 'SvMatrixSocket',
     'o': 'SvObjectSocket',
+    'c': 'SvColorSocket',
     'C': 'SvCurveSocket',
     'D': 'SvDictionarySocket',
     'T': 'SvTextSocket',
