@@ -14,4 +14,5 @@ Exchange
    FCStd_spreadsheet
    FCStd_write
    FCStd_read
+   FCStd_read_mod
    gcode_exporter
