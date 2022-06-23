@@ -84,7 +84,15 @@ class SvSNLiteAddFromTextEditor(bpy.types.Operator):
                         return {'CANCELLED'}
 
             snlite = ng.nodes.new('SvScriptNodeLite')
-            snlite.location = ng.view_center
+            
+            # middle of view, translated to nodetree location
+            dpi_fac = get_params({'render_location_xy_multiplier': 1.0}, direct=True)[0]
+            region = override['region']
+            mid_x = region.width / 2
+            mid_y = region.height / 2 
+            x, y  = region.view2d.region_to_view(mid_x, mid_y)
+            snlite.location = x * 1 / dpi_fac, y *1 / dpi_fac
+
             snlite.script_name = text_file_name
             snlite.load()
 
