@@ -7,7 +7,7 @@
 
 import bpy
 from sverchok.utils.logging import getLogger
-
+from sverchok.settings import get_params
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -89,16 +89,17 @@ class SvSNLiteAddFromTextEditor(bpy.types.Operator):
             dpi_fac = get_params({'render_location_xy_multiplier': 1.0}, direct=True)[0]
             region = override['region']
             mid_x = region.width / 2
-            mid_y = region.height / 2 
+            mid_y = region.height / 2
+            print("mid==", mid_x, mid_y)
             x, y  = region.view2d.region_to_view(mid_x, mid_y)
             snlite.location = x * 1 / dpi_fac, y *1 / dpi_fac
 
             snlite.script_name = text_file_name
             snlite.load()
 
-            ng.nodes.active = snlite
-            snlite.select = True
-            bpy.ops.node.view_selected(override)
+            #ng.nodes.active = snlite
+            #snlite.select = True
+            #bpy.ops.node.view_selected(override)
 
         return {'FINISHED'}
 
