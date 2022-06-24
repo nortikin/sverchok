@@ -15,6 +15,34 @@ if FreeCAD:
     def rounded(rgba, level=5):
         return tuple(round(c, level) for c in rgba)
 
+    def cleanup(faces, faces_data):
+        """
+        this avoids the following bmesh exception:
+
+           faces.new(verts): face already exists
+
+        """
+        faces_set = set()
+        
+        new_faces = []
+        new_faces_data = []
+        good_face = new_faces.append
+        good_face_data = new_faces_data.append
+        
+        for idx, face in enumerate(faces):
+            proposed_face = tuple(sorted(face))
+            if proposed_face in faces_set:
+                continue
+            else:
+                faces_set.add(proposed_face)
+                good_face(face)
+                if faces_data:
+                    color = faces_data[0] if len(faces_data) == 1 else faces_data[idx]  
+                    good_face_data(color)
+                
+        return new_faces, new_faces_data
+
+
     from sverchok.utils.decorators import duration
     import Part
 
@@ -118,7 +146,7 @@ if FreeCAD:
         skiphidden=True,
         scale=1.0,
         sharemats=True,
-        report=None):
+        remove_duplicate_faces=True):
 
         guidata = get_guidata(filename)
 
@@ -258,8 +286,6 @@ if FreeCAD:
                     new_quaternion = Quaternion((w, x, y, z))
                     current_obj.matrix = new_quaternion.to_matrix().to_4x4()
                     current_obj.loc = placement.Base.multiply(scale)[:]
-    
-            obj_data.append(current_obj)
 
             if verts and (faces or edges):
 
@@ -300,7 +326,13 @@ if FreeCAD:
                     polycolors.append(rgba)
 
 
-        FreeCAD.closeDocument(docname)
+            if remove_duplicate_faces and current_obj.faces:
+                current_obj.faces, current_obj.polycolors = cleanup(current_obj.faces, current_obj.polycolors)
 
+            obj_data.append(current_obj)
+
+
+        FreeCAD.closeDocument(docname)
         print("Import finished without errors")
+
         return obj_data
