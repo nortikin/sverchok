@@ -12,6 +12,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length, fixed_iter
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
 split_modes = [
@@ -74,10 +75,14 @@ class SvSplitEdgesMk3Node(bpy.types.Node, SverchCustomTreeNode):
         factor = self.inputs['Factor'].sv_get(deepcopy=False)
         cuts = self.inputs['Cuts'].sv_get(deepcopy=False)
 
+        if faces and not edges:
+            edges = polygons_to_edges_np(faces, True, False)
+
         obj_n = max(len(verts), len(e_mask), len(factor), len(cuts))
         out_v = []
         out_e = []
         out_f = []
+
 
         def vec(arr):
             return fixed_iter(arr, obj_n, [])
