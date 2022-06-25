@@ -56,6 +56,10 @@ class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
         faces_out = []
         for verts, edges, faces in zip_long_repeat(verts_s, edges_s, faces_s):
             bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
+            if not edges:
+                bm.edges.index_update()
+                bm.edges.ensure_lookup_table()
+
             new_bm = truncate_vertices(bm)
             bm.free()
             new_verts, new_edges, new_faces = pydata_from_bmesh(new_bm)
