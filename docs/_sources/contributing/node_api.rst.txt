@@ -366,11 +366,11 @@ custom_draw
 
 
 quick_link_to_node
-  Expects a sting of node `bl_idname``. This will add an operator which can
+  Expects a string of node `bl_idname``. This will add an operator which can
   create quick link to the given node.
 
 link_menu_handler
-  Expects a sting of class name defined inside node of the socket. This only
+  Expects a string of class name defined inside node of the socket. This only
   works when displaying quick links is in multiple values mode. In the class
   its possible to define extra nodes for connections. This is analog of
   creating nodes during dragging a link from a socket in Blender 3.1.
@@ -424,7 +424,7 @@ nesting_level
   * 1 for single item
 
 default_mode
-  Expects one of the next stings:
+  Expects one of the next strings:
 
   * 'NONE' to leave empty
   * 'EMPTY_LIST' for [[]] (Default)
@@ -432,7 +432,7 @@ default_mode
   * 'MASK' for [[True]]
 
 pre_processing
-  Expects one of the next stings:
+  Expects one of the next strings:
 
   * 'ONE_ITEM' for values like the number of subdivision (one value per object).
     It will match one value per object independently if the list is [[1,2]]
