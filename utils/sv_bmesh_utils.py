@@ -105,7 +105,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
             if markup_edge_data:
                 bm_edge[initial_index_layer] = idx
 
-        bm.edges.index_update()
+    bm.edges.index_update()
 
     if markup_vert_data:
         bm_verts.ensure_lookup_table()
@@ -529,9 +529,11 @@ def truncate_vertices(bm):
     new_bm_add_vert = new_bm.verts.new
     new_bm_add_face = new_bm.faces.new
     edge_centers = dict()
+
     for edge in bm.edges:
         center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
         edge_centers[edge.index] = new_bm_add_vert(center_co)
+ 
     for face in bm.faces:
         new_face = [edge_centers[edge.index] for edge in face.edges]
         old_normal = face.normal
@@ -539,6 +541,7 @@ def truncate_vertices(bm):
         if new_normal.dot(old_normal) < 0:
             new_face = list(reversed(new_face))
         new_bm_add_face(new_face)
+
     for vertex in bm.verts:
         new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
         if len(new_face) > 2:
