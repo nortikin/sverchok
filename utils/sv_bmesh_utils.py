@@ -539,7 +539,7 @@ def truncate_vertices(bm):
         old_normal = face.normal
         new_normal = mathutils.geometry.normal(*[vert.co for vert in new_face])
         if new_normal.dot(old_normal) < 0:
-           new_face = list(reversed(new_face))
+            new_face = list(reversed(new_face))
         new_bm_add_face(new_face)
 
     for vertex in bm.verts:
