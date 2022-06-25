@@ -105,7 +105,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
             if markup_edge_data:
                 bm_edge[initial_index_layer] = idx
 
-        bm.edges.index_update()
+    bm.edges.index_update()
 
     if markup_vert_data:
         bm_verts.ensure_lookup_table()
