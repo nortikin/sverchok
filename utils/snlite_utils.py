@@ -47,6 +47,7 @@ def ddir(content, filter_str=None):
         vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
     return vals
 
+# deprecated, use decorators_compilation.njit instead
 
 def sv_njit(function_to_njit, parameters):
     fn_name = function_to_njit.__name__

@@ -45,7 +45,7 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = [0] * 32
 
-template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
+template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils', 'templates']
 
 
 
