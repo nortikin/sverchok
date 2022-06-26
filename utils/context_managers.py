@@ -2,7 +2,6 @@ from contextlib import contextmanager
 
 import bpy
 import sverchok
-from sverchok.utils.ascii_print import str_color
 
 
 @contextmanager
