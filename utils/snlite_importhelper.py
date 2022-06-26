@@ -78,8 +78,8 @@ def trim_comment(line):
     return line[:idx]
 
 def parse_required_socket_line(node, line):
-    # receives a line like
     # required input sockets do not accept defaults or nested info, what would be the point?
+    # receives a line like
     # >in socketname sockettype
 
     line = trim_comment(line)
