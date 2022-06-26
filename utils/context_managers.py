@@ -1,7 +1,10 @@
+import time
 from contextlib import contextmanager
 
 import bpy
 import sverchok
+from sverchok.utils.logging import info
+from sverchok.utils.ascii_print import str_color
 
 
 @contextmanager
@@ -34,3 +37,18 @@ def addon_preferences(addon_name):
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
         yield addon.preferences
+
+@contextmanager
+def timed(func):
+    start_time = time.time()
+    
+    #result = func(*args, **kwargs)
+    yield func
+    
+    duration = (time.time() - start_time) * 1000
+
+    func_name = str_color(func.__name__, 31)
+    duration = str_color(f"{duration:.5g} ms", 32)
+        
+    msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
+    info(msg)
