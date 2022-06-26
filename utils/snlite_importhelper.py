@@ -85,6 +85,9 @@ def parse_required_socket_line(node, line):
     line = trim_comment(line)
 
     lsp = line.strip().split()
+    if len(lsp) > 3:
+        lsp = lsp[:3]
+
     if len(lsp) == 3:
         socket_type = sock_dict.get(lsp[2])
         socket_name = lsp[1]
@@ -92,7 +95,7 @@ def parse_required_socket_line(node, line):
             return UNPARSABLE
         return socket_type, socket_name, None, None
 
-    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type?')
+    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type? {lsp}')
     return UNPARSABLE
 
 
