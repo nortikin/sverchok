@@ -85,6 +85,7 @@ def timepart(section_name=">"):
 
     """
     from sverchok.utils.ascii_print import str_color
+
     start_time = time.time()
     
     yield None
