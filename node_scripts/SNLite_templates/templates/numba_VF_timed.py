@@ -6,7 +6,7 @@ out _faces s
 """
 
 from sverchok.utils.decorators_compilation import njit, numba_uncache
-
+from sverchok.utils.context_managers import timed
 # if other numba features are needed
 # from sverchok.dependencies import numba
 
@@ -23,6 +23,7 @@ def your_function(vlist, flist):
 
 
 for vlist, flist in zip(verts, faces):
-    v, f = your_function(vlist, flist)
+    with timed(your_function) as your_function:
+        v, f = your_function(vlist, flist)
     _verts.append(v)
     _faces.append(f)
