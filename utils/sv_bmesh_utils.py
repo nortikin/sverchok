@@ -30,7 +30,6 @@ import mathutils
 
 from sverchok.data_structure import zip_long_repeat, has_element
 from sverchok.utils.logging import debug
-from sverchok.utils.decorators import duration
 
 @contextmanager
 def empty_bmesh(use_operators=True):
