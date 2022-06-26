@@ -63,12 +63,18 @@ def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
     finally:
         bmesh.update_edit_mesh(mesh)
 
+def bmesh_from_pydata(
+        verts=None, edges=[], faces=[],
+        markup_face_data=False, markup_edge_data=False, markup_vert_data=False,
+        normal_update=False, index_edges=False):
 
-def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
-                      markup_vert_data=False, normal_update=False):
-    ''' verts is necessary, edges/faces are optional
-        normal_update, will update verts/edges/faces normals at the end
-    '''
+    """
+    verts              : necessary
+    edges / faces      : optional
+    normal_update      : optional - will update verts/edges/faces normals at the end
+    index_edges (bool) : optional - will make it possible for users of the bmesh to manually 
+                         iterate over any edges or do index lookups
+    """
 
     bm = bmesh.new()
     bm_verts = bm.verts
@@ -105,7 +111,8 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
             if markup_edge_data:
                 bm_edge[initial_index_layer] = idx
 
-    bm.edges.index_update()
+    if has_element(edges) or index_edges:
+        bm.edges.index_update()
 
     if markup_vert_data:
         bm_verts.ensure_lookup_table()

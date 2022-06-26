@@ -118,6 +118,10 @@ def duration(func):
         duration = str_color(f"{duration:.5g} ms", 32)
         
         msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
-        info(msg)
+        try:
+            info(msg)
+        except:
+            print(msg)
+
         return result
     return wrapped
