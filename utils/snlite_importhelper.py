@@ -71,10 +71,19 @@ def parse_socket_line(node, line):
             nested = processed(lsp[4])
             return socket_type, socket_name, default, nested
 
+def trim_comment(line):
+    idx = line.find("#")
+    if idx < 0:
+        return line
+    return line[:idx]
+
 def parse_required_socket_line(node, line):
     # receives a line like
     # required input sockets do not accept defaults or nested info, what would be the point?
     # >in socketname sockettype
+
+    line = trim_comment(line)
+
     lsp = line.strip().split()
     if len(lsp) == 3:
         socket_type = sock_dict.get(lsp[2])

@@ -1,6 +1,6 @@
 """
->in verts v       # ..
->in faces s       # only start execution if both of these are connected
+>in verts v    #
+>in faces s    # no computation until both input sockets are connected
 out _verts v
 out _faces s
 """
