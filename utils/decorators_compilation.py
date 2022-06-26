@@ -21,6 +21,12 @@ def njit(**kwargs):
             if function_name not in local_numba_storage:
                 jitted_func = numba.njit(**kwargs)(function_to_compile)
                 local_numba_storage[function_name] = jitted_func
+            
+            #elif function_name in local_numba_storage and function_str_hash doesn't match:
+            #    # recache
+            # the dowside to this would be that it becomes whitespace/comment changes sensitive
+            # unless whitespace and comments are removed from functionstring before compilation..
+
             return local_numba_storage[function_name]
 
     else:
@@ -47,3 +53,6 @@ def jit(**kwargs):
             return function_to_compile
 
     return wrapper
+
+def numba_uncache(function_name):
+    del local_numba_storage[function_name]
