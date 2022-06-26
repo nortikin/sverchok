@@ -58,12 +58,9 @@ def timed(func):
     yield func
 
     duration = (time.time() - start_time) * 1000
-
-    # display_args = (f"\n    {args=}" if args else "")
-    # display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
     
     func_name = str_color(func.__name__, 31)
     duration = str_color(f"{duration:.5g} ms", 32)
     func_name = func.__name__
-    msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
+    msg = f"\n{func_name}: {duration}"
     print(msg)
