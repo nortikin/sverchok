@@ -49,6 +49,8 @@ def timed(func):
             result = func(....)    
         ...
 
+        >>> func_name: 29.987335205078125
+
     """
 
     from sverchok.utils.ascii_print import str_color
@@ -62,5 +64,34 @@ def timed(func):
     func_name = str_color(func.__name__, 31)
     duration = str_color(f"{duration:.5g} ms", 32)
     func_name = func.__name__
-    msg = f"\n{func_name}: {duration}"
+    msg = f"{func_name}: {duration}"
+    print(msg)
+
+@contextmanager
+def timepart(section_name=">"):
+    """
+    usage:
+    
+    from sverchok.utils.context_managers import timepart
+
+    ...
+
+        with timepart("section 1"):
+            f = []
+            for i in range(100_000):
+                f.append(i*random())
+
+        >>> section 1: 29.987335205078125
+
+    """
+    from sverchok.utils.ascii_print import str_color
+    start_time = time.time()
+    
+    yield None
+
+    duration = (time.time() - start_time) * 1000
+
+    section_name = str_color(section_name, 31)
+    duration = str_color(f"{duration:.5g} ms", 32)
+    msg = f"{section_name}: {duration}"
     print(msg)
