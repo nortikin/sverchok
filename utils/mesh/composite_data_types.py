@@ -82,9 +82,10 @@ class CompositeList():
         self.add_tri = self.tris.append
         self.add_quad = self.quads.append
         self.add_ngon = self.ngons.append
-        index_polygons(self, plist)
-        
-        # create numpy representations
+        self.index_polygons(plist)
+        self.create_numpy_data()
+    
+    def create_numpy_data(self)
         self.np_tris = np.array(self.tris, dtype="i32")
         self.np_quads = np.array(self.quads, dtype="i32")
         self.np_ngons = PolyList(self.ngons)
@@ -105,13 +106,15 @@ class CompositeList():
 
         # polylist will need to be widend if a new ngon exceeds largest existing ngon
 
-
-    def extend(self, items):
-        ...
-    def append(self, item):
-        ...
+    # def extend(self, items):
+    #     ...
+    # def append(self, item):
+    #     ...
 
     def lookup(self, idx):
+        """
+        this lookup may be useful for debugging, avoid using it during a long/tight iteration.
+        """
         if idx < self.num_polygons:
             index_type, index_list = self.remap.get(idx)
             return [self.tris, self.quads, self.ngons][index_type][index_list]
