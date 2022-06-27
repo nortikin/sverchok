@@ -72,8 +72,9 @@ class CompositeList():
     - make a remap lookup, which allows the user to treat the content of this class as a continguous array
     - provide a generic set of functions which return normals (face, edge and vertex on demand), and tesselations
     """
-    def __init__(self, plist):
-        self.num_polygons = len(plist)
+    def __init__(self, verts=None, edges=None, polygons=None):
+
+        self.num_polygons = len(polygons)
         self.remap = defaultdict(tuple)
         self.tris = []
         self.quads = []
@@ -88,8 +89,9 @@ class CompositeList():
         self.np_quads = np.array(self.quads, dtype="i32")
         self.np_ngons = PolyList(self.ngons)
 
-    def index_polygons(self, plist):
-        for idx, p in enumerate(plist):
+    def index_polygons(self, polygons):
+
+        for idx, p in enumerate(polygons):
             length = len(p)
             if length == 3:
                 self.remap[idx] = (0, len(self.tris))
