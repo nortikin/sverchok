@@ -456,8 +456,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def inject_sv_internal_links(self, local_variables):
         if (result := self.get_function_code(func_name="sv_internal_links", end="pass")):
             exec(result, local_variables, local_variables)
-            ui_func = local_variables.get('sv_internal_links')
-            local_variables['socket_info']['sv_internal_links'] = ui_func
+            func = local_variables.get('sv_internal_links')
+            local_variables['socket_info']['sv_internal_links'] = func
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
