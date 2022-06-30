@@ -161,6 +161,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
 
+    # @property
+    # def sv_internal_links(self):
+    #     ND = self.node_dict.get(hash(self))
+    #     if ND:
+    
+    #     else:
+    #         return [(_input, _output) for zip(self.inputs, self.outputs)]
+
 
     script_name: StringProperty()
     script_str: StringProperty()
@@ -399,38 +407,39 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         return local_dict
 
+    def detect_indentation_from_snippet(self, lines):
+        for line in lines:
+            if line.startswith(" "): return "    "
+            elif line.startswith("\t"): return "\t"
+        print(f"no indentation detected..{lines}")
+        return "  "
+
     def get_node_from_function_name(self, func_name):
         """
-        this seems to get enough info for a snlite stateful setup function.
-        "node" here refers to a node/function in the self.script_str after being parsed 
-
+        "node" here refers to an ast.node entity for the named function
+        found in the self.script_str 
         """
         tree = ast.parse(self.script_str)
         for node in tree.body:
             if isinstance(node, ast.FunctionDef) and node.name == func_name:
                 return node
 
-
-    def get_setup_code(self):
-        ast_node = self.get_node_from_function_name('setup')
-        if ast_node:
-            begin_setup = ast_node.body[0].lineno - 1
-            end_setup = ast_node.body[-1].lineno
-            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-            return 'def setup():\n\n' + code + '\n    return locals()\n'
-
-
-    def get_ui_code(self):
-        ast_node = self.get_node_from_function_name('ui')
-        if ast_node:
-            begin_setup = ast_node.body[0].lineno - 1
-            end_setup = ast_node.body[-1].lineno
-            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-            return 'def ui(self, context, layout):\n\n' + code + '\n\n'
+    def get_function_code_from_ast(self, func_name="named", end=""):
+        if (ast_node:= self.get_node_from_function_name(func_name)):
+            start_line = ast_node.lineno-1   # off by one
+            end_line = ast_node.end_lineno
+            if not end:
+                return '\n'.join(self.script_str.split('\n')[start_line: end_line])
+            else:
+                # snlite will inject tail-code
+                real_lines = self.script_str.split('\n')[start_line: end_line]
+                indentation = self.detect_indentation_from_snippet(real_lines)
+                real_lines.append(f"{indentation}{end}\n")
+                return "\n".join(real_lines)
 
 
     def inject_state(self, local_variables):
-        setup_result = self.get_setup_code()
+        setup_result = self.get_function_code_from_ast(func_name="setup", end="return locals()")
         if setup_result:
             exec(setup_result, local_variables, local_variables)
             setup_locals = local_variables.get('setup')()
@@ -440,7 +449,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def inject_draw_buttons(self, local_variables):
-        draw_ui_result = self.get_ui_code()
+        draw_ui_result = self.get_function_code_from_ast(func_name="ui", end="pass")
         if draw_ui_result:
             exec(draw_ui_result, local_variables, local_variables)
             ui_func = local_variables.get('ui')
