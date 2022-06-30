@@ -28,6 +28,7 @@ sock_dict = {
     's': 'SvStringsSocket',
     'm': 'SvMatrixSocket',
     'o': 'SvObjectSocket',
+    'c': 'SvColorSocket',
     'C': 'SvCurveSocket',
     'D': 'SvDictionarySocket',
     'T': 'SvTextSocket',
@@ -70,11 +71,23 @@ def parse_socket_line(node, line):
             nested = processed(lsp[4])
             return socket_type, socket_name, default, nested
 
+def trim_comment(line):
+    idx = line.find("#")
+    if idx < 0:
+        return line
+    return line[:idx]
+
 def parse_required_socket_line(node, line):
-    # receives a line like
     # required input sockets do not accept defaults or nested info, what would be the point?
+    # receives a line like
     # >in socketname sockettype
+
+    line = trim_comment(line)
+
     lsp = line.strip().split()
+    if len(lsp) > 3:
+        lsp = lsp[:3]
+
     if len(lsp) == 3:
         socket_type = sock_dict.get(lsp[2])
         socket_name = lsp[1]
@@ -82,7 +95,7 @@ def parse_required_socket_line(node, line):
             return UNPARSABLE
         return socket_type, socket_name, None, None
 
-    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type?')
+    node.error(f'directive: (socket line) "{line}" -> is malformed, missing socket type? {lsp}')
     return UNPARSABLE
 
 

@@ -13,6 +13,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length, fixed_iter
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
 split_modes = [
@@ -74,6 +75,9 @@ class SvSplitEdgesMk3Node(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         e_mask = self.inputs['EdgeMask'].sv_get(deepcopy=False, default=[[True]])
         factor = self.inputs['Factor'].sv_get(deepcopy=False)
         cuts = self.inputs['Cuts'].sv_get(deepcopy=False)
+
+        if faces and not edges:
+            edges = polygons_to_edges_np(faces, True, False)
 
         obj_n = max(len(verts), len(e_mask), len(factor), len(cuts))
         out_v = []

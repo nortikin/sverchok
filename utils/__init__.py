@@ -125,13 +125,14 @@ utils_modules = [
     "cad_module_class", "sv_bmesh_utils", "sv_stethoscope_helper", "sv_viewer_utils",
     "sv_curve_utils", "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
-    "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
+    "snlite_utils", "snlite_importhelper", "snlite_script_searcher",
+    "context_managers", "sv_node_utils", "sv_noise_utils",
     "profile", "logging", "testing", "sv_requests", "sv_shader_sources", "tree_structure",
     "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "modules.edge_utils", "modules.polygon_utils",
     "wfc_algorithm", "handle_blender_data", "nodes_mixins.generating_objects", "decorators_compilation",
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
     "meshes", "tree_walk", "mesh_functions", 'mesh.inset_faces', 'mesh.extrude_edges', "sv_json_struct",
-    "nodeview_time_graph_drawing", "modules.shader_utils", "dummy_nodes",
+    "nodeview_time_graph_drawing", "modules.shader_utils", "modules.FreeCAD_utils", "dummy_nodes",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools

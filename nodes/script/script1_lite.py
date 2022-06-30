@@ -38,14 +38,14 @@ from sverchok.data_structure import updateNode
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
-READY_COLOR = (0, 0.8, 0.95)
+READY_COLOR = (0, 0.6, 0.8)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = [0] * 32
 
-template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
+template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils', 'templates']
 
 
 
@@ -77,7 +77,7 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
     bl_idname = "node.scriptlite_ui_callback"
     bl_label = "SNLite callback"
     bl_options = {'INTERNAL'}
-    fn_name: bpy.props.StringProperty(default='')
+    fn_name: StringProperty(default='')
 
     def execute(self, context):
         getattr(context.node, self.fn_name)()
@@ -89,7 +89,7 @@ class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
     bl_idname = "node.scriptlite_custom_callback"
     bl_label = "custom SNLite callback"
     bl_options = {'INTERNAL'}
-    cb_name: bpy.props.StringProperty(default='')
+    cb_name: StringProperty(default='')
 
     def execute(self, context):
         context.node.custom_callback(context, self)
@@ -100,7 +100,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
     bl_label = "SNLite load"
-    filepath: bpy.props.StringProperty()
+    filepath: StringProperty()
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
@@ -309,7 +309,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.use_custom_color = False
-
 
     def load(self):
         if not self.script_name:
@@ -564,6 +563,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
+            self.wrapper_tracked_ui_draw_op(row, "node.sv_snlite_script_search", text="", icon="VIEWZOOM")
         else:
             col = layout.column(align=True)
             row = col.row()
