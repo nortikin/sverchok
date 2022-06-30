@@ -467,6 +467,9 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @property
     def sv_internal_links(self) -> Iterable[tuple[NodeSocket, NodeSocket]]:
+        """Override the property to change logic of connecting sockets
+        when the node is muted.
+        Also, there are some basic implementations `utils/nodes_mixins/sockets_config`"""
         for link in self.internal_links:
             yield link.from_socket, link.to_socket
 
