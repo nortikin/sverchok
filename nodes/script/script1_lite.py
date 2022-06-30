@@ -167,7 +167,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if (func := ND['sockets'].get("sv_internal_links")):
                 return func(self)
         
-        return [(_input, _output) for zip(self.inputs, self.outputs)]
+        return list(zip(self.inputs[:], self.outputs[:]))
 
 
     script_name: StringProperty()
