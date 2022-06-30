@@ -66,7 +66,8 @@ class ConcurrentUpdateTree(us.UpdateTree):
         for node, prev_socks in walker:
             us.prepare_input_data(prev_socks, node.inputs)
         with Pool() as p:
-            p.map(up_tree._concurrent_update_node, [getattr(n, 'process') for n, _ in walker])
+            # p.map(_concurrent_update_node, [getattr(n, 'process') for n, _ in walker])
+            p.map(_concurrent_update_node2, [n for n, _ in walker])
 
         if up_tree._tree.show_time_mode == "Cumulative":
             times = up_tree._calc_cam_update_time()
@@ -77,6 +78,12 @@ class ConcurrentUpdateTree(us.UpdateTree):
     def _walk(self):
         return [(n, self.previous_sockets(n)) for n in self._tree.nodes]
 
-    def _concurrent_update_node(self, method):
-        # todo grab stats
-        method()
+
+def _concurrent_update_node(self, method):
+    # todo grab stats
+    method()
+
+
+def _concurrent_update_node2(self, node):
+    # todo grab stats
+    node.process()

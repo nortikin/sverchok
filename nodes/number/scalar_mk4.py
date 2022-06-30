@@ -143,6 +143,12 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Scalar Math'
     sv_icon = 'SV_SCALAR_MATH'
 
+    def __getstate__(self):
+        return self.__dict__
+
+    def __setstate__(self, state):
+        return
+
     def mode_change(self, context):
         self.update_sockets()
         updateNode(self, context)
