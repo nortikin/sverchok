@@ -161,13 +161,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
 
-    # @property
-    # def sv_internal_links(self):
-    #     ND = self.node_dict.get(hash(self))
-    #     if ND:
-    
-    #     else:
-    #         return [(_input, _output) for zip(self.inputs, self.outputs)]
+    @property
+    def sv_internal_links(self):
+        if (ND := self.node_dict.get(hash(self))) and 'sockets' in ND:
+            if (func := ND['sockets'].get("sv_internal_links")):
+                return func(self)
+        
+        return [(_input, _output) for zip(self.inputs, self.outputs)]
 
 
     script_name: StringProperty()
@@ -424,7 +424,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(node, ast.FunctionDef) and node.name == func_name:
                 return node
 
-    def get_function_code_from_ast(self, func_name="named", end=""):
+    def get_function_code(self, func_name="named", end=""):
         if (ast_node:= self.get_node_from_function_name(func_name)):
             start_line = ast_node.lineno-1   # off by one
             end_line = ast_node.end_lineno
@@ -439,7 +439,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def inject_state(self, local_variables):
-        if (setup_result := self.get_function_code_from_ast(func_name="setup", end="return locals()")):
+        if (setup_result := self.get_function_code(func_name="setup", end="return locals()")):
             exec(setup_result, local_variables, local_variables)
             setup_locals = local_variables.get('setup')()
             local_variables.update(setup_locals)
@@ -448,11 +448,16 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def inject_draw_buttons(self, local_variables):
-        if (draw_ui_result := self.get_function_code_from_ast(func_name="ui", end="pass")):
+        if (draw_ui_result := self.get_function_code(func_name="ui", end="pass")):
             exec(draw_ui_result, local_variables, local_variables)
             ui_func = local_variables.get('ui')
             local_variables['socket_info']['drawfunc'] = ui_func
 
+    def inject_sv_internal_links(self, local_variables):
+        if (result := self.get_function_code(func_name="sv_internal_links", end="pass")):
+            exec(result, local_variables, local_variables)
+            ui_func = local_variables.get('sv_internal_links')
+            local_variables['socket_info']['sv_internal_links'] = ui_func
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
@@ -482,6 +487,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if not self.injected_state:
                 self.inject_state(locals())
                 self.inject_draw_buttons(locals())
+                self.inject_sv_internal_links(locals())
             else:
                 locals().update(socket_info['setup_state'])
 
