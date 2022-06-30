@@ -53,7 +53,7 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
-VERSION = 'v1.1.0-alpha.2'  # looks like the only way to have custom format for the version
+VERSION = 'v1.1.0-beta'  # looks like the only way to have custom format for the version
 
 import sys
 import importlib
