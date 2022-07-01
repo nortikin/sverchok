@@ -92,9 +92,16 @@ exist. Muting links connected to reroute nodes mutes also the link from opposite
 
 .. _`standard Blender functionality`: https://docs.blender.org/manual/en/latest/interface/controls/nodes/editing.html?#mute-links
 
+
+Muting nodes
+------------
+It's partly supported (not for all nodes yet). You are welcome to report if you
+find that some node is muting improperly.
+
 .. warning::
-    Muting nodes is not supported neither by Blender (Blender does not support muting nodes UI for custom trees) or
-    Sverchok. However Sverchok is moving slowly in the direction to make it possible.
+   Currently there are cases when internal inks of a node does not fit to how
+   data really paths through the node. It's limitation of Blender which API
+   does not give control of displaying internal links properly.
 
 
 .. _sv_triggers:

@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from collections import defaultdict
-
 import bpy
 import bmesh
 from mathutils import Vector
@@ -27,9 +25,10 @@ from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.data_structure import match_long_repeat, cycle_for_length, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, remove_doubles
 from sverchok.utils.intersect_edges import intersect_edges_3d
+from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorNode
+
 
 def distance_z(idx, v1, v2):
     return abs(v1[idx] - v2[idx])
@@ -116,7 +115,8 @@ def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, conn1, conn2, ma
     for i, v in enumerate(verts1_bm):
         connect_verts(bm, z_idx, v, verts2_bm, conn1, max_rho1)
 
-class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvFrameworkNode(EdgeGeneratorNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Framework / carcass / ferme
     Tooltip: Generate construction framework

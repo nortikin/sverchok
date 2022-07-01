@@ -26,9 +26,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.sv_mesh_utils import clean_meshes
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvMeshCleanNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvMeshCleanNode(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Duplicated + unreferenced
     Tooltip: Cleans input mesh by removing doubled, unreferenced or bad formed elements

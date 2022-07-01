@@ -22,14 +22,13 @@ from random import gauss
 from math import radians
 
 import bpy
-import bmesh
-from bpy.types import Operator
 from mathutils import Euler, Vector
 from bpy.props import FloatProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 sv_info = {
@@ -254,8 +253,8 @@ def perform_mextrude(self, bm, sel):
     return (out_verts, out_faces) or None
 
 
-
-class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
+class SvMultiExtrudeAlt(
+        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
     bl_label = 'MultiExtrude Alt from addons'

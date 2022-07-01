@@ -15,14 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from functools import reduce
-from itertools import cycle, chain
 
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+
 
 def mesh_join(vertices, edges, polygons):
     is_py_input = isinstance(vertices[0], (list, tuple))
@@ -32,7 +32,9 @@ def mesh_join(vertices, edges, polygons):
 
     return out_vertices, out_edges, out_polygons
 
-class SvMeshJoinNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+
+class SvMeshJoinNodeMk2(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Join Meshes
     Tooltip: Join many mesh into on mesh object

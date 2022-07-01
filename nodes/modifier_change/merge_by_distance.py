@@ -21,9 +21,9 @@ from bpy.props import FloatProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Vector_generate, repeat_last, zip_long_repeat
+from sverchok.data_structure import updateNode, Vector_generate, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, face_data_from_bmesh_faces, vert_data_from_bmesh_verts
-from sverchok.utils.logging import info, debug
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):
@@ -80,7 +80,7 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
     return (verts, edges, faces, face_data_out, doubles, mask_out)
 
 
-class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeByDistanceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Remove Doubles
     Tooltip: Merge Vertices that are closer than a distance.
@@ -107,6 +107,15 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'FaceData')
         self.outputs.new('SvVerticesSocket', 'Doubles')
         self.outputs.new('SvStringsSocket', 'Mask')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+            (self.inputs[2], self.outputs[3]),
+            (self.inputs[3], self.outputs['Mask']),
+        ]
 
     def draw_buttons(self, context, layout):
         #layout.prop(self, 'distance', text="Distance")

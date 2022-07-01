@@ -739,6 +739,27 @@ enough to override ``is_animation_dependent`` node attribute with True value.
    updates for the current node.
 
 
+Muting
+------
+
+Blender gives opportunity to temporary switch off any node in a tree. In this
+case its input data paths through the node without any modifications toward next
+nodes. Bas node class has default ``sv_internal_links`` property to determine
+how the data should path a node. If default behaviour does not fit into a node
+logic it can override the property. The property should return iterable tuple
+of input and output sockets of the node.
+
+.. note::
+   Before implementing your own ``sv_internal_links`` property have a look at
+   the ``utils/nodes_mixins/sockets_config`` module. It has implementations
+   of the property for some basic node types.
+
+.. warning::
+   Unfortunately the ``sv_internal_links`` property does not change how
+   internal links will be displayed in UI. Currently it's limitation of Blender
+   which API does not give control of displaying internal links properly.
+
+
 Nodes With Dependencies
 -----------------------
 

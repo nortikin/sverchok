@@ -59,8 +59,8 @@ class TreeCleaningTest(SverchokTestCase):
 
     def _assert_socks_equal(self, socks1, socks2):
         self.assertSetEqual(
-            set(_to_names(socks1)),
-            set(_to_names(socks2))
+            set(_path(s) for s in socks1),
+            set(_path(s) for s in socks2)
         )
 
     def _assert_node_equal(self, node1, node2):
@@ -82,4 +82,4 @@ def _to_names(nodes: Iterable) -> Iterable[str]:
 
 
 def _path(socket):
-    return f"{socket.node.name}.{socket.name}"
+    return f"{socket.node.name}|{'out' if socket.is_output else 'in'}|{socket.name}"
