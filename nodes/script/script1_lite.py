@@ -142,9 +142,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def extract_code(self, ast_node, joined=False):
         code_lines = self.script_str.split('\n')[ast_node.lineno-1:ast_node.end_lineno]
-        if joined:
-            code_lines = '\n'.join(code_lines) 
-        return code_lines
+        return '\n'.join(code_lines) if joined else code_lines
 
     def custom_callback(self, context, operator):
         if (ND := self.current_node_dict):
@@ -292,7 +290,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             for _ in range(num_to_remove):
                 sockets.remove(sockets[-1])
 
-
     def update_sockets(self):
         socket_info = parse_sockets(self)
         if not socket_info['inputs']:
@@ -333,7 +330,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.injected_state = False
             self.process_node(None)
 
-
     def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
@@ -350,7 +346,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not all([self.script_name, self.script_str]):
             return
         self.process_script()
-
 
     def make_new_locals(self):
 
@@ -432,7 +427,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 indentation = self.detect_indentation_from_snippet(code)
                 code.append(f"{indentation}{end}\n")
                 return "\n".join(code)
-
 
     def inject_state(self, local_variables):
         if (setup_result := self.get_function_code("setup", end="return locals()")):
