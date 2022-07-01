@@ -140,6 +140,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
 
+    def extract_code(self, ast_node, joined=False):
+        code_lines = self.script_str.split('\n')[ast_node.lineno-1:ast_node.end_lineno]
+        if joined:
+            code_lines = '\n'.join(code_lines) 
+        return code_lines
+
     def custom_callback(self, context, operator):
         if (ND := self.current_node_dict):
             ND['sockets']['callbacks'][operator.cb_name](self, context)
@@ -150,9 +156,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if not (new_func_name in callbacks) or force:
                 # here node refers to an ast node (a syntax tree node), not a node tree node
                 ast_node = self.get_node_from_function_name(new_func_name)
-                slice_begin, slice_end = ast_node.body[0].lineno-1, ast_node.body[-1].lineno
-                code = '\n'.join(self.script_str.split('\n')[slice_begin-1:slice_end+1])
-
+                code = self.extract_code(ast_node, joined=True)
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
 
@@ -419,16 +423,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def get_function_code(self, func_name, end=""):
         if (ast_node:= self.get_node_from_function_name(func_name)):
-            start_line = ast_node.lineno-1   # off by one
-            end_line = ast_node.end_lineno
+            
             if not end:
-                return '\n'.join(self.script_str.split('\n')[start_line: end_line])
+                return self.extract_code(ast_node, joined=True)
             else:
                 # snlite will inject tail-code
-                real_lines = self.script_str.split('\n')[start_line: end_line]
-                indentation = self.detect_indentation_from_snippet(real_lines)
-                real_lines.append(f"{indentation}{end}\n")
-                return "\n".join(real_lines)
+                code = self.extract_code(ast_node)
+                indentation = self.detect_indentation_from_snippet(code)
+                code.append(f"{indentation}{end}\n")
+                return "\n".join(code)
 
 
     def inject_state(self, local_variables):
