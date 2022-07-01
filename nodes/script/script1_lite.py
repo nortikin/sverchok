@@ -424,7 +424,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(node, ast.FunctionDef) and node.name == func_name:
                 return node
 
-    def get_function_code(self, func_name="named", end=""):
+    def get_function_code(self, func_name, end=""):
         if (ast_node:= self.get_node_from_function_name(func_name)):
             start_line = ast_node.lineno-1   # off by one
             end_line = ast_node.end_lineno
@@ -439,7 +439,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def inject_state(self, local_variables):
-        if (setup_result := self.get_function_code(func_name="setup", end="return locals()")):
+        if (setup_result := self.get_function_code("setup", end="return locals()")):
             exec(setup_result, local_variables, local_variables)
             setup_locals = local_variables.get('setup')()
             local_variables.update(setup_locals)
@@ -447,10 +447,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.injected_state = True
 
     def inject_function(self, local_variables, func_name=None, end=""):
-        if (result := self.get_function_code(func_name="ui", end="pass")):
+        if (result := self.get_function_code(func_name, end="pass")):
             exec(result, local_variables, local_variables)
-            func = local_variables.get('ui')
-            local_variables['socket_info']['ui'] = func
+            func = local_variables.get(func_name)
+            local_variables['socket_info'][func_name] = func
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
