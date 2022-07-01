@@ -26,9 +26,11 @@ from sverchok.data_structure import (
     updateNode, zip_long_repeat, make_repeaters)
 from sverchok.utils.mesh.inset_faces import inset_special_np, inset_special_mathutils
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvInsetSpecialMk2(
+        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: or Extrude (Fast)
     Tooltip: Fast Inset or extrude geometry

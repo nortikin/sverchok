@@ -16,18 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
-from mathutils import Matrix, Vector
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, updateNode,
-                                     match_long_repeat)
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, dual_mesh
+from sverchok.data_structure import (match_long_repeat)
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvDualMeshNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Dual Mesh
     Tooltip: Create dual mesh for the given mesh
@@ -44,6 +41,13 @@ class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Faces')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[2], self.outputs[1]),
+        ]
 
     def process(self):
         if not any((s.is_linked for s in self.outputs)):

@@ -21,9 +21,10 @@ from itertools import chain
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeleteLooseNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Delete vertices not used in face or edge'''
 
     bl_idname = 'SvDeleteLooseNode'

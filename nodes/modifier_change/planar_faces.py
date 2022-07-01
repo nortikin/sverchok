@@ -18,14 +18,16 @@
 
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvPlanarFacesNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvPlanarFacesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: planar faces
     Tooltip: Make Quad/NGon faces planar (flat).

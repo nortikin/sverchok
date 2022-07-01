@@ -18,7 +18,6 @@
 
 import bpy
 import bmesh
-import mathutils
 
 from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
@@ -26,6 +25,7 @@ from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, Vector_degenerate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 def normal_consistent(bm, direction):
@@ -161,7 +161,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
         return False
 
 
-class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
+class CrossSectionNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Plane Intersection'''
     bl_idname = 'CrossSectionNode'
     bl_label = 'Cross Section'

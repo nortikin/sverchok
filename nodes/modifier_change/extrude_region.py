@@ -26,6 +26,7 @@ import bmesh.ops
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 is_290 = bpy.app.version >= (2, 90, 0)
 
@@ -51,7 +52,8 @@ OUT = 1
 IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
-class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvExtrudeRegionNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude region of faces '''
     bl_idname = 'SvExtrudeRegionNode'
     bl_label = 'Extrude Region'

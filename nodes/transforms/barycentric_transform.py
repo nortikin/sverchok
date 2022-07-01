@@ -25,6 +25,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 def matrix_def(triangle):
@@ -98,7 +99,8 @@ def compute_barycentric_transform_mu(params, result):
     result.append(sub_result)
 
 
-class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBarycentricTransformNode(
+        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Adaptive Triangles
     Tooltip: Adaptive Triangles. Barycentric transformation between triangles.

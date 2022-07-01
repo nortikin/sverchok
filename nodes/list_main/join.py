@@ -132,6 +132,12 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'data')
         self.outputs.new('SvStringsSocket', 'data')
 
+    @property
+    def sv_internal_links(self):
+        for in_s in self.inputs:
+            if in_s.is_linked:
+                return [(in_s, self.outputs[0])]
+
     def draw_buttons(self, context, layout):
         if self.numpy_mode:
             layout.prop(self, "mix_check", text="mix")

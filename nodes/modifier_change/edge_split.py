@@ -12,6 +12,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length, fixed_iter
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
@@ -22,7 +23,7 @@ split_modes = [
     ]
 
 
-class SvSplitEdgesMk3Node(bpy.types.Node, SverchCustomTreeNode):
+class SvSplitEdgesMk3Node(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Split Edges
     Tooltip: Split each edge of a mesh in two
@@ -82,7 +83,6 @@ class SvSplitEdgesMk3Node(bpy.types.Node, SverchCustomTreeNode):
         out_v = []
         out_e = []
         out_f = []
-
 
         def vec(arr):
             return fixed_iter(arr, obj_n, [])

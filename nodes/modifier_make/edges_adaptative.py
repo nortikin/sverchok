@@ -16,17 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-
 import bpy
 from mathutils import Matrix
 
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, updateNode, match_long_repeat)
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptiveEdgeNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Map edge object to recipent edges'''
     bl_idname = 'SvAdaptiveEdgeNode'
     bl_label = 'Adaptive Edges'

@@ -17,15 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
+from bpy.props import BoolProperty, FloatProperty
 from bmesh.ops import dissolve_limit
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
+class SvLimitedDissolve(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Limited Dissolve '''
     bl_idname = 'SvLimitedDissolve'
     bl_label = 'Limited Dissolve'

@@ -26,6 +26,7 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, make_repeaters, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 vsock, toposock = 'SvVerticesSocket', 'SvStringsSocket'
 
@@ -34,7 +35,8 @@ OUT = 1
 IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
-class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvExtrudeSeparateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Inset like behaviour '''
     bl_idname = 'SvExtrudeSeparateNode'
     bl_label = 'Extrude Separate Faces'

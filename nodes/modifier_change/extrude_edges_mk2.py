@@ -22,8 +22,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.mesh.extrude_edges import extrude_edges, extrude_edges_bmesh
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+
+class SvExtrudeEdgesNodeMk2(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Extrude edges
     Tooltip: Extrude some edges of the mesh

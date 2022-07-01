@@ -15,15 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh
 from itertools import cycle
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4, numpy_full_list_cycle
+from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-import numpy as np
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # by Linus Yng
 
 def create_edges(bm, edges, v_len):
@@ -146,7 +145,8 @@ def solidify_blender(vertices, edges, faces, t, offset=None, even=True, output_e
     bm.free()
     return (verts, edges, faces, newpols, rim_pols, pol_group, new_verts_mask)
 
-class SvSolidifyNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+
+class SvSolidifyNodeMk2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Extrude/Thicken Mesh
     Tooltip: Extrude along normal the mesh surface.

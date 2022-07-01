@@ -22,11 +22,12 @@ from bpy.props import EnumProperty
 from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 maskTypeItems = [("VERTICES", "Verts", "Mask refers to Vertices", 0), ("POLY_EDGE", "PolyEdge", "Mask refers to PolyEdge", 1), ]
 
 
-class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTransformSelectNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Apply matrix w. mask.
     Tooltip: Transform part of geometry.
@@ -61,6 +62,13 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         son('SvStringsSocket', "PolyEdge T")
         son('SvVerticesSocket', "Vertices F")
         son('SvStringsSocket', "PolyEdge F")
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Vertices'], self.outputs[0]),
+            (self.inputs['PolyEdge'], self.outputs[1]),
+        ]
 
     def get_data(self):
         '''get data from inputs and match it'''

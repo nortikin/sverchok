@@ -21,6 +21,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 class Limit(NamedTuple):
     v_index: int
@@ -163,7 +164,7 @@ def edgenet_to_paths(verts_in, edges_in, close_loops):
 
     return verts_out_s, edges_out_s, index_vs_s, index_eds_s, closed
 
-class SvEdgenetToPathsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEdgenetToPathsNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Mesh to polylines
     Tooltip: Sort Vertices and split different paths

@@ -17,15 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntVectorProperty
+from bpy.props import BoolProperty
 import bmesh
-from mathutils import Vector, Matrix
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
+from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.mesh_functions import mesh_join
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 # based on CrossSectionNode
 # but using python bmesh code for driving
@@ -72,8 +73,8 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
     return bisect_bmesh(bm, pp, pno, outer, inner, fill)
 
 
-
-class SvBisectNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvBisectNode(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     ''' Matrix Cuts geometry'''
     bl_idname = 'SvBisectNode'
     bl_label = 'Bisect'
@@ -126,6 +127,13 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket', 'edges')
         self.outputs.new('SvStringsSocket', 'polygons')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+        ]
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
