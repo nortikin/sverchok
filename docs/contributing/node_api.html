@@ -81,6 +81,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#node-registration">Node Registration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#animation">Animation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#muting">Muting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nodes-with-dependencies">Nodes With Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#json-import-export">JSON Import / Export</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#upgrade-node">Upgrade Node</a><ul>
@@ -791,6 +792,27 @@ enough to override <code class="docutils literal notranslate"><span class="pre">
 <p>Buttons should be displayed via <code class="docutils literal notranslate"><span class="pre">sv_draw_buttons</span></code> method otherwise the
 node won’t display extra property which can be used by user to disable
 updates for the current node.</p>
+</div>
+</section>
+<section id="muting">
+<h2>Muting<a class="headerlink" href="#muting" title="Permalink to this heading">¶</a></h2>
+<p>Blender gives opportunity to temporary switch off any node in a tree. In this
+case its input data paths through the node without any modifications toward next
+nodes. Bas node class has default <code class="docutils literal notranslate"><span class="pre">sv_internal_links</span></code> property to determine
+how the data should path a node. If default behaviour does not fit into a node
+logic it can override the property. The property should return iterable tuple
+of input and output sockets of the node.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Before implementing your own <code class="docutils literal notranslate"><span class="pre">sv_internal_links</span></code> property have a look at
+the <code class="docutils literal notranslate"><span class="pre">utils/nodes_mixins/sockets_config</span></code> module. It has implementations
+of the property for some basic node types.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Unfortunately the <code class="docutils literal notranslate"><span class="pre">sv_internal_links</span></code> property does not change how
+internal links will be displayed in UI. Currently it’s limitation of Blender
+which API does not give control of displaying internal links properly.</p>
 </div>
 </section>
 <section id="nodes-with-dependencies">

@@ -55,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#reroute-nodes">Reroute nodes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#other-nodes">Other nodes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#muting-links">Muting links</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#muting-nodes">Muting nodes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#triggers">Triggers</a><ul>
@@ -168,10 +169,16 @@ to hide the links by using wifi nodes. <code class="docutils literal notranslate
 </figure>
 <p>This is <a class="reference external" href="https://docs.blender.org/manual/en/latest/interface/controls/nodes/editing.html?#mute-links">standard Blender functionality</a> which allows temporary to mute links. A muted link acts as if it did not
 exist. Muting links connected to reroute nodes mutes also the link from opposite side.</p>
+</section>
+<section id="muting-nodes">
+<h3>Muting nodes<a class="headerlink" href="#muting-nodes" title="Permalink to this heading">¶</a></h3>
+<p>It’s partly supported (not for all nodes yet). You are welcome to report if you
+find that some node is muting improperly.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Muting nodes is not supported neither by Blender (Blender does not support muting nodes UI for custom trees) or
-Sverchok. However Sverchok is moving slowly in the direction to make it possible.</p>
+<p>Currently there are cases when internal inks of a node does not fit to how
+data really paths through the node. It’s limitation of Blender which API
+does not give control of displaying internal links properly.</p>
 </div>
 </section>
 </section>
