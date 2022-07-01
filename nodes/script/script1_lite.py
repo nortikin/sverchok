@@ -446,18 +446,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             local_variables['socket_info']['setup_state'] = setup_locals
             self.injected_state = True
 
-
-    def inject_draw_buttons(self, local_variables):
-        if (draw_ui_result := self.get_function_code(func_name="ui", end="pass")):
-            exec(draw_ui_result, local_variables, local_variables)
-            ui_func = local_variables.get('ui')
-            local_variables['socket_info']['drawfunc'] = ui_func
-
-    def inject_sv_internal_links(self, local_variables):
-        if (result := self.get_function_code(func_name="sv_internal_links", end="pass")):
+    def inject_function(self, local_variables, func_name=None, end=""):
+        if (result := self.get_function_code(func_name="ui", end="pass")):
             exec(result, local_variables, local_variables)
-            func = local_variables.get('sv_internal_links')
-            local_variables['socket_info']['sv_internal_links'] = func
+            func = local_variables.get('ui')
+            local_variables['socket_info']['ui'] = func
 
     def process_script(self):
         __local__dict__ = self.make_new_locals()
@@ -486,8 +479,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             # inject once!
             if not self.injected_state:
                 self.inject_state(locals())
-                self.inject_draw_buttons(locals())
-                self.inject_sv_internal_links(locals())
+                self.inject_function(locals(), func_name="ui", end="pass")
+                self.inject_function(locals(), func_name="sv_internal_links")
             else:
                 locals().update(socket_info['setup_state'])
 
@@ -564,7 +557,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
 
             # user supplied custom draw function
-            f = snlite_info.get('drawfunc')
+            f = snlite_info.get('ui')
             if f:
                 f(self, context, layout)
 
