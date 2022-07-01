@@ -127,30 +127,25 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     is_animation_dependent = True
 
     def return_enumeration(self, enum_name=""):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets'][enum_name]
-            if enum_list:
+        if (ND := self.node_dict.get(hash(self))):
+            if (enum_list := ND['sockets'][enum_name]):
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
 
-    def custom_enum_func(self, context):
-        return self.return_enumeration(enum_name='custom_enum')
+    # def custom_enum_func(self, context):
+    #     return self.return_enumeration(enum_name='custom_enum')
 
-    def custom_enum_func_2(self, context):
-        return self.return_enumeration(enum_name='custom_enum_2')
+    # def custom_enum_func_2(self, context):
+    #     return self.return_enumeration(enum_name='custom_enum_2')
 
 
     def custom_callback(self, context, operator):
-        ND = self.node_dict.get(hash(self))
-        if ND:
+        if (ND := self.node_dict.get(hash(self))):
             ND['sockets']['callbacks'][operator.cb_name](self, context)
 
-
     def make_operator(self, new_func_name, force=False):
-        ND = self.node_dict.get(hash(self))
-        if ND:
+        if (ND := self.node_dict.get(hash(self))):
             callbacks = ND['sockets']['callbacks']
             if not (new_func_name in callbacks) or force:
                 # here node refers to an ast node (a syntax tree node), not a node tree node
@@ -213,10 +208,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     n_id: StringProperty(default='')
 
     custom_enum: bpy.props.EnumProperty(
-        items=custom_enum_func, description="custom enum", update=updateNode
+        items=lambda self, c: self.return_enumeration(enum_name='custom_enum'), description="enum 1", update=updateNode
     )
     custom_enum_2: bpy.props.EnumProperty(
-        items=custom_enum_func_2, description="custom enum 2", update=updateNode
+        items=lambda self, c: self.return_enumeration(enum_name='custom_enum_2'), description="enum 2", update=updateNode
     )
 
 
@@ -548,17 +543,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         if not tk or not tk.get('sockets'):
             return
 
-        snlite_info = tk['sockets']
-        if snlite_info:
+        if (snlite_info := tk['sockets']):
 
             # snlite supplied custom file handler solution
-            fh = snlite_info.get('display_file_handler')
-            if fh:
+            if (fh := snlite_info.get('display_file_handler')):
                 layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
 
             # user supplied custom draw function
-            f = snlite_info.get('ui')
-            if f:
+            if (f := snlite_info.get('ui')):
                 f(self, context, layout)
 
     def sv_draw_buttons(self, context, layout):
