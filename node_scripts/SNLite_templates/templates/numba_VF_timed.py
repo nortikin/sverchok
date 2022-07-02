@@ -6,7 +6,7 @@ out _faces s
 """
 
 from sverchok.utils.decorators_compilation import njit, numba_uncache
-from sverchok.utils.context_managers import timed
+from sverchok.utils.context_managers import timed # timepart
 # if other numba features are needed
 # from sverchok.dependencies import numba
 
@@ -27,3 +27,8 @@ for vlist, flist in zip(verts, faces):
         v, f = your_function(vlist, flist)
     _verts.append(v)
     _faces.append(f)
+
+# note,  util.context_managers.timepart allows you to time the duration of a context
+#
+# with timepart():
+#    your code ..
