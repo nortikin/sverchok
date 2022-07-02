@@ -42,13 +42,9 @@ READY_COLOR = (0, 0.6, 0.8)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
-
-defaults = [0] * 32
-
 template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils', 'templates']
 
-
-
+#defaults = [0] * 32
 
 class SNLITE_EXCEPTION(Exception): pass
 
