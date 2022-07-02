@@ -25,4 +25,4 @@ if not (data := cache.get("current_state")):
     data = some_long_calculation()
     cache["current_state"] = data 
 
-vout.append(data) 
+vout.append(data)
