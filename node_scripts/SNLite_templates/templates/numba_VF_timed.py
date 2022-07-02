@@ -28,7 +28,7 @@ for vlist, flist in zip(verts, faces):
     _verts.append(v)
     _faces.append(f)
 
-# note,  util.context_managers.timepart allows you to time the duration of a context
+# note,  sverchok.utils.context_managers.timepart allows you to time the duration of a context
 #
 # with timepart():
 #    your code ..
