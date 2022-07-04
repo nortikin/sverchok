@@ -3,8 +3,8 @@ in verts v
 """
 
 def my_operator(self, context):
-    # this will have a limited knowledge of the globally available vars
-    # import bpy   if you need stuff from bpy ..etc.
+    # this will have a limited knowledge of the globally available variables
+    # the aliases will be available. ( see self.snlite_aliases.keys())
     print(self, context, self.inputs['verts'].sv_get())
     return {'FINISHED'}
 
