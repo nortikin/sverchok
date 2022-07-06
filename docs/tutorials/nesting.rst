@@ -54,13 +54,15 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
 
 To know how many elements are in each socket's sublist, we can attach a ``List Length`` node. Each sublist represents a Level and it's values depends on how nested the level is. The default ``Level`` param of 1 will be sufficient for now.
 
-Two Perpendicular Lines
-=======================
+Two Parallel Lines
+==================
 
 verts
 -----
 
-Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like.
+Let's entertain the scenario above where a Node outputs two parallel
+"PolyLines", each with a different vertex and edge count. The data in that
+**vertex-socket** looks like.
 
 - ``A``. (abstract top level) ``vertices. 2`` is a ``list`` with 2 items
 - ``B``. zoom in, what's inside the "vertex_lists" data?::
