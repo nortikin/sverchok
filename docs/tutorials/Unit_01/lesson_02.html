@@ -99,7 +99,8 @@
 <p>Same as lesson 01.</p>
 <section id="lesson-02-a-circle">
 <h2>Lesson 02 - A Circle<a class="headerlink" href="#lesson-02-a-circle" title="Permalink to this heading">¶</a></h2>
-<p>This lesson will introduce the following nodes: <code class="docutils literal notranslate"><span class="pre">List</span> <span class="pre">Length,</span> <span class="pre">List</span> <span class="pre">Shift,</span> <span class="pre">List</span> <span class="pre">Zip,</span> <span class="pre">Formula</span></code>, and use nodes seen in Lesson 01.</p>
+<p>This lesson will introduce the following nodes: <code class="docutils literal notranslate"><span class="pre">List</span> <span class="pre">Length,</span> <span class="pre">List</span> <span class="pre">Shift,</span>
+<span class="pre">List</span> <span class="pre">Zip,</span> <span class="pre">List</span> <span class="pre">Join</span></code>, and use nodes seen in Lesson 01.</p>
 <p>This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or recreate it from scratch by cross referencing this image.</p>
 <p><img alt="former_final_image" src="https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png" /></p>
 <p><strong>A Circle</strong></p>
@@ -144,21 +145,16 @@
 </div></blockquote>
 <p><img alt="not_nested_enough" src="https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png" /></p>
 <p>If you have gone through the notes on nesting, then you’ll understand why we need another set of <em>Square Brackets</em> to produce a structure that the <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> node will understand <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">one</span> <span class="pre">object</span> <span class="pre">with</span> <span class="pre">one</span> <span class="pre">face</span></code>, it needs to be <code class="docutils literal notranslate"><span class="pre">[[[0,1,2,3]]]</span></code>.</p>
-<ol class="arabic simple" start="5">
-<li><p>Connect the output of <code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> into a <code class="docutils literal notranslate"><span class="pre">Formula</span></code> node to add Brackets (an extra level of nesting),</p></li>
-</ol>
-<ul class="simple">
-<li><p>type in <code class="docutils literal notranslate"><span class="pre">x</span></code> into the formula field</p></li>
-<li><p>the node will make one socket available</p></li>
-<li><p>press the <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> toggle</p></li>
-</ul>
+<p>5) Connect the output of <code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> into a <code class="docutils literal notranslate"><span class="pre">List</span> <span class="pre">Join</span></code> node (with
+pressed to add <code class="docutils literal notranslate"><span class="pre">Wrap</span></code> toggle) to add Brackets (an extra level of nesting).</p>
 <ol class="arabic simple" start="6">
-<li><p>Hook the output of <code class="docutils literal notranslate"><span class="pre">Formula</span></code> to the <code class="docutils literal notranslate"><span class="pre">Faces</span></code> socket of <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code>.</p></li>
+<li><p>Hook the output of <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">List</span></code> to the <code class="docutils literal notranslate"><span class="pre">Faces</span></code> socket of <code class="docutils literal notranslate"><span class="pre">Viewer</span> <span class="pre">Draw</span></code>.</p></li>
 </ol>
 <blockquote>
-<div><p><em>Note</em>: connect a Stethoscope also to the output of <code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> in order to see the generated list for yourself</p>
+<div><p><em>Note</em>: connect a Stethoscope also to the output of <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">List</span></code> in order to
+see the generated list for yourself</p>
 </div></blockquote>
-<p><img alt="using_range_node_one" src="https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png" /></p>
+<p><img alt="using_range_node_one" src="https://user-images.githubusercontent.com/28003269/177475219-ac549100-7de8-4310-ac2e-167eac3d8dd9.png" /></p>
 <p><strong>Generating the set of circular verts</strong></p>
 <p>The above takes care of automatically generating the face indices for any number of incoming vertices. Now we want to automate the creation of Vertices. The 4 verts we’ve had from the very beginning are already points on a circular path, we can make a change to <code class="docutils literal notranslate"><span class="pre">Number</span> <span class="pre">Range</span></code> node to finally see this Circle emerge.</p>
 <ul class="simple">
@@ -167,7 +163,7 @@
 <li><p>Set the <code class="docutils literal notranslate"><span class="pre">step</span></code> to <code class="docutils literal notranslate"><span class="pre">0.2</span></code> for example.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">2.0</span> <span class="pre">/</span> <span class="pre">0.2</span> <span class="pre">=</span> <span class="pre">10</span></code>, this means the Float Series node will now output ten values <code class="docutils literal notranslate"><span class="pre">[0.0,</span> <span class="pre">0.2,</span> <span class="pre">0.4,</span> <span class="pre">0.6,</span> <span class="pre">0.8,</span> <span class="pre">1.0,</span> <span class="pre">1.2,</span> <span class="pre">1.4,</span> <span class="pre">1.6,</span> <span class="pre">1.8]</span></code>. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)</p>
-<p><img alt="automatic_circle_from_plane" src="https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png" /></p>
+<p><img alt="automatic_circle_from_plane" src="https://user-images.githubusercontent.com/28003269/177475439-991c1248-0aa9-470e-bfa3-749f44335b4e.png" /></p>
 <p>You can see the beginnings of a circle.</p>
 <p><strong>Forcing an even spread of Vertices</strong></p>
 <p>Above we manually set the step to <code class="docutils literal notranslate"><span class="pre">0.2</span></code>, if you are as lazy as we are, then you’ll want to automate that. We will add nodes to do the calculation for us. Think about how you might do that. The formula is:</p>
@@ -193,7 +189,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You should see something like this, if not you can by now probably figure out what to do.
-<img alt="use_reciprocal" src="https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png" /></p>
+<img alt="use_reciprocal" src="https://user-images.githubusercontent.com/28003269/177476096-d4548e41-c2e2-4079-9ce8-40d87bbe8286.png" /></p>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>

@@ -55,7 +55,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="tutorials.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="Unit_01/lesson_01.html">Lesson 01 - A Plane</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Notes for Lesson 02 (Nesting)</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#two-perpendicular-lines">Two Perpendicular Lines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#two-parallel-lines">Two Parallel Lines</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#a-circle-and-a-cube">A Circle and a Cube</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#the-final-nail">The final nail</a></li>
 </ul>
@@ -142,11 +142,13 @@
 </ul>
 </div></blockquote>
 <p>To know how many elements are in each socket’s sublist, we can attach a <code class="docutils literal notranslate"><span class="pre">List</span> <span class="pre">Length</span></code> node. Each sublist represents a Level and it’s values depends on how nested the level is. The default <code class="docutils literal notranslate"><span class="pre">Level</span></code> param of 1 will be sufficient for now.</p>
-<section id="two-perpendicular-lines">
-<h2>Two Perpendicular Lines<a class="headerlink" href="#two-perpendicular-lines" title="Permalink to this heading">¶</a></h2>
+<section id="two-parallel-lines">
+<h2>Two Parallel Lines<a class="headerlink" href="#two-parallel-lines" title="Permalink to this heading">¶</a></h2>
 <section id="verts">
 <h3>verts<a class="headerlink" href="#verts" title="Permalink to this heading">¶</a></h3>
-<p>Let’s entertain the scenario above where a Node outputs two perpendicular “PolyLines”, each with a different vertex and edge count. The data in that <strong>vertex-socket</strong> looks like.</p>
+<p>Let’s entertain the scenario above where a Node outputs two parallel
+“PolyLines”, each with a different vertex and edge count. The data in that
+<strong>vertex-socket</strong> looks like.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">A</span></code>. (abstract top level) <code class="docutils literal notranslate"><span class="pre">vertices.</span> <span class="pre">2</span></code> is a <code class="docutils literal notranslate"><span class="pre">list</span></code> with 2 items</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">B</span></code>. zoom in, what’s inside the “vertex_lists” data?:</p>
