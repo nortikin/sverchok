@@ -8,7 +8,7 @@
 import collections
 
 def separate_loose(ve, pe):
-    verts, poly_edges = [], []
+    # verts, poly_edges = [], []
 
     # build links
     node_links = {}
@@ -42,6 +42,8 @@ def separate_loose(ve, pe):
             node_set.add(n)
 
     # create new meshes from sets, new_pe is the slow line.
+    verts = []
+    poly_edges = []
     if len(node_set_list) > 1:
 
         for node_set in node_set_list:
@@ -51,12 +53,10 @@ def separate_loose(ve, pe):
             new_pe = [[vert_dict[n] for n in fe]
                       for fe in pe
                       if fe[0] in node_set]
+            
             verts.append(new_vert)
             poly_edges.append(new_pe)
+        return verts, poly_edges
 
     elif node_set_list:  # no reprocessing needed
-
-        verts.append(ve)
-        poly_edges.append(pe)
-
-    return verts, poly_edges
+        return [ve], [pe]
