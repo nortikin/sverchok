@@ -1,4 +1,4 @@
-Mask To Index
+Index To Mask
 =============
 
 Functionality
