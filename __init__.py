@@ -67,22 +67,26 @@ if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
 from sverchok.core import sv_registration_utils, init_architecture, make_node_list
-from sverchok.core import reload_event, handle_reload_event
+from sverchok.core import interupted_activation_detected, reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
 from sverchok.utils.profile import profiling_startup
 
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
-node_list = make_node_list(nodes)
 
-if "bpy" in locals():
-    reload_event = True
-    node_list = handle_reload_event(nodes, imported_modules)
+if "nodes" not in locals():
+    raise interupted_activation_detected()
+else:
 
+    node_list = make_node_list(nodes)
 
-import bpy
-import sverchok
+    if "bpy" in locals():
+        reload_event = True
+        node_list = handle_reload_event(nodes, imported_modules)
+
+    import bpy
+    import sverchok
 
 def register():
     with profiling_startup():

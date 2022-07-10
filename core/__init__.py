@@ -112,6 +112,13 @@ def init_bookkeeping(sv_name):
     auto_gather_node_classes()
 
 
+activation_message = """\n
+** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
+** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
+"""
+def interupted_activation_detected():
+    return NameError(activation_message)
+
 
 undo_handler_node_count = {}
 undo_handler_node_count['sv_groups'] = 0
