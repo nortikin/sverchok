@@ -1,6 +1,8 @@
 ## Problem statement
 
-Please describe your problem here.
+Is the problem installation related? then `visit this page first <https://github.com/nortikin/sverchok#troubleshooting-installation-errors>`_.  
+
+For any other issues, or if the installation still failed; Please describe the problem here.
 
 ## Steps to reproduce
 
