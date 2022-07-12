@@ -30,37 +30,31 @@ def mask_converter_node(vertices=None,
                         faces_mask=None,
                         mode='BY_VERTEX',
                         include_partial=False):
-    out = {'vertices_mask': [], 'edges_mask': [], 'faces_mask': []}
-
     vertices = vertices or []
     edges = edges or []
     faces = faces or []
 
-    len_verts = len(vertices)
-    len_edges_verts = (max(i for e in edges for i in e) + 1) if edges else 0
-    len_faces_verts = (max(i for f in faces for i in f) + 1) if faces else 0
-    len_verts = max(len_verts, len_edges_verts, len_faces_verts)
-
-    vertices_mask = list(fixed_iter(vertices_mask, len_verts))
-    edges_mask = list(fixed_iter(edges_mask, len(edges)))
-    faces_mask = list(fixed_iter(faces_mask, len(faces)))
-
     if mode == 'BY_VERTEX':
+        len_verts = len(vertices)
+        len_edges_verts = (max(i for e in edges for i in e) + 1) if edges else 0
+        len_faces_verts = (max(i for f in faces for i in f) + 1) if faces else 0
+        len_verts = max(len_verts, len_edges_verts, len_faces_verts)
+
+        vertices_mask = list(fixed_iter(vertices_mask, len_verts))
         out_edges_mask, out_faces_mask = by_vertex(vertices_mask, edges, faces, include_partial)
         out_verts_mask = vertices_mask
     elif mode == 'BY_EDGE':
+        edges_mask = list(fixed_iter(edges_mask, len(edges)))
         out_verts_mask, out_faces_mask = by_edge(edges_mask, vertices, edges, faces, include_partial)
         out_edges_mask = edges_mask
     elif mode == 'BY_FACE':
+        faces_mask = list(fixed_iter(faces_mask, len(faces)))
         out_verts_mask, out_edges_mask = by_face(faces_mask, vertices, edges, faces, include_partial)
         out_faces_mask = faces_mask
     else:
         raise ValueError("Unknown mode: " + mode)
 
-    out['vertices_mask'] = out_verts_mask
-    out['edges_mask'] = out_edges_mask
-    out['faces_mask'] = out_faces_mask
-    return out
+    return out_verts_mask, out_edges_mask, out_faces_mask
 
 
 def by_vertex(verts_mask, edges, faces, include_partial):
@@ -202,7 +196,7 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
         for v, e, f, vm, em, fm in iter_data:
             out.append(mask_converter_node(v, e, f, vm, em, fm, self.mode, self.include_partial))
 
-        vm, em, fm = list(zip(*[d.values() for d in out]))
+        vm, em, fm = list(zip(*out))
         self.outputs['VerticesMask'].sv_set(vm)
         self.outputs['EdgesMask'].sv_set(em)
         self.outputs['FacesMask'].sv_set(fm)
