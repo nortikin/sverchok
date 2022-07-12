@@ -20,11 +20,9 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fixed_iter
-from sverchok.utils.handling_nodes import vectorize
 
 
-def mask_converter_node(*,
-                        vertices=None,
+def mask_converter_node(vertices=None,
                         edges=None,
                         faces=None,
                         vertices_mask=None,
@@ -197,19 +195,17 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
         edge_mask_s = self.inputs['EdgesMask'].sv_get(deepcopy=False, default=[[True]])
         face_mask_s = self.inputs['FacesMask'].sv_get(deepcopy=False, default=[[True]])
 
-        result = vectorize(mask_converter_node)(
-            vertices=vertices_s,
-            edges=edges_s,
-            faces=faces_s,
-            vertices_mask=verts_mask_s,
-            edges_mask=edge_mask_s,
-            faces_mask=face_mask_s,
-            mode=[self.mode],
-            include_partial=[self.include_partial])
+        out = []
+        data = [vertices_s, edges_s, faces_s, verts_mask_s, edge_mask_s, face_mask_s]
+        obj_n = max(map(len, data))
+        iter_data = zip(*[fixed_iter(d, obj_n, None) for d in data])
+        for v, e, f, vm, em, fm in iter_data:
+            out.append(mask_converter_node(v, e, f, vm, em, fm, self.mode, self.include_partial))
 
-        self.outputs['VerticesMask'].sv_set(result['vertices_mask'])
-        self.outputs['EdgesMask'].sv_set(result['edges_mask'])
-        self.outputs['FacesMask'].sv_set(result['faces_mask'])
+        vm, em, fm = list(zip(*[d.values() for d in out]))
+        self.outputs['VerticesMask'].sv_set(vm)
+        self.outputs['EdgesMask'].sv_set(em)
+        self.outputs['FacesMask'].sv_set(fm)
 
 
 def register():
