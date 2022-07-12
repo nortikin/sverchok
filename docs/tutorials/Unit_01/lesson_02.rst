@@ -10,7 +10,8 @@ Same as lesson 01.
 Lesson 02 - A Circle
 --------------------
 
-This lesson will introduce the following nodes: ``List Length, List Shift, List Zip, Formula``, and use nodes seen in Lesson 01.
+This lesson will introduce the following nodes: ``List Length, List Shift,
+List Zip, List Join``, and use nodes seen in Lesson 01.
 
 This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or recreate it from scratch by cross referencing this image.
 
@@ -65,15 +66,13 @@ before we go to point ``5``, you need to understand a thing called *Nesting*. we
 
 If you have gone through the notes on nesting, then you'll understand why we need another set of *Square Brackets* to produce a structure that the ``Viewer Draw`` node will understand ``as one object with one face``, it needs to be ``[[[0,1,2,3]]]``. 
 
-5) Connect the output of ``Number Range`` into a ``Formula`` node to add Brackets (an extra level of nesting), 
+5) Connect the output of ``Number Range`` into a ``List Join`` node (with
+pressed to add ``Wrap`` toggle) to add Brackets (an extra level of nesting).
 
-- type in ``x`` into the formula field
-- the node will make one socket available
-- press the ``Wrap`` toggle
+6) Hook the output of ``Join List`` to the ``Faces`` socket of ``Viewer Draw``.
 
-6) Hook the output of ``Formula`` to the ``Faces`` socket of ``Viewer Draw``.
-
-  *Note*: connect a Stethoscope also to the output of ``Number Range`` in order to see the generated list for yourself
+  *Note*: connect a Stethoscope also to the output of ``Join List`` in order to
+  see the generated list for yourself
 
 |using_range_node_one|
 
@@ -215,9 +214,9 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
 .. |not_nested_enough| image:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
-.. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
-.. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png
-.. |use_reciprocal| image:: https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png
+.. |using_range_node_one| image:: https://user-images.githubusercontent.com/28003269/177475219-ac549100-7de8-4310-ac2e-167eac3d8dd9.png
+.. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/28003269/177475439-991c1248-0aa9-470e-bfa3-749f44335b4e.png
+.. |use_reciprocal| image:: https://user-images.githubusercontent.com/28003269/177476096-d4548e41-c2e2-4079-9ce8-40d87bbe8286.png
 .. |right_click_menu| image:: https://user-images.githubusercontent.com/619340/82489407-e1830280-9ae1-11ea-97ef-e43d1d9914f8.png
 .. |minimized| image:: https://user-images.githubusercontent.com/619340/82501213-2fedcc80-9af5-11ea-94ca-39ef089b7756.png
 .. |current_final| image:: https://user-images.githubusercontent.com/619340/82545240-b090e500-9b56-11ea-9655-3647f59ce854.png

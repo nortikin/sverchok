@@ -17,16 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bmesh
 from bmesh.ops import unsubdivide
 import numpy as np
 from bpy.props import IntProperty, BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
+class SvUnsubdivideNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Unsubdivide vertices if possible '''
     bl_idname = 'SvUnsubdivideNode'
     bl_label = 'Unsubdivide'
@@ -53,6 +53,14 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket', 'bmesh_list')
         self.inputs['bmesh_list'].hide_safe = True
         self.outputs['bmesh_list'].hide_safe = True
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Vert'], self.outputs['Verts']),
+            (self.inputs['Poly'], self.outputs['Faces']),
+            (self.inputs['bmesh_list'], self.outputs['bmesh_list']),
+        ]
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'show_bmesh_list')

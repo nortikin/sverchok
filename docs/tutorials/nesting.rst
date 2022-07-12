@@ -34,9 +34,9 @@ If, for example, you want to generate edges between vertices, you reference the 
 
 If we want to generate an object composed of 3 edges from the above ``vertex list`` we would end up with an edge list similar to this::
 
-  edges_list = [(0, 1), (1, 2), (2, 3)]
+  edges_list = [(0, 1), (1, 2), (2, 0)]
 
-At a fundamental level sverchok works by using nodes to creat lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.
+At a fundamental level sverchok works by using nodes to create lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.
 
 This is why the nesting concept is fundamental in order to use Sverchok.
 
@@ -54,13 +54,15 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
 
 To know how many elements are in each socket's sublist, we can attach a ``List Length`` node. Each sublist represents a Level and it's values depends on how nested the level is. The default ``Level`` param of 1 will be sufficient for now.
 
-Two Perpendicular Lines
-=======================
+Two Parallel Lines
+==================
 
 verts
 -----
 
-Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like.
+Let's entertain the scenario above where a Node outputs two parallel
+"PolyLines", each with a different vertex and edge count. The data in that
+**vertex-socket** looks like.
 
 - ``A``. (abstract top level) ``vertices. 2`` is a ``list`` with 2 items
 - ``B``. zoom in, what's inside the "vertex_lists" data?::

@@ -143,6 +143,7 @@ limited_dissolve.py
 limited_dissolve_mk2.py
 mesh_separate_mk2.py
 symmetrize.py
+approx_subd_to_nurbs.py
 vd_attr_node_mk2.py
 scalar_field_point.py
 quads_to_nurbs.py
@@ -167,11 +168,15 @@ sun_position.py""".split("\n")
                     else:
                         bad_files.append(module_file)
 
+            category = dir_name
+            
             if known:
-                info("Category %s: Tolerating unexistance of the documentation for the following nodes for now:\n%s", dir_name, "\n".join(known))
+                explicitly_missing = "\n".join(known)
+                info(f"{category=}: Tolerating missing documentation for the following nodes for now:\n{explicitly_missing=}")
 
             if bad_files:
-                self.fail("Not all nodes of category `{}' have corresponding documentation; missing are:\n{}".format(dir_name, "\n".join(bad_files)))
+                missing = "\n".join(bad_files)
+                self.fail(f"Not all nodes of {category=} have corresponding documentation; \n{missing=}")
 
         for directory, subdirs, fnames in walk(nodes_dir):
             with self.subTest(directory=basename(directory)):

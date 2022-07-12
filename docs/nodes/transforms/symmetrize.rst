@@ -6,7 +6,7 @@ Functionality
 
 This node performs the standard Blender's "Symmetrize" transformation on the
 mesh. In general, it takes one half of the mesh, mirrors it relative to some
-plane, and then joins these two halfs together. Please refer to Blender_
+plane, and then joins these two halves together. Please refer to Blender_
 documentation for more precise description of the transformation.
 
 .. _Blender: https://docs.blender.org/manual/en/latest/modeling/meshes/editing/basics/symmetry.html#symmetrize

@@ -16,6 +16,7 @@ class TextViewerTest(EmptyTreeTestCase):
 
         # Trigger processing of Cylinder node
         cyl.process()
+        viewer_text.inputs[0].sv_set(cyl.outputs['Edges'].sv_get())
         # Invoke "VIEW" operator
         bpy.ops.node.sverchok_viewer_buttonmk1('EXEC_DEFAULT', treename=self.tree.name, nodename=viewer_text.name)
 

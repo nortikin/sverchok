@@ -19,7 +19,6 @@
 import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, no_space, enum_item as e)
 
 def frame_from_available(idx, layer):
@@ -59,12 +58,13 @@ def frame_from_available2(current_frame, layer):
     return inp_to_index.get(tval, 0)
 
 
-class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Asset Props '''
     bl_idname = 'SvGetAssetProperties'
     bl_label = 'Object ID Selector'
     bl_icon = 'SELECT_SET'
     sv_icon = 'SV_OBJECT_ID_SELECTOR'
+    is_animation_dependent = True
 
     def pre_updateNode(self, context):
         ''' must rebuild for each update'''
@@ -155,9 +155,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
         layout.prop(self, 'gp_pass_points', text='pass points')
 
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
-        self.draw_animatable_buttons(layout, icon_only=True)
         layout.row().prop(self, "Mode", text="data")
 
         if self.Mode == 'objects':

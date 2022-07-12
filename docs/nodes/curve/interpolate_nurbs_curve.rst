@@ -39,7 +39,7 @@ This node has the following parameters:
     package is installed.
   * **Sverchok**. Use built-in Sverchok implementation.
   
-  In general (with large nuber of control points), built-in implementation
+  In general (with large number of control points), built-in implementation
   should be faster; but Geomdl implementation is better tested.
   The default option is **Geomdl**, when it is available; otherwise, built-in
   implementation is used.

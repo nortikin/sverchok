@@ -38,7 +38,7 @@ mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
 
 def get_font(node):
     fonts = bpy.data.fonts
-    default = fonts.get('Bfont')
+    default = fonts.get('Bfont Regular') or fonts.get('Bfont')
 
     if node.font_pointer:
         return node.font_pointer
@@ -187,6 +187,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.sv_init_helper_basedata_name()
         self.inputs.new('SvStringsSocket', 'text')
         self.inputs.new('SvMatrixSocket', 'matrix')
+        self.outputs.new('SvObjectSocket', 'Objects')
 
     def draw_buttons(self, context, layout):
         self.draw_live_and_outliner(context, layout)
@@ -290,6 +291,10 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 obj.parent = bpy.data.objects[mtname]
             elif obj.parent:
                 obj.parent = None
+
+        if 'Objects' in self.outputs:
+            self.outputs['Objects'].sv_set(objs)
+
 
     def draw_label(self):
         return f"TV {self.basedata_name}"

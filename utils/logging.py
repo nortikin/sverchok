@@ -41,14 +41,18 @@ def catch_log_error():
 
 def log_error(err):
     """Should be used in except statement"""
-    frame, _, line, *_ = inspect.trace()[-1]
-    module = inspect.getmodule(frame)
-    name = module.__name__ or "<Unknown Module>"
-    try_initialize()
-    _logger = logging.getLogger(f'{name}:{line} ')
-    _logger.error(err)
-    if _logger.isEnabledFor(logging.DEBUG):
-        traceback.print_exc()
+    for frame, _, line, *_ in inspect.trace()[::-1]:
+        module = inspect.getmodule(frame)
+        if module is None:  # looks like frame points into non Python module
+            continue  # try to find the module before
+        else:
+            name = module.__name__ or "<Unknown Module>"
+            try_initialize()
+            _logger = logging.getLogger(f'{name}:{line} ')
+            _logger.error(err)
+            if _logger.isEnabledFor(logging.DEBUG):
+                traceback.print_exc()
+            break
 
 
 @contextmanager
@@ -241,7 +245,7 @@ def setLevel(level):
 
 
 def is_enabled_for(log_level="DEBUG") -> bool:
-    """This chek should be used for improving performance of calling disabled loggers"""
+    """This check should be used for improving performance of calling disabled loggers"""
     rates = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "EXCEPTION": 50}
     addon = bpy.context.preferences.addons.get(sverchok.__name__)
     current_level = rates.get(addon.preferences.log_level, 0)

@@ -125,6 +125,8 @@ class SvSeparatePartsToIndexes(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Edge index')
         self.outputs.new('SvStringsSocket', "Face index")
 
+    sv_internal_links = []
+
     def process(self):
         if not (self.inputs['Verts'].is_linked and (self.inputs['Edges'].is_linked or self.inputs['Faces'].is_linked)):
             return

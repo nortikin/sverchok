@@ -9,7 +9,7 @@ Making edges/polygons between vertices objects it several ways.
 Inputs
 ------
 
-Vertices. Multysockets can eat many objects. every object to be connecting with other.
+Vertices. Multisockets can eat many objects. every object to be connecting with other.
 
 Parameters
 ----------

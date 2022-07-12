@@ -24,9 +24,8 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty,
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
@@ -400,7 +399,8 @@ class SvProfileImportOperator(bpy.types.Operator):
 # Node class
 #################################
 
-class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: svg-like 2d profiles
     Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
@@ -474,7 +474,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         update = updateNode)
 
     def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
 
         row = layout.row(align=True)

@@ -1,7 +1,9 @@
 from itertools import chain
 from pathlib import Path
+from typing import Iterator
 
 import bpy
+from bpy.types import NodeTree
 import os
 from os.path import dirname, basename, join
 import unittest
@@ -14,9 +16,9 @@ import ast
 
 import sverchok
 from sverchok import old_nodes
-from sverchok.old_nodes import is_old
 from sverchok.data_structure import get_data_nesting_level
-from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
+from sverchok.core.socket_data import get_output_socket_data
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names
@@ -284,6 +286,15 @@ class SverchokTestCase(unittest.TestCase):
             yield new_tree
         finally:
             remove_node_tree(new_tree_name)
+
+    @contextmanager
+    def tree_from_file(self, file_name: str, tree_name: str) -> Iterator[NodeTree]:
+        path = join(get_tests_path(), "references", file_name)
+        link_node_tree(path, tree_name)
+        try:
+            yield get_node_tree(tree_name)
+        finally:
+            remove_node_tree(tree_name)
 
     def serialize_json(self, data):
         """

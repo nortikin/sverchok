@@ -18,19 +18,20 @@
 
 import bpy
 from bpy.props import StringProperty, EnumProperty, BoolProperty
-import bmesh
 from sverchok.utils.sv_bmesh_utils import *
 import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
-class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
     ''' UV texture node '''
     bl_idname = 'SvUVtextureNode'
     bl_label = 'UVtextures'
     bl_icon = 'MATERIAL'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
@@ -57,8 +58,7 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     uv: EnumProperty(items=avail_uvs, name="UV",
         description="Choose UV to load", update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'uv', text='uv')
 
     def UV(self, object, uv):

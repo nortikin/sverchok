@@ -20,16 +20,16 @@
 import bpy
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode)
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
-class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Get Object Data'''
     bl_idname = 'SvObjectToMeshNodeMK2'
     bl_label = 'Object ID Out MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_OUT'
+    is_animation_dependent = True
 
     replacement_nodes = [('SvGetObjectsData',
                           None,
@@ -55,8 +55,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         self.outputs.new('SvVerticesSocket', "PolygonNormals")
         self.outputs.new('SvMatrixSocket', "Matrices")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, "modifiers", text="Post modifiers")
 

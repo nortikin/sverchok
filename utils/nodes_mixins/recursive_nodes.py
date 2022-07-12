@@ -8,14 +8,13 @@ from bpy.props import EnumProperty
 from mathutils import Matrix
 from bpy.props import BoolProperty, IntVectorProperty
 from sverchok.utils.sv_itertools import process_matched
-from sverchok.core.socket_data import sentinel
 from sverchok.data_structure import (updateNode,
                                     list_match_func, numpy_list_match_modes,
                                     ensure_nesting_level, ensure_min_nesting)
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 DEFAULT_TYPES = {
-    'NONE': sentinel,
+    'NONE': ...,
     'EMPTY_LIST': [[]],
     'MATRIX': [Matrix()],
     'MASK': [[True]]
@@ -110,7 +109,7 @@ class SvRecursiveNode():
                 bmesh_list, other_param1, other_param2 = params
 
         creating the bmesh_list before matching improves performance a lot, but if
-        you are modifiying the bm in your function do it over a copy  -> bm.copy()
+        you are modifying the bm in your function do it over a copy  -> bm.copy()
 
 
     '''

@@ -19,10 +19,6 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D, draw_indices_2D_wbg
 
-# status colors
-FAIL_COLOR = (0.1, 0.05, 0)
-READY_COLOR = (1, 0.3, 0)
-
 
 def calc_median(vlist):
     a = Vector((0, 0, 0))
@@ -287,7 +283,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         if not self.id_data.sv_show:
             return True
 
-        self.use_custom_color = True
         if not (self.activate and self.inputs['verts'].is_linked):
             return True
 

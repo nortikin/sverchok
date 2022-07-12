@@ -3,7 +3,9 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.update_system import clear_system_cache, reset_timing_graphs
+import sverchok.core.events as ev
+from sverchok.core.event_system import handle_event
+from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
@@ -82,32 +84,26 @@ def sv_handler_undo_post(scene):
 
     undo_handler_node_count['sv_groups'] = 0
 
-    import sverchok.core.group_handlers as gh
-    gh.GroupContextTrees.reset_data()  # todo repeat the logic from main tree?
-
-    # ideally we would like to recalculate all from scratch
-    # but with heavy trees user can be scared of pressing undo button
-    # I consider changes in tree topology as most common case
-    # but if properties or work of some viewer node (removing generated objects) was effected by undo
-    # only recalculating of all can restore the adequate state of a tree
-    for tree in BlTrees().sv_main_trees:
-        tree.update()  # the tree could changed by undo event
-
 
 @persistent
 def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
+    Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+    Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+    Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+    Playing animation: has_frame_changed=True, is_animation_playing=True
+    Playing animation(stop): has_frame_changed=False, is_animation_playing=False
     """
-    if not has_frame_changed(scene):
-        return
+    is_playing = bpy.context.screen.is_animation_playing
+    is_frame_changed = has_frame_changed(scene)
+    # print(f"Frame changed: {is_frame_changed}, Animation is playing: {is_playing}")
 
-    for ng in sverchok_trees():
-        try:
-            # print('sv_update_handler')
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', str(e))  # name,
+    for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
+        with catch_log_error():
+            ng.process_ani(is_frame_changed, is_playing)
 
 
 @persistent
@@ -129,6 +125,15 @@ def sv_main_handler(scene):
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
     pre_running = False
+
+    # When the Play Animation is on this trigger is executed once. Such event
+    # should be suppressed because it repeats animation trigger. When Play
+    # animation is on and user changes something in the scene this trigger is
+    # only called if frame rate is equal to maximum.
+    if bpy.context.screen.is_animation_playing:
+        return
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()
 
 
 @persistent
@@ -152,15 +157,10 @@ def sv_pre_load(scene):
     3. post_load handler
     4. evaluate trees from main tree handler
     """
-    clear_system_cache()
+    clear_all_socket_cache()
     sv_clean(scene)
 
-    import sverchok.core.group_handlers as gh
-    gh.NodesStatuses.reset_data()
-    gh.GroupContextTrees.reset_data()
-    import sverchok.core.main_tree_handler as mh
-    mh.NodesStatuses.reset_data()
-    mh.ContextTrees.reset_data()
+    handle_event(ev.FileEvent())
 
 
 @persistent
@@ -223,7 +223,7 @@ handler_dict = {
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'depsgraph_update_pre': sv_main_handler,
 }
 
 

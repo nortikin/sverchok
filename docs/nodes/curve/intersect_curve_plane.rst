@@ -33,6 +33,9 @@ Parameters
 
 This node has the following parameters:
 
+* **NURBS**. If checked, the node will apply NURBS-specific algorithm for NURBS
+  and NURBS-like curves. This algorithm can be about 50% faster comparing to
+  generic algorithm. Unchecked by default.
 * **Init resolution**. Number of segments to subdivide the curve in. This
   defines the maximum number of intersection this node can potentially find.
   For example, if you set this to 1, but actually the curve intersects the

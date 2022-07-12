@@ -177,7 +177,7 @@ class SvSolidFaceSurface(SvSurface):
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         faces = self.face.toNurbs().Faces
         nurbs = faces[0].Surface
-        return SvFreeCadNurbsSurface(nurbs, face=faces[0])
+        return SvFreeCadNurbsSurface(nurbs, face=faces[0])#.copy(implementation=implementation)
 
     def get_min_continuity(self):
         s = self.surface.Continuity[1]
@@ -302,7 +302,7 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
         return SvFreeCadNurbsCurve(fc_curve)
 
-    def insert_knot(self, direction, parameter, count=1):
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
         surface = SvFreeCadNurbsSurface(self.surface.copy())
         tolerance = 1e-6
         if direction == 'U':

@@ -21,8 +21,6 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
 from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -41,7 +39,8 @@ mapper_funcs = {
     'Texture Matrix': lambda v, m: m @ v
 }
 
-class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Add texture to verts
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier
@@ -51,6 +50,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvDisplaceNodeMk2'
     bl_label = 'Texture Displace'
     bl_icon = 'MOD_DISPLACE'
+    is_scene_dependent = True
 
     out_modes = [
         ('NORMAL', 'Normal', 'Texture displacement along Vertex Normal', '', 1),
@@ -164,11 +164,10 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             c.label(text=socket.name+ ':')
             c.prop_search(self, "texture_pointer", bpy.data, 'textures', text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
             
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']
-        self.draw_animatable_buttons(layout, icon_only=True)
         c = layout.split(factor=0.5, align=False)
         r = c.column(align=False)
         r.label(text='Direction'+ ':')
@@ -182,8 +181,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             r.label(text='Channel'+ ':')
             r.prop(self, 'color_channel', expand=False, text='')
 
-
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
         self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)

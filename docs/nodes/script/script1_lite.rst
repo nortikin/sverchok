@@ -12,6 +12,12 @@ Sverchok itself.
 
 The script node implementation is intended for quick, non serious, experimentation.
 
+Keyboard Shortcuts
+------------------
+
+When a script is loaded in the SNLite node you can keep editing the script from the TextEditor.
+Instead of pressing the reload button the Node's UI you can press "Ctrl+Enter" while inside the TextEditor.
+
 Features
 --------
 
@@ -23,6 +29,15 @@ Features
 - You must declare an input socket, but outputs are optional.
 - You can set defaults for input numbers, vectors, and list sockets.
 - You can set the level of nestedness; means you don't need to unwrap/index stuff via code
+- You can use a dictionary per node instance, this allows you to store any data that can be produced at runtime. Get a `dict` and store states using these functions ::
+
+    # here self refers to the node and will be available at runtime.
+    dict = self.get_user_dict()
+    self.reset_user_dict()   # takes a boolean parameter "hard" to wipe the 
+    ...                      # dictionaries at the class-level (all instances)
+    ...                      # hard=True is useful for debugging.
+
+
 - You can append a UI drawing function to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
 - has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
@@ -58,6 +73,9 @@ you make them visible on the ui by doing::
     def ui(self, context, layout):
         layout.prop(self, 'custom_enum', expand=True)
         layout.prop(self, 'custom_enum_2', expand=True)
+        pass
+
+When adding a custom UI drawing function (as above) it's sometimes necessary to add an explicit ``pass`` or ``return`` "terminator" statement at the end, this is down to a bug i've not had time to track down yet. If you get unexplainable/illogical python errors with a `def ui`, then add a "terminator".
 
 in your code you might use them this way::
 

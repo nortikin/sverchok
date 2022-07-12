@@ -92,9 +92,16 @@ exist. Muting links connected to reroute nodes mutes also the link from opposite
 
 .. _`standard Blender functionality`: https://docs.blender.org/manual/en/latest/interface/controls/nodes/editing.html?#mute-links
 
+
+Muting nodes
+------------
+It's partly supported (not for all nodes yet). You are welcome to report if you
+find that some node is muting improperly.
+
 .. warning::
-    Muting nodes is not supported neither by Blender (Blender does not support muting nodes UI for custom trees) or
-    Sverchok. However Sverchok is moving slowly in the direction to make it possible.
+   Currently there are cases when internal inks of a node does not fit to how
+   data really paths through the node. It's limitation of Blender which API
+   does not give control of displaying internal links properly.
 
 
 .. _sv_triggers:
@@ -136,13 +143,6 @@ Node property / socket property changes
 `Update all` operator (:ref:`layout_manager`)
     It is the same as `re-update all nodes` operator but effect all trees in a file.
 
-.. _live_update_operator:
-
-Live update modal operator (:ref:`3d_panel`)
-    It makes update some nodes, which read information from Blender objects, via timer with update period
-    about 1/10 second. If the tree did not manage to update while this period next event will be ignored.
-    In this case there can be a visible lag between user action and tree response.
-
 Frame changes
     Update upon frame changes. Extra information `Animation`_.
 
@@ -152,18 +152,29 @@ Frame changes
     Also you can add shortcut for the operator by pressing :kbd:`RMB` on the button of the operator (active tree panel).
     Another way to update is enabling `Live update` mode. In this case only changed put of the tree will be updated.
 
+Scene changes
+    This trigger reacts on arbitrary changes in scene. Those can be: moving
+    objects, changing edit / object mode, mesh editing, assign materials etc.
+
 
 Modes (:ref:`active_tree_panel`)
 --------------------------------
 
 Live update
-    If enabled it means that the tree will be evaluated upon changes in topology or changes in properties of a node
-    made by user. This property does not effect evaluation upon frame changes or by `re-update all nodes` operator.
+    If enabled it means that the tree will be evaluated upon changes in its
+    topology, changes in node properties or scene changes made by user.
+    This property does not effect evaluation upon frame changes or by
+    `re-update all nodes` operator.
     Enabling the property will call the tree topology changes trigger.
 
 Animate
     If enabled the tree will be reevaluated upon frame change. The update can effect not all nodes but only those
     which have property `to_animate` enabled.
+
+Scene update
+    If enabled togather with Live Update the tree will be reevaluated upon
+    changes in the scene. It will effect only nodes with `interactive`
+    property enabled.
 
 
 Animation
@@ -183,9 +194,10 @@ enabled the node will be update each frame change. This can serve two purposes.
 
 - Firstly this can be used for generating animations. In this case
   :doc:`Frame info node <nodes/scene/frame_info_mk2>` will be most useful.
-- Secondly updating nodes upon frame change can be used for refreshing nodes which take data from Blender data blocks.
-  For frame change the left/right arrow buttons can be used. Alternative way is to use
-  :ref:`Live update operator <live_update_operator>`
+- **(Deprecated, the Scene trigger is used instead now)** Secondly updating
+  nodes upon frame change can be used for refreshing nodes which take data from
+  Blender data blocks. For frame change the left/right arrow buttons can be
+  used.
 
 
 .. warning::

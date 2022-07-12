@@ -129,60 +129,49 @@ def connected_edges_num(verts, edges):
 
 
 def adjacent_faces_number(edges, pols):
-    '''
+    """
     calculate number of adjacent faces
     edges: list as [edge, edge,..], being each edge [int, int].
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
     returns number of faces connected to each edge as [int, int,...]
-    '''
-    e_sorted = [sorted(e) for e in edges]
-    ad_faces = [0 for e in edges]
-    for pol in pols:
-        for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = sorted(edge)
-            if e_s in e_sorted:
-                idx = e_sorted.index(e_s)
-                ad_faces[idx] += 1
-    return ad_faces
+    """
+    return [len(face_indexes) for face_indexes in adjacent_faces_idx(edges, pols)]
+
 
 def adjacent_faces(edges, pols):
-    '''
+    """
     calculates of adjacent faces
     edges: list as [edge, edge,..], being each edge [int, int].
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
     returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
-    '''
-    e_sorted = [sorted(e) for e in edges]
-    ad_faces = [[] for e in edges]
-    for pol in pols:
-        for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = sorted(edge)
-            if e_s in e_sorted:
-                idx = e_sorted.index(e_s)
-                ad_faces[idx] += [pol]
-    return ad_faces
+    """
+    edge_to_adj_face = [[] for _ in edges]
+    for adj_faces, face_indexes in zip(edge_to_adj_face, adjacent_faces_idx(edges, pols)):
+        for fi in face_indexes:
+            adj_faces.append(pols[fi])
+    return edge_to_adj_face
+
 
 def adjacent_faces_idx(edges, pols):
-    '''
+    """
     calculates of adjacent faces
-    edges: list as [edge, edge,..], being each edge [int, int].
+    edges: list as [edge, edge,..], being each edge [int, int]. Optional, it can be empty lies
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
     returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
-    '''
-    e_sorted = [sorted(e) for e in edges]
+    """
+    edge_to_index = {tuple(sorted(e)): i for i, e in enumerate(edges)}
     ad_faces = [[] for e in edges]
     for p_idx, pol in enumerate(pols):
-        print(p_idx, pol)
         for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = sorted(edge)
+            e_s = tuple(sorted(edge))
             try:
-                e_idx = e_sorted.index(e_s)
-                ad_faces[e_idx].append(p_idx)
-            except ValueError:
+                e_idx = edge_to_index[e_s]
+            except KeyError:
                 pass
-
-
+            else:
+                ad_faces[e_idx].append(p_idx)
     return ad_faces
+
 
 def faces_angle_full(vertices, edges, faces):
     '''
@@ -200,31 +189,27 @@ def faces_angle_full(vertices, edges, faces):
 
 
 def faces_angle(normals, edges, pols):
-    '''
+    """
     angle between faces of each edge (only first two faces)
     normals: list as [vertex, vertex, ...], being each vertex Vector([float, float, float]).
     edges: list as [edge, edge,..], being each edge [int, int].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     returns angle of faces (in radians) connected to each edge as [int, int,...]
-    '''
-    ad_faces = adjacent_faces_number(edges, pols)
-    e_sorted = [sorted(e) for e in edges]
-    ad_faces = [[] for e in edges]
-    for idp, pol in enumerate(pols):
-        for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = sorted(edge)
-            if e_s in e_sorted:
-                idx = e_sorted.index(e_s)
-                ad_faces[idx].append(idp)
+    """
     angles = []
-    for edg in ad_faces:
-        if len(edg) > 1:
-            dot_p = Vector(normals[edg[0]]).dot(Vector(normals[edg[1]]))
-            ang = acos(dot_p)
+    for face_indexes in adjacent_faces_idx(edges, pols):
+        if len(face_indexes) > 1:
+            dot_p = Vector(normals[face_indexes[0]]).dot(Vector(normals[face_indexes[1]]))
+            if dot_p >= 1.0:
+                # Floating-point maths calculation error workaround
+                ang = 0.0
+            else:
+                ang = acos(dot_p)
         else:
             ang = 2*pi
         angles.append(ang)
     return angles
+
 
 def edges_normal(vertices, edges, faces):
     '''

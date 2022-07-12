@@ -13,6 +13,7 @@ from bmesh.ops import inset_individual, remove_doubles, inset_region
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, make_repeaters
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None,
@@ -299,7 +300,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
     return bm_out
 
 
-class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
+class SvInsetFaces(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Also can used as extrude
     Tooltip: Analog of Blender inset function
@@ -367,6 +368,15 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Faces')
         self.outputs.new('SvStringsSocket', 'Face data')
         self.outputs.new('SvStringsSocket', 'Mask').custom_draw = 'draw_mask_socket'
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[1]),
+            (self.inputs[2], self.outputs[2]),
+            (self.inputs[3], self.outputs[3]),
+        ]
 
     def draw_mask_socket(self, socket, context, layout):
         layout.prop(self, 'mask_type', expand=True)

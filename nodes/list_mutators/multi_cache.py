@@ -20,7 +20,7 @@ from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
     '''Clear Cache'''
-    bl_idname = "node.multy_cache_reset"
+    bl_idname = "node.multi_cache_reset"
     bl_label = "Multi Cache Reset"
 
     def sv_execute(self, context, node):
@@ -68,7 +68,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'pause_recording')
         layout.prop(self, 'unwrap')
-        self.wrapper_tracked_ui_draw_op(layout, "node.multy_cache_reset", icon='X', text="RESET")
+        self.wrapper_tracked_ui_draw_op(layout, "node.multi_cache_reset", icon='X', text="RESET")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Data')

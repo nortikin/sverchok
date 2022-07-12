@@ -20,7 +20,7 @@
 import bpy
 
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core import main_tree_handler
+import sverchok.core.tasks as ts
 
 
 class SvToggleProcess(bpy.types.Operator):
@@ -109,8 +109,8 @@ class PressingEscape(bpy.types.Operator):
     bl_label = 'Abort nodes updating'
 
     def execute(self, context):
-        if main_tree_handler.NodesUpdater.is_running():
-            main_tree_handler.NodesUpdater.cancel_task()
+        if ts.tasks:
+            ts.tasks.cancel()
         return {'FINISHED'}
 
     @classmethod
@@ -220,12 +220,6 @@ def add_keymap():
         nodeview_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new('node.zoom_to_node', 'Z', 'PRESS', alt=True)
-        nodeview_keymaps.append((km, kmi))
-
-        # 3D View
-        km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.sv_obj_modal_update', 'F5', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.mode='toggle'
         nodeview_keymaps.append((km, kmi))
 
 

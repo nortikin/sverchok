@@ -17,11 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathutils
 
-# from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_extended_curve_utils import get_points_bezier, get_points_nurbs, offset
 from sverchok.utils.modules.range_utils import frange_count
@@ -134,11 +131,13 @@ def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
     return radii
 
 
-class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Curve data in '''
     bl_idname = 'SvCurveInputNode'
     bl_label = 'Curve Input'
     bl_icon = 'ROOTCURVE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     mode_options = [(k, k, '', i) for i, k in enumerate(["LINEAR", "CATMUL"])]
@@ -158,8 +157,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         new_o_put("SvStringsSocket", "radii")
         new_o_put("SvMatrixSocket", "matrices")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'selected_mode', expand=True)
 
     def get_objects(self):

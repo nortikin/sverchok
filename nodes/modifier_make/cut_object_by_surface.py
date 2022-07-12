@@ -26,8 +26,10 @@ from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Cut object edges by surface
     Tooltip: Cut object's edges by surface

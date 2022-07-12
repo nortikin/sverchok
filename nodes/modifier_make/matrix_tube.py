@@ -19,10 +19,11 @@
 import bpy
 from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, Matrix_generate, updateNode)
+from sverchok.data_structure import (Vector_generate, Matrix_generate)
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixTubeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' takes a list of vertices and a list of matrices
         the vertices are to be joined in a ring, copied and transformed by the 1st matrix
         and this ring joined to the previous ring.
@@ -41,6 +42,10 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
+
+    @property
+    def sv_internal_links(self):
+        return [(self.inputs['Vertices'], self.outputs['Vertices'])]
 
     def process(self):
         if not self.outputs['Vertices'].is_linked:

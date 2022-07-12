@@ -8,35 +8,9 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_repeat
-
-import sverchok.utils.handling_nodes as hn
+from sverchok.data_structure import match_long_repeat, fixed_iter
 
 
-node = hn.WrapNode()
-
-node.props.factor = hn.NodeProperties(bpy.props.FloatProperty(
-        name="Factor", description="Split Factor",
-        default=0.5, min=0.0, soft_min=0.0, max=1.0))
-node.props.mirror = hn.NodeProperties(bpy.props.BoolProperty(
-        name="Mirror", description="Mirror split",
-        default=False))
-
-node.inputs.verts = hn.SocketProperties(
-    name='Vertices', socket_type=hn.SockTypes.VERTICES,
-    deep_copy=False, vectorize=False, mandatory=True)
-node.inputs.edges = hn.SocketProperties(
-    name='Edges', socket_type=hn.SockTypes.STRINGS,
-    deep_copy=False, vectorize=False, mandatory=True)
-node.inputs.factors = hn.SocketProperties(
-    name='Factor', socket_type=hn.SockTypes.STRINGS, 
-    prop=node.props.factor, deep_copy=False)
-
-node.outputs.verts = hn.SocketProperties(name='Vertices', socket_type=hn.SockTypes.VERTICES)
-node.outputs.edges = hn.SocketProperties(name='Edges', socket_type=hn.SockTypes.STRINGS)
-
-
-@hn.initialize_node(node)
 class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Split Edges '''
     bl_idname = 'SvSplitEdgesNode'
@@ -46,59 +20,91 @@ class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
     replacement_nodes = [('SvSplitEdgesMk3Node', None, None)]
 
+    factor: bpy.props.FloatProperty(
+        name="Factor", description="Split Factor",
+        default=0.5, min=0.0, soft_min=0.0, max=1.0,
+        update=lambda s, c: s.process_node(c))
+    mirror: bpy.props.BoolProperty(
+        name="Mirror", description="Mirror split",
+        default=False, update=lambda s, c: s.process_node(c))
+
+    def sv_init(self, context):
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Factor').prop_name = 'factor'
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mirror')
 
     def process(self):
+        verts = self.inputs['Vertices'].sv_get(default=[])
+        edges = self.inputs['Edges'].sv_get(default=[])
+        factor = self.inputs['Factor'].sv_get(deepcopy=False)
 
-        # sanitize the input
-        input_f = list(map(lambda f: min(1, max(0, f)), node.inputs.factors))
+        obj_n = max(len(verts), len(factor))
+        out_v = []
+        out_e = []
 
-        params = match_long_repeat([node.inputs.edges, input_f])
+        def vec(arr):
+            return fixed_iter(arr, obj_n, [])
 
-        offset = len(node.inputs.verts)
-        new_verts = list(node.inputs.verts)
-        new_edges = []
-        i = 0
-        for edge, f in zip(*params):
-            i0 = edge[0]
-            i1 = edge[1]
-            v0 = node.inputs.verts[i0]
-            v1 = node.inputs.verts[i1]
+        for v, e, f in zip(vec(verts), vec(edges), vec(factor)):
+            if not all((v, e)):
+                break
 
-            if node.props.mirror:
-                f = f / 2
+            # sanitize the input
+            input_f = list(map(lambda _f: min(1, max(0, _f)), f))
 
-                vx = v0[0] * (1 - f) + v1[0] * f
-                vy = v0[1] * (1 - f) + v1[1] * f
-                vz = v0[2] * (1 - f) + v1[2] * f
-                va = [vx, vy, vz]
-                new_verts.append(va)
+            params = match_long_repeat([e, input_f])
 
-                vx = v0[0] * f + v1[0] * (1 - f)
-                vy = v0[1] * f + v1[1] * (1 - f)
-                vz = v0[2] * f + v1[2] * (1 - f)
-                vb = [vx, vy, vz]
-                new_verts.append(vb)
+            offset = len(v)
+            new_verts = list(v)
+            new_edges = []
+            i = 0
+            for edge, f in zip(*params):
+                i0 = edge[0]
+                i1 = edge[1]
+                v0 = v[i0]
+                v1 = v[i1]
 
-                new_edges.append([i0, offset + i])  # v0 - va
-                new_edges.append([offset + i, offset + i + 1])  # va - vb
-                new_edges.append([offset + i + 1, i1])  # vb - v1
-                i = i + 2
+                if self.mirror:
+                    f = f / 2
 
-            else:
-                vx = v0[0] * (1 - f) + v1[0] * f
-                vy = v0[1] * (1 - f) + v1[1] * f
-                vz = v0[2] * (1 - f) + v1[2] * f
-                va = [vx, vy, vz]
-                new_verts.append(va)
+                    vx = v0[0] * (1 - f) + v1[0] * f
+                    vy = v0[1] * (1 - f) + v1[1] * f
+                    vz = v0[2] * (1 - f) + v1[2] * f
+                    va = [vx, vy, vz]
+                    new_verts.append(va)
 
-                new_edges.append([i0, offset + i])  # v0 - va
-                new_edges.append([offset + i, i1])  # va - v1
-                i = i + 1
+                    vx = v0[0] * f + v1[0] * (1 - f)
+                    vy = v0[1] * f + v1[1] * (1 - f)
+                    vz = v0[2] * f + v1[2] * (1 - f)
+                    vb = [vx, vy, vz]
+                    new_verts.append(vb)
 
-        node.outputs.verts = new_verts
-        node.outputs.edges = new_edges
+                    new_edges.append([i0, offset + i])  # v0 - va
+                    new_edges.append([offset + i, offset + i + 1])  # va - vb
+                    new_edges.append([offset + i + 1, i1])  # vb - v1
+                    i = i + 2
+
+                else:
+                    vx = v0[0] * (1 - f) + v1[0] * f
+                    vy = v0[1] * (1 - f) + v1[1] * f
+                    vz = v0[2] * (1 - f) + v1[2] * f
+                    va = [vx, vy, vz]
+                    new_verts.append(va)
+
+                    new_edges.append([i0, offset + i])  # v0 - va
+                    new_edges.append([offset + i, i1])  # va - v1
+                    i = i + 1
+
+            out_v.append(new_verts)
+            out_e.append(new_edges)
+
+        self.outputs['Vertices'].sv_set(out_v)
+        self.outputs['Edges'].sv_set(out_e)
 
 
 register, unregister = bpy.utils.register_classes_factory([SvSplitEdgesNode])

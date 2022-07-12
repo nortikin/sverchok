@@ -35,7 +35,8 @@ def make_euclidean_ts(pts):
 class SvCurveLengthSolver(object):
     def __init__(self, curve):
         self.curve = curve
-        self._spline = None
+        self._reverse_spline = None
+        self._prime_spline = None
 
     def calc_length_segments(self, tknots):
         vectors = self.curve.evaluate_array(tknots)
@@ -44,32 +45,72 @@ class SvCurveLengthSolver(object):
         return lengths
 
     def get_total_length(self):
-        if self._spline is None:
+        if self._reverse_spline is None:
             raise Exception("You have to call solver.prepare() first")
         return self._length_params[-1]
 
-    def prepare(self, mode, resolution=50):
+    def _calc_tknots_fixed(self, resolution):
         t_min, t_max = self.curve.get_u_bounds()
         tknots = np.linspace(t_min, t_max, num=resolution)
-        lengths = self.calc_length_segments(tknots)
-        self._length_params = np.cumsum(np.insert(lengths, 0, 0))
-        self._spline = self._make_spline(mode, tknots)
+        return tknots
 
-    def _make_spline(self, mode, tknots):
+    def _prepare_find(self, resolution, tolerance, tknots=None, lengths=None, length_params=None):
+        if tknots is None:
+            tknots = self._calc_tknots_fixed(resolution)
+        if lengths is None:
+            lengths = self.calc_length_segments(tknots)
+        if length_params is None:
+            length_params = np.cumsum(np.insert(lengths, 0, 0))
+
+        resolution2 = resolution * 2 - 1
+        tknots2 = self._calc_tknots_fixed(resolution2)
+        lengths2 = self.calc_length_segments(tknots2)
+        length_params2 = np.cumsum(np.insert(lengths2, 0, 0))
+        
+        dl = abs(length_params2[::2] - length_params)
+        if (dl < tolerance).all():
+            return tknots2, length_params2
+        else:
+            return self._prepare_find(resolution2, tolerance, tknots2, lengths2, length_params2)
+
+    def prepare(self, mode, resolution=50, tolerance=None):
+        if tolerance is None:
+            tknots = self._calc_tknots_fixed(resolution)
+            lengths = self.calc_length_segments(tknots)
+            self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        else:
+            tknots, self._length_params = self._prepare_find(resolution, tolerance)
+        self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+        self._prime_spline = self._make_spline(mode, self._length_params, tknots)
+
+
+    def _make_spline(self, mode, tknots, values):
         zeros = np.zeros(len(tknots))
-        control_points = np.vstack((self._length_params, tknots, zeros)).T
+        control_points = np.vstack((values, tknots, zeros)).T
         if mode == 'LIN':
-            spline = LinearSpline(control_points, tknots = self._length_params, is_cyclic = False)
+            spline = LinearSpline(control_points, tknots = values, is_cyclic = False)
         elif mode == 'SPL':
-            spline = CubicSpline(control_points, tknots = self._length_params, is_cyclic = False)
+            spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
         else:
             raise Exception("Unsupported mode; supported are LIN and SPL.")
         return spline
 
-    def solve(self, input_lengths):
-        if self._spline is None:
+    def calc_length(self, t_min, t_max):
+        if self._prime_spline is None:
             raise Exception("You have to call solver.prepare() first")
-        spline_verts = self._spline.eval(input_lengths)
+        lengths = self._prime_spline.eval(np.array([t_min, t_max]))
+        return lengths[1][1] - lengths[0][1]
+
+    def calc_length_params(self, ts):
+        if self._prime_spline is None:
+            raise Exception("You have to call solver.prepare() first")
+        spline_verts = self._prime_spline.eval(ts)
+        return spline_verts[:,1]
+
+    def solve(self, input_lengths):
+        if self._reverse_spline is None:
+            raise Exception("You have to call solver.prepare() first")
+        spline_verts = self._reverse_spline.eval(input_lengths)
         return spline_verts[:,1]
 
 class SvNormalTrack(object):
@@ -674,7 +715,7 @@ class SvIsoUvCurve(SvCurve):
             return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))
 
 class SvLengthRebuiltCurve(SvCurve):
-    def __init__(self, curve, resolution, mode='SPL'):
+    def __init__(self, curve, resolution, mode='SPL', tolerance=None):
         self.curve = curve
         self.resolution = resolution
         if hasattr(curve, 'tangent_delta'):
@@ -683,7 +724,7 @@ class SvLengthRebuiltCurve(SvCurve):
             self.tangent_delta = 0.001
         self.mode = mode
         self.solver = SvCurveLengthSolver(curve)
-        self.solver.prepare(self.mode, resolution)
+        self.solver.prepare(self.mode, resolution, tolerance=tolerance)
         self.u_bounds = (0.0, self.solver.get_total_length())
         self.__description__ = "{} rebuilt".format(curve)
 

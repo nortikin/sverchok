@@ -21,10 +21,12 @@ from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
 
-    def __init__(self, point, direction):
+    def __init__(self, point, direction, u_bounds=None):
         self.point = np.array(point)
         self.direction = np.array(direction)
-        self.u_bounds = (0.0, 1.0)
+        if u_bounds is None:
+            u_bounds = (0.0, 1.0)
+        self.u_bounds = u_bounds
 
     def __repr__(self):
         return f"<{self.point} - {self.point+self.direction}>"
@@ -33,6 +35,11 @@ class SvLine(SvCurve):
     def from_two_points(cls, point1, point2):
         direction = np.array(point2) - np.array(point1)
         return SvLine(point1, direction)
+    
+    def copy(self, u_bounds=None):
+        if u_bounds is None:
+            u_bounds = self.u_bounds
+        return SvLine(self.point, self.direction, u_bounds=u_bounds)
 
     def get_degree(self):
         return 1
@@ -47,12 +54,12 @@ class SvLine(SvCurve):
         ts = ts[np.newaxis].T
         return self.point + ts * self.direction
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         tg = self.direction
         n = np.linalg.norm(tg)
         return tg / n
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         tg = self.direction
         n = np.linalg.norm(tg)
         tangent = tg / n
@@ -74,14 +81,21 @@ class SvLine(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def split_at(self, t):
+        t_min, t_max = self.get_u_bounds()
+        curve1 = self.copy(u_bounds=(t_min, t))
+        curve2 = self.copy(u_bounds=(t, t_max))
+        return curve1, curve2
+
     def reverse(self):
         t_min, t_max = self.get_u_bounds()
         p1, p2 = self.evaluate(t_min), self.evaluate(t_max)
         return SvLine.from_two_points(p2, p1)
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
+        knotvector = sv_knotvector.generate(1, 2)
+        knotvector = sv_knotvector.rescale(knotvector, u_min, u_max)
         p1 = self.evaluate(u_min)
         p2 = self.evaluate(u_max)
         control_points = np.array([p1, p2])
@@ -97,6 +111,9 @@ class SvLine(SvCurve):
 
     def to_bezier_segments(self):
         return [self.to_bezier()]
+
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
 def rotate_radius(radius, normal, thetas):
     ct = np.cos(thetas)[np.newaxis].T
@@ -250,13 +267,13 @@ class SvCircle(SvCurve):
         #return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
         return self.center + rotate_radius(self.vectorx, self.normal, ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         x = - self.radius * sin(t)
         y = self.radius * cos(t)
         z = 0
         return self.matrix @ np.array([x, y, z])
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         xs = - self.radius * np.sin(ts)
         ys = self.radius * np.cos(ts)
         zs = np.zeros_like(xs)
@@ -392,35 +409,77 @@ class SvCircle(SvCurve):
             #curve = curve_segment(curve, t_min, t_max)
         return curve
 
-    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-        idxs = np.array(range(2*n+1), dtype=np.float64)
-        ts = pi * idxs / n
-        alpha = pi / n
-        rs = np.where(idxs % 2 == 0, 1.0, 1.0 / cos(alpha))
+    def to_nurbs_arc(self, n=4, t_min=None, t_max=None, implementation = SvNurbsMaths.NATIVE):
+        if t_min is None:
+            t_min = 0.0
+        if t_max is None:
+            t_max = 2*pi
 
-        xs = rs * np.cos(ts)
-        ys = rs * np.sin(ts)
-        zs = np.zeros((2*n+1,))
+        if t_max < t_min:
+            return self.to_nurbs_arc(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+        omega = t_max - t_min
+        alpha = pi / n
+        n_full_arcs = round(omega // (2*alpha))
+        small_arc_angle = omega % (2*alpha)
+
+        idxs_full = np.array(range(2*n_full_arcs+1), dtype=np.float64)
+        ts_full = pi * idxs_full / n + t_min
+        rs_full = np.where(idxs_full % 2 == 0, 1.0, 1.0 / cos(alpha))
+
+        xs_full = rs_full * np.cos(ts_full)
+        ys_full = rs_full * np.sin(ts_full)
+        zs_full = np.zeros_like(xs_full)
+
+        weights_full = np.where(idxs_full % 2 == 0, 1.0, cos(alpha))
+
+        knots_full = np.array(range(n_full_arcs+1), dtype=np.float64)
+        knots_full = 2*pi * knots_full / n + t_min
+        knots_full = np.repeat(knots_full, 2)
+
+        if small_arc_angle > 1e-6:
+            t_mid_small_arc = ts_full[-1] + small_arc_angle / 2.0
+            r_mid_small_arc = 1.0 / cos(small_arc_angle / 2.0)
+            x_mid_small_arc = r_mid_small_arc * cos(t_mid_small_arc)
+            y_mid_small_arc = r_mid_small_arc * sin(t_mid_small_arc)
+            z_mid_small_arc = 0.0
+
+            x_end = cos(t_max)
+            y_end = sin(t_max)
+            z_end = 0.0
+
+            xs = np.concatenate((xs_full, [x_mid_small_arc, x_end]))
+            ys = np.concatenate((ys_full, [y_mid_small_arc, y_end]))
+            zs = np.concatenate((zs_full, [z_mid_small_arc, z_end]))
+
+            weight_mid_small_arc = cos(small_arc_angle / 2.0)
+            weight_end = 1.0
+            weights = np.concatenate((weights_full, [weight_mid_small_arc, weight_end]))
+
+            knots = np.concatenate((knots_full, [t_max, t_max]))
+        else:
+            xs = xs_full
+            ys = ys_full
+            zs = zs_full
+
+            weights = weights_full
+            knots = knots_full
+
+        knots = np.concatenate(([knots[0]], knots, [knots[-1]]))
 
         control_points = np.stack((xs, ys, zs)).T
         control_points = self.radius * control_points
         control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
         control_points = self.center + control_points
 
-        weights = np.where(idxs % 2 == 0, 1.0, cos(alpha))
-
-        knots = [0.0]
-        for i in range(n+1):
-            t = i * 2*pi / n
-            knots.extend([t, t])
-        knots.append(2*pi)
-        knots = np.array(knots)
-
         degree = 2
         curve = SvNurbsMaths.build_curve(implementation,
                     degree, knots,
                     control_points, weights)
         return curve
+
+    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
+        return self.to_nurbs_arc(n=n, implementation=implementation)
 
     def reverse(self):
         circle = self.copy()
@@ -443,6 +502,10 @@ class SvCircle(SvCurve):
 
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
+
+#     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+#         t_min, t_max = self.get_u_bounds()
+#         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"
@@ -519,10 +582,10 @@ class SvEllipse(SvCurve):
         center = self.get_center()
         return center + vs
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         return self.tangent_array(np.array([t]))[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         xs = - self.a * np.sin(ts)
         ys = self.b * np.cos(ts)
         zs = np.zeros_like(xs)
@@ -530,10 +593,10 @@ class SvEllipse(SvCurve):
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
         return vs
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         xs = - self.a * np.cos(ts)
         ys = - self.b * np.sin(ts)
         zs = np.zeros_like(xs)
@@ -564,4 +627,7 @@ class SvEllipse(SvCurve):
         circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
         return circle.to_nurbs(implementation)
+
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 

@@ -8,7 +8,6 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from bpy.props import BoolProperty;
 
@@ -16,7 +15,8 @@ from bpy.props import BoolProperty;
 # pylint: disable=c0111
 # pylint: disable=c0103
 
-class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: SvCollectionPicker
@@ -28,6 +28,8 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_idname = 'SvCollectionPicker'
     bl_label = 'Collection Picker'
     bl_icon = 'GROUP'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def find_collections(self, object):
         return True
@@ -50,8 +52,7 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     def sv_init(self, context):
         self.outputs.new("SvObjectSocket", "Objects")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column()
         col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
         layout.prop(self, "show_all_objects")

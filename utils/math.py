@@ -298,6 +298,16 @@ def binomial(n,k):
         n -= 1
     return b
 
+def binomial_array(size, dtype=np.float64):
+    binom = np.zeros((size, size), dtype=dtype)
+    binom[:,0] = 1.0
+    for j in range(size):
+        binom[j,j] = 1.0
+    for n in range(2, size):
+        for k in range(1, n):
+            binom[n,k] = binom[n-1, k-1] + binom[n-1, k]
+    return binom
+
 def np_mixed_product(a, b, c):
     return np.dot(a, np.cross(b, c))
 
@@ -305,8 +315,9 @@ def np_signed_angle(a, b, normal):
     cross = np.cross(a, b)
     scalar = np.dot(cross, normal)
     sign = 1 if scalar >= 0 else -1
-    sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
-    alpha = asin(sin_alpha)
+    #sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
+    cos_alpha = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    alpha = acos(cos_alpha)
     return sign * alpha
 
 def np_vectors_angle(v1, v2):
@@ -316,7 +327,7 @@ def np_vectors_angle(v1, v2):
     return np.arccos(dot)
 
 def np_dot(u, v, axis=1):
-    'conveniece function to calculate dot vector between vector arrays'
+    '''convenience function to calculate dot vector between vector arrays'''
     return np.sum(u * v, axis=axis)
 
 def np_normalized_vectors(vecs):
@@ -372,3 +383,28 @@ def _gcd(a, b):
     while b:
         a, b = b, a%b
     return a
+
+def distribute_int(n, sizes):
+    total_size = sum(sizes)
+    ratios = [size / total_size for size in sizes]
+    counts = [int(n * ratio) for ratio in ratios]
+    count_good = sum(counts)
+    count_left = n - count_good
+    for idx in np.argsort(sizes)[::-1]:
+        if count_left == 0:
+            break
+        counts[idx] += 1
+        count_left -= 1
+    return counts
+
+def cmp(a, b):
+    return int(a > b) - int(a < b)
+
+def cartesian_product(*arrays):
+    la = len(arrays)
+    dtype = np.result_type(*arrays)
+    arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
+    for i, a in enumerate(np.ix_(*arrays)):
+        arr[...,i] = a
+    return arr.reshape(-1, la)
+

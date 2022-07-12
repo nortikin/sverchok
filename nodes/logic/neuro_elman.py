@@ -22,7 +22,6 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import handle_read, handle_write
 
@@ -164,7 +163,7 @@ class SvNeuroElman:
         prop['wB'] = weights_b
 
 
-class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     ''' 
         Triggers: Neuro Elman 1 Layer 
         Tooltip: Join ETALON data - after animation learning - disconnect ETALON
@@ -174,7 +173,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_label = '*Neuro Elman 1 Layer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_NEURO'
-
+    is_animation_dependent = True
     elman = None
 
     k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Learning rate")
@@ -202,8 +201,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.inputs.new('SvStringsSocket', "etalon")
         self.outputs.new('SvStringsSocket', "result")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         handle_name = self.name + self.id_data.name
 
         col_top = layout.column(align=True)

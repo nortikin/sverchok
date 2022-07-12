@@ -148,16 +148,16 @@ class SvNumberNode(Show3DProperties, DraftMode, bpy.types.Node, SverchCustomTree
             if not self.inputs[0].links:
                 value = getattr(self, prop_name)
                 if kind == 'float':
-                    label = 'Float: ' + str(round(value, 3))
+                    label = f"Float: {value:.3f}"
                 else:
-                    label = 'Int: ' + str(value)
+                    label = f"Int: {value}"
             else:
                 label = kind.title()
         else:
             label = self.label or self.name
 
         if self.id_data.sv_draft:
-            label = "[D] " + label
+            label = f"[D] {label}"
 
         return label
 

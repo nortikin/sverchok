@@ -20,7 +20,6 @@ import bpy
 
 import sverchok
 from sverchok.utils import profile
-from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.handle_blender_data import BlTrees
@@ -38,7 +37,7 @@ class SverchokPanels:
 
 class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ToolsMenu"
-    bl_label = f"Tree properties ({version_and_sha})"
+    bl_label = f"Tree properties"
     bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 
@@ -67,6 +66,7 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         col.use_property_split = True
         col.prop(ng, 'sv_show', text="Viewers", icon=f"RESTRICT_VIEW_{'OFF' if ng.sv_show else 'ON'}")
         col.prop(ng, 'sv_animate', text="Animation", icon='ANIM')
+        col.prop(ng, 'sv_scene_update', text="Scene", icon='SCENE_DATA')
         col.prop(ng, 'sv_process', text="Live update", toggle=True)
         col.prop(ng, "sv_draft", text="Draft mode", toggle=True)
 
@@ -181,11 +181,12 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
         # buttons
         row = row.row(align=True)
         row.alignment = 'RIGHT'
-        row.ui_units_x = 4.5
+        row.ui_units_x = 5.5
         row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
         row.prop(tree, 'sv_show', icon= f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
         row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
-        row.prop(tree, "sv_process", toggle=True, text="P")
+        row.prop(tree, 'sv_scene_update', icon='SCENE_DATA', text=' ')
+        row.prop(tree, "sv_process", toggle=True, text="L")
         row.prop(tree, "sv_draft", toggle=True, text="D")
 
     def filter_items(self, context, data, prop_name):
@@ -329,13 +330,6 @@ def node_show_tree_mode(self, context):
         layout.label(text=message, icon=icon)
 
 
-def view3d_show_live_mode(self, context):
-    if context.scene.SvShowIn3D_active:
-        layout = self.layout
-        OP = 'wm.sv_obj_modal_update'
-        layout.operator(OP, text='Stop Live Update', icon='CANCEL').mode = 'end'
-
-
 sv_tools_classes = [
     SV_PT_ToolsMenu,
     SV_PT_ActiveTreePanel,
@@ -353,26 +347,15 @@ sv_tools_classes = [
 
 
 def register():
-    bpy.types.Scene.SvShowIn3D_active = bpy.props.BoolProperty(
-        name='update from 3dview',
-        default=False,
-        description='Allows updates directly to object-in nodes from 3d panel')
-
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
     bpy.types.Scene.ui_list_selected_tree = bpy.props.IntProperty()  # Pointer to selected item in list of trees
 
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
-    bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
 
 
 def unregister():
     del bpy.types.Scene.ui_list_selected_tree
 
-    for class_name in reversed(sv_tools_classes):
-        bpy.utils.unregister_class(class_name)
-
-    del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
-    bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)

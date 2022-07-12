@@ -47,7 +47,7 @@ This node has the following parameters:
 * **Search Best**. If checked, the node will try to find global maximum or
   minimum. Otherwise, the node will return all points it managed to find.
 * **Method**. This parameter is available in the N panel only. The algorithm
-  used to find the exterme point. The available values are:
+  used to find the extreme point. The available values are:
 
    * L-BFGS-B
    * Conjugate Gradient

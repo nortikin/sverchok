@@ -56,7 +56,7 @@ class ShaderLib2D():
         self.addc(new_colors)
         self.addi([[offset + i for i in tri] for tri in new_indices])
 
-    def add_rect(self, x, y, w, h, color):
+    def add_rect(self, x, y, w, h, color, color2=False):
         """
         b - c
         | / |
@@ -69,11 +69,63 @@ class ShaderLib2D():
         c = (x + w, y - h)
         d = (x + w, y)
 
+        colors = [color for _ in range(4)]
+        if color2:
+            colors = [color, color2, color2, color]
+
         self.add_data(
             new_vectors=[a, b, c, d], 
-            new_colors=[color for _ in range(4)],
+            new_colors=colors,
             new_indices=[[0, 1, 2], [0, 2, 3]]
         )
+
+    def add_rect_outline(self, x, y, w, h, thickness, direction, color):
+        """
+        direction: outside, inside, both
+        """
+        if self.can_use_cache: return
+
+        TH = thickness / 2.0
+        T = thickness
+
+
+        if direction == "inside":
+            a = (x, y)
+            b = (x, y - h)
+            c = (x + w, y - h)
+            d = (x + w, y)
+            e = a[0]+T, a[1]-T
+            f = b[0]+T, b[1]+T
+            g = c[0]-T, c[1]+T
+            h = d[0]-T, d[1]-T
+        elif direction == "outside":
+            e = (x, y)
+            f = (x, y - h)
+            g = (x + w, y - h)
+            h = (x + w, y)
+            a = e[0]-T, e[1]+T
+            b = f[0]-T, f[1]-T
+            c = g[0]+T, g[1]-T
+            d = h[0]+T, h[1]+T
+        else:
+            a = x-TH, y+TH
+            b = x-TH, y-h-TH
+            c = x+w+TH, y-h-TH
+            d = x+w+TH, y+TH
+            e = x+TH, y-TH
+            f = x+TH, y-h+TH
+            g = x+w-TH, y-h+TH
+            h = x+w-TH, y-TH
+
+        A, B, C, D, E, F, G, H = 0, 1, 2, 3, 4, 5, 6, 7
+        self.add_data(
+            new_vectors=[a, b, c, d, e, f, g, h], 
+            new_colors=[color for _ in range(8)],
+            new_indices=[
+                [A, E, F], [A, F, B], [B, F, G], [B, G, C], 
+                [C, G, H], [C, H, D], [D, H, E], [D, E, A]]
+        )
+
 
     def add_rect_rounded(self, x, y, w, h, color, r=0, precision=5):
         xa = x - r       ;   ya = y + h

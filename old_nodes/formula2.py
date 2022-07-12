@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import parser
 from math import (
     acos, acosh, asin, asinh, atan, atan2,
     atanh, ceil, copysign, cos, cosh, degrees, e,
@@ -29,6 +28,7 @@ from math import (
 import bpy
 from bpy.props import BoolProperty, StringProperty
 
+from sverchok.utils.modules.parser_subset import parser
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     updateNode, multi_socket, changable_sockets,

@@ -36,15 +36,14 @@ def range_step_stop(start, stop, step, n_type, out_numpy):
 def range_stop_count(start, stop, count, n_type, out_numpy):
     ''' Gives count total values in [start,stop] '''
     # we are casting to int here because the input can be floats.
-    result = np.linspace(start, stop, num=count, dtype=n_type)
+    result = np.linspace(start, stop, num=int(count), dtype=n_type)
     return result if out_numpy else result.tolist()
 
 
 def range_step_count(start, step, count, n_type, out_numpy):
     ''' Gives count values with step from start'''
     stop = start + step * (count-1)
-    result = np.linspace(start, stop, num=count, dtype=n_type)
-
+    result = np.linspace(start, stop, num=int(count), dtype=n_type)
     return result if out_numpy else result.tolist()
 
 

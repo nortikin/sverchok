@@ -14,6 +14,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 Modes = namedtuple('Modes', ['even', 'length', 'average'])
@@ -248,7 +249,7 @@ def calc_average_length(bm, faces):
     return edge_lengths
 
 
-class SvFollowActiveQuads(bpy.types.Node, SverchCustomTreeNode):
+class SvFollowActiveQuads(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: UV unwrapping
 
@@ -287,6 +288,13 @@ class SvFollowActiveQuads(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Face mask")
         self.outputs.new('SvVerticesSocket', 'UV verts')
         self.outputs.new('SvStringsSocket', "UV faces")
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[1]),
+        ]
 
     def process(self):
         if not all([sock.is_linked for sock in list(self.inputs)[:2]]):

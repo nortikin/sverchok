@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Matrix, Vector
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, truncate_vertices
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvClipVertsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Clip / Truncate Vertices
     Tooltip: Clip all vertices of the mesh
@@ -55,7 +55,7 @@ class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
         edges_out = []
         faces_out = []
         for verts, edges, faces in zip_long_repeat(verts_s, edges_s, faces_s):
-            bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
+            bm = bmesh_from_pydata(verts, edges, faces, normal_update=True, index_edges=True)
             new_bm = truncate_vertices(bm)
             bm.free()
             new_verts, new_edges, new_faces = pydata_from_bmesh(new_bm)

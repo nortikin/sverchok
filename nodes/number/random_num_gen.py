@@ -99,7 +99,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         "LOG_NORMAL":    (11, np.random.lognormal,            [6, 1, 0],    True,  "Log Normal",            (1e-06, 1e-06)),
         "LOG_SERIES":    (12, np.random.logseries,            [3, 0],       True,  "Log Series",            (1e-06, 1e-06)),
         "NEG_BINOMIAL":  (13, np.random.negative_binomial,    [1, 3, 0],    True,  "Negative Binomial",     (1e-06, 1e-06)),
-        "NONCEN_CHI_SQ": (14, np.random.noncentral_chisquare, [1, 2, 0],    True,  "Noncentred Chi-Square", (1e-06, 1e-06)),
+        "NONCEN_CHI_SQ": (14, np.random.noncentral_chisquare, [1, 2, 0],    True,  "Noncentered Chi-Square", (1e-06, 1e-06)),
         "NORMAL":        (15, np.random.normal,               [6, 6, 0],    True,  "Normal",                (1e-06, 1e-06)),
         "PARETO":        (16, np.random.pareto,               [1, 0],       True,  "Pareto",                (0.01,  1e-06)),
         "POISSON":       (17, np.random.poisson,              [6, 0],       True,  "Poisson",               (1e-06, 1e-06)),
