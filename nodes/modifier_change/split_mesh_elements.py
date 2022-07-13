@@ -14,9 +14,9 @@ from sverchok.nodes.list_masks.mask_convert import mask_converter_node
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fixed_iter
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
-# my guess is that any of such functions should not modifier input data
 def split_mesh_elements_node(vertices=None,
                              edges=None,
                              faces=None,
@@ -34,7 +34,14 @@ def split_mesh_elements_node(vertices=None,
     mask = mask or []
 
     if split_type == 'VERTS':
-        vs, es, fs, fds = split_by_vertices(vertices, edges, faces, mask)
+        if mask_mode != 'BY_VERTEX':
+            mask, _, _ = mask_converter_node(
+                vertices, edges, faces,
+                edges_mask=mask if mask_mode == 'BY_EDGE' else None,
+                faces_mask=mask if mask_mode == 'BY_FACE' else None,
+                mode=mask_mode)
+
+        vs, es, fs, fds = split_by_vertices(vertices, edges, faces, mask, face_data)
     elif split_type == 'EDGES':
 
         if mask_mode != 'BY_EDGE':
@@ -51,7 +58,12 @@ def split_mesh_elements_node(vertices=None,
     return vs, es, fs, fds
 
 
-def split_by_vertices(verts, edges=None, faces=None, selected_verts: List[bool] = None):
+def split_by_vertices(verts,
+                      edges=None,
+                      faces=None,
+                      selected_verts: List[bool] = None,
+                      face_data=None):
+    """it ignores edges for now"""
     edges = edges or []
     faces = faces or []
     selected_verts = selected_verts or [True] * len(verts)
@@ -73,7 +85,8 @@ def split_by_vertices(verts, edges=None, faces=None, selected_verts: List[bool] 
                     old_new_verts[i] = len(out_verts) - 1
                     new_face.append(len(out_verts) - 1)
         out_faces.append(new_face)
-    return out_verts, [], out_faces, []
+    out_edges = polygons_to_edges_np([out_faces], unique_edges=True)[0]
+    return out_verts, out_edges, out_faces, face_data
 
 
 def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges: List[bool] = None):
