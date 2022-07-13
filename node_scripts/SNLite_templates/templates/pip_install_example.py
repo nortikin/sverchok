@@ -1,5 +1,5 @@
 """
-in package t
+in package s
 """
 
 import sys
@@ -14,7 +14,7 @@ def install_package(package):
 def install_whl(package_path):
     subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", f"{package_path}"])
     
-
+'''
 if __name__ == '__main__':
     ## install_package(['--upgrade', 'pip']) # <-- may not be needed
     # install_package('pandas')
@@ -25,3 +25,4 @@ if __name__ == '__main__':
     # install_package('geopandas')
     # install_package('pygeos')   # <-- optional
     # install_package('shapely')  # <-- optional
+'''
