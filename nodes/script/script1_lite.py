@@ -151,6 +151,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 # here node refers to an ast node (a syntax tree node), not a node tree node
                 ast_node = self.get_node_from_function_name(new_func_name)
                 code = self.extract_code(ast_node, joined=True)
+                # locals().update(self.make_new_locals())  # maybe..
+                locals().update(self.snlite_aliases)
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
 
@@ -438,10 +440,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             func = local_variables.get(func_name)
             local_variables['socket_info'][func_name] = func
 
-    def process_script(self):
-        __local__dict__ = self.make_new_locals()
-        locals().update(__local__dict__)
-        locals().update({
+    @property
+    def snlite_aliases(self):
+        return {
             'vectorize': vectorize,
             'bpy': bpy,
             'np': np,
@@ -454,7 +455,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
-        })
+        }
+
+    def process_script(self):
+        __local__dict__ = self.make_new_locals()
+        locals().update(__local__dict__)
+        locals().update(self.snlite_aliases)
 
         for output in self.outputs:
             locals().update({output.name: []})
