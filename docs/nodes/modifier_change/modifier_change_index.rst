@@ -46,3 +46,4 @@ Modifier Change
    rigid_origami
    flat_geometry
    edgenet_to_paths
+   split_mesh_elements

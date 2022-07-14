@@ -15,6 +15,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fixed_iter
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 def split_mesh_elements_node(vertices=None,
@@ -66,7 +67,10 @@ def split_by_vertices(verts,
     """it ignores edges for now"""
     edges = edges or []
     faces = faces or []
-    selected_verts = selected_verts or [True] * len(verts)
+    if not selected_verts:
+        selected_verts = [True] * len(verts)
+    elif len(selected_verts) != len(verts):
+        selected_verts = list(fixed_iter(selected_verts, len(verts)))
 
     out_verts = []
     out_faces = []
@@ -101,11 +105,11 @@ def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges
         return v, e, f, fd
 
 
-class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
+class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers:
+    Triggers: split rip separate
 
-    todo
+    Split selected mesh elements from each other
     """
     bl_idname = 'SvSplitMeshElements'
     bl_label = 'Split mesh elements'
@@ -130,27 +134,18 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Faces')
-        self.inputs.new('SvStringsSocket', 'Face_data')
+        self.inputs.new('SvStringsSocket', 'FaceData')
         self.inputs.new('SvStringsSocket', 'Mask').custom_draw = 'draw_mask_socket'
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
-        self.outputs.new('SvStringsSocket', 'Face_data')
-
-    @property
-    def sv_internal_links(self):
-        return [
-            (self.inputs[0], self.outputs[0]),
-            (self.inputs[1], self.outputs[1]),
-            (self.inputs[2], self.outputs[2]),
-            (self.inputs[3], self.outputs[3]),
-        ]
+        self.outputs.new('SvStringsSocket', 'FaceData')
 
     def process(self):
         vertices = self.inputs['Vertices'].sv_get(deepcopy=False, default=[])
         edges = self.inputs['Edges'].sv_get(deepcopy=False, default=[])
         faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])
-        face_data = self.inputs['Face_data'].sv_get(deepcopy=False, default=[])
+        face_data = self.inputs['FaceData'].sv_get(deepcopy=False, default=[])
         mask = self.inputs['Mask'].sv_get(deepcopy=False, default=[])
 
         out = []
@@ -164,7 +159,7 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Vertices'].sv_set(vs)
         self.outputs['Edges'].sv_set(es)
         self.outputs['Faces'].sv_set(fs)
-        self.outputs['Face_data'].sv_set(fds)
+        self.outputs['FaceData'].sv_set(fds)
 
 
 register, unregister = bpy.utils.register_classes_factory([SvSplitMeshElements])
