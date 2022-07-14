@@ -185,7 +185,8 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
-        self.inputs.new('SvStringsSocket', 'text')
+
+        self.sv_new_input('SvStringsSocket', 'text', quick_link_to_node="SvSimpleTextNode")
         self.inputs.new('SvMatrixSocket', 'matrix')
         self.outputs.new('SvObjectSocket', 'Objects')
 
