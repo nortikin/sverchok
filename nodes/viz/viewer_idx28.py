@@ -196,8 +196,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
                 # ensure they are Matrix() multiplied
                 for obj_index, verts in enumerate(input_stream):
-                    if obj_index < len(geom.matrix):
-                        matrix = geom.matrix[obj_index]
+                    if geom.matrix:
+                        matrix_index = obj_index if obj_index < len(geom.matrix) else -1
+                        matrix = geom.matrix[matrix_index]    
                         input_stream[obj_index] = [matrix @ v for v in verts]
 
             setattr(geom, socket, input_stream)
