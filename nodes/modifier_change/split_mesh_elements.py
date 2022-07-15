@@ -16,6 +16,7 @@ from sverchok.data_structure import updateNode, fixed_iter
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+from sverchok.utils.island_mesh import IslandMesh
 
 
 def split_mesh_elements_node(vertices=None,
@@ -27,7 +28,7 @@ def split_mesh_elements_node(vertices=None,
                              split_type='VERTS'):
 
     if not vertices:
-        return [], [], [], []
+        return [], [], [], [], [], []
 
     edges = edges or []
     faces = faces or []
@@ -42,7 +43,7 @@ def split_mesh_elements_node(vertices=None,
                 faces_mask=mask if mask_mode == 'BY_FACE' else None,
                 mode=mask_mode)
 
-        vs, es, fs, fds = split_by_vertices(vertices, edges, faces, mask, face_data)
+        vs, es, fs, vi, ei, fi = split_by_vertices(vertices, edges, faces, mask)
     elif split_type == 'EDGES':
 
         if mask_mode != 'BY_EDGE':
@@ -52,20 +53,18 @@ def split_mesh_elements_node(vertices=None,
                 faces_mask=mask if mask_mode == 'BY_FACE' else None,
                 mode=mask_mode)
 
-        vs, es, fs, fds = split_by_edges(vertices, edges, faces, face_data, mask)
+        vs, es, fs, vi, ei, fi = split_by_edges(vertices, edges, faces, face_data, mask)
     else:
         raise TypeError(f'Unknown "split_typ" mode = {split_type}')
 
-    return vs, es, fs, fds
+    return vs, es, fs, vi, ei, fi
 
 
 def split_by_vertices(verts,
                       edges=None,
                       faces=None,
-                      selected_verts: List[bool] = None,
-                      face_data=None):
-    """it ignores edges for now"""
-    edges = edges or []
+                      selected_verts: List[bool] = None):
+    """it ignores edges without faces currently"""
     faces = faces or []
     if not selected_verts:
         selected_verts = [True] * len(verts)
@@ -73,6 +72,7 @@ def split_by_vertices(verts,
         selected_verts = list(fixed_iter(selected_verts, len(verts)))
 
     out_verts = []
+    old_v_indexes = []
     out_faces = []
     old_new_verts: Dict[int, int] = dict()
     for face in faces:
@@ -80,17 +80,30 @@ def split_by_vertices(verts,
         for i in face:
             if selected_verts[i]:
                 out_verts.append(verts[i])
+                old_v_indexes.append(i)
                 new_face.append(len(out_verts) - 1)
             else:
                 if i in old_new_verts:
                     new_face.append(old_new_verts[i])
                 else:
                     out_verts.append(verts[i])
+                    old_v_indexes.append(i)
                     old_new_verts[i] = len(out_verts) - 1
                     new_face.append(len(out_verts) - 1)
         out_faces.append(new_face)
-    out_edges = polygons_to_edges_np([out_faces], unique_edges=True)[0]
-    return out_verts, out_edges, out_faces, face_data
+
+    if edges:
+        edge_indexes = {tuple(sorted(e)): i for i, e in enumerate(edges)}
+        out_edges = polygons_to_edges_np([out_faces], unique_edges=True)[0]
+        old_e_indexes = []
+        for edge in out_edges:
+            e = (old_v_indexes[edge[0]], old_v_indexes[edge[1]])
+            old_e_indexes.append(edge_indexes.get(tuple(sorted(e)), -1))
+    else:
+        out_edges = []
+        old_e_indexes = []
+    old_f_indexes = list(range(len(faces)))
+    return out_verts, out_edges, out_faces, old_v_indexes, old_e_indexes, old_f_indexes
 
 
 def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges: List[bool] = None):
@@ -102,7 +115,7 @@ def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges
         else:
             v, e, f = pydata_from_bmesh(bm)
             fd = []
-        return v, e, f, fd
+        return v, e, f, [], [], []
 
 
 class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
@@ -148,18 +161,26 @@ class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         face_data = self.inputs['FaceData'].sv_get(deepcopy=False, default=[])
         mask = self.inputs['Mask'].sv_get(deepcopy=False, default=[])
 
-        out = []
-        data = [vertices, edges, faces, face_data, mask]
-        obj_n = max(map(len, data))
-        iter_data = zip(*[fixed_iter(d, obj_n, None) for d in data])
-        for v, e, f, fd, m in iter_data:
-            out.append(split_mesh_elements_node(v, e, f, fd, m, self.mask_mode, self.split_type))
+        me = IslandMesh(vertices, edges, faces)
+        me.set_attribute('face_data', face_data)
+        domain = {'BY_VERTEX': 'POINT', 'BY_EDGE': 'EDGE', 'BY_FACE': 'FACE'}
+        me.set_attribute('mask', mask, domain[self.mask_mode])
+        vs, es, fs, vi, ei, fi = split_mesh_elements_node(
+            me.verts,
+            me.edges,
+            me.faces,
+            me.get_attribute('face_data'),
+            me.get_attribute('mask'),
+            self.mask_mode,
+            self.split_type
+        )
+        me.update(vs, es, fs, vi, ei, fi)
+        vs, es, fs = me.split_islands()
 
-        vs, es, fs, fds = list(zip(*out)) if out else ([], [], [], [])
         self.outputs['Vertices'].sv_set(vs)
         self.outputs['Edges'].sv_set(es)
         self.outputs['Faces'].sv_set(fs)
-        self.outputs['FaceData'].sv_set(fds)
+        self.outputs['FaceData'].sv_set([])
 
 
 register, unregister = bpy.utils.register_classes_factory([SvSplitMeshElements])

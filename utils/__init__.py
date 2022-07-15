@@ -133,6 +133,7 @@ utils_modules = [
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
     "meshes", "tree_walk", "mesh_functions", 'mesh.inset_faces', 'mesh.extrude_edges', "sv_json_struct",
     "nodeview_time_graph_drawing", "modules.shader_utils", "modules.FreeCAD_utils", "dummy_nodes",
+    "island_mesh",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools

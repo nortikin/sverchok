@@ -40,7 +40,9 @@ class IslandMesh:
     def set_attribute(self, name, data, domain='FACE'):
         """Should be used right after initialization"""
         if not data:
+            self._attributes[name] = Attribute(data, domain)
             return
+
         sorted_islands = self._get_islands(domain)
         out = []
         indexes, sizes = np.unique(sorted_islands, return_counts=True)
@@ -58,6 +60,24 @@ class IslandMesh:
 
     def get_attribute(self, name):
         return self._attributes[name].data
+
+    def update(self, verts, edges, faces, vert_indexes, edge_indexes, face_indexes):
+        """This method should be called when topology of the mesh was changed
+        indexes should point to old indexes of elements"""
+        self.verts = verts
+        self.edges = edges
+        self.faces = faces
+        self.vert_islands = self.vert_islands[vert_indexes]
+        self.edge_islands = self.edge_islands[edge_indexes]
+        self.face_islands = self.face_islands[face_indexes]
+
+        indexes = {'POINT': vert_indexes, 'EDGE': edge_indexes, 'FACE': face_indexes}
+
+        for name, (data, domain) in self._attributes.items():
+            if not data:
+                continue
+            new_data = [data[i] for i in indexes[domain]]
+            self._attributes[name] = Attribute(new_data, domain)
 
     def split_islands(self) -> tuple[list, list, list]:
         """Return separate meshes for each island"""
