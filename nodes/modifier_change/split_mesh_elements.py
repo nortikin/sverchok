@@ -13,7 +13,7 @@ from bmesh.ops import split_edges
 from sverchok.nodes.list_masks.mask_convert import mask_converter_node
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fixed_iter
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, mesh_indexes_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 from sverchok.utils.island_mesh import IslandMesh
@@ -53,7 +53,7 @@ def split_mesh_elements_node(vertices=None,
                 faces_mask=mask if mask_mode == 'BY_FACE' else None,
                 mode=mask_mode)
 
-        vs, es, fs, vi, ei, fi = split_by_edges(vertices, edges, faces, face_data, mask)
+        vs, es, fs, vi, ei, fi = split_by_edges(vertices, edges, faces, mask)
     else:
         raise TypeError(f'Unknown "split_typ" mode = {split_type}')
 
@@ -106,16 +106,12 @@ def split_by_vertices(verts,
     return out_verts, out_edges, out_faces, old_v_indexes, old_e_indexes, old_f_indexes
 
 
-def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges: List[bool] = None):
+def split_by_edges(verts, edges=None, faces=None, selected_edges: List[bool] = None):
     with empty_bmesh() as bm:
         add_mesh_to_bmesh(bm, verts, edges, faces, 'initial_index')
         split_edges(bm, edges=[e for e, b in zip(bm.edges, selected_edges) if b])
-        if face_data:
-            v, e, f, fd = pydata_from_bmesh(bm, face_data=face_data)
-        else:
-            v, e, f = pydata_from_bmesh(bm)
-            fd = []
-        return v, e, f, [], [], []
+        v, e, f, vi, ei, fi, _ = mesh_indexes_from_bmesh(bm, 'initial_index')
+        return v, e, f, vi, ei, fi
 
 
 class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
@@ -160,6 +156,9 @@ class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])
         face_data = self.inputs['FaceData'].sv_get(deepcopy=False, default=[])
         mask = self.inputs['Mask'].sv_get(deepcopy=False, default=[])
+
+        if not edges and faces:
+            edges = polygons_to_edges_np(faces, unique_edges=True)
 
         me = IslandMesh(vertices, edges, faces)
         me.set_attribute('face_data', face_data)

@@ -142,14 +142,6 @@ def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, upd
     if update_normals:
         bm.normal_update()
 
-    if sv_index_name:
-        for sequence in [bm.verts, bm.edges, bm.faces]:
-            lay = sequence.layers.int.get(sv_index_name, sequence.layers.int.new(sv_index_name))
-            [setitem(el, lay, el.index) for el in sequence]
-        loop_lay = bm.loops.layers.int.get(sv_index_name, bm.loops.layers.int.new(sv_index_name))
-        loop_indexes = count()
-        [setitem(l, loop_lay, next(loop_indexes)) for face in bm.faces for l in face.loops]
-
     # update mesh
     bm.verts.ensure_lookup_table()
     bm.edges.ensure_lookup_table()
@@ -158,6 +150,15 @@ def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, upd
         bm.verts.index_update()
         bm.edges.index_update()
         bm.faces.index_update()
+
+    if sv_index_name:
+        for sequence in [bm.verts, bm.edges, bm.faces]:
+            lay = sequence.layers.int.get(sv_index_name, sequence.layers.int.new(sv_index_name))
+            [setitem(el, lay, el.index) for el in sequence]
+        loop_lay = bm.loops.layers.int.get(sv_index_name, bm.loops.layers.int.new(sv_index_name))
+        loop_indexes = count()
+        [setitem(l, loop_lay, next(loop_indexes)) for face in bm.faces for l in face.loops]
+
 
 
 def numpy_data_from_bmesh(bm, out_np, face_data=None):

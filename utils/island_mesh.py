@@ -65,11 +65,14 @@ class IslandMesh:
         """This method should be called when topology of the mesh was changed
         indexes should point to old indexes of elements"""
         self.verts = verts
-        self.edges = edges
         self.faces = faces
         self.vert_islands = self.vert_islands[vert_indexes]
-        self.edge_islands = self.edge_islands[edge_indexes]
         self.face_islands = self.face_islands[face_indexes]
+
+        # if edges was not generated initially it's impossible to calculate their islands
+        if self.edges:
+            self.edges = edges
+            self.edge_islands = self.edge_islands[edge_indexes]
 
         indexes = {'POINT': vert_indexes, 'EDGE': edge_indexes, 'FACE': face_indexes}
 
