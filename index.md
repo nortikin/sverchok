@@ -407,6 +407,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
+    SvOpenSubdivideNode
     SvSubdivideNodeMK2
     SvSubdivideToQuadsNode
     SvOffsetLineNode
