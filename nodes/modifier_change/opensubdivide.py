@@ -70,14 +70,10 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
                 vertsPerFace = [len(face) for face in faces]
 
                 new_mesh = openSubdivide(subdivision_level,vertices,faceVerts,vertsPerFace)
-                if(implementation['Boost']):
-                    new_meshes['vertices'].append(new_mesh['verts']) # Boost implementation 
-                    new_meshes['edges'].append(new_mesh['edges'])
-                    new_meshes['faces'].append(new_mesh['faces'])
-                elif(implementation['ctypes']):
-                    new_meshes['vertices'].append(new_mesh['vertices']) # ctypes implementation 
-                    new_meshes['edges'].append(new_mesh['edges'])
-                    new_meshes['faces'].append(new_mesh['faces'])
+                
+                new_meshes['vertices'].append(new_mesh['vertices']) # ctypes implementation 
+                new_meshes['edges'].append(new_mesh['edges'])
+                new_meshes['faces'].append(new_mesh['faces'])
 
             self.outputs['Vertices'].sv_set(new_meshes['vertices'])
             self.outputs['Edges'].sv_set(new_meshes['edges'])
