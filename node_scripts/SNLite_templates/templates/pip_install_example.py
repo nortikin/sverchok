@@ -13,17 +13,7 @@ in package s
 # below are examples of lines that you can execute using these two functions, they will call subprocess
 # and install the packages into the current bpython executable's site-packages directory.
 
-import sys
-import os
-import subprocess
-
-def install_package(package):
-    if not isinstance(package, list):
-        package = [package]
-    subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", *package])
-
-def install_whl(package_path):
-    subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", f"{package_path}"])
+from sverchok.utils.pip_utils import install_package, install_whl
     
 #if __name__ == '__main__':
 # install_package(['--upgrade', 'pip']) # <-- may not be needed
