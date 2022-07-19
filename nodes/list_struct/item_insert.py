@@ -106,9 +106,10 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             params = list_match_func[self.list_match_local]([indexes, new_items])
             for ind, i in zip(*params):
                 idx = ind % len(data)  # translate to positive idx
-                if self.replace and len(data_out) > idx:
-                    data_out.pop(idx)
-                data_out.insert(idx, i)
+                if self.replace:
+                    data_out[idx] = i
+                else:
+                    data_out.insert(idx, i)
             return data_out
        
         elif type(data) == np.ndarray:
