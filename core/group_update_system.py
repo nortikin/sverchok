@@ -75,9 +75,9 @@ class GroupUpdateTree(us.UpdateTree):
 
             walker = self._walk()
             # walker = self._debug_color(walker)
-            for node, prev_socks in walker:
+            for node in walker:
                 with us.AddStatistic(node):
-                    us.prepare_input_data(prev_socks, node.inputs)
+                    self._fill_input(node)
                     node.process()
 
             if is_opened_tree:
@@ -130,10 +130,10 @@ class GroupUpdateTree(us.UpdateTree):
             self._outdated_nodes.clear()
             self._viewer_nodes.clear()
 
-        for node, other_socks in self._sort_nodes(outdated, viewers):
+        for node in self._sort_nodes(outdated, viewers):
             # execute node only if all previous nodes are updated
-            if all(n.get(us.UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
-                yield node, other_socks
+            if all(n.get(us.UPDATE_KEY, True) for n in self._from_nodes[node]):
+                yield node
                 if node.get(us.ERROR_KEY, False):
                     self._outdated_nodes.add(node)
             else:

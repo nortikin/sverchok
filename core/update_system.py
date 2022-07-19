@@ -14,6 +14,7 @@ from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.logging import log_error
 from sverchok.utils.tree_walk import bfs_walk
+from sverchok.utils.socket_utils import format_bpy_property
 
 if TYPE_CHECKING:
     from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
@@ -154,15 +155,6 @@ class SearchTree:
         """Return output sockets connected to input ones of given node
         If input socket is not linked the output socket will be None"""
         return [self._from_sock.get(s) for s in node.inputs]
-
-    def update_node(self, node: 'SvNode', suppress=True):
-        """Fetches data from previous node, makes data conversion if connected
-        sockets have different types, calls process method of the given node
-        records nodes statistics
-        If suppress is True an error during node execution will be suppressed"""
-        with AddStatistic(node, suppress):
-            prepare_input_data(self.previous_sockets(node), node.inputs)
-            node.process()
 
     def _remove_reroutes(self):
         for r in self._tree.nodes:
@@ -387,10 +379,11 @@ class UpdateTree(SearchTree):
                         changed_nodes = _tree._update_difference(old)
 
                         # disconnected input sockets can remember previous data
+                        _tree._update_default_values(changed_nodes)
                         # a node can be laizy and don't recalculate output
                         for node in changed_nodes:
-                            for in_s in chain(node.inputs, node.outputs):
-                                in_s.sv_forget()
+                            for out_s in node.outputs:
+                                out_s.sv_forget()
 
                         _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
@@ -428,10 +421,10 @@ class UpdateTree(SearchTree):
             walker = up_tree._walk()
             # walker = up_tree._debug_color(walker)
             try:
-                for node, prev_socks in walker:
+                for node in walker:
                     with AddStatistic(node):
                         yield node
-                        prepare_input_data(prev_socks, node.inputs)
+                        up_tree._fill_input(node)
                         node.process()
             except CancelError:
                 pass
@@ -442,6 +435,15 @@ class UpdateTree(SearchTree):
             else:
                 times = None
             update_ui(tree, times)
+
+    def update_node(self, node: 'SvNode', suppress=True):
+        """Fetches data from previous node, makes data conversion if connected
+        sockets have different types, calls process method of the given node
+        records nodes statistics
+        If suppress is True an error during node execution will be suppressed"""
+        with AddStatistic(node, suppress):
+            self._fill_input(node)
+            node.process()
 
     @classmethod
     def reset_tree(cls, tree: NodeTree = None):
@@ -467,6 +469,9 @@ class UpdateTree(SearchTree):
         if self._outdated_nodes is not None:
             self._outdated_nodes.update(nodes)
 
+            # todo is it best place?
+            self._update_default_values(n for n in nodes if n in self._from_nodes)
+
     def __init__(self, tree: NodeTree):
         """Should not use be used directly, only via the get class method
         :is_updated: Should be False if topology of the tree was changed
@@ -486,15 +491,18 @@ class UpdateTree(SearchTree):
         self.is_scene_updated = True
         self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
 
-        # https://stackoverflow.com/a/68550238
-        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
-
         self._copy_attrs = [
             'is_updated',
             'is_animation_updated',
             'is_scene_updated',
             '_outdated_nodes',
         ]
+
+        # https://stackoverflow.com/a/68550238
+        self.previous_sockets = lru_cache(maxsize=None)(self.previous_sockets)
+        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
+
+        self._update_default_values(self._from_nodes.keys())
 
     def _animation_nodes(self) -> set['SvNode']:
         """Returns nodes which are animation dependent"""
@@ -533,10 +541,10 @@ class UpdateTree(SearchTree):
             outdated = frozenset(self._outdated_nodes)
             self._outdated_nodes.clear()
 
-        for node, other_socks in self._sort_nodes(outdated):
+        for node in self._sort_nodes(outdated):
             # execute node only if all previous nodes are updated
-            if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
-                yield node, other_socks
+            if all(n.get(UPDATE_KEY, True) for n in self._from_nodes[node]):
+                yield node
                 if node.get(ERROR_KEY, False):
                     self._outdated_nodes.add(node)
             else:
@@ -544,8 +552,7 @@ class UpdateTree(SearchTree):
 
     def __sort_nodes(self,
                      from_nodes: frozenset['SvNode'] = None,
-                     to_nodes: frozenset['SvNode'] = None)\
-                     -> list[tuple['SvNode', list[NodeSocket]]]:
+                     to_nodes: frozenset['SvNode'] = None) -> list['SvNode']:
         """Sort nodes of the tree in proper execution order. Whe all given
         parameters are None it uses all tree nodes
         :from_nodes: if given it sorts only next nodes from given ones
@@ -575,7 +582,7 @@ class UpdateTree(SearchTree):
         nodes = []
         if walk_structure:
             for node in TopologicalSorter(walk_structure).static_order():
-                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
+                nodes.append(node)
         return nodes
 
     def _update_difference(self, old: 'UpdateTree') -> set['SvNode']:
@@ -590,12 +597,73 @@ class UpdateTree(SearchTree):
                 nodes_to_update.add(self._sock_node[from_sock])
             else:
                 nodes_to_update.add(self._sock_node[to_sock])
+        for to_sock in self._disconnected_inputs(old):
+            nodes_to_update.add(self._sock_node[to_sock])
+        return nodes_to_update
+
+    def _disconnected_inputs(self, old: 'UpdateTree') -> set[NodeSocket]:
+        inputs = set()
         removed_links = old._links - self._links
         for from_sock, to_sock in removed_links:
             if to_sock not in self._sock_node:
                 continue  # the link was removed together with the node
-            nodes_to_update.add(self._sock_node[to_sock])
-        return nodes_to_update
+            inputs.add(to_sock)
+        return inputs
+
+    def _fill_input(self, node: Node):
+        for ps, ns in zip(self.previous_sockets(node), node.inputs):
+
+            # default values already should be in socket_data cache dictionary
+            if ps is None:
+                continue
+
+            # extract data from connected socket
+            else:
+                try:
+                    data = ps.sv_get()
+                except SvNoDataError:
+                    # let to the node handle No Data error
+                    ns.sv_forget()
+                else:
+                    # cast data
+                    if ps.bl_idname != ns.bl_idname:
+                        implicit_conversion = conversions[ns.default_conversion_name]
+                        data = implicit_conversion.convert(ns, ps, data)
+
+                    ns.sv_set(data)
+
+    def _update_default_values(self, nodes: Iterable[Node]):
+        for node in nodes:
+            for from_s, in_s in zip(self.previous_sockets(node), node.inputs):
+                if from_s is not None:
+                    continue
+                elif (default := self._search_default_value(in_s)) is not None:
+                    in_s.sv_set(default)
+                else:
+                    in_s.sv_forget()
+
+    def _search_default_value(self, socket: NodeSocket) -> Optional[list]:
+        node = self._sock_node[socket]
+        if hasattr(node, 'missing_dependency'):
+            prop_name = None
+        elif node.id_data.sv_draft:
+            draft = None
+            if hasattr(node, 'draft_properties_mapping'):
+                draft = node.draft_properties_mapping.get(socket.prop_name, None)
+            if draft is not None:
+                prop_name = draft
+            else:
+                prop_name = socket.prop_name
+        else:
+            prop_name = socket.prop_name
+
+        if prop_name:
+            prop = getattr(node, prop_name)
+            return format_bpy_property(prop)
+
+        elif socket.use_prop:
+            default_property = socket.default_property
+            return format_bpy_property(default_property)
 
     def _calc_cam_update_time(self) -> Iterable['SvNode']:
         """Return cumulative update time in order of node_group.nodes collection"""
@@ -671,28 +739,6 @@ class AddStatistic:
             if issubclass(exc_type, CancelError):
                 return False
             return issubclass(exc_type, Exception)
-
-
-def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
-                       input_socks: list[NodeSocket]):
-    """Reads data from given outputs socket make it conversion if necessary and
-    put data into input given socket"""
-    # this can be a socket method
-    for ps, ns in zip(prev_socks, input_socks):
-        if ps is None:
-            continue
-        try:
-            data = ps.sv_get()
-        except SvNoDataError:
-            # let to the node handle No Data error
-            ns.sv_forget()
-        else:
-            # cast data
-            if ps.bl_idname != ns.bl_idname:
-                implicit_conversion = conversions[ns.default_conversion_name]
-                data = implicit_conversion.convert(ns, ps, data)
-
-            ns.sv_set(data)
 
 
 def update_ui(tree: NodeTree, times: Iterable[float] = None):

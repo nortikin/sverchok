@@ -403,36 +403,24 @@ class SvSocketCommon(SvSocketProcessing):
         """
         The method is used for getting socket data
         In most cases the method should not be overridden
-        Also a socket can use its default_property
         Order of getting data (if available):
-        1. written socket data
-        2. node default property
-        3. socket default property
-        4. script default property
-        5. Raise no data error
+        1. written socket data which includes default socket values
+        2. script default property
+        3. Raise no data error
         :param default: script default property
-        :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
+        :param deepcopy: in most cases should be False for efficiency but not
+        in cases if input data will be modified
         :return: data bound to the socket
         """
         if self.is_output:
-            return sv_get_socket(self, False)
+            deepcopy = False
 
-        if self.is_linked:
+        try:
             return sv_get_socket(self, deepcopy)
-
-        prop_name = self.get_prop_name()
-        if prop_name:
-            prop = getattr(self.node, prop_name)
-            return format_bpy_property(prop)
-
-        if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
-            default_property = self.default_property
-            return format_bpy_property(default_property)
-
-        if default is not ...:
-            return default
-
-        raise SvNoDataError(self)
+        except KeyError:
+            if default is not ...:
+                return default
+            raise SvNoDataError(self)
 
     def sv_set(self, data):
         """Set data, provide context in case the node can be evaluated several times in different context"""
