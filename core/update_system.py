@@ -253,7 +253,10 @@ class SearchTree:
             del self._to_nodes[in_]
 
     def _remove_muted_nodes(self):
+        util_nodes = {'NodeFrame', 'NodeReroute', 'NodeGroupInput'}
         for node in self._tree.nodes:
+            if node.bl_idname in util_nodes:
+                continue
             if not node.mute:
                 continue
             for in_s, out_s in node.sv_internal_links:
