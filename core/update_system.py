@@ -669,7 +669,7 @@ class AddStatistic:
             self._node[ERROR_KEY] = None
             self._node[TIME_KEY] = perf_counter() - self._start
         else:
-            log_error(exc_type)
+            log_error(exc_val)
             self._node[UPDATE_KEY] = False
             self._node[ERROR_KEY] = repr(exc_val)
 
