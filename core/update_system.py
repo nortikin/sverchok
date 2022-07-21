@@ -391,9 +391,12 @@ class UpdateTree(SearchTree):
 
                         # disconnected input sockets can remember previous data
                         # a node can be laizy and don't recalculate output
+                        util_nodes = {'NodeGroupInput', 'NodeGroupOutput'}
                         for node in changed_nodes:
-                            for in_s in chain(node.inputs, node.outputs):
-                                in_s.sv_forget()
+                            if node.bl_idname in util_nodes:
+                                continue
+                            for s in chain(node.inputs, node.outputs):
+                                s.sv_forget()
 
                         _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
