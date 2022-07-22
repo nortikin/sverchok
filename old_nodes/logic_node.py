@@ -81,6 +81,10 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'NONE' #'LOGIC'
     sv_icon = 'SV_LOGIC'
 
+    replacement_nodes = [
+        ('SvLogicNodeMK2', {'X': 'A', 'Y': 'B'}, {'Gate': 'Result'})
+    ]
+
     def change_type(self, context):
         signature = func_dict[self.items_][2]
         self.set_inputs(len(signature))
@@ -155,11 +159,6 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "prop_types", index=i, text=txt, toggle=True)
         layout.row().prop(self, 'list_match', expand=False)
         layout.prop(self, "output_numpy", text="Output NumPy")
-
-    def rclick_menu(self, context, layout):
-        layout.prop_menu_enum(self, "items_", text="Function:")
-        layout.prop_menu_enum(self, "list_match", text="List Match")
-        layout.prop(self, "output_numpy", expand=False)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "X").prop_name = 'x'

@@ -113,6 +113,15 @@ class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop_menu_enum(self, "list_match", text="List Match")
         layout.prop(self, "output_numpy", expand=False)
 
+    def migrate_from(self, old_node):
+        self.function_name = old_node.items_
+        self.inputs['A'].default_int_property = old_node.x
+        self.inputs['B'].default_int_property = old_node.y
+        self.inputs['A'].default_float_property = old_node.i_x
+        self.inputs['B'].default_float_property = old_node.i_y
+        self.inputs['A'].default_property_type = 'float' if old_node.prop_types[0] else 'int'
+        self.inputs['B'].default_property_type = 'float' if old_node.prop_types[1] else 'int'
+
     def sv_init(self, context):
         a = self.inputs.new('SvStringsSocket', "A")
         a.use_prop = True
