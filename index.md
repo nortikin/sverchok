@@ -572,7 +572,7 @@
     SvTextureEvaluateNodeMk2
 
 ## Logic
-    SvLogicNode
+    SvLogicNodeMK2
     SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
