@@ -20,6 +20,7 @@
 
 from collections import UserDict
 from itertools import chain
+from traceback import format_list, extract_stack
 from typing import NewType, Optional, Literal
 
 from bpy.types import NodeSocket
@@ -34,9 +35,10 @@ SockId = NewType('SockId', str)
 class DebugMemory(UserDict):
     _last_printed = dict()
 
-    def __init__(self, data, print_all=True):
+    def __init__(self, data, print_all=True, print_trace=False):
         self.data = data
         self._print_all = print_all
+        self._print_trace = print_trace
 
         self._id_sock: dict[SockId, NodeSocket] = dict()
 
@@ -47,6 +49,9 @@ class DebugMemory(UserDict):
         self._data_len = 100
 
     def __setitem__(self, key, value):
+        if self._print_trace:
+            for line in format_list(extract_stack()[4:-3]):
+                print(line, end='')
         if key not in self.data:
             self.data[key] = value
             (self._pprint if self._print_all else self._pprint_id)(key, 'NEW')
@@ -55,6 +60,9 @@ class DebugMemory(UserDict):
             (self._pprint if self._print_all else self._pprint_id)(key, 'VALUE')
 
     def __delitem__(self, key):
+        if self._print_trace:
+            for line in format_list(extract_stack()[4:-3]):
+                print(line, end='')
         (self._pprint if self._print_all else self._pprint_id)(key, 'DELETE')
         del self.data[key]
 
