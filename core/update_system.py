@@ -253,7 +253,10 @@ class SearchTree:
             del self._to_nodes[in_]
 
     def _remove_muted_nodes(self):
+        util_nodes = {'NodeFrame', 'NodeReroute', 'NodeGroupInput'}
         for node in self._tree.nodes:
+            if node.bl_idname in util_nodes:
+                continue
             if not node.mute:
                 continue
             for in_s, out_s in node.sv_internal_links:
@@ -388,9 +391,12 @@ class UpdateTree(SearchTree):
 
                         # disconnected input sockets can remember previous data
                         # a node can be laizy and don't recalculate output
+                        util_nodes = {'NodeGroupInput', 'NodeGroupOutput'}
                         for node in changed_nodes:
-                            for in_s in chain(node.inputs, node.outputs):
-                                in_s.sv_forget()
+                            if node.bl_idname in util_nodes:
+                                continue
+                            for s in chain(node.inputs, node.outputs):
+                                s.sv_forget()
 
                         _tree._outdated_nodes.update(changed_nodes)
                     if not _tree.is_animation_updated:
@@ -663,7 +669,7 @@ class AddStatistic:
             self._node[ERROR_KEY] = None
             self._node[TIME_KEY] = perf_counter() - self._start
         else:
-            log_error(exc_type)
+            log_error(exc_val)
             self._node[UPDATE_KEY] = False
             self._node[ERROR_KEY] = repr(exc_val)
 

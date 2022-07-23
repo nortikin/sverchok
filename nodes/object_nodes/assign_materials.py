@@ -168,11 +168,10 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
                 obj.data.materials[i] = material
 
     def process(self):
-        objects = self.inputs['Object'].sv_get()
+        objects = self.inputs['Object'].sv_get(deepcopy=False, default=[])
 
         for obj in objects:
             self.assign_materials(obj)
-            obj.data.update()
 
         self.outputs['Object'].sv_set(objects)
 

@@ -105,21 +105,25 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             data_out = data.copy() if isinstance(data, list) else list(data)
             params = list_match_func[self.list_match_local]([indexes, new_items])
             for ind, i in zip(*params):
-                if self.replace and len(data_out) > ind:
-                    data_out.pop(ind)
-                data_out.insert(ind, i)
+                idx = ind % len(data)  # translate to positive idx
+                if self.replace:
+                    data_out[idx] = i
+                else:
+                    data_out.insert(idx, i)
             return data_out
+       
         elif type(data) == np.ndarray:
             out_data = np.array(data)
             ind, items = list_match_func[self.list_match_local]([indexes, new_items])
+       
             if self.replace:
                 out_data[ind] = items
-
             else:
                 for i, item in zip(ind, items):
                     out_data = np.concatenate([data[:i], [item], data[i:]])
 
             return out_data
+       
         elif type(data) == str:
             ind, items = list_match_func[self.list_match_local]([indexes, new_items])
 
@@ -128,6 +132,7 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             for i, item in zip(ind, items):
                 out_data = out_data[:i]+ str(item) + out_data[i+add_one:]
             return out_data
+       
         return None
 
     def get_(self, data, new_items, level, items, f):

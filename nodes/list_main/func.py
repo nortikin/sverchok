@@ -133,8 +133,6 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
             for obj in data:
                 out.append(self.count(obj, level-1, func, numpy_func))
         elif isinstance(data, (list, tuple)) and len(data) > 0:
-            if len(data) == 1:
-                data.extend(data)
             out = func(data)
         elif isinstance(data, np.ndarray):
             out = numpy_func(data)
