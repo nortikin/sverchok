@@ -21,8 +21,17 @@ from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
-from sverchok.utils.modules.ctypes_pyOpenSubdiv import pyOpenSubdiv
-openSubdivide = pyOpenSubdiv
+# from sverchok.utils.modules.ctypes_pyOpenSubdiv import pyOpenSubdiv
+# openSubdivide = pyOpenSubdiv
+
+enable_module = False
+try:
+    import pyOpenSubdiv
+    from pyOpenSubdiv.pysubdivision import pysubdivide    
+    enable_module = True
+except ModuleNotFoundError:
+    enable_module = False
+
 
 from itertools import chain 
 import traceback 
@@ -44,6 +53,9 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
+        if not enable_module:
+            raise Exception("The dependent library is not installed (pyOpenSubdiv).")
+
         vert_sets = self.inputs['Vertices'].sv_get(default=[],deepcopy=False)
         edges = []         
         face_sets = self.inputs['Faces'].sv_get(default=[],deepcopy=False)
@@ -69,7 +81,7 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
                 faceVerts = list(chain.from_iterable(faces))
                 vertsPerFace = [len(face) for face in faces]
 
-                new_mesh = openSubdivide(subdivision_level,vertices,faceVerts,vertsPerFace)
+                new_mesh = pysubdivide(subdivision_level,vertices,faceVerts,vertsPerFace)
                 
                 new_meshes['vertices'].append(new_mesh['vertices']) # ctypes implementation 
                 new_meshes['edges'].append(new_mesh['edges'])
@@ -90,6 +102,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvOpenSubdivideNode)
-
-
-

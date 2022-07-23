@@ -150,6 +150,17 @@ except ImportError:
     info(numba_d.message)
     numba = None
 
+pyOpenSubdiv_d = sv_dependencies["pyOpenSubdiv"] = SvDependency("pyOpenSubdiv","https://github.com/GeneralPancakeMSTR/pyOpenSubdivision")
+pyOpenSubdiv_d.pip_installable = True
+try:
+    import pyOpenSubdiv
+    pyOpenSubdiv_d.message = "pyOpenSubdiv package is available"
+    pyOpenSubdiv_d.module = pyOpenSubdiv
+except ImportError:
+    pyOpenSubdiv_d.message = "sv: pyOpenSubdiv package is not available, Catmull-Clark subdivision will not be available"
+    info(pyOpenSubdiv_d.message)
+    pyOpenSubdiv = None 
+
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:
     info("sv: Dependencies available: %s.", ", ".join(good_names))
