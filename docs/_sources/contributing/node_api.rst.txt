@@ -669,6 +669,12 @@ separate file which can be visualized with another tools.
 Printing / Logging
 ^^^^^^^^^^^^^^^^^^
 
+.. figure:: https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png
+   :align: right
+   :width: 400px
+
+   Logging level can be set in the add-on settings.
+
 Printing and profiling are very expensive operations. Also console can fastly
 turn into unreadable mess. So it's better to avoid using them inside node code.
 During debugging it's valid to use print function but it should removed in the
@@ -677,6 +683,12 @@ end.
 Usually logging can be don in some operators in this case you can use loggers
 from ``utils.logging`` module or by using ``node.debug``, ``node.info`` and
 other aliases.
+
+If a node rises an error it will appear in console in next format: ``data and
+time [loging level] module name:line number : error name``
+
+Traceback is switch off for all logging levels except debug one. If you need it
+make sure that you have appropriate logging level in the settings.
 
 Node Registration
 -----------------
@@ -723,7 +735,33 @@ When the add-on is disabled or reloaded its classes should be unregister. To
 unregister a node is possible in function with name ``unregister`` in the same
 module with Node class.
 
-Also with node should go documentation file in ``docs.nodes`` folder.
+
+Documentation
+-------------
+
+When new node is added it's strongly recommended to add its documentation.
+Without it, in most cases, users will hardly able to use the node and also
+it can be difficult to distinguish a bug because the desired behaviour was not
+proclaimed.
+
+To add documentation to a node two things should be done:
+
+- file with documentation (name_of_the_node.rst) should be added to the
+  ``docs.nodes.node_category`` folder
+- Name of the file should be add to list inside
+  ``docs.nodes.node_category.node_category_index.rst`` file
+
+For generating documentation `Sphinx library`_ is used. Also
+`Read the Docs`_ Sphinx theme is used. So both libraries should be available
+if you want to build documentation locally. There is ``docs/make.bat`` file
+which builds the documentation into ``docs/_build`` (excluded from git) folder.
+
+.. _Sphinx library: https://www.sphinx-doc.org/en/master/
+.. _Read the Docs: https://github.com/readthedocs/sphinx_rtd_theme
+
+There is action which will automatically build and publish documentation on the
+next address - http://nortikin.github.io/sverchok/docs/main.html, whenever
+changes will be introduced in master on GitHub.
 
 
 Animation

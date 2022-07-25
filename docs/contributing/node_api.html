@@ -80,6 +80,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#node-registration">Node Registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#animation">Animation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#muting">Muting</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nodes-with-dependencies">Nodes With Dependencies</a></li>
@@ -732,6 +733,12 @@ separate file which can be visualized with another tools.</p>
 </section>
 <section id="printing-logging">
 <h3>Printing / Logging<a class="headerlink" href="#printing-logging" title="Permalink to this heading">¶</a></h3>
+<figure class="align-right" id="id3">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png"><img alt="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png" src="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png" style="width: 400px;" /></a>
+<figcaption>
+<p><span class="caption-text">Logging level can be set in the add-on settings.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Printing and profiling are very expensive operations. Also console can fastly
 turn into unreadable mess. So it’s better to avoid using them inside node code.
 During debugging it’s valid to use print function but it should removed in the
@@ -739,6 +746,10 @@ end.</p>
 <p>Usually logging can be don in some operators in this case you can use loggers
 from <code class="docutils literal notranslate"><span class="pre">utils.logging</span></code> module or by using <code class="docutils literal notranslate"><span class="pre">node.debug</span></code>, <code class="docutils literal notranslate"><span class="pre">node.info</span></code> and
 other aliases.</p>
+<p>If a node rises an error it will appear in console in next format: <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">and</span>
+<span class="pre">time</span> <span class="pre">[loging</span> <span class="pre">level]</span> <span class="pre">module</span> <span class="pre">name:line</span> <span class="pre">number</span> <span class="pre">:</span> <span class="pre">error</span> <span class="pre">name</span></code></p>
+<p>Traceback is switch off for all logging levels except debug one. If you need it
+make sure that you have appropriate logging level in the settings.</p>
 </section>
 </section>
 <section id="node-registration">
@@ -780,7 +791,27 @@ categories.</p>
 <p>When the add-on is disabled or reloaded its classes should be unregister. To
 unregister a node is possible in function with name <code class="docutils literal notranslate"><span class="pre">unregister</span></code> in the same
 module with Node class.</p>
-<p>Also with node should go documentation file in <code class="docutils literal notranslate"><span class="pre">docs.nodes</span></code> folder.</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">¶</a></h2>
+<p>When new node is added it’s strongly recommended to add its documentation.
+Without it, in most cases, users will hardly able to use the node and also
+it can be difficult to distinguish a bug because the desired behaviour was not
+proclaimed.</p>
+<p>To add documentation to a node two things should be done:</p>
+<ul class="simple">
+<li><p>file with documentation (name_of_the_node.rst) should be added to the
+<code class="docutils literal notranslate"><span class="pre">docs.nodes.node_category</span></code> folder</p></li>
+<li><p>Name of the file should be add to list inside
+<code class="docutils literal notranslate"><span class="pre">docs.nodes.node_category.node_category_index.rst</span></code> file</p></li>
+</ul>
+<p>For generating documentation <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx library</a> is used. Also
+<a class="reference external" href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs</a> Sphinx theme is used. So both libraries should be available
+if you want to build documentation locally. There is <code class="docutils literal notranslate"><span class="pre">docs/make.bat</span></code> file
+which builds the documentation into <code class="docutils literal notranslate"><span class="pre">docs/_build</span></code> (excluded from git) folder.</p>
+<p>There is action which will automatically build and publish documentation on the
+next address - <a class="reference external" href="http://nortikin.github.io/sverchok/docs/main.html">http://nortikin.github.io/sverchok/docs/main.html</a>, whenever
+changes will be introduced in master on GitHub.</p>
 </section>
 <section id="animation">
 <h2>Animation<a class="headerlink" href="#animation" title="Permalink to this heading">¶</a></h2>
