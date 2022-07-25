@@ -21,9 +21,6 @@ from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
-# from sverchok.utils.modules.ctypes_pyOpenSubdiv import pyOpenSubdiv
-# openSubdivide = pyOpenSubdiv
-
 enable_module = False
 try:
     import pyOpenSubdiv
@@ -32,7 +29,6 @@ try:
 except ModuleNotFoundError:
     enable_module = False
 
-
 from itertools import chain 
 import traceback 
 class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
@@ -40,13 +36,31 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
     bl_label = "OpenSubdiv"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
+    
+    maxSubdivision = 5 # Creates a self.maxSubdivision attribute
+    maxlevel : IntProperty(name='level',default=0,min=0,max=maxSubdivision,update=updateNode)
 
-    maxlevel : IntProperty(name='level',default=0,min=0,max=5,update=updateNode)
+    # Mute Node Implementation 
+    @property
+    def sv_internal_links(self):
+        mapping =  [
+            (self.inputs['Vertices'],self.outputs['Vertices']),
+            (self.inputs['Edges'],self.outputs['Edges']),
+            (self.inputs['Faces'],self.outputs['Faces'])
+        ]        
+        return mapping 
 
-    def sv_init(self,context):
-        self.inputs.new('SvStringsSocket', "Levels").prop_name='maxlevel'
+    def sv_init(self,context):        
         self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket',"Edges")
         self.inputs.new('SvStringsSocket', "Faces")
+
+        socket = self.inputs.new('SvStringsSocket', "Levels")
+        socket.use_prop=True
+        socket.prop_name = 'maxlevel'
+        socket.default_property_type = 'int'
+        socket.default_int_property = 0 
+        socket.int_range = (0,self.maxSubdivision) # This does not actually appear to limit the subdivision levels 
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -60,6 +74,11 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
         edges = []         
         face_sets = self.inputs['Faces'].sv_get(default=[],deepcopy=False)
         
+        new_meshes = {
+            'vertices':[],            
+            'edges':[],
+            'faces':[]
+        }
         
         if(vert_sets != [] and face_sets != []):
             subdivision_levels = self.inputs["Levels"].sv_get()[0]
@@ -67,15 +86,9 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
             # This is definitely gonna crash. 
             # I think I'll take the "wait and see how" approach?
             parameters = zip(*match_long_repeat([subdivision_levels,vert_sets,face_sets]))
-
-            new_meshes = {
-                'vertices':[],
-                'edges':[],
-                'faces':[]
-            }
             
             for params in parameters:
-                subdivision_level = params[0]                
+                subdivision_level = params[0] if params[0] <= self.maxSubdivision else self.maxSubdivision
                 vertices = params[1]
                 faces = params[2] 
                 faceVerts = list(chain.from_iterable(faces))
@@ -87,15 +100,9 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
                 new_meshes['edges'].append(new_mesh['edges'])
                 new_meshes['faces'].append(new_mesh['faces'])
 
-            self.outputs['Vertices'].sv_set(new_meshes['vertices'])
-            self.outputs['Edges'].sv_set(new_meshes['edges'])
-            self.outputs['Faces'].sv_set(new_meshes['faces'])
-        
-        else:
-            self.outputs['Vertices'].sv_set(vertices)
-            self.outputs['Edges'].sv_set(edges)
-            self.outputs['Faces'].sv_set(faces)
-        
+        self.outputs['Vertices'].sv_set(new_meshes['vertices'])
+        self.outputs['Edges'].sv_set(new_meshes['edges'])
+        self.outputs['Faces'].sv_set(new_meshes['faces'])
 
 def register():
     bpy.utils.register_class(SvOpenSubdivideNode)
