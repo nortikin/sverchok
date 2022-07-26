@@ -147,7 +147,7 @@
 <h1>Circle<a class="headerlink" href="#circle" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>Circle generator creates circles based on the radius and the number of vertices. What does that mean? It means that if the number of vertices is too low, ir will stop being a circle and will be a regular polygon, in example:</p>
+<p>Circle generator creates circles based on the radius and the number of vertices. A higher number of verts gives a more detailed approximation of a circle:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="mi">3</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">triangle</span><span class="o">.</span>
 <span class="o">-</span> <span class="mi">4</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">square</span>
 <span class="o">-</span> <span class="o">...</span>
@@ -156,12 +156,12 @@
 <span class="o">-</span> <span class="n">Many</span> <span class="n">vertices</span> <span class="o">=</span>  <span class="n">circle</span>
 </pre></div>
 </div>
-<p>This node will also create sector or segment of circles using the <strong>Degrees</strong> option. See the examples below to see it working also with the <strong>mode</strong> option.</p>
+<p>This node will also create sector or segment of a circle using the <strong>Degrees</strong> option. See the examples below to see it working also with the <strong>mode</strong> option.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.
-There is three inputs:</p>
+There are three inputs:</p>
 <ul class="simple">
 <li><p><strong>Radius</strong></p></li>
 <li><p><strong>N Vertices</strong></p></li>
@@ -208,7 +208,7 @@ There is three inputs:</p>
 <td><p>angle for a sector/segment circle</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Mode</strong></p></td>
-<td><p>Bollean</p></td>
+<td><p>Boolean</p></td>
 <td><p>False</p></td>
 <td><p>switch between two sector and segment circle</p></td>
 </tr>
@@ -218,11 +218,11 @@ There is three inputs:</p>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Vertices</strong>, <strong>Edges</strong> and <strong>Polygons</strong>.
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent circles. In example:</p>
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiple independent circles. In example:</p>
 <img alt="CircleDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4187227/07366302-3768-11e4-8e9c-4068c9ce6773.png" />
 <img alt="CircleDemo2.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4187228/0759a754-3768-11e4-80a4-458e286edf20.png" />
-<p>As you can see in the red rounded values, depending on how many inputs have the node, will be generated those same number of outputs.</p>
-<p>If <strong>Degrees</strong> is minor than 0, depending of the <strong>mode</strong> state, will be generated a sector or a segment of a circle with that degrees angle.</p>
+<p>As you can see in the red rounded values, depending on how many data inputs the node has, will be generated those same number of outputs.</p>
+<p>If <strong>Degrees</strong> is less than 360, depending of the <strong>mode</strong> state, the node generates a sector or a segment of a circle of the given number of degrees.</p>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
