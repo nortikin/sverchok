@@ -120,12 +120,20 @@ def draw_indices_2D(context, args):
                 draw_index(*vidx)
     
         blf.color(font_id, *edge_idx_color)
-        for eidx in geom.edge_data:
-            draw_index(*eidx)
+        if geom.text_data:
+            for text_item, (_, location) in zip(geom.text_data, geom.edge_data):
+                draw_index(text_item, location)
+        else:
+            for eidx in geom.edge_data:
+                draw_index(*eidx)
 
         blf.color(font_id, *face_idx_color)
-        for fidx in geom.face_data:
-            draw_index(*fidx)
+        if geom.text_data:
+            for text_item, (_, location) in zip(geom.text_data, geom.face_data):
+                draw_index(text_item, location)
+        else:
+            for fidx in geom.face_data:
+                draw_index(*fidx)
 
         # if drawing all geometry, we end early.
         return
@@ -308,12 +316,20 @@ def draw_indices_2D_wbg(context, args):
                 gather_index(vidx[0], vidx[1], 'verts')
     
         # blf.color(font_id, *edge_idx_color)
-        for eidx in geom.edge_data:
-            gather_index(eidx[0], eidx[1], 'edges')
+        if geom.text_data:
+            for text_item, eidx in zip(geom.text_data, geom.edge_data):
+                gather_index(text_item, eidx[1], 'edges')
+        else:
+            for eidx in geom.edge_data:
+                gather_index(eidx[0], eidx[1], 'edges')
 
         # blf.color(font_id, *face_idx_color)
-        for fidx in geom.face_data:
-            gather_index(fidx[0], fidx[1], 'faces')
+        if geom.text_data:
+            for text_item, fidx in zip(geom.text_data, geom.face_data):
+                gather_index(text_item, fidx[1], 'faces')
+        else:
+            for fidx in geom.face_data:
+                gather_index(fidx[0], fidx[1], 'faces')
 
         draw_all_text_at_once(final_draw_data)
         # if drawing all geometry, we end early.
