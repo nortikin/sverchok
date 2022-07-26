@@ -299,6 +299,16 @@ class FileStruct(Struct):
                 data_block = bpy.data.node_groups[new_name]
                 tree_struct.build(data_block, factories, imported_structs)
 
+        # mark old nodes
+        group_trees = []
+        for tree_name in [t.name for t in trees_to_build]:
+            new_name = imported_structs[StrTypes.TREE, '', tree_name]
+            gr_tree = bpy.data.node_groups[new_name]
+            group_trees.append(gr_tree)
+        for node in chain(tree.nodes, *(t.nodes for t in group_trees)):
+            if old_nodes.is_old(node):
+                old_nodes.mark_old(node)
+
     def _build_nodes(self, tree, factories, imported_structs):
         """Build nodes of the main tree, other dependencies should be already initialized"""
         with tree.init_tree():
