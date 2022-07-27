@@ -36,28 +36,24 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
     bl_label = "OpenSubdiv"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
-    
-    maxSubdivision = 5 # Creates a self.maxSubdivision attribute
-    maxlevel : IntProperty(name='level',default=0,min=0,max=maxSubdivision,update=updateNode)
+
+    maxSubdivision = 5 # creates a self.maxSubdivision attribute 
 
     # Mute Node Implementation 
     @property
     def sv_internal_links(self):
         mapping =  [
             (self.inputs['Vertices'],self.outputs['Vertices']),
-            (self.inputs['Edges'],self.outputs['Edges']),
             (self.inputs['Faces'],self.outputs['Faces'])
         ]        
         return mapping 
 
-    def sv_init(self,context):        
+    def sv_init(self,context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.inputs.new('SvStringsSocket',"Edges")
         self.inputs.new('SvStringsSocket', "Faces")
 
         socket = self.inputs.new('SvStringsSocket', "Levels")
         socket.use_prop=True
-        socket.prop_name = 'maxlevel'
         socket.default_property_type = 'int'
         socket.default_int_property = 0 
         socket.int_range = (0,self.maxSubdivision) # This does not actually appear to limit the subdivision levels 
