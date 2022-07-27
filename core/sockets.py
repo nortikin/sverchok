@@ -882,9 +882,15 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     quick_link_to_node: StringProperty()  # this can be overridden by socket instances
 
-    default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
+    default_property_type: bpy.props.EnumProperty(  # for internal usage
+        description="Switch between float and int without node updating",
+        items=[(i, i, '') for i in ['float', 'int']])
+
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
     default_int_property: bpy.props.IntProperty(update=process_from_socket)
+
+    show_property_type: BoolProperty(
+        description="Add icon to switch default type")
 
     def get_link_parameter_node(self):
         if self.quick_link_to_node:
@@ -931,10 +937,14 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         if prop_origin and prop_name:
             layout.prop(prop_origin, prop_name)
         elif self.use_prop:
+            row = layout.row(align=True)
             if self.default_property_type == 'float':
-                layout.prop(self, 'default_float_property', text=self.name)
+                row.prop(self, 'default_float_property', text=self.name)
             elif self.default_property_type == 'int':
-                layout.prop(self, 'default_int_property', text=self.name)
+                row.prop(self, 'default_int_property', text=self.name)
+            if self.show_property_type:
+                icon = 'IPO_LINEAR' if self.default_property_type == 'float' else 'IPO_CONSTANT'
+                row.operator(SvSwitchDefaultOp.bl_idname, icon=icon, text='')
 
     def draw_menu_items(self, context, layout):
         self.draw_simplify_modes(layout)
@@ -1433,6 +1443,24 @@ class SvInputLinkMenuOp(bpy.types.Operator):
         wm.invoke_search_popup(self)
         return {'FINISHED'}
 
+
+class SvSwitchDefaultOp(bpy.types.Operator):
+    """Either Float or Integer"""
+    bl_idname = "node.sv_switch_default"
+    bl_label = "Switch default value of string socket"
+    bl_options = {'INTERNAL', 'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'socket')
+
+    def execute(self, context):
+        s = context.socket
+        s.default_property_type = 'float' if s.default_property_type == 'int' else 'int'
+        process_from_socket(s, context)
+        return {'FINISHED'}
+
+
 classes = [
     SV_MT_SocketOptionsMenu, SV_MT_AllSocketsOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
@@ -1442,7 +1470,8 @@ classes = [
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
     SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp, SvInputLinkMenuOp
+    SvSocketHelpOp, SvInputLinkMenuOp,
+    SvSwitchDefaultOp,
 ]
 
 def socket_interface_classes():

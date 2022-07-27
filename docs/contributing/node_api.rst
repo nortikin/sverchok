@@ -354,6 +354,12 @@ label
 use_prop
   Expects boolean value. If true the socket will display its default property.
 
+.. image:: https://user-images.githubusercontent.com/28003269/180741280-683987fa-e10c-47e1-91e0-807311697fea.png
+   :align: right
+
+show_property_type (SvStringsSocket)
+  It adds icon to switch default type of the string socket
+
 custom_draw
   Expects name of a method of the node of the socket. If defined the method
   will be used draw UI elements for the socket.
