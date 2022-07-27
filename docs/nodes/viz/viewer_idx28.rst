@@ -10,7 +10,8 @@ This node's primary purpose is for display the index information of geometry and
 - Edge indices are drawn on midpoint of the Edge
 - Face indices are drawn at the average location of the Vertices associated with the face.
 
-Additionally 
+Additionally
+
 - the input geometry can be transformed using the Matrix socket.
 - the Node can draw arbitrary (non renderable) text into the 3dview at the
   location of incoming verts, edges and faces. If incoming data is shorter than
