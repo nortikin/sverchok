@@ -39,7 +39,6 @@ Indicies in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relat
 
 Examples of usage
 -----------------
-.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/sverchok/sverchok_OpenSubdiv/.github/images/nodes/modifier_change/opensubdivide/opensubdivide_vector.png
+.. image:: https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png
 
-.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/sverchok/sverchok_OpenSubdiv/.github/images/nodes/modifier_change/opensubdivide/opensubdivide_multi.png
-
+.. image:: https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png
