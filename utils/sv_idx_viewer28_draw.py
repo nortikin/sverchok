@@ -177,7 +177,8 @@ def draw_indices_2D(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            draw_index(idx, world_coordinate)
+                            text = geom.text_data[idx] if geom.text_data else idx
+                            draw_index(text, world_coordinate)
                         
                         if display_vert_index:
                             for j in polygon:
@@ -191,7 +192,8 @@ def draw_indices_2D(context, args):
 
             blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                draw_index(idx, vertices[idx])
+                text = geom.text_data[idx] if geom.text_data else idx
+                draw_index(text, vertices[idx])
 
             blf.color(font_id, *edge_idx_color)
             for idx, edge in enumerate(edges):
@@ -199,7 +201,8 @@ def draw_indices_2D(context, args):
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    draw_index(idx, loc)
+                    text = geom.text_data[idx] if geom.text_data else idx
+                    draw_index(text, loc)
                     cache_edge_indices.remove(sorted_edge)
 
     except Exception as err:
@@ -376,7 +379,8 @@ def draw_indices_2D_wbg(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            gather_index(idx, world_coordinate, 'faces')
+                            text = geom.text_data[idx] if geom.text_data else idx
+                            gather_index(text, world_coordinate, 'faces')
                         
                         if display_vert_index:
                             for j in polygon:
@@ -390,7 +394,8 @@ def draw_indices_2D_wbg(context, args):
 
             # blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                gather_index(idx, vertices[idx], 'verts')
+                text = geom.text_data[idx] if geom.text_data else idx
+                gather_index(text, vertices[idx], 'verts')
 
             # blf.color(font_id, *edge_idx_color)
             for idx, edge in enumerate(edges):
@@ -398,7 +403,8 @@ def draw_indices_2D_wbg(context, args):
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    gather_index(idx, loc, 'edges')
+                    text = geom.text_data[idx] if geom.text_data else idx
+                    gather_index(text, loc, 'edges')
                     cache_edge_indices.remove(sorted_edge)
 
         draw_all_text_at_once(final_draw_data)
