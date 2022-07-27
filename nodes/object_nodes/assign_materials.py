@@ -172,7 +172,8 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
 
         for obj in objects:
             self.assign_materials(obj)
-            obj.data.update()
+            if hasattr(obj.data, "update"):
+                obj.data.update()
 
         self.outputs['Object'].sv_set(objects)
 
