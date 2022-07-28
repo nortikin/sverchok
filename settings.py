@@ -396,9 +396,10 @@ class SverchokPreferences(AddonPreferences):
     log_to_buffer: BoolProperty(name = "Log to text buffer",
             description = "Enable log output to internal Blender's text buffer (requires restart)",
             default = True)
-    log_to_buffer_clean: BoolProperty(name = "Clear buffer at startup",
-            description = "Clear text buffer at each Blender startup (requires restart)",
-            default = False)
+    log_to_buffer_clean: BoolProperty(
+        name="Clear buffer at saving file",
+        description="Clear text buffer each time when file is saved",
+        default=True)
     log_to_file: BoolProperty(name = "Log to file",
             description = "Enable log output to external file (requires restart)",
             default = False)
