@@ -107,7 +107,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         color_input = self.inputs['Colors']
         if color_input.is_linked:
-            abc = self.inputs['Colors'].sv_get()
+            abc = self.inputs['Colors'].sv_get(deepcopy=False)
             data = dataCorrect_np(abc)
         else:
             data = [[self.unit_color[:]]]
