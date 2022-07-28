@@ -17,10 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets)
+from sverchok.data_structure import (updateNode, changable_sockets, fixed_iter)
 
 
 class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,8 +33,6 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
     level: IntProperty(name='level', default=1, min=0, update=updateNode)
     number: IntProperty(name='number', default=1, min=1, update=updateNode)
     unwrap: BoolProperty(name='unwrap', default=False, update=updateNode)
-    typ: StringProperty(name='typ', default='')
-    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -46,19 +44,19 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Data")
 
     def sv_update(self):
-        if 'Data' in self.inputs and self.inputs['Data'].links:
+        if self.inputs['Data'].is_linked:
             inputsocketname = 'Data'
             outputsocketname = ['Data', ]
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if not (self.inputs['Data'].is_linked and self.outputs['Data'].is_linked):
-            return
+        data = self.inputs['Data'].sv_get(deepcopy=False, default=[])
+        number = self.inputs['Number'].sv_get(deepcopy=False)[0]
 
-        data = self.inputs['Data'].sv_get(deepcopy=False)
-        Number = self.inputs['Number'].sv_get(default=[[self.number]], deepcopy=False)[0]
+        obj_num = max(len(data), len(number))
+        data = fixed_iter(data, obj_num)
 
-        out_ = self.count(data, self.level, Number)
+        out_ = self.count(data, self.level, number)
         if self.unwrap:
             if len(out_) > 0:
                 out = []
