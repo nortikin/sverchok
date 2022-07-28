@@ -55,12 +55,12 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.level == 1:  # only for 1 otherwise it changes behaviour dramatically
             obj_num = max(len(data), len(number))
-            data = fixed_iter(data, obj_num)
+            data = fixed_iter(data, obj_num) if data else []
 
         out_ = self.count(data, self.level, number)
         if self.unwrap:
+            out = []
             if len(out_) > 0:
-                out = []
                 for o in out_:
                     out.extend(o)
         else:
