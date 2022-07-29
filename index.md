@@ -281,7 +281,7 @@
     SvBBoxNodeMk3
     SvComponentAnalyzerNode
     SvDiameterNode
-    SvVolumeNode
+    SvVolumeNodeMK2
     SvAreaNode
     DistancePPNode
     SvDistancePointLineNode
