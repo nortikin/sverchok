@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last_for_length
 from sverchok.data_structure import match_long_repeat as mlrepeat
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
-from sverchok.utils.modules.polygon_utils import np_process_polygons, np_faces_normals
+from sverchok.utils.math import np_normalize_vectors
 
 
 def flip_from_mask(mask, geom, reverse):
@@ -47,13 +47,32 @@ def flip_to_match_1st_np(geom, reverse):
     this mode expects all faces to be coplanar, else you need to manually generate a flip mask.
     """
     verts, edges, faces = geom
-    normals = np_process_polygons(verts, faces, func=np_faces_normals, output_numpy=True) # already normalized
+    normals = face_normals_np(verts, faces)
     direction = normals[0]
-    matched = np.linalg.norm((normals - direction), axis=1) < 0.004
-    flips = np.invert(matched) if reverse else matched
+    flips = np.isclose(np.dot(normals, direction), 1, atol=0.004)
+    if reverse:
+        flips = ~flips
     b_faces = [poly if flip else poly[::-1] for flip, poly in zip(flips, faces)]
 
     return verts, edges, b_faces
+
+
+def face_normals_np(verts, faces):
+    verts = np.asarray(verts)
+    def first_3_indexes():
+        for f in faces:
+            for i in f[:3]:
+                yield i
+    faces = np.fromiter(first_3_indexes(), dtype=int)  # 2x faster than from list
+    faces.shape = (-1, 3)
+    v1 = verts[faces[:, 0]]
+    v2 = verts[faces[:, 1]]
+    v3 = verts[faces[:, 2]]
+    d1 = v1 - v2
+    d2 = v3 - v2
+    normals = np.cross(d1, d2)
+    np_normalize_vectors(normals)
+    return normals
 
 
 class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
@@ -90,7 +109,7 @@ class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         vertices_s = self.inputs['Vertices'].sv_get(default=[], deepcopy=False)
-        edges_s = self.inputs['Edges'].sv_get(default=[], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces_s = self.inputs['Polygons'].sv_get(default=[], deepcopy=False)
 
         geom = [[], [], []]
