@@ -56,7 +56,7 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
         socket.use_prop=True
         socket.default_property_type = 'int'
         socket.default_int_property = 0 
-        socket.int_range = (0,self.maxSubdivision) # This does not actually appear to limit the subdivision levels 
+        # socket.int_range = (0,self.maxSubdivision) # There's no way to visually limit the subdivision levels (it's handled internally), but something like this would be nice in the future. 
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
