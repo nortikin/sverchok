@@ -16,15 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
+
 import bpy
-# from mathutils import Vector
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last_for_length
 from sverchok.data_structure import match_long_repeat as mlrepeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+from sverchok.utils.modules.polygon_utils import np_process_polygons, np_faces_normals
 
 
 def flip_from_mask(mask, geom, reverse):
@@ -41,22 +42,17 @@ def flip_from_mask(mask, geom, reverse):
     return verts, edges, b_faces
 
 
-def flip_to_match_1st(geom, reverse):
+def flip_to_match_1st_np(geom, reverse):
     """
     this mode expects all faces to be coplanar, else you need to manually generate a flip mask.
     """
     verts, edges, faces = geom
-    b_faces = []
-    bm = bmesh_from_pydata(verts, faces=faces, normal_update=True)
-    bm.faces.ensure_lookup_table()
-    Direction = bm.faces[0].normal
-    for face in bm.faces:
-        close = (face.normal - Direction).length < 0.004
-        flip = close if not reverse else not close
-        poly = [i.index for i in face.verts]
-        b_faces.append(poly if flip else poly[::-1])
+    normals = np_process_polygons(verts, faces, func=np_faces_normals, output_numpy=True) # already normalized
+    direction = normals[0]
+    matched = np.linalg.norm((normals - direction), axis=1) < 0.004
+    flips = np.invert(matched) if reverse else matched
+    b_faces = [poly if flip else poly[::-1] for flip, poly in zip(flips, faces)]
 
-    bm.free()
     return verts, edges, b_faces
 
 
@@ -93,13 +89,9 @@ class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         r2.prop(self, "selected_mode", expand=True)
 
     def process(self):
-
-        if not any(self.outputs[idx].is_linked for idx in range(3)):
-            return
-
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
-        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
+        vertices_s = self.inputs['Vertices'].sv_get(default=[], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[], deepcopy=False)
 
         geom = [[], [], []]
 
@@ -111,11 +103,10 @@ class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
 
         elif self.selected_mode == 'match':
             for single_geom in zip(*mlrepeat([vertices_s, edges_s, faces_s])):
-                for idx, d in enumerate(flip_to_match_1st(single_geom, self.reverse)):
+                for idx, d in enumerate(flip_to_match_1st_np(single_geom, self.reverse)):
                     geom[idx].append(d)
 
         self.set_output(geom)
-
 
     def set_output(self, geom):
         _ = [self.outputs[idx].sv_set(data) for idx, data in enumerate(geom)]
