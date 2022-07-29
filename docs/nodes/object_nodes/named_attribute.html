@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Layout &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Named attribute &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Socket Converter" href="converter.html" />
-    <link rel="prev" title="Named attribute" href="../object_nodes/named_attribute.html" /> 
+    <link rel="next" title="Layout" href="../layout/layout_index.html" />
+    <link rel="prev" title="Copy Modifiers Node" href="copy_modifiers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,13 +77,33 @@
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Layout</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="converter.html">Socket Converter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wifi_in.html">Wifi In &amp; Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wifi_out.html">Wifi In &amp; Out</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="object_nodes_index.html">Object</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="get_asset_properties_mk2.html">Object ID Selector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lattice_analyzer.html">Lattice Props</a></li>
+<li class="toctree-l3"><a class="reference internal" href="armature_analyzer.html">Armature Props</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sample_uv_color.html">Sample UV texture color on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="select_mesh_verts.html">Select vertices of mesh Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weightsmk2.html">Weights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getsetprop.html">Get Property / Set Property</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getsetprop_mk2.html">Get Property / Set Property</a></li>
+<li class="toctree-l3"><a class="reference internal" href="assign_materials.html">Assign Materials List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="material_index.html">Set Material Index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_custom_uv_map.html">Set custom UV map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_loop_normals.html">Set loop normals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_mesh_attribute.html">Set mesh attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_collection.html">Set collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="copy_modifiers.html">Copy Modifiers Node</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Named attribute</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#category">Category</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
@@ -109,9 +129,10 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
-      <li>Layout</li>
+          <li><a href="object_nodes_index.html">Objects</a> &raquo;</li>
+      <li>Named attribute</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/layout/layout_index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/object_nodes/named_attribute.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -119,23 +140,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="layout">
-<h1>Layout<a class="headerlink" href="#layout" title="Permalink to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="converter.html">Socket Converter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wifi_in.html">Wifi In &amp; Out</a></li>
-<li class="toctree-l1"><a class="reference internal" href="wifi_out.html">Wifi In &amp; Out</a></li>
+  <section id="named-attribute">
+<h1>Named attribute<a class="headerlink" href="#named-attribute" title="Permalink to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<p>The node takes a blender object and an attribute name and tries to find
+attribute with such name if it fails it rises an error. The size and type
+of attributes remains unchanged by the node.</p>
+</section>
+<section id="category">
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
+<p>BPY Data -&gt; Set mesh attribute</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Object</strong> - Blender data blocks</p></li>
+<li><p><strong>Name</strong> - name of attribute to read</p></li>
 </ul>
-</div>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Object</strong> - Blender data blocks</p></li>
+<li><p><strong>Attribute</strong> - Values of the attriubte</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<p>Setting and reading some attribute on a mesh</p>
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/181222478-42302284-b72f-460d-9df2-6fed2b49f625.png"><img alt="https://user-images.githubusercontent.com/28003269/181222478-42302284-b72f-460d-9df2-6fed2b49f625.png" src="https://user-images.githubusercontent.com/28003269/181222478-42302284-b72f-460d-9df2-6fed2b49f625.png" style="width: 800px;" /></a>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../object_nodes/named_attribute.html" class="btn btn-neutral float-left" title="Named attribute" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="converter.html" class="btn btn-neutral float-right" title="Socket Converter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="copy_modifiers.html" class="btn btn-neutral float-left" title="Copy Modifiers Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../layout/layout_index.html" class="btn btn-neutral float-right" title="Layout" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
