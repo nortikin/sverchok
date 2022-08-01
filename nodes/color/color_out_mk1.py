@@ -107,12 +107,12 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         color_input = self.inputs['Colors']
         if color_input.is_linked:
-            abc = self.inputs['Colors'].sv_get()
+            abc = self.inputs['Colors'].sv_get(deepcopy=False)
             data = dataCorrect_np(abc)
         else:
             data = [[self.unit_color[:]]]
 
-        if self.output_numpy:
+        if self.output_numpy or isinstance(data[0], ndarray):
             unpack_func = unpack_np if isinstance(data[0], ndarray) else unpack_list_to_np
         else:
             unpack_func = unpack_list
