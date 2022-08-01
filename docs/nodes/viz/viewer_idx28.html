@@ -80,6 +80,8 @@
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">vd matrix</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Index Viewer</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline viewer</a></li>
@@ -153,18 +155,38 @@
 <li><p>Edge indices are drawn on midpoint of the Edge</p></li>
 <li><p>Face indices are drawn at the average location of the Vertices associated with the face.</p></li>
 </ul>
-<p>Additionally
-- the input geometry can be transformed using the Matrix socket.
-- the Node can draw arbitrary (non renderable) text into the 3dview at the location of incoming verts. There must be a one-to-one supply of vertices and text to draw, else the node will decide where to draw the excess text elements.</p>
-<img alt="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" src="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" />
+<p>Additionally</p>
 <ul class="simple">
-<li><p>(available from N Panel) the Node can display the Object index associated with the element ( the first object, first index will be drawn as <code class="docutils literal notranslate"><span class="pre">0:</span> <span class="pre">0</span></code> )</p></li>
+<li><p>the input geometry can be transformed using the Matrix socket.</p></li>
+<li><p>the Node can draw arbitrary (non renderable) text into the 3dview at the
+location of incoming verts, edges and faces. If incoming data is shorter than
+number of elements the last element will be displayed on rest elements.</p></li>
 </ul>
 <p>Because it can be difficult to read indices when there are many geometric elements visible there is an option to draw a small background under the text element.</p>
-<ul class="simple">
-<li><p>(using the Ghost icon in the Node UI) if you attach verts + faces, you can also hide backfacing indices from being displayed. Adding the faces information gives the node enough information to detect what can be seen directly by the viewport “eye” location.</p></li>
-</ul>
-<img alt="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" src="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" />
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Activate</dt><dd><p>Enabling the node.</p>
+</dd>
+<dt>Draw background</dt><dd><p>Hide background around text.</p>
+</dd>
+<dt>Draw bface</dt><dd><p>(using the Ghost icon in the Node UI) if you attach verts + faces, you can
+also hide backfacing indices from being displayed. Adding the faces
+information gives the node enough information to detect what can be seen
+directly by the viewport “eye” location.</p>
+</dd>
+<dt>Draw object index</dt><dd><p>(available from N Panel) the Node can display the Object index associated
+with the element ( the first object, first index will be drawn as <code class="docutils literal notranslate"><span class="pre">0:</span> <span class="pre">0</span></code> )</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Hide text behind geometry</p>
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png"><img alt="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" src="https://user-images.githubusercontent.com/619340/127735702-7db6c27a-9f59-4ad4-83f8-44fe96fcbd0c.png" style="width: 800px;" /></a>
+<p>Show custom text</p>
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png"><img alt="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" src="https://user-images.githubusercontent.com/619340/127735798-4c3a4222-28ce-418a-b3f0-13c8149a590c.png" style="width: 800px;" /></a>
 </section>
 </section>
 
