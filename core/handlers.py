@@ -4,6 +4,7 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 import sverchok.core.events as ev
+import sverchok.utils.logging as log
 from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
@@ -218,12 +219,18 @@ def update_frame_change_mode():
     set_frame_change(mode)
 
 
+@persistent
+def save_pre_handler(scene):
+    log.clear_internal_buffer()
+
+
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
     'depsgraph_update_pre': sv_main_handler,
+    'save_pre': save_pre_handler,
 }
 
 
