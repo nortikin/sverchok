@@ -98,8 +98,12 @@ def sv_update_handler(scene):
     Playing animation: has_frame_changed=True, is_animation_playing=True
     Playing animation(stop): has_frame_changed=False, is_animation_playing=False
     """
-    is_playing = bpy.context.screen.is_animation_playing
-    is_frame_changed = has_frame_changed(scene)
+    if bpy.context.screen is None:  # rendering
+        is_playing = False  # should be False to update UI
+        is_frame_changed = True
+    else:
+        is_playing = bpy.context.screen.is_animation_playing
+        is_frame_changed = has_frame_changed(scene)
     # print(f"Frame changed: {is_frame_changed}, Animation is playing: {is_playing}")
 
     for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
