@@ -17,9 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import numpy as np
+import awkward as ak
+from numba import njit
 
 import bpy
 from bpy.props import EnumProperty, BoolProperty
+from mathutils.geometry import normal
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last_for_length
@@ -75,6 +78,59 @@ def face_normals_np(verts, faces):
     return normals
 
 
+def flip_to_match_1st_ak(geom, reverse):
+    """
+    this mode expects all faces to be coplanar, else you need to manually generate a flip mask.
+    """
+    verts, edges, faces = geom
+    normals = face_normals_ak(verts, faces)
+    direction = normals[0]
+    flips = np.isclose(np.dot(normals, direction), 1, atol=0.004)
+    if reverse:
+        flips = ~flips
+    b_faces = np.where(flips, faces, faces[:, ::-1])
+
+    return verts, edges, b_faces
+
+
+def face_normals_ak(verts, faces):
+    v1 = verts[faces[:, 0]]
+    v2 = verts[faces[:, 1]]
+    v3 = verts[faces[:, 2]]
+    d1 = v1 - v2
+    d2 = v3 - v2
+    normals = np.cross(d1, d2)
+    np_normalize_vectors(normals)
+    return normals
+
+
+def flip_to_match_1st_numba(verts, faces, direction, reverse):
+    builder = ak.ArrayBuilder()
+    flip(builder, verts, faces, direction, reverse)
+    faces = builder.snapshot()
+    return faces
+
+
+@njit
+def flip(builder, verts, faces, direction, reverse):
+    for fi in range(len(faces)):
+        v1 = verts[faces[fi][0]]
+        v2 = verts[faces[fi][1]]
+        v3 = verts[faces[fi][2]]
+        d1 = v1 - v2
+        d2 = v3 - v2
+        normal = np.cross(d1, d2)
+        normal_len = np.sqrt(normal.dot(normal))
+        normal = normal / normal_len
+        flip = np.isclose(np.dot(normal, direction), 1, atol=0.004)
+        flip = ~flip if reverse else flip
+
+        builder.begin_list()
+        for vi in faces[fi] if flip else faces[fi][::-1]:
+            builder.append(vi)
+        builder.end_list()
+
+
 class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Flip face normals '''
     bl_idname = 'SvFlipNormalsNode'
@@ -107,6 +163,8 @@ class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         r2 = r1.split().row()
         r2.prop(self, "selected_mode", expand=True)
 
+    from sverchok.utils.profile import profile
+    @profile
     def process(self):
         vertices_s = self.inputs['Vertices'].sv_get(default=[], deepcopy=False)
         edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
@@ -122,8 +180,14 @@ class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
 
         elif self.selected_mode == 'match':
             for single_geom in zip(*mlrepeat([vertices_s, edges_s, faces_s])):
-                for idx, d in enumerate(flip_to_match_1st_np(single_geom, self.reverse)):
-                    geom[idx].append(d)
+                # for idx, d in enumerate(flip_to_match_1st_ak(single_geom, self.reverse)):
+                #     geom[idx].append(d)
+                v, e, f = single_geom
+                direction = np.array(normal([v[f[0][0]], v[f[0][1]], v[f[0][2]]]))
+                new_f = flip_to_match_1st_numba(v, f, direction, self.reverse)
+                geom[0].append(v)
+                geom[1].append(e)
+                geom[2].append(new_f)
 
         self.set_output(geom)
 
