@@ -10,8 +10,11 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
+from sverchok.utils.dummy_nodes import add_dummy
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExInterpolateNurbsSurfaceNode', "Interpolate NURBS Surface", 'geomdl')
+else:
     from geomdl import fitting
     
 class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
