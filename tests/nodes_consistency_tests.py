@@ -33,24 +33,23 @@ class NodesAPITest(SverchokTestCase):
             ('SvUVtextureNode', 'objects'),  # it seems does not appear in UI
         }
 
-        def is_enum_keep_refs(bl_class_, prop_identifier):
-            prop = bl_class_.bl_rna.properties[prop_identifier]
-            if prop.enum_items:
-                return True
-            item_func = bl_class_.__annotations__[prop_identifier].keywords['items']
-            return hasattr(item_func, 'keep_ref')
+        def is_enum_keep_refs(prop_):
+            item_func = prop_.keywords['items']
+            if callable(item_func) and not hasattr(item_func, 'keep_ref'):
+                return False
+            return True
 
         for node_class in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-            bl_class = bpy.types.Node.bl_rna_get_subclass_py(node_class.bl_idname)
-            if bl_class is None:
-                continue
-            for enum in bl_class.bl_rna.properties:
-                if (node_class.bl_idname, enum.identifier) in checked_nodes:
+            for identifier, prop in node_class.__annotations__.items():
+                if not isinstance(prop, bpy.props._PropertyDeferred):
                     continue
-                if enum.type == 'ENUM':
-                    with self.subTest(node=node_class.bl_idname, enum=enum.identifier):
-                        self.assertTrue(
-                            is_enum_keep_refs(bl_class, enum.identifier),
-                            msg=f"Make sure that the {node_class=} store its items"
-                                f" in memory and add its bl_idname to the exception list"
-                                f" or add 'keep_enum_reference' decorator to the enum function")
+                if 'items' not in prop.keywords:
+                    continue
+                if (node_class.bl_idname, identifier) in checked_nodes:
+                    continue
+                with self.subTest(node=node_class.bl_idname, enum=identifier):
+                    self.assertTrue(
+                        is_enum_keep_refs(prop),
+                        msg=f"Make sure that the {node_class=} store its items"
+                            f" in memory and add its bl_idname to the exception list"
+                            f" or add 'keep_enum_reference' decorator to the enum function")

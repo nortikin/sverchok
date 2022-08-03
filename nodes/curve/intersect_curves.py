@@ -35,21 +35,15 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INTERSECT_CURVES'
 
-    def get_implementations(self, context):
-        result = []
-        if FreeCAD is not None:
-            item = ('FREECAD', "FreeCAD", "Implementation from FreeCAD library", 0)
-            result.append(item)
-        
-        if scipy is not None:
-            item = ('SCIPY', "SciPy", "Sverchok built-in implementation", 1)
-            result.append(item)
-
-        return result
+    implementations = []
+    if FreeCAD is not None:
+        implementations.append(('FREECAD', "FreeCAD", "Implementation from FreeCAD library", 0))
+    if scipy is not None:
+        implementations.append(('SCIPY', "SciPy", "Sverchok built-in implementation", 1))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     match_methods = [
