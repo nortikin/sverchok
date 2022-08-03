@@ -38,7 +38,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type: StringProperty(default='SvStringsSocket')
 
     def auto_count(self):
-        data = self.inputs['data'].sv_get(default=[])
+        data = self.inputs['data'].sv_get(default=[], deepcopy=False)
         leve = levelsOflist(data)
         if leve+1 < self.level:
             self.level = leve+1
@@ -76,10 +76,9 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         if not other:
             return
         self.multi_socket_type = other.bl_idname
-        multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
-        outputsocketname = [name.name for name in self.outputs]
-        changable_sockets(self, 'data', outputsocketname)
-
+        for out in self.outputs:
+            if out.bl_idname != other.bl_idname:
+                out.replace_socket(other.bl_idname)
 
     def process(self):
         data = self.inputs['data'].sv_get()
