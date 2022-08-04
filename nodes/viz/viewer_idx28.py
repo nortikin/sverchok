@@ -209,8 +209,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         if geom.text:
             for obj_index, final_verts in enumerate(geom.verts):
                 text_size = max(len(final_verts),
-                                len(geom.edges[obj_index]),
-                                len(geom.faces[obj_index]))
+                                len(geom.edges[obj_index] if geom.edges else []),
+                                len(geom.faces[obj_index] if geom.faces else []))
                 text_items = self.get_text_of_correct_length(obj_index, geom, text_size)
                 for text_item in text_items:
 
