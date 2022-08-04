@@ -144,6 +144,9 @@ class Tasks:
         if self._main_area:
             self._main_area.header_text_set(text)
 
+    def __repr__(self):
+        return f"<Tasks current={self.current} todo={self._todo}>"
+
 
 tasks = Tasks()
 

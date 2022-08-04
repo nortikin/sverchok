@@ -4,6 +4,7 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 import sverchok.core.events as ev
+import sverchok.core.tasks as ts
 import sverchok.utils.logging as log
 from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
@@ -136,6 +137,14 @@ def sv_main_handler(scene):
     # animation is on and user changes something in the scene this trigger is
     # only called if frame rate is equal to maximum.
     if bpy.context.screen.is_animation_playing:
+        return
+
+    # scene handler can be triggered even when new node or its property
+    # is changed what causes redundant updates. Such events are created first,
+    # so it's possible to check them in the tasks object.
+    # also be aware that updates generate scene events by their selves and
+    # they have mechanism to avoid them
+    if ts.tasks:
         return
     for ng in BlTrees().sv_main_trees:
         ng.scene_update()
