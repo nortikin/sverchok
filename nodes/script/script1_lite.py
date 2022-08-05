@@ -35,7 +35,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.console_print import console_print
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.6, 0.8)
@@ -208,10 +208,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     n_id: StringProperty(default='')
 
     custom_enum: bpy.props.EnumProperty(
-        items=lambda self, c: self.return_enumeration(enum_name='custom_enum'),
+        items=keep_enum_reference(
+            lambda self, c: self.return_enumeration(enum_name='custom_enum')),
         description="enum 1", update=updateNode)
     custom_enum_2: bpy.props.EnumProperty(
-        items=lambda self, c: self.return_enumeration(enum_name='custom_enum_2'),
+        items=keep_enum_reference(
+            lambda self, c: self.return_enumeration(enum_name='custom_enum_2')),
         description="enum 2", update=updateNode)
 
     snlite_raise_exception: BoolProperty(name="raise exception")

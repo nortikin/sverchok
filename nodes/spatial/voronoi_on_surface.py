@@ -40,13 +40,11 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
 
-    def get_modes(self, context):
-        modes = [('UV', "UV Space", "Generate 2D Voronoi diagram in surface's UV space", 0)]
-        if scipy is not None:
-            modes.append(('RIDGES', "3D Ridges", "Generate ridges of 3D Voronoi diagram", 1))
-            modes.append(('REGIONS', "3D Regions", "Generate regions of 3D Voronoi diagram", 2))
-        return modes
-    
+    modes = [('UV', "UV Space", "Generate 2D Voronoi diagram in surface's UV space", 0)]
+    if scipy is not None:
+        modes.append(('RIDGES', "3D Ridges", "Generate ridges of 3D Voronoi diagram", 1))
+        modes.append(('REGIONS', "3D Regions", "Generate regions of 3D Voronoi diagram", 2))
+
     def update_sockets(self, context):
         self.inputs['MaxSides'].hide_safe = self.mode != 'UV' or not self.make_faces
         self.inputs['Thickness'].hide_safe = self.mode == 'UV'
@@ -57,7 +55,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode : EnumProperty(
         name = "Mode",
-        items = get_modes,
+        items=modes,
         update = update_sockets)
 
     make_faces: BoolProperty(

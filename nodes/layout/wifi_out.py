@@ -21,6 +21,7 @@ from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 OLD_OP = "node.sverchok_generic_callback_old"
 
@@ -37,6 +38,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     var_name: StringProperty(name='var_name', default='')
 
+    @keep_enum_reference
     def avail_var_name(self, context):
         ng = self.id_data
         out = [(n.var_name, n.var_name, "") for n in ng.nodes

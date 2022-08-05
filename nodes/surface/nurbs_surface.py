@@ -33,24 +33,19 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['KnotsV'].hide_safe = self.knot_mode == 'AUTO'
         updateNode(self, context)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsSurface.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsSurface.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        i += 1
-        if FreeCAD is not None:
-            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation",i)
-            items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsSurface.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsSurface.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append(
+            (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     input_mode : EnumProperty(

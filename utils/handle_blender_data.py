@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from functools import singledispatch
+from functools import singledispatch, wraps
 from itertools import chain
 from typing import Any, List, Union, TYPE_CHECKING
 
@@ -491,3 +491,19 @@ def get_func_and_args(prop):
         return prop.function, prop.keywords
     else:
         return prop
+
+
+def keep_enum_reference(enum_func):
+    """remember you have to keep enum strings somewhere in py,
+    else they get freed and Blender references invalid memory!
+    This decorator should be used for these purposes"""
+    saved_items = dict()
+
+    @wraps(enum_func)
+    def wrapper(node, context):
+        nonlocal saved_items
+        items = enum_func(node, context)
+        saved_items[node.node_id] = items
+        return saved_items[node.node_id]
+    wrapper.keep_ref = True  # just for tests
+    return wrapper
