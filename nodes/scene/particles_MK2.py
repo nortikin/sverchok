@@ -21,7 +21,6 @@ import numpy as np
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, second_as_first_cycle as safc
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
 class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
@@ -50,7 +49,7 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
         outL, outV = self.outputs
 
         # this may not work in render mode.
-        sv_depsgraph = get_sv_depsgraph()
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         # listobj = [i.particle_systems.active.particles for i in O.sv_get() if i.particle_systems]
         listobj = []
@@ -79,8 +78,6 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
         if outV.is_linked:
             outV.sv_set([[i.velocity[:] for i in Plist] for Plist in listobj])
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
 
 def register():
     bpy.utils.register_class(SvParticlesMK2Node)

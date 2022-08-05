@@ -22,7 +22,6 @@ from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.data_structure import (updateNode)
 
 
@@ -46,14 +45,11 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'Point on mesh')
         self.outputs.new('SvColorSocket', 'Color on UV')
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
         Points = self.inputs[1]
         Colors = self.outputs[0]
         if Colors.is_linked:
-            dps = get_sv_depsgraph()
+            dps = bpy.context.evaluated_depsgraph_get()
             obj = self.inputs[0].sv_get()[0]  # triangulate faces
             bvh = BVHTree.FromObject(obj, dps)
             point = Points.sv_get()[0]
