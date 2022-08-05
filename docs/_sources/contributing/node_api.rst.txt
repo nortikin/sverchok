@@ -158,6 +158,11 @@ expose dynamic enums which do not store their content.
 
 .. _known cases: https://github.com/nortikin/sverchok/issues/4316
 
+.. tip::
+   There is now ``utils.handle_blender_data.keep_enum_reference`` decorator
+   which can be used with dynamic enums. The decorator assign enum items to a
+   Python variable what solves the problem above.
+
 Enum items can have custom icons. Custom icons should be stored in the
 ``sverchok.ui.icons`` folder. To use custom icons the ``ui.sv_icons.custom_icon``
 function should be used. It expects the name of the file in upper case without

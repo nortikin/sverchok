@@ -261,6 +261,12 @@ return boolean value.</p>
 are generated dynamically they always should be stored somewhere in Python
 memory. There are <a class="reference external" href="https://github.com/nortikin/sverchok/issues/4316">known cases</a> when Blender crashes during rendering when UI
 expose dynamic enums which do not store their content.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>There is now <code class="docutils literal notranslate"><span class="pre">utils.handle_blender_data.keep_enum_reference</span></code> decorator
+which can be used with dynamic enums. The decorator assign enum items to a
+Python variable what solves the problem above.</p>
+</div>
 <p>Enum items can have custom icons. Custom icons should be stored in the
 <code class="docutils literal notranslate"><span class="pre">sverchok.ui.icons</span></code> folder. To use custom icons the <code class="docutils literal notranslate"><span class="pre">ui.sv_icons.custom_icon</span></code>
 function should be used. It expects the name of the file in upper case without
