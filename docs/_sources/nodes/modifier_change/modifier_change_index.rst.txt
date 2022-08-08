@@ -6,6 +6,7 @@ Modifier Change
    :maxdepth: 1
 
    bevel
+   opensubdivision
    subdivide_mk2
    subdivide_lite
    subdivide_to_quads
