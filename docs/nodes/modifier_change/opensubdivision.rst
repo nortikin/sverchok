@@ -1,4 +1,4 @@
-Subdivision Node
+OpenSubdivision Node
 ===================
 
 Functionality
@@ -35,7 +35,7 @@ This node has the following outputs:
 
 Unexpected behavior may occur if using Faces from one mesh with Vertices from another. 
 
-Indicies in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relate to vertices in **Vertices** output.
+Indices in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relate to vertices in **Vertices** output.
 
 Examples of usage
 -----------------

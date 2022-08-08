@@ -31,9 +31,9 @@ except ModuleNotFoundError:
 
 from itertools import chain 
 import traceback 
-class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
-    bl_idname = "SvOpenSubdivideNode"
-    bl_label = "OpenSubdiv"
+class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
+    bl_idname = "SvOpenSubdivisionNode"
+    bl_label = "OpenSubdivision"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
 
@@ -101,7 +101,7 @@ class SvOpenSubdivideNode(bpy.types.Node,SverchCustomTreeNode):
         self.outputs['Faces'].sv_set(new_meshes['faces'])
 
 def register():
-    bpy.utils.register_class(SvOpenSubdivideNode)
+    bpy.utils.register_class(SvOpenSubdivisionNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvOpenSubdivideNode)
+    bpy.utils.unregister_class(SvOpenSubdivisionNode)
