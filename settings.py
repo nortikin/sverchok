@@ -574,6 +574,7 @@ dependencies, or install only some of them.""")
         draw_message(box, "circlify")
         draw_message(box, "cython")
         draw_message(box, "numba")
+        draw_message(box, "pyOpenSubdiv")
 
         draw_freecad_ops()
 
