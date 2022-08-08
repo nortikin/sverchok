@@ -20,3 +20,4 @@ Objects
    set_mesh_attribute
    set_collection
    copy_modifiers
+   named_attribute

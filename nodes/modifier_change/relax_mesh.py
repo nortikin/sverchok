@@ -12,6 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.relax_mesh import *
 from sverchok.utils.nodes_mixins.sockets_config import TransformNode
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 
 class SvRelaxMeshNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
@@ -52,6 +53,7 @@ class SvRelaxMeshNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
             default = 'LLOYD',
             update = update_sockets)
 
+    @keep_enum_reference
     def get_available_methods(self, context):
         items = []
         items.append((NONE, "Do not use", "Do not use", 0))

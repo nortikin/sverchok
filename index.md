@@ -281,7 +281,7 @@
     SvBBoxNodeMk3
     SvComponentAnalyzerNode
     SvDiameterNode
-    SvVolumeNode
+    SvVolumeNodeMK2
     SvAreaNode
     DistancePPNode
     SvDistancePointLineNode
@@ -573,7 +573,7 @@
     SvTextureEvaluateNodeMk2
 
 ## Logic
-    SvLogicNode
+    SvLogicNodeMK2
     SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
@@ -643,6 +643,7 @@
     SvSortObjsNode
     SvFilterObjsNode
     SvSetMeshAttributeNode
+    SvNamedMeshAttributeNode
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2

@@ -24,15 +24,13 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_FROM_CURVES'
 
-    def get_interp_modes(self, context):
-        modes = [
-            ('LIN', "Linear", "Linear interpolation", 0),
-            ('CUBIC', "Cubic", "Cubic interpolation", 1)
-        ]
-        modes.append(('BSPLINE', "B-Spline", "B-Spline interpolation", 2))
-        if scipy is not None:
-            modes.append(('RBF', "RBF", "RBF interpolation", 3))
-        return modes
+    interp_modes = [
+        ('LIN', "Linear", "Linear interpolation", 0),
+        ('CUBIC', "Cubic", "Cubic interpolation", 1),
+        ('BSPLINE', "B-Spline", "B-Spline interpolation", 2),
+    ]
+    if scipy is not None:
+        interp_modes.append(('RBF', "RBF", "RBF interpolation", 3))
 
     def update_sockets(self, context):
         self.inputs['Degree'].hide_safe = self.interp_mode != 'BSPLINE'
@@ -40,25 +38,19 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Epsilon'].hide_safe = self.interp_mode != 'RBF'
         updateNode(self, context)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append((SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     interp_mode : EnumProperty(
         name = "Interpolation mode",
-        items = get_interp_modes,
+        items=interp_modes,
         update = update_sockets)
 
     is_cyclic : BoolProperty(

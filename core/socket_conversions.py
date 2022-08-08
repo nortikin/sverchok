@@ -27,6 +27,7 @@ from sverchok.utils.surface import SvSurface
 from sverchok.utils.solid_conversion import to_solid_recursive
 
 from mathutils import Matrix, Quaternion
+import numpy as np
 from numpy import ndarray
 
 
@@ -136,7 +137,13 @@ def string_to_color(source_data):
 
 
 def vector_to_color(source_data):
-    return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]
+    if source_data and isinstance(source_data[0], np.ndarray):
+        out = []
+        for obj in source_data:
+            out.append(np.concatenate((obj, np.ones((len(obj), 1))), axis=1))
+        return out
+    else:
+        return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]
 
 
 class NoImplicitConversionPolicy:

@@ -130,6 +130,11 @@ class TreeImporter01:
                     parent_name = self._get_new_node_name(parent_name)
                     self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
 
+            # mark old nodes
+            for node in self._tree.nodes:
+                if old_nodes.is_old(node):
+                    old_nodes.mark_old(node)
+
     @property
     def file_version(self) -> float:
         """json structure version"""

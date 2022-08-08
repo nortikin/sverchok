@@ -28,6 +28,8 @@ from sverchok.utils.listutils import (
     listinput_setI,
     listinput_setF
     )
+from sverchok.utils.handle_blender_data import keep_enum_reference
+
 
 def check_memory_prop(tx):
     if len(tx) > 1:
@@ -572,6 +574,7 @@ class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
             gen_data.set_node_with_gene(tree, agent_gene)
 
 
+@keep_enum_reference
 def get_framenodes(base_node, _):
 
     items = [

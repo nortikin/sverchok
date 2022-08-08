@@ -135,14 +135,24 @@ class Tasks:
         for area in bpy.context.screen.areas:
             if area.ui_type == 'SverchCustomTreeType':
                 path = area.spaces[0].path
-                if path and path[-1].node_tree.name == self._current.tree.name:
-                    return area
+
+                # it appeared the tree already can be invalid when undo event
+                # is called pretty fast
+                try:
+                    if path and path[-1].node_tree.name == self._current.tree.name:
+                        return area
+                except ReferenceError:
+                    # probably all reports should be cleaned through search
+                    debug(f"Unable report a nodes updating progress")
 
     def _report_progress(self, text: str = None):
         """Show text in the tree editor header. If text is none the header
         returns in its initial condition"""
         if self._main_area:
             self._main_area.header_text_set(text)
+
+    def __repr__(self):
+        return f"<Tasks current={self._current} todo={self._todo}>"
 
 
 tasks = Tasks()

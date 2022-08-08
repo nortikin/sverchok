@@ -4,6 +4,8 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 import sverchok.core.events as ev
+import sverchok.core.tasks as ts
+import sverchok.utils.logging as log
 from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
@@ -97,8 +99,12 @@ def sv_update_handler(scene):
     Playing animation: has_frame_changed=True, is_animation_playing=True
     Playing animation(stop): has_frame_changed=False, is_animation_playing=False
     """
-    is_playing = bpy.context.screen.is_animation_playing
-    is_frame_changed = has_frame_changed(scene)
+    if bpy.context.screen is None:  # rendering
+        is_playing = False  # should be False to update UI
+        is_frame_changed = True
+    else:
+        is_playing = bpy.context.screen.is_animation_playing
+        is_frame_changed = has_frame_changed(scene)
     # print(f"Frame changed: {is_frame_changed}, Animation is playing: {is_playing}")
 
     for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
@@ -131,6 +137,14 @@ def sv_main_handler(scene):
     # animation is on and user changes something in the scene this trigger is
     # only called if frame rate is equal to maximum.
     if bpy.context.screen.is_animation_playing:
+        return
+
+    # scene handler can be triggered even when new node or its property
+    # is changed what causes redundant updates. Such events are created first,
+    # so it's possible to check them in the tasks object.
+    # also be aware that updates generate scene events by their selves and
+    # they have mechanism to avoid them
+    if ts.tasks:
         return
     for ng in BlTrees().sv_main_trees:
         ng.scene_update()
@@ -218,12 +232,18 @@ def update_frame_change_mode():
     set_frame_change(mode)
 
 
+@persistent
+def save_pre_handler(scene):
+    log.clear_internal_buffer()
+
+
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
     'depsgraph_update_pre': sv_main_handler,
+    'save_pre': save_pre_handler,
 }
 
 

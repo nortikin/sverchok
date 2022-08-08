@@ -146,9 +146,6 @@ def try_initialize():
             if prefs.log_to_buffer:
                 buffer = get_log_buffer(prefs.log_buffer_name)
                 if buffer is not None:
-                    if prefs.log_to_buffer_clean:
-                        buffer.clear()
-                        logging.debug("Internal text buffer cleared")
                     handler = TextBufferHandler(prefs.log_buffer_name)
                     handler.setFormatter(logging.Formatter(log_format))
                     logging.getLogger().addHandler(handler)
@@ -190,6 +187,15 @@ def try_initialize():
                     ("no" if not prefs.log_to_file else prefs.log_file_name),
                     ("yes" if prefs.log_to_console else "no"))
             initialized = True
+
+
+def clear_internal_buffer():
+    """It clears only BLender text editor"""
+    with sv_preferences() as prefs:
+        if prefs.log_to_buffer_clean:
+            get_log_buffer(prefs.log_buffer_name).clear()
+            logging.debug("Internal text buffer cleared")
+
 
 # Convenience functions
 

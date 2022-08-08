@@ -16,6 +16,7 @@ from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level, upda
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 if FreeCAD is None:
     add_dummy('SvSelectSolidNode', 'Select Solid Elements', 'FreeCAD')
@@ -77,6 +78,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'VERTS',
             update = updateNode)
 
+    @keep_enum_reference
     def get_available_criteria(self, context):
         result = []
         for item in SvSelectSolidNode.criteria_types:
