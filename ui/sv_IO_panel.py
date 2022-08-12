@@ -326,7 +326,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
             context.window_manager.clipboard = gist_url  # full destination url
             info(gist_url)
-            self.report({'WARNING'}, "Copied gist URL to clipboad")
+            self.report({'WARNING'}, "Copied gist URL to clipboard")
 
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
             return {'FINISHED'}

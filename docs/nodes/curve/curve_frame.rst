@@ -5,7 +5,7 @@ Functionality
 -------------
 
 This node calculates a reference frame of a curve (also known as Frenet_ frame)
-for the given value of curve's T parameter. Basically, the node allowes one to
+for the given value of curve's T parameter. Basically, the node allows one to
 place some object at the curve, by aligning the object with curve's "natural"
 orientation.
 

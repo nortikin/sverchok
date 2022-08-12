@@ -20,11 +20,11 @@ This node has the following parameter:
 
 * **Coordinates**. This defines the coordinate system to be used. The available options are:
 
-  * **Carthesian**. The vector field is decomposed into X, Y and Z fields.
+  * **Cartesian**. The vector field is decomposed into X, Y and Z fields.
   * **Cylindrical**. The vector field is decomposed into Rho, Phi and Z fields.
   * **Spherical**. The vector field is decomposed into Rho, Phi and Theta fields.
 
-  The default mode is **Carthesian**.
+  The default mode is **Cartesian**.
 
 Outputs
 -------

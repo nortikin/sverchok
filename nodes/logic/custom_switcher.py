@@ -74,7 +74,7 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'ui_scale', text='Size of buttons')
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
-        # I think it is moore appropriate place for coding layout of 3d panel
+        # I think it is more appropriate place for coding layout of 3d panel
         if not in_menu:
             row = layout.row(align=True)
 

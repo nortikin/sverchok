@@ -611,7 +611,7 @@ class SvPresetToGist(bpy.types.Operator):
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
             context.window_manager.clipboard = gist_url   # full destination url
             info(gist_url)
-            self.report({'WARNING'}, "Copied gist URL to clipboad")
+            self.report({'WARNING'}, "Copied gist URL to clipboard")
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
         except Exception as err:
             exception(err)

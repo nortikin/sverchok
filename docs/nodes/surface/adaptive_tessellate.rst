@@ -7,7 +7,7 @@ Functionality
 This node generates an adaptive tessellation for the given surface, i.e. the
 mesh which represents the surface, and has smaller amount of subdivisions in
 places where the mesh is nearly flat and more subdivisions where the surface
-behaivour is more interesting.
+behaviour is more interesting.
 
 In most cases, one converts a Surface object into a mesh by use of "Evaluate
 Surface" node. That node generates a subdivision by cartesian (rectangular)

@@ -356,7 +356,7 @@
         1210.0062255859375
       ],
       "params": {
-        "text": "Nikitron 2020 - genetic algorithm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once. Threshod inside SNL till 0.995, not more"
+        "text": "Nikitron 2020 - genetic algorithm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once. Threshold inside SNL till 0.995, not more"
       },
       "use_custom_color": true,
       "width": 509.6258544921875

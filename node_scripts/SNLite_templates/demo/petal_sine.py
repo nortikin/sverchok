@@ -3,7 +3,7 @@ in   n_petals s        default=8       nested=2
 in   vp_petal s        default=10      nested=2
 in   profile_radius s  ;=2.3           n=2
 in   amp s             default=1.0     nested=2
-in   origin v          defautt=(0,0,0) n=2
+in   origin v          default=(0,0,0) n=2
 out  verts v
 out  edges s
 """

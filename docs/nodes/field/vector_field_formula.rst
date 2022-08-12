@@ -58,7 +58,7 @@ also becomes additional input.
 
 The following variables are considered to be point coordinates:
 
-* For Carthesian input mode: `x`, `y` and `z`;
+* For Cartesian input mode: `x`, `y` and `z`;
 * For Cylindrical input mode: `rho`, `phi` and `z`;
 * For Spherical input mode: `rho`, `phi` and `theta`.
 
@@ -74,7 +74,7 @@ This node has the following parameters:
 
 * **Input**. This defines the coordinate system being used for the input
   points. The available values are **Carhtesian**, **Cylindrical** and
-  **Spherical**. The default value is **Carthesian**.
+  **Spherical**. The default value is **Cartesian**.
 * **Formula1**, **Formula2**, **Formula3**. Three formulas defining the
   respective coordinate / components of the resulting vectors: X, Y, Z, or Rho,
   Phi, Z, or Rho, Phi, Theta, depending on the **Output** parameter. The
@@ -82,7 +82,7 @@ This node has the following parameters:
   the whole space 90 degrees around the Z axis.
 * **Output**. This defines the coordinate system in which the resulting vectors
   are expressed. The available values are **Carhtesian**, **Cylindrical** and
-  **Spherical**. The default value is **Carthesian**.
+  **Spherical**. The default value is **Cartesian**.
 * **Vectorize**. This parameter is available in the N panel only. If enabled,
   then to evaluate formulas for a series of input values, the node will use
   NumPy functions to perform several computations at a time; otherwise, the

@@ -373,7 +373,7 @@ class SvTimerNode(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0)
 
     normalize: BoolProperty(
-        name="normalize", description="Display times as percetage of the duration",
+        name="normalize", description="Display times as percentage of the duration",
         default=False, update=updateNode)
 
     inhibit_update: BoolProperty(

@@ -64,7 +64,7 @@ class Expression(object):
         return "Expr({})".format(self.string)
 
     def __eq__(self, other):
-        # Proper comparasion of ast.Expression would be too complex to implement
+        # Proper comparison of ast.Expression would be too complex to implement
         # (it is not implemented in the ast module).
         return isinstance(other, Expression) and self.string == other.string
 
@@ -474,13 +474,13 @@ class CurveTo(Statement):
             # But in SVG specification, 
             # >> ...  *At the end of the command*, the new current point becomes
             # >> the final (x,y) coordinate pair used in the polybézier.
-            # This is also behaivour of browsers.
+            # This is also behaviour of browsers.
 
             #interpreter.position = handle1
             handle2 = interpreter.calc_vertex(self.is_abs, segment.control2[0], segment.control2[1], variables)
             #interpreter.position = handle2
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
-            # Judging by the behaivour of Inkscape and Firefox, by "end of command"
+            # Judging by the behaviour of Inkscape and Firefox, by "end of command"
             # SVG spec means "end of segment".
             interpreter.position = knot2
 

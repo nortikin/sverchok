@@ -97,7 +97,7 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
-Generate cubes near the cyllinder:
+Generate cubes near the cylinder:
 
 .. image:: https://user-images.githubusercontent.com/284644/81504481-f2be5900-9302-11ea-8948-fb189c3fc3c5.png
 

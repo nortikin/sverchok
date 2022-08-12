@@ -50,7 +50,7 @@ This node has the following parameters:
 - **Neighbour faces**. Visible only if **Mode** parameter is set to **Faces**. This defines which faces are considered to be neighbour. The available modes are:
 
     - **By Edge**. Faces that share an edge are considered to be neighbour.
-    - **By Vertex**. Faces that share a vertex are considered to be neigbhour.
+    - **By Vertex**. Faces that share a vertex are considered to be neighbour.
 
 Outputs
 -------

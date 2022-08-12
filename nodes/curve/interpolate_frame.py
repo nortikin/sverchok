@@ -52,7 +52,7 @@ else:
         dts = (ts - t1s) / (t2s - t1s)
         #dts = np.clip(dts, 0.0, 1.0) # Just in case...
         matrix_out = []
-        # TODO: ideally this shoulld be vectorized with numpy;
+        # TODO: ideally this should be vectorized with numpy;
         # but that would require implementation of quaternion
         # interpolation in numpy.
         for dt, base_index, point in zip(dts, base_indexes, points):

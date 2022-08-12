@@ -20,7 +20,7 @@ Parameters
 +================+=================+=============+====================================================+
 | **Vertices**   | Vector          |             | vertices from nodes generators or lists (in, out)  |
 +----------------+-----------------+-------------+----------------------------------------------------+
-| **PolyEdge**   | Int             |             | index of polgons or edges     (in, out)            |
+| **PolyEdge**   | Int             |             | index of polygons or edges     (in, out)           |
 +----------------+-----------------+-------------+----------------------------------------------------+
 | **Sortmode**   | XYZ, Dist,      | XYZ         | will sort the index according to different criteria|
 |                | Axis, Connect,  |             |                                                    |
