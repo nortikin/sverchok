@@ -456,6 +456,7 @@ class Population:
         else:
             weights = 1/np.power(np.array(fitness), self.node.fitness_booster)
         weights = weights/np.sum(weights)
+        print(weights)
 
         parents_id = np.random.choice(len(self.population_g), [len(self.population_g)-1, 2], replace=True, p=weights)
         # we keep the fittest for the next generation
