@@ -423,7 +423,7 @@ class UpdateTree(SearchTree):
 
     @classmethod
     def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
-        """Thi generator is for the triggers. It can update outdated nodes and
+        """This generator is for the triggers. It can update outdated nodes and
         update UI. Should be used only with main trees, the group trees should
         use different method to separate profiling statistics. When it's called
         the tree should have information of what is outdated"""
