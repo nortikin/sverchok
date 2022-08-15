@@ -699,6 +699,31 @@ class OtherNurbsTests(SverchokTestCase):
         self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
 
 class KnotvectorTests(SverchokTestCase):
+    def test_generate_1(self):
+        knotvector = sv_knotvector.generate(degree=1, num_ctrlpts=2, clamped=True)
+        expected = np.array([0.0, 0.0, 1.0, 1.0])
+        self.assert_numpy_arrays_equal(knotvector, expected)
+
+    def test_generate_2(self):
+        knotvector = sv_knotvector.generate(degree=1, num_ctrlpts=3, clamped=True)
+        expected = np.array([0.0, 0.0, 0.5, 1.0, 1.0])
+        self.assert_numpy_arrays_equal(knotvector, expected)
+
+    def test_generate_3(self):
+        knotvector = sv_knotvector.generate(degree=2, num_ctrlpts=3, clamped=True)
+        expected = np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0])
+        self.assert_numpy_arrays_equal(knotvector, expected)
+
+    def test_generate_4(self):
+        knotvector = sv_knotvector.generate(degree=2, num_ctrlpts=4, clamped=True)
+        expected = np.array([0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 1.0])
+        self.assert_numpy_arrays_equal(knotvector, expected)
+
+    def test_generate_5(self):
+        knotvector = sv_knotvector.generate(degree=2, num_ctrlpts=3, clamped=False)
+        expected = np.array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+        self.assert_numpy_arrays_equal(knotvector, expected, precision=6)
+
     def test_to_multiplicity_1(self):
         kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
         result = sv_knotvector.to_multiplicity(kv)
