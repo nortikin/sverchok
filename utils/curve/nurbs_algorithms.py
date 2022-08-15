@@ -16,10 +16,14 @@ from sverchok.utils.math import distribute_int
 from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import scipy
+from sverchok.utils.math import (
+    ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+    NORMAL_DIR, NONE
+)
 
 if scipy is not None:
     import scipy.optimize
@@ -547,4 +551,23 @@ def cast_nurbs_curve(curve, target, coeff=1.0):
     result_cpts = (1-coeff) * cpts + coeff * target_cpts
 
     return curve.copy(control_points = result_cpts)
+
+def offset_nurbs_curve(curve, offset_vector,
+        src_ts,
+        algorithm = FRENET, algorithm_resolution = 50,
+        metric = 'DISTANCE', target_tolerance = 1e-4):
+    src_points = curve.evaluate_array(src_ts)
+    n = len(src_ts)
+    print(f"N => {n}")
+    calc = SvCurveFrameCalculator(curve, algorithm, resolution = algorithm_resolution)
+    matrices = calc.get_matrices(src_ts)
+    offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
+    offset_vectors = (matrices @ offset_vectors)[:,:,0]
+    offset_points = src_points + offset_vectors
+    offset_curve = interpolate_nurbs_curve(curve.get_nurbs_implementation(),
+                    degree = curve.get_degree(), points = offset_points,
+                    #metric = None, tknots = src_ts)
+                    metric = metric)
+    offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
+    return offset_curve
 
