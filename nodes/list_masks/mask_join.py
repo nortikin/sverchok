@@ -18,9 +18,9 @@
 
 from itertools import cycle
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import changable_sockets, updateNode
+from sverchok.data_structure import changable_sockets, updateNode, list_match_modes, list_match_func
 
 
 class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,6 +34,12 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     choice: BoolProperty(name="Choice", default=False, update=updateNode)
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)
+    
+    list_match_global : EnumProperty(
+    name="Match Global",
+    description="Behavior on different list lengths, multiple objects level",
+    items=list_match_modes, default="REPEAT",
+    update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Mask')
@@ -44,7 +50,16 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'level')
         layout.prop(self, 'choice')
+        
+    def draw_buttons_ext(self, context, layout):
+        '''draw buttons on the N-panel'''
+        layout.label(text="List Match:")
+        layout.prop(self, "list_match_global", text="Global Match", expand=False)
 
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
+    
     def sv_update(self):
         inputsocketname = 'Data True'
         outputsocketname = ['Data']
@@ -63,7 +78,8 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []
-        for m, t, f in zip(cycle(mask), data_t, data_f):
+        param = list_match_func[self.list_match_global]([mask, data_t, data_f])
+        for m, t, f in zip(*param):
             if m:
                 out.append(t)
             else:
@@ -87,28 +103,29 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         return out
 
     def get_level(self, mask, data_t, data_f, level):
+        if self.choice:
+            apply_mask = self.apply_choice_mask
+        else:
+            apply_mask = self.apply_mask
+            
         if level == 1:
             out = []
-            param = (mask, data_t, data_f)
+            param = list_match_func[self.list_match_global]([mask, data_t, data_f])
             if not all((isinstance(p, (list, tuple)) for p in param)):
                 print("Fail")
                 return
-            max_index = min(map(len, param))
-            if self.choice:
-                apply_mask = self.apply_choice_mask
-            else:
-                apply_mask = self.apply_mask
 
-            for i in range(max_index):
-                out.append(apply_mask(mask[i], data_t[i], data_f[i]))
+            for m, t, f in zip(*param):
+                out.append(apply_mask(m, t, f))
             return out
-        elif level > 2:
+        elif level >= 2:
             out = []
-            for t, f in zip(data_t, data_f):
+            param = list_match_func[self.list_match_global]([data_t, data_f])
+            for t, f in zip(*param):
                 out.append(self.get_level(mask, t, f, level - 1))
             return out
         else:
-            return self.apply_mask(mask[0], data_t, data_f)
+            return apply_mask(mask[0], data_t, data_f)
 
 
 def register():
