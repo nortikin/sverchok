@@ -1362,6 +1362,16 @@ class LineEquation(object):
             raise Exception("Lines are (almost) parallel")
         return abs(num) / denom
 
+    def intersect_with_line_coplanar(self, line2):
+        pt1 = self.point
+        dir1 = self.direction
+        dir2 = line2.direction
+        pt11 = pt1 + dir1
+        normal = dir1.cross(dir2)
+        pt12 = pt1 + normal
+        plane = PlaneEquation.from_three_points(pt1, pt11, pt12)
+        return plane.intersect_with_line(line2)
+
 def distance(v1, v2):
     v1 = np.asarray(v1)
     v2 = np.asarray(v2)

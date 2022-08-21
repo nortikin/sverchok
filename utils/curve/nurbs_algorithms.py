@@ -13,17 +13,18 @@ from mathutils import Vector
 import mathutils.geometry
 
 from sverchok.utils.math import distribute_int
-from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
+from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
+from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
-from sverchok.dependencies import scipy
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
+from sverchok.dependencies import scipy
 
 if scipy is not None:
     import scipy.optimize
@@ -556,9 +557,26 @@ def offset_nurbs_curve(curve, offset_vector,
         src_ts,
         algorithm = FRENET, algorithm_resolution = 50,
         metric = 'DISTANCE', target_tolerance = 1e-4):
+    """
+    Offset a NURBS curve to obtain another NURBS curve.
+
+    The algorithm is as follows:
+    * Offset some number of points from the curve
+    * then interpolate a NURBS curve through these offsetted points
+    * remove excessive knots from the resulting curve
+
+    Parameters:
+    * curve - the curve to be offsetted
+    * offset_vector - np.array of shape (3,)
+    * src_ts - T parameters of the points to be offsetted (the more points you take,
+        the more precise the offset will be)
+    * algorithm
+    * algorithm_resolution
+    * metric
+    * target_tolerance - the tolerance of remove_excessive_knots procedure
+    """
     src_points = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    print(f"N => {n}")
     calc = SvCurveFrameCalculator(curve, algorithm, resolution = algorithm_resolution)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
@@ -570,4 +588,137 @@ def offset_nurbs_curve(curve, offset_vector,
                     metric = metric)
     offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
     return offset_curve
+
+def curve_to_cubic_nurbs(curve, ts, tolerance=1e-6):
+    points = curve.evaluate_array(ts)
+    tangents = curve.tangent_array(ts)
+    #tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+    #tangents /= float(len(ts))
+    #tangents /= 17.0
+    #print("Ts", ts)
+    #print("Tgs", tangents)
+    point_pairs = zip(points, points[1:])
+    tangent_pairs = zip(tangents, tangents[1:])
+    t_pairs = zip(ts, ts[1:])
+    segments = []
+    for (t1, t2), (p1, p2), (tg1, tg2) in zip(t_pairs, point_pairs, tangent_pairs):
+        print(f"Dt: {t1} - {t2}")
+        dt = t2 - t1
+        tg11 = tg1 * dt
+        tg21 = tg2 * dt
+        print(f"Tg: {tg11}, {tg21}")
+        segment = SvBezierCurve.from_points_and_tangents(p1, tg11, tg21, p2)  
+        segments.append(segment)
+    curve = concatenate_nurbs_curves(segments, tolerance)
+    return curve
+    #return remove_excessive_knots(curve, tolerance)
+
+def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
+    """
+    Adjust the given curve so that at parameter u_bar it goes through
+    the point C[u_bar] + vector instead of C[u_bar].
+    The adjustment is done by moving one control point.
+
+    See The NURBS Book, 2nd ed, p.11.2.
+
+    Parameters:
+    * curve - the curve to be adjusted
+    * u_bar - curve's parameter, indicating the point you want to move
+    * k - index of control point to be moved
+    * vector - the vector indicating the direction and distance for which
+        you want the point to be moved
+    """
+    p = curve.get_degree()
+    cpts = curve.get_control_points().copy()
+    weights = curve.get_weights()
+    vector = np.array(vector)
+    distance = np.linalg.norm(vector)
+    vector = vector / distance
+    functions = SvNurbsBasisFunctions(curve.get_knotvector())
+    x = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    alpha = distance / x
+    cpts[k] = cpts[k] + alpha * vector
+    return curve.copy(control_points = cpts)
+
+def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
+    p = curve.get_degree()
+    weights = curve.get_weights().copy()
+    pt = curve.evaluate(u_bar)
+    pk = curve.get_control_points()[k]
+    pkpt = np.linalg.norm(pt - pk)
+    functions = SvNurbsBasisFunctions(curve.get_knotvector())
+    r = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    denominator = r * (pkpt - distance)
+    coeff = 1 + distance / denominator
+    target_w = weights[k] * coeff
+    weights[k] = target_w
+    return curve.copy(weights = weights)
+
+def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, scale=None):
+
+    if distance is None and scale is None:
+        raise Exception("Either distance or scale must be specified")
+    if distance is not None and scale is not None:
+        raise Exception("Of distance and scale, only one parameter must be specified")
+
+    p = curve.get_degree()
+    cpts = curve.get_control_points()
+    weights = curve.get_weights().copy()
+
+    weights0 = weights.copy()
+    weights0[k] = weights0[k+1] = 0.0
+    R = curve.copy(weights = weights0).evaluate(u_bar)
+
+    pk = cpts[k]
+    pk1 = cpts[k+1]
+    control_leg = LineEquation.from_two_points(pk, pk1)
+    control_leg_len = np.linalg.norm(pk1 - pk)
+
+    P = curve.evaluate(u_bar)
+
+    direction = LineEquation.from_two_points(R, P)
+    Q = direction.intersect_with_line_coplanar(control_leg)
+    Q = np.asarray(Q)
+
+    pkQ = Q - pk
+    pk1Q = Q - pk1
+
+    RQ = np.linalg.norm(Q - R)
+    RP = np.linalg.norm(P - R)
+
+    direction = (P - R) / RP
+
+    if distance is None:
+        if scale >= 0:
+            distance = scale * np.linalg.norm(Q - P)
+        else:
+            distance = scale * np.linalg.norm(R - P)
+
+    target_pt = P + distance * direction
+    Rtarget = RP + distance
+
+    qRP = RP / RQ
+    qRtarget = Rtarget / RQ
+
+    A = pk + qRP * pkQ
+    B = pk1 + qRP * pk1Q
+    C = pk + qRtarget * pkQ
+    D = pk1 + qRtarget * pk1Q
+
+    ak = np.linalg.norm(B - pk1) / control_leg_len
+    ak1 = np.linalg.norm(A - pk) / control_leg_len
+    abk = np.linalg.norm(D - pk1) / control_leg_len
+    abk1 = np.linalg.norm(C - pk) / control_leg_len
+
+    numerator = 1.0 - ak - ak1
+    numerator_brave = 1.0 - abk - abk1
+
+    beta_k = (numerator / ak) / (numerator_brave / abk)
+    beta_k1 = (numerator / ak1) / (numerator_brave / abk1)
+
+    weights[k] = beta_k * weights[k]
+    weights[k+1] = beta_k1 * weights[k+1]
+
+    new_curve = curve.copy(weights = weights)
+    return new_curve
 
