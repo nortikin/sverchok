@@ -809,3 +809,26 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
     new_curve = curve.copy(weights = weights)
     return new_curve
 
+def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
+        scale = 1.0,
+        direction = None,
+        refinement_algorithm = REFINE_TRIVIAL, refinement_solver = None,
+        tolerance = 1e-4):
+    curve = refine_curve(curve, refinement_samples,
+                t_min = t_min, t_max = t_max,
+                algorithm = refinement_algorithm,
+                solver = refinement_solver)
+    cpts = curve.get_control_points().copy()
+    greville_ts = curve.calc_greville_ts()
+    wrap_idxs = np.where(np.logical_and(greville_ts >= t_min, greville_ts <= t_max))
+    wrap_ts = greville_ts[wrap_idxs]
+    normalized_ts = (wrap_ts - wrap_ts[0]) / (wrap_ts[-1] - wrap_ts[0])
+    wrap_cpts = cpts[wrap_idxs]
+    wrap_dirs = curve.main_normal_array(wrap_ts)
+    wrap_values = scale * function(normalized_ts)
+    #print("Wv", wrap_values)
+    wrap_vectors = wrap_dirs * wrap_values[np.newaxis].T
+    cpts[wrap_idxs] = cpts[wrap_idxs] + wrap_vectors
+    curve = curve.copy(control_points = cpts)
+    return remove_excessive_knots(curve, tolerance)
+

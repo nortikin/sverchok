@@ -223,7 +223,7 @@ class SvNurbsBasisFunctions(object):
         n = len(weights)
 
         def calc(us):
-            numerator = self.function(i,p, reset_cache=False)(us) * weights[i]
+            numerator = self.function(i,p, reset_cache=reset_cache)(us) * weights[i]
             ds = [self.function(j,p, reset_cache=False)(us) * weights[j] for j in range(n)]
             denominator = sum(ds)
             return numerator / denominator
