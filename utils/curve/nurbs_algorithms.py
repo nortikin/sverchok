@@ -697,6 +697,20 @@ def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
     return curve.copy(control_points = cpts)
 
 def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
+    """
+    Adjust the given curve so that curve's point at parameter u_bar is moved
+    by given distance towards (or away from) k'th control point.
+
+    See The NURBS Book, 2nd ed, p.11.3.1.
+
+    Parameters:
+    * curve - the curve to be adjusted
+    * u_bar - curve's parameter, point at which is to be moved
+    * k - index of curve's weight, which is to be changed
+    * distance - the distance to move the point by. If > 0,
+        then the point is moved towards the corresponding control point;
+        otherwise, the point is moved away from it.
+    """
     p = curve.get_degree()
     weights = curve.get_weights().copy()
     pt = curve.evaluate(u_bar)
@@ -711,6 +725,23 @@ def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
     return curve.copy(weights = weights)
 
 def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, scale=None):
+    """
+    Adjust the given curve so that curve's point at parameter u_bar is moved towards
+    (or away from) curve's control polygon leg P[k] - P[k+1].
+    If distance is specified, then the point is moved by given distance. Distance > 0
+    indicates movement towards curve's control polygon leg. Note that if you try to
+    move the point farther than curve's control polygon leg, this method will produce
+    some fancy curve.
+    If scale is specified, then the distance will be calculated automatically, so that:
+    * scale = 0 means do not move anything;
+    * scale = 1.0 means move the point all the way to control polygon leg, making a small
+        fragment of the curve a straight line;
+    * scale = -1.0 means move the point all the way from control polygon leg, making a larger
+        fragment of the curve a straight line.
+    Of distance and scale, exactly one parameter must be provided.
+
+    See The NURBS Book, 2nd ed., p.11.3.2.
+    """
 
     if distance is None and scale is None:
         raise Exception("Either distance or scale must be specified")
