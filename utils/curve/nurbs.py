@@ -135,6 +135,9 @@ class SvNurbsCurve(SvCurve):
         return self._bounding_box
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        if tolerance is None:
+            tolerance = 1e-6
+
         curve1 = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:

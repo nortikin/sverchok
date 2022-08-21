@@ -444,55 +444,111 @@ def remove_excessive_knots(curve, tolerance=1e-6):
 
 REFINE_TRIVIAL = 'TRIVIAL'
 REFINE_DISTRIBUTE = 'DISTRIBUTE'
+REFINE_BISECT = 'BISECT'
 
-def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None):
+def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None, output_new_knots = False):
     if refine_max:
         degree = curve.get_degree()
         inserts_count = degree
     else:
         inserts_count = 1
 
+    if t_min is None:
+        t_min = curve.get_u_bounds()[0]
+    if t_max is None:
+        t_max = curve.get_u_bounds()[1]
+
+    existing_knots = curve.get_knotvector()
+    existing_knots = np.unique(existing_knots)
+    cond = np.logical_and(existing_knots >= t_min, existing_knots <= t_max)
+    existing_knots = existing_knots[cond]
+
+    start_knots = existing_knots.copy()
+    if t_min not in start_knots:
+        start_knots = np.concatenate(([t_min], start_knots))
+    if t_max not in start_knots:
+        start_knots = np.concatenate((start_knots, [t_max]))
+
     if algorithm == REFINE_TRIVIAL:
-        t_min, t_max = curve.get_u_bounds()
-        ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
-        for t in ts:
-            try:
-                curve = curve.insert_knot(t, count=inserts_count)
-            except CantInsertKnotException:
-                break
+        new_knots = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
 
     elif algorithm == REFINE_DISTRIBUTE:
-        existing_knots = np.unique(curve.get_knotvector())
-        if solver is not None:
-            length_params = solver.calc_length_params(existing_knots)
-            sizes = length_params[1:] - length_params[:-1]
 
-            #print(f"K: {existing_knots} => Ls {length_params} => Sz {sizes}")
+        if solver is not None:
+            length_params = solver.calc_length_params(start_knots)
+            sizes = length_params[1:] - length_params[:-1]
+            new_knots = np.array([])
             counts = distribute_int(samples, sizes)
             for l1, l2, count in zip(length_params[1:], length_params[:-1], counts):
                 ls = np.linspace(l1, l2, num=count+2, endpoint=True)[1:-1]
                 ts = solver.solve(ls)
-                for t in ts:
-                    try:
-                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
-                    except CantInsertKnotException:
-                        continue
+                new_knots = np.concatenate((new_knots, ts))
         else:
-            sizes = existing_knots[1:] - existing_knots[:-1]
-
+            sizes = start_knots[1:] - start_knots[:-1]
             counts = distribute_int(samples, sizes)
-            for t1, t2, count in zip(existing_knots[1:], existing_knots[:-1], counts):
+            new_knots = np.array([])
+            for t1, t2, count in zip(start_knots[1:], start_knots[:-1], counts):
                 ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
-                for t in ts:
-                    try:
-                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
-                    except CantInsertKnotException:
-                        continue
+                new_knots = np.concatenate((new_knots, ts))
+
+    elif algorithm == REFINE_BISECT:
+        if solver is not None:
+
+            def iteration(knots, remaining):
+                if remaining == 0:
+                    return knots
+
+                knots_np = np.asarray(list(knots))
+                knots_np.sort()
+                length_params = solver.calc_length_params(knots_np)
+                sizes = length_params[1:] - length_params[:-1]
+                i_max = sizes.argmax()
+                half_length = 0.5 * (length_params[i_max+1] + length_params[i_max])
+                half_t = solver.solve(np.array([half_length]))[0]
+                return iteration(knots | set([half_t]), remaining-1)
+
+            all_knots = set(list(start_knots))
+            new_knots = np.asarray(list(iteration(all_knots, samples)))
+
+        else:
+
+            def iteration(knots, remaining):
+                if remaining == 0:
+                    return knots
+
+                knots_np = np.asarray(list(knots))
+                knots_np.sort()
+                sizes = knots_np[1:] - knots_np[:-1]
+                i_max = sizes.argmax()
+                half_t = 0.5 * (knots_np[i_max+1] + knots_np[i_max])
+                return iteration(knots | set([half_t]), remaining-1)
+
+            all_knots = set(list(start_knots))
+            new_knots = np.asarray(list(iteration(all_knots, samples)))
 
     else:
         raise Exception("Unsupported algorithm")
 
-    return curve
+    if t_min not in existing_knots:
+        new_knots = np.concatenate(([t_min], new_knots))
+    if t_max not in existing_knots:
+        new_knots = np.concatenate((new_knots, [t_max]))
+    new_knots = np.unique(new_knots)
+    new_knots.sort()
+    #print("New:", new_knots)
+
+    for t in new_knots:
+        if t in existing_knots:
+            continue
+        try:
+            curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
+        except CantInsertKnotException:
+            continue
+
+    if output_new_knots:
+        return new_knots, curve
+    else:
+        return curve
 
 class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
     def __init__(self, curve):
