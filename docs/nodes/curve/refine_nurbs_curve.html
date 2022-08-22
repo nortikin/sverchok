@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Concatenate Curves &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Refine NURBS Curve &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Blend Curves" href="blend_curves.html" />
-    <link rel="prev" title="Sort Curves" href="sort_curves.html" /> 
+    <link rel="next" title="Remove Excessive Knots (NURBS Curve)" href="remove_excessive_knots.html" />
+    <link rel="prev" title="Remove Knot (NURBS Curve)" href="remove_knot.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -73,14 +73,7 @@
 <li class="toctree-l3"><a class="reference internal" href="offset_mk2.html">Offset Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sort_curves.html">Sort Curves</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Concatenate Curves</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="concat_curves.html">Concatenate Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="blend_curves.html">Blend Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_length.html">Curve Length</a></li>
@@ -108,7 +101,14 @@
 <li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="refine_nurbs_curve.html">Refine NURBS Curve</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Refine NURBS Curve</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="remove_excessive_knots.html">Remove Excessive Knots (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="adaptive_plot_nurbs.html">Adaptive Plot NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="catenary_curve.html">Catenary Curve</a></li>
@@ -180,9 +180,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="curve_index.html">Curves</a> &raquo;</li>
-      <li>Concatenate Curves</li>
+      <li>Refine NURBS Curve</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/curve/concat_curves.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/curve/refine_nurbs_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -190,45 +190,94 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="concatenate-curves">
-<h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Permalink to this heading">¶</a></h1>
+  <section id="refine-nurbs-curve">
+<h1>Refine NURBS Curve<a class="headerlink" href="#refine-nurbs-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node composes one Curve object from several Curve objects, by “glueing”
-their ends. It assumes that end points of the curves being concatenated are
-already coinciding. You can make the node check this fact additionally.</p>
-<p>Curve domain: summed up from domains of curves being concatenated.</p>
+<p>This node performs “refinement” procedure on a NURBS curve, i.e. inserts a
+number of knots in order to make it easier to manipulate with curve’s shape.
+Each knot can be inserted once or multiple times. Knots are distributed
+according to one of algorithms, in order to make knots distribution more even.</p>
+<p>After some modifications to refined curve shape were done, unneded knots can be
+removed by use of “Remove excessive knots (Curve)” node.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following input:</p>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curves</strong>. A list of curves to be concatenated. This input is mandatory.</p></li>
+<li><p><strong>Curve</strong>. The NURBS Curve object to be refined. This input is mandatory.</p></li>
+<li><p><strong>NewKnots</strong>. The number of knots to be inserted. The default value is 10.</p></li>
+<li><p><strong>Resolution</strong>. Resolution of the algorithm which is used to calculate curve
+arc lengths (see the documentation of “Curve Length” node, for example).
+Larger values correspond to better precision, but worse performance. The
+default value is 50. This input is only available when the <strong>Distribution</strong>
+parameter is set to <strong>Distribute Length</strong> or <strong>Bisect Length</strong>.</p></li>
+<li><p><strong>TMin</strong>, <strong>TMax</strong>. Minimum and maximum values of curve’s T parameters,
+between which the new knots are to be inserted. These inputs are available
+only when the <strong>Specify Segment</strong> parameter is checked. The default values
+are 0.0 and 1.0, correspondingly.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>Check coincidence</strong>. If enabled, then the node will check that the end points of curves being concatenated do actually coincide (within threshold). If they do not, the node will give an error (become red), and the processing will stop.</p></li>
-<li><p><strong>Max distance</strong>. Maximum distance between end points of the curves, which is allowable to decide that they actually coincide. The default value is 0.001. This parameter is only available if <strong>Check coincidence</strong> parameter is enabled.</p></li>
-<li><p><strong>All NURBS</strong>. This parameter is available in the N panel only. If checked,
-then the node will try to convert all input curves to NURBS, and output a
-NURBS curve. The node will fail (become red) if it was not able either to
-convert one of input curves, or join resulting NURBS curves.</p></li>
+<li><p><strong>Distribution</strong>. The algorithm used to distribute curve’s knots evenly. The available options are:</p>
+<ul>
+<li><p><strong>Even T</strong>. New knots are distributed evenly in curve’s T space, not taking
+into account the fact that previously existing curve knots can lie near to
+newly inserted knots. This option is the default.</p></li>
+<li><p><strong>Distribute T</strong>. New knots are inserted into each segment between existing
+curve knots, distributed evenly (in curve’s parameter space) inside each
+segment. The number of knots inserted into each segment is proportional to
+the span of curve’s T parameter, corresponding to the segment.</p></li>
+<li><p><strong>Distribute Length</strong>. New knots are inserted into each segment between
+existing curve knots, distributed evenly (according to curve arc length)
+inside each segment. The number of knots inserted into each segment is
+proportional to the curve arc length within the segment.</p></li>
+<li><p><strong>Bisect T</strong>. New knot is inserted in the middle (in curve’s parameter
+space) of the segment between existing curve knots, which has the maximum
+span of curve’s T parameter; thus, this segment is subdivided in two
+smaller ones. The following knot is similarly inserted into the segment
+which is now largest. The procedure is repeated until the required number
+of knots is inserted.</p></li>
+<li><p><strong>Bisect Length</strong>. New knot is inserted in the middle (in terms of curve arc
+length) of the segment between existing curve knots, which has the maximum
+curve arc length; thus, this segment is subdivided in two smaller ones. The
+following knot is similarly inserted into the segment which is now largest.
+The procedure is repeated until the required number of knots is inserted.</p></li>
+</ul>
+</li>
+<li><p><strong>Insert each knot</strong>. This defines the number of times each knot is inserted. The available options are:</p>
+<ul>
+<li><p><strong>Once</strong>. Each knot is inserted one time.</p></li>
+<li><p><strong>As possible</strong>. Each knot is inserted as many times as possible; that is,
+<cite>p-1</cite> times, where <cite>p</cite> is the degree of the curve - if the new knot does
+not coincide with any of existing knots; or smaller number of times, if the
+new knot hapens to coincide with previously existing knot. This option is
+the default.</p></li>
+</ul>
+</li>
+<li><p><strong>Specify Segment</strong>. If checked, the node allows you to specify the range of
+curve’s T parameter, into which all new knots are inserted. The range is
+specified by <strong>TMin</strong>, <strong>TMax</strong> inputs. If the parameter is not checked, then
+new knots will be inserted along the whole curve. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following output:</p>
+<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The resulting concatenated curve.</p></li>
+<li><p><strong>Curve</strong>. The resulting NURBS Curve object.</p></li>
+<li><p><strong>NewKnots</strong>. The values of newly inserted knots.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Make single curve from two segments of line and an arc:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" src="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" />
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<p>Black curve is the original one. Cyan / blue is the control polygon of the original curve. Dark blue points on the curve indicate the knot values of original curve.</p>
+<p>Red lines with orange dots indicate the control polygon of the resulting curve. Green dots indicate the newly inserted knots.</p>
+<p>As you can see, inserting 10 knots creates a lot of control points.</p>
+<img alt="https://user-images.githubusercontent.com/284644/185967665-5105d75c-5fd4-496a-9664-b81322b8e24d.png" src="https://user-images.githubusercontent.com/284644/185967665-5105d75c-5fd4-496a-9664-b81322b8e24d.png" />
 </section>
 </section>
 
@@ -236,8 +285,8 @@ convert one of input curves, or join resulting NURBS curves.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sort_curves.html" class="btn btn-neutral float-left" title="Sort Curves" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="blend_curves.html" class="btn btn-neutral float-right" title="Blend Curves" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="remove_knot.html" class="btn btn-neutral float-left" title="Remove Knot (NURBS Curve)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="remove_excessive_knots.html" class="btn btn-neutral float-right" title="Remove Excessive Knots (NURBS Curve)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

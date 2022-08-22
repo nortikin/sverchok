@@ -53,6 +53,7 @@ Curves
    interpolate_nurbs_curve
    insert_knot
    remove_knot
+   refine_nurbs_curve
    remove_excessive_knots
    adaptive_plot_nurbs
    catenary_curve
