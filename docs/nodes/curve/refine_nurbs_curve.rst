@@ -84,5 +84,11 @@ This node has the following outputs:
 Example of Usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/284644/126066221-95589c16-c04d-4b9c-add7-19c6ad4ab906.png
+Black curve is the original one. Cyan / blue is the control polygon of the original curve. Dark blue points on the curve indicate the knot values of original curve.
+
+Red lines with orange dots indicate the control polygon of the resulting curve. Green dots indicate the newly inserted knots.
+
+As you can see, inserting 10 knots creates a lot of control points.
+
+.. image:: https://user-images.githubusercontent.com/284644/185967665-5105d75c-5fd4-496a-9664-b81322b8e24d.png
 
