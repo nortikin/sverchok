@@ -51,7 +51,7 @@ def Boolean(VA, PA, VB, PB, operation):
 class SvCSGBooleanNodeMK2(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''CSG Boolean Node MK2'''
     bl_idname = 'SvCSGBooleanNodeMK2'
-    bl_label = 'CSG Boolean 2'
+    bl_label = 'CSG Boolean MK2'
     bl_icon = 'MOD_BOOLEAN'
 
     mode_options = [

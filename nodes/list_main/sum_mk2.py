@@ -26,7 +26,7 @@ from bpy.props import IntProperty
 class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' List summa MK2 '''
     bl_idname = 'ListSumNodeMK2'
-    bl_label = 'List Sum'
+    bl_label = 'List Summa'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_SUM'
 

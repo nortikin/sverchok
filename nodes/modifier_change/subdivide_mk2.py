@@ -49,7 +49,7 @@ class SvSubdivideNodeMK2(
     '''
 
     bl_idname = 'SvSubdivideNodeMK2'
-    bl_label = 'Subdivide'
+    bl_label = 'Subdivide Node'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SUBDIVIDE'
 

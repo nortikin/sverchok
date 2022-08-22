@@ -27,7 +27,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     ''' Select vertices of mesh objects '''
     bl_idname = 'SvSelectMeshVerts'
-    bl_label = 'Select Object Vertices'
+    bl_label = 'Select Vertices of Mesh'
     bl_icon = 'EDITMODE_HLT'
     is_animation_dependent = True
     is_scene_dependent = True

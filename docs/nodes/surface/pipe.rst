@@ -1,5 +1,5 @@
-Pipe (Curve)
-============
+Pipe Surface Along Curve
+========================
 
 Functionality
 -------------

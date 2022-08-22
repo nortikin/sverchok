@@ -43,7 +43,7 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Get NURBS curve or surface objects from scene
     """
     bl_idname = 'SvExNurbsInNode'
-    bl_label = 'NURBS In'
+    bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True

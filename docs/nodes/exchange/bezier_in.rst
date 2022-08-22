@@ -1,5 +1,5 @@
-Bezier In
-=========
+Bezier Input
+============
 
 Functionality
 -------------

@@ -25,7 +25,7 @@ class SvDissolveMeshElements(ModifierNode, bpy.types.Node, SverchCustomTreeNode)
     dissolve points edges or polygons of given mesh
     """
     bl_idname = 'SvDissolveMeshElements'
-    bl_label = 'Dissolve mesh elements'
+    bl_label = 'Dissolve Mesh Elements'
     bl_icon = 'EXPERIMENTAL'
 
     mask_mode: bpy.props.EnumProperty(items=modes, update=updateNode)

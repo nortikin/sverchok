@@ -159,7 +159,7 @@ Blender's internal NURBS support is currently limited in two aspects:
 
 So, Sverchok has limited features in interacting with Blender's native NURBS objects:
 
-* **NURBS In** node can bring arbitrary Blender's NURBS curves or surfaces
+* **NURBS Input** node can bring arbitrary Blender's NURBS curves or surfaces
   from scene to Sverchok space;
 * **NURBS Curve Out** and **NURBS Surface Out** nodes allow to generate
   Blender's NURBS objects in scene, but without possibility to specify

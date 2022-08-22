@@ -164,7 +164,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     multisocket lets you insert many outputs
     """
     bl_idname = 'ViewerNodeTextMK3'
-    bl_label = 'Viewer text mk3'
+    bl_label = 'Viewer Text MK3'
     bl_icon = 'FILE_TEXT'
 
     autoupdate: BoolProperty(name='update', default=False)

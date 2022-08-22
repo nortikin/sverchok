@@ -1,4 +1,4 @@
-Dissolve mesh elements
+Dissolve Mesh Elements
 ======================
 
 .. image:: https://user-images.githubusercontent.com/28003269/89492228-2d307880-d7c2-11ea-9a4a-ab12e7dd699a.png
@@ -11,7 +11,7 @@ Instead of removing the geometry, which may leave holes that you have to fill in
 Category
 --------
 
-Modifiers -> Modifier change -> Dissolve mesh elements
+Modifiers -> Modifier change -> Dissolve Mesh Elements
 
 Inputs
 ------

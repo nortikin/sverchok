@@ -1,5 +1,5 @@
-G-code exporter
-===============
+Export G-code
+=============
 
 Functionality
 -------------
@@ -31,7 +31,7 @@ Properties
 ------
 
 - **End** - Finishing Gcode after all geometry done (turn back nozzle to home position for example)    
-- **Export Gcode** - Button to export when all ready    
+- **Export G-code** - Button to export when all ready    
 
 Continuous
 ----------

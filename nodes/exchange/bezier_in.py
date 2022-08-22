@@ -35,7 +35,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Get Bezier Curve objects from scene
     """
     bl_idname = 'SvBezierInNode'
-    bl_label = 'Bezier In'
+    bl_label = 'Bezier Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 

@@ -1,4 +1,4 @@
-Find closest value
+Find Closest Value
 ==================
 
 .. image:: https://user-images.githubusercontent.com/28003269/107801210-3ace4880-6d79-11eb-9fe4-440caef9f73f.png
@@ -11,7 +11,7 @@ The closest value (and index of the value) to given will be return. Input data c
 Category
 --------
 
-List -> Find closest value
+List -> Find Closest Value
 
 Inputs
 ------

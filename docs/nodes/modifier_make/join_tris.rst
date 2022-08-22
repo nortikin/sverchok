@@ -1,5 +1,5 @@
-join tris
-=========
+Join Triangles
+==============
 
 The workhorse code of this node is essentially a bmesh.operator (bmesh.ops)::
 

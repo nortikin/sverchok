@@ -126,7 +126,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvMatrixApplyJoinNode'
-    bl_label = 'Matrix Apply'
+    bl_label = 'Matrix Apply to Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_APPLY_JOIN'
 

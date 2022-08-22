@@ -257,7 +257,7 @@ class SvMultiExtrudeAlt(
         ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
-    bl_label = 'MultiExtrude Alt from addons'
+    bl_label = 'MultiExtrude Alt from Addons'
     sv_icon = 'SV_MULTI_EXTRUDE'
 
     def sv_init(self, context):

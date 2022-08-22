@@ -27,7 +27,7 @@ from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
     ''' Particles input node new '''
     bl_idname = 'SvParticlesMK2Node'
-    bl_label = 'ParticlesMK2'
+    bl_label = 'Particles MK2'
     bl_icon = 'PARTICLES'
     is_animation_dependent = True
     is_scene_dependent = True

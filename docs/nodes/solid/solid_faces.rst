@@ -1,5 +1,5 @@
-Solid Faces (Curves)
-====================
+Solid Faces (Surfaces)
+======================
 
 Functionality
 -------------

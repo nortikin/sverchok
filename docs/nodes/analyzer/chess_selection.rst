@@ -1,4 +1,4 @@
-Chess selection
+Chess Selection
 ===============
 
 .. image:: https://user-images.githubusercontent.com/28003269/70528861-9f37bb80-1b68-11ea-9f23-6e7a76ec779b.png
@@ -12,7 +12,7 @@ The node creates face selection mask with pattern like chess board.
 Category
 --------
 
-Analysers -> Chess selection
+Analysers -> Chess Selection
 
 Inputs
 ------

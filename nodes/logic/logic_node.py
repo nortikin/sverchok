@@ -71,7 +71,7 @@ def logic_numpy(params, constant, matching_f):
 class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''And, Or, If, <, >..'''
     bl_idname = 'SvLogicNodeMK2'
-    bl_label = 'Logic functions'
+    bl_label = 'Logic Functions'
     bl_icon = 'NONE' #'LOGIC'
     sv_icon = 'SV_LOGIC'
 

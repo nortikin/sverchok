@@ -37,7 +37,7 @@
     "Scalar Math.010": "Frame",
     "Select mesh elements by location": "Frame.002",
     "Simple deformation": "Frame.002",
-    "Vertex color mk3": "Frame.001"
+    "Vertex Color MK3": "Frame.001"
   },
   "groups": {},
   "nodes": {
@@ -795,7 +795,7 @@
       },
       "width": 140.0
     },
-    "Vertex color mk3": {
+    "Vertex Color MK3": {
       "bl_idname": "SvVertexColorNodeMK3",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1083,19 +1083,19 @@
     [
       "Mesh viewer",
       0,
-      "Vertex color mk3",
+      "Vertex Color MK3",
       0
     ],
     [
       "Number Range.006",
       0,
-      "Vertex color mk3",
+      "Vertex Color MK3",
       1
     ],
     [
       "Color in",
       0,
-      "Vertex color mk3",
+      "Vertex Color MK3",
       2
     ],
     [

@@ -39,7 +39,7 @@ class SvRotationDifference(bpy.types.Node, SverchCustomTreeNode):
     creates quaternion which represent rotation from vertices A to vertices B
     """
     bl_idname = 'SvRotationDifference'
-    bl_label = 'Rotation difference'
+    bl_label = 'Rotation Difference'
     bl_icon = 'TRACKING_REFINE_BACKWARDS'
 
     vec1: bpy.props.FloatVectorProperty(default=(1, 0, 0), update=updateNode)

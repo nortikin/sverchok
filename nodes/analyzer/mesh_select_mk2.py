@@ -268,7 +268,7 @@ class SvMeshSelectNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode)
     Tooltip: Select vertices, edges, faces by geometric criteria
     '''
     bl_idname = 'SvMeshSelectNodeMk2'
-    bl_label = 'Select mesh elements'
+    bl_label = 'Select Mesh Elements'
     bl_icon = 'UV_SYNC_SELECT'
 
     modes = [

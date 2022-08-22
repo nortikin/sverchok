@@ -1,5 +1,5 @@
-vd matrix
-=========
+Matrix View
+===========
 
 A quick way to represent matrices, the colour start/end allows you to show the sequence of matrices easily by transitioning from one colour to the next over the full sequence of matrices.
 

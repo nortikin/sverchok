@@ -1,4 +1,4 @@
-Separate parts to indexes
+Separate Parts To Indexes
 =========================
 
 .. image:: https://user-images.githubusercontent.com/28003269/73426269-4f49c980-434d-11ea-8dab-36513715f09a.png

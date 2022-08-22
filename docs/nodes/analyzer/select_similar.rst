@@ -1,11 +1,11 @@
-Select similar
+Select Similar
 ==============
 
 Functionality
 -------------
 
 This node allows to select mesh elements (vertices, edges and faces), which are similar to elements already selected in some aspect.
-This is the implementation of Blender's own "Select similar" (Shift+G) feature. So fo additional information, please refer to the Blender's documentation on this feature.
+This is the implementation of Blender's own "Select Similar" (Shift+G) feature. So fo additional information, please refer to the Blender's documentation on this feature.
 
 Inputs
 ------

@@ -102,7 +102,7 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     """
     bl_idname = 'SvColorsInNodeMK1'
-    bl_label = 'Color in'
+    bl_label = 'Color In'
     bl_icon = 'COLOR'
     sv_icon = 'SV_COLOR_IN'
 

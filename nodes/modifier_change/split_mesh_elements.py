@@ -112,7 +112,7 @@ class SvSplitMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     Split selected mesh elements from each other
     """
     bl_idname = 'SvSplitMeshElements'
-    bl_label = 'Split mesh elements'
+    bl_label = 'Split Mesh Elements'
     bl_icon = 'MOD_EDGESPLIT'
 
     select_mode_items = [(n.upper(), n, '', ic, i) for i, (n, ic) in enumerate(zip(

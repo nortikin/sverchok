@@ -1,5 +1,5 @@
-Fill / Stroke
-=============
+Fill / Stroke SVG
+=================
 
 Functionality
 -------------

@@ -35,7 +35,7 @@ def name_seq():
 class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Wifi Input '''
     bl_idname = 'WifiInNode'
-    bl_label = 'Wifi in'
+    bl_label = 'Wifi In'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_WIFI_IN'
 

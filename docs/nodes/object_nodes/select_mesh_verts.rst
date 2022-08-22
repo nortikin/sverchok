@@ -1,4 +1,4 @@
-Select vertices of mesh Node
+Select Vertices of Mesh Node
 ============================
 
 Functionality
