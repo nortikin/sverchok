@@ -71,6 +71,7 @@
     ---
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
+    SvRefineNurbsCurveNode
     SvCurveRemoveExcessiveKnotsNode
     ---
     SvAdaptivePlotNurbsCurveNode

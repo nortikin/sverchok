@@ -13,17 +13,18 @@ from mathutils import Vector
 import mathutils.geometry
 
 from sverchok.utils.math import distribute_int
-from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
+from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
+from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
-from sverchok.dependencies import scipy
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
+from sverchok.dependencies import scipy
 
 if scipy is not None:
     import scipy.optimize
@@ -443,55 +444,111 @@ def remove_excessive_knots(curve, tolerance=1e-6):
 
 REFINE_TRIVIAL = 'TRIVIAL'
 REFINE_DISTRIBUTE = 'DISTRIBUTE'
+REFINE_BISECT = 'BISECT'
 
-def refine_curve(curve, samples, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None):
+def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None, output_new_knots = False):
     if refine_max:
         degree = curve.get_degree()
         inserts_count = degree
     else:
         inserts_count = 1
 
+    if t_min is None:
+        t_min = curve.get_u_bounds()[0]
+    if t_max is None:
+        t_max = curve.get_u_bounds()[1]
+
+    existing_knots = curve.get_knotvector()
+    existing_knots = np.unique(existing_knots)
+    cond = np.logical_and(existing_knots >= t_min, existing_knots <= t_max)
+    existing_knots = existing_knots[cond]
+
+    start_knots = existing_knots.copy()
+    if t_min not in start_knots:
+        start_knots = np.concatenate(([t_min], start_knots))
+    if t_max not in start_knots:
+        start_knots = np.concatenate((start_knots, [t_max]))
+
     if algorithm == REFINE_TRIVIAL:
-        t_min, t_max = curve.get_u_bounds()
-        ts = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
-        for t in ts:
-            try:
-                curve = curve.insert_knot(t, count=inserts_count)
-            except CantInsertKnotException:
-                break
+        new_knots = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
 
     elif algorithm == REFINE_DISTRIBUTE:
-        existing_knots = np.unique(curve.get_knotvector())
-        if solver is not None:
-            length_params = solver.calc_length_params(existing_knots)
-            sizes = length_params[1:] - length_params[:-1]
 
-            #print(f"K: {existing_knots} => Ls {length_params} => Sz {sizes}")
+        if solver is not None:
+            length_params = solver.calc_length_params(start_knots)
+            sizes = length_params[1:] - length_params[:-1]
+            new_knots = np.array([])
             counts = distribute_int(samples, sizes)
             for l1, l2, count in zip(length_params[1:], length_params[:-1], counts):
                 ls = np.linspace(l1, l2, num=count+2, endpoint=True)[1:-1]
                 ts = solver.solve(ls)
-                for t in ts:
-                    try:
-                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
-                    except CantInsertKnotException:
-                        continue
+                new_knots = np.concatenate((new_knots, ts))
         else:
-            sizes = existing_knots[1:] - existing_knots[:-1]
-
+            sizes = start_knots[1:] - start_knots[:-1]
             counts = distribute_int(samples, sizes)
-            for t1, t2, count in zip(existing_knots[1:], existing_knots[:-1], counts):
+            new_knots = np.array([])
+            for t1, t2, count in zip(start_knots[1:], start_knots[:-1], counts):
                 ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
-                for t in ts:
-                    try:
-                        curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
-                    except CantInsertKnotException:
-                        continue
+                new_knots = np.concatenate((new_knots, ts))
+
+    elif algorithm == REFINE_BISECT:
+        if solver is not None:
+
+            def iteration(knots, remaining):
+                if remaining == 0:
+                    return knots
+
+                knots_np = np.asarray(list(knots))
+                knots_np.sort()
+                length_params = solver.calc_length_params(knots_np)
+                sizes = length_params[1:] - length_params[:-1]
+                i_max = sizes.argmax()
+                half_length = 0.5 * (length_params[i_max+1] + length_params[i_max])
+                half_t = solver.solve(np.array([half_length]))[0]
+                return iteration(knots | set([half_t]), remaining-1)
+
+            all_knots = set(list(start_knots))
+            new_knots = np.asarray(list(iteration(all_knots, samples)))
+
+        else:
+
+            def iteration(knots, remaining):
+                if remaining == 0:
+                    return knots
+
+                knots_np = np.asarray(list(knots))
+                knots_np.sort()
+                sizes = knots_np[1:] - knots_np[:-1]
+                i_max = sizes.argmax()
+                half_t = 0.5 * (knots_np[i_max+1] + knots_np[i_max])
+                return iteration(knots | set([half_t]), remaining-1)
+
+            all_knots = set(list(start_knots))
+            new_knots = np.asarray(list(iteration(all_knots, samples)))
 
     else:
         raise Exception("Unsupported algorithm")
 
-    return curve
+    if t_min not in existing_knots:
+        new_knots = np.concatenate(([t_min], new_knots))
+    if t_max not in existing_knots:
+        new_knots = np.concatenate((new_knots, [t_max]))
+    new_knots = np.unique(new_knots)
+    new_knots.sort()
+    #print("New:", new_knots)
+
+    for t in new_knots:
+        if t in existing_knots:
+            continue
+        try:
+            curve = curve.insert_knot(t, count=inserts_count, if_possible=True)
+        except CantInsertKnotException:
+            continue
+
+    if output_new_knots:
+        return new_knots, curve
+    else:
+        return curve
 
 class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
     def __init__(self, curve):
@@ -556,9 +613,26 @@ def offset_nurbs_curve(curve, offset_vector,
         src_ts,
         algorithm = FRENET, algorithm_resolution = 50,
         metric = 'DISTANCE', target_tolerance = 1e-4):
+    """
+    Offset a NURBS curve to obtain another NURBS curve.
+
+    The algorithm is as follows:
+    * Offset some number of points from the curve
+    * then interpolate a NURBS curve through these offsetted points
+    * remove excessive knots from the resulting curve
+
+    Parameters:
+    * curve - the curve to be offsetted
+    * offset_vector - np.array of shape (3,)
+    * src_ts - T parameters of the points to be offsetted (the more points you take,
+        the more precise the offset will be)
+    * algorithm
+    * algorithm_resolution
+    * metric
+    * target_tolerance - the tolerance of remove_excessive_knots procedure
+    """
     src_points = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    print(f"N => {n}")
     calc = SvCurveFrameCalculator(curve, algorithm, resolution = algorithm_resolution)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
@@ -570,4 +644,191 @@ def offset_nurbs_curve(curve, offset_vector,
                     metric = metric)
     offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
     return offset_curve
+
+def curve_to_cubic_nurbs(curve, ts, tolerance=1e-6):
+    points = curve.evaluate_array(ts)
+    tangents = curve.tangent_array(ts)
+    #tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+    #tangents /= float(len(ts))
+    #tangents /= 17.0
+    #print("Ts", ts)
+    #print("Tgs", tangents)
+    point_pairs = zip(points, points[1:])
+    tangent_pairs = zip(tangents, tangents[1:])
+    t_pairs = zip(ts, ts[1:])
+    segments = []
+    for (t1, t2), (p1, p2), (tg1, tg2) in zip(t_pairs, point_pairs, tangent_pairs):
+        print(f"Dt: {t1} - {t2}")
+        dt = t2 - t1
+        tg11 = tg1 * dt
+        tg21 = tg2 * dt
+        print(f"Tg: {tg11}, {tg21}")
+        segment = SvBezierCurve.from_points_and_tangents(p1, tg11, tg21, p2)  
+        segments.append(segment)
+    curve = concatenate_nurbs_curves(segments, tolerance)
+    return curve
+    #return remove_excessive_knots(curve, tolerance)
+
+def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
+    """
+    Adjust the given curve so that at parameter u_bar it goes through
+    the point C[u_bar] + vector instead of C[u_bar].
+    The adjustment is done by moving one control point.
+
+    See The NURBS Book, 2nd ed, p.11.2.
+
+    Parameters:
+    * curve - the curve to be adjusted
+    * u_bar - curve's parameter, indicating the point you want to move
+    * k - index of control point to be moved
+    * vector - the vector indicating the direction and distance for which
+        you want the point to be moved
+    """
+    p = curve.get_degree()
+    cpts = curve.get_control_points().copy()
+    weights = curve.get_weights()
+    vector = np.array(vector)
+    distance = np.linalg.norm(vector)
+    vector = vector / distance
+    functions = SvNurbsBasisFunctions(curve.get_knotvector())
+    x = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    alpha = distance / x
+    cpts[k] = cpts[k] + alpha * vector
+    return curve.copy(control_points = cpts)
+
+def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
+    """
+    Adjust the given curve so that curve's point at parameter u_bar is moved
+    by given distance towards (or away from) k'th control point.
+
+    See The NURBS Book, 2nd ed, p.11.3.1.
+
+    Parameters:
+    * curve - the curve to be adjusted
+    * u_bar - curve's parameter, point at which is to be moved
+    * k - index of curve's weight, which is to be changed
+    * distance - the distance to move the point by. If > 0,
+        then the point is moved towards the corresponding control point;
+        otherwise, the point is moved away from it.
+    """
+    p = curve.get_degree()
+    weights = curve.get_weights().copy()
+    pt = curve.evaluate(u_bar)
+    pk = curve.get_control_points()[k]
+    pkpt = np.linalg.norm(pt - pk)
+    functions = SvNurbsBasisFunctions(curve.get_knotvector())
+    r = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    denominator = r * (pkpt - distance)
+    coeff = 1 + distance / denominator
+    target_w = weights[k] * coeff
+    weights[k] = target_w
+    return curve.copy(weights = weights)
+
+def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, scale=None):
+    """
+    Adjust the given curve so that curve's point at parameter u_bar is moved towards
+    (or away from) curve's control polygon leg P[k] - P[k+1].
+    If distance is specified, then the point is moved by given distance. Distance > 0
+    indicates movement towards curve's control polygon leg. Note that if you try to
+    move the point farther than curve's control polygon leg, this method will produce
+    some fancy curve.
+    If scale is specified, then the distance will be calculated automatically, so that:
+    * scale = 0 means do not move anything;
+    * scale = 1.0 means move the point all the way to control polygon leg, making a small
+        fragment of the curve a straight line;
+    * scale = -1.0 means move the point all the way from control polygon leg, making a larger
+        fragment of the curve a straight line.
+    Of distance and scale, exactly one parameter must be provided.
+
+    See The NURBS Book, 2nd ed., p.11.3.2.
+    """
+
+    if distance is None and scale is None:
+        raise Exception("Either distance or scale must be specified")
+    if distance is not None and scale is not None:
+        raise Exception("Of distance and scale, only one parameter must be specified")
+
+    p = curve.get_degree()
+    cpts = curve.get_control_points()
+    weights = curve.get_weights().copy()
+
+    weights0 = weights.copy()
+    weights0[k] = weights0[k+1] = 0.0
+    R = curve.copy(weights = weights0).evaluate(u_bar)
+
+    pk = cpts[k]
+    pk1 = cpts[k+1]
+    control_leg = LineEquation.from_two_points(pk, pk1)
+    control_leg_len = np.linalg.norm(pk1 - pk)
+
+    P = curve.evaluate(u_bar)
+
+    direction = LineEquation.from_two_points(R, P)
+    Q = direction.intersect_with_line_coplanar(control_leg)
+    Q = np.asarray(Q)
+
+    pkQ = Q - pk
+    pk1Q = Q - pk1
+
+    RQ = np.linalg.norm(Q - R)
+    RP = np.linalg.norm(P - R)
+
+    direction = (P - R) / RP
+
+    if distance is None:
+        if scale >= 0:
+            distance = scale * np.linalg.norm(Q - P)
+        else:
+            distance = scale * np.linalg.norm(R - P)
+
+    target_pt = P + distance * direction
+    Rtarget = RP + distance
+
+    qRP = RP / RQ
+    qRtarget = Rtarget / RQ
+
+    A = pk + qRP * pkQ
+    B = pk1 + qRP * pk1Q
+    C = pk + qRtarget * pkQ
+    D = pk1 + qRtarget * pk1Q
+
+    ak = np.linalg.norm(B - pk1) / control_leg_len
+    ak1 = np.linalg.norm(A - pk) / control_leg_len
+    abk = np.linalg.norm(D - pk1) / control_leg_len
+    abk1 = np.linalg.norm(C - pk) / control_leg_len
+
+    numerator = 1.0 - ak - ak1
+    numerator_brave = 1.0 - abk - abk1
+
+    beta_k = (numerator / ak) / (numerator_brave / abk)
+    beta_k1 = (numerator / ak1) / (numerator_brave / abk1)
+
+    weights[k] = beta_k * weights[k]
+    weights[k+1] = beta_k1 * weights[k+1]
+
+    new_curve = curve.copy(weights = weights)
+    return new_curve
+
+def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
+        scale = 1.0,
+        direction = None,
+        refinement_algorithm = REFINE_TRIVIAL, refinement_solver = None,
+        tolerance = 1e-4):
+    curve = refine_curve(curve, refinement_samples,
+                t_min = t_min, t_max = t_max,
+                algorithm = refinement_algorithm,
+                solver = refinement_solver)
+    cpts = curve.get_control_points().copy()
+    greville_ts = curve.calc_greville_ts()
+    wrap_idxs = np.where(np.logical_and(greville_ts >= t_min, greville_ts <= t_max))
+    wrap_ts = greville_ts[wrap_idxs]
+    normalized_ts = (wrap_ts - wrap_ts[0]) / (wrap_ts[-1] - wrap_ts[0])
+    wrap_cpts = cpts[wrap_idxs]
+    wrap_dirs = curve.main_normal_array(wrap_ts)
+    wrap_values = scale * function(normalized_ts)
+    #print("Wv", wrap_values)
+    wrap_vectors = wrap_dirs * wrap_values[np.newaxis].T
+    cpts[wrap_idxs] = cpts[wrap_idxs] + wrap_vectors
+    curve = curve.copy(control_points = cpts)
+    return remove_excessive_knots(curve, tolerance)
 
