@@ -359,7 +359,7 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     def get_weights(self):
         return np.array(self.curve.getWeights())
 
-    def insert_knot(self, u, count=1):
+    def insert_knot(self, u, count=1, if_possible=False):
         curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
         curve.curve.insertKnot(u, count)
         return curve
