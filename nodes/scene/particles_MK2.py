@@ -64,6 +64,7 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
 
         if V.is_linked:
             for i, i2 in zip(listobj, V.sv_get()):
+                print(len(i))
                 i.foreach_set('velocity', np.array(safc(i, i2)).flatten())
         if S.is_linked:
             for i, i2 in zip(listobj, S.sv_get()):
@@ -71,6 +72,7 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
         if L.is_linked:
             for i, i2 in zip(listobj, L.sv_get()):
                 i.foreach_set('location', np.array(safc(i, i2)).flatten())
+        
         if outL.is_linked:
             if self.Filt_D:
                 outL.sv_set([[i.location[:] for i in Plist if i.alive_state == 'ALIVE'] for Plist in listobj])
