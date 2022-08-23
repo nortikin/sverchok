@@ -63,7 +63,7 @@ Parameters
 | Collection      | Collection where to put instances                                        |
 +-----------------+--------------------------------------------------------------------------+
 | Full copy       | All properties related with given objects will be copied into instances  |
-|                 | this property can be used for coping modifier stack for example          |
+|                 | this property can be used for copying modifier stack for example         |
 +-----------------+--------------------------------------------------------------------------+
 
 Caveats

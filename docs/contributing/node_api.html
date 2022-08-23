@@ -417,7 +417,7 @@ idea. Now it’s only used in Dictionary output node. The problem is that this c
 easily lead to losses of user connections what breaks node setups. For example
 in Geometry Nodes project there was a decision that sockets should be
 independent to data layer. So to generate such nodes is not recommended now.
-If there is now way but to have this functionality possible solution could be
+If there is no way but to have this functionality possible solution could be
 to add a button to a node which would recreate sockets explicitly.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">mode_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
@@ -628,7 +628,7 @@ sense to repeat it.</p>
 </div>
 <div class="admonition note" id="experimental-vectorization">
 <p class="admonition-title">Note</p>
-<p>There are two experimental approaches to automatize data matching. One can
+<p>There are two experimental approaches to automate data matching. One can
 be found in <code class="docutils literal notranslate"><span class="pre">utils.nodes_mixins.recursive_nodes</span></code> and another in
 <code class="docutils literal notranslate"><span class="pre">utils.vectorize</span></code> modules. Both of them can handle not only list of
 objects but and nested to each other lists of objects with arbitrary
@@ -651,7 +651,7 @@ and so they can’t be recommended for use for now.</p>
 <p class="admonition-title">Note</p>
 <p>In future vectorization should leve the nodes area and arrive to execution
 system. In this case nodes only have to add information to sockets to give to
-execution system to now how to match data.</p>
+execution system to know how to match data.</p>
 </div>
 </section>
 <section id="data-structure">
@@ -758,7 +758,7 @@ end.</p>
 from <code class="docutils literal notranslate"><span class="pre">utils.logging</span></code> module or by using <code class="docutils literal notranslate"><span class="pre">node.debug</span></code>, <code class="docutils literal notranslate"><span class="pre">node.info</span></code> and
 other aliases.</p>
 <p>If a node rises an error it will appear in console in next format: <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">and</span>
-<span class="pre">time</span> <span class="pre">[loging</span> <span class="pre">level]</span> <span class="pre">module</span> <span class="pre">name:line</span> <span class="pre">number</span> <span class="pre">:</span> <span class="pre">error</span> <span class="pre">name</span></code></p>
+<span class="pre">time</span> <span class="pre">[logging</span> <span class="pre">level]</span> <span class="pre">module</span> <span class="pre">name:line</span> <span class="pre">number</span> <span class="pre">:</span> <span class="pre">error</span> <span class="pre">name</span></code></p>
 <p>Traceback is switch off for all logging levels except debug one. If you need it
 make sure that you have appropriate logging level in the settings.</p>
 </section>
@@ -924,7 +924,7 @@ breaking existing layouts. It can be done in two ways:</p>
 <section id="improve-existing-node">
 <h3>Improve existing node<a class="headerlink" href="#improve-existing-node" title="Permalink to this heading">¶</a></h3>
 <p>First is when you add extra functionality to some node. It’s possible by adding
-extra buttons, sockets, modes. Whe you add something like this you should ensure
+extra buttons, sockets, modes. When you add something like this you should ensure
 that default behaviour will be unchanged.</p>
 <p>New socket, in most cases, can be placed anywhere among existing ones but it
 should be checked in the process method that data from sockets is not collecting

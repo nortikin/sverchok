@@ -8,7 +8,7 @@ This node visualizes a Vector Field object by generating arrows (which
 represent vectors) from points of original space to the results of vector field
 application to those original points.
 
-The original points are generated as carthesian grid in 3D space.
+The original points are generated as cartesian grid in 3D space.
 
 This node is mainly intended for visualization.
 
@@ -21,7 +21,7 @@ This node has the following inputs:
 * **Bounds**. The list of points which define the area of space, in which the
   field is to be visualized. Only the bounding box of these points is used.
 * **Scale**. The scale of arrows to be generated. The default value is 1.0.
-* **SamplesX**, **SamplesY**, **SamplesZ**. The number of samples of carthesian
+* **SamplesX**, **SamplesY**, **SamplesZ**. The number of samples of cartesian
   grid, from which the arrows are to be generated. The default value is 10.
 
 Parameters
@@ -30,7 +30,7 @@ Parameters
 This node has the following parameters:
 
 * **Auto scale**. Select the scale of arrows automatically, so that the largest
-  arrows are not bigger than the distance between carthesian grid points.
+  arrows are not bigger than the distance between cartesian grid points.
   Checked by default.
 * **Join**. If checked, then all arrows will be merged into one mesh object.
   Otherwise, separate object will be generated for each arrow. Checked by

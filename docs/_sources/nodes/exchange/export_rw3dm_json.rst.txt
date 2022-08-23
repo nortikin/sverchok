@@ -13,7 +13,7 @@ Functionality
 
 This node allows to export a set of NURBS_ Curve or Surface objects to a
 JSON format, supported by rw3dm_ utility; that utility can be used to convert
-such JSON formath to Rhinoceros ® 3D format.
+such JSON format to Rhinoceros ® 3D format.
 
 .. _rw3dm: https://github.com/orbingol/rw3dm
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
