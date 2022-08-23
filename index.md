@@ -68,6 +68,7 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    SvNurbsCurveNodesNode
     ---
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode

@@ -33,6 +33,7 @@ Curves
    length_rebuild
    curvature
    torsion
+   nurbs_curve_nodes
    deconstruct_curve
    curve_frame
    curve_frame_on_surface
