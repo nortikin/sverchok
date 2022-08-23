@@ -35,7 +35,7 @@
     "Scalar Math.008": "Frame",
     "Scalar Math.009": "Frame",
     "Scalar Math.010": "Frame",
-    "Select mesh elements by location": "Frame.002",
+    "Select Mesh Elements by Location": "Frame.002",
     "Simple deformation": "Frame.002",
     "Vertex Color MK3": "Frame.001"
   },
@@ -754,7 +754,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -891,19 +891,19 @@
     [
       "Cylinder",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Cylinder",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
       "Cylinder",
       2,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2
     ],
     [
@@ -913,7 +913,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0,
       "List Mask (out)",
       1
@@ -925,7 +925,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0,
       "List Mask Join (in)",
       0

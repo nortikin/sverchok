@@ -18,7 +18,7 @@
     "Proportional Edit Falloff": "Bottom Flat",
     "Scale": "Fractal",
     "Scale.002": "Fractal",
-    "Select mesh elements by location.001": "Bottom Flat",
+    "Select Mesh Elements by Location.001": "Bottom Flat",
     "Vector Noise": "Fractal",
     "Vector in": "Bottom Flat"
   },
@@ -535,7 +535,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "0": {
@@ -567,7 +567,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location.001": {
+    "Select Mesh Elements by Location.001": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "0": {
@@ -706,13 +706,13 @@
       "Faces"
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2,
       "Inset faces",
       3
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2,
       "Inset faces",
       4
@@ -802,7 +802,7 @@
       0
     ],
     [
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0,
       "Proportional Edit Falloff",
       1
@@ -852,31 +852,31 @@
     [
       "Torus",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Torus",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
       "Torus",
       2,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2
     ],
     [
       "Inset faces",
       0,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0
     ],
     [
       "Inset faces",
       2,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       2
     ],
     [

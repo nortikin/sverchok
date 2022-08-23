@@ -299,7 +299,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -525,7 +525,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0,
       "Proportional Edit Falloff",
       1
@@ -533,13 +533,13 @@
     [
       "Mesh Join.002",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Mesh Join.002",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [

@@ -32,7 +32,7 @@ from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh as calc_mesh_no
 class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
-    bl_label = 'Select Mesh Elements by location'
+    bl_label = 'Select Mesh Elements by Location'
     bl_icon = 'UV_SYNC_SELECT'
     replacement_nodes = [('SvMeshSelectNodeMk2', None, None)]
     modes = [

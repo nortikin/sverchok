@@ -1,4 +1,4 @@
-Select Mesh Elements by location
+Select Mesh Elements by Location
 ================================
 
 Functionality

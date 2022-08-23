@@ -17,8 +17,8 @@
     "Reroute": "Frame.002",
     "Reroute.001": "Frame.003",
     "Reroute.002": "Frame.002",
-    "Select mesh elements by location": "Frame",
-    "Select mesh elements by location.001": "Frame.001",
+    "Select Mesh Elements by Location": "Frame",
+    "Select Mesh Elements by Location.001": "Frame.001",
     "Symmetrize Mesh": "Frame.003",
     "Symmetrize Mesh.001": "Frame.003",
     "Vector in": "Frame",
@@ -416,7 +416,7 @@
       "params": {},
       "width": 16.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -449,7 +449,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location.001": {
+    "Select Mesh Elements by Location.001": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -746,7 +746,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0,
       "Proportional Edit Falloff",
       1
@@ -758,7 +758,7 @@
       0
     ],
     [
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0,
       "Proportional Edit Falloff.001",
       1
@@ -784,25 +784,25 @@
     [
       "Plane",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Plane",
       2,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2
     ],
     [
       "Move.002",
       0,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0
     ],
     [
       "Plane",
       2,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       2
     ],
     [

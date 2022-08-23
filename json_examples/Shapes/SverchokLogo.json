@@ -28,7 +28,7 @@
     "Merge by Distance": "Frame.012",
     "Merge mesh 2D": "Frame.005",
     "Mesh Join.001": "Frame.006",
-    "Select mesh elements by location": "Frame.006",
+    "Select Mesh Elements by Location": "Frame.006",
     "Viewer Draw": "Frame.006",
     "Viewer Draw.001": "Frame.001",
     "Viewer Draw.002": "Frame.002",
@@ -696,7 +696,7 @@
       "use_custom_color": true,
       "width": 400.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -1163,7 +1163,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1,
       "List Mask (out)",
       1
@@ -1171,13 +1171,13 @@
     [
       "Contour 2D",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Contour 2D",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
