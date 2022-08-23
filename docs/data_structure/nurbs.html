@@ -181,6 +181,16 @@ clamped uniform knot vector.</p></li>
 in which distance between neighbour knots is different in different places.
 For example, <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">0</span> <span class="pre">0.5</span> <span class="pre">0.6</span> <span class="pre">1.5</span> <span class="pre">1.7</span> <span class="pre">1.9</span> <span class="pre">2</span> <span class="pre">2</span> <span class="pre">2</span></code> is a non-uniform (and clamped)
 knot vector.</p></li>
+<li><p><strong>Node values</strong>, <strong>Node points</strong>. Also known as Greville abscissaes and
+Greville points, average knot values, or simply edit points. The values of
+NURBS curve’s T parameter, defined as: <code class="docutils literal notranslate"><span class="pre">t[i]</span> <span class="pre">=</span> <span class="pre">sum(u[i+j]</span> <span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">p)</span>
+<span class="pre">/</span> <span class="pre">p</span></code>, where <code class="docutils literal notranslate"><span class="pre">u</span></code> is curve’s knotvector, and <code class="docutils literal notranslate"><span class="pre">p</span></code> is curve’s degree.  NURBS
+curve <em>node points</em> (or Greville points) are points at the curve at parameter
+values equal to node values.  The number of curve’s nodes is equal to the
+number of curve’s control points.  Node points of the curve are positioned on
+the curve near corresponding control points. So in many NURBS algorithms,
+node points are used to define the shape of NURBS curve, instead of control
+points.</p></li>
 </ul>
 </section>
 <section id="workflow">
