@@ -172,7 +172,7 @@ class SvNormalTrack(object):
         dts = (ts - t1s) / (t2s - t1s)
         #dts = np.clip(dts, 0.0, 1.0) # Just in case...
         matrix_out = []
-        # TODO: ideally this shoulld be vectorized with numpy;
+        # TODO: ideally this should be vectorized with numpy;
         # but that would require implementation of quaternion
         # interpolation in numpy.
         for dt, base_index in zip(dts, base_indexes):
@@ -818,7 +818,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     inputs:
     * curves: list of SvCurve
     * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
-    * allow_generic: what to do it it is not possible to concatenate curves natively:
+    * allow_generic: what to do if it is not possible to concatenate curves natively:
         True - use generic SvConcatCurve
         False - raise an Exception.
 

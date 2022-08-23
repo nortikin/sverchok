@@ -30,7 +30,7 @@ TEMPORARY DOCUMENTATION
 Every SvScript needs a self.process() function.
 The node can be access via self.node
  
-Procsess won't be called unless all sockets without a default are conneted
+Procsess won't be called unless all sockets without a default are connected
  
 inputs = (socket_type, socket_name, default, ... )
 outputs = (socket_type, socket_name, ... )

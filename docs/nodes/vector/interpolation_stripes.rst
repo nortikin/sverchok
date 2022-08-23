@@ -36,7 +36,7 @@ Parameters
 
 **Factor** - is multiplyer after produce function as sinus/cosinus/etc.
 **Scale** - is multiplyer before produce function as sinus/cosinus/etc.
-**Function** - popup function between Simple/Multiplyed/Sinus/Cosinus/Power/Square
+**Function** - popup function between Simple/Multiplied/Sinus/Cosinus/Power/Square
 
 Parameters extended
 -------------------

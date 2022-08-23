@@ -86,7 +86,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvVerticesSocket', "Centers")
         #so('SvVerticesSocket', "HitP")
         so('SvStringsSocket',  "Hours")
-        # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
+        # self.inputs[2].prop[2] = -1  # z down   # <--- maybe?
 
     def sv_draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)

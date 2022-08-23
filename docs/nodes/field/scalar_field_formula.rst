@@ -56,7 +56,7 @@ Each variable used in the formula, except for `V` and the coordinate variables, 
 
 The following variables are considered to be point coordinates:
 
-* For Carthesian mode: `x`, `y` and `z`;
+* For Cartesian mode: `x`, `y` and `z`;
 * For Cylindrical mode: `rho`, `phi` and `z`;
 * For Spherical mode: `rho`, `phi` and `theta`.
 
@@ -67,7 +67,7 @@ This node has the following parameters:
 
 * **Input**. This defines the coordinate system being used. The available
   values are **Carhtesian**, **Cylindrical** and **Spherical**. The default
-  value is **Carthesian**.
+  value is **Cartesian**.
 * **Formula**. The formula which defines the scalar field. The default formula
   is `x*x + y*y + z*z`.
 * **Vectorize**. This parameter is available in the N panel only. If enabled,

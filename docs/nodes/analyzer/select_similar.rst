@@ -44,7 +44,7 @@ This node has the following parameters:
     * **Perimeter**. Faces with similar perimeter.
     * **Normal**. Faces with similar normal vector.
     * **CoPlanar**. Faces nearly coplanar to selected.
-- **Compare by**. Comparasion operator to use. Available values are **=**, **>=**, **<=**.
+- **Compare by**. Comparison operator to use. Available values are **=**, **>=**, **<=**.
 - **Threshold**. Similarity threshold. This parameter can be also provided as input.
 
 Outputs

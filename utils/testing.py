@@ -334,7 +334,7 @@ class SverchokTestCase(unittest.TestCase):
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
-        Comparasion is done by serializing both objects.
+        Comparison is done by serializing both objects.
         """
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
@@ -452,7 +452,7 @@ class SverchokTestCase(unittest.TestCase):
             for a1, a2, ind in fails:
                 message = f"{a1} != {a2}: Array 1 [{ind}] != Array 2 [{ind}]"
                 messages.append(message)
-            header = f"{len(fails)} fails of {arr1.size} comparasions:\n"
+            header = f"{len(fails)} fails of {arr1.size} comparisons:\n"
             message = header + "\n".join(messages)
             self.fail(message)
 

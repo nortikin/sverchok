@@ -22,7 +22,7 @@ This node has the following parameter:
 
 * **Coordinates**. This defines the coordinate system being used. The available modes are:
 
-  * **Carthesian**. Compose the vector field from X, Y and Z fields.
+  * **Cartesian**. Compose the vector field from X, Y and Z fields.
   * **Cylindrical**. Compose the vector field from Rho, Phi and Z fields.
   * **Spherical**. Compose the vector field from Rho, Phi and Theta fields.
 

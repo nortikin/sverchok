@@ -47,7 +47,7 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
-# njit is a light-wrapper aroudn numba.njit, if found
+# njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
@@ -446,7 +446,7 @@ class Spline2D(object):
     across them (in U direction) by using another series of 1D splines.
     U and V splines can both be either linear or cubic.
     The spline can optionally be cyclic in U and/or V directions
-    (so it can form a cylindrical or thoroidal surface).
+    (so it can form a cylindrical or toroidal surface).
     This is implemented partly in pure python, partly in numpy, so the performance
     is not very good. The performance is not very bad either, because of caching.
     """
@@ -2354,7 +2354,7 @@ def circle_approximation(data):
     e1, e2 = e1.normalized(), e2.normalized()
     matrix = np.array([e1, e2, plane.normal])
     on_plane = np.apply_along_axis(lambda v: matrix @ v, 1, centered)# All vectors here have Z == 0
-    # Calculate circluar approximation in 2D
+    # Calculate circular approximation in 2D
     circle_2d = circle_approximation_2d(on_plane[:,0:2], mean_is_zero=True)
     # Map the center back into 3D space
     matrix_inv = np.linalg.inv(matrix)

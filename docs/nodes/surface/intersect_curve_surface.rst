@@ -22,7 +22,7 @@ then searches for sinle intersection in each segment.
 
 For the initial guess, at the first step the node generates a rough
 approximation of the surface with a mesh by evaluating the surface in points of
-carthesian grid.
+cartesian grid.
 
 Inputs
 ------
