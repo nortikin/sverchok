@@ -5,7 +5,7 @@ Functionality
 -------------
 
 This node calculates so-called *node* points (also known as Greville points or
-average knot points) of the NURBS curve.
+average knot points, or simply edit points) of the NURBS curve.
 NURBS curve *nodes* (or Greville abscissaes) are defined as:
 ``t[i] = sum(u[i+j] for j from 1 to p) / p``, where ``u`` is curve's knotvector, and
 ``p`` is curve's degree.
@@ -33,4 +33,8 @@ This node has the following outputs:
 
 Example of Usage
 ----------------
+
+Orange is curve's control polygon; dark blue are curve's node points (Greville points):
+
+.. image:: https://user-images.githubusercontent.com/284644/186223165-72a48126-b290-4eb9-a3cc-262fd23bf426.png
 
