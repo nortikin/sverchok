@@ -1,5 +1,5 @@
-NURBS In
-========
+NURBS Input
+===========
 
 Dependencies
 ------------

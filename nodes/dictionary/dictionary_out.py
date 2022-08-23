@@ -54,7 +54,7 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
     Keys of first given dictionary in a list are taken in account
     """
     bl_idname = 'SvDictionaryOut'
-    bl_label = 'Dictionary out'
+    bl_label = 'Dictionary Out'
     bl_icon = 'OUTLINER_DATA_GP_LAYER'
 
     def sv_init(self, context):

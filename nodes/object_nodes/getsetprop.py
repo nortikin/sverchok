@@ -158,9 +158,9 @@ def secondary_type_assesment(item):
     return None
 
 class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Get property '''
+    ''' Get Property '''
     bl_idname = 'SvGetPropNode'
-    bl_label = 'Get property'
+    bl_label = 'Get Property'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
     is_animation_dependent = True
@@ -209,9 +209,9 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Set property '''
+    ''' Set Property '''
     bl_idname = 'SvSetPropNode'
-    bl_label = 'Set property'
+    bl_label = 'Set Property'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
 

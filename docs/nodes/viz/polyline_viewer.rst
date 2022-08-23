@@ -1,4 +1,4 @@
-Polyline viewer
+Polyline Viewer
 ===============
 
 .. image:: https://user-images.githubusercontent.com/28003269/96707644-35538980-13a9-11eb-95f9-56b02f2c561e.png
@@ -13,7 +13,7 @@ If bevel object is given (curve type) it will be extruded along generated spline
 Category
 --------
 
-Viz -> Polyline viewer
+Viz -> Polyline Viewer
 
 Inputs
 ------

@@ -1,4 +1,4 @@
-topology simple
+Topology Simple
 ===============
 
 This node is useful for educational purposes. It allows you to declare the edges and face index lists of a basic geometry, but from directly inside the node. It allows you to use a simplified syntax to describe the indices (with less brackets..).

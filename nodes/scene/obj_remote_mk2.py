@@ -26,7 +26,7 @@ from sverchok.data_structure import dataCorrect, updateNode, match_long_repeat
 class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvObjRemoteNodeMK2'
-    bl_label = 'Object Remote (Control) mk2'
+    bl_label = 'Object Remote (Control) MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_OBJECT'
 

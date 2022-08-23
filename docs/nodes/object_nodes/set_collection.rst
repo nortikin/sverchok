@@ -1,4 +1,4 @@
-Set collection
+Set Collection
 ==============
 
 .. image:: https://user-images.githubusercontent.com/28003269/118350859-e8fcb080-b569-11eb-8342-c8987bd4c523.png
@@ -16,7 +16,7 @@ it always try to unlink it from scene collection.
 Category
 --------
 
-BPY Data -> Set collection
+BPY Data -> Set Collection
 
 Inputs
 ------

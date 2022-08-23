@@ -1,4 +1,4 @@
-Extrude edges
+Extrude Edges
 =============
 
 Functionality

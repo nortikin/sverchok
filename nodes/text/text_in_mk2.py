@@ -78,7 +78,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvTextInNodeMK2'
-    bl_label = 'Text in+'
+    bl_label = 'Text In+'
     bl_icon = 'PASTEDOWN'
 
     csv_data = {}

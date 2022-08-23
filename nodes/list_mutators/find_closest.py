@@ -17,7 +17,7 @@ from sverchok.data_structure import repeat_last, fixed_iter
 class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
     """Triggers: find search closest"""
     bl_idname = 'SvFindClosestValue'
-    bl_label = 'Find closest value'
+    bl_label = 'Find Closest Value'
     bl_icon = 'VIEWZOOM'
 
     def update_mode(self, context):

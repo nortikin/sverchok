@@ -43,7 +43,7 @@ class SvMergeMesh2DLite(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     Has hidden output socket, look N panel
     """
     bl_idname = 'SvMergeMesh2DLite'
-    bl_label = 'Merge mesh 2D lite'
+    bl_label = 'Merge Mesh 2D lite'
     bl_icon = 'AUTOMERGE_ON'
 
     def update_sockets(self, context):

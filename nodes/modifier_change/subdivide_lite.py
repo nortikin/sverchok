@@ -31,7 +31,7 @@ class SvSubdivideLiteNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     '''Subdivide Fast'''
 
     bl_idname = 'SvSubdivideLiteNode'
-    bl_label = 'Subdivide lite'
+    bl_label = 'Subdivide Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SUBDIVIDE_LITE'
 

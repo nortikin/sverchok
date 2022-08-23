@@ -55,7 +55,7 @@ class SvChessSelection(bpy.types.Node, SverchCustomTreeNode):
     Topology of input mesh should be in an appropriate view for getting expecting result
     """
     bl_idname = 'SvChessSelection'
-    bl_label = 'Chess selection'
+    bl_label = 'Chess Selection'
     bl_icon = 'TEXTURE'
 
     def sv_init(self, context):

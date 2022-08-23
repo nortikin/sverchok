@@ -28,7 +28,7 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Inspect shape of input data
     """
     bl_idname = "SvDataShapeNode"
-    bl_label = "Data shape"
+    bl_label = 'Data Shape'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DATA_SHAPE'
 

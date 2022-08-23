@@ -43,9 +43,9 @@ def fix(s):
 
 
 class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Formula shape '''
+    ''' Formula Shape '''
     bl_idname = 'SvFormulaShapeNode'
-    bl_label = 'Formula shape'
+    bl_label = 'Formula Shape'
     bl_icon = 'NONE'
     sv_icon = 'SV_FORMULA_SHAPE'
 

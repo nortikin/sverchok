@@ -39,7 +39,7 @@ class SvCropMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     Has hidden output socket, look N panel
     """
     bl_idname = 'SvCropMesh2D'
-    bl_label = 'Crop mesh 2D'
+    bl_label = 'Crop Mesh 2D'
     bl_icon = 'MOD_BOOLEAN'
 
     def update_sockets(self, context):

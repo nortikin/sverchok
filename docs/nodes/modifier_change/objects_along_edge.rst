@@ -1,5 +1,5 @@
-Duplicate along Edge
-====================
+Duplicate Objects Along Edge
+============================
 
 Functionality
 -------------

@@ -29,7 +29,7 @@ from sverchok.utils.listutils import preobrazovatel
 class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Lists Levels node '''
     bl_idname = 'ListLevelsNode'
-    bl_label = 'List Del Levels'
+    bl_label = 'List Delete Levels'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_DEL_LEVELS'
 

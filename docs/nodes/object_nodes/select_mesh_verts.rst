@@ -1,5 +1,5 @@
-Select vertices of mesh Node
-============================
+Select Object Vertices
+======================
 
 Functionality
 -------------

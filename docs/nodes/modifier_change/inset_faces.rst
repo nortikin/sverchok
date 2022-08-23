@@ -1,4 +1,4 @@
-Inset faces
+Inset Faces
 ===========
 
 .. image:: https://user-images.githubusercontent.com/28003269/70852237-a89e8c00-1eb8-11ea-8563-1ef453f0f50d.png

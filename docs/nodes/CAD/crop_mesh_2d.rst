@@ -1,4 +1,4 @@
-Crop mesh 2D
+Crop Mesh 2D
 ============
 
 .. image:: https://user-images.githubusercontent.com/28003269/71086774-1b0eb500-21b4-11ea-91c0-37c932309d0a.png

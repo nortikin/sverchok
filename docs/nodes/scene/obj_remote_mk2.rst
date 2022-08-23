@@ -1,5 +1,5 @@
-Object Remote
-=============
+Object Remote (Control)
+=======================
 
 This node is a convenience node.
 

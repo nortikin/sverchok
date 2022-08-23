@@ -35,7 +35,7 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Cut object's edges by surface
     """
     bl_idname = 'SvCutObjBySurfaceNode'
-    bl_label = 'Cut by Surface'
+    bl_label = 'Cut Object by Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CUT'
 

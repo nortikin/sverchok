@@ -69,13 +69,13 @@ def set_uv_edit_mode(verts: list, faces: list, mesh: bpy.types.Mesh, uv_name: st
 
 class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Set custom UV map to Blender mesh
+    Triggers: Set Custom UV Map to Blender mesh
 
     3D coordinates can be putted,
     it will works as flat projection
     """
     bl_idname = 'SvSetCustomUVMap'
-    bl_label = 'Set custom UV map'
+    bl_label = 'Set Custom UV Map'
     bl_icon = 'GROUP_UVS'
 
     @property

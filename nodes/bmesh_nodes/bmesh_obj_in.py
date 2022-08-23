@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
     ''' BMesh Object In '''
     bl_idname = 'SvBMObjinputNode'
-    bl_label = 'BMesh Obj in'
+    bl_label = 'BMesh Obj In'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_IN_BMESH'
 

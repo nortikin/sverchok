@@ -1,4 +1,4 @@
-Deform by formula
+Deform by Formula
 =================
 
 Functionality

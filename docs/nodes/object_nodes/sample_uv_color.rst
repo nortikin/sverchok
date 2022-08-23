@@ -1,4 +1,4 @@
-Sample UV texture color on Mesh
+Sample UV Texture Color on Mesh
 ===============================
 
 Functionality

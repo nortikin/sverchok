@@ -22,7 +22,7 @@ class SvEdgesToFaces2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvEdgesToFaces2D'
-    bl_label = 'Edges to faces 2D'
+    bl_label = 'Edges to Faces 2D'
     bl_icon = 'MESH_GRID'
     sv_icon = 'SV_PLANAR_EDGES_TO_POLY'
 

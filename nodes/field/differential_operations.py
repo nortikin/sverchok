@@ -44,7 +44,7 @@ class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Field differential operations
     """
     bl_idname = 'SvExFieldDiffOpsNode'
-    bl_label = 'Field Differential Operation'
+    bl_label = 'Field Differential Operations'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_NABLA'
 

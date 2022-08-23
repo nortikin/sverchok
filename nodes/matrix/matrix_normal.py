@@ -45,7 +45,7 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvMatrixNormalNode'
-    bl_label = 'Matrix normal'
+    bl_label = 'Matrix Normal'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_NORMAL'
 

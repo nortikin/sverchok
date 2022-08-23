@@ -1,4 +1,4 @@
-Fractal curve
+Fractal Curve
 =============
 
 Functionality

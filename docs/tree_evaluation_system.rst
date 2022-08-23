@@ -61,8 +61,8 @@ return it to evaluation system after their part is done.
     Connection between ``A number`` and ``Stethoscope`` nodes via wifi nodes
 
 In case if you have links which go through all your tree and spoil the tree readability it's possible
-to hide the links by using wifi nodes. ``Wifi in`` and ``Wifi out`` nodes act as if they had a link between each other.
-``Wifi in`` can be connected to multiple ``Wifi out`` nodes.
+to hide the links by using wifi nodes. ``Wifi In`` and ``Wifi Out`` nodes act as if they had a link between each other.
+``Wifi In`` can be connected to multiple ``Wifi Out`` nodes.
 
 
 Reroute nodes
@@ -193,7 +193,7 @@ enabled the node will be update each frame change. This can serve two purposes.
 .. |option| image:: https://user-images.githubusercontent.com/28003269/124885639-87464900-dfe4-11eb-8796-a54ff5f84e58.png
 
 - Firstly this can be used for generating animations. In this case
-  :doc:`Frame info node <nodes/scene/frame_info_mk2>` will be most useful.
+  :doc:`Frame Info node <nodes/scene/frame_info_mk2>` will be most useful.
 - **(Deprecated, the Scene trigger is used instead now)** Secondly updating
   nodes upon frame change can be used for refreshing nodes which take data from
   Blender data blocks. For frame change the left/right arrow buttons can be

@@ -336,7 +336,7 @@ class SvPlanarEdgenetToPolygons(ModifierNode, bpy.types.Node, SverchCustomTreeNo
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvPlanarEdgenetToPolygons'
-    bl_label = 'Planar edgenet to polygons'
+    bl_label = 'Planar Edgenet to Polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_PLANAR_EDGES_TO_POLY'
 

@@ -32,7 +32,7 @@ OLD_OP = "node.sverchok_generic_callback_old"
 class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' WifiOutNode '''
     bl_idname = 'WifiOutNode'
-    bl_label = 'Wifi out'
+    bl_label = 'Wifi Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_WIFI_OUT'
 

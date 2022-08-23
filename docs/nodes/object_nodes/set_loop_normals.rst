@@ -1,4 +1,4 @@
-Set loop normals
+Set Loop Normals
 ================
 
 .. image:: https://user-images.githubusercontent.com/28003269/111056673-62a8ed00-849a-11eb-86b8-faa4bb111f16.png
@@ -11,7 +11,7 @@ Most of the time it should be used together with `Origins` nodes which can calcu
 Category
 --------
 
-BPY Data -> Set loop normals
+BPY Data -> Set Loop Normals
 
 Inputs
 ------
