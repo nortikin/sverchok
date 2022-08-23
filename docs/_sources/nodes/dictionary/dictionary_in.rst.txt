@@ -1,4 +1,4 @@
-Dictionary in
+Dictionary In
 =============
 
 .. image:: https://user-images.githubusercontent.com/28003269/71763474-bd89a080-2ef5-11ea-9b5d-e4526c1e5357.png
@@ -12,7 +12,7 @@ It can be used for preparing data structure which is required for some nodes.
 Category
 --------
 
-Dictionary -> dictionary in
+Dictionary -> dictionary In
 
 Inputs
 ------

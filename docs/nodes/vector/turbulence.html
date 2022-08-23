@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Turbulence &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Vector Turbulence &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -64,7 +64,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Attraction Vectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
 <li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
@@ -72,7 +72,7 @@
 <li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Turbulence</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Turbulence</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#range-table">Range table</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
@@ -134,7 +134,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="vector_index.html">Vector</a> &raquo;</li>
-      <li>Turbulence</li>
+      <li>Vector Turbulence</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/vector/turbulence.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -144,9 +144,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="turbulence">
-<h1>Turbulence<a class="headerlink" href="#turbulence" title="Permalink to this heading">¶</a></h1>
-<p>This Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
+  <section id="vector-turbulence">
+<h1>Vector Turbulence<a class="headerlink" href="#vector-turbulence" title="Permalink to this heading">¶</a></h1>
+<p>This Vector Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 May output scalars or vectors.
 For some noise types, if your output goes to the texture viewer you need to remap them, otherwise your texture
 will be supersaturated or undersaturated. See below ‘range table’ for a detailed description.</p>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Set loop normals &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Set Loop Normals &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Set mesh attribute" href="set_mesh_attribute.html" />
-    <link rel="prev" title="Set custom UV map" href="set_custom_uv_map.html" /> 
+    <link rel="next" title="Set Mesh Attribute" href="set_mesh_attribute.html" />
+    <link rel="prev" title="Set Custom UV Map" href="set_custom_uv_map.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -81,15 +81,15 @@
 <li class="toctree-l3"><a class="reference internal" href="get_asset_properties_mk2.html">Object ID Selector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lattice_analyzer.html">Lattice Props</a></li>
 <li class="toctree-l3"><a class="reference internal" href="armature_analyzer.html">Armature Props</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sample_uv_color.html">Sample UV texture color on Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="select_mesh_verts.html">Select vertices of mesh Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="weightsmk2.html">Weights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sample_uv_color.html">Sample UV Texture Color on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="select_mesh_verts.html">Select Object Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weightsmk2.html">Vertex Group Weights</a></li>
 <li class="toctree-l3"><a class="reference internal" href="getsetprop.html">Get Property / Set Property</a></li>
 <li class="toctree-l3"><a class="reference internal" href="getsetprop_mk2.html">Get Property / Set Property</a></li>
 <li class="toctree-l3"><a class="reference internal" href="assign_materials.html">Assign Materials List</a></li>
 <li class="toctree-l3"><a class="reference internal" href="material_index.html">Set Material Index</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_custom_uv_map.html">Set custom UV map</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Set loop normals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="set_custom_uv_map.html">Set Custom UV Map</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Set Loop Normals</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#category">Category</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -98,10 +98,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="set_mesh_attribute.html">Set mesh attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_collection.html">Set collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_mesh_attribute.html">Set Mesh Attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_collection.html">Set Collection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="copy_modifiers.html">Copy Modifiers Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="named_attribute.html">Named attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="named_attribute.html">Named Attribute</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
@@ -131,7 +131,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="object_nodes_index.html">Objects</a> &raquo;</li>
-      <li>Set loop normals</li>
+      <li>Set Loop Normals</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/object_nodes/set_loop_normals.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -142,7 +142,7 @@
            <div itemprop="articleBody">
              
   <section id="set-loop-normals">
-<h1>Set loop normals<a class="headerlink" href="#set-loop-normals" title="Permalink to this heading">¶</a></h1>
+<h1>Set Loop Normals<a class="headerlink" href="#set-loop-normals" title="Permalink to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/28003269/111056673-62a8ed00-849a-11eb-86b8-faa4bb111f16.png" src="https://user-images.githubusercontent.com/28003269/111056673-62a8ed00-849a-11eb-86b8-faa4bb111f16.png" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
@@ -151,7 +151,7 @@ Most of the time it should be used together with <cite>Origins</cite> nodes whic
 </section>
 <section id="category">
 <h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
-<p>BPY Data -&gt; Set loop normals</p>
+<p>BPY Data -&gt; Set Loop Normals</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -189,8 +189,8 @@ Most of the time it should be used together with <cite>Origins</cite> nodes whic
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="set_custom_uv_map.html" class="btn btn-neutral float-left" title="Set custom UV map" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="set_mesh_attribute.html" class="btn btn-neutral float-right" title="Set mesh attribute" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="set_custom_uv_map.html" class="btn btn-neutral float-left" title="Set Custom UV Map" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="set_mesh_attribute.html" class="btn btn-neutral float-right" title="Set Mesh Attribute" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

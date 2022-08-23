@@ -1,4 +1,4 @@
-Edges to faces 2D
+Edges to Faces 2D
 =================
 
 .. image:: https://user-images.githubusercontent.com/28003269/67938049-30218b80-fbe8-11e9-9da7-c65df2de733e.png

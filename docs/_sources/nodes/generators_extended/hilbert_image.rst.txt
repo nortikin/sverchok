@@ -1,5 +1,5 @@
-Hilbert 3D
-=======================
+Hilbert Image
+=============
 
 Functionality
 -------------

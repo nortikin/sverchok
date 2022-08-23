@@ -1,5 +1,5 @@
-FCurve In
-=========
+FCurve Input
+============
 
 This node give you access to the FCurves bound to scene objects. 
 

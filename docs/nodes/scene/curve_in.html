@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>curve in &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Curve Input &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Object Remote" href="obj_remote_mk2.html" />
-    <link rel="prev" title="FCurve In" href="FCurve_in.html" /> 
+    <link rel="next" title="Object Remote (Control)" href="obj_remote_mk2.html" />
+    <link rel="prev" title="FCurve Input" href="FCurve_in.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -78,19 +78,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="scene_index.html">Scene</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="frame_info_mk2.html">Frame Info</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cache.html">cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cache.html">Cache</a></li>
 <li class="toctree-l3"><a class="reference internal" href="get_objects_data.html">Get Objects Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="objects_in_lite.html">objects in lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="FCurve_in.html">FCurve In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="objects_in_lite.html">Objects in Lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="FCurve_in.html">FCurve Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCurve_in.html#none-of-that-made-sense">None of that made sense?</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">curve in</a></li>
-<li class="toctree-l3"><a class="reference internal" href="obj_remote_mk2.html">Object Remote</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Curve Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obj_remote_mk2.html">Object Remote (Control)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="obj_remote_mk2.html#implementation-details">Implementation details</a></li>
 <li class="toctree-l3"><a class="reference internal" href="3dview_props.html">3D View Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="collection_picker_mk1.html">Collection Picker mk1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="particles_MK2.html">particles MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="node_remote_mk2.html">node remote</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selection_grabber_lite.html">selection grabber lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="particles_MK2.html">Particles MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="node_remote_mk2.html">Node Remote</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selection_grabber_lite.html">Selection Grabber Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 </ul>
 </li>
@@ -122,7 +122,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="scene_index.html">Scene</a> &raquo;</li>
-      <li>curve in</li>
+      <li>Curve Input</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/scene/curve_in.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -132,8 +132,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="curve-in">
-<h1>curve in<a class="headerlink" href="#curve-in" title="Permalink to this heading">¶</a></h1>
+  <section id="curve-input">
+<h1>Curve Input<a class="headerlink" href="#curve-input" title="Permalink to this heading">¶</a></h1>
 <p>pick a curve from the scene, and output it into the nodetree, with additional options to apply smoothing. and reading radii for each of its points.</p>
 <p>Best to read the development thread</p>
 <p><a class="reference external" href="https://github.com/nortikin/sverchok/issues/1817">https://github.com/nortikin/sverchok/issues/1817</a>
@@ -144,8 +144,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="FCurve_in.html" class="btn btn-neutral float-left" title="FCurve In" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="obj_remote_mk2.html" class="btn btn-neutral float-right" title="Object Remote" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="FCurve_in.html" class="btn btn-neutral float-left" title="FCurve Input" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="obj_remote_mk2.html" class="btn btn-neutral float-right" title="Object Remote (Control)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

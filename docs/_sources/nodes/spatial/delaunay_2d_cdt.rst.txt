@@ -1,5 +1,5 @@
-Random points on mesh
-=====================
+Delaunay 2D Cdt (Random points on mesh)
+=======================================
 
 .. image:: https://user-images.githubusercontent.com/28003269/70866264-f088e600-1f80-11ea-91b2-f8b785c597a3.png
 

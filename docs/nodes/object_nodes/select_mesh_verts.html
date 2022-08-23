@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Select vertices of mesh Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Select Object Vertices &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Weights" href="weightsmk2.html" />
-    <link rel="prev" title="Sample UV texture color on Mesh" href="sample_uv_color.html" /> 
+    <link rel="next" title="Vertex Group Weights" href="weightsmk2.html" />
+    <link rel="prev" title="Sample UV Texture Color on Mesh" href="sample_uv_color.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -81,8 +81,8 @@
 <li class="toctree-l3"><a class="reference internal" href="get_asset_properties_mk2.html">Object ID Selector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lattice_analyzer.html">Lattice Props</a></li>
 <li class="toctree-l3"><a class="reference internal" href="armature_analyzer.html">Armature Props</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sample_uv_color.html">Sample UV texture color on Mesh</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Select vertices of mesh Node</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_uv_color.html">Sample UV Texture Color on Mesh</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Select Object Vertices</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -90,17 +90,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="weightsmk2.html">Weights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weightsmk2.html">Vertex Group Weights</a></li>
 <li class="toctree-l3"><a class="reference internal" href="getsetprop.html">Get Property / Set Property</a></li>
 <li class="toctree-l3"><a class="reference internal" href="getsetprop_mk2.html">Get Property / Set Property</a></li>
 <li class="toctree-l3"><a class="reference internal" href="assign_materials.html">Assign Materials List</a></li>
 <li class="toctree-l3"><a class="reference internal" href="material_index.html">Set Material Index</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_custom_uv_map.html">Set custom UV map</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_loop_normals.html">Set loop normals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_mesh_attribute.html">Set mesh attribute</a></li>
-<li class="toctree-l3"><a class="reference internal" href="set_collection.html">Set collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_custom_uv_map.html">Set Custom UV Map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_loop_normals.html">Set Loop Normals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_mesh_attribute.html">Set Mesh Attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="set_collection.html">Set Collection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="copy_modifiers.html">Copy Modifiers Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="named_attribute.html">Named attribute</a></li>
+<li class="toctree-l3"><a class="reference internal" href="named_attribute.html">Named Attribute</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
@@ -130,7 +130,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="object_nodes_index.html">Objects</a> &raquo;</li>
-      <li>Select vertices of mesh Node</li>
+      <li>Select Object Vertices</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/object_nodes/select_mesh_verts.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -140,8 +140,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="select-vertices-of-mesh-node">
-<h1>Select vertices of mesh Node<a class="headerlink" href="#select-vertices-of-mesh-node" title="Permalink to this heading">¶</a></h1>
+  <section id="select-object-vertices">
+<h1>Select Object Vertices<a class="headerlink" href="#select-object-vertices" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node can select vertices of mesh objects in the scene using different parameters.</p>
@@ -186,8 +186,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="sample_uv_color.html" class="btn btn-neutral float-left" title="Sample UV texture color on Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="weightsmk2.html" class="btn btn-neutral float-right" title="Weights" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="sample_uv_color.html" class="btn btn-neutral float-left" title="Sample UV Texture Color on Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="weightsmk2.html" class="btn btn-neutral float-right" title="Vertex Group Weights" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

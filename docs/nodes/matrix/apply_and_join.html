@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apply Matrix to Mesh &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Matrix Apply to Mesh &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -65,7 +65,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Apply Matrix to Mesh</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Apply to Mesh</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -76,7 +76,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Euler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
@@ -86,7 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -129,7 +129,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="matrix_index.html">Matrix</a> &raquo;</li>
-      <li>Apply Matrix to Mesh</li>
+      <li>Matrix Apply to Mesh</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/matrix/apply_and_join.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -139,8 +139,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="apply-matrix-to-mesh">
-<h1>Apply Matrix to Mesh<a class="headerlink" href="#apply-matrix-to-mesh" title="Permalink to this heading">¶</a></h1>
+  <section id="matrix-apply-to-mesh">
+<h1>Matrix Apply to Mesh<a class="headerlink" href="#matrix-apply-to-mesh" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Applies a Transform Matrix to a list or nested lists of vertices, edges and faces. If several matrices are provided on the input, then this node will produce several meshes.</p>

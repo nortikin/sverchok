@@ -1,4 +1,4 @@
-Named attribute
+Named Attribute
 ===============
 
 Functionality
@@ -11,7 +11,7 @@ of attributes remains unchanged by the node.
 Category
 --------
 
-BPY Data -> Set mesh attribute
+BPY Data -> Set Mesh Attribute
 
 Inputs
 ------

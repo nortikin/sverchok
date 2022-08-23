@@ -6,7 +6,7 @@ Functionality
 
 Looking for data and convert to readable format as:
 
-node name: Viewer text mk3
+node name: Viewer Text MK3
 
 From data0 type "Vertices": 
 (1) object(s)

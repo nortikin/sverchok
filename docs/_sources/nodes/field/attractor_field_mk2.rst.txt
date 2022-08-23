@@ -22,7 +22,7 @@ This node has the following inputs:
   * If attractor type is **Point**, then this is the attracting point itself;
   * if attractor type is **Line**, then this is the point lying on the attracting line;
   * if attractor type is **Plane**, then this is the point lying on the attracting plane.
-  * if attractor type is **Mesh - Faces** or **Mesh - Faces**, then this is the set of mesh vertices.
+  * if attractor type is **Mesh - Faces** or **Mesh - Edges**, then this is the set of mesh vertices.
   * If attractor type is **Circle**, then this is the center of the circle.
 
   It is possible to provide several attracting points. The default value is `(0, 0, 0)` (origin).

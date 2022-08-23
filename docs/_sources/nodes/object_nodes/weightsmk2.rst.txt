@@ -1,5 +1,5 @@
-Weights
-=======
+Vertex Group Weights
+====================
 Functionality
 -------------
 
