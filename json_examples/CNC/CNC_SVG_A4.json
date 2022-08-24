@@ -844,7 +844,7 @@
                         "bl_idname": "SvMatrixSocket",
                         "name": "Offset"
                     },
-                    "Fill / Stroke SVG": {
+                    "Fill / Stroke": {
                         "bl_idname": "SvSvgSocket",
                         "name": "Fill / Stroke"
                     }
