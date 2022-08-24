@@ -306,7 +306,7 @@
                 },
                 "bl_idname": "NodeReroute"
             },
-            "Vector in.001": {
+            "Vector In.001": {
                 "attributes": {
                     "location": [-2332.785840034485, 487.9129943847656],
                     "width": 100.0,
@@ -696,7 +696,7 @@
                 },
                 "bl_idname": "SvComponentAnalyzerNode"
             },
-            "Color in": {
+            "Color In": {
                 "attributes": {
                     "location": [-1481.1812257766724, 582.4952392578125],
                     "width": 110.0,
@@ -844,7 +844,7 @@
                         "bl_idname": "SvMatrixSocket",
                         "name": "Offset"
                     },
-                    "Fill / Stroke": {
+                    "Fill / Stroke SVG": {
                         "bl_idname": "SvSvgSocket",
                         "name": "Fill / Stroke"
                     }
@@ -861,7 +861,7 @@
                 },
                 "bl_idname": "SvSvgMeshNode"
             },
-            "Vector out": {
+            "Vector Out": {
                 "attributes": {
                     "location": [-1672.0271730422974, 680.5901489257812],
                     "parent": {
@@ -1386,7 +1386,7 @@
                 },
                 "bl_idname": "SvSvgFillStrokeNodeMk2"
             },
-            "Vector in.007": {
+            "Vector In.007": {
                 "attributes": {
                     "location": [-1891.1725997924805, -932.6820659637451],
                     "width": 100.0,
@@ -1430,7 +1430,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector in.021": {
+            "Vector In.021": {
                 "attributes": {
                     "location": [-1577.1291427612305, -932.6820659637451],
                     "width": 100.0,
@@ -1526,7 +1526,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.022": {
+            "Vector In.022": {
                 "attributes": {
                     "location": [-1243.9699630737305, -932.6820659637451],
                     "width": 100.0,
@@ -1750,7 +1750,7 @@
                 },
                 "bl_idname": "ListJoinNode"
             },
-            "Vector in.015": {
+            "Vector In.015": {
                 "attributes": {
                     "location": [-589.0246925354004, -1513.229944229126],
                     "width": 100.0,
@@ -1847,7 +1847,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.014": {
+            "Vector In.014": {
                 "attributes": {
                     "location": [-589.0246925354004, -1263.3675174713135],
                     "width": 100.0,
@@ -1944,7 +1944,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.013": {
+            "Vector In.013": {
                 "attributes": {
                     "location": [-908.0008888244629, -1779.317102432251],
                     "width": 100.0,
@@ -2041,7 +2041,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.012": {
+            "Vector In.012": {
                 "attributes": {
                     "location": [-910.8004493713379, -1529.3435916900635],
                     "width": 100.0,
@@ -2138,7 +2138,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.011": {
+            "Vector In.011": {
                 "attributes": {
                     "location": [-909.8992042541504, -1267.2693729400635],
                     "width": 100.0,
@@ -2235,7 +2235,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.010": {
+            "Vector In.010": {
                 "attributes": {
                     "location": [-1238.473545074463, -1770.038293838501],
                     "width": 100.0,
@@ -2332,7 +2332,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.009": {
+            "Vector In.009": {
                 "attributes": {
                     "location": [-1238.473545074463, -1511.729211807251],
                     "width": 100.0,
@@ -2429,7 +2429,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.008": {
+            "Vector In.008": {
                 "attributes": {
                     "location": [-1238.473545074463, -1267.613000869751],
                     "width": 100.0,
@@ -2578,7 +2578,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.005": {
+            "Vector In.005": {
                 "attributes": {
                     "location": [-1548.079013824463, -1785.1973514556885],
                     "width": 100.0,
@@ -2622,7 +2622,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector in.004": {
+            "Vector In.004": {
                 "attributes": {
                     "location": [-1548.079013824463, -1531.4014530181885],
                     "width": 100.0,
@@ -2718,7 +2718,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.003": {
+            "Vector In.003": {
                 "attributes": {
                     "location": [-1548.079013824463, -1270.2032108306885],
                     "width": 100.0,
@@ -2762,7 +2762,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector in.002": {
+            "Vector In.002": {
                 "attributes": {
                     "location": [-1892.5303077697754, -1782.732629776001],
                     "width": 100.0,
@@ -2857,7 +2857,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.006": {
+            "Vector In.006": {
                 "attributes": {
                     "location": [-1892.5303077697754, -1524.860803604126],
                     "width": 100.0,
@@ -2952,7 +2952,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.016": {
+            "Vector In.016": {
                 "attributes": {
                     "location": [-1891.1955909729004, -1263.522424697876],
                     "width": 100.0,
@@ -3327,7 +3327,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.020": {
+            "Vector In.020": {
                 "attributes": {
                     "location": [-1884.4849033355713, -628.0329971313477],
                     "width": 100.0,
@@ -3423,7 +3423,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.019": {
+            "Vector In.019": {
                 "attributes": {
                     "location": [-1884.4849033355713, -366.3506851196289],
                     "width": 100.0,
@@ -3467,7 +3467,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector in.017": {
+            "Vector In.017": {
                 "attributes": {
                     "location": [-1574.8838291168213, -628.0329971313477],
                     "width": 100.0,
@@ -3563,7 +3563,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.018": {
+            "Vector In.018": {
                 "attributes": {
                     "location": [-1574.8838291168213, -366.3506851196289],
                     "width": 100.0,
@@ -3607,7 +3607,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector in.023": {
+            "Vector In.023": {
                 "attributes": {
                     "location": [-1249.1296787261963, -372.8864517211914],
                     "width": 100.0,
@@ -3703,7 +3703,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in.024": {
+            "Vector In.024": {
                 "attributes": {
                     "location": [-1249.1296787261963, -622.1206436157227],
                     "width": 100.0,
@@ -3918,7 +3918,7 @@
                 },
                 "bl_idname": "SvSvgTextNode"
             },
-            "Vector in": {
+            "Vector In": {
                 "attributes": {
                     "location": [79.07525634765625, -263.23123931884766],
                     "width": 100.0,
@@ -4570,10 +4570,10 @@
             }, {
                 "from_node": "Map Range",
                 "from_socket": "Value",
-                "to_node": "Color in",
+                "to_node": "Color In",
                 "to_socket": "R"
             }, {
-                "from_node": "Color in",
+                "from_node": "Color In",
                 "from_socket": "Colors",
                 "to_node": "Fill / Stroke SVG.002",
                 "to_socket": "Fill Color"
@@ -4593,7 +4593,7 @@
                 "to_node": "Mesh SVG.001",
                 "to_socket": "Projection Plane"
             }, {
-                "from_node": "Vector in.001",
+                "from_node": "Vector In.001",
                 "from_socket": "Vectors",
                 "to_node": "Mesh SVG.001",
                 "to_socket": "Offset"
@@ -4605,10 +4605,10 @@
             }, {
                 "from_node": "Component Analyzer",
                 "from_socket": "Normal",
-                "to_node": "Vector out",
+                "to_node": "Vector Out",
                 "to_socket": "Vectors"
             }, {
-                "from_node": "Vector out",
+                "from_node": "Vector Out",
                 "from_socket": "Z",
                 "to_node": "Scalar Math",
                 "to_socket": "x"
@@ -4648,7 +4648,7 @@
                 "to_node": "Mesh SVG.003",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.021",
+                "from_node": "Vector In.021",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.021",
                 "to_socket": "Location"
@@ -4663,7 +4663,7 @@
                 "to_node": "Text SVG.021",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.022",
+                "from_node": "Vector In.022",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.022",
                 "to_socket": "Location"
@@ -4693,7 +4693,7 @@
                 "to_node": "List Join.003",
                 "to_socket": "data 2"
             }, {
-                "from_node": "Vector in.007",
+                "from_node": "Vector In.007",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.007",
                 "to_socket": "Location"
@@ -4733,7 +4733,7 @@
                 "to_node": "List Join.004",
                 "to_socket": "data 4"
             }, {
-                "from_node": "Vector in.015",
+                "from_node": "Vector In.015",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.015",
                 "to_socket": "Location"
@@ -4748,7 +4748,7 @@
                 "to_node": "Text SVG.015",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.014",
+                "from_node": "Vector In.014",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.014",
                 "to_socket": "Location"
@@ -4763,7 +4763,7 @@
                 "to_node": "Text SVG.014",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.013",
+                "from_node": "Vector In.013",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.013",
                 "to_socket": "Location"
@@ -4778,7 +4778,7 @@
                 "to_node": "Text SVG.013",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.012",
+                "from_node": "Vector In.012",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.012",
                 "to_socket": "Location"
@@ -4793,7 +4793,7 @@
                 "to_node": "Text SVG.012",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.011",
+                "from_node": "Vector In.011",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.011",
                 "to_socket": "Location"
@@ -4808,7 +4808,7 @@
                 "to_node": "Text SVG.011",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.010",
+                "from_node": "Vector In.010",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.010",
                 "to_socket": "Location"
@@ -4823,7 +4823,7 @@
                 "to_node": "Text SVG.010",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.009",
+                "from_node": "Vector In.009",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.009",
                 "to_socket": "Location"
@@ -4838,7 +4838,7 @@
                 "to_node": "Text SVG.009",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.008",
+                "from_node": "Vector In.008",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.008",
                 "to_socket": "Location"
@@ -4853,7 +4853,7 @@
                 "to_node": "Text SVG.008",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.005",
+                "from_node": "Vector In.005",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.005",
                 "to_socket": "Location"
@@ -4868,7 +4868,7 @@
                 "to_node": "Text SVG.005",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.004",
+                "from_node": "Vector In.004",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.004",
                 "to_socket": "Location"
@@ -4883,7 +4883,7 @@
                 "to_node": "Text SVG.004",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.002",
+                "from_node": "Vector In.002",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.002",
                 "to_socket": "Location"
@@ -4898,7 +4898,7 @@
                 "to_node": "Text SVG.002",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.006",
+                "from_node": "Vector In.006",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.001",
                 "to_socket": "Location"
@@ -4913,7 +4913,7 @@
                 "to_node": "Text SVG.001",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.016",
+                "from_node": "Vector In.016",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.003",
                 "to_socket": "Location"
@@ -4998,7 +4998,7 @@
                 "to_node": "List Join.001",
                 "to_socket": "data 13"
             }, {
-                "from_node": "Vector in.003",
+                "from_node": "Vector In.003",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.023",
                 "to_socket": "Location"
@@ -5043,7 +5043,7 @@
                 "to_node": "List Join.002",
                 "to_socket": "data 5"
             }, {
-                "from_node": "Vector in.018",
+                "from_node": "Vector In.018",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.018",
                 "to_socket": "Location"
@@ -5058,7 +5058,7 @@
                 "to_node": "Text SVG.018",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.019",
+                "from_node": "Vector In.019",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.019",
                 "to_socket": "Location"
@@ -5073,7 +5073,7 @@
                 "to_node": "Text SVG.019",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.020",
+                "from_node": "Vector In.020",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.020",
                 "to_socket": "Location"
@@ -5088,7 +5088,7 @@
                 "to_node": "Text SVG.020",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.017",
+                "from_node": "Vector In.017",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.017",
                 "to_socket": "Location"
@@ -5103,7 +5103,7 @@
                 "to_node": "Text SVG.017",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.023",
+                "from_node": "Vector In.023",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.016",
                 "to_socket": "Location"
@@ -5118,7 +5118,7 @@
                 "to_node": "Text SVG.016",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in.024",
+                "from_node": "Vector In.024",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG.006",
                 "to_socket": "Location"
@@ -5133,7 +5133,7 @@
                 "to_node": "Text SVG.006",
                 "to_socket": "Fill / Stroke"
             }, {
-                "from_node": "Vector in",
+                "from_node": "Vector In",
                 "from_socket": "Vectors",
                 "to_node": "Text SVG",
                 "to_socket": "Location"

@@ -41,7 +41,7 @@
                 },
                 "bl_idname": "SvListInputNode"
             },
-            "Triangulate mesh": {
+            "Triangulate Mesh": {
                 "attributes": {
                     "location": [-952.4639282226562, 325.711669921875]
                 },
@@ -503,32 +503,32 @@
             }
         },
         "links": [{
-                "from_node": "Triangulate mesh",
+                "from_node": "Triangulate Mesh",
                 "from_socket": "Edges",
                 "to_node": "Reroute.001",
                 "to_socket": "Input"
             }, {
                 "from_node": "Plane",
                 "from_socket": "Vertices",
-                "to_node": "Triangulate mesh",
+                "to_node": "Triangulate Mesh",
                 "to_socket": "Vertices"
             }, {
                 "from_node": "Plane",
                 "from_socket": "Edges",
-                "to_node": "Triangulate mesh",
+                "to_node": "Triangulate Mesh",
                 "to_socket": "Edges"
             }, {
                 "from_node": "Plane",
                 "from_socket": "Polygons",
-                "to_node": "Triangulate mesh",
+                "to_node": "Triangulate Mesh",
                 "to_socket": "Polygons"
             }, {
-                "from_node": "Triangulate mesh",
+                "from_node": "Triangulate Mesh",
                 "from_socket": "Vertices",
                 "to_node": "Reroute.002",
                 "to_socket": "Input"
             }, {
-                "from_node": "Triangulate mesh",
+                "from_node": "Triangulate Mesh",
                 "from_socket": "Polygons",
                 "to_node": "Reroute",
                 "to_socket": "Input"

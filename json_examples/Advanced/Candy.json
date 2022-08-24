@@ -4,19 +4,19 @@
     "A Number": "Frame.003",
     "A Number.001": "Frame.003",
     "Cast": "Frame.002",
-    "Color in": "Frame",
+    "Color In": "Frame",
     "Curve Mapper": "Frame.003",
     "Curve Mapper.001": "Frame",
     "Cylinder": "Frame.004",
-    "Float to Int": "Frame",
+    "Float to Integer": "Frame",
     "List Length": "Frame",
     "List Length.001": "Frame.001",
-    "List Mask (out)": "Frame.002",
-    "List Mask Join (in)": "Frame.002",
+    "List Mask (Out)": "Frame.002",
+    "List Mask Join (In)": "Frame.002",
     "List Shift": "Frame",
     "List Shift.001": "Frame",
     "Matrix In.001": "Frame.002",
-    "Mesh viewer": "Frame.002",
+    "Mesh Viewer": "Frame.002",
     "Number Range": "Frame.003",
     "Number Range.001": "Frame.003",
     "Number Range.002": "Frame",
@@ -36,7 +36,7 @@
     "Scalar Math.009": "Frame",
     "Scalar Math.010": "Frame",
     "Select Mesh Elements by Location": "Frame.002",
-    "Simple deformation": "Frame.002",
+    "Simple Deformation": "Frame.002",
     "Vertex Color MK3": "Frame.001"
   },
   "groups": {},
@@ -107,7 +107,7 @@
       },
       "width": 140.0
     },
-    "Color in": {
+    "Color In": {
       "bl_idname": "SvColorsInNodeMK1",
       "custom_socket_props": {},
       "height": 100.0,
@@ -178,7 +178,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Float to Int": {
+    "Float to Integer": {
       "bl_idname": "Float2IntNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -282,7 +282,7 @@
       "params": {},
       "width": 140.0
     },
-    "List Mask (out)": {
+    "List Mask (Out)": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -297,7 +297,7 @@
       },
       "width": 140.0
     },
-    "List Mask Join (in)": {
+    "List Mask Join (In)": {
       "bl_idname": "SvMaskJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -366,7 +366,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         0.6284880042076111,
@@ -778,7 +778,7 @@
       },
       "width": 140.0
     },
-    "Simple deformation": {
+    "Simple Deformation": {
       "bl_idname": "SvSimpleDeformNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -909,17 +909,17 @@
     [
       "Cylinder",
       0,
-      "List Mask (out)",
+      "List Mask (Out)",
       0
     ],
     [
       "Select Mesh Elements by Location",
       0,
-      "List Mask (out)",
+      "List Mask (Out)",
       1
     ],
     [
-      "List Mask (out)",
+      "List Mask (Out)",
       3,
       "Cast",
       0
@@ -927,49 +927,49 @@
     [
       "Select Mesh Elements by Location",
       0,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       0
     ],
     [
       "Cast",
       0,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       1
     ],
     [
-      "List Mask (out)",
+      "List Mask (Out)",
       4,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       2
     ],
     [
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       0,
-      "Simple deformation",
+      "Simple Deformation",
       0
     ],
     [
-      "Simple deformation",
+      "Simple Deformation",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Cylinder",
       1,
-      "Mesh viewer",
+      "Mesh Viewer",
       1
     ],
     [
       "Cylinder",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "Matrix In.001",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       4
     ],
     [
@@ -987,7 +987,7 @@
     [
       "Scalar Math.006",
       0,
-      "Float to Int",
+      "Float to Integer",
       0
     ],
     [
@@ -1003,7 +1003,7 @@
       0
     ],
     [
-      "Float to Int",
+      "Float to Integer",
       0,
       "List Shift.001",
       1
@@ -1015,7 +1015,7 @@
       0
     ],
     [
-      "Float to Int",
+      "Float to Integer",
       0,
       "List Shift",
       1
@@ -1047,19 +1047,19 @@
     [
       "Curve Mapper.001",
       0,
-      "Color in",
+      "Color In",
       0
     ],
     [
       "Scalar Math.010",
       0,
-      "Color in",
+      "Color In",
       1
     ],
     [
       "Scalar Math.009",
       0,
-      "Color in",
+      "Color In",
       2
     ],
     [
@@ -1075,13 +1075,13 @@
       2
     ],
     [
-      "Simple deformation",
+      "Simple Deformation",
       0,
       "List Length.001",
       0
     ],
     [
-      "Mesh viewer",
+      "Mesh Viewer",
       0,
       "Vertex Color MK3",
       0
@@ -1093,7 +1093,7 @@
       1
     ],
     [
-      "Color in",
+      "Color In",
       0,
       "Vertex Color MK3",
       2

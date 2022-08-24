@@ -4,7 +4,7 @@
     "A Number": "Frame.003",
     "A Number.001": "Frame.003",
     "Fill Holes": "Frame.002",
-    "Flip normals": "Frame.002",
+    "Flip Normals": "Frame.002",
     "List Math": "Frame.001",
     "List Math.001": "Frame.001",
     "Map Range": "Frame.001",
@@ -106,7 +106,7 @@
       },
       "width": 140.0
     },
-    "Flip normals": {
+    "Flip Normals": {
       "bl_idname": "SvFlipNormalsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -295,7 +295,7 @@
       ],
       "params": {
         "n_id": "-8034980455338195246",
-        "text": "\"Flip normals\" may be needed with some parameters, because \"Fill holes\" sometimes may calculate incorrect normals"
+        "text": "\"Flip Normals\" may be needed with some parameters, because \"Fill holes\" sometimes may calculate incorrect normals"
       },
       "use_custom_color": true,
       "width": 400.0
@@ -581,13 +581,13 @@
     [
       "Fill Holes",
       0,
-      "Flip normals",
+      "Flip Normals",
       0
     ],
     [
       "Fill Holes",
       2,
-      "Flip normals",
+      "Flip Normals",
       2
     ],
     [
@@ -681,13 +681,13 @@
       "Faces"
     ],
     [
-      "Flip normals",
+      "Flip Normals",
       "Polygons",
       "Reroute",
       "Input"
     ],
     [
-      "Flip normals",
+      "Flip Normals",
       "Vertices",
       "Reroute.001",
       "Input"

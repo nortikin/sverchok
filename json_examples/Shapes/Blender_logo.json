@@ -383,7 +383,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -489,7 +489,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -569,13 +569,13 @@
     [
       "Perspective",
       0,
-      "Vector in",
+      "Vector In",
       0
     ],
     [
       "Perspective",
       0,
-      "Vector in",
+      "Vector In",
       1
     ],
     [

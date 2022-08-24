@@ -3,7 +3,7 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Bend object along surface": {
+    "Bend Object Along Surface": {
       "bl_idname": "SvBendAlongSurfaceNode",
       "height": 100.0,
       "hide": false,
@@ -19,7 +19,7 @@
       },
       "width": 140.0
     },
-    "Bricks grid": {
+    "Bricks Grid": {
       "bl_idname": "SvBricksNode",
       "height": 100.0,
       "hide": false,
@@ -133,25 +133,25 @@
       0
     ],
     [
-      "Bricks grid",
+      "Bricks Grid",
       0,
-      "Bend object along surface",
+      "Bend Object Along Surface",
       0
     ],
     [
       "List Flip",
       0,
-      "Bend object along surface",
+      "Bend Object Along Surface",
       1
     ],
     [
-      "Bend object along surface",
+      "Bend Object Along Surface",
       0,
       "Viewer Draw Mk3",
       0
     ],
     [
-      "Bricks grid",
+      "Bricks Grid",
       2,
       "Viewer Draw Mk3",
       2

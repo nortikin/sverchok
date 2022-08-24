@@ -1,4 +1,4 @@
-Make monotone
+Make Monotone
 =============
 
 .. image:: https://user-images.githubusercontent.com/28003269/67477849-eb3ba900-f66b-11e9-9892-392d5fb9a0c3.png
@@ -21,7 +21,7 @@ according that the node does not make any tests like is hole inside polygon or n
 Category
 --------
 
-Modifiers -> Modifier change -> Make monotone
+Modifiers -> Modifier change -> Make Monotone
 
 Inputs
 ------

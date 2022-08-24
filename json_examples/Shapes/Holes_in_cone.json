@@ -2,8 +2,8 @@
   "export_version": "0.10",
   "framed_nodes": {
     "Circle": "Frame.001",
-    "Crop mesh 2D": "Frame.001",
-    "Matrix Apply.001": "Frame.002",
+    "Crop Mesh 2D": "Frame.001",
+    "Matrix Apply to Mesh.001": "Frame.002",
     "Merge by Distance": "Frame.002",
     "Origins": "Frame",
     "Polygon Boom": "Frame",
@@ -33,7 +33,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Crop mesh 2D": {
+    "Crop Mesh 2D": {
       "bl_idname": "SvCropMesh2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -111,7 +111,7 @@
       "params": {},
       "width": 419.053955078125
     },
-    "Matrix Apply.001": {
+    "Matrix Apply to Mesh.001": {
       "bl_idname": "SvMatrixApplyJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -219,53 +219,53 @@
     [
       "Vector Drop",
       0,
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       0
     ],
     [
       "Polygon Boom",
       1,
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       1
     ],
     [
       "Circle",
       0,
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       2
     ],
     [
       "Circle",
       2,
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       3
     ],
     [
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       0,
-      "Matrix Apply.001",
+      "Matrix Apply to Mesh.001",
       0
     ],
     [
-      "Crop mesh 2D",
+      "Crop Mesh 2D",
       1,
-      "Matrix Apply.001",
+      "Matrix Apply to Mesh.001",
       2
     ],
     [
       "Origins",
       3,
-      "Matrix Apply.001",
+      "Matrix Apply to Mesh.001",
       3
     ],
     [
-      "Matrix Apply.001",
+      "Matrix Apply to Mesh.001",
       0,
       "Merge by Distance",
       0
     ],
     [
-      "Matrix Apply.001",
+      "Matrix Apply to Mesh.001",
       2,
       "Merge by Distance",
       1

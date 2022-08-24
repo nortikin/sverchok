@@ -3,7 +3,7 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Profile Parametric Mk3": {
+    "Profile Parametric MK3": {
       "bl_idname": "SvProfileNodeMK3",
       "height": 100.0,
       "hide": false,
@@ -39,13 +39,13 @@
   },
   "update_lists": [
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
       "Viewer Draw Mk3",
       0
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       1,
       "Viewer Draw Mk3",
       1

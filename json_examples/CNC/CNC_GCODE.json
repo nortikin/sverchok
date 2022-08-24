@@ -385,7 +385,7 @@
                 },
                 "bl_idname": "ListJoinNode"
             },
-            "Vector out": {
+            "Vector Out": {
                 "attributes": {
                     "location": [-1602.1269989013672, 237.58186054229736],
                     "parent": {
@@ -415,7 +415,7 @@
                 },
                 "bl_idname": "VectorsOutNode"
             },
-            "Vector in": {
+            "Vector In": {
                 "attributes": {
                     "location": [-1425.7999725341797, 241.41312885284424],
                     "width": 100.0,
@@ -527,7 +527,7 @@
                 },
                 "bl_idname": "SvMoveNodeMk3"
             },
-            "List Mask Join (in)": {
+            "List Mask Join (In)": {
                 "attributes": {
                     "location": [-535.8356704711914, 281.63492488861084],
                     "parent": {
@@ -560,7 +560,7 @@
                 },
                 "bl_idname": "SvMaskJoinNode"
             },
-            "Vector in.001": {
+            "Vector In.001": {
                 "attributes": {
                     "location": [-882.0748062133789, 23.134541511535645],
                     "width": 100.0,
@@ -601,7 +601,7 @@
                 },
                 "bl_idname": "GenVectorsNode"
             },
-            "Vector out.001": {
+            "Vector Out.001": {
                 "attributes": {
                     "location": [-1051.4008560180664, 22.10655117034912],
                     "hide": true,
@@ -678,7 +678,7 @@
                 },
                 "bl_idname": "SvScaleNodeMk3"
             },
-            "List Mask (out)": {
+            "List Mask (Out)": {
                 "attributes": {
                     "location": [-965.8620376586914, 286.0737066268921],
                     "parent": {
@@ -949,7 +949,7 @@
                 "to_node": "List Length",
                 "to_socket": "Data"
             }, {
-                "from_node": "List Mask Join (in)",
+                "from_node": "List Mask Join (In)",
                 "from_socket": "Data",
                 "to_node": "List Join",
                 "to_socket": "data"
@@ -961,17 +961,17 @@
             }, {
                 "from_node": "Vector Noise",
                 "from_socket": "Noise V",
-                "to_node": "Vector out",
+                "to_node": "Vector Out",
                 "to_socket": "Vectors"
             }, {
-                "from_node": "Vector out",
+                "from_node": "Vector Out",
                 "from_socket": "X",
-                "to_node": "Vector in",
+                "to_node": "Vector In",
                 "to_socket": "X"
             }, {
-                "from_node": "Vector out",
+                "from_node": "Vector Out",
                 "from_socket": "Y",
-                "to_node": "Vector in",
+                "to_node": "Vector In",
                 "to_socket": "Y"
             }, {
                 "from_node": "Spiral",
@@ -984,54 +984,54 @@
                 "to_node": "Move",
                 "to_socket": "Vertices"
             }, {
-                "from_node": "Vector in",
+                "from_node": "Vector In",
                 "from_socket": "Vectors",
                 "to_node": "Move",
                 "to_socket": "Movement Vectors"
             }, {
-                "from_node": "List Mask (out)",
+                "from_node": "List Mask (Out)",
                 "from_socket": "mask",
-                "to_node": "List Mask Join (in)",
+                "to_node": "List Mask Join (In)",
                 "to_socket": "Mask"
             }, {
-                "from_node": "List Mask (out)",
+                "from_node": "List Mask (Out)",
                 "from_socket": "dataTrue",
-                "to_node": "List Mask Join (in)",
+                "to_node": "List Mask Join (In)",
                 "to_socket": "Data True"
             }, {
                 "from_node": "Scale",
                 "from_socket": "Vertices",
-                "to_node": "List Mask Join (in)",
+                "to_node": "List Mask Join (In)",
                 "to_socket": "Data False"
             }, {
-                "from_node": "Vector out.001",
+                "from_node": "Vector Out.001",
                 "from_socket": "Z",
-                "to_node": "Vector in.001",
+                "to_node": "Vector In.001",
                 "to_socket": "Z"
             }, {
-                "from_node": "List Mask (out)",
+                "from_node": "List Mask (Out)",
                 "from_socket": "dataFalse",
-                "to_node": "Vector out.001",
+                "to_node": "Vector Out.001",
                 "to_socket": "Vectors"
             }, {
-                "from_node": "List Mask (out)",
+                "from_node": "List Mask (Out)",
                 "from_socket": "dataFalse",
                 "to_node": "Scale",
                 "to_socket": "Vertices"
             }, {
-                "from_node": "Vector in.001",
+                "from_node": "Vector In.001",
                 "from_socket": "Vectors",
                 "to_node": "Scale",
                 "to_socket": "Centers"
             }, {
                 "from_node": "Move",
                 "from_socket": "Vertices",
-                "to_node": "List Mask (out)",
+                "to_node": "List Mask (Out)",
                 "to_socket": "data"
             }, {
                 "from_node": "List Input",
                 "from_socket": "List",
-                "to_node": "List Mask (out)",
+                "to_node": "List Mask (Out)",
                 "to_socket": "mask"
             }
         ]

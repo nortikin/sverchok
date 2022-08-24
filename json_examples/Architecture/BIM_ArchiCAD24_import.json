@@ -2,7 +2,7 @@
     "export_version": "1.0",
     "main_tree": {
         "nodes": {
-            "Mesh viewer": {
+            "Mesh Viewer": {
                 "attributes": {
                     "location": [511.502685546875, 476.802734375],
                     "color": [0.0774407684803009, 0.3384043276309967, 1.0],
@@ -47,7 +47,7 @@
                 },
                 "bl_idname": "SvMeshViewer"
             },
-            "Mesh viewer.001": {
+            "Mesh Viewer.001": {
                 "attributes": {
                     "location": [511.502685546875, 74.662353515625],
                     "color": [0.0774407684803009, 0.3384043276309967, 1.0],
@@ -92,7 +92,7 @@
                 },
                 "bl_idname": "SvMeshViewer"
             },
-            "Recalc normals": {
+            "Recalculate Normals": {
                 "attributes": {
                     "location": [205.02899169921875, 356.03302001953125]
                 },
@@ -130,7 +130,7 @@
                 },
                 "bl_idname": "SvRecalcNormalsNode"
             },
-            "Recalc normals.001": {
+            "Recalculate Normals.001": {
                 "attributes": {
                     "location": [205.02899169921875, 29.29400634765625]
                 },
@@ -340,44 +340,44 @@
             }
         },
         "links": [{
-                "from_node": "Recalc normals",
+                "from_node": "Recalculate Normals",
                 "from_socket": "Vertices",
-                "to_node": "Mesh viewer",
+                "to_node": "Mesh Viewer",
                 "to_socket": "vertices"
             }, {
-                "from_node": "Recalc normals",
+                "from_node": "Recalculate Normals",
                 "from_socket": "Polygons",
-                "to_node": "Mesh viewer",
+                "to_node": "Mesh Viewer",
                 "to_socket": "faces"
             }, {
-                "from_node": "Recalc normals.001",
+                "from_node": "Recalculate Normals.001",
                 "from_socket": "Vertices",
-                "to_node": "Mesh viewer.001",
+                "to_node": "Mesh Viewer.001",
                 "to_socket": "vertices"
             }, {
-                "from_node": "Recalc normals.001",
+                "from_node": "Recalculate Normals.001",
                 "from_socket": "Polygons",
-                "to_node": "Mesh viewer.001",
+                "to_node": "Mesh Viewer.001",
                 "to_socket": "faces"
             }, {
                 "from_node": "UV Connection",
                 "from_socket": "vertices",
-                "to_node": "Recalc normals",
+                "to_node": "Recalculate Normals",
                 "to_socket": "Vertices"
             }, {
                 "from_node": "UV Connection",
                 "from_socket": "data",
-                "to_node": "Recalc normals",
+                "to_node": "Recalculate Normals",
                 "to_socket": "Polygons"
             }, {
                 "from_node": "UV Connection.001",
                 "from_socket": "vertices",
-                "to_node": "Recalc normals.001",
+                "to_node": "Recalculate Normals.001",
                 "to_socket": "Vertices"
             }, {
                 "from_node": "UV Connection.001",
                 "from_socket": "data",
-                "to_node": "Recalc normals.001",
+                "to_node": "Recalculate Normals.001",
                 "to_socket": "Polygons"
             }, {
                 "from_node": "Scripted Node Lite",

@@ -632,7 +632,7 @@
                 },
                 "bl_idname": "SvViewerDrawMk4"
             },
-            "Triangulate mesh": {
+            "Triangulate Mesh": {
                 "attributes": {
                     "location": [492.757568359375, -52.520965576171875]
                 },
@@ -1053,7 +1053,7 @@
                 },
                 "bl_idname": "SvO3TriangleMeshSmoothNode"
             },
-            "Color in": {
+            "Color In": {
                 "attributes": {
                     "location": [1597.9423828125, -337.6838073730469],
                     "width": 110.0
@@ -1102,7 +1102,7 @@
                 },
                 "bl_idname": "SvColorsInNodeMK1"
             },
-            "Color in.001": {
+            "Color In.001": {
                 "attributes": {
                     "location": [315.2167053222656, -284.96270751953125],
                     "width": 110.0
@@ -1240,17 +1240,17 @@
                 "to_node": "Triangle Mesh Clean",
                 "to_socket": "O3D Triangle Mesh"
             }, {
-                "from_node": "Triangulate mesh",
+                "from_node": "Triangulate Mesh",
                 "from_socket": "Vertices",
                 "to_node": "Triangle Mesh In",
                 "to_socket": "Vertices"
             }, {
-                "from_node": "Color in.001",
+                "from_node": "Color In.001",
                 "from_socket": "Colors",
                 "to_node": "Triangle Mesh In",
                 "to_socket": "Vertex Colors"
             }, {
-                "from_node": "Triangulate mesh",
+                "from_node": "Triangulate Mesh",
                 "from_socket": "Polygons",
                 "to_node": "Triangle Mesh In",
                 "to_socket": "Faces"
@@ -1287,12 +1287,12 @@
             }, {
                 "from_node": "Mesh Join.001",
                 "from_socket": "Vertices",
-                "to_node": "Triangulate mesh",
+                "to_node": "Triangulate Mesh",
                 "to_socket": "Vertices"
             }, {
                 "from_node": "Mesh Join.001",
                 "from_socket": "Polygons",
-                "to_node": "Triangulate mesh",
+                "to_node": "Triangulate Mesh",
                 "to_socket": "Polygons"
             }, {
                 "from_node": "Triangle Mesh In",
@@ -1330,7 +1330,7 @@
                 "to_node": "Triangle Mesh Poke",
                 "to_socket": "O3D Triangle Mesh"
             }, {
-                "from_node": "Color in",
+                "from_node": "Color In",
                 "from_socket": "Colors",
                 "to_node": "Triangle Mesh Poke",
                 "to_socket": "New Vertex Color"

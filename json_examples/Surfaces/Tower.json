@@ -428,7 +428,7 @@
                 },
                 "bl_idname": "SvInterpolatingSurfaceNode"
             },
-            "Vector in": {
+            "Vector In": {
                 "attributes": {
                     "location": [-226.06790161132812, -212.81639099121094],
                     "width": 100.0
@@ -657,7 +657,7 @@
                 "to_node": "Viewer Draw Mk3.003",
                 "to_socket": "Polygons"
             }, {
-                "from_node": "Vector in",
+                "from_node": "Vector In",
                 "from_socket": "Vectors",
                 "to_node": "Circle (Curve).001",
                 "to_socket": "Center"

@@ -95,7 +95,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Text in+": {
+    "Text In+": {
       "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
@@ -216,7 +216,7 @@
       "use_custom_color": true,
       "width": 159.08990478515625
     },
-    "Text in+.001": {
+    "Text In+.001": {
       "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
@@ -3773,25 +3773,25 @@
   },
   "update_lists": [
     [
-      "Text in+.001",
+      "Text In+.001",
       3,
       "Adaptive Polygons Mk2",
       0
     ],
     [
-      "Text in+.001",
+      "Text In+.001",
       2,
       "Adaptive Polygons Mk2",
       1
     ],
     [
-      "Text in+",
+      "Text In+",
       1,
       "Adaptive Polygons Mk2",
       2
     ],
     [
-      "Text in+",
+      "Text In+",
       0,
       "Adaptive Polygons Mk2",
       4
