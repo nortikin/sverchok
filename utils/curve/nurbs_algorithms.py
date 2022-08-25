@@ -693,6 +693,8 @@ def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
     vector = vector / distance
     functions = SvNurbsBasisFunctions(curve.get_knotvector())
     x = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    if abs(x) < 1e-6:
+        raise Exception(f"Specified control point #{k} is too far from curve parameter U = {u_bar}")
     alpha = distance / x
     cpts[k] = cpts[k] + alpha * vector
     return curve.copy(control_points = cpts)
@@ -798,6 +800,10 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
     abk = np.linalg.norm(D - pk1) / control_leg_len
     abk1 = np.linalg.norm(C - pk) / control_leg_len
 
+    eps = 1e-6
+    if abs(ak) < eps or abs(abk) < eps or abs(ak1) < eps or abs(abk1) < eps:
+        raise Exception(f"Specified control point #{k} is too far from curve parameter U = {u_bar}")
+
     numerator = 1.0 - ak - ak1
     numerator_brave = 1.0 - abk - abk1
 
@@ -813,7 +819,7 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
 WEIGHTS_NONE = 'NONE'
 WEIGHTS_EUCLIDIAN = 'EUCLIDIAN'
 
-def move_curve_point_by_moving_control_points(curve, u_bar, vector, weight_mode = WEIGHTS_NONE):
+def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE):
     """
     Adjust the given curve so that at parameter u_bar it goues through
     the point C[u_bar] + vector instead of C[u_bar].
