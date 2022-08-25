@@ -23,6 +23,7 @@ from mathutils.kdtree import KDTree
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+import sverchok.utils.math as falloff_functions
 
 
 def get_avg_vector(vectors):
@@ -111,7 +112,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'clamp')
 
     def _falloff(self, coefficient, rho):
-        func = globals()[self.falloff_type]
+        func = getattr(falloff_functions, self.falloff_type)
         return func(coefficient, rho)
 
     def falloff(self, amplitude, coefficient, rho):
