@@ -673,7 +673,8 @@ def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
     """
     Adjust the given curve so that at parameter u_bar it goes through
     the point C[u_bar] + vector instead of C[u_bar].
-    The adjustment is done by moving one control point.
+    The adjustment is done by moving one control point and not modifying
+    curve weights.
 
     See The NURBS Book, 2nd ed, p.11.2.
 
@@ -808,6 +809,115 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
 
     new_curve = curve.copy(weights = weights)
     return new_curve
+
+WEIGHTS_NONE = 'NONE'
+WEIGHTS_EUCLIDIAN = 'EUCLIDIAN'
+
+def move_curve_point_by_moving_control_points(curve, u_bar, vector, weight_mode = WEIGHTS_NONE):
+    """
+    Adjust the given curve so that at parameter u_bar it goues through
+    the point C[u_bar] + vector instead of C[u_bar].
+    The adjustment is done by moving several control points of the curve
+    (approximately `p` of them, where p is curve's degree). The adjustment is
+    calculated so that total movement of control points is minimal.
+    Curve's weights are not changed.
+    This method tends to create more smooth curves compared to
+    move_curve_point_by_moving_control_point, but it involves more calculations,
+    so probably it is less performant.
+
+    Parameters:
+    * curve - NURBS curve to be adjusted.
+    * u_bar - curve's parameter, indicating the point you want to move
+    * vector - the vector indicating the direction and distance for which
+        you want the point to be moved
+    * weights_mode - defines whether the method will try to keep some control points
+        in place more than other control points. With WEIGHTS_NONE, it will
+        try to keep all control points in place equally. With WEIGHTS_EUCLIDIAN,
+        it will tend to move more the points which are nearer to the new location of
+        C[u_bar].
+
+    Underlying theory:
+    Given curve's knotvector, curve weights and u_bar, we can say that C[u_bar] is some
+    linear combination of curve's control points, where coefficients of that linear
+    combination are some functions of u_bar. So, the equation
+
+        C[u_bar] = Pt0            (1)
+
+    is actually an underdetermined system of linear equations on coordinates of curve
+    control points. Similarly, if we want to find a curve C1, which is similar to C,
+    but goes through Pt1 instead of Pt0, the equation
+
+        C1[u_bar] = Pt1           (2)
+
+    is also an underdetermined system of linear equations of coordinates of curve control
+    points.
+    Now, if we substract (1) from (2), we will have a new underdetermined system of 
+    linear equations on *movements* of curve control points (i.e. on how should we move
+    control points of C in order to obtain C1).
+    This underdetermined system, obviously, will have infinite number of solutions (in
+    other words, we obviously have infinite ways of moving curve control points so that
+    the new curve will go through Pt1). But, among this infinite number of solutions, let's
+    peek one which makes us move control points by the least amount. If we will understand
+    "the least amount" as "the minimum sum of squares of movement vectors", than we will
+    see that this is a standard least squares problem. We may want to assign some weights
+    to different control points, if we want to try to move less control points, and keep
+    ones which are far from Pt1 more or less in place. In such case, we will have weighted
+    least squares problem.
+    Both weighted and unweighted least squares problems are solved by use of Moore-Penrose
+    pseudo-inverse matrix - numpy.linalg.pinv.
+    """
+    ndim = 3
+    cpts = curve.get_control_points().copy()
+    curve_weights = curve.get_weights()
+    if weights_mode == WEIGHTS_EUCLIDIAN:
+        pt0 = curve.evaluate(u_bar)
+        pt1 = pt0 + vector
+        move_weights = [np.linalg.norm(pt1 - cpt[:3])**(-2) for cpt in cpts]
+    else:
+        move_weights = [1 for cpt in cpts]
+    n = len(cpts)
+    p = curve.get_degree()
+    kv = curve.get_knotvector()
+    basis = SvNurbsBasisFunctions(kv)
+    alphas = [basis.fraction(k,p, curve_weights)(np.array([u_bar]))[0] for k in range(n)]
+    A = np.zeros((ndim,ndim*n))
+    for i in range(n):
+        for j in range(ndim):
+            A[j,ndim*i+j] = alphas[i] * move_weights[i]
+    A1 = np.linalg.pinv(A)
+    B = np.zeros((ndim,1))
+    B[0:3,0] = vector[np.newaxis]
+    X = (A1 @ B).T
+    W = np.diag(move_weights)
+    d_cpts = W @ X.reshape((n,ndim))
+    cpts = cpts + d_cpts
+    return curve.copy(control_points = cpts)
+
+def move_curve_point_by_inserting_knot(curve, u_bar, vector):
+    """
+    Adjust the given curve so that at parameter u_bar it goues through
+    the point C[u_bar] + vector instead of C[u_bar].
+    The adjustment is made by inserting additional knot at u_bar, and
+    then moving two control points.
+
+    Parameters:
+    * curve - NURBS curve to be adjusted.
+    * u_bar - curve's parameter, indicating the point you want to move
+    * vector - the vector indicating the direction and distance for which
+        you want the point to be moved
+    """
+    pt0 = curve.evaluate(u_bar)
+    p = curve.get_degree()
+    curve2 = curve.insert_knot(u_bar, p-1, if_possible=True)
+    cpts = curve2.get_control_points().copy()
+    n = len(cpts)
+    k = np.linalg.norm(cpts - pt0, axis=1).argmin()
+    cpts[k] += vector
+    if k >= 1:
+        cpts[k-1] += vector
+    if k < n-1:
+        cpts[k+1] += vector
+    return curve2.copy(control_points = cpts)
 
 def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
         scale = 1.0,
