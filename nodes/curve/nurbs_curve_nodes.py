@@ -24,7 +24,7 @@ class SvNurbsCurveNodesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNurbsCurveNodesNode'
     bl_label = 'NURBS Curve Nodes'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_DECONSTRUCT_CURVE'
+    sv_icon = 'SV_CURVE_NODES'
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")

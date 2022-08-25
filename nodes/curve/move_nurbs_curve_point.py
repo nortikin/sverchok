@@ -29,7 +29,7 @@ class SvNurbsCurveMovePointNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNurbsCurveMovePointNode'
     bl_label = 'Move NURBS Curve Point'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_INSERT_KNOT'
+    sv_icon = 'SV_MOVE_CURVE_POINT'
 
     methods = [
             ('ONE_CPT', "Move one control point", "Move single control point", 0),
