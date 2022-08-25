@@ -27,7 +27,7 @@ xyz_axes = [
     ]
 
 coordinate_modes = [
-    ('XYZ', "Carthesian", "Carthesian coordinates - x, y, z", 0),
+    ('XYZ', "Cartesian", "Cartesian coordinates - x, y, z", 0),
     ('CYL', "Cylindrical", "Cylindrical coordinates - rho, phi, z", 1),
     ('SPH', "Spherical", "Spherical coordinates - rho, phi, theta", 2)
 ]

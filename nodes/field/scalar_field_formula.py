@@ -62,7 +62,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def make_function(self, variables):
         compiled = sv_compile(self.formula)
 
-        def carthesian(x, y, z, V):
+        def cartesian(x, y, z, V):
             variables.update(dict(x=x, y=y, z=z, V=V))
             r = safe_eval_compiled(compiled, variables)
             if not isinstance(r, np.ndarray):
@@ -86,7 +86,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return r
 
         if self.input_mode == 'XYZ':
-            function = carthesian
+            function = cartesian
         elif self.input_mode == 'CYL':
             function = cylindrical
         else: # SPH
@@ -97,7 +97,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def make_function_vector(self, variables):
         compiled = sv_compile(self.formula)
 
-        def carthesian(x, y, z, V):
+        def cartesian(x, y, z, V):
             variables.update(dict(x=x, y=y, z=z, V=V))
             r = safe_eval_compiled(compiled, variables, allowed_names = safe_names_np)
             if not isinstance(r, np.ndarray):
@@ -121,7 +121,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return r
 
         if self.input_mode == 'XYZ':
-            function = carthesian
+            function = cartesian
         elif self.input_mode == 'CYL':
             function = cylindrical
         else: # SPH

@@ -96,7 +96,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             def out_coordinates(rho, phi, theta):
                 return from_spherical(rho, phi, theta, mode='radians')
 
-        def carthesian_in(x, y, z, V):
+        def cartesian_in(x, y, z, V):
             variables.update(dict(x=x, y=y, z=z, V=V))
             v1 = safe_eval_compiled(compiled1, variables)
             v2 = safe_eval_compiled(compiled2, variables)
@@ -120,7 +120,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return out_coordinates(v1, v2, v3)
 
         if self.input_mode == 'XYZ':
-            function = carthesian_in
+            function = cartesian_in
         elif self.input_mode == 'CYL':
             function = cylindrical_in
         else: # SPH
@@ -143,7 +143,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             def out_coordinates(rho, phi, theta):
                 return from_spherical_np(rho, phi, theta, mode='radians')
 
-        def carthesian_in(x, y, z, V):
+        def cartesian_in(x, y, z, V):
             variables.update(dict(x=x, y=y, z=z, V=V))
             v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
             v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
@@ -185,7 +185,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return out_coordinates(v1, v2, v3)
 
         if self.input_mode == 'XYZ':
-            function = carthesian_in
+            function = cartesian_in
         elif self.input_mode == 'CYL':
             function = cylindrical_in
         else: # SPH
