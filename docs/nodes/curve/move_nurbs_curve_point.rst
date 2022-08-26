@@ -98,3 +98,34 @@ This node has the following output:
 Examples of Usage
 -----------------
 
+An illustration of **Move one control point** method. Here, black is the
+original curve; dark blue is it's control polygon; light blue point is the
+point at T parameter on the original curve. Green is the resulting curve, and
+big green point is the resulting point. In this case, only control point number
+7 is moved.
+
+.. image:: https://user-images.githubusercontent.com/284644/186957079-ceee637d-be54-4d26-8474-04dd4543a011.png
+
+An example of **Adjust one weight** method. Here, the blue point is moved
+towards the control point number 8. Curve control points are not moved, only
+one curve weight is changed.
+
+.. image:: https://user-images.githubusercontent.com/284644/186957074-4f520bad-ff48-48d1-a3b4-ebe2fec1d270.png
+
+An example of **Adjust two weights** method. Here, the blue point is pushed
+away from control polygon leg between control points 4 and 5 (note the negative
+value of Distance parameter). Again, control points are not moved, only weights
+are changed.
+
+.. image:: https://user-images.githubusercontent.com/284644/186957069-2bb35686-1d3b-4abb-94cb-fb0fc03a338d.png
+
+An example of **Move control points** method. Here, the blue point is moved by
+specified vector by moving of three control points (6, 7 and 8).
+
+.. image:: https://user-images.githubusercontent.com/284644/186957065-2b465e62-82f7-48ce-a38a-402580dcd7e7.png
+
+An example of **Insert knot** method. The point is moved by inserting a knot,
+thus creating additional control points, and moving three control points.
+
+.. image:: https://user-images.githubusercontent.com/284644/186957056-66fb3952-664a-4368-92e3-ab48487d51b6.png
+
