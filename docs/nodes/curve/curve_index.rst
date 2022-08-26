@@ -52,6 +52,7 @@ Curves
    nurbs_curve
    approximate_nurbs_curve
    interpolate_nurbs_curve
+   move_nurbs_curve_point
    insert_knot
    remove_knot
    refine_nurbs_curve
