@@ -184,11 +184,12 @@
         -16.67555809020996
       ],
       "params": {
-        "cap_U": 1,
+        "cap_U": 0,
         "cap_V": 1,
         "cicl_check_U": 0,
         "cicl_check_V": 1,
-        "slice_check": 0
+        "slice_check": 0,
+		"dir_check": "V_dir"
       },
       "width": 140.0
     },
