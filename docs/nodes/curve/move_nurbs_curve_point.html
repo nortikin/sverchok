@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apply Field to Curve &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Move NURBS Curve Point &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Offset Curve" href="offset_mk2.html" />
-    <link rel="prev" title="Curve Formula" href="curve_formula.html" /> 
+    <link rel="next" title="Insert Knot (NURBS Curve)" href="insert_knot.html" />
+    <link rel="prev" title="Interpolate NURBS Curve" href="interpolate_nurbs_curve.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,14 +69,7 @@
 <li class="toctree-l3"><a class="reference internal" href="kinky_curve.html">Kinked Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_formula.html">Curve Formula</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Apply Field to Curve</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="apply_field_to_curve.html">Apply Field to Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_mk2.html">Offset Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sort_curves.html">Sort Curves</a></li>
@@ -107,7 +100,14 @@
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_curve.html">Approximate NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="move_nurbs_curve_point.html">Move NURBS Curve Point</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Move NURBS Curve Point</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="refine_nurbs_curve.html">Refine NURBS Curve</a></li>
@@ -182,9 +182,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="curve_index.html">Curves</a> &raquo;</li>
-      <li>Apply Field to Curve</li>
+      <li>Move NURBS Curve Point</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/curve/apply_field_to_curve.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/curve/move_nurbs_curve_point.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -192,76 +192,131 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="apply-field-to-curve">
-<h1>Apply Field to Curve<a class="headerlink" href="#apply-field-to-curve" title="Permalink to this heading">¶</a></h1>
+  <section id="move-nurbs-curve-point">
+<h1>Move NURBS Curve Point<a class="headerlink" href="#move-nurbs-curve-point" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node generates a Curve object by taking another Curve and “bending” it
-according to some Vector Field. More precisely, it generates a curve, each
-point of which is calculated as <cite>x + Coefficient * VectorPoint(x)</cite>.</p>
-<p>Optionally, for NURBS and NURBS-like curves, this node can apply a Vector
-Fields to control points of NURBS curve, instead of applying to all points of
-the curve. Such mode is supported for the following types of curves:</p>
-<ul class="simple">
-<li><p>NURBS curves</p></li>
-<li><p>Bezier curves</p></li>
-<li><p>Cubic splines</p></li>
-<li><p>Polylines</p></li>
-<li><p>Circular arcs</p></li>
-<li><p>Line segments</p></li>
-</ul>
-<p>Some nodes, that output complex curves composed from simple curves (for
-example, “Rounded rectangle”), have <strong>NURBS output</strong> parameter; when it is
-checked, such nodes output NURBS curves, so “Apply Field to Curve” can work
-with them.</p>
-<p>If this mode is enabled, then output curve will be always a NURBS curve.</p>
-<p>Note that mathematically, for NURBS and Bezier curves, if you apply an affine
-transformation (such as translation, scale, rotation - i.e. vector field
-defined by a Matrix) to control points of a NURBS curve, you will have a curve
-of exactly the same shape, but translated / scaled / rotated according to the
-transformation. For any more complex transformation (attractor field, for
-example), the resulting curve will have different shape; and also it will be
-different from a curve that you would receive if you applied the vector field
-to all points of the curve instead.</p>
-<p>Curve domain: the same as the domain of curve being deformed.</p>
+<p>This node suggests several ways of adjusting a NURBS curve so that it would go
+through another point at specified position, while keeping most of the curve
+more or less in place.</p>
+<p>Different methods of curve adjustment allow different degrees of freedom in
+specifying what do you want to move and where to.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
+<ul>
+<li><p><strong>Curve</strong>. The NURBS Curve object to be adjusted. This input is mandatory.</p></li>
+<li><p><strong>T</strong>. The value of curve parameter, point at which is to be moved. The default value is 0.5.</p></li>
+<li><p><strong>Index</strong>. This input has different meaning for different curve adjustment methods being used:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>For <strong>Move one control point</strong> method, this is the index of curve control point to be moved.</p></li>
+<li><p>For <strong>Adjust one weight</strong> method, this is the index of curve weight to be adjusted.</p></li>
+<li><p>For <strong>Adjust two weights</strong> method, this is the index of first of two curve
+weights to be adjusted. The second weight adjusted will be the following one.</p></li>
+<li><p>For other methods, this input is not available.</p></li>
+</ul>
+<p>The default value is 1.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Distance</strong>. The distance for which curve point at <strong>T</strong> parameter is to be moved.</p>
 <ul class="simple">
-<li><p><strong>Field</strong>. Vector field to be applied to the curve. This input is mandatory.</p></li>
-<li><p><strong>Curve</strong>. Curve to be “bent” by vector field. This input is mandatory.</p></li>
-<li><p><strong>Coefficient</strong>. Vector field application coefficient (0 means vector field
-will have no effect). The default value is 1.0.</p></li>
+<li><p>For <strong>Adjust one weight</strong> method, positive values mean move the point
+toward corresponding control point (index of which is defined in <strong>Index</strong>
+input). Negative values mean movement in the oppposite direction.</p></li>
+<li><p>For <strong>Adjust two weight</strong> method, positive values mean move the span of
+curve towards the corresponding curve control polygon leg (the one between
+control points <strong>Index</strong> and <strong>Index+1</strong>). Negative values mean movement in
+the opposite direction.</p></li>
+<li><p>For other methods, this input is not available.</p></li>
+</ul>
+<p>The default value is 1.0.</p>
+</li>
+<li><p><strong>Vector</strong>. The vector for which the curve point at <strong>T</strong> parameter is to be
+moved. This input is available only when <strong>Method</strong> is set to <strong>Move one
+control point</strong>, <strong>Move control points</strong>, or <strong>Insert knot</strong>. The default
+value is <code class="docutils literal notranslate"><span class="pre">(1.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></code>.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following parameter:</p>
+<p>This node has the following parameters:</p>
+<ul>
+<li><p><strong>Method</strong>. The method to be used to adjust the curve. The following methods are available:</p>
 <ul class="simple">
-<li><p><strong>Use Control Points</strong>. If checked, then the vector field will be applied to
-control points of a NURBS curve, instead of applying it to all points of the
-curve. This node will fail (become red) if this mode is enabled, but input
-curve is not a NURBS and can not be presented as a NURBS. If not checked,
-then the node will apply the vector fields to all points of the curve; in
-such a case, it can process any type of curve. Disabled by default.</p></li>
+<li><p><strong>Move one control point</strong>. The node will move exactly one control point of
+the curve, to move curve point at <strong>T</strong> parameter by <strong>Vector</strong>. The index
+of control point being moved is specified in the <strong>Index</strong> input. Note that
+it is not always possible to move arbitrary curve point by arbitrary vector
+by moving specified control point. In intuitive terms, the point to be
+moved has to be near control point being moved.</p></li>
+<li><p><strong>Adjust one weight</strong>. The node will adjust one weight of the curve, to
+move curve point at <strong>T</strong> parameter directly towards corresponding control
+point, or in the opposite direction. The index of the weight being adjusted
+(and the index of corresponding control point) is specified in the
+<strong>Index</strong> input. Movement distance is specified in the <strong>Distance</strong> input.
+Note that it is not always possible to move arbitrary curve point by
+adjusting the specified curve weight. Also, if you try to move the point
+too far with this method, you will probably get unexpected curve shapes.</p></li>
+<li><p><strong>Adjust two weights</strong>. The node will adjust two weights of the curve, to
+move curve point at <strong>T</strong> parameter, together with neighbouring curve span,
+towards the corresponding control polygon leg, or in the opposite
+direction. The index of the first weight to be adjusted (and corresponding
+control point index) is specified in the <strong>Index</strong> input. Note that it is
+not always possible to move an arbitrary curve point by adjusting the
+specified weights. Also, if you try to move the point too far with this
+method, you will probably get unexpected curve shapes.</p></li>
+<li><p><strong>Move control points</strong>. The node will move several control points of the
+curve (approximately <code class="docutils literal notranslate"><span class="pre">p</span></code> of them, where <code class="docutils literal notranslate"><span class="pre">p</span></code> is the degree of the
+curve), to move curve point at <strong>T</strong> parameter by the specified vector. The
+node will automatically figure out which control points have to be moved.
+This algorithms gives most smooth results, but it requires more
+computations, so it is probably less performant.</p></li>
+<li><p><strong>Insert knot</strong>. The node will insert additional knot into curve’s
+knotvector, and then move three control points, in order to move curve
+point at <strong>T</strong> parameter by specified vector. The node will automatically
+figure out which control points have to be moved.</p></li>
+</ul>
+<p>The default option is <strong>Move one control point</strong>.</p>
+</li>
+<li><p><strong>Preserve tangent</strong>. This parameter is available only when <strong>Method</strong> is set
+to <strong>Move control points</strong>. If checked, the node will try to preserve the
+direction of curve tangent at the point being moved. In many cases, this
+gives only a slight difference; but sometimes this will make the result
+smoother. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The curve modified by vector field.</p></li>
+<li><p><strong>Curve</strong>. The adjusted curve.</p></li>
 </ul>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Several Line curves modified by Noise vector field:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" src="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" />
-<p>Apply Attractor field to control points of a NURBS curve. Control polygon of a resulting curve is indicated with red:</p>
-<img alt="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" src="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" />
-<p>If we apply the same curve to all points of curve (disable “Use control points” mode), we will have different curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" src="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<p>An illustration of <strong>Move one control point</strong> method. Here, black is the
+original curve; dark blue is it’s control polygon; light blue point is the
+point at T parameter on the original curve. Green is the resulting curve, and
+big green point is the resulting point. In this case, only control point number
+7 is moved.</p>
+<img alt="https://user-images.githubusercontent.com/284644/186957079-ceee637d-be54-4d26-8474-04dd4543a011.png" src="https://user-images.githubusercontent.com/284644/186957079-ceee637d-be54-4d26-8474-04dd4543a011.png" />
+<p>An example of <strong>Adjust one weight</strong> method. Here, the blue point is moved
+towards the control point number 8. Curve control points are not moved, only
+one curve weight is changed.</p>
+<img alt="https://user-images.githubusercontent.com/284644/186957074-4f520bad-ff48-48d1-a3b4-ebe2fec1d270.png" src="https://user-images.githubusercontent.com/284644/186957074-4f520bad-ff48-48d1-a3b4-ebe2fec1d270.png" />
+<p>An example of <strong>Adjust two weights</strong> method. Here, the blue point is pushed
+away from control polygon leg between control points 4 and 5 (note the negative
+value of Distance parameter). Again, control points are not moved, only weights
+are changed.</p>
+<img alt="https://user-images.githubusercontent.com/284644/186957069-2bb35686-1d3b-4abb-94cb-fb0fc03a338d.png" src="https://user-images.githubusercontent.com/284644/186957069-2bb35686-1d3b-4abb-94cb-fb0fc03a338d.png" />
+<p>An example of <strong>Move control points</strong> method. Here, the blue point is moved by
+specified vector by moving of three control points (6, 7 and 8).</p>
+<img alt="https://user-images.githubusercontent.com/284644/186957065-2b465e62-82f7-48ce-a38a-402580dcd7e7.png" src="https://user-images.githubusercontent.com/284644/186957065-2b465e62-82f7-48ce-a38a-402580dcd7e7.png" />
+<p>An example of <strong>Insert knot</strong> method. The point is moved by inserting a knot,
+thus creating additional control points, and moving three control points.</p>
+<img alt="https://user-images.githubusercontent.com/284644/186957056-66fb3952-664a-4368-92e3-ab48487d51b6.png" src="https://user-images.githubusercontent.com/284644/186957056-66fb3952-664a-4368-92e3-ab48487d51b6.png" />
 </section>
 </section>
 
@@ -269,8 +324,8 @@ such a case, it can process any type of curve. Disabled by default.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="curve_formula.html" class="btn btn-neutral float-left" title="Curve Formula" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="offset_mk2.html" class="btn btn-neutral float-right" title="Offset Curve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="interpolate_nurbs_curve.html" class="btn btn-neutral float-left" title="Interpolate NURBS Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="insert_knot.html" class="btn btn-neutral float-right" title="Insert Knot (NURBS Curve)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
