@@ -818,8 +818,9 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
 
 WEIGHTS_NONE = 'NONE'
 WEIGHTS_EUCLIDIAN = 'EUCLIDIAN'
+TANGENT_PRESERVE = 'PRESERVE'
 
-def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE):
+def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE, tangent = None):
     """
     Adjust the given curve so that at parameter u_bar it goues through
     the point C[u_bar] + vector instead of C[u_bar].
@@ -886,13 +887,29 @@ def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode
     kv = curve.get_knotvector()
     basis = SvNurbsBasisFunctions(kv)
     alphas = [basis.fraction(k,p, curve_weights)(np.array([u_bar]))[0] for k in range(n)]
-    A = np.zeros((ndim,ndim*n))
+    if tangent is None:
+        A = np.zeros((ndim,ndim*n))
+    else:
+        if tangent == TANGENT_PRESERVE:
+            tangent = curve.tangent(u_bar)
+        A = np.zeros((2*ndim,ndim*n))
+        ns = np.array([basis.derivative(k, p, 1)(np.array([u_bar]))[0] for k in range(n)])
+        numerator = ns * curve_weights#[np.newaxis].T
+        denominator = curve_weights.sum()
+        betas = numerator / denominator
     for i in range(n):
         for j in range(ndim):
-            A[j,ndim*i+j] = alphas[i] * move_weights[i]
+            A[j, ndim*i+j] = alphas[i] * move_weights[i]
+            if tangent is not None:
+                A[ndim + j, ndim*i+j] = betas[i] * move_weights[i]
     A1 = np.linalg.pinv(A)
-    B = np.zeros((ndim,1))
-    B[0:3,0] = vector[np.newaxis]
+    if tangent is None:
+        B = np.zeros((ndim,1))
+        B[0:3,0] = vector[np.newaxis]
+    else:
+        B = np.zeros((2*ndim,1))
+        B[0:3,0] = vector[np.newaxis]
+        #B[3:6,0] = tangent[np.newaxis]
     X = (A1 @ B).T
     W = np.diag(move_weights)
     d_cpts = W @ X.reshape((n,ndim))

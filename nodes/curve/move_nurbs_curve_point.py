@@ -18,7 +18,7 @@ from sverchok.utils.curve.nurbs_algorithms import (
             move_curve_point_by_moving_control_point,
             move_curve_point_by_adjusting_one_weight,
             move_curve_point_by_adjusting_two_weights,
-            move_curve_point_by_moving_control_points,
+            move_curve_point_by_moving_control_points, TANGENT_PRESERVE,
             move_curve_point_by_inserting_knot)
 
 class SvNurbsCurveMovePointNode(bpy.types.Node, SverchCustomTreeNode):
@@ -71,8 +71,15 @@ class SvNurbsCurveMovePointNode(bpy.types.Node, SverchCustomTreeNode):
             default = 1.0,
             update = updateNode)
 
+    preserve_tangent : BoolProperty(
+            name = "Preserve tangent",
+            default = False,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'method')
+        if self.method == 'MOVE_CPTS':
+            layout.prop(self, 'preserve_tangent')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -120,7 +127,11 @@ class SvNurbsCurveMovePointNode(bpy.types.Node, SverchCustomTreeNode):
                 elif self.method == 'TWO_WEIGHTS':
                     curve = move_curve_point_by_adjusting_two_weights(curve, t_value, index, distance=distance)
                 elif self.method == 'MOVE_CPTS':
-                    curve = move_curve_point_by_moving_control_points(curve, t_value, vector)
+                    if self.preserve_tangent:
+                        tangent = TANGENT_PRESERVE
+                    else:
+                        tangent = None
+                    curve = move_curve_point_by_moving_control_points(curve, t_value, vector, tangent=tangent)
                 elif self.method == 'INSERT_KNOT':
                     curve = move_curve_point_by_inserting_knot(curve, t_value, vector)
                 else:
