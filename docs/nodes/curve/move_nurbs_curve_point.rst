@@ -49,7 +49,7 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Method**. The method to be used to adjust the curve. The following methods are available:
 
@@ -87,6 +87,12 @@ This node has the following parameter:
     figure out which control points have to be moved.
 
   The default option is **Move one control point**.
+
+* **Preserve tangent**. This parameter is available only when **Method** is set
+  to **Move control points**. If checked, the node will try to preserve the
+  direction of curve tangent at the point being moved. In many cases, this
+  gives only a slight difference; but sometimes this will make the result
+  smoother. Unchecked by default.
 
 Outputs
 -------
