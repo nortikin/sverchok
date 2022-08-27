@@ -8,7 +8,7 @@ This node use the mask list i.e. 1,0,0,0 as switch to mix two data list together
 
 **0** means false, an item from the **Data False** will be appended to the output data;
 
-**1** will be considered as true (actually any value that evaluate as true in python), an item from the **Data True** will be appended to the output data. If the mask list, the **Data True**, and the **Data False** are not of the same length, how to match the inputs can be determined via the list match mode in the N panel.
+**1** will be considered as true (actually any value that evaluate as true in python), an item from the **Data True** will be appended to the output data. If the mask list is not long enough to cover all the inputs, it will be repeated as the mask for the rest of inputs.
 
 Length of mask list affect output because every item (without Choice activated) corresponding to Inputs several times.
 
@@ -30,19 +30,13 @@ Parameters
 
 **Level:** Set the level at which the items to be masked.
 
-**Choice:** When true, use the mask to choose between elements of the lists, otherwise, use the mask to mix the lists while keeping all their elements.
+**Choice:** Make length of out list the same as length of input list
 
-Advanced Parameters
--------------------
-
-In the N-Panel (and on the right-click menu) you can find:
-
-**Match List Global:** Define how list with different lengths should be matched. **Data True** and **Data False** are matched together at each level, and also matched with **Mask** on the two last levels (depending on **Level**).
 
 Outputs
 -------
 
-**Data:** Mixed data of the incoming data, the length of Outputs depends on the  **Data True**, **Data False** and **Mask** list lengths.
+**Data:** Mixed data of the incoming data, the length of Outputs depends on the  **Data True** and  **Data False** list length.
 
 Example
 -------

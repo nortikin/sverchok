@@ -65,7 +65,6 @@ class SvDistancetLineLineNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
-        
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
         layout.prop(self, "tolerance")
