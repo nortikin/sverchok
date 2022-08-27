@@ -70,6 +70,8 @@
     SvDeconstructCurveNode
     SvNurbsCurveNodesNode
     ---
+    SvNurbsCurveMovePointNode
+    ---
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
     SvRefineNurbsCurveNode
