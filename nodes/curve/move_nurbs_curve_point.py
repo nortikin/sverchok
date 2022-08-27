@@ -150,5 +150,5 @@ def register():
     bpy.utils.register_class(SvNurbsCurveMovePointNode)
 
 def unregister():
-    bpy.utils.unregister_class(SNurbsCurveMovePointNodevCurveInsertKnotNode)
+    bpy.utils.unregister_class(SvNurbsCurveMovePointNode)
 
