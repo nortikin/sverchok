@@ -20,6 +20,8 @@ def install_whl(package_path):
 
 usage = """\
 
+from sverchok.utils.pip_utils import install_package, install_whl
+
 install_package(['--upgrade', 'pip']) # <-- may not be needed
 install_package('pandas')
 install_package('gdal') # <-- may fail
