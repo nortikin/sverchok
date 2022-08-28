@@ -70,12 +70,18 @@ class SvNurbsMaths(object):
             return nurbs_class.to_nurbs(surface, implementation)
 
 def nurbs_divide(numerator, denominator):
-    if denominator.ndim != 2:
+    if denominator.ndim < 2:
         denominator = denominator[np.newaxis].T
     good = (denominator != 0)
     good_num = good.flatten()
     result = np.zeros_like(numerator)
     result[good_num] = numerator[good_num] / denominator[good][np.newaxis].T
+    return result
+
+def nurbs_divide_flat(numerator, denominator):
+    good = (denominator != 0)
+    result = np.zeros_like(numerator)
+    result[good] = numerator[good] / denominator[good]
     return result
 
 def elevate_bezier_degree(self_degree, control_points, delta=1):
@@ -226,9 +232,23 @@ class SvNurbsBasisFunctions(object):
             numerator = self.function(i,p, reset_cache=reset_cache)(us) * weights[i]
             ds = [self.function(j,p, reset_cache=False)(us) * weights[j] for j in range(n)]
             denominator = sum(ds)
-            return numerator / denominator
+            return nurbs_divide_flat(numerator, denominator)
 
         return calc
+
+    def weighted_derivative(self, i, p, k, weights, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        n = len(weights)
+
+        def calc(us):
+            ns = self.derivative(i, p, k)(us)
+            numerator = ns * weights[i]
+            denominator = weights.sum()
+            return numerator / denominator
+        
+        return calc
+
 
 class CantInsertKnotException(Exception):
     pass
