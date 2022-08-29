@@ -17,7 +17,7 @@ the node requires that of each face of "object" mesh, only two edges intersect
 the "surface" mesh. So, each face can be cut only in two pieces, not in three or more.
 The node will not crash, just ignore these options and simply output intersection points.
 
-**Developper notes** : for those interested in removing this limitation, a general idea
+**Developer notes** : for those interested in removing this limitation, a general idea
 on how to proceed, with its limitations, is included in the code as comments.
 If multiple points are detected for a single real intersection point,
 see comments in the code for a solution on how to solve it. 
