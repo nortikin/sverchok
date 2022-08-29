@@ -13,8 +13,8 @@ operation can be considered as a very simple analog of Boolean operations, but
 it finds intersections of **edges**, not intersections of volumes.
 
 **Implementation restriction**: when generating cut surface or making cut pieces,
-the node requires that of each face of "object" mesh, only two edges intersect
- the "surface" mesh. So, each face can be cut only in two pieces, not in three or more.
+the node requires that of each face of "object" mesh, only two edges intersect 
+the "surface" mesh. So, each face can be cut only in two pieces, not in three or more.
 The node will not crash, just ignore these options and simply output intersection points.
 
 **Developper notes** : for those interested in removing this limitation, a general idea
@@ -69,7 +69,9 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**all triangles**. Boolean to work with triangularized surface mesh (makes the node faster). 
+* **All triangles**. Boolean to work with triangularized surface mesh (makes the node faster).
+* **Block**. Boolean to define whether or not the node should raise an error when more than
+  two intersections by face are found
 
 Outputs
 -------
