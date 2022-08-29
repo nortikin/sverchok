@@ -14,7 +14,7 @@ and may be merged with other nearby verts.
 Category
 --------
 
-Modifiers -> Modifier make -> Delaunay 2D cdt
+Modifiers -> Modifier make -> Delaunay 2D Cdt
 
 Inputs
 ------
