@@ -1,4 +1,4 @@
-Align mesh by mesh
+Align Mesh by Mesh
 ==================
 
 .. image:: https://user-images.githubusercontent.com/28003269/70231673-36b99a80-1774-11ea-9163-3ffbad2148f7.png

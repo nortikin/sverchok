@@ -146,7 +146,7 @@
       },
       "width": 140.0
     },
-    "Matrix normal": {
+    "Matrix Normal": {
       "bl_idname": "SvMatrixNormalNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -490,13 +490,13 @@
     [
       "IcoSphere",
       0,
-      "Matrix normal",
+      "Matrix Normal",
       0
     ],
     [
       "Component Analyzer.002",
       0,
-      "Matrix normal",
+      "Matrix Normal",
       1
     ],
     [
@@ -614,7 +614,7 @@
       2
     ],
     [
-      "Matrix normal",
+      "Matrix Normal",
       0,
       "Viewer Draw.002",
       3

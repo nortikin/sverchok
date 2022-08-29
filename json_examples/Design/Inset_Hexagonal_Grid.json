@@ -48,7 +48,7 @@
       },
       "width": 140.0
     },
-    "Inset faces": {
+    "Inset Faces": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -258,7 +258,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -281,7 +281,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Vector Math.005",
       1
@@ -361,29 +361,29 @@
     [
       "Vector Rewire",
       0,
-      "Inset faces",
+      "Inset Faces",
       0
     ],
     [
       "Polygon Grid",
       3,
-      "Inset faces",
+      "Inset Faces",
       2
     ],
     [
       "Scalar Math.001",
       0,
-      "Inset faces",
+      "Inset Faces",
       6
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       0,
       "VD Experimental.001",
       0
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       2,
       "VD Experimental.001",
       2

@@ -3,7 +3,7 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Inset faces": {
+    "Inset Faces": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -21,7 +21,7 @@
       },
       "width": 140.0
     },
-    "Inset faces.001": {
+    "Inset Faces.001": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -39,7 +39,7 @@
       },
       "width": 140.0
     },
-    "Inset faces.002": {
+    "Inset Faces.002": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -57,7 +57,7 @@
       },
       "width": 140.0
     },
-    "Inset faces.003": {
+    "Inset Faces.003": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -75,7 +75,7 @@
       },
       "width": 140.0
     },
-    "Inset faces.004": {
+    "Inset Faces.004": {
       "bl_idname": "SvInsetFaces",
       "height": 100.0,
       "hide": false,
@@ -93,7 +93,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "collection": "",
       "color": [
@@ -134,97 +134,97 @@
     [
       "Regular Solid",
       0,
-      "Inset faces.004",
+      "Inset Faces.004",
       0
     ],
     [
       "Regular Solid",
       2,
-      "Inset faces.004",
+      "Inset Faces.004",
       2
     ],
     [
-      "Inset faces.004",
+      "Inset Faces.004",
       0,
-      "Inset faces",
+      "Inset Faces",
       0
     ],
     [
-      "Inset faces.004",
+      "Inset Faces.004",
       2,
-      "Inset faces",
+      "Inset Faces",
       2
     ],
     [
-      "Inset faces.004",
+      "Inset Faces.004",
       4,
-      "Inset faces",
+      "Inset Faces",
       4
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       0,
-      "Inset faces.001",
+      "Inset Faces.001",
       0
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       2,
-      "Inset faces.001",
+      "Inset Faces.001",
       2
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       4,
-      "Inset faces.001",
+      "Inset Faces.001",
       4
     ],
     [
-      "Inset faces.001",
+      "Inset Faces.001",
       0,
-      "Inset faces.002",
+      "Inset Faces.002",
       0
     ],
     [
-      "Inset faces.001",
+      "Inset Faces.001",
       2,
-      "Inset faces.002",
+      "Inset Faces.002",
       2
     ],
     [
-      "Inset faces.001",
+      "Inset Faces.001",
       4,
-      "Inset faces.002",
+      "Inset Faces.002",
       4
     ],
     [
-      "Inset faces.002",
+      "Inset Faces.002",
       0,
-      "Inset faces.003",
+      "Inset Faces.003",
       0
     ],
     [
-      "Inset faces.002",
+      "Inset Faces.002",
       2,
-      "Inset faces.003",
+      "Inset Faces.003",
       2
     ],
     [
-      "Inset faces.002",
+      "Inset Faces.002",
       4,
-      "Inset faces.003",
+      "Inset Faces.003",
       4
     ],
     [
-      "Inset faces.003",
+      "Inset Faces.003",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
-      "Inset faces.003",
+      "Inset Faces.003",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ]
   ]

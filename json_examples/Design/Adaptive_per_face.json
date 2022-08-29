@@ -21,9 +21,9 @@
     "Select Mesh Elements by Location.001": "Frame.001",
     "Symmetrize Mesh": "Frame.003",
     "Symmetrize Mesh.001": "Frame.003",
-    "Vector in": "Frame",
-    "Vector in.001": "Frame.001",
-    "Vector out": "Frame.004",
+    "Vector In": "Frame",
+    "Vector In.001": "Frame.001",
+    "Vector Out": "Frame.004",
     "Viewer Draw Mk3": "Frame.003"
   },
   "groups": {},
@@ -111,7 +111,7 @@
       },
       "width": 200.0
     },
-    "Color in": {
+    "Color In": {
       "bl_idname": "SvColorsInNodeMK1",
       "custom_socket_props": {},
       "height": 100.0,
@@ -243,7 +243,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -512,7 +512,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -527,7 +527,7 @@
       },
       "width": 100.0
     },
-    "Vector in.001": {
+    "Vector In.001": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -542,7 +542,7 @@
       },
       "width": 100.0
     },
-    "Vector out": {
+    "Vector Out": {
       "bl_idname": "VectorsOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -656,7 +656,7 @@
       5
     ],
     [
-      "Mesh viewer",
+      "Mesh Viewer",
       0,
       "Assign Materials List",
       0
@@ -664,11 +664,11 @@
     [
       "Adaptive Polygons Mk2",
       3,
-      "Color in",
+      "Color In",
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       2,
       "Map Range",
       0
@@ -676,19 +676,19 @@
     [
       "Adaptive Polygons Mk2",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Adaptive Polygons Mk2",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "Adaptive Polygons Mk2",
       3,
-      "Mesh viewer",
+      "Mesh Viewer",
       3
     ],
     [
@@ -698,7 +698,7 @@
       0
     ],
     [
-      "Vector in.001",
+      "Vector In.001",
       0,
       "Move",
       1
@@ -716,7 +716,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.002",
       1
@@ -856,7 +856,7 @@
     [
       "Origins",
       0,
-      "Vector out",
+      "Vector Out",
       0
     ],
     [
@@ -872,7 +872,7 @@
       2
     ],
     [
-      "Color in",
+      "Color In",
       0,
       "Viewer Draw",
       6
