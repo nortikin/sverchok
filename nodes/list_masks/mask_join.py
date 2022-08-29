@@ -23,9 +23,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, updateNode, list_match_modes, list_match_func
 
 
-class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Mask Join'''
-    bl_idname = 'SvMaskJoinNode'
+    bl_idname = 'SvMaskJoinNodeMK2'
     bl_label = 'List Mask Join (in)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MASK_JOIN'
@@ -112,7 +112,6 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
             out = []
             param = list_match_func[self.list_match_global]([mask, data_t, data_f])
             if not all((isinstance(p, (list, tuple)) for p in param)):
-                print("Fail")
                 return
 
             for m, t, f in zip(*param):
