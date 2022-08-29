@@ -34,7 +34,7 @@ class SvAlignMeshByMesh(TransformNode, bpy.types.Node, SverchCustomTreeNode):
     relatively to bounding box of base mesh
     """
     bl_idname = 'SvAlignMeshByMesh'
-    bl_label = 'Align mesh by mesh'
+    bl_label = 'Align Mesh by Mesh'
     bl_icon = 'SNAP_ON'
 
     align_enum = [('L', ' ', '', 'BACK', 1),
