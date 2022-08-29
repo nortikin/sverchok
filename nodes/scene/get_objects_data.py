@@ -17,10 +17,16 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
+from sverchok.utils.logging import debug
+
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
+
+
+class ReadingObjectDataError(Exception):
+    pass
 
 
 class SVOB3B_UL_NamesList(bpy.types.UIList):
@@ -313,7 +319,10 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
                     del bm
                 else:
 
-                    if self.modifiers:
+                    # https://developer.blender.org/T99661
+                    if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
+                        raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
+                    elif self.modifiers:
                         obj = sv_depsgraph.objects[obj.name]
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
@@ -346,8 +355,12 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
 
                     obj.to_mesh_clear()
 
+            except ReadingObjectDataError:
+                raise
             except Exception as err:
-                print('failure in process between frozen area', self.name, err)
+                # it's not clear which cases this try catch should handle
+                # probably it should skip wrong object types
+                debug('failure in process between frozen area', self.name, err)
 
             if o_ms:
                 ms.append(mtrx)
