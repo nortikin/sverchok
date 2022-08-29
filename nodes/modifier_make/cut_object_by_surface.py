@@ -65,8 +65,8 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
         
     triangles: BoolProperty(
-        name="all triangles",
-        description="all triangles", default=False,
+        name="All triangles",
+        description="If your input mesh consists of triangles only, then this mode can improve performance a lot", default=False,
         update=updateNode)
         
     block: BoolProperty(
