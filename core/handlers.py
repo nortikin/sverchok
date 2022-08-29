@@ -16,26 +16,6 @@ from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
 
-pre_running = False
-sv_depsgraph = []
-depsgraph_need = False
-
-def get_sv_depsgraph():
-    global sv_depsgraph
-    global depsgraph_need
-
-    if not depsgraph_need:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-        depsgraph_need = True
-    elif not sv_depsgraph:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-
-    return sv_depsgraph
-
-def set_sv_depsgraph_need(val):
-    global depsgraph_need
-    depsgraph_need = val
-
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -82,7 +62,6 @@ def sv_handler_undo_post(scene):
     if undo_handler_node_count['sv_groups'] != num_to_test_against:
         debug('looks like a node was removed, cleaning')
         sv_clean(scene)
-        sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
 
@@ -113,25 +92,10 @@ def sv_update_handler(scene):
 
 
 @persistent
-def sv_main_handler(scene):
+def sv_scene_change_handler(scene):
     """
     On depsgraph update (pre)
     """
-    global pre_running
-    global sv_depsgraph
-    global depsgraph_need
-
-    # when this handler is called from inside another call to this handler we end early
-    # to avoid stack overflow.
-    if pre_running:
-        return
-
-    pre_running = True
-    if depsgraph_need:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-
-    pre_running = False
-
     # When the Play Animation is on this trigger is executed once. Such event
     # should be suppressed because it repeats animation trigger. When Play
     # animation is on and user changes something in the scene this trigger is
@@ -242,7 +206,7 @@ handler_dict = {
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler,
+    'depsgraph_update_pre': sv_scene_change_handler,
     'save_pre': save_pre_handler,
 }
 

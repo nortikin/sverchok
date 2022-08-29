@@ -2529,7 +2529,7 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
         local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
     else:
         inter_p = intersect_point_line(line_origin_a, line_origin_b, line_end_b)
-        dist = (inter_p[0] - line_origin_b).length
+        dist = (inter_p[0] - line_origin_a).length
         intersect = dist < tolerance
         closest_in_segment = 0 <= inter_p[1] <= 1
         local_result = [dist, intersect, line_a[0], list(inter_p[0]), True, closest_in_segment]

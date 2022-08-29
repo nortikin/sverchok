@@ -10,7 +10,6 @@ import numpy as np
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
 def interp_v3l_v3v3(a, b, t):
@@ -108,7 +107,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         num_path_verts = len(path_verts)
 
         # -- use the depsgraph for the bevelled objects
-        sv_depsgraph = get_sv_depsgraph()
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         shape_a = sv_depsgraph.objects[construct.shape_a.name]
         shape_b = sv_depsgraph.objects[construct.shape_b.name]
         shape_a_data = shape_a.to_mesh()
@@ -200,15 +199,11 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         finally:
             if not construct.complete:
                 return
-            
-            set_sv_depsgraph_need(True)
+
             v, e, f = self.sweep_between(construct)
             self.outputs['Verts'].sv_set([v])
             self.outputs['Edges'].sv_set([e])
             self.outputs['Faces'].sv_set([f])
-
-    def sv_free(self):
-        set_sv_depsgraph_need(False)        
 
 
 classes = [SvSweepModulator]
