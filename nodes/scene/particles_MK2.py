@@ -20,7 +20,7 @@ import bpy
 import numpy as np
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, second_as_first_cycle as safc
+from sverchok.data_structure import updateNode, cycle_for_length
 
 
 class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
@@ -62,14 +62,14 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
             listobj.append(particles)
 
         if V.is_linked:
-            for i, i2 in zip(listobj, V.sv_get()):
-                i.foreach_set('velocity', np.array(safc(i, i2)).flatten())
+            for i, i2 in zip(listobj, V.sv_get(deepcopy=False)):
+                i.foreach_set('velocity', np.array(cycle_for_length(i2, len(i))).flatten())
         if S.is_linked:
-            for i, i2 in zip(listobj, S.sv_get()):
-                i.foreach_set('size', safc(i, i2))
+            for i, i2 in zip(listobj, S.sv_get(deepcopy=False)):
+                i.foreach_set('size', cycle_for_length(i2, len(i)))
         if L.is_linked:
-            for i, i2 in zip(listobj, L.sv_get()):
-                i.foreach_set('location', np.array(safc(i, i2)).flatten())
+            for i, i2 in zip(listobj, L.sv_get(deepcopy=False)):
+                i.foreach_set('location', np.array(cycle_for_length(i2, len(i))).flatten())
         if outL.is_linked:
             if self.Filt_D:
                 outL.sv_set([[i.location[:] for i in Plist if i.alive_state == 'ALIVE'] for Plist in listobj])
