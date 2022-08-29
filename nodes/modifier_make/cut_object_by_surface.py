@@ -68,6 +68,11 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         name="all triangles",
         description="all triangles", default=False,
         update=updateNode)
+        
+    block: BoolProperty(
+        name="Block",
+        description="Whether to raise exception or not when more than two intersections are found on one object face", default=False,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'ObjVertices')
@@ -94,6 +99,7 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "triangles")
+        layout.prop(self, "block")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -194,7 +200,10 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
                     # i. e. there are new edges not included in any rings
                     # If the surface or the object has wire geometry, or has more than two faces linked to an edge,
                     # or has vertices linked to multiple mesh regions (see Blender select non manifold function)
-                    continue
+                    if self.block:
+                        raise Exception("Unsupported: more than two edges of the face intersect the surface")
+                    else:
+                        continue
                 v1, v2 = intersections[0][0], intersections[1][0]
                 try:
                     bm_edge = bm_cut.edges.new((v1, v2))
@@ -293,10 +302,10 @@ class SvCutObjBySurfaceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
                 for new_vert_1, new_vert_2 in new_verts_by_old_face.values():
                     try:
                         edge = bm_obj.edges.get((new_vert_1, new_vert_2))
+                        edges_to_split.append(edge)
                     except ValueError:
                         continue
-                    edges_to_split.append(edge)
-
+                    
                 # Split "object" by remembered cut edges. There will be "holes"
                 # at places we cut.
                 split_result = bmesh.ops.split_edges(bm_obj, edges=edges_to_split)
