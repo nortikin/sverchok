@@ -99,7 +99,7 @@
       },
       "width": 140.0
     },
-    "Profile Parametric Mk3": {
+    "Profile Parametric MK3": {
       "bl_idname": "SvProfileNodeMK3",
       "height": 100.0,
       "hide": false,
@@ -184,11 +184,12 @@
         -16.67555809020996
       ],
       "params": {
-        "cap_U": 1,
+        "cap_U": 0,
         "cap_V": 1,
         "cicl_check_U": 0,
         "cicl_check_V": 1,
-        "slice_check": 0
+        "slice_check": 0,
+		"dir_check": "V_dir"
       },
       "width": 140.0
     },
@@ -213,7 +214,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -228,7 +229,7 @@
       },
       "width": 100.0
     },
-    "Vector in.001": {
+    "Vector In.001": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -260,23 +261,23 @@
     [
       "Scalar Math.002",
       0,
-      "Vector in",
+      "Vector In",
       1
     ],
     [
       "A Number",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       1
     ],
     [
       "A Number.003",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       2
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
       "Rotate",
       0
@@ -294,13 +295,13 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.002",
       1
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
       "Rotate.001",
       0
@@ -314,7 +315,7 @@
     [
       "A Number.001",
       0,
-      "Vector in.001",
+      "Vector In.001",
       1
     ],
     [
@@ -324,7 +325,7 @@
       0
     ],
     [
-      "Vector in.001",
+      "Vector In.001",
       0,
       "Move",
       1

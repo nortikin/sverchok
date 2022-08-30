@@ -21,14 +21,14 @@ Inputs
 
 **Skip**: If a True value is inputted the loop the result wont be added to the output, like a internal mask.  (Only if Loop In is in For Each Mode).
 
-Data0, Data1... if working on Range Mode inputs will be created coping the Loop in Outputs. If working in For Each mode they will be created when linking the Loop Out inputs
+Data0, Data1... if working on Range Mode inputs will be created copying the Loop in Outputs. If working in For Each mode they will be created when linking the Loop Out inputs
 
 
 Outputs
 -------
 
 
-Data0, Data1... In Range mode: inputs will be created coping the Loop in Outputs. In For Each mode they will be copy the Loop Out inputs.
+Data0, Data1... In Range mode: inputs will be created copying the Loop in Outputs. In For Each mode they will be copy the Loop Out inputs.
 
 
 Examples

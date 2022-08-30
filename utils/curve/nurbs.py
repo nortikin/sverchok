@@ -135,6 +135,9 @@ class SvNurbsCurve(SvCurve):
         return self._bounding_box
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        if tolerance is None:
+            tolerance = 1e-6
+
         curve1 = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:
@@ -325,6 +328,19 @@ class SvNurbsCurve(SvCurve):
 
     def get_degree(self):
         raise Exception("Not implemented!")
+
+    def calc_greville_ts(self):
+        cpts = self.get_control_points()
+        n = len(cpts)
+        p = self.get_degree()
+        gps = np.zeros((n,))
+        kv = self.get_knotvector()
+        for i in range(n):
+            gps[i] = kv[i+1:i+p+1].mean()
+        return gps
+
+    def calc_greville_points(self):
+        return self.evaluate_array(self.calc_greville_ts())
 
     def elevate_degree(self, delta=None, target=None):
         orig_delta, orig_target = delta, target

@@ -110,18 +110,16 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             samples_z = 'samples_z_draft'
         )
 
-    def get_modes(self, context):
-        modes = []
-        if skimage is not None:
-            modes.append(("skimage", "SciKit-Image", "SciKit-Image", 0))
-        if mcubes is not None:
-            modes.append(("mcubes", "PyMCubes", "PyMCubes", 1))
-        modes.append(('python', "Pure Python", "Pure Python implementation", 2))
-        return modes
+    modes = []
+    if skimage is not None:
+        modes.append(("skimage", "SciKit-Image", "SciKit-Image", 0))
+    if mcubes is not None:
+        modes.append(("mcubes", "PyMCubes", "PyMCubes", 1))
+    modes.append(('python', "Pure Python", "Pure Python implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_modes,
+            items=modes,
             update = update_sockets)
 
     class BoundsMenuHandler():

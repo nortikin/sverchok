@@ -367,7 +367,7 @@ When management mode is enabled, there are more buttons:
     :align: right
 
 * **Import preset from Gist**. You will be asked for Gist ID or full URL of the
-  gist, and preset name. If you have gist URL in the clibpoard, it will be
+  gist, and preset name. If you have gist URL in the clipboard, it will be
   pasted automatically.
 * **Import preset from file**. File browser will appear to allow you to select
   a `.json` file to import. In the left bottom part of this file browser, there

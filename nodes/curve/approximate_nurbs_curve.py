@@ -66,17 +66,15 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             min = 3, default = 5,
             update = updateNode)
 
-    def get_implementations(self, context):
-        implementations = []
-        if geomdl is not None:
-            implementations.append(('GEOMDL', "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
-        if scipy is not None:
-            implementations.append(('SCIPY', "SciPy", "SciPy package implementation", 1))
-        return implementations
+    implementations = []
+    if geomdl is not None:
+        implementations.append(('GEOMDL', "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    if scipy is not None:
+        implementations.append(('SCIPY', "SciPy", "SciPy package implementation", 1))
     
     implementation : EnumProperty(name = "Implementation",
             description = "Approximation algorithm implementation",
-            items = get_implementations,
+            items=implementations,
             update = update_sockets)
 
     smoothing : FloatProperty(

@@ -257,7 +257,7 @@ class SvFollowActiveQuads(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     Can unwrap mesh  with separate parts at once
     """
     bl_idname = 'SvFollowActiveQuads'
-    bl_label = 'Follow active quads'
+    bl_label = 'Follow Active Quads'
     bl_icon = 'MOD_UVPROJECT'
 
     edge_length_mode: bpy.props.EnumProperty(items=[(i, i, '') for i in MODE], update=updateNode)

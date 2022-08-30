@@ -10,8 +10,11 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
+from sverchok.utils.dummy_nodes import add_dummy
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExInterpolateNurbsSurfaceNode', "Interpolate NURBS Surface", 'geomdl')
+else:
     from geomdl import fitting
     
 class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -68,20 +71,16 @@ class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'DISTANCE',
             update = updateNode)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsMaths.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsMaths.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     def sv_init(self, context):

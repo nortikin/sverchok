@@ -58,7 +58,7 @@ def control_center(event):
 
 class GroupUpdateTree(us.UpdateTree):
     """Group trees has their own update method separate from main tree to have
-    more nice profiling statistics. Also, it keeps some specific to grop trees
+    more nice profiling statistics. Also, it keeps some specific to group trees
     statuses."""
     get: Callable[['GrTree'], 'GroupUpdateTree']  # type hinting does not work grate :/
 

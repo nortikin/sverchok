@@ -94,7 +94,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Filter data with a boolean list ([False, True] or [0,1])
     '''
     bl_idname = 'MaskListNode'
-    bl_label = 'List Mask (out)'
+    bl_label = 'List Mask (Out)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MASK_OUT'
 

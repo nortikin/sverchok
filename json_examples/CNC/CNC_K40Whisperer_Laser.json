@@ -6,7 +6,7 @@
     "A Number.002": "Frame.002",
     "A Number.003": "Frame.002",
     "Circle.001": "Frame.004",
-    "Color in": "Frame.001",
+    "Color In": "Frame.001",
     "File Path": "Frame.007",
     "Fill / Stroke SVG": "Frame.006",
     "Fill / Stroke SVG.002": "Frame.008",
@@ -29,9 +29,9 @@
     "Scalar Math": "Frame.003",
     "Scalar Math.001": "Frame.003",
     "Vector Turbulence": "Frame.010",
-    "Vector in": "Frame.002",
-    "Vector in.001": "Frame.010",
-    "Vector out": "Frame.010",
+    "Vector In": "Frame.002",
+    "Vector In.001": "Frame.010",
+    "Vector Out": "Frame.010",
     "Viewer Draw": "Frame.004",
     "Viewer Draw.002": "Frame.007",
     "Viewer Draw.003": "Frame",
@@ -127,7 +127,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Color in": {
+    "Color In": {
       "bl_idname": "SvColorsInNodeMK1",
       "custom_socket_props": {},
       "height": 100.0,
@@ -663,7 +663,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -679,7 +679,7 @@
       },
       "width": 159.3623046875
     },
-    "Vector in.001": {
+    "Vector In.001": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -692,7 +692,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector out": {
+    "Vector Out": {
       "bl_idname": "VectorsOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -872,7 +872,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.001",
       1
@@ -980,7 +980,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -998,7 +998,7 @@
       2
     ],
     [
-      "Color in",
+      "Color In",
       0,
       "Viewer Draw.003",
       6
@@ -1010,7 +1010,7 @@
       0
     ],
     [
-      "Vector in.001",
+      "Vector In.001",
       0,
       "Move.004",
       1
@@ -1022,21 +1022,21 @@
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       0,
-      "Vector in.001",
+      "Vector In.001",
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       1,
-      "Vector in.001",
+      "Vector In.001",
       1
     ],
     [
       "Vector Turbulence",
       0,
-      "Vector out",
+      "Vector Out",
       0
     ],
     [
@@ -1046,7 +1046,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.003",
       1
@@ -1096,7 +1096,7 @@
     [
       "List Join.001",
       0,
-      "Color in",
+      "Color In",
       2
     ],
     [
@@ -1130,7 +1130,7 @@
       4
     ],
     [
-      "Color in",
+      "Color In",
       0,
       "Fill / Stroke SVG.002",
       0

@@ -63,7 +63,7 @@ def flip_to_match_1st(geom, reverse):
 class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Flip face normals '''
     bl_idname = 'SvFlipNormalsNode'
-    bl_label = 'Flip normals'
+    bl_label = 'Flip Normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLIP_NORMALS'
 

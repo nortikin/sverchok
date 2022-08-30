@@ -1,5 +1,5 @@
-Framework node
-==============
+Framework
+=========
 
 Functionality
 -------------

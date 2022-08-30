@@ -18,7 +18,7 @@ class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate a taper surface along a line
     """
     bl_idname = 'SvExTaperSweepSurfaceNode'
-    bl_label = 'Taper Sweep'
+    bl_label = 'Taper Sweep Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_TAPER_SWEEP'
 

@@ -1,4 +1,4 @@
-Planar edgenet to polygons
+Planar Edgenet to Polygons
 ==========================
 
 Functionality

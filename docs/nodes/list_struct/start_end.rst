@@ -14,7 +14,7 @@ Inputs
 Properties
 ----------
 
-**level** - leve to take first and last items
+**level** - level to take first and last items
 
 Outputs
 -------

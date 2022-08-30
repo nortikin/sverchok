@@ -4,7 +4,7 @@
     "A Number": "Frame",
     "Apply Vector Field": "Frame.003",
     "Bend Along Surface Field": "Frame.003",
-    "Bounding box": "Frame.003",
+    "Bounding Box": "Frame.003",
     "Component Analyzer": "Frame.002",
     "Cubic Spline": "Frame",
     "Curve Viewer": "Frame.002",
@@ -14,7 +14,7 @@
     "List Split": "Frame",
     "List Split.001": "Frame.002",
     "Mesh Join.001": "Frame.002",
-    "Mesh viewer": "Frame.001",
+    "Mesh Viewer": "Frame.001",
     "Move": "Frame",
     "Plane": "Frame",
     "Polygon Boom": "Frame.002",
@@ -74,7 +74,7 @@
       },
       "width": 140.0
     },
-    "Bounding box": {
+    "Bounding Box": {
       "bl_idname": "SvBBoxNodeMk3",
       "custom_socket_props": {
         "0": {
@@ -331,7 +331,7 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -573,25 +573,25 @@
       0
     ],
     [
-      "Bounding box",
+      "Bounding Box",
       5,
       "Bend Along Surface Field",
       1
     ],
     [
-      "Bounding box",
+      "Bounding Box",
       8,
       "Bend Along Surface Field",
       2
     ],
     [
-      "Bounding box",
+      "Bounding Box",
       4,
       "Bend Along Surface Field",
       3
     ],
     [
-      "Bounding box",
+      "Bounding Box",
       7,
       "Bend Along Surface Field",
       4
@@ -683,13 +683,13 @@
     [
       "Solidify.001",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Solidify.001",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
@@ -791,7 +791,7 @@
     [
       "Polygon Grid",
       1,
-      "Bounding box",
+      "Bounding Box",
       0
     ],
     [

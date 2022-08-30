@@ -18,7 +18,9 @@ def install_package(package):
 def install_whl(package_path):
     subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", f"{package_path}"])
 
-usage = """\
+usage = r"""\
+
+from sverchok.utils.pip_utils import install_package, install_whl
 
 install_package(['--upgrade', 'pip']) # <-- may not be needed
 install_package('pandas')

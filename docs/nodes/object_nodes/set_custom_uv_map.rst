@@ -1,4 +1,4 @@
-Set custom UV map
+Set Custom UV Map
 =================
 
 .. image:: https://user-images.githubusercontent.com/28003269/72145465-04730c80-33b4-11ea-830a-1ce9ba114b7d.png
@@ -13,7 +13,7 @@ UV coordinates should be prepared by other nodes.
 Category
 --------
 
-BPY Data -> Set custom UV map
+BPY Data -> Set Custom UV Map
 
 Inputs
 ------

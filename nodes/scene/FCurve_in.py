@@ -26,7 +26,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     '''
     bl_idname = 'SvFCurveInNodeMK1'
-    bl_label = 'F-Curve In'
+    bl_label = 'F-Curve Input'
     bl_icon = 'FCURVE'
     is_scene_dependent = True
 

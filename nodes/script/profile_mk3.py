@@ -414,7 +414,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     bl_idname = 'SvProfileNodeMK3'
-    bl_label = 'Profile Parametric Mk3'
+    bl_label = 'Profile Parametric MK3'
     bl_icon = 'SYNTAX_ON'
 
     axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]

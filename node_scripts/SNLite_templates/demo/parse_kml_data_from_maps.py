@@ -14,12 +14,6 @@ def ui(self, context, layout):
     a = layout.operator(cb_str, text='.kml>names+verts')
     a.cb_name='my_operator'
 
-#ND = self.node_dict.get(hash(self))               #
-#if ND:                                            #
-#    callbacks = ND['sockets']['callbacks']        #    this will be hidden in the node eventually 
-#    if not 'my_operator' in callbacks:            #
-#        callbacks['my_operator'] = my_operator    #
-
 def my_operator(self, context):
     ''' converting kml to sverchok data '''
 

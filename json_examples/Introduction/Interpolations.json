@@ -30,8 +30,8 @@
     "Vector Interpolation UV": "Frame.003",
     "Vector Interpolation.001": "Frame.004",
     "Vector Turbulence": "Frame.002",
-    "Vector in": "Frame.002",
-    "Vector out": "Frame.002",
+    "Vector In": "Frame.002",
+    "Vector Out": "Frame.002",
     "Viewer Draw": "Frame.001",
     "Viewer Draw.001": "Frame",
     "Viewer Draw.002": "Frame.003",
@@ -586,7 +586,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -599,7 +599,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector out": {
+    "Vector Out": {
       "bl_idname": "VectorsOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -708,7 +708,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -728,13 +728,13 @@
     [
       "Vector Turbulence",
       0,
-      "Vector out",
+      "Vector Out",
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       2,
-      "Vector in",
+      "Vector In",
       2
     ],
     [

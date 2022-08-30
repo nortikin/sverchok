@@ -173,7 +173,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -266,7 +266,7 @@
       4
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Vector Field Math",
       0

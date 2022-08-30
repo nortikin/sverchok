@@ -581,7 +581,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             # triangle will be processed as degenerated Quad,
             # where third and fourth vertices coincide.
             # In Tissue addon, this is the only mode possible for Quads.
-            # Someone may like that behaivour, so we allow it with setting...
+            # Someone may like that behaviour, so we allow it with setting...
             #
             # This can process NGons in even worse way:
             # it will take first three vertices and the last one

@@ -139,7 +139,7 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     Tooltip: Get vertices bounding box (vertices, sizes, center)
     """
     bl_idname = 'SvBBoxNodeMk3'
-    bl_label = 'Bounding box'
+    bl_label = 'Bounding Box'
     bl_icon = 'SHADING_BBOX'
     sv_icon = 'SV_BOUNDING_BOX'
 

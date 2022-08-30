@@ -1,5 +1,5 @@
-slice lite
-==========
+List Slice Lite
+===============
 
 This node differs little from the current slice node, but it does use alternative code. If the regular node isn't doing what you expect, it's worth trying this one.
 

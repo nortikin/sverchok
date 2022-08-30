@@ -16,7 +16,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate scalar field by distance from a point
     """
     bl_idname = 'SvExScalarFieldPointNode'
-    bl_label = 'Distance from a point'
+    bl_label = 'Distance From a Point'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINT_DISTANCE_FIELD'
 

@@ -33,6 +33,7 @@ Curves
    length_rebuild
    curvature
    torsion
+   nurbs_curve_nodes
    deconstruct_curve
    curve_frame
    curve_frame_on_surface
@@ -51,8 +52,10 @@ Curves
    nurbs_curve
    approximate_nurbs_curve
    interpolate_nurbs_curve
+   move_nurbs_curve_point
    insert_knot
    remove_knot
+   refine_nurbs_curve
    remove_excessive_knots
    adaptive_plot_nurbs
    catenary_curve

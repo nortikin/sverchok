@@ -73,7 +73,7 @@ class CreaseLines:
         diffs = [final - angle \
                     for final, angle in zip(final_angles, self.angles)]
 
-        # Target angles multiplyed with folding ratio
+        # Target angles multiplied with folding ratio
         self.target_angles = [angle + (diff * folding) for angle, diff \
                                 in zip(self.angles, diffs)]
         
@@ -283,7 +283,7 @@ class FoldAngleCalculator:
             adjustment = -np.dot(Cp, r.T) if step_count == 1 \
                             else np.zeros(len(crease_lines.edges)).T
             
-            # Add the calcuated actual delta-rho angles
+            # Add the calculated actual delta-rho angles
             dr_actual = adjustment + np.dot((In - np.dot(Cp, C)), dr.T)
             cls.current_rhos += dr_actual
 

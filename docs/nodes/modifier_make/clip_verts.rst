@@ -5,7 +5,7 @@ Functionality
 -------------
 
 This node cuts off (clips, truncates) all vertices of original mesh, by cutting
-each edge in half, and then connecting centers of all edges incidential to each
+each edge in half, and then connecting centers of all edges incidental to each
 vertex, to produce new faces. Please refer to usage examples for better
 understanding.
 

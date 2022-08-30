@@ -18,7 +18,7 @@
     "Scripted Node Lite": "Frame.001",
     "Stethoscope MK2.002": "Frame.003",
     "UV Connection": "Frame.004",
-    "Vector in": "Frame",
+    "Vector In": "Frame",
     "Viewer Draw Mk3": "Frame.002",
     "Viewer Draw Mk3.001": "Frame",
     "Viewer Draw Mk3.002": "Frame.001",
@@ -356,7 +356,7 @@
         1210.0062255859375
       ],
       "params": {
-        "text": "Nikitron 2020 - genetic algorithm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once. Threshod inside SNL till 0.995, not more"
+        "text": "Nikitron 2020 - genetic algorithm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once. Threshold inside SNL till 0.995, not more"
       },
       "use_custom_color": true,
       "width": 509.6258544921875
@@ -519,7 +519,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -696,7 +696,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -708,7 +708,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.001",
       1

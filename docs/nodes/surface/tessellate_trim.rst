@@ -4,7 +4,7 @@ Tessellate & Trim Surface
 Functionality
 -------------
 
-This node "visualizes" the Surface object (turns it into a mesh), by drawing a carthesian (rectangular) grid on it and then cutting (trimming) that grid with the specified Curve object.
+This node "visualizes" the Surface object (turns it into a mesh), by drawing a cartesian (rectangular) grid on it and then cutting (trimming) that grid with the specified Curve object.
 
 The provided trimming curve is supposed to be planar (flat), and be defined in the surface's U/V coordinates frame.
 

@@ -1,5 +1,5 @@
-Random points on mesh
-=====================
+Populate Mesh (Random points on mesh)
+=====================================
 
 .. image:: https://user-images.githubusercontent.com/28003269/70495032-d1282e00-1b26-11ea-8776-1f66d247ceef.png
 

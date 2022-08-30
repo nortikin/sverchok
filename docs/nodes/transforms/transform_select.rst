@@ -33,7 +33,7 @@ Outputs
 This node has the following outputs:
 
 - **Vertices**. The whole group of vertices
-- **PolyEdge**. A copy of the PolyEdge data supplyed
+- **PolyEdge**. A copy of the PolyEdge data supplied
 - **PolyEdge O**. PolyEdge data with vertices which are true and false (index referred to "Vertices" output)
 - **Vertices T**. Only the vertices marked as true
 - **PolyEdge T**. PolyEdge data with vertices which are true (index referred to "Vertices T" output)

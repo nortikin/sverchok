@@ -1,5 +1,5 @@
-Euler
-=====
+Matrix Euler
+============
 
 This node creates a transformation Matrix by defining the angles with X, Y and Z and the rotation order.
 

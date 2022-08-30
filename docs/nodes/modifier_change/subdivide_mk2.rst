@@ -1,5 +1,5 @@
-Subdivide Node
-==============
+Subdivide
+=========
 
 Functionality
 -------------

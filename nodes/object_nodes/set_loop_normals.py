@@ -21,7 +21,7 @@ class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
     Should be used together with Origins node
     """
     bl_idname = 'SvSetLoopNormalsNode'
-    bl_label = 'Set loop normals'
+    bl_label = 'Set Loop Normals'
     bl_icon = 'NORMALS_VERTEX'
 
     normalize: bpy.props.BoolProperty(name="Normalize", default=True, description="Normalize input normals",

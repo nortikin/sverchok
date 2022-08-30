@@ -456,8 +456,9 @@ class SvSpiralNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.presets = " "
         updateNode(self, context)
 
-    def preset_items(self, context):
-        return [(k, k.title(), "", "", s[0]) for k, s in sorted(spiral_presets.items(), key=lambda k: k[1][0])]
+    preset_items = [
+        (k, k.title(), "", "", s[0])
+        for k, s in sorted(spiral_presets.items(), key=lambda k: k[1][0])]
 
     def update_presets(self, context):
         self.updating = True

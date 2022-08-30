@@ -17,7 +17,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         Tooltip: Concatenate several curves into one
         """
         bl_idname = 'SvExConcatCurvesNode'
-        bl_label = 'Concat Curves'
+        bl_label = 'Concatenate Curves'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_CONCAT_CURVES'
 

@@ -21,7 +21,7 @@ import bpy
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
+
 
 class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Get Object Data'''
@@ -38,11 +38,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                                PolygonCenters='Polygon Centers',
                                PolygonNormals='Polygon Normals'))]
 
-    def modifiers_handle(self, context):
-        set_sv_depsgraph_need(self.modifiers)
-        updateNode(self, context)
-
-    modifiers: BoolProperty(name='Modifiers', default=False, update=modifiers_handle)
+    modifiers: BoolProperty(name='Modifiers', default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Objects")
@@ -59,9 +55,6 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, "modifiers", text="Post modifiers")
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
         objs = self.inputs[0].sv_get()
         if isinstance(objs[0], list):
@@ -71,7 +64,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
 
         if self.modifiers:
-            sv_depsgraph = get_sv_depsgraph()
+            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE', 'META']
         for obj in objs:

@@ -24,9 +24,9 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
 class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Vertex Group mk2'''
+    ''' Vertex Group Weights mk2'''
     bl_idname = 'SvVertexGroupNodeMK2'
-    bl_label = 'Vertex group weights'
+    bl_label = 'Vertex Group Weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VERTEX_WEIGHT'
     is_animation_dependent = True

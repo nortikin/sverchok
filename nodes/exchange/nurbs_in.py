@@ -43,7 +43,7 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Get NURBS curve or surface objects from scene
     """
     bl_idname = 'SvExNurbsInNode'
-    bl_label = 'NURBS In'
+    bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
     is_scene_dependent = True
@@ -102,20 +102,16 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         else:
             layout.label(text='--None--')
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     def sv_draw_buttons(self, context, layout):

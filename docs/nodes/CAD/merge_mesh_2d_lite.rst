@@ -57,7 +57,7 @@ So it is not enabled by default.
 Category
 --------
 
-CAD -> Merge mesh 2D light
+CAD -> Merge Mesh 2D light
 
 Inputs
 ------

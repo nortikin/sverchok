@@ -23,6 +23,7 @@ import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 
 class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
@@ -45,6 +46,7 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
             items = [(obj.name, obj.name, '') for obj in objects]
         return items
 
+    @keep_enum_reference
     def avail_uvs(self, context):
         items = [('','','')]
         if self.inputs and self.inputs[0].is_linked:

@@ -1,5 +1,5 @@
-Triangulate Heavy
-=================
+Triangulate Mesh (Heavy)
+========================
 
 This node tesselates all polygons that are not triangles, using this code::
 

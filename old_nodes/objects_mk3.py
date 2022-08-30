@@ -13,7 +13,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
@@ -94,10 +93,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    def modifiers_handle(self, context):
-        set_sv_depsgraph_need(self.modifiers)
-        updateNode(self, context)
-
     groupname: StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
@@ -105,7 +100,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False, update=modifiers_handle)
+        default=False, update=updateNode)
 
     vergroups: BoolProperty(
         name='Vergroups',
@@ -221,9 +216,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     def get_materials_from_mesh(self, mesh):
         return [face.material_index for face in mesh.polygons[:]]
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
 
         if not self.object_names:
@@ -242,7 +234,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         materials_out = []
 
         if self.modifiers:
-            sv_depsgraph = get_sv_depsgraph()
+            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):

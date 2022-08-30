@@ -1,4 +1,4 @@
-Dictionary out
+Dictionary Out
 ==============
 
 .. image:: https://user-images.githubusercontent.com/28003269/71804968-6a8f2500-307e-11ea-85ce-8c3c7619ee0a.png
@@ -11,7 +11,7 @@ The node unpacks dictionary and assign values of each key to sockets with names 
 Category
 --------
 
-Dictionary -> dictionary out
+Dictionary -> dictionary Out
 
 Inputs
 ------

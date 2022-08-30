@@ -1,5 +1,5 @@
 # taken from https://github.com/nortikin/simple-ga
-# making comparement between vertices and choose best match
+# comparing between vertices and choosing best match
 
 import random
 from functools import reduce

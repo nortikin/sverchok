@@ -113,7 +113,7 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         # scalar-vector output
         self.outputs.new('SvStringsSocket', "Scalar")
         self.outputs.new('SvVerticesSocket', "Vector")
-        # euler angle ouputs
+        # euler angle outputs
         self.outputs.new('SvStringsSocket', "Angle X")
         self.outputs.new('SvStringsSocket', "Angle Y")
         self.outputs.new('SvStringsSocket', "Angle Z")

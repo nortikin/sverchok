@@ -1,5 +1,5 @@
-Raycast
-=======
+Raycaster
+=========
 
 Functionality
 -------------

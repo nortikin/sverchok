@@ -68,9 +68,13 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    SvNurbsCurveNodesNode
+    ---
+    SvNurbsCurveMovePointNode
     ---
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
+    SvRefineNurbsCurveNode
     SvCurveRemoveExcessiveKnotsNode
     ---
     SvAdaptivePlotNurbsCurveNode
@@ -407,6 +411,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
+    SvOpenSubdivisionNode
     SvSubdivideNodeMK2
     SvSubdivideToQuadsNode
     SvOffsetLineNode

@@ -120,7 +120,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Quickly write data from NodeView to text datablock
     """
     bl_idname = 'SvTextOutNodeMK2'
-    bl_label = 'Text out+'
+    bl_label = 'Text Out+'
     bl_icon = 'COPYDOWN'
 
     sv_modes = [

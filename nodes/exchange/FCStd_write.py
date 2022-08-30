@@ -161,7 +161,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     obj_names = set( [ i.Name for i in fc_root.Objects] )
 
-    part_name += '_sv_' #->suffix added to avoid deleting erroneusly freecad objects
+    part_name += '_sv_' #->suffix added to avoid deleting freecad objects erroneously
 
     # SEARCH the freecad project for previous writed parts from this node
 

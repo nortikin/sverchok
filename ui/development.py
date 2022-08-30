@@ -118,6 +118,14 @@ class SvViewHelpForNode(bpy.types.Operator):
             string_dir = 'list_masks'
         elif filename in ('modifier'):
             string_dir = 'list_mutators'
+        elif string_dir == 'curves' or string_dir == 'curves @ primitives' or string_dir == 'curves @ bezier' or string_dir == 'curves @ nurbs':
+            string_dir = 'curve'
+        elif string_dir == 'surfaces' or string_dir == 'surfaces @ nurbs':
+            string_dir = 'surface'
+        elif string_dir == 'fields':
+            string_dir = 'field'
+        elif string_dir == 'solids' or string_dir == 'solids @ analyze':
+            string_dir = 'solid'
         elif string_dir == 'analyzers':
             string_dir = 'analyzer'
         elif string_dir == 'cad':

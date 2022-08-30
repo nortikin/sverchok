@@ -22,7 +22,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     Can have nested dictionaries
     """
     bl_idname = 'SvDictionaryIn'
-    bl_label = 'Dictionary in'
+    bl_label = 'Dictionary In'
     bl_icon = 'GREASEPENCIL'
 
     def update_node(self, context):

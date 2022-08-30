@@ -47,7 +47,7 @@ from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.math import np_mixed_product
 from sverchok.utils.logging import debug, info
 
-# njit is a light-wrapper aroudn numba.njit, if found
+# njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
@@ -446,7 +446,7 @@ class Spline2D(object):
     across them (in U direction) by using another series of 1D splines.
     U and V splines can both be either linear or cubic.
     The spline can optionally be cyclic in U and/or V directions
-    (so it can form a cylindrical or thoroidal surface).
+    (so it can form a cylindrical or toroidal surface).
     This is implemented partly in pure python, partly in numpy, so the performance
     is not very good. The performance is not very bad either, because of caching.
     """
@@ -1361,6 +1361,16 @@ class LineEquation(object):
         if denom < parallel_threshold:
             raise Exception("Lines are (almost) parallel")
         return abs(num) / denom
+
+    def intersect_with_line_coplanar(self, line2):
+        pt1 = self.point
+        dir1 = self.direction
+        dir2 = line2.direction
+        pt11 = pt1 + dir1
+        normal = dir1.cross(dir2)
+        pt12 = pt1 + normal
+        plane = PlaneEquation.from_three_points(pt1, pt11, pt12)
+        return plane.intersect_with_line(line2)
 
 def distance(v1, v2):
     v1 = np.asarray(v1)
@@ -2344,7 +2354,7 @@ def circle_approximation(data):
     e1, e2 = e1.normalized(), e2.normalized()
     matrix = np.array([e1, e2, plane.normal])
     on_plane = np.apply_along_axis(lambda v: matrix @ v, 1, centered)# All vectors here have Z == 0
-    # Calculate circluar approximation in 2D
+    # Calculate circular approximation in 2D
     circle_2d = circle_approximation_2d(on_plane[:,0:2], mean_is_zero=True)
     # Map the center back into 3D space
     matrix_inv = np.linalg.inv(matrix)
@@ -2519,7 +2529,7 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
         local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
     else:
         inter_p = intersect_point_line(line_origin_a, line_origin_b, line_end_b)
-        dist = (inter_p[0] - line_origin_b).length
+        dist = (inter_p[0] - line_origin_a).length
         intersect = dist < tolerance
         closest_in_segment = 0 <= inter_p[1] <= 1
         local_result = [dist, intersect, line_a[0], list(inter_p[0]), True, closest_in_segment]

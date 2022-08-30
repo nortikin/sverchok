@@ -9,7 +9,7 @@ def some_long_calculation():
 
 #   There are many ways to store the state of a node, or cache a one off calculation
 #
-#   you can pickle, for presistence beyond the current blender session:
+#   you can pickle, for persistence beyond the current blender session:
 #      https://docs.python.org/3/library/pickle.html
 #
 #   snlite also has a few internal caches, one specifically implemented for runtime caching, it is the user_dict

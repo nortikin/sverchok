@@ -68,7 +68,7 @@
       },
       "width": 140.0
     },
-    "Vector Attraction": {
+    "Vectors Attraction": {
       "bl_idname": "SvAttractorNode",
       "custom_socket_props": {
         "1": {
@@ -130,13 +130,13 @@
     [
       "Rounded Box",
       0,
-      "Vector Attraction",
+      "Vectors Attraction",
       0
     ],
     [
       "Plane",
       0,
-      "Vector Attraction",
+      "Vectors Attraction",
       1
     ],
     [
@@ -146,7 +146,7 @@
       0
     ],
     [
-      "Vector Attraction",
+      "Vectors Attraction",
       0,
       "Move.001",
       1

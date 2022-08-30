@@ -27,7 +27,7 @@ defaults = [True for i in range(32)]
 class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     ''' print socket data to terminal '''
     bl_idname = 'SvDebugPrintNode'
-    bl_label = 'Debug print'
+    bl_label = 'Debug Print'
     bl_icon = 'CONSOLE'
     sv_icon = 'SV_DEBUG_PRINT'
 

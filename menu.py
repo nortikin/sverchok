@@ -114,7 +114,7 @@ def include_submenus(node_cats):
 
 def juggle_and_join(node_cats):
     '''
-    this step post processes the extended catagorization used
+    this step post processes the extended categorization used
     by ctrl+space dynamic menu, and attempts to merge previously
     joined categories. Why? Because the default menu gets very
     long if there are too many categories.

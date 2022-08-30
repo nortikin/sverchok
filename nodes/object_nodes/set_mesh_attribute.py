@@ -79,7 +79,7 @@ class SvSetMeshAttributeNode(SverchCustomTreeNode, bpy.types.Node):
     Tooltip: It adds an attribute to a mesh
     """
     bl_idname = 'SvSetMeshAttributeNode'
-    bl_label = 'Set mesh attribute'
+    bl_label = 'Set Mesh Attribute'
     bl_icon = 'SORTALPHA'
 
     def update_type(self, context):
