@@ -70,32 +70,29 @@ class SvListLevelsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         if not self.nesting:
             layout.label(text="No data passed")
             return
-        grid = layout.grid_flow(row_major=True, columns=5, align=True)
 
-        grid.label(text='Depth')
-        grid.label(text='Nesting')
-        grid.label(text='Shape')
-        grid.label(text='Flatten')
-        grid.label(text='Wrap')
+        # https://blender.stackexchange.com/questions/51256/how-to-create-uilist-with-auto-aligned-three-columns/51263#51263
+        lvl_split = 0.08
+        shape_split = 0.6
+        flat_split = 0.5
+
+        col = layout.column()
+        col.label(text='Lvl|Shape|Flatten|Wrap')
 
         for i, entry in zip(range(self.nesting), self.levels_config):
             nesting = self.nesting - i - 1
-            level_str = str(i)
-            if i == 0:
-                level_str += " (outermost)"
-            elif nesting == 0:
-                level_str += " (innermost)"
-            grid.label(text=level_str)
-            grid.label(text=str(nesting))
-            grid.label(text=entry.description)
+            row = col.split(factor=lvl_split)
+            row.label(text=f"{i+1}")
+            row = row.split(factor=shape_split)
+            row.label(text=entry.description)
+            row = row.split(factor=flat_split)
             if nesting < 2:
-                grid.label(icon='X', text='')
+                row.label(icon='X', text='')
             else:
-                grid.prop(entry, 'flatten', text='')
-            grid.prop(entry, 'wrap', text='')
+                row.prop(entry, 'flatten', text='')
+            row.prop(entry, 'wrap', text='')
 
     def sv_init(self, context):
-        self.width = 300
         self.inputs.new('SvStringsSocket', 'Data')
         self.outputs.new('SvStringsSocket', 'Data')
 
