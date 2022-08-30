@@ -24,7 +24,10 @@ from bpy.props import IntProperty
 
 
 class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' List summa MK2 '''
+    ''' List summa MK2. Minimal level is 1.
+    level 1: [ [[0,1,2]], [[1.5, 2, 2.5]] ] => [[3,6]]
+    level 2: [ [[0,1,2]], [[1.5, 2, 2.5]] ] => [[3],[6]]
+    '''
     bl_idname = 'ListSumNodeMK2'
     bl_label = 'List Summa'
     bl_icon = 'OUTLINER_OB_EMPTY'

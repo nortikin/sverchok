@@ -15,7 +15,7 @@ from typing import Iterator, Iterable
 class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: index find
-    Tooltip: Returns index of item position in given data or -1 if item is not in data
+    Tooltip: Returns index of item position in given data or -1 if item is not in data\n\t[[1,3,5,2,7]]->[[1,2,3,10]] => [[0,3,1,-1]]
     """
     bl_idname = 'SvIndexListNode'
     bl_label = 'List Index'

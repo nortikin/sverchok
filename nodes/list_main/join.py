@@ -89,7 +89,10 @@ def match_and_join_mix(slots, level, wrap, match_func):
 
 
 class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' ListJoin node '''
+    ''' List Join
+        [[0,1,2]] Join [[4,5,6]] => [ [0,1,2],[4,5,6] ]
+        [[<Bezier[3*] curve]] Join [[<Bezier[3*] curve]] => [ [<Bezier[3*] curve], [<Bezier[3*] curve] ]
+'''
     bl_idname = 'ListJoinNode'
     bl_label = 'List Join'
     bl_icon = 'OUTLINER_OB_EMPTY'

@@ -1,6 +1,8 @@
 List Statistics
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/187531724-31b3ac44-011f-4e0d-a133-bcedaa9a2820.png
+
 Functionality
 -------------
 
@@ -77,3 +79,9 @@ The statistical quantity of the input values corresponding to the selected funct
 When "All Statistics" is selected the **Names** and **Values** outputs will list the names and the corresponding values for all the statistical functions.
 
 
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/187533079-ada585a4-d1cf-4eb0-ba80-8faae3f53222.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/187532896-f7fe6bdd-d25e-40f4-99bf-d2373f75b9c0.png
