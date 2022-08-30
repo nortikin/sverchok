@@ -988,7 +988,9 @@ def split_curve(curve, splits, rescale=False):
 
 def curve_segment(curve, new_t_min, new_t_max, rescale=False):
     t_min, t_max = curve.get_u_bounds()
-    if hasattr(curve, 'split_at') and (new_t_min > t_min or new_t_max < t_max):
+    if hasattr(curve, 'cut_segment'):
+        return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
+    elif hasattr(curve, 'split_at') and (new_t_min > t_min or new_t_max < t_max):
         if new_t_min > t_min:
             start, curve = curve.split_at(new_t_min)
         if new_t_max < t_max:
