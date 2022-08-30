@@ -24,6 +24,9 @@ class SvNurbsCurveGoal(object):
     def get_equations(self, solver):
         raise Exception("Not implemented")
 
+    def get_n_defined_control_points(self):
+        raise Exception("Not implemented")
+
 class SvNurbsCurvePoints(SvNurbsCurveGoal):
     def __init__(self, us, points, weights = None):
         self.us = np.asarray(us)
@@ -46,9 +49,13 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
     def get_weights(self):
         weights = self.weights
+        n_points = len(self.vectors)
         if weights is None:
-            n_points = len(self.vectors)
             weights = np.ones((n_points,))
+        elif isinstance(weights, np.ndarray) and weights.shape == (1,):
+            weights = np.full((n_points,), weights[0])
+        elif isinstance(weights, (int,float)):
+            weights = np.full((n_points,), weights)
         return weights
 
     def add(self, other):
@@ -63,6 +70,9 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
         return alphas
+
+    def get_n_defined_control_points(self):
+        return len(self.us)
 
     def get_equations(self, solver):
         ndim = 3
@@ -79,6 +89,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
         A = np.zeros((n_equations, n_unknowns))
         B = np.zeros((n_equations, 1))
+        #print(f"A: {A.shape}, W {weights.shape}, n_points {n_points}")
 
         for pt_idx in range(n_points):
             for cpt_idx in range(solver.n_cpts):
@@ -167,6 +178,9 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         betas = [solver.basis.fraction(k,p, solver.curve_weights)(self.us2) for k in range(solver.n_cpts)]
         betas = np.array(betas) # (n_cpts, n_points)
         return alphas, betas
+
+    def get_n_defined_control_points(self):
+        return len(self.us1)
 
     def get_equations(self, solver):
         ndim = 3
@@ -275,12 +289,15 @@ class SvNurbsCurveSolver(SvCurve):
         self.curve_weights = weights
 
     def guess_curve_params(self):
-        n_equations = len(self.goals)
+        n_equations = sum(g.get_n_defined_control_points() for g in self.goals)
         self.n_cpts = n_equations
         self.knotvector = sv_knotvector.generate(self.degree, self.n_cpts)
 
     def add_goal(self, goal):
         self.goals.append(goal)
+
+    def set_goals(self, goals):
+        self.goals = goals[:]
 
     def _sort_goals(self):
         goal_dict = defaultdict(list)
@@ -323,6 +340,7 @@ class SvNurbsCurveSolver(SvCurve):
         ndim = 3
         n = self.n_cpts
         n_equations, n_unknowns = self.A.shape
+        print(f"A: {self.A.shape}")
         if n_equations == n_unknowns:
             A1 = np.linalg.inv(self.A)
             X = (A1 @ self.B).T
@@ -337,7 +355,7 @@ class SvNurbsCurveSolver(SvCurve):
         if src_curve is None:
             return SvNurbsCurve.build(implementation, self.degree, self.knotvector, d_cpts, self.curve_weights)
         else:
-            cpts = curve.get_control_points() + d_cpts
+            cpts = src_curve.get_control_points() + d_cpts
             return SvNurbsCurve.build(implementation, self.degree, self.knotvector, cpts, self.curve_weights)
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
