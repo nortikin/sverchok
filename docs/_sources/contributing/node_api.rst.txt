@@ -921,15 +921,19 @@ applied to changes which were made in not released version of Sverchok. In this
 case changes can be done with breaking backward compatibility.
 
 Creating new version should be done togather with keeping previous one. In most
-cases it's enough **to move** module of current node into old_nodes folder. It
+cases it's enough **to copy** module of current node into old_nodes folder. It
 should be done more carefully if in the module together with the node something
 else is registered.
 
-New version of the node should be created **in new file** in the same place and
-with the same name as version of previous node. Class of a new version should
-get ``MKn`` suffix where *n* is index of new version. The same should be done to
+New version of the node should be created **in the same module** of initial
+node by adding suffix to node class. Convention of the suffix is
+``MKn`` where *n* is index of new version. The same should be done to
 ``bl_idname`` attribute of the class. New version of the node can implement
 anything what can be implemented in new node.
+
+.. note::
+   By changing class name and its ``bl_idname`` attribute, don't forget to fix
+   these names in the registration functions and in the ``index.md`` file.
 
 When new version is introduced it's convenient to add replacement operator to
 the old version of the node which automatically replace old node with new one

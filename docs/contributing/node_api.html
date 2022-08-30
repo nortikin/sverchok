@@ -954,14 +954,19 @@ a node should be introduced. It’s not necessary step when changes should be
 applied to changes which were made in not released version of Sverchok. In this
 case changes can be done with breaking backward compatibility.</p>
 <p>Creating new version should be done togather with keeping previous one. In most
-cases it’s enough <strong>to move</strong> module of current node into old_nodes folder. It
+cases it’s enough <strong>to copy</strong> module of current node into old_nodes folder. It
 should be done more carefully if in the module together with the node something
 else is registered.</p>
-<p>New version of the node should be created <strong>in new file</strong> in the same place and
-with the same name as version of previous node. Class of a new version should
-get <code class="docutils literal notranslate"><span class="pre">MKn</span></code> suffix where <em>n</em> is index of new version. The same should be done to
+<p>New version of the node should be created <strong>in the same module</strong> of initial
+node by adding suffix to node class. Convention of the suffix is
+<code class="docutils literal notranslate"><span class="pre">MKn</span></code> where <em>n</em> is index of new version. The same should be done to
 <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> attribute of the class. New version of the node can implement
 anything what can be implemented in new node.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By changing class name and its <code class="docutils literal notranslate"><span class="pre">bl_idname</span></code> attribute, don’t forget to fix
+these names in the registration functions and in the <code class="docutils literal notranslate"><span class="pre">index.md</span></code> file.</p>
+</div>
 <p>When new version is introduced it’s convenient to add replacement operator to
 the old version of the node which automatically replace old node with new one
 with keeping all connected links. This can be done by adding
