@@ -21,7 +21,6 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -36,7 +35,7 @@ from sverchok.utils.sv_manual_curves_utils import (
 
 from sverchok.utils.curve import SvScalarFunctionCurve
 
-import numpy as np
+
 node_group_name = 'sverchok_helper_group'
 
 if (2, 82, 0) > bpy.app.version:
@@ -52,7 +51,7 @@ def curve_mapper(params, constant, matching_f):
 
     return result
 
-class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Manual Curve remap
     Tooltip:  Map input list using a manually defined curve
@@ -61,6 +60,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvCurveMapperNode'
     bl_label = 'Curve Mapper'
     bl_icon = 'NORMALIZE_FCURVES'
+    is_scene_dependent = True
 
     value: FloatProperty(
         name='Value', description='New Max',
@@ -75,14 +75,12 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvVerticesSocket', "Control Points")
         _ = get_evaluator(node_group_name, self._get_curve_node_name())
 
-
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         m = bpy.data.node_groups.get(node_group_name)
         if not m:
             layout.label(text="Connect input to activate")
             return
         try:
-            self.draw_animatable_buttons(layout, icon_only=True, update_big=True)
             tnode = m.nodes[self._get_curve_node_name()]
             if not tnode:
                 layout.label(text="Connect input to activate")

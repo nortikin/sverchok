@@ -16,7 +16,7 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.sv_bmesh_utils import remove_doubles
 import  random
 
-# loosly based on https://www.youtube.com/watch?v=GhquYJ9m1Oc
+# loosely based on https://www.youtube.com/watch?v=GhquYJ9m1Oc
 
 sort = lambda vex, pox: [vex[i] for i in pox]
 def get_center(pts):

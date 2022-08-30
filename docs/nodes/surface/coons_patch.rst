@@ -64,6 +64,18 @@ This node has the following parameters:
   allowable to decide that they actually coincide. The default value is 0.001.
   This parameter is only available if **Check coincidence** parameter is
   enabled.
+* **NURBS option**. This defines whether the node will generate a NURBS surface
+  or a generic Surface object. The available options are:
+
+   * **Generic**. Always create a generic Surface object.
+   * **Always NURBS**. Create a NURBS surface. If input curves are not NURBS or
+     NURBS-like, or if it is not possible to generate a NURBS surface for some
+     another reason, the node will fail.
+   * **NURBS if possible**. Create a NURBS surface. If input curves are not NURBS or
+     NURBS-like, or if it is not possible to generate a NURBS surface for some
+     another reason, the node will create a generic Surface object.
+
+   The default option is **NURBS if possible**.
 
 Outputs
 -------

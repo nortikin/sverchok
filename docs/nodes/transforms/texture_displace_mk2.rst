@@ -17,7 +17,7 @@ Inputs & Parameters
 |                |                                                                         |
 |                | - UV: Input a second set of verts to be the UV coordinates of           |
 |                |   the mesh.                                                             |
-|                | - Mesh Matrix: Matrix to mutiply the verts to get their UV coord.       |
+|                | - Mesh Matrix: Matrix to multiply the verts to get their UV coord.      |
 |                | - Texture Matrix: Matrix of external object to set where in global      |
 |                |   space is the origin location and rotation of texture.                 |
 +----------------+-------------------------------------------------------------------------+

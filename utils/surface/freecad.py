@@ -55,7 +55,7 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
 
     if len(edges) != len(wire.Edges):
-        raise Exception(f"Cant build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
+        raise Exception(f"Can't build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
 
     #wire.fix(0, 0, 0)
     #wire.fixTolerance(1e-5)
@@ -177,7 +177,7 @@ class SvSolidFaceSurface(SvSurface):
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         faces = self.face.toNurbs().Faces
         nurbs = faces[0].Surface
-        return SvFreeCadNurbsSurface(nurbs, face=faces[0])
+        return SvFreeCadNurbsSurface(nurbs, face=faces[0])#.copy(implementation=implementation)
 
     def get_min_continuity(self):
         s = self.surface.Continuity[1]
@@ -301,6 +301,35 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
             raise Exception("Unsupported direction")
 
         return SvFreeCadNurbsCurve(fc_curve)
+
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        tolerance = 1e-6
+        if direction == 'U':
+            surface.surface.insertUKnot(parameter, count, tolerance)
+        else:
+            surface.surface.insertVKnot(parameter, count, tolerance)
+        return surface
+    
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        if direction == 'U':
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())
+        else:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_v())
+        idx = None
+        M = None
+        for i, (u1, m) in enumerate(ms):
+            if u1 == parameter:
+                idx = i
+                M = m - count
+                break
+        if idx is not None:
+            if direction == 'U':
+                surface.surface.removeUKnot(idx+1, M, tolerance)
+            else:
+                surface.surface.removeVKnot(idx+1, M, tolerance)
+        return surface
 
 #     def to_nurbs(self, **kwargs):
 #         return self

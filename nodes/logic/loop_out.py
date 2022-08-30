@@ -17,20 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty
+from bpy.props import EnumProperty
+from sverchok.core.update_system import UpdateTree
 
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.data_structure import list_match_func, enum_item_4, updateNode
+from sverchok.data_structure import list_match_func, enum_item_4
 
-def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
-    for node_name in node_list:
-        try:
-            tree_nodes[node_name].process()
-        except Exception as e:
-            raise type(e)(str(e) + f' @ {node_name} node. {process_name} number: {iteration}')
 
 socket_labels = {'Range': 'Break', 'For_Each': 'Skip'}
 
@@ -184,20 +178,6 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
 
         return False
 
-    def get_affected_nodes(self, loop_in_node):
-        tree = self.id_data
-        nodes_to_loop_out = make_tree_from_nodes([self.name], tree, down=False)
-        nodes_from_loop_in = make_tree_from_nodes([loop_in_node.name], tree, down=True)
-        nodes_from_loop_out = make_tree_from_nodes([self.name], tree, down=True)
-
-        set_nodes_from_loop_in = frozenset(nodes_from_loop_in)
-        set_nodes_from_loop_out = frozenset(nodes_from_loop_out)
-
-        intersection = [x for x in nodes_to_loop_out if x in set_nodes_from_loop_in and tree.nodes[x].bl_idname != 'NodeReroute']
-        related_nodes = [x for x in nodes_from_loop_in if x not in set_nodes_from_loop_out and x not in intersection]
-
-        return intersection, related_nodes
-
     def ready(self):
         if not self.inputs[0].is_linked:
             print("Inner Loop not connected")
@@ -222,38 +202,43 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             self.for_each_mode(loop_in_node)
 
-    def break_loop(self):
-        stop_ = self.inputs['Break'].sv_get(deepcopy=False, default=[[False]])
-        return stop_[0][0]
-
-    def append_data(self, out_data):
-        if not self.break_loop():
-            for inp, out in zip(self.inputs[2:len(self.outputs)+2], out_data):
-                out.append(inp.sv_get(deepcopy=False, default=[[]])[0])
-
     def for_each_mode(self, loop_in_node):
-
         list_match = list_match_func[loop_in_node.list_match]
         params = list_match([inp.sv_get(deepcopy=False, default=[]) for inp in loop_in_node.inputs[1:-1]])
 
         if len(params[0]) == 1:
-            if not self.break_loop():
+            if not self.inputs['Break'].sv_get(deepcopy=False, default=[[False]])[0][0]:
                 for inp, outp in zip(self.inputs[2:], self.outputs):
                     outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
             else:
                 for outp in self.outputs:
                     outp.sv_set([])
         else:
-            intersection, related_nodes = self.get_affected_nodes(loop_in_node)
-            if self.bad_inner_loops(intersection):
+            tree = UpdateTree.get(self.id_data)
+            from_nodes = tree.nodes_from([loop_in_node])
+            to_nodes = tree.nodes_to([self])
+            loop_nodes = from_nodes.intersection(to_nodes)
+            sort_loop_nodes = tree.sort_nodes(loop_nodes)
+            break_socket = tree.previous_sockets(self)[1]
+
+            if self.bad_inner_loops((n.name for n in loop_nodes)):
                 raise Exception("Loops inside not well connected")
 
-            tree_nodes = self.id_data.nodes
             do_print = loop_in_node.print_to_console
             idx = 0
             out_data = [[] for inp in self.inputs[2:]]
-            do_update(intersection[:-1], tree_nodes)
-            self.append_data(out_data)
+
+            # the nodes should be cleared out from last loop data
+            for node in sort_loop_nodes[:-1]:
+                tree.update_node(node)
+
+            if not break_socket or not break_socket.sv_get(default=[[False]])[0][0]:
+                for inp, out in zip(tree.previous_sockets(self)[2:len(self.outputs) + 2], out_data):
+                    if inp is not None:
+                        out.append(inp.sv_get()[0])
+                    else:
+                        out.append([])
+
             for item_params in zip(*params):
                 if idx == 0:
                     idx += 1
@@ -264,52 +249,76 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                 idx += 1
                 if do_print:
                     print(f"Looping Object Number {idx}")
-                process_looped_nodes(intersection[1:-1], tree_nodes, 'Element', idx)
-                self.append_data(out_data)
+                for node in sort_loop_nodes[1:-1]:
+                    try:
+                        tree.update_node(node, suppress=False)
+                    except Exception:
+                        raise Exception(f"Element: {idx}")
+
+                if not break_socket or not break_socket.sv_get(default=[[False]])[0][0]:
+                    for inp, out in zip(tree.previous_sockets(self)[2:len(self.outputs) + 2], out_data):
+                        if inp is not None:
+                            out.append(inp.sv_get()[0])
+                        else:
+                            out.append([])
 
             for inp, outp in zip(out_data, self.outputs):
                 outp.sv_set(inp)
 
-            do_update(related_nodes, self.id_data.nodes)
+            from_out_nodes = tree.nodes_from([self])
+            side_loop_nodes = from_nodes - from_out_nodes - loop_nodes
+            for node in tree.sort_nodes(side_loop_nodes):
+                tree.update_node(node)
 
     def range_mode(self, loop_in_node):
-        if loop_in_node.iterations == 0:
+        iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
+        if iterations == 0:
             for inp, outp in zip(loop_in_node.inputs[1:-1], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
 
-        elif loop_in_node.iterations == 1:
+        elif iterations == 1:
 
             for inp, outp in zip(self.inputs[2:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
         else:
+            tree = UpdateTree.get(self.id_data)
+            from_nodes = tree.nodes_from([loop_in_node])
+            to_nodes = tree.nodes_to([self])
+            loop_nodes = from_nodes.intersection(to_nodes)
+            sort_loop_nodes = tree.sort_nodes(loop_nodes)
+            break_socket = tree.previous_sockets(self)[1]
 
-            intersection, related_nodes = self.get_affected_nodes(loop_in_node)
-            if self.bad_inner_loops(intersection):
+            if self.bad_inner_loops((n.name for n in loop_nodes)):  # todo pass real nodes
                 raise Exception("Loops inside not well connected")
 
             do_print = loop_in_node.print_to_console
-            iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
-            tree_nodes = self.id_data.nodes
-            do_update(intersection[:-1], tree_nodes)
+
+            # the nodes should be cleared out from last loop data
+            for node in sort_loop_nodes[:-1]:
+                tree.update_node(node)
 
             for i in range(iterations-1):
-                if self.break_loop():
+                if break_socket and break_socket.sv_get(default=[[False]])[0][0]:
                     break
-                for j, socket in enumerate(self.inputs[2:]):
+                for j, socket in enumerate(tree.previous_sockets(self)[2:]):
                     data = socket.sv_get(deepcopy=False, default=[])
                     loop_in_node.outputs[j+3].sv_set(data)
                 loop_in_node.outputs['Loop Number'].sv_set([[i+1]])
                 if do_print:
                     print(f"Looping iteration Number {i+1}")
-                process_looped_nodes(intersection[1:-1], tree_nodes, 'Iteration', i+1)
+                for node in sort_loop_nodes[1:-1]:
+                    try:
+                        tree.update_node(node, suppress=False)
+                    except Exception:
+                        raise Exception(f"Iteration number: {i+1}")
 
-
-            for inp, outp in zip(self.inputs[2:], self.outputs):
+            for inp, outp in zip(tree.previous_sockets(self)[2:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
 
-            do_update(related_nodes, self.id_data.nodes)
-
-
+            from_out_nodes = tree.nodes_from([self])
+            side_loop_nodes = from_nodes - from_out_nodes - loop_nodes
+            for node in tree.sort_nodes(side_loop_nodes):
+                tree.update_node(node)
 
 
 def register():

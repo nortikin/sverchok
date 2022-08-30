@@ -1,7 +1,6 @@
 import importlib
 import sverchok
-from sverchok.utils.logging import debug, exception
-from sverchok.core.update_system import clear_system_cache
+from sverchok.core.socket_data import clear_all_socket_cache
 
 reload_event = False
 
@@ -11,11 +10,15 @@ root_modules = [
 ]
 
 core_modules = [
-    "sv_custom_exceptions",
-    "node_id_dict", "links", "sockets",
-    "handlers", "update_system",
-    "events", "node_group", "group_handlers"
+    "sv_custom_exceptions", "update_system",
+    "sockets", "socket_data",
+    "handlers",
+    "events", "node_group",
+    "tasks",
+    "group_update_system",
+    "event_system",
 ]
+
 
 def sv_register_modules(modules):
     for m in modules:
@@ -25,7 +28,7 @@ def sv_register_modules(modules):
                 m.register()
 
 def sv_unregister_modules(modules):
-    clear_system_cache()
+    clear_all_socket_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             try:
@@ -74,7 +77,7 @@ def handle_reload_event(nodes, imported_modules):
 
 
 def import_settings(imported_modules, sv_dir_name):
-    # "settings" treated separately incase the sverchok dir not named "sverchok"
+    # "settings" treated separately in case the sverchok dir isn't named "sverchok"
     settings = importlib.import_module(".settings", sv_dir_name)
     imported_modules.append(settings)
 
@@ -108,6 +111,13 @@ def init_bookkeeping(sv_name):
     ascii_print.show_welcome()
     auto_gather_node_classes()
 
+
+activation_message = """\n
+** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
+** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
+"""
+def interupted_activation_detected():
+    return NameError(activation_message)
 
 
 undo_handler_node_count = {}

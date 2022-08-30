@@ -15,6 +15,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import vectors_center_axis_to_matrix
 from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_idx
 from sverchok.nodes.analyzer.mesh_filter import Faces
+from .edge_utils import adjacent_faces_idx
 
 
 def areas_from_polygons(verts, polygons, sum_faces=False):
@@ -112,78 +113,35 @@ def pols_sides(faces, sum_sides=False):
         vals = [sum(vals)]
     return vals
 
+
 def pols_adjacent(pols):
-    '''
+    """
     returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
-    '''
-    vals = []
-    edges = []
-    pols_eds = []
-    for pol in pols:
-        pol_edgs = []
-        for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = tuple(sorted(edge))
-            pol_edgs.append(e_s)
-            edges.append(e_s)
-        pols_eds.append(pol_edgs)
-    edges = list(set(edges))
+    """
+    return [[pols[i] for i in p_indexes] for p_indexes in pols_adjacent_idx(pols)]
 
-    ad_faces = [[] for e in edges]
-    for pol, eds in zip(pols, pols_eds):
-        for edge in eds:
-            idx = edges.index(edge)
-            ad_faces[idx] += [pol]
-
-    for pol, edgs in zip(pols, pols_eds):
-        col_pol = []
-        for edge in edgs:
-            idx = edges.index(edge)
-            col_pol.extend(ad_faces[idx])
-            col_pol.remove(pol)
-        vals.append(col_pol)
-
-    return vals
 
 def pols_adjacent_idx(pols):
-    '''
+    """
     returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
-    '''
-    vals = []
-    edges = []
-    pols_eds = []
-    for pol in pols:
-        pol_edgs = []
-        for edge in zip(pol, pol[1:] + [pol[0]]):
-            e_s = tuple(sorted(edge))
-            pol_edgs.append(e_s)
-            edges.append(e_s)
-        pols_eds.append(pol_edgs)
-    edges = list(set(edges))
+    """
+    edges = {tuple(sorted(e)): None for pol_edges in pols_edges(pols) for e in pol_edges}
+    edges = {e: adj_indexes for e, adj_indexes in zip(edges.keys(), adjacent_faces_idx(edges.keys(), pols))}
+    adj_pols = []
+    for ei, pol_edges in enumerate(pols_edges(pols)):
+        adj_pols.append(list({fi for e in pol_edges for fi in edges[tuple(sorted(e))]} - {ei}))
+    return adj_pols
 
-    ad_faces = [[] for e in edges]
-    for pol_idx, eds in zip(range(len(pols)), pols_eds):
-        for edge in eds:
-            idx = edges.index(edge)
-            ad_faces[idx] += [pol_idx]
-
-    for pol_idx, edgs in zip(range(len(pols)), pols_eds):
-        col_pol = []
-        for edge in edgs:
-            idx = edges.index(edge)
-            col_pol.extend(ad_faces[idx])
-            col_pol.remove(pol_idx)
-        vals.append(col_pol)
-
-    return vals
 
 def pols_adjacent_num(pols):
-    '''
+    """
     returns the number polygons that share a vertex with each polygon [int, int,..]]
     pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
-    '''
-    return [len(p) for p in pols_adjacent(pols)]
+    """
+    return [len(p) for p in pols_adjacent_idx(pols)]
+
 
 def pols_neighbor(verts, pols):
     '''
@@ -282,12 +240,12 @@ def pols_shell_factor(vertices, faces):
 
 def np_faces_perimeters(v_pols):
 
-    return np.sum(edges_lenghts(v_pols), axis=1)
+    return np.sum(edges_lengths(v_pols), axis=1)
 
 def vertex_weight_factor(v_pols):
-    ed_lenghts = edges_lenghts(v_pols)
-    perimeters = np.sum(ed_lenghts, axis=1)
-    edges_prop = ed_lenghts/perimeters[:, np.newaxis]
+    ed_lengths = edges_lengths(v_pols)
+    perimeters = np.sum(ed_lengths, axis=1)
+    edges_prop = ed_lengths/perimeters[:, np.newaxis]
     return (edges_prop + np.roll(edges_prop, 1, axis=1))/2
 
 def np_center_median(v_pols):
@@ -303,7 +261,7 @@ def np_center_weighted(v_pols):
 
     return np.sum(v_pols * v_factor[:, :, np.newaxis], axis=1)
 
-def edges_lenghts(v_pols):
+def edges_lengths(v_pols):
     return np.linalg.norm(v_pols-np.roll(v_pols, 1, axis=1), axis=2)
 
 def np_tangent_longest_edge(v_pols):

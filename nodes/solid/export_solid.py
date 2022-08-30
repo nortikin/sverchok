@@ -22,6 +22,10 @@ if FreeCAD is None:
 else:
 
     from FreeCAD import Part
+    try:
+        import Part as PartModule
+    except ImportError:
+        PartModule = Part
 
     from sverchok.utils.solid import to_solid
 
@@ -44,18 +48,18 @@ else:
 
             folder_path = node.inputs[0].sv_get()[0][0]
             objects = node.inputs['Solids'].sv_get()
-            #objects = flatten_data(objects, data_types=(Part.Shape, SvCurve, SvSurface))
+            #objects = flatten_data(objects, data_types=(PartModule.Shape, SvCurve, SvSurface))
             base_name = node.base_name
             if not base_name:
                 base_name = "sv_solid"
             for i, shape in enumerate(objects):
-                #shape = map_recursive(to_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
+                #shape = map_recursive(to_solid, object, data_types=(PartModule.Shape, SvCurve, SvSurface))
                 debug("Exporting", shape)
                 if isinstance(shape, (list, tuple)):
-                    shape = flatten_data(shape, data_types=(Part.Shape,))
+                    shape = flatten_data(shape, data_types=(PartModule.Shape,))
                 if isinstance(shape, (list,tuple)):
                     debug("Make compound:", shape)
-                    shape = Part.Compound(shape)
+                    shape = PartModule.Compound(shape)
                 file_path = folder_path + base_name + "_"  + "%05d" % i
 
                 if node.mode == "BREP":

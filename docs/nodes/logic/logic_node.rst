@@ -1,5 +1,5 @@
-Logic
-=====
+Logic Functions
+===============
 
 Functionality
 -------------
@@ -50,10 +50,6 @@ Advanced Parameters
 -------------------
 
 In the N-Panel (and on the right-click menu) you can find:
-
-**Input 1 Type**: offers int / float selection for socket 1. (Just on N-panel)
-
-**Input 2 Type**: offers int / float selection for socket 2. (Just on N-panel)
 
 **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available for GCD or Round-N]
 

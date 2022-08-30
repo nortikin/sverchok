@@ -19,16 +19,16 @@ Parameters
 ----------
 
 +------------------+---------------+-------------+-------------------------------------------------+
-| Param            | Type          | Default     | Description                                     |  
+| Param            | Type          | Default     | Description                                     |
 +==================+===============+=============+=================================================+
 | mode             | Enum          | Lerp        | - **Lerp** will linear interpolate once between |
-|                  |               |             |   each corresponding Vector                     |   
-|                  |               |             |                                                 | 
+|                  |               |             |   each corresponding Vector                     |
+|                  |               |             |                                                 |
 |                  |               |             | - **Evaluate** will repeatedly interpolate      |
 |                  |               |             |   between each member of vectors A and B for    |
 |                  |               |             |   all items in Factor input (see example)       |
 +------------------+---------------+-------------+-------------------------------------------------+
-| **Vertex A**     | Vector        | None        | first group of vertices (Stream)                | 
+| **Vertex A**     | Vector        | None        | first group of vertices (Stream)                |
 +------------------+---------------+-------------+-------------------------------------------------+
 | **Vertex B**     | Vector        | None        | second group of vertices (Stream)               |
 +------------------+---------------+-------------+-------------------------------------------------+
@@ -40,7 +40,7 @@ Parameters
 Outputs
 -------
 
-The content of **EvPoint** depends on the current mode of the node, but it will always be a list (or multiple lists) of Vectors. 
+The content of **EvPoint** depends on the current mode of the node, but it will always be a list (or multiple lists) of Vectors.
 
 
 Example of usage
@@ -50,19 +50,19 @@ Example of usage
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png
 
-**-0.5**  
+**-0.5**
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png
 
-**1.5**  
+**1.5**
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png
 
-**range float `0.0 ... 1.0   n=10`  Evaluate**  
+**range float `0.0 ... 1.0   n=10`  Evaluate**
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png
 
-**range float `0.0 ... 1.0   n=10`  Lerp**  
+**range float `0.0 ... 1.0   n=10`  Lerp**
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png
 

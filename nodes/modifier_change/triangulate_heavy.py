@@ -17,14 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
-import mathutils
 from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-
+from sverchok.data_structure import match_long_repeat
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 """
 
@@ -33,10 +31,11 @@ out the bug in the original node.
 
 """
 
-class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Triangulate mesh (Heavy)'''
+
+class SvHeavyTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+    ''' Triangulate Mesh (Heavy)'''
     bl_idname = 'SvHeavyTriangulateNode'
-    bl_label = 'Triangulate mesh (heavy)'
+    bl_label = 'Triangulate Mesh (Heavy)'
     bl_icon = 'MOD_TRIANGULATE'
 
     def sv_init(self, context):
@@ -46,6 +45,13 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.ouputs[0]),
+            (self.inputs[1], self.ouputs[2]),
+        ]
 
     def process(self):
 

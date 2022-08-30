@@ -10,7 +10,7 @@ This node calculates several types of information about implicitly defined surfa
 * Gauss Curvature
 * Mean Curvature
 
-You can refer to Wikipedia_ for more detailed information about these terms.
+You can refer to Wkikpedia_ for more detailed information about these terms.
 
 .. _Wkikpedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 

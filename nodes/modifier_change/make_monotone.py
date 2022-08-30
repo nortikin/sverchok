@@ -13,16 +13,17 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.make_monotone import monotone_sv_face_with_holes
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvMakeMonotone(bpy.types.Node, SverchCustomTreeNode):
+class SvMakeMonotone(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Split face into monotone pieces
     Can spilt face with holes
     One object - one polygon
     """
     bl_idname = 'SvMakeMonotone'
-    bl_label = 'Make monotone'
+    bl_label = 'Make Monotone'
     bl_icon = 'MOD_MESHDEFORM'
 
     accuracy: bpy.props.IntProperty(name='Accuracy', description='Some errors of the node '
@@ -35,6 +36,10 @@ class SvMakeMonotone(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Hole polygons')
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Polygons')
+
+    @property
+    def sv_internal_links(self):
+        return [(self.inputs[0], self.outputs[0])]
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'accuracy')

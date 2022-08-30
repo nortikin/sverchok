@@ -150,12 +150,12 @@ This node has the following parameters:
   used for interpolation along V direction. The available values are:
 
    * Manhattan
-   * Euclidian
+   * Euclidean
    * Points (just number of points from the beginning)
    * Chebyshev
-   * Centripetal (square root of Euclidian distance).
+   * Centripetal (square root of Euclidean distance).
 
-   The default option is Euclidian.
+   The default option is Euclidean.
 
 Outputs
 -------

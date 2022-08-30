@@ -18,16 +18,17 @@
 
 from math import pi
 import bpy
-import bmesh
 from bmesh.ops import transform, extrude_discrete_faces
 from mathutils import Matrix, Vector
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeSeparateLiteNode(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Inset like behaviour but way different '''
     bl_idname = 'SvExtrudeSeparateLiteNode'
     bl_label = 'Extrude Separate Faces Lite'
@@ -56,6 +57,13 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
         onew('SvStringsSocket', 'Polygons')
         onew('SvStringsSocket', 'ExtrudedPolys')
         onew('SvStringsSocket', 'OtherPolys')
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[2]),
+        ]
 
     def process(self):
         outputs = self.outputs

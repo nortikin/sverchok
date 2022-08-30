@@ -32,7 +32,7 @@ from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh as calc_mesh_no
 class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
-    bl_label = 'Select mesh elements by location'
+    bl_label = 'Select Mesh Elements by Location'
     bl_icon = 'UV_SYNC_SELECT'
     replacement_nodes = [('SvMeshSelectNodeMk2', None, None)]
     modes = [
@@ -137,7 +137,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return result
 
     def by_normal(self, vertices, edges, faces):
-        vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+        face_normals, vertex_normals = calc_mesh_normals(vertices, faces)
         percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
         direction = self.inputs['Direction'].sv_get()[0][0]
         values = [Vector(n).dot(direction) for n in face_normals]
@@ -249,7 +249,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return out_verts_mask, out_edges_mask, out_faces_mask
 
     def by_outside(self, vertices, edges, faces):
-        vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+        face_normals, vertex_normals = calc_mesh_normals(vertices, faces)
         percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
         center = self.inputs['Center'].sv_get()[0][0]
         center = Vector(center)

@@ -22,12 +22,11 @@ import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, match_long_repeat, fullList, get_data_nesting_level,
-                                     describe_data_shape, throttle_and_update_node)
+                                     describe_data_shape)
 
-class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: material index
     Tooltip: Set material index per object face
@@ -37,9 +36,17 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
 
-    @throttle_and_update_node
+    @property
+    def is_scene_dependent(self):
+        return (not self.inputs['Object'].is_linked) and self.inputs['Object'].object_ref_pointer
+
+    @property
+    def is_animation_dependent(self):
+        return (not self.inputs['Object'].is_linked) and self.inputs['Object'].object_ref_pointer
+
     def update_all_faces(self, context):
         self.inputs['FaceIndex'].hide_safe = self.all_faces
+        updateNode(self, context)
 
     all_faces: BoolProperty(name = "All Faces",
             description = "Assign materials to all faces",
@@ -58,7 +65,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
 
     matching_modes = [
             ('FACE', "Per Face", "Assign specific material for each face", 0),
-            ('OBJECT', "Per Object", "Assign signle material for the whole object", 1)
+            ('OBJECT', "Per Object", "Assign single material for the whole object", 1)
         ]
 
     matching_mode : EnumProperty(
@@ -68,8 +75,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             default = 'FACE',
             update = updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, "all_faces", toggle=True)
         if self.all_faces:
             layout.prop(self, "matching_mode", text='')
@@ -112,7 +118,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             elif materials_level == 1:
                 materials = materials_s
             else:
-                raise Exception("Materials input can consume either list of indicies or list of lists of indicies, but got " + describe_data_shape(materials_s))
+                raise Exception("Materials input can consume either list of indices or list of lists of indices, but got " + describe_data_shape(materials_s))
 
             inputs = match_long_repeat([objects, faces_s, materials])
             for obj, faces, material in zip(*inputs):
@@ -123,7 +129,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 obj.data.update()
         else:
             if materials_level != 2:
-                raise Exception("Materials input can consume only list of lists of indicies, but got " + describe_data_shape(materials_s))
+                raise Exception("Materials input can consume only list of lists of indices, but got " + describe_data_shape(materials_s))
 
             inputs = match_long_repeat([objects, faces_s, materials_s])
             for obj, faces, materials in zip(*inputs):

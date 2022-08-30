@@ -21,7 +21,6 @@ from numpy import array
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id, match_long_repeat
 from sverchok.utils.pulga_physics_core import pulga_system_init
 
@@ -46,7 +45,7 @@ def fill_past_file(p, location):
     text.clear()
     text.write(''.join(str(p)))
 
-class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Springs, Cloth
     Tooltip: Physics Engine
@@ -54,6 +53,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_idname = 'SvPulgaPhysicsNode'
     bl_label = 'Pulga Physics Lite'
     bl_icon = 'MOD_PHYSICS'
+    is_animation_dependent = True
 
     n_id : StringProperty()
 
@@ -102,7 +102,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         precision=3, update=updateNode)
 
     max_vel : FloatProperty(
-        name='Max Velocity', description='Limit maximun speed. 0 = no limit',
+        name='Max Velocity', description='Limit maximum speed. 0 = no limit',
         default=0.01, precision=3, update=updateNode)
     drag_force : FloatProperty(
         name='Drag Force', description='Movement resistance from environment',

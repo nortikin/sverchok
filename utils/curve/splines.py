@@ -40,15 +40,20 @@ class SvSplineCurve(SvCurve):
         vs = self.spline.eval(ts)
         return np.array(vs)
 
-    def tangent(self, t):
-        vs = self.spline.tangent(np.array([t]))
+    def tangent(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        vs = self.spline.tangent(np.array([t]), h=h)
         return vs[0]
 
-    def tangent_array(self, ts):
-        return self.spline.tangent(ts)
+    def tangent_array(self, ts, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        return self.spline.tangent(ts, h=h)
 
     def get_u_bounds(self):
         return self.u_bounds
+
+    def get_degree(self):
+        return self.spline.get_degree()
 
     def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
         control_points = self.spline.get_control_points()

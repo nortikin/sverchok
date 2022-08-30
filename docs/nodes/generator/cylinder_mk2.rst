@@ -74,7 +74,7 @@ Notes:
 
 
 Extended Parameters
-----------
+-------------------
 The Property Panel provides additional parameters.
 
 **Cyclic**
@@ -86,7 +86,7 @@ Outputs
 
 **Vertices**, **Edges** and **Polygons**.
 All outputs will be generated when the output sockets are connected.
-Depending on the type of the inputs the node will generate only one or multiples independant cylinder shapes.
+Depending on the type of the inputs the node will generate only one or multiples independent cylinder shapes.
 
 If **Separate** is True, the node will output the parallel sections as separate lists (verts, edges and polys).
 

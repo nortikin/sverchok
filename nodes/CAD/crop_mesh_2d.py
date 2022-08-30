@@ -11,9 +11,11 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, no_space, throttle_and_update_node
+from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges, crop_mesh_delaunay
 from sverchok.utils.decorators import deprecated
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
+
 
 @deprecated("Use sverchok.utils.geom_2d.merge_mesh.crop_mesh_delaunay")
 def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
@@ -29,7 +31,7 @@ def get_bl_crop_mesh_edges(verts, edges, verts_crop, faces_crop, mode, epsilon):
     return [v.to_3d() for v in verts_new], edges_new
 
 
-class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
+class SvCropMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Crop mesh by another mesh
     Tooltip: Can create holes or crop mesh by boundary contours
@@ -37,10 +39,9 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
     Has hidden output socket, look N panel
     """
     bl_idname = 'SvCropMesh2D'
-    bl_label = 'Crop mesh 2D'
+    bl_label = 'Crop Mesh 2D'
     bl_icon = 'MOD_BOOLEAN'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         if self.alg_mode == 'Sweep_line':
             if self.inputs[1].name != self.input_mode:
@@ -50,6 +51,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             if self.inputs[1].name != 'Faces':
                 self.inputs[1].name = 'Faces'
                 self.outputs[1].name = 'Faces'
+        updateNode(self, context)
 
     alg_mode_items = [(no_space(k), k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
     mode_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),

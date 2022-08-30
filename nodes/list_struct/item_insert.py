@@ -94,7 +94,7 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
         new_item = si['Item'].sv_get(deepcopy=False)
         indexes = si['Index'].sv_get(default=[[self.index]], deepcopy=False)
         if self.level-1:
-            out = self.get(data, new_item, self.level-1, indexes, self.set_items)
+            out = self.get_(data, new_item, self.level-1, indexes, self.set_items)
         else:
             out = self.set_items(data, new_item, indexes[0])
         out_socket.sv_set(out)
@@ -105,21 +105,25 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             data_out = data.copy() if isinstance(data, list) else list(data)
             params = list_match_func[self.list_match_local]([indexes, new_items])
             for ind, i in zip(*params):
-                if self.replace and len(data_out) > ind:
-                    data_out.pop(ind)
-                data_out.insert(ind, i)
+                idx = ind % len(data)  # translate to positive idx
+                if self.replace:
+                    data_out[idx] = i
+                else:
+                    data_out.insert(idx, i)
             return data_out
+       
         elif type(data) == np.ndarray:
             out_data = np.array(data)
             ind, items = list_match_func[self.list_match_local]([indexes, new_items])
+       
             if self.replace:
                 out_data[ind] = items
-
             else:
                 for i, item in zip(ind, items):
                     out_data = np.concatenate([data[:i], [item], data[i:]])
 
             return out_data
+       
         elif type(data) == str:
             ind, items = list_match_func[self.list_match_local]([indexes, new_items])
 
@@ -128,15 +132,16 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             for i, item in zip(ind, items):
                 out_data = out_data[:i]+ str(item) + out_data[i+add_one:]
             return out_data
+       
         return None
 
-    def get(self, data, new_items, level, items, f):
+    def get_(self, data, new_items, level, items, f):
         if level == 1:
             item_iter = repeat_last(items)
             new_item_iter = repeat_last(new_items)
-            return [self.get(obj, next(new_item_iter), level-1, next(item_iter), f) for obj in data]
+            return [self.get_(obj, next(new_item_iter), level-1, next(item_iter), f) for obj in data]
         elif level:
-            return [self.get(obj, new_items, level-1, items, f) for obj in data]
+            return [self.get_(obj, new_items, level-1, items, f) for obj in data]
         else:
             return f(data, new_items, items)
 

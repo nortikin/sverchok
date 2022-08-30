@@ -3,9 +3,10 @@ Modifier Change
 ***************
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    bevel
+   opensubdivision
    subdivide_mk2
    subdivide_lite
    subdivide_to_quads
@@ -46,3 +47,4 @@ Modifier Change
    rigid_origami
    flat_geometry
    edgenet_to_paths
+   split_mesh_elements

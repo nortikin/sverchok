@@ -23,7 +23,7 @@ import webbrowser
 import socket
 import inspect
 import bpy
-from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
+from bpy.props import StringProperty
 
 # global variables in tools
 import sverchok
@@ -118,6 +118,14 @@ class SvViewHelpForNode(bpy.types.Operator):
             string_dir = 'list_masks'
         elif filename in ('modifier'):
             string_dir = 'list_mutators'
+        elif string_dir == 'curves' or string_dir == 'curves @ primitives' or string_dir == 'curves @ bezier' or string_dir == 'curves @ nurbs':
+            string_dir = 'curve'
+        elif string_dir == 'surfaces' or string_dir == 'surfaces @ nurbs':
+            string_dir = 'surface'
+        elif string_dir == 'fields':
+            string_dir = 'field'
+        elif string_dir == 'solids' or string_dir == 'solids @ analyze':
+            string_dir = 'solid'
         elif string_dir == 'analyzers':
             string_dir = 'analyzer'
         elif string_dir == 'cad':
@@ -148,7 +156,7 @@ class SvViewHelpForNode(bpy.types.Operator):
         # valid doc link!
         help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
-            destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
+            destination = 'http://nortikin.github.io/sverchok/docs/nodes/' + help_url + '.html'
         elif self.kind == 'offline':
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
@@ -159,20 +167,16 @@ class SvViewHelpForNode(bpy.types.Operator):
         return {'FINISHED'}
 
     def throw_404(self, n):
-        # bl_label of some nodes is edited by us, but those nodes do have docs ..
-        _dirname = os.path.dirname(sverchok.__file__)
-        path1 = os.path.join(_dirname, 'docs', '404.html')
-        path2 = os.path.join(_dirname, 'docs', '404_custom.html')
 
-        with open(path1) as origin:
-            with open(path2, 'w') as destination:
-                for line in origin:
-                    if '{{variable}}' in line:
-                        destination.write(line.replace("{{variable}}", n.bl_label))
-                    else:
-                        destination.write(line)
+        if hasattr(n, "bl_label"):
+            slug = f"?param1={n.bl_idname}"
+            url = 'https://sverchok.github.io/missing_doc_handler/index.html' + slug
+            webbrowser.open(url)
 
-        webbrowser.open(path2)
+        else:
+            self.report({'INFO'}, "This Node does not have bl_label")
+            return
+        
 
 
 class SvViewSourceForNode(bpy.types.Operator):
@@ -343,10 +347,16 @@ def idname_draw(self, context):
     op.new_bl_idname = bl_idname
 
 
+def show_sv_version(self, context):
+    if displaying_sverchok_nodes(context):
+        self.layout.label(text=sverchok.VERSION)
+
+
 def register():
     branch = get_branch()
     if branch:
         bpy.types.NODE_HT_header.append(node_show_branch)
+    bpy.types.NODE_HT_header.append(show_sv_version)
 
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)

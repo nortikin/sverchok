@@ -12,9 +12,9 @@ Inputs / Parameters
 
 
 +------------------+-------------+----------------------------------------------------------------------+
-| Param            | Type        | Description                                                          |  
+| Param            | Type        | Description                                                          |
 +==================+=============+======================================================================+
-| **Verts_Line A** | Vertices    |  It will get the first and last vertices's to define the line segment| 
+| **Verts_Line A** | Vertices    | It will get the first and last vertices's to define the line segment |
 +------------------+-------------+----------------------------------------------------------------------+
 | **Verts_Line B** | Vertices    | It will get the first and last vertices's to define the line segment |
 +------------------+-------------+----------------------------------------------------------------------+

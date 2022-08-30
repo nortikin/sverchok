@@ -13,7 +13,7 @@ In this mode the all the data inputted to the Loop In node will be processed eve
 For Each
 --------
 
-In this mode the inputted data will be splitted before being processed and there will be one loop per every level 1 object.
+In this mode the inputted data will be split before being processed and there will be one loop per every level 1 object.
 
 Operators
 ---------

@@ -17,13 +17,13 @@ Inputs & Parameters
 +================+=======================+============================================================================+
 | radius         | single value or list  | radius of corner fillets                                                   |
 +----------------+-----------------------+----------------------------------------------------------------------------+
-| arc div        | single value or list  | number of divisions in the fillet                                          | 
+| arc div        | single value or list  | number of divisions in the fillet                                          |
 +----------------+-----------------------+----------------------------------------------------------------------------+
 | lin div        | single value or list  | number of internal divisions on straight parts (``[0..1]`` or ``[1..20]``) |
 +----------------+-----------------------+----------------------------------------------------------------------------+
 | Vector Size    | single vector or list | x y z dimensions for each box                                              |
 +----------------+-----------------------+----------------------------------------------------------------------------+
-| div type       | 3way switch, integers | just corners, corners and edges, all                                       |  
+| div type       | 3way switch, integers | just corners, corners and edges, all                                       |
 +----------------+-----------------------+----------------------------------------------------------------------------+
 | odd axis align | 0..1 on or off        | internal rejiggery, not sure.                                              |
 +----------------+-----------------------+----------------------------------------------------------------------------+

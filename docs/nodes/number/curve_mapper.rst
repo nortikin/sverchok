@@ -30,7 +30,7 @@ This node has the following outputs:
   always lying in XOY plane along the OX axis. The domain of the curve is
   defined by **Min X** and **Max X** parameters, which are defined in the curve
   editor widget.
-* **Control Points: Location over the XOY Plane of the control points of the widget.
+* **Control Points**: Location over the XOY Plane of the control points of the widget.
   It can be used as a 2D slider.
 
 Examples

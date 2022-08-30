@@ -7,7 +7,7 @@ Functionality
 This node generates an adaptive tessellation for the given surface, i.e. the
 mesh which represents the surface, and has smaller amount of subdivisions in
 places where the mesh is nearly flat and more subdivisions where the surface
-behaivour is more interesting.
+behaviour is more interesting.
 
 In most cases, one converts a Surface object into a mesh by use of "Evaluate
 Surface" node. That node generates a subdivision by cartesian (rectangular)
@@ -68,7 +68,7 @@ computations involved. Thus, the node can not handle all cases. Especially,
   "sharp edges" (if any). If you happen to know where such edges should be (in
   terms of surface's U/V coordinates), use the "AddUVPoints" input.
 * When surface curvature values are used, the node may not handle very well
-  so-called "signular points" of the surface (if it happens to have any) -
+  so-called "singular points" of the surface (if it happens to have any) -
   places where different values of U/V coordinates are mapped into one point in
   space. For example, a sphere with usual polar parametrisation has such points
   at the poles.

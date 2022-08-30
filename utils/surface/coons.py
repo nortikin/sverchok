@@ -11,11 +11,12 @@ from sverchok.utils.logging import info, debug
 from sverchok.utils.nurbs_common import from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
-from sverchok.utils.curve.nurbs import SvNurbsCurve, unify_two_curves
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import reverse_curve, reparametrize_curve
+from sverchok.utils.curve.nurbs_algorithms import unify_curves, unify_two_curves
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.surface.algorithms import SvCurveLerpSurface
+from sverchok.utils.surface.algorithms import SvCurveLerpSurface, unify_nurbs_surfaces
 
 class SvCoonsSurface(SvSurface):
     __description__ = "Coons Patch"
@@ -66,52 +67,36 @@ class SvCoonsSurface(SvSurface):
     def evaluate_array(self, us, vs):
         return self.linear1.evaluate_array(1-us, 1-vs) + self.linear2.evaluate_array(1-vs, us) - self._calc_b(1-us, 1-vs, True)
 
-def coons_surface(curve1, curve2, curve3, curve4):
+GENERIC = 'GENERIC'
+NURBS_ONLY = 'NURBS'
+NURBS_IF_POSSIBLE = 'NURBS_OPTION'
+
+def coons_surface(curve1, curve2, curve3, curve4, use_nurbs=NURBS_IF_POSSIBLE):
     curves = [curve1, curve2, curve3, curve4]
     nurbs_curves = [SvNurbsCurve.to_nurbs(c) for c in curves]
-    if any(c is None for c in nurbs_curves):
+    if use_nurbs == GENERIC:
         return SvCoonsSurface(*curves)
+    if any(c is None for c in nurbs_curves):
+        if use_nurbs == NURBS_ONLY:
+            raise UnsupportedCurveTypeException("Some of curves are not NURBS")
+        else:
+            return SvCoonsSurface(*curves)
     try:
         nurbs_curves = [c.reparametrize(0,1) for c in nurbs_curves]
         degrees = [c.get_degree() for c in nurbs_curves]
         implementation = nurbs_curves[0].get_nurbs_implementation()
 
-        if degrees[0] > degrees[2]:
-            nurbs_curves[2] = nurbs_curves[2].elevate_degree(delta = degrees[0] - degrees[2])
-        if degrees[2] > degrees[0]:
-            nurbs_curves[0] = nurbs_curves[0].elevate_degree(delta = degrees[2] - degrees[0])
-        if degrees[1] > degrees[3]:
-            nurbs_curves[3] = nurbs_curves[3].elevate_degree(delta = degrees[1] - degrees[3])
-        if degrees[3] > degrees[1]:
-            nurbs_curves[1] = nurbs_curves[1].elevate_degree(delta = degrees[3] - degrees[1])
+        nurbs_curves[0], nurbs_curves[2] = unify_curves([nurbs_curves[0], nurbs_curves[2]])
+        nurbs_curves[1], nurbs_curves[3] = unify_curves([nurbs_curves[1], nurbs_curves[3]])
 
         degree_u = nurbs_curves[0].get_degree()
         degree_v = nurbs_curves[1].get_degree()
-
-        knotvectors = [c.get_knotvector() for c in nurbs_curves]
-        if not sv_knotvector.equal(knotvectors[0], knotvectors[2]):
-            nurbs_curves[0], nurbs_curves[2] = unify_two_curves(nurbs_curves[0], nurbs_curves[2])
-        if not sv_knotvector.equal(knotvectors[1], knotvectors[3]):
-            nurbs_curves[1], nurbs_curves[3] = unify_two_curves(nurbs_curves[1], nurbs_curves[3])
 
         nurbs_curves[0] = reverse_curve(nurbs_curves[0])
         nurbs_curves[3] = reverse_curve(nurbs_curves[3])
 
         ruled1 = nurbs_curves[0].make_ruled_surface(nurbs_curves[2], 0, 1)
         ruled2 = nurbs_curves[1].make_ruled_surface(nurbs_curves[3], 0, 1).swap_uv()
-        ruled1 = ruled1.elevate_degree(SvNurbsSurface.V, target=degree_v)
-        ruled2 = ruled2.elevate_degree(SvNurbsSurface.U, target=degree_u)
-
-        diff_1to2 = sv_knotvector.difference(ruled1.get_knotvector_v(), ruled2.get_knotvector_v())
-        diff_2to1 = sv_knotvector.difference(ruled2.get_knotvector_u(), ruled1.get_knotvector_u())
-
-        for v, count in diff_1to2:
-            #print(f"R1: insert V={v} {count} times")
-            ruled1 = ruled1.insert_knot(SvNurbsSurface.V, v, count)
-        for u, count in diff_2to1:
-            #print(f"R2: insert U={u} {count} times")
-            ruled2 = ruled2.insert_knot(SvNurbsSurface.U, u, count)
-        #print(f"R1: {ruled1.get_control_points().shape}, R2: {ruled2.get_control_points().shape}")
 
         linear_kv = sv_knotvector.generate(1, 2)
 
@@ -136,17 +121,9 @@ def coons_surface(curve1, curve2, curve3, curve4):
                     linear_kv, linear_kv,
                     linear_pts, linear_weights)
 
-        bilinear = bilinear.elevate_degree(SvNurbsSurface.U, target=degree_u)
-        bilinear = bilinear.elevate_degree(SvNurbsSurface.V, target=degree_v)
-
+        ruled1, ruled2, bilinear = unify_nurbs_surfaces([ruled1, ruled2, bilinear])
         knotvector_u = ruled1.get_knotvector_u()
-        knotvector_v = ruled2.get_knotvector_v()
-        for u, count in sv_knotvector.get_internal_knots(knotvector_u, output_multiplicity=True):
-            #print(f"B: insert U={u} {count} times")
-            bilinear = bilinear.insert_knot(SvNurbsSurface.U, u, count)
-        for v, count in sv_knotvector.get_internal_knots(knotvector_v, output_multiplicity=True):
-            #print(f"B: insert V={v} {count} times")
-            bilinear = bilinear.insert_knot(SvNurbsSurface.V, v, count)
+        knotvector_v = ruled1.get_knotvector_v()
 
         control_points = ruled1.get_control_points() + ruled2.get_control_points() - bilinear.get_control_points()
         weights = ruled1.get_weights() + ruled2.get_weights() - bilinear.get_weights()
@@ -156,6 +133,9 @@ def coons_surface(curve1, curve2, curve3, curve4):
                     control_points, weights)
         return result
     except UnsupportedCurveTypeException as e:
-        info("Can't create a native Coons surface from curves %s: %s", curves, e)
-        return SvCoonsSurface(*curves)
+        if use_nurbs == NURBS_ONLY:
+            raise
+        else:
+            info("Can't create a native Coons surface from curves %s: %s", curves, e)
+            return SvCoonsSurface(*curves)
 

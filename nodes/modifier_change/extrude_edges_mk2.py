@@ -22,8 +22,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.mesh.extrude_edges import extrude_edges, extrude_edges_bmesh
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+
+class SvExtrudeEdgesNodeMk2(
+        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Extrude edges
     Tooltip: Extrude some edges of the mesh
@@ -33,7 +36,7 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
     implementation_items = [
-        ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transfered identically)', 0),
+        ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transferred identically)', 0),
         ('NUMPY', 'Numpy', 'Faster', 1)]
     implementation: bpy.props.EnumProperty(
         name='Implementation',
@@ -71,8 +74,13 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     def process_data(self, params):
 
         output_data = [[] for s in self.outputs]
-        extrude = extrude_edges if self.implementation == 'NUMPY' else extrude_edges_bmesh
+
         for vertices, edges, faces, edge_mask, face_data, matrices in zip(*params):
+
+            if edge_mask or self.implementation == 'BMESH':
+                extrude = extrude_edges_bmesh
+            else:
+                extrude = extrude_edges
             res = extrude(vertices, edges, faces, edge_mask, face_data, matrices)
             for o, r in zip(output_data, res):
                 o.append(r)

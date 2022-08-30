@@ -78,7 +78,7 @@ class SvSetCollection(SverchCustomTreeNode, bpy.types.Node):
     """
 
     bl_idname = 'SvSetCollection'
-    bl_label = 'Set collection'
+    bl_label = 'Set Collection'
     bl_icon = 'OUTLINER_COLLECTION'
 
     collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode)

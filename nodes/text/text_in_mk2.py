@@ -15,13 +15,11 @@ import csv
 import collections
 import json
 import ast
-import sverchok
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
 
 from sverchok.utils.sv_text_io_common import (
@@ -73,14 +71,14 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView
     """
 
     bl_idname = 'SvTextInNodeMK2'
-    bl_label = 'Text in+'
+    bl_label = 'Text In+'
     bl_icon = 'PASTEDOWN'
 
     csv_data = {}
@@ -291,11 +289,9 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             if n_id not in self.csv_data:
                 print("CSV auto reload failed, press update")
-                self.use_custom_color = True
                 self.color = FAIL_COLOR
                 return
 
-        self.use_custom_color = True
         self.color = READY_COLOR
         csv_data = self.csv_data[n_id]
         if not self.one_sock:
@@ -443,7 +439,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             print(sys.exc_info()[-1].tb_frame.f_code)
             pass
 
-        self.use_custom_color = True
         if isinstance(data, (list, tuple)):
             self.list_data[n_id] = data
             self.color = READY_COLOR
@@ -462,7 +457,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.reload_sv()
 
         if n_id not in self.list_data:
-            self.use_custom_color = True
             self.color = FAIL_COLOR
             return
 
@@ -503,7 +497,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if len(data) == 2 and data[0] in {'v', 's', 'm'}:
                 new_output_socket(self, named_socket, data[0])
             else:
-                self.use_custom_color = True
                 self.color = FAIL_COLOR
                 return
 
@@ -513,7 +506,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.load_json_data()
 
         if n_id in self.json_data:
-            self.use_custom_color = True
             self.color = READY_COLOR
 
     def load_json_data(self):
@@ -530,7 +522,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             print("Failed to load JSON data")
 
         if not json_data:
-            self.use_custom_color = True
             self.color = FAIL_COLOR
             return
 
@@ -547,11 +538,9 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.reload_json()
 
         if n_id not in self.json_data:
-            self.use_custom_color = True
             self.color = FAIL_COLOR
             return
 
-        self.use_custom_color = True
         self.color = READY_COLOR
         json_data = self.json_data[n_id]
         for item in json_data:
@@ -586,7 +575,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         #     print(sys.exc_info()[-1].tb_frame.f_code)
         #     pass
 
-        self.use_custom_color = True
         self.list_data[n_id] = data
         self.color = READY_COLOR
         self.current_text = self.text
@@ -604,7 +592,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.reload_text()
 
         if n_id not in self.list_data:
-            self.use_custom_color = True
             self.color = FAIL_COLOR
             return
 

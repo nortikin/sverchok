@@ -6,11 +6,8 @@
 # License-Filename: LICENSE
 
 import bpy
-# import mathutils
-# from mathutils import Vector
 from bpy.props import IntProperty, StringProperty, EnumProperty  # FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 
@@ -20,7 +17,7 @@ class SvFCurveMK1CB(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_label = "Callback for fcurve sampler node mk1"
     bl_options = {'INTERNAL'}
 
-class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: FCurve In
     Tooltip: Get result of curve evaluated at frame x
@@ -29,8 +26,9 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     '''
     bl_idname = 'SvFCurveInNodeMK1'
-    bl_label = 'F-Curve In'
+    bl_label = 'F-Curve Input'
     bl_icon = 'FCURVE'
+    is_scene_dependent = True
 
     def wrapped_update(self, context):
 
@@ -64,8 +62,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.inputs.new("SvStringsSocket", "Frame")
         self.outputs.new("SvStringsSocket", "Evaluated")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
         row.operator("node.sv_fcurvenodemk1_callback_with_params", text='', icon="ZOOM_IN").fn_name="add_empty"

@@ -139,7 +139,7 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     Tooltip: Get vertices bounding box (vertices, sizes, center)
     """
     bl_idname = 'SvBBoxNodeMk3'
-    bl_label = 'Bounding box'
+    bl_label = 'Bounding Box'
     bl_icon = 'SHADING_BBOX'
     sv_icon = 'SV_BOUNDING_BOX'
 
@@ -161,7 +161,7 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     min_list: BoolVectorProperty(
         name='Min', description="Show Minimum values sockets", size=3, update=update_sockets)
     max_list: BoolVectorProperty(
-        name='Max', description="Show Maximun values sockets", size=3, update=update_sockets)
+        name='Max', description="Show Maximum values sockets", size=3, update=update_sockets)
     size_list: BoolVectorProperty(
         name='Size', description="Show Size values sockets", size=3, update=update_sockets)
     implentation_modes = [

@@ -7,11 +7,10 @@
 
 import numpy as np
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
@@ -48,31 +47,25 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'DISTANCE',
             update = updateNode)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        i += 1
-        if FreeCAD is not None:
-            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD implementation",i)
-            i += 1
-            items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append(
+            (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD implementation", 2))
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['V1'].hide_safe = not self.explicit_v
         self.inputs['V2'].hide_safe = not self.explicit_v
+        updateNode(self, context)
 
     profiles_count : IntProperty(
         name = "V Sections",

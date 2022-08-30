@@ -160,7 +160,7 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-# place here (out of node) to supress warnings during headless testing. i think.
+# place here (out of node) to suppress warnings during headless testing. i think.
 def get_2d_uniform_color_shader():
     # return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     uniform_2d_vertex_shader = '''

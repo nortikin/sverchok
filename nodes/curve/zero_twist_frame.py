@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvNormalTrack
 
 class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,12 +34,12 @@ class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
                 default = True,
                 update = updateNode)
 
-        @throttle_and_update_node
         def update_sockets(self, context):
             self.outputs['CumulativeTorsion'].hide_safe = self.algorithm != 'FRENET'
+            updateNode(self, context)
 
         algorithms = [
-                ('FRENET', "Integrate torsion", "Substract torsion integral from Frenet matrices", 0),
+                ('FRENET', "Integrate torsion", "Subtract torsion integral from Frenet matrices", 0),
                 ('TRACK', "Track normal", "Try to maintain constant normal direction by tracking it along the curve", 1)
             ]
 

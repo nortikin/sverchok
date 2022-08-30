@@ -93,7 +93,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         for n in range(ns):
             n1 = ratios[n]  # size of the current column
             n2 = sum(ratios[n + 1:])  # size of all remaining columns
-            p = n1 / (n1 + n2)  # percentage split of current vs remaning columns
+            p = n1 / (n1 + n2)  # percentage split of current vs remaining columns
             # print("n = ", n, " n1 = ", n1, " n2 = ", n2, " p = ", p)
             split = col2.split(factor=p, align=aligns[n])
             col1 = split.column(align=True)
@@ -180,7 +180,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
             if gates[3]:
                 z_list.append([Z.x, Z.y, Z.z])
             if gates[0]:
-                # composite matrix: M = T * R * S (Tanslation x Rotation x Scale)
+                # composite matrix: M = T * R * S (Translation x Rotation x Scale)
                 m = [[X.x * S.x, Y.x * S.y, Z.x * S.z, L.x],
                      [X.y * S.x, Y.y * S.y, Z.y * S.z, L.y],
                      [X.z * S.x, Y.z * S.y, Z.z * S.z, L.z],
@@ -217,8 +217,8 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
             matrix_list, x_list, y_list, z_list = self.matrix_track_to(match_long_repeat(par), mT, mU, orthogonalize, gates)
             m_add(matrix_list)
             x_add([x_list])
-            y_add(y_list)
-            z_add(z_list)
+            y_add([y_list])
+            z_add([z_list])
 
         outputs["Matrix"].sv_set(matrix_lists)
         outputs["X"].sv_set(x_lists)

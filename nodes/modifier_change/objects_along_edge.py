@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, degrees, floor, ceil, copysign
+from math import floor, ceil
 from mathutils import Vector, Matrix
 import numpy as np
 
@@ -24,8 +24,10 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
+from sverchok.data_structure import updateNode, match_long_repeat, Vector_generate, Vector_degenerate
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+
 
 all_axes = [
         Vector((1.0, 0.0, 0.0)),
@@ -36,10 +38,11 @@ all_axes = [
 def Matrix_degenerate(ms):
     return [[ j[:] for j in M ] for M in ms]
 
-class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvDuplicateAlongEdgeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Duplicate meshes along edge '''
     bl_idname = 'SvDuplicateAlongEdgeNode'
-    bl_label = 'Duplicate objects along edge'
+    bl_label = 'Duplicate Objects Along Edge'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DUPLICATE'
 

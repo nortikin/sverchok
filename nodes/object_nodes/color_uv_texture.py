@@ -22,23 +22,22 @@ from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Find pixel on UV texture from mesh object and change its color'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'
     bl_icon = 'UV_DATA'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     image: StringProperty(default='', update=updateNode)
     unit_color: FloatVectorProperty(name='', default=(1.0, 1.0, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
-    def draw_buttons(self, context,   layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context,   layout):
         ob = self.inputs[0].sv_get(default=[[]])[0]
         if ob and ob.type == 'MESH':
             layout.prop_search(self, 'image', bpy.data, "images", text="")
@@ -50,12 +49,9 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         color_socket = si('SvColorSocket', 'Color on UV')
         color_socket.prop_name = 'unit_color'
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
         Object, Points, Colors = self.inputs
-        dps = get_sv_depsgraph()
+        dps = bpy.context.evaluated_depsgraph_get()
         obj = Object.sv_get()[0]  # triangulate faces
         bvh = BVHTree.FromObject(obj, dps)
         point = Points.sv_get()[0]

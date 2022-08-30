@@ -3,7 +3,7 @@ Quaternion
 **********
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    quaternion_in_mk2
    quaternion_out_mk2

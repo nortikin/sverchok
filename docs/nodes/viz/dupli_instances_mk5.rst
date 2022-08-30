@@ -11,7 +11,7 @@ low memory impact.
 The Node  has to main modes Verts and Polys.
   - In the **Verts** mode the instances will be placed at the inputted vertices.
   - In the **Polys** mode the instances will be placed with a incoming list matrices,
-  being able to rotate and scale the instances.
+    being able to rotate and scale the instances.
 
 Parameters & Features
 ---------------------

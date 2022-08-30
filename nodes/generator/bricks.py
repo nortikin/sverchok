@@ -25,6 +25,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 """
 The grid is represented by following structure:
@@ -227,7 +228,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Create a brick wall or honeycomb-like structure.
     """
     bl_idname = 'SvBricksNode'
-    bl_label = 'Bricks grid'
+    bl_label = 'Bricks Grid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BRICKS'
 
@@ -276,13 +277,13 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update=updateNode)
 
-
     faces_modes = [
             ("flat", "Flat", "Flat polygons", 0),
             ("stitch", "Stitch", "Stitch with triangles", 1),
             ("centers", "Centers", "Connect each edge with face center", 2)
         ]
 
+    @keep_enum_reference
     def available_face_modes(self, context):
         result = self.faces_modes[:]
         if self.cycle_u or self.cycle_v:

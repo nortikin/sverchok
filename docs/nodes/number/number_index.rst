@@ -3,7 +3,7 @@ Number
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    curve_mapper
    exponential

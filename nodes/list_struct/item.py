@@ -59,32 +59,27 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         self.index = old_node.item
 
     def sv_update(self):
-        '''adapt socket type to input type'''
-        if 'Data' in self.inputs and self.inputs['Data'].links:
+        """adapt socket type to input type"""
+        if self.inputs['Data'].is_linked:
             inputsocketname = 'Data'
             outputsocketname = ['Item', 'Other']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        '''main node function called every update'''
-        if self.inputs['Data'].is_linked:
-            out_item, out_other = self.outputs
-            data = self.inputs['Data'].sv_get(deepcopy=False)
-            indexes = self.inputs['Index'].sv_get(default=[[self.index]], deepcopy=False)
+        data = self.inputs['Data'].sv_get(default=[], deepcopy=False)
+        indexes = self.inputs['Index'].sv_get(deepcopy=False)
 
-            if out_item.is_linked:
-                if self.level-1:
-                    out = self.get(data, self.level-1, indexes, self.get_items)
-                else:
-                    out = self.get_items(data, indexes[0])
-                out_item.sv_set(out)
+        if self.level-1:
+            out = self.get_(data, self.level-1, indexes, self.get_items)
+        else:
+            out = self.get_items(data, indexes[0])
+        self.outputs[0].sv_set(out)
 
-            if out_other.is_linked:
-                if self.level-1:
-                    out = self.get(data, self.level-1, indexes, self.get_other)
-                else:
-                    out = self.get_other(data, indexes[0])
-                out_other.sv_set(out)
+        if self.level-1:
+            out = self.get_(data, self.level-1, indexes, self.get_other)
+        else:
+            out = self.get_other(data, indexes[0])
+        self.outputs[1].sv_set(out)
 
     def get_items(self, data, indexes):
         '''extract the indexes from the list'''
@@ -125,13 +120,16 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return None
 
-    def get(self, data, level, indexes, func):
-        '''iterative fucntion to get down to the requested level'''
+    def get_(self, data, level, indexes, func):  # get is build-in method of Node class
+        """iterative function to get down to the requested level"""
         if level == 1:
+            obj_num = max(len(data), len(indexes))
             index_iter = repeat_last(indexes)
-            return [self.get(obj, level-1, next(index_iter), func) for obj in data]
+            data_iter = repeat_last(data)
+            return [self.get_(next(data_iter), level-1, next(index_iter), func)
+                    for _ in range(obj_num)]
         elif level:
-            return [self.get(obj, level-1, indexes, func) for obj in data]
+            return [self.get_(obj, level-1, indexes, func) for obj in data]
         else:
             return func(data, indexes)
 

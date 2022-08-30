@@ -14,11 +14,10 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Union, Generator, ContextManager
 
 import bpy
-from sverchok.core.update_system import build_update_list, process_tree
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
-from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
+from sverchok.utils.handle_blender_data import BPYProperty, BlNode
 from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
@@ -58,9 +57,7 @@ class JSONImporter:
         if print_log:
             self._fails_log.report_log_result()
 
-        # Update tree
-        build_update_list(tree)
-        process_tree(tree)
+        tree.update()
 
     def import_node_settings(self, node: SverchCustomTreeNode):
         if self.structure_version < 1.0:
@@ -73,7 +70,7 @@ class JSONImporter:
         It takes first node from file and apply its settings to given node
         It is strange but it is how it was originally implemented
         """
-        node = BPYNode(node)
+        node = BlNode(node)
         for prop in node.properties:
             if prop.is_to_save:
                 prop.unset()
@@ -132,6 +129,11 @@ class TreeImporter01:
                     node_name = self._get_new_node_name(node_name)
                     parent_name = self._get_new_node_name(parent_name)
                     self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+            # mark old nodes
+            for node in self._tree.nodes:
+                if old_nodes.is_old(node):
+                    old_nodes.mark_old(node)
 
     @property
     def file_version(self) -> float:
@@ -251,9 +253,8 @@ class TreeGenerator:
         Returns itself and freezing tree what should prevent tree from updating
         but actually often tree can unfreeze itself in during importing
         """
-        with tree.throttle_update():
-            builder = cls(tree.name, log)
-            yield builder
+        builder = cls(tree.name, log)
+        yield builder
 
     def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
         """

@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from __future__ import annotations  # this will fix backward compatibility with Python 3.8 and less
+
 from inspect import isfunction
 
 import bpy
@@ -26,7 +28,7 @@ import bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
-
+from sverchok.utils.logging import debug
 
 callback_dict = {}
 point_dict = {}
@@ -50,6 +52,24 @@ def callback_enable(*args, overlay='POST_VIEW'):
 
     handle_pixel = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', overlay)
     callback_dict[n_id] = handle_pixel
+    tag_redraw_all_nodeviews()
+
+
+def draw_text(node, text: str, draw_id=None, color=(1, 1, 1, 1), scale=1., align="RIGHT", dynamic_location=True):
+    """Draw any text nearby a node, use together with callback_disable
+    align = {"RIGHT", "UP", "DOWN"} todo replace with typing.Literal"""
+    draw_id = draw_id or node.node_id
+    if draw_id in callback_dict:
+        callback_disable(draw_id)
+
+    color = color if len(color) == 4 else (*color, 1)
+    text_location = None if dynamic_location else _get_text_location(node, align)
+    handle_pixel = SpaceNodeEditor.draw_handler_add(
+        _draw_text_handler,
+        (node.id_data.tree_id, node.node_id, text, color, scale, align, text_location),
+        'WINDOW',
+        'POST_VIEW')
+    callback_dict[draw_id] = handle_pixel
     tag_redraw_all_nodeviews()
 
 
@@ -175,7 +195,81 @@ def draw_callback_px(n_id, data):
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
         # bgl.glDisable(bgl.GL_DEPTH_TEST)
-        
-        
+
+
+def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT',
+                       text_coordinates=None):
+    """Draw the text in a node tree editor nearby the given node"""
+    editor = bpy.context.space_data
+
+    if editor.type != 'NODE_EDITOR':
+        return
+
+    if editor.tree_type not in {"SverchCustomTreeType", 'SvGroupTree'}:
+        return
+
+    if not editor.edit_tree or editor.edit_tree.tree_id != tree_id:
+        return
+
+    # this is less efficient because it requires search of the node each redraw call
+    if not text_coordinates:
+        if not any(n for n in editor.edit_tree.nodes if n.node_id == node_id):
+            debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
+            return
+
+        # find node location
+        node = next(n for n in editor.edit_tree.nodes if n.node_id == node_id)
+        (x, y), z = _get_text_location(node, align), 0
+
+    # put static coordinates if there are a lot of nodes with text to draw (does not react on the node movements)
+    else:
+        (x, y), z = text_coordinates, 0
+
+    # https://github.com/nortikin/sverchok/issues/4247
+    ui_scale = bpy.context.preferences.system.ui_scale
+    x, y = x * ui_scale, y * ui_scale
+
+    # todo add scale from the preferences
+    text_height = int(15 * scale * ui_scale)
+    line_height = int(18 * scale * ui_scale)
+    font_id = 0
+    dpi = 72
+
+    blf.size(font_id, text_height, dpi)
+    blf.color(font_id, *color)
+
+    for line in text.split('\n'):
+        blf.position(font_id, x, y, z)
+        blf.draw(font_id, line)
+        y -= line_height
+
+
+def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
+    """Find location for a text nearby give node"""
+    (x, y) = node.absolute_location
+    gap = 10
+
+    # some nodes override standard attributes
+    try:
+        dx, dy = node.dimensions
+    except (TypeError, ValueError):
+        dx, dy = 1, 1  # todo would be nice to have something more sensible here
+
+    # find text location
+    if align == "RIGHT":
+        x, y = int(x + dx + gap), int(y)
+    elif align == "UP":
+        if node.hide:  # when the node is hidden its location moves slightly upper
+            max_sock_num = max(len([s for s in node.inputs if not s.hide]),
+                               len([s for s in node.outputs if not s.hide]))
+            gap += (max_sock_num * 0.3) * max_sock_num
+        x, y = int(x), int(y + gap)
+    elif align == "DOWN":
+        x, y = int(x), int(y - dy - gap)
+    else:
+        debug(f'Some node drawing text with unsupported align: {align}')
+    return x, y
+
+
 def unregister():
     callback_disable_all()

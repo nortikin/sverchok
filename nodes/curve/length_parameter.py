@@ -1,11 +1,10 @@
 import numpy as np
 
-from mathutils import Matrix
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurveLengthSolver, SvCurve
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
@@ -43,10 +42,10 @@ class SvCurveLengthParameterNode(DraftMode, bpy.types.Node, SverchCustomTreeNode
 
     mode: EnumProperty(name='Interpolation mode', default="SPL", items=modes, update=updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Length'].hide_safe = self.eval_mode != 'MANUAL'
         self.inputs['Samples'].hide_safe = self.eval_mode != 'AUTO'
+        updateNode(self, context)
 
     eval_modes = [
         ('AUTO', "Automatic", "Evaluate the curve at evenly spaced points", 0),
@@ -65,7 +64,24 @@ class SvCurveLengthParameterNode(DraftMode, bpy.types.Node, SverchCustomTreeNode
             min = 4,
             update = updateNode)
 
-    draft_properties_mapping = dict(length = 'length_draft')
+    specify_accuracy : BoolProperty(
+        name = "Specify accuracy",
+        default = False,
+        update = updateNode)
+
+    accuracy : IntProperty(
+        name = "Accuracy",
+        default = 3,
+        min = 0,
+        update = updateNode)
+
+    accuracy_draft : IntProperty(
+        name = "[D] Accuracy",
+        default = 1,
+        min = 0,
+        update = updateNode)
+
+    draft_properties_mapping = dict(length = 'length_draft', accuracy = 'accuracy_draft')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -78,6 +94,12 @@ class SvCurveLengthParameterNode(DraftMode, bpy.types.Node, SverchCustomTreeNode
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'eval_mode', expand=True)
+        layout.prop(self, 'specify_accuracy')
+        if self.specify_accuracy:
+            if self.id_data.sv_draft:
+                layout.prop(self, 'accuracy_draft')
+            else:
+                layout.prop(self, 'accuracy')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -115,10 +137,18 @@ class SvCurveLengthParameterNode(DraftMode, bpy.types.Node, SverchCustomTreeNode
             for curve, resolution, input_lengths, samples in zip_long_repeat(curves, resolutions, input_lengths_i, samples_i):
 
                 mode = self.mode
+                accuracy = self.accuracy
                 if self.id_data.sv_draft:
                     mode = 'LIN'
+                    accuracy = self.accuracy_draft
+
+                if self.specify_accuracy:
+                    tolerance = 10 ** (-accuracy)
+                else:
+                    tolerance = None
+
                 solver = SvCurveLengthSolver(curve)
-                solver.prepare(mode, resolution)
+                solver.prepare(mode, resolution, tolerance=tolerance)
 
                 if self.eval_mode == 'AUTO':
                     total_length = solver.get_total_length()

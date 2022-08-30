@@ -8,14 +8,15 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level, updateNode,
-                                     get_data_nesting_level, throttle_and_update_node)
+                                     get_data_nesting_level)
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 if FreeCAD is None:
     add_dummy('SvSelectSolidNode', 'Select Solid Elements', 'FreeCAD')
@@ -61,7 +62,6 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE', 'NORMAL_INSIDE', 'NORMAL_OUTSIDE'}
         }
 
-    @throttle_and_update_node
     def update_type(self, context):
         criteria = self.criteria_type
         available = SvSelectSolidNode.known_criteria[self.element_type]
@@ -69,6 +69,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             self.criteria_type = available[0]
         else:
             self.update_sockets(context)
+        updateNode(self, context)
 
     element_type : EnumProperty(
             name = "Select",
@@ -77,6 +78,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'VERTS',
             update = updateNode)
 
+    @keep_enum_reference
     def get_available_criteria(self, context):
         result = []
         for item in SvSelectSolidNode.criteria_types:
@@ -84,7 +86,6 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 result.append(item)
         return result
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Direction'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'PLANE', 'CYLINDER', 'DIRECTION'}
         self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER'}
@@ -92,6 +93,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Radius'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
         self.inputs['Tool'].hide_safe = self.criteria_type not in {'SOLID_DISTANCE', 'SOLID_INSIDE'}
         self.inputs['Precision'].hide_safe = self.element_type == 'VERTS' or self.criteria_type in {'SOLID_DISTANCE'}
+        updateNode(self, context)
 
     criteria_type : EnumProperty(
             name = "Criteria",

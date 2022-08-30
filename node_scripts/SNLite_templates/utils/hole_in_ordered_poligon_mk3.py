@@ -89,7 +89,7 @@ if verts_A and verts_B and edges_A and edges_B:
         #va_.append(vb[k])
         verts.append(va_)
 
-        ##### one poligon
+        ##### one polygon
         # 25,12
         fap = [k+la,i]
         if not i_do:
@@ -121,7 +121,7 @@ if verts_A and verts_B and edges_A and edges_B:
                 fap.append(n)
 
 
-        ##### two poligon
+        ##### two polygon
         # 25,12
         fap_ = [k_+la,i_]
         if i_do:

@@ -1,16 +1,14 @@
 
-from itertools import zip_longest
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, zip_long_repeat, throttle_and_update_node, fullList_deep_copy,
+from sverchok.data_structure import (updateNode, zip_long_repeat, fullList_deep_copy,
                                      repeat_last_for_length, ensure_nesting_level, split_by_count)
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
@@ -28,31 +26,26 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
         self.inputs['KnotsU'].hide_safe = self.knot_mode == 'AUTO'
         self.inputs['KnotsV'].hide_safe = self.knot_mode == 'AUTO'
+        updateNode(self, context)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsSurface.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsSurface.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        i += 1
-        if FreeCAD is not None:
-            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation",i)
-            items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsSurface.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsSurface.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append(
+            (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     input_mode : EnumProperty(
@@ -205,6 +198,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.knot_mode == 'AUTO':
                 if self.is_cyclic_u:
                     knots_u = list(range(n_u_total + degree_u + 1))
+                    knots_u = [float(u) for u in knots_u]
                 else:
                     knots_u = sv_knotvector.generate(degree_u, n_u_total)
                 self.debug("Auto knots U: %s", knots_u)
@@ -212,6 +206,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if self.is_cyclic_v:
                     knots_v = list(range(n_v_total + degree_v + 1))
+                    knots_v = [float(v) for v in knots_v]
                 else:
                     knots_v = sv_knotvector.generate(degree_v, n_v_total)
                 self.debug("Auto knots V: %s", knots_v)
@@ -226,7 +221,8 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.is_cyclic_u:
                 u_min = surf_knotvector_u[degree_u]
                 u_max = surf_knotvector_u[-degree_u-2]
-                new_surf.u_bounds = u_min, u_max
+                #new_surf.u_bounds = u_min, u_max
+                new_surf = new_surf.cut_slice('U', u_min, u_max)
                 #print("U:",new_surf.u_bounds)
             else:
                 u_min = min(surf_knotvector_u)
@@ -235,7 +231,8 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if self.is_cyclic_v:
                 v_min = surf_knotvector_v[degree_v]
                 v_max = surf_knotvector_v[-degree_v-2]
-                new_surf.v_bounds = v_min, v_max
+                #new_surf.v_bounds = v_min, v_max
+                new_surf = new_surf.cut_slice('V', v_min, v_max)
                 #print("V:",new_surf.v_bounds)
             else:
                 v_min = min(surf_knotvector_v)

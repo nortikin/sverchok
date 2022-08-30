@@ -8,10 +8,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, throttle_and_update_node, updateNode
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -41,14 +41,14 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_PROJECT_CUT_FACE'
     solid_catergory = "Inputs"
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
         self.inputs['Vector'].hide_safe = self.projection_type != 'PARALLEL'
+        updateNode(self, context)
 
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
-            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
+            ('PERSPECTIVE', "Perspective", "Use perspective projection from given point", 1),
             ('ORTHO', "Orthogonal", "Use orthogonal projection", 2),
             ('UV', "UV Trim", "Trim surface by curve(s) in surface's UV space", 3)
         ]

@@ -22,6 +22,7 @@ from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.csg_core import CSG
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 def Boolean(VA, PA, VB, PB, operation):
@@ -47,10 +48,10 @@ def Boolean(VA, PA, VB, PB, operation):
     return [vertices, faces]
 
 
-class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvCSGBooleanNodeMK2(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''CSG Boolean Node MK2'''
     bl_idname = 'SvCSGBooleanNodeMK2'
-    bl_label = 'CSG Boolean 2'
+    bl_label = 'CSG Boolean MK2'
     bl_icon = 'MOD_BOOLEAN'
 
     mode_options = [
@@ -95,6 +96,16 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket',  'Polys Nested').hide_safe = True
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Polygons')
+
+    @property
+    def sv_internal_links(self):
+        if self.nest_objs:
+            return [
+                (self.inputs['Verts Nested'], self.outputs[0]),
+                (self.inputs['Polys Nested'], self.outputs[1]),
+            ]
+        else:
+            return super().sv_internal_links
 
     def draw_buttons(self, context, layout):
         row = layout.row()

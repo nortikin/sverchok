@@ -40,7 +40,7 @@ This node has the following parameters:
   * **Ridges**. Each output mesh object will represent one ridge, i.e. a part
     of plane which separates to regions of Voronoi diagram.
   * **Regions**. Each output mesh will represent one region of Voronoi diagram,
-    with ridges that separate it from neigbours.
+    with ridges that separate it from neighbours.
 
   The default option is **Regions**.
 

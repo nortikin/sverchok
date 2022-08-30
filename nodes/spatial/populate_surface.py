@@ -5,16 +5,12 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-import random
-
 import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty, FloatProperty
-from mathutils.kdtree import KDTree
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.populate import populate_surface
 from sverchok.utils.field.scalar import SvScalarField
@@ -52,13 +48,13 @@ class SvPopulateSurfaceMk2Node(bpy.types.Node, SverchCustomTreeNode):
             min = 1,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
         self.inputs['RadiusField'].hide_safe = self.distance_mode != 'FIELD'
         self.inputs['MinDistance'].hide_safe = self.distance_mode != 'CONST'
         self.outputs['Radiuses'].hide_safe = self.distance_mode != 'FIELD'
+        updateNode(self, context)
 
     proportional : BoolProperty(
             name = "Proportional",

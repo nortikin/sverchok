@@ -17,6 +17,7 @@ from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerN
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 import sverchok.utils.meshes as me
+from sverchok.utils.logging import fix_error_msg
 
 
 class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
@@ -27,9 +28,17 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     """
 
     bl_idname = 'SvMeshViewer'
-    bl_label = 'Mesh viewer'
+    bl_label = 'Mesh Viewer'
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
+
+    replacement_nodes = [('SvViewerDrawMk4', 
+                            dict(vertices = 'Vertices',
+                                 edges = 'Edges',
+                                 faces = 'Polygons',
+                                 matrix = 'Matrix'
+                            ),
+                        None)]
 
     mesh_data: bpy.props.CollectionProperty(type=SvMeshData, options={'SKIP_SAVE'})
 
@@ -95,7 +104,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         if self.hide:
             return f"MeV {self.base_data_name}"
         else:
-            return "Mesh viewer"
+            return "Mesh Viewer"
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
@@ -177,7 +186,8 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
                 me_data.mesh.materials.clear()
                 me_data.mesh.materials.append(self.material)
             if mat_indexes:
-                mat_i = [mi for _, mi in zip(me_data.mesh.polygons, cycle(mat_i))]
+                with fix_error_msg({TypeError: "Unsupported material format"}):
+                    mat_i = [int(mi) for _, mi in zip(me_data.mesh.polygons, cycle(mat_i))]
                 me_data.mesh.polygons.foreach_set('material_index', mat_i)
             me_data.set_smooth(self.is_smooth_mesh)
 

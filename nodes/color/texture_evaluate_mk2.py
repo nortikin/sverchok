@@ -15,18 +15,15 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from colorsys import rgb_to_hls
-from itertools import repeat
+
 import bpy
-from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty, BoolProperty
-from mathutils import Vector, Matrix, Color
+from bpy.props import EnumProperty, BoolProperty
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
+from sverchok.utils.sv_IO_pointer_helpers import unpack_pointer_property_name
 from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
-                                     iter_list_match_func, no_space, throttle_and_update_node)
+                                     iter_list_match_func, no_space)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.color_utils import color_channels
 
@@ -76,9 +73,10 @@ mapper_funcs = {
     'Object': lambda v: Vector(v),
 }
 
-class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Scence Texture In
+    Triggers: Scene Texture In
     Tooltip: Evaluate Scene texture at input coordinates
 
     """
@@ -87,19 +85,23 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
     bl_label = 'Texture Evaluate'
     bl_icon = 'FORCE_TEXTURE'
 
+    @property
+    def is_scene_dependent(self):
+        return not self.inputs['Texture'].is_linked and self.texture_pointer
+
     texture_coord_modes = [
         ('UV', 'UV coordinates', 'Input UV coordinates to evaluate texture. (0 to 1 as domain)', '', 1),
         ('Object', 'Object', 'Input Object coordinates to evaluate texture. (-1 to 1 as domain)', '', 2),
 
     ]
 
-    @throttle_and_update_node
     def change_mode(self, context):
         outputs = self.outputs
         if self.color_channel not in ['Color', 'RGBA']:
             outputs[0].replace_socket('SvStringsSocket', 'Value')
         else:
             outputs[0].replace_socket('SvColorSocket', 'Color')
+        updateNode(self, context)
 
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,
@@ -144,9 +146,9 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
 
             c.prop_search(self, "texture_pointer", bpy.data, 'textures', text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
+
+    def sv_draw_buttons(self, context, layout):
         b = layout.split(factor=0.33, align=True)
         b.label(text='Mapping:')
         b.prop(self, 'tex_coord_type', expand=False, text='')
@@ -156,9 +158,8 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         if self.color_channel == 'Color':
             layout.prop(self, 'use_alpha', text="Use Alpha")
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)
 
     def rclick_menu(self, context, layout):

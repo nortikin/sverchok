@@ -3,22 +3,28 @@ Viz
 ***
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    mesh_viewer
-   viewer_metaball
-   viewer_waveform_output
-   viewer_draw_mk4
    viewer_2d
-   empty_out
+   viewer_draw_mk4
+   vd_matrix
+   viewer_idx28
+   polyline_viewer
+   viewer_curves
+   viewer_bezier_curve
    viewer_nurbs_curve
    viewer_nurbs_surface
-   console_node
-   viewer_texture
-   viewer_texture_lite
-   light_viewer
-   vd_matrix
+   viewer_metaball
+   viewer_skin
+   viewer_typography
    instancer
    dupli_instances_mk5
    dupli_instances_lite
-   polyline_viewer
+   empty_out
+   light_viewer
+   viewer_texture
+   viewer_texture_lite
+   viewer_gp
+   viewer_waveform_output
+   console_node

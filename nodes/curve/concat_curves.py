@@ -17,7 +17,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         Tooltip: Concatenate several curves into one
         """
         bl_idname = 'SvExConcatCurvesNode'
-        bl_label = 'Concat Curves'
+        bl_label = 'Concatenate Curves'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_CONCAT_CURVES'
 
@@ -41,12 +41,9 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
         def draw_buttons(self, context, layout):
             layout.prop(self, 'check')
-            if self.check:
+            layout.prop(self, 'all_nurbs')
+            if self.check or self.all_nurbs:
                 layout.prop(self, 'max_rho')
-
-        def draw_buttons_ext(self, context, layout):
-            self.draw_buttons(context, layout)
-            layout.prop(self, 'all_nurbs', toggle=True)
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curves")
@@ -87,7 +84,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.all_nurbs:
                     curves = self.to_nurbs(curves)
                 if self.all_nurbs:
-                    new_curve = concatenate_nurbs_curves(curves)
+                    new_curve = concatenate_nurbs_curves(curves, tolerance=self.max_rho)
                 else:
                     new_curve = concatenate_curves(curves)
                 curves_out.append(new_curve)

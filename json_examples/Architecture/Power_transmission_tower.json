@@ -66,13 +66,13 @@
       ],
       "params": {
         "divisions": 2,
-        "rad_": 3.5799999237060547,
+        "rad_": 3.94,
         "sides_": 4
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector polar input": {
+    "Vector Polar Input": {
       "bl_idname": "VectorPolarInNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -85,7 +85,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector polar output": {
+    "Vector Polar Output": {
       "bl_idname": "VectorPolarOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -169,7 +169,7 @@
       2
     ],
     [
-      "Vector polar input",
+      "Vector Polar Input",
       0,
       "Wireframe",
       2
@@ -183,25 +183,25 @@
     [
       "Framework",
       0,
-      "Vector polar output",
+      "Vector Polar Output",
       0
     ],
     [
       "Formula",
       0,
-      "Vector polar input",
+      "Vector Polar Input",
       0
     ],
     [
-      "Vector polar output",
+      "Vector Polar Output",
       1,
-      "Vector polar input",
+      "Vector Polar Input",
       1
     ],
     [
-      "Vector polar output",
+      "Vector Polar Output",
       2,
-      "Vector polar input",
+      "Vector Polar Input",
       2
     ],
     [
@@ -211,13 +211,13 @@
       0
     ],
     [
-      "Vector polar output",
+      "Vector Polar Output",
       0,
       "Formula",
       1
     ],
     [
-      "Vector polar output",
+      "Vector Polar Output",
       2,
       "Formula",
       2

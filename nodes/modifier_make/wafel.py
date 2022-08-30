@@ -92,7 +92,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     bindCircle: BoolProperty(
-        name='Bind2', description='circle for leyer to bind with contras',
+        name='Bind2', description='circle for layer to bind with contras',
         default=False, update=ext_draw_checking)
 
     do_contra: BoolProperty(
@@ -446,7 +446,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                                  lz1])
                                 k += 10
 
-                            # streight section
+                            # straight section
                             else:
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ

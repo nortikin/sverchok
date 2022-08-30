@@ -11,32 +11,32 @@ import copy
 from collections import deque, defaultdict
 from mathutils import Vector
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-        
+
 # === Object wrapper class ===
 class ObjectParams:
-    
+
     # Constructor
     def __init__(self, verts, edges, faces):
-        
+
         # Store the vertices, edges and faces
         self.verts = np.array(verts)
         self.num_verts = len(self.verts)
         self.edges = [tuple(sorted([e[0], e[1]])) for e in edges]
         self.faces = faces
-        
-        # Create bmesh from the datas
+
+        # Create bmesh from the data
         self.bm = bmesh_from_pydata(verts, self.edges, self.faces)
         self.bm.faces.ensure_lookup_table()
         self.bm.edges.ensure_lookup_table()
         self.bm.normal_update()
-    
+
     def free(self):
         if self.bm != None:
             self.bm.free()
 
     # Get the object-edge index from a bmesh edge
     def bm_to_obj_edge_index(self, bm_edge):
-        edge = tuple(sorted([bm_edge.verts[0].index, bm_edge.verts[1].index])) 
+        edge = tuple(sorted([bm_edge.verts[0].index, bm_edge.verts[1].index]))
         return self.edges.index(edge)
 
     # Get the object face index from a bmesh face
@@ -46,7 +46,7 @@ class ObjectParams:
             if set(f) == set(v_indices):
                 return i
         raise ValueError("Created BMesh faces is wrong")
-        
+
 # === Crease Lines class ===
 class CreaseLines:
 
@@ -73,7 +73,7 @@ class CreaseLines:
         diffs = [final - angle \
                     for final, angle in zip(final_angles, self.angles)]
 
-        # Target angles multiplyed with folding ratio
+        # Target angles multiplied with folding ratio
         self.target_angles = [angle + (diff * folding) for angle, diff \
                                 in zip(self.angles, diffs)]
         
@@ -168,7 +168,7 @@ class InsideVertex:
                     continue
                 
                 # Choose a edge connected with a vertex outside, 
-                # and next one sould be connected with vertex inside
+                # and next one should be connected with vertex inside
                 bm_vert = obj.bm.verts[target_indices[idx]]
                 is_candidate = [bm_edge.other_vert(bm_vert).index in outer_verts_indices and \
                                 not target_ccw[(i+1)%len(target_ccw)].other_vert(bm_vert).index in outer_verts_indices \
@@ -283,7 +283,7 @@ class FoldAngleCalculator:
             adjustment = -np.dot(Cp, r.T) if step_count == 1 \
                             else np.zeros(len(crease_lines.edges)).T
             
-            # Add the calcuated actual delta-rho angles
+            # Add the calculated actual delta-rho angles
             dr_actual = adjustment + np.dot((In - np.dot(Cp, C)), dr.T)
             cls.current_rhos += dr_actual
 

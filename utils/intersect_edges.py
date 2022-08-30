@@ -206,7 +206,7 @@ def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
     dist = np_dot(perp[non_parallel], dp[non_parallel])
     co_planar = np.abs(dist) < s_epsilon
     seg_v = seg_v[non_parallel][co_planar]
-    # Calculate denomitator
+    # Calculate denominator
     A = direc_a[non_parallel][co_planar]
     B = direc_b[non_parallel][co_planar]
     magA = np.linalg.norm(A, axis=1)

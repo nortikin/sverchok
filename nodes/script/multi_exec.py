@@ -18,12 +18,8 @@
 
 import json
 import bpy
-import mathutils
-import bmesh as bm
-import numpy as np
 from bpy.props import StringProperty, PointerProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
 callback_id = 'node.callback_execnodemod'
@@ -69,11 +65,13 @@ class SvExecNodeModCallback(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     '''Execute small script'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
     bl_icon = 'CONSOLE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     # depreciated
     text: StringProperty(default='', update=updateNode)
@@ -84,8 +82,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     dynamic_strings: bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         row = layout.row(align=True)
         # add() remove() clear() move()
         row.operator(callback_id, text='', icon='ZOOM_IN').cmd = 'add_new_line'
@@ -121,8 +118,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 opp2.idx = idx
 
 
-    def draw_buttons_ext(self, context, layout):
-        self.draw_animatable_buttons(layout)
+    def sv_draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
         col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
         col.prop_search(self, 'text_pointer', bpy.data, "texts", text="")
@@ -228,11 +224,10 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', 'out')
 
         # add default strings
-        with self.sv_throttle_tree_update():
-            self.dynamic_strings.add().line = lines[0]
-            self.dynamic_strings.add().line = lines[1]
-            self.dynamic_strings.add().line = ""
-            self.width = 289
+        self.dynamic_strings.add().line = lines[0]
+        self.dynamic_strings.add().line = lines[1]
+        self.dynamic_strings.add().line = ""
+        self.width = 289
 
     def process(self):
         v1, v2, v3 = self.inputs

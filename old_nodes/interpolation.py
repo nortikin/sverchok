@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 
 
-# spline function modifed from
+# spline function modified from
 # from looptools 4.5.2 done by Bart Crouch
 
 

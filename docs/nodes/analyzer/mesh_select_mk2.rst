@@ -1,4 +1,4 @@
-Select mesh elements by location
+Select Mesh Elements by Location
 ================================
 
 Functionality
@@ -26,7 +26,7 @@ Parameters
 
 This node has the following parameters:
 
-- **Mode**. Criteria type to apply. Supported criterias are:
+- **Mode**. Criteria type to apply. Supported criteria are:
 
   * **By side**. Selects vertices that are located at one side of mesh. The side is specified by **Direction** input. So you can select "rightmost" vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by **Percent** input: 1% means select only "most rightmost" vertices, 99% means select "all but most leftmost". More exactly, this mode selects vertex V if `(Direction, V) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.
   * **By normal direction**. Selects faces, that have normal vectors pointing in specified **Direction**. So you can select "faces looking to right". Number of faces to select is controlled by **Percent** input, similar to **By side** mode. More exactly, this mode selects face F if `(Direction, Normal(F)) >= max - Percent * (max - min)`, where `max` and `min` are maximum and minimum values of that scalar product amongst all vertices.

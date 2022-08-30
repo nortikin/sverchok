@@ -18,16 +18,15 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-
-from sverchok.data_structure import match_long_cycle as mlc, updateNode
 
 
-class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
     '''Armature object props'''
     bl_idname = 'SvArmaturePropsNode'
     bl_label = 'Armature Props'
     bl_icon = 'MOD_ARMATURE'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Armature Object')
@@ -39,9 +38,6 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         self.outputs.new('SvStringsSocket', 'Length of bone')
         self.outputs.new('SvMatrixSocket', "local bone matrix")
         self.outputs.new('SvObjectSocket', "Armature Object")
-        
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
 
     def process(self):
         armobj, selm = self.inputs

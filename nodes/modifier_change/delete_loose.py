@@ -21,9 +21,10 @@ from itertools import chain
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeleteLooseNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     '''Delete vertices not used in face or edge'''
 
     bl_idname = 'SvDeleteLooseNode'
@@ -40,6 +41,11 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'VertsMask')
 
     def process(self):
+        
+        # older versions of this node do not have a vertsmask socket. This upgrades them silently
+        if not self.outputs.get('VertsMask'):
+            self.outputs.new('SvStringsSocket', 'VertsMask')
+        
         if not (all([s.is_linked for s in self.inputs]) and any([s.is_linked for s in self.outputs])):
             return
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)
@@ -47,7 +53,7 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         verts_mask_out = []
         poly_edge_out = []
-        if len(poly_edge[0][0]) == 2:
+        if len(poly_edge[0]) > 0 and len(poly_edge[0][0]) == 2:
             self.outputs['PolyEdge'].label = "Edges"
         else:
             self.outputs['PolyEdge'].label = "Polygons"

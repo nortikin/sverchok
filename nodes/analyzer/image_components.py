@@ -224,7 +224,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
     filter_mode: BoolProperty(
         default=0,
         name='filter_mode',
-        description='Allows arbitary filter logic, to spit out verts (polygons are dropped)',
+        description='Allows arbitrary filter logic, to spit out verts (polygons are dropped)',
         update=updateNode)
 
     filter_str: StringProperty(

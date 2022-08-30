@@ -3,45 +3,24 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.update_system import (
-    set_first_run, clear_system_cache, reset_timing_graphs, build_update_list, process_tree)
+import sverchok.core.events as ev
+import sverchok.core.tasks as ts
+import sverchok.utils.logging as log
+from sverchok.core.event_system import handle_event
+from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
-from sverchok.utils.logging import catch_log_error
+from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
-
-pre_running = False
-sv_depsgraph = []
-depsgraph_need = False
-
-def get_sv_depsgraph():
-    global sv_depsgraph
-    global depsgraph_need
-
-    if not depsgraph_need:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-        depsgraph_need = True
-    elif not sv_depsgraph:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-
-    return sv_depsgraph
-
-def set_sv_depsgraph_need(val):
-    global depsgraph_need
-    depsgraph_need = val
 
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
-
-def get_all_sverchok_affiliated_trees():
-    sv_types = {'SverchCustomTreeType', 'SvGroupTree'}
-    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
 
 def has_frame_changed(scene):
@@ -51,7 +30,7 @@ def has_frame_changed(scene):
 
 #
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
-#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
+#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attach viewer draw"
 #  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
 #  there is never a point where the node can ask "am i connected to anything, do i need
 #  to stop drawing?". When the Undo event causes a node to be removed, its node.free function
@@ -70,72 +49,69 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
-    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.sv_links.create_new_links(ng)
-        links_changed = ng.sv_links.links_have_changed(ng)
-        if links_changed:
-            break
 
-    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
-        print('looks like a node was removed, cleaning')
+    if undo_handler_node_count['sv_groups'] != num_to_test_against:
+        debug('looks like a node was removed, cleaning')
         sv_clean(scene)
-        for ng in sverchok_trees():
-            ng.nodes_dict.load_nodes(ng)
-            ng.has_changed = True
-        sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
-
-    import sverchok.core.group_handlers as gh
-    gh.ContextTrees.reset_data()
-
 
 
 @persistent
 def sv_update_handler(scene):
     """
     Update sverchok node groups on frame change events.
+    Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+    Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+    Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+    Playing animation: has_frame_changed=True, is_animation_playing=True
+    Playing animation(stop): has_frame_changed=False, is_animation_playing=False
     """
-    if not has_frame_changed(scene):
-        return
+    if bpy.context.screen is None:  # rendering
+        is_playing = False  # should be False to update UI
+        is_frame_changed = True
+    else:
+        is_playing = bpy.context.screen.is_animation_playing
+        is_frame_changed = has_frame_changed(scene)
+    # print(f"Frame changed: {is_frame_changed}, Animation is playing: {is_playing}")
 
-    reset_timing_graphs()
-
-    for ng in sverchok_trees():
-        try:
-            # print('sv_update_handler')
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', str(e))  # name,
+    for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
+        with catch_log_error():
+            ng.process_ani(is_frame_changed, is_playing)
 
 
 @persistent
-def sv_main_handler(scene):
+def sv_scene_change_handler(scene):
     """
     On depsgraph update (pre)
     """
-    global pre_running
-    global sv_depsgraph
-    global depsgraph_need
-
-    # when this handler is called from inside another call to this handler we end early
-    # to avoid stack overflow.
-    if pre_running:
+    # When the Play Animation is on this trigger is executed once. Such event
+    # should be suppressed because it repeats animation trigger. When Play
+    # animation is on and user changes something in the scene this trigger is
+    # only called if frame rate is equal to maximum.
+    if bpy.context.screen.is_animation_playing:
         return
 
-    pre_running = True
-    if depsgraph_need:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-
-    pre_running = False
+    # scene handler can be triggered even when new node or its property
+    # is changed what causes redundant updates. Such events are created first,
+    # so it's possible to check them in the tasks object.
+    # also be aware that updates generate scene events by their selves and
+    # they have mechanism to avoid them
+    if ts.tasks:
+        return
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()
 
 
 @persistent
@@ -157,17 +133,12 @@ def sv_pre_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
-    Because Sverchok does not fully initialize itself during its initialization
-    it requires throttling of update method of loaded trees
+    4. evaluate trees from main tree handler
     """
-    clear_system_cache()
+    clear_all_socket_cache()
     sv_clean(scene)
 
-    import sverchok.core.group_handlers as gh
-    gh.NodesStatuses.reset_data()
-    gh.ContextTrees.reset_data()
-
-    set_first_run(True)
+    handle_event(ev.FileEvent())
 
 
 @persistent
@@ -178,10 +149,9 @@ def sv_post_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
+    4. evaluate trees from main tree handler
     post_load handler is also called when Blender is first ran
-    The method should remove throttling trees made in pre_load event,
-    initialize Sverchok parts which are required by loaded tree
-    and update all Sverchok trees
+    The method should initialize Sverchok parts which are required by loaded tree
     """
     from sverchok import node_tree, settings
 
@@ -199,10 +169,9 @@ def sv_post_load(scene):
     with catch_log_error():
         settings.apply_theme_if_necessary()
 
-    # release all trees and update them
-    set_first_run(False)
-    build_update_list()
-    process_tree()
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()
 
 
 def set_frame_change(mode):
@@ -227,12 +196,18 @@ def update_frame_change_mode():
     set_frame_change(mode)
 
 
+@persistent
+def save_pre_handler(scene):
+    log.clear_internal_buffer()
+
+
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'depsgraph_update_pre': sv_scene_change_handler,
+    'save_pre': save_pre_handler,
 }
 
 

@@ -25,7 +25,7 @@ if there are repeated points. It ignores overlapping edges
 **Np**
 
 This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but can produce double points that can be
-removed with the remove doubles toogle. It ignores overlapping edges
+removed with the remove doubles toggle. It ignores overlapping edges
 
 **Sweep line algorithm**
 
@@ -87,8 +87,8 @@ Three different test to determine the efficiency of the algorithms.
 |Np + RD*   |   9 ms |  1281 ms | 419789 ms/BC* |  18 ms | 3052 ms |      SC* |   5 ms | 168 ms  | 6580 ms  |
 +-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
 
-*BC = Blender Crash
-*SC = Blender Crash + Partial System Crash
+*BC = Blender Crash*
+*SC = Blender Crash + Partial System Crash*
 
 
 Inputs

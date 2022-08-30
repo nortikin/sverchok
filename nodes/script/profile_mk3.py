@@ -24,9 +24,8 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty,
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
@@ -202,7 +201,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
         for ob_points, clo in zip(op,clos):
             values += '# Spline %a\n' % (ss)
             ss += 1
-            # handles preperation
+            # handles preparation
             curves_left  = [i.handle_left_type for i in ob_points]
             curves_right = ['v']+[i.handle_right_type for i in ob_points][:-1]
             # first collect C,L values to compile them later per point
@@ -400,7 +399,8 @@ class SvProfileImportOperator(bpy.types.Operator):
 # Node class
 #################################
 
-class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: svg-like 2d profiles
     Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
@@ -414,7 +414,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
 
     bl_idname = 'SvProfileNodeMK3'
-    bl_label = 'Profile Parametric Mk3'
+    bl_label = 'Profile Parametric MK3'
     bl_icon = 'SYNTAX_ON'
 
     axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
@@ -474,7 +474,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         update = updateNode)
 
     def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
 
         row = layout.row(align=True)

@@ -3,7 +3,7 @@ Text
 ****
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    debug_print
    datetime_strings
@@ -15,3 +15,4 @@ Text
    stethoscope_v28
    gtext
    string_tools
+   simple_text

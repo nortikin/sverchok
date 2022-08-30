@@ -11,9 +11,10 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import edges_to_faces
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
+class SvEdgesToFaces2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: create polygons from given edges
     Tooltip: can generate holes in mesh
@@ -21,7 +22,7 @@ class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvEdgesToFaces2D'
-    bl_label = 'Edges to faces 2D'
+    bl_label = 'Edges to Faces 2D'
     bl_icon = 'MESH_GRID'
     sv_icon = 'SV_PLANAR_EDGES_TO_POLY'
 

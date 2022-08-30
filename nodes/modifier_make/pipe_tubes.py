@@ -17,14 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle
 from math import sin, cos, radians, sqrt
+from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorLiteNode
 
 
-class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPipeNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Pipe from edges '''
     bl_idname = 'SvPipeNode'
     bl_label = 'Pipe'

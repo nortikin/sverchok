@@ -34,9 +34,11 @@ import numpy as np
 #     1) Keep 4 items per column
 #     2) only add new function with unique number
 
+power_y_signed = lambda x: np.float_power(abs(x[0]), x[1]) * np.sign(x[0])
+
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
-    "ADD":         (0,   lambda x : x[0]+x[1],              ('ss s'), "Add"),
+    "ADD":         (0,   lambda x : x[0]+x[1],             ('ss s'), "Add"),
     "SUB":         (1,   lambda x : x[0]-x[1],             ('ss s'), "Sub"),
     "MUL":         (2,   lambda x: x[0]*x[1],              ('ss s'), "Multiply"),
     "DIV":         (3,   lambda x: x[0]/x[1],              ('ss s'), "Divide"),
@@ -44,6 +46,7 @@ func_dict = {
     "SQRT":        (10,  lambda x: np.sqrt(np.fabs(x)),    ('s s'),  "Squareroot"),
     "EXP":         (11,  lambda x: np.exp(x),              ('s s'),  "Exponent"),
     "POW":         (12,  lambda x: x[0]**x[1],             ('ss s'), "Power y"),
+    "POW_SIGNED":  (200, power_y_signed,                   ('ss s'), "Power y (signed)"),
     "POW2":        (13,  lambda x: x*x,                    ('s s'),  "Power 2"),
     "LN":          (14,  np.log,                           ('s s'),  "log"),
     "LOG10":       (20,  np.log10,                         ('s s'),  "log10"),
@@ -287,8 +290,7 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         for enum_property in enums:
             current_value = getattr(self, enum_property)
             if " " in current_value:
-                with self.sv_throttle_tree_update():
-                    setattr(self, enum_property, no_space(current_value))
+                setattr(self, enum_property, no_space(current_value))
 
 
 classes = [SvScalarMathNodeMK4]

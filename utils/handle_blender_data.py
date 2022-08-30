@@ -7,12 +7,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum
-from functools import singledispatch
+from functools import singledispatch, wraps
 from itertools import chain
-from typing import Any, List, Union
+from typing import Any, List, Union, TYPE_CHECKING
 
 import bpy
+
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree
+    from sverchok.node_tree import SverchCustomTree
 
 
 # ~~~~ collection property functions ~~~~~
@@ -100,6 +105,61 @@ def get_sv_trees():
 
 # ~~~~ encapsulation Blender objects ~~~~
 
+# In general it's still arbitrary set of functionality (like module which fully consists with functions)
+# But here the functions are combine with data which they handle
+
+class BlModifier:
+    def __init__(self, modifier):
+        self._mod: bpy.types.Modifier = modifier
+
+    def get_property(self, name):
+        return getattr(self._mod, name)
+
+    def set_property(self, name, value):
+        setattr(self._mod, name, value)
+
+    def get_tree_prop(self, name):
+        return self._mod[name]
+
+    def set_tree_prop(self, name, value):
+        self._mod[name] = value
+
+    @property
+    def type(self) -> str:
+        return self._mod.type
+
+    def __eq__(self, other):
+        if isinstance(other, BlModifier):
+            # check type
+            if self.type != other.type:
+                return False
+
+            # check properties
+            for prop in (p for p in self._mod.bl_rna.properties if not p.is_readonly):
+                if other.get_property(prop.identifier) != self.get_property(prop.identifier):
+                    return False
+
+            # check tree properties
+            if self._mod.type == 'NODES' and self._mod.node_group:
+                for tree_inp in self._mod.node_group.inputs[1:]:
+                    prop_name = tree_inp.identifier
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+                    use_name = f"{prop_name}_use_attribute"
+                    if self.get_tree_prop(use_name) != other.get_tree_prop(use_name):
+                        return False
+                    attr_name = f"{prop_name}_attribute_name"
+                    if self.get_tree_prop(attr_name) != other.get_tree_prop(attr_name):
+                        return False
+                for tree_out in self._mod.node_group.outputs[1:]:
+                    prop_name = f"{tree_out.identifier}_attribute_name"
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+
+            return True
+        else:
+            return NotImplemented
+
 
 class BlTrees:
     """Wrapping around Blender tree, use with care
@@ -107,22 +167,44 @@ class BlTrees:
     https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
     All this is True and about Blender class itself"""
 
+    MAIN_TREE_ID = 'SverchCustomTreeType'
+    GROUP_ID = 'SvGroupTree'
+
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
     @property
-    def sv_trees(self):
+    def sv_trees(self) -> Iterable[Union[SverchCustomTree, SvGroupTree]]:
+        """All Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
-        return (t for t in trees if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'})
+        return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])
 
     @property
-    def sv_main_trees(self):
+    def sv_main_trees(self) -> Iterable[SverchCustomTree]:
+        """All main Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
-        return (t for t in trees if t.bl_idname == 'SverchCustomTreeType')
+        return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
+
+    @property
+    def sv_group_trees(self) -> Iterable[SvGroupTree]:
+        """All Sverchok group trees"""
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.GROUP_ID)
 
 
-class BPYNode:
+class BlTree:
+    def __init__(self, tree):
+        self._tree = tree
+
+    @property
+    def is_group_tree(self) -> bool:
+        return self._tree.bl_idname == BlTrees.GROUP_ID
+
+
+class BlNode:
     """Wrapping around ordinary node for extracting some its information"""
+    DEBUG_NODES_IDS = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # can be added as Mix-in class
+
     def __init__(self, node):
         self.data = node
 
@@ -131,6 +213,22 @@ class BPYNode:
         """Iterator over all node properties"""
         node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, '__annotations__') else []
         return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+    @property
+    def is_debug_node(self) -> bool:
+        """Nodes which print sockets content"""
+        return self.base_idname in self.DEBUG_NODES_IDS
+
+    @property
+    def base_idname(self) -> str:
+        """SvStethoscopeNodeMK2 -> SvStethoscopeNode
+        it won't parse more tricky variants like SvStethoscopeMK2Node which I saw exists"""
+        id_name, _, version = self.data.bl_idname.partition('MK')
+        try:
+            int(version)
+        except ValueError:
+            return self.data.bl_idname
+        return id_name
 
 
 class BPYProperty:
@@ -393,3 +491,19 @@ def get_func_and_args(prop):
         return prop.function, prop.keywords
     else:
         return prop
+
+
+def keep_enum_reference(enum_func):
+    """remember you have to keep enum strings somewhere in py,
+    else they get freed and Blender references invalid memory!
+    This decorator should be used for these purposes"""
+    saved_items = dict()
+
+    @wraps(enum_func)
+    def wrapper(node, context):
+        nonlocal saved_items
+        items = enum_func(node, context)
+        saved_items[node.node_id] = items
+        return saved_items[node.node_id]
+    wrapper.keep_ref = True  # just for tests
+    return wrapper

@@ -1,5 +1,5 @@
 Flat Geometry
-========
+=============
 
 Functionality
 -------------

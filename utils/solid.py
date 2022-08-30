@@ -403,7 +403,7 @@ class SvBoolResult(object):
 
 def transform_solid(matrix, solid):
     """
-    Utility funciton to apply mathutils.Matrix to a Solid object.
+    Utility function to apply mathutils.Matrix to a Solid object.
     """
     mat = Base.Matrix(*[i for v in matrix for i in v])
     return solid.transformGeometry(mat)
@@ -548,3 +548,79 @@ def mesh_from_solid_faces(solid):
 
     return verts, edges, faces
 
+def hascurves(shape):
+    for e in shape.Edges:
+        if not isinstance(e.Curve, (Part.Line, Part.LineSegment)): return True
+    return False
+
+def drop_existing_faces(faces):
+    """
+    this avoids the following bmesh exception:
+
+       faces.new(verts): face already exists
+
+    """
+    faces_set = set()
+    new_faces = []
+    good_face = new_faces.append
+    for face in faces:
+        proposed_face = tuple(sorted(face))
+        if proposed_face in faces_set:
+            continue
+        else:
+            faces_set.add(proposed_face)
+            good_face(face)
+    return new_faces
+
+
+def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
+    """
+    modified from yorik van havre's FreeCAD importer for Blender.
+    """
+
+    vdict = {}
+    faces = []
+    add_face = faces.append # alias increase speed
+
+    # write FreeCAD faces as polygons when possible
+    for face in shape.Faces:
+        
+        if (len(face.Wires) > 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face) or tessellate:
+            # face has holes or is curved, so we need to triangulate it
+            rawdata = face.tessellate(quality)
+            
+            for v in rawdata[0]:
+                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                    vdict[v1] = len(vdict)
+            
+            for f in rawdata[1]:
+                raw = rawdata[0]
+                nf = [vdict[(nv.x, nv.y, nv.z)] for nv in [raw[vi] for vi in f]]
+                add_face(nf)
+
+        else:
+        
+            f = []
+            ov = face.OuterWire.OrderedVertexes
+        
+            for v in ov:
+
+                if not (vec := (v.X, v.Y, v.Z)) in vdict:
+                    vdict[vec] = len(vdict)
+                    f.append(len(vdict) - 1)
+                else:
+                    f.append(vdict[(v.X, v.Y, v.Z)])
+        
+            # FreeCAD doesn't care about verts order. Make sure our loop goes clockwise
+            c = face.CenterOfMass
+            v1 = ov[0].Point.sub(c)
+            v2 = ov[1].Point.sub(c)
+            n = face.normalAt(0,0)
+            if (v1.cross(v2)).getAngle(n) > 1.57:
+                f.reverse() # inverting verts order if the direction is couterclockwise
+            
+            add_face(f)
+
+    faces = drop_existing_faces(faces)
+    verts = list(vdict.keys())
+    return verts, faces

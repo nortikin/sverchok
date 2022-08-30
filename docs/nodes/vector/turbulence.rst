@@ -1,7 +1,7 @@
-Turbulence
-==========
+Vector Turbulence
+=================
 
-This Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
+This Vector Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 May output scalars or vectors.
 For some noise types, if your output goes to the texture viewer you need to remap them, otherwise your texture
 will be supersaturated or undersaturated. See below 'range table' for a detailed description.

@@ -43,7 +43,7 @@ selectors = {  # Selectors of Statistical Functions
     "SELECTED_STATISTICS": (1, "SEL", 0)  # select SOME statistical quantities
 }
 
-functions = {  # Statistical Functions > name : (index, abreviation, function)
+functions = {  # Statistical Functions > name : (index, abbreviation, function)
     "SUM":                 (10, "SUM", get_sum),
     "SUM_OF_SQUARES":      (11, "SOS", get_sum_of_squares),
     "SUM_OF_INVERSIONS":   (12, "SOI", get_sum_of_inversions),
@@ -72,11 +72,11 @@ mode_items = [
 
 function_items = [(k, k.replace("_", " ").title(), "", "", s[0]) for k, s in sorted({**selectors, **functions}.items(), key=lambda k: k[1][0])]
 
-# cache these for faster abreviation->index and index->abreviation access
+# cache these for faster abbreviation->index and index->abbreviation access
 # aTi: SUM->0 , SOS->1 ... CNT->19  and  iTa: 0->SUM , 1->SOS ... 19->CNT
 aTi = {v[1]: i for i, v in enumerate(sorted(functions.values(), key=lambda v: v[0]))}
 iTa = {i: v[1] for i, v in enumerate(sorted(functions.values(), key=lambda v: v[0]))}
-abreviations = [(i, name) for i, name in sorted(iTa.items(), key=lambda i: i)]
+abbreviations = [(i, name) for i, name in sorted(iTa.items(), key=lambda i: i)]
 
 loaded_fonts = {}
 
@@ -241,7 +241,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
         default=10.0, update=updateNode)
 
     abreviate_names: BoolProperty(
-        name="Abreviate Names", description="Abreviate the statistics quantity names",
+        name="Abbreviate Names", description="Abbreviate the statistics quantity names",
         default=False, update=updateNode)
 
     def toggle_all(self, context):
@@ -286,10 +286,10 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
             if self.quantities_expanded:
                 c2.prop(self, "quantities_expanded", icon='TRIA_UP', text='')
                 # draw the toggle buttons for the selected quantities
-                N = int(ceil(len(abreviations)/4))  # break list into 4 columns
+                N = int(ceil(len(abbreviations)/4))  # break list into 4 columns
                 col = box.column(align=True)
                 split = col.split(factor=1/4, align=True)
-                for i, name in abreviations:
+                for i, name in abbreviations:
                     if i % N == 0:
                         col = split.column(align=True)
                     col.prop(self, "selected_quantities", toggle=True, index=i, text=name)
@@ -329,7 +329,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
         self["selected_quantities"] = [True] * len(functions)
 
     def get_statistics_function(self):
-        return functions[self.function][2]  # (0=index, 1=abreviation, 2=function)
+        return functions[self.function][2]  # (0=index, 1=abbreviation, 2=function)
 
     def draw_statistics(self, names, values):
         """ Draw the statistics in the node editor
@@ -476,7 +476,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
         all_names = []
         all_values = []
         for function_name in function_names:
-            statistics_function = functions[function_name][2]  # (0=index, 1=abreviation, 2=function)
+            statistics_function = functions[function_name][2]  # (0=index, 1=abbreviation, 2=function)
             quantity_list = []
             for d, p, b, s in zip(*params):
                 if function_name == "PERCENTILE":
@@ -493,7 +493,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
                 quantity_list.append(quantity)
 
             if self.abreviate_names:
-                name = functions[function_name][1]  # (0=index, 1=abreviation, 2=function)
+                name = functions[function_name][1]  # (0=index, 1=abbreviation, 2=function)
             else:
                 name = function_name.replace("_", " ").title()
 

@@ -21,15 +21,16 @@ import bpy
 import numpy as np
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     ''' Select vertices of mesh objects '''
     bl_idname = 'SvSelectMeshVerts'
     bl_label = 'Select Object Vertices'
     bl_icon = 'EDITMODE_HLT'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     formula: StringProperty(name='formula', default='val == 0', update=updateNode)
     deselect_all: BoolProperty(name='deselect', default=False, update=updateNode)
@@ -41,8 +42,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     mode: EnumProperty(items=modes, default='vertices', update=updateNode)
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, "deselect_all", text="clear selection")
         layout.prop(self, "mode", expand=True)
         if self.inputs[4].is_linked:
@@ -65,7 +65,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         objsl = O.sv_get()
         elements = [getattr(ob.data, self.mode) for ob in objsl]
         if self.deselect_all:
-            for ob in objsl:    # unfortunately we cant just deselect verts
+            for ob in objsl:    # unfortunately we can't just deselect verts
                 for p in ob.data.polygons:
                     p.select = False
                 for e in ob.data.edges:

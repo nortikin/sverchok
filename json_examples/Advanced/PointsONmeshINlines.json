@@ -18,20 +18,20 @@
     "List Match": "Frame.004",
     "Matrix Apply (verts)": "Frame.006",
     "Matrix Math.001": "Frame.007",
-    "Matrix normal": "Frame.006",
+    "Matrix Normal": "Frame.006",
     "Merge by Distance": "Frame.005",
     "Mesh Join.001": "Frame.005",
     "Note": "Frame",
-    "Random points on mesh": "Frame.002",
+    "Populate Mesh": "Frame.002",
     "Reroute.001": "Frame",
     "Reroute.002": "Frame",
     "Reroute.003": "Frame",
     "Socket Converter": "Frame.004",
     "Suzanne": "Frame.001",
-    "Triangulate mesh": "Frame.010",
+    "Triangulate Mesh": "Frame.010",
     "UV Connection": "Frame",
-    "Vector in": "Frame.001",
-    "Vector polar output": "Frame.009",
+    "Vector In": "Frame.001",
+    "Vector Polar Output": "Frame.009",
     "Viewer Draw Mk3": "Frame.006",
     "Viewer Draw Mk3.001": "Frame.005"
   },
@@ -376,7 +376,7 @@
       },
       "width": 140.0
     },
-    "Matrix normal": {
+    "Matrix Normal": {
       "bl_idname": "SvMatrixNormalNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -464,7 +464,7 @@
       "use_custom_color": true,
       "width": 400.0
     },
-    "Random points on mesh": {
+    "Populate Mesh": {
       "bl_idname": "SvRandomPointsOnMesh",
       "custom_socket_props": {},
       "height": 100.0,
@@ -556,7 +556,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Triangulate mesh": {
+    "Triangulate Mesh": {
       "bl_idname": "SvTriangulateNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -585,7 +585,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -601,7 +601,7 @@
       },
       "width": 100.0
     },
-    "Vector polar output": {
+    "Vector Polar Output": {
       "bl_idname": "VectorPolarOutNode",
       "custom_socket_props": {
         "0": {
@@ -682,7 +682,7 @@
       "V1"
     ],
     [
-      "Vector polar output",
+      "Vector Polar Output",
       1,
       "Exec Node Mod",
       1
@@ -706,21 +706,21 @@
       0
     ],
     [
-      "Matrix normal",
+      "Matrix Normal",
       0,
       "Matrix Apply (verts)",
       1
     ],
     [
-      "Matrix normal",
+      "Matrix Normal",
       0,
       "Matrix Math.001",
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
-      "Matrix normal",
+      "Matrix Normal",
       1
     ],
     [
@@ -736,21 +736,21 @@
       1
     ],
     [
-      "Triangulate mesh",
+      "Triangulate Mesh",
       0,
-      "Random points on mesh",
+      "Populate Mesh",
       0
     ],
     [
-      "Triangulate mesh",
+      "Triangulate Mesh",
       2,
-      "Random points on mesh",
+      "Populate Mesh",
       1
     ],
     [
       "A Number.001",
       0,
-      "Random points on mesh",
+      "Populate Mesh",
       3
     ],
     [
@@ -766,7 +766,7 @@
       "Input"
     ],
     [
-      "Random points on mesh",
+      "Populate Mesh",
       "Verts",
       "Reroute.003",
       "Input"
@@ -774,13 +774,13 @@
     [
       "Matrix Apply (verts)",
       0,
-      "Triangulate mesh",
+      "Triangulate Mesh",
       0
     ],
     [
       "Reroute.002",
       "Output",
-      "Triangulate mesh",
+      "Triangulate Mesh",
       "Polygons"
     ],
     [
@@ -792,7 +792,7 @@
     [
       "Reroute.003",
       "Output",
-      "Vector polar output",
+      "Vector Polar Output",
       "Vectors"
     ],
     [

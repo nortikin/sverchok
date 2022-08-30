@@ -1,4 +1,4 @@
-Apply Matrix to Mesh
+Matrix Apply to Mesh
 ====================
 
 Functionality
@@ -51,7 +51,7 @@ Usage of nested lists of matrices
 The node can handle with list of lists of matrices.
 It means that each object mesh has it's own list of matrices to apply.
 Applying list of matrices to a mesh creates its copies inside an object and transform its.
-Usage case is when there are bunch of seperate meshes which should be copied inside their objects.
+Usage case is when there are bunch of separate meshes which should be copied inside their objects.
 In this mode and with numpy implementation mode you will get numpy output for vertices and edges anyway.
 
 

@@ -29,9 +29,9 @@ Inputs & Parameters
 |               | either direction.                                                 |
 +---------------+-------------------------------------------------------------------+
 | xy_spread     | the ``xy`` component of the ``xya`` socket can be multiplied to   |
-|               | get a wider spread.                                               | 
+|               | get a wider spread.                                               |
 +---------------+-------------------------------------------------------------------+
-| z_spread      | this amplifies ``rgb``, not ``a`` (which you can amplify yourself | 
+| z_spread      | this amplifies ``rgb``, not ``a`` (which you can amplify yourself |
 |               | if that was needed.)                                              |
 +---------------+-------------------------------------------------------------------+
 | Filter?       | uses a restricted eval to drop pixels using a simple typed command|

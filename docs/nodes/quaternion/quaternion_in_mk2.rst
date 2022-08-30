@@ -69,9 +69,9 @@ These parameters do not receive external input.
 +==================+==========+=========+======================================+
 | **Angle Units**  | Enum     | DEGREES | Interprets the angle values based on |
 |                  |  RADIANS |         | the selected angle units:            |
-|                  |  DEGREES |         |   Radians = 0 - 2pi                  |
-|                  |  UNITIES |         |   Degrees = 0 - 360                  |
-|                  |          |         |   Unities = 0 - 1                    |
+|                  |  DEGREES |         | Radians = 0 - 2pi                    |
+|                  |  UNITIES |         | Degrees = 0 - 360                    |
+|                  |          |         | Unities = 0 - 1                      |
 +------------------+----------+---------+--------------------------------------+
 
 
@@ -80,7 +80,7 @@ Outputs
 
 **Quaternions**
 
-The node outputs a list of one ore more quaternions based on the given input.
+The node outputs a list of one or more quaternions based on the given input.
 
 The node only generates the quaternions when the output socket is connected.
 

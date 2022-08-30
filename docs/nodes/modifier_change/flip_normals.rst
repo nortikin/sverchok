@@ -1,4 +1,4 @@
-flip normals
+Flip Normals
 ============
 
 This node offers the usual normal recalculation features, but when all faces are disjoint islands this node will attempt to flip all faces towards the same direction. 

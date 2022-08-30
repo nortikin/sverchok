@@ -54,7 +54,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     Tooltip: Get cylindrical or spherical coordinates from vectors
     '''
     bl_idname = 'VectorPolarOutNode'
-    bl_label = 'Vector polar output'
+    bl_label = 'Vector Polar Output'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VECTOR_POLAR_OUT'
 

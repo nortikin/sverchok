@@ -1,6 +1,6 @@
-
+from sverchok.core.update_system import prepare_input_data
 from mathutils import Matrix
-from sverchok.core.socket_conversions import ImplicitConversionProhibited
+from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
 
@@ -19,6 +19,7 @@ class SocketConversionTests(EmptyTreeTestCase):
 
         # Trigger processing of NGon node
         ngon.process()
+        prepare_input_data([ngon.outputs['Vertices']], [matrix_apply.inputs['Matrixes']])
         # Read what MatrixApply node sees
         data =[[v[:] for v in m] for m in matrix_apply.inputs['Matrixes'].sv_get()]
 
@@ -114,6 +115,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                             # We do not actually care about the data
                             # itself, it is only important that there
                             # was no exception.
+                            node.inputs[input_name].sv_set(ngon.outputs['Vertices'].sv_get())
                             data = node.inputs[input_name].sv_get()
                 except ImplicitConversionProhibited as e:
                     raise e

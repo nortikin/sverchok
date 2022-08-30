@@ -23,18 +23,19 @@ In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` fo
 One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
 
 - Functions from math module:
+
   - acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+    atanh, ceil, copysign, cos, cosh, degrees,
+    erf, erfc, exp, expm1, fabs, factorial, floor,
+    fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+    isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+    pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
 - Constants from math module: pi, e;
 - Additional functions: abs, sign;
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list, dict.
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not guarantee that no one can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
 
 Examples of valid expressions are:
 
@@ -49,13 +50,13 @@ Inputs
 
 This node has the following input:
 
-* **Field**. A scalar field, whose values can be used in the formula. This input is required only if the formula involves the **S** variable.
+* **Field**. A scalar field, whose values can be used in the formula. This input is required only if the formula involves the **V** variable. (see example below)
 
-Each variable used in the formula, except for `S` and the coordinate variables, also becomes additional input.
+Each variable used in the formula, except for `V` and the coordinate variables, also becomes additional input.
 
 The following variables are considered to be point coordinates:
 
-* For Carthesian mode: `x`, `y` and `z`;
+* For Cartesian mode: `x`, `y` and `z`;
 * For Cylindrical mode: `rho`, `phi` and `z`;
 * For Spherical mode: `rho`, `phi` and `theta`.
 
@@ -66,7 +67,7 @@ This node has the following parameters:
 
 * **Input**. This defines the coordinate system being used. The available
   values are **Carhtesian**, **Cylindrical** and **Spherical**. The default
-  value is **Carthesian**.
+  value is **Cartesian**.
 * **Formula**. The formula which defines the scalar field. The default formula
   is `x*x + y*y + z*z`.
 * **Vectorize**. This parameter is available in the N panel only. If enabled,
@@ -96,3 +97,6 @@ The same formula in spherical coordinates:
 
 .. image:: https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png
 
+Using the Field input with V:
+
+.. image:: https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png

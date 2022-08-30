@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 
-from math import pi, degrees, floor, ceil, copysign
 from mathutils import Vector, Matrix
 import numpy as np
 
@@ -15,21 +14,22 @@ import bmesh
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
+from sverchok.data_structure import updateNode, match_long_repeat, ensure_nesting_level
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.geom import LinearSpline, CubicSpline
-from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvBevelCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bevel Curve
-    Tooltip: Bevel a Curve (a.k.a. Extrude along Path)
+    Tooltip: Bevel a Curve (a.k.a. Extrude along Path) - mesh
     """
 
     bl_idname = 'SvBevelCurveNode'
-    bl_label = 'Bevel a Curve'
+    bl_label = 'Bevel a Curve (Mesh)'
     bl_icon = 'MOD_CURVE'
 
     algorithms = [
@@ -151,6 +151,14 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
 
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['BevelVerts'], self.outputs[0]),
+            (self.inputs['BevelEdges'], self.outputs[1]),
+            (self.inputs['BevelFaces'], self.outputs[2]),
+        ]
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "orient_axis", expand=True)
         layout.prop(self, "algorithm")
@@ -270,7 +278,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, twist, steps):
         spline = self.build_spline(curve, self.bevel_mode, self.is_cyclic)
 
-        t_values = np.linspace(0.0, 1.0, num = steps)
+        t_values = np.linspace(0.0, 1.0, num=int(steps))
         if self.is_cyclic:
             t_values = t_values[:-1]
         if self.flip_curve:

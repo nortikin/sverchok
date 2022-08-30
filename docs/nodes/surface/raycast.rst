@@ -54,7 +54,7 @@ This node has the following parameters:
   default.
 * **Samples**. This parameter is available in the N panel only, if **Precise**
   parameter is checked. To find the "initial guess" point for numerical method,
-  this node evaluates the surface in points of carthesian grid, and uses
+  this node evaluates the surface in points of cartesian grid, and uses
   Blender's "BVH raycast" method. This input defines the number of samples for
   this first step. The higher this number is, the more precise the initial
   guess is, so the less work for numeric method; but the more time will this
@@ -88,5 +88,5 @@ Example of usage
 
 .. image:: https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png
 
-Note that in this case we set **Method** paramter to **Krylov**.
+Note that in this case we set **Method** parameter to **Krylov**.
 

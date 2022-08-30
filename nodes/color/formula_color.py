@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Change Colors by Math '''
     bl_idname = 'SvFormulaColorNode'
-    bl_label = 'Color by formula'
+    bl_label = 'Color by Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_COLOR_BY_FORMULA'
 

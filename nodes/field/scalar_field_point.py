@@ -2,11 +2,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.scalar import SvScalarFieldPointDistance
 from sverchok.utils.math import falloff_types, falloff_array
@@ -17,14 +16,14 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate scalar field by distance from a point
     """
     bl_idname = 'SvExScalarFieldPointNode'
-    bl_label = 'Distance from a point'
+    bl_label = 'Distance From a Point'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINT_DISTANCE_FIELD'
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Amplitude'].hide_safe = (self.falloff_type != 'NONE')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['NONE', 'inverse_exp', 'gauss'])
+        updateNode(self, context)
 
     falloff_type: EnumProperty(
         name="Falloff type", items=falloff_types, default='NONE', update=update_type)
@@ -39,7 +38,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
         name="Clamp", description="Restrict coefficient with R", default=False, update=updateNode)
 
     metrics = [
-        ('EUCLIDEAN', "Euclidian", "Standard euclidian distance - sqrt(dx*dx + dy*dy + dz*dz)", 0),
+        ('EUCLIDEAN', "Euclidean", "Standard euclidean distance - sqrt(dx*dx + dy*dy + dz*dz)", 0),
         ('CHEBYSHEV', "Chebyshev", "Chebyshev distance - abs(dx, dy, dz)", 1),
         ('MANHATTAN', "Manhattan", "Manhattan distance - abs(dx) + abs(dy) + abs(dz)", 2),
         ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)

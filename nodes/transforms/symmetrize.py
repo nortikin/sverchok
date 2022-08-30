@@ -24,9 +24,10 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSymmetrizeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Symmetrize mesh '''
     bl_idname = 'SvSymmetrizeNode'
     bl_label = 'Symmetrize Mesh'

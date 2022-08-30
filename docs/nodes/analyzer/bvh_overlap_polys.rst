@@ -31,7 +31,7 @@ Parameters
 +===============+=========================================================================================+
 | all triangles | Boolean to work with triangles makes it faster to calculate                             |
 +---------------+-----------------------------------------------------------------------------------------+
-| epsilon       | float threashold for cut weak results                                                   |
+| epsilon       | float threshold for cut weak results                                                    |
 +---------------+-----------------------------------------------------------------------------------------+
 
 
@@ -57,6 +57,7 @@ Examples
 
 
 .. image:: https://user-images.githubusercontent.com/5783432/30777862-8d369f36-a0cd-11e7-8c8e-a72e7aa8ee7f.png
+
 https://github.com/nortikin/sverchok/files/1326934/bvhtree-overlap_2017_09_23_23_07.zip
 
 

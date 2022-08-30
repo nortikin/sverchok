@@ -1,5 +1,5 @@
-Color In
-========
+Color Out
+=========
 
 Functionality
 -------------

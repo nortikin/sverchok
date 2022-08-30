@@ -14,24 +14,24 @@ It's vectorized, meaning it accepts nested and multiple inputs and produces mult
 Parameters
 ----------
 
-All Vector parameters (except axis) default to (0,0,0) if no input is given. 
+All Vector parameters (except axis) default to (0,0,0) if no input is given.
 
 +-------------+---------------+-----------------------------------------------------------------+
-| Param       | Type          | Description                                                     |  
+| Param       | Type          | Description                                                     |
 +=============+===============+=================================================================+
-| **cent**    | Vector        | central coordinate around which to pivot                        | 
+| **cent**    | Vector        | central coordinate around which to pivot                        |
 +-------------+---------------+-----------------------------------------------------------------+
-| **axis**    | Vector        | axis around which to rotate around the pivot, default (0, 0, 1) |  
+| **axis**    | Vector        | axis around which to rotate around the pivot, default (0, 0, 1) |
 +-------------+---------------+-----------------------------------------------------------------+
-| **dvec**    | Vector        | is used to push the center Vector by a Vector quantity per step | 
+| **dvec**    | Vector        | is used to push the center Vector by a Vector quantity per step |
 +-------------+---------------+-----------------------------------------------------------------+
 | **Degrees** | Scalar, Float | angle of the total rotation. Default 360.0                      |
 +-------------+---------------+-----------------------------------------------------------------+
-| **Steps**   | Scalar, Int   | numer of rotation steps. Default 20                             | 
+| **Steps**   | Scalar, Int   | number of rotation steps. Default 20                            |
 +-------------+---------------+-----------------------------------------------------------------+
-| **Merge**   | Bool, toggle  | removes double vertices if the geometry can be merged,          |  
+| **Merge**   | Bool, toggle  | removes double vertices if the geometry can be merged,          |
 |             |               | usually used to prevent doubles of first profile and last       |
-|             |               | profile copy. Default `off`.                                    | 
+|             |               | profile copy. Default `off`.                                    |
 +-------------+---------------+-----------------------------------------------------------------+
 
 

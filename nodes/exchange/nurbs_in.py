@@ -10,14 +10,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -39,15 +37,17 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
     """
     bl_idname = 'SvExNurbsInNode'
-    bl_label = 'NURBS In'
+    bl_label = 'NURBS Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
@@ -102,28 +102,19 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
         else:
             layout.label(text='--None--')
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append(
+            (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append(
+        (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "draw_3dpanel")
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
-
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -268,23 +259,23 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
             obj = bpy.data.objects.get(object_name)
             if not obj:
                 continue
-            with self.sv_throttle_tree_update():
-                matrix = obj.matrix_world
-                if obj.type not in {'SURFACE', 'CURVE'}:
-                    self.warning("%s: not supported object type: %s", object_name, obj.type)
+
+            matrix = obj.matrix_world
+            if obj.type not in {'SURFACE', 'CURVE'}:
+                self.warning("%s: not supported object type: %s", object_name, obj.type)
+                continue
+            for spline in obj.data.splines:
+                if spline.type != 'NURBS':
+                    self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
-                for spline in obj.data.splines:
-                    if spline.type != 'NURBS':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
-                        continue
-                    if obj.type == 'SURFACE':
-                        surface = self.get_surface(spline, matrix)
-                        surfaces_out.append(surface)
-                        matrices_out.append(matrix)
-                    elif obj.type == 'CURVE':
-                        curve = self.get_curve(spline, matrix)
-                        curves_out.append(curve)
-                        matrices_out.append(matrix)
+                if obj.type == 'SURFACE':
+                    surface = self.get_surface(spline, matrix)
+                    surfaces_out.append(surface)
+                    matrices_out.append(matrix)
+                elif obj.type == 'CURVE':
+                    curve = self.get_curve(spline, matrix)
+                    curves_out.append(curve)
+                    matrices_out.append(matrix)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['Surfaces'].sv_set(surfaces_out)

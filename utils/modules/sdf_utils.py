@@ -8,7 +8,7 @@ def geometry_from_points(points, mode="python"):
         points: the direct output from `f.generate()`
         mode:   "np" (numpy), or "python"
     output:
-        geom:   with a `.verts` atribute and `.tris`
+        geom:   with a `.verts` attribute and `.tris`
                 verts and tris are output in numpy arrays if the mode is "np",
                 else standard python lists.
 

@@ -20,12 +20,13 @@ from mathutils import Matrix, Vector
 #from math import copysign
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, repeat_last_for_length
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 is_290 = bpy.app.version >= (2, 90, 0)
 
@@ -51,7 +52,8 @@ OUT = 1
 IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
-class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvExtrudeRegionNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude region of faces '''
     bl_idname = 'SvExtrudeRegionNode'
     bl_label = 'Extrude Region'
@@ -67,7 +69,6 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             ("Normal", "Along normal", "Extrude vertices along normal", 1)
         ]
 
-    @throttle_and_update_node
     def update_mode(self, context):
         self.inputs['Matrices'].hide_safe = (self.transform_mode != "Matrix")
         self.inputs['Height'].hide_safe = (self.transform_mode != "Normal")
@@ -75,6 +76,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.transform_mode == "Normal":
             self.multiple = True
+        updateNode(self, context)
 
     transform_mode: EnumProperty(
         name="Transformation mode", description="How vertices transformation is specified",

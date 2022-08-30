@@ -8,7 +8,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import fixed_iter, repeat_last, throttle_tree_update, updateNode
+from sverchok.data_structure import fixed_iter, repeat_last, updateNode
 from typing import Iterator, Iterable
 
 
@@ -18,13 +18,12 @@ class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
     Tooltip: Returns index of item position in given data or -1 if item is not in data
     """
     bl_idname = 'SvIndexListNode'
-    bl_label = 'List index'
+    bl_label = 'List Index'
     bl_icon = 'VIEWZOOM'
 
     def update_mode(self, context):
-        with throttle_tree_update(self):
-            self.inputs['Start index'].hide_safe = not self.use_range
-            self.inputs['End index'].hide_safe = not self.use_range
+        self.inputs['Start index'].hide_safe = not self.use_range
+        self.inputs['End index'].hide_safe = not self.use_range
         updateNode(self, context)
 
     level: bpy.props.IntProperty(name='Level', default=2, min=1, update=updateNode)

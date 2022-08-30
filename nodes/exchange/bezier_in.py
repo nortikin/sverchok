@@ -7,10 +7,8 @@
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
@@ -31,15 +29,23 @@ class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         node.get_objects_from_scene(self)
 
 
-class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
     """
     bl_idname = 'SvBezierInNode'
-    bl_label = 'Bezier In'
+    bl_label = 'Bezier Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+
+    @property
+    def is_scene_dependent(self):
+        return self.object_names
+
+    @property
+    def is_animation_dependent(self):
+        return self.object_names
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
@@ -53,7 +59,12 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         description = "Apply object matrices to control points",
         default = True,
         update = updateNode)
-
+    
+    concat_segments : BoolProperty(
+        name = "Concatenate segments",
+        description = "If checked, join Bezier segments of the curve into a single Curve object; otherwise, output a separate Curve object for each segment",
+        default = True,
+        update = updateNode)
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
@@ -95,17 +106,13 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         else:
             layout.label(text='--None--')
 
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "draw_3dpanel")
-
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
         self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
 
@@ -118,8 +125,9 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text=op_text)
 
-        layout.prop(self, 'sort', text='Sort', toggle=True)
-        layout.prop(self, 'apply_matrix', toggle=True)
+        layout.prop(self, 'sort', text='Sort', toggle=False)
+        layout.prop(self, 'apply_matrix', toggle=False)
+        layout.prop(self, 'concat_segments', toggle=False)
 
         self.draw_obj_names(layout)
 
@@ -142,7 +150,10 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
             points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
-        return points, concatenate_curves(segments)
+        if self.concat_segments:
+            return points, concatenate_curves(segments)
+        else:
+            return points, segments
 
     def process(self):
 
@@ -157,19 +168,19 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
             obj = bpy.data.objects.get(object_name)
             if not obj:
                 continue
-            with self.sv_throttle_tree_update():
-                matrix = obj.matrix_world
-                if obj.type != 'CURVE':
-                    self.warning("%s: not supported object type: %s", object_name, obj.type)
+
+            matrix = obj.matrix_world
+            if obj.type != 'CURVE':
+                self.warning("%s: not supported object type: %s", object_name, obj.type)
+                continue
+            for spline in obj.data.splines:
+                if spline.type != 'BEZIER':
+                    self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
-                for spline in obj.data.splines:
-                    if spline.type != 'BEZIER':
-                        self.warning("%s: not supported spline type: %s", spline, spline.type)
-                        continue
-                    controls, curve = self.get_curve(spline, matrix)
-                    curves_out.append(curve)
-                    controls_out.append(controls)
-                    matrices_out.append(matrix)
+                controls, curve = self.get_curve(spline, matrix)
+                curves_out.append(curve)
+                controls_out.append(controls)
+                matrices_out.append(matrix)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)

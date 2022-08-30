@@ -1,5 +1,5 @@
-Solid Distance
-==============
+Slice Solid
+===========
 
 Dependencies
 ------------

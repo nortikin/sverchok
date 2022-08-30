@@ -1,17 +1,17 @@
-G-code exporter
-===============
+Export G-code
+=============
 
 Functionality
 -------------
 
-Export file with G-code discribing the generated shape
+Export file with G-code describing the generated shape
 
 Inputs
 ------
 
 * **Layer Height** - List of coefficients for layer height        
 * **Flow Mult** - List of coefficients for Print speed        
-* **Vertices** - Main thing The Geometry (can be one or severat pathes)        
+* **Vertices** - Main thing The Geometry (can be one or several paths)        
 
 Outputs
 -------
@@ -31,7 +31,7 @@ Properties
 ------
 
 - **End** - Finishing Gcode after all geometry done (turn back nozzle to home position for example)    
-- **Export Gcode** - Button to export when all ready    
+- **Export G-code** - Button to export when all ready    
 
 Continuous
 ----------

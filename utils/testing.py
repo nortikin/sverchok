@@ -1,7 +1,9 @@
 from itertools import chain
 from pathlib import Path
+from typing import Iterator
 
 import bpy
+from bpy.types import NodeTree
 import os
 from os.path import dirname, basename, join
 import unittest
@@ -14,9 +16,9 @@ import ast
 
 import sverchok
 from sverchok import old_nodes
-from sverchok.old_nodes import is_old
 from sverchok.data_structure import get_data_nesting_level
-from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
+from sverchok.core.socket_data import get_output_socket_data
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names
@@ -230,7 +232,7 @@ def run_all_tests(pattern=None):
 def run_test_from_file(file_name):
     """
     Run test from file given by name. File should be places in tests folder
-    :param file_name: sting like avl_tree_tests.py
+    :param file_name: string like avl_tree_tests.py
     :return: result
     """
     tests_path = get_tests_path()
@@ -285,6 +287,15 @@ class SverchokTestCase(unittest.TestCase):
         finally:
             remove_node_tree(new_tree_name)
 
+    @contextmanager
+    def tree_from_file(self, file_name: str, tree_name: str) -> Iterator[NodeTree]:
+        path = join(get_tests_path(), "references", file_name)
+        link_node_tree(path, tree_name)
+        try:
+            yield get_node_tree(tree_name)
+        finally:
+            remove_node_tree(tree_name)
+
     def serialize_json(self, data):
         """
         Serialize JSON object in standard format.
@@ -323,7 +334,7 @@ class SverchokTestCase(unittest.TestCase):
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
-        Comparasion is done by serializing both objects.
+        Comparison is done by serializing both objects.
         """
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
@@ -441,7 +452,7 @@ class SverchokTestCase(unittest.TestCase):
             for a1, a2, ind in fails:
                 message = f"{a1} != {a2}: Array 1 [{ind}] != Array 2 [{ind}]"
                 messages.append(message)
-            header = f"{len(fails)} fails of {arr1.size} comparasions:\n"
+            header = f"{len(fails)} fails of {arr1.size} comparisons:\n"
             message = header + "\n".join(messages)
             self.fail(message)
 
@@ -917,14 +928,14 @@ def register():
         try:
             bpy.utils.register_class(clazz)
         except Exception as e:
-            exception("Cant register class %s: %s", clazz, e)
+            exception("Can't register class %s: %s", clazz, e)
 
 def unregister():
     for clazz in reversed(classes):
         try:
             bpy.utils.unregister_class(clazz)
         except Exception as e:
-            exception("Cant unregister class %s: %s", clazz, e)
+            exception("Can't unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys

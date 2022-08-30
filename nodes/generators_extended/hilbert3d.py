@@ -47,7 +47,7 @@ def hilbert(step, n):
 class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Hilbert3d line '''
     bl_idname = 'Hilbert3dNode'
-    bl_label = 'Hilbert3d'
+    bl_label = 'Hilbert 3d'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_HILBERT_3D'
 

@@ -20,11 +20,9 @@ import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.voronoi import voronoi_bounded
 from sverchok.utils.sv_mesh_utils import mask_vertices
@@ -42,24 +40,22 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
 
-    def get_modes(self, context):
-        modes = [('UV', "UV Space", "Generate 2D Voronoi diagram in surface's UV space", 0)]
-        if scipy is not None:
-            modes.append(('RIDGES', "3D Ridges", "Generate ridges of 3D Voronoi diagram", 1))
-            modes.append(('REGIONS', "3D Regions", "Generate regions of 3D Voronoi diagram", 2))
-        return modes
-    
-    @throttle_and_update_node
+    modes = [('UV', "UV Space", "Generate 2D Voronoi diagram in surface's UV space", 0)]
+    if scipy is not None:
+        modes.append(('RIDGES', "3D Ridges", "Generate ridges of 3D Voronoi diagram", 1))
+        modes.append(('REGIONS', "3D Regions", "Generate regions of 3D Voronoi diagram", 2))
+
     def update_sockets(self, context):
         self.inputs['MaxSides'].hide_safe = self.mode != 'UV' or not self.make_faces
         self.inputs['Thickness'].hide_safe = self.mode == 'UV'
         self.inputs['Clipping'].hide_safe = self.mode == 'UV' or not self.do_clip
         self.outputs['UVVertices'].hide_safe = self.mode != 'UV'
         self.outputs['Faces'].hide_safe = self.mode == 'UV' and not self.make_faces
+        updateNode(self, context)
 
     mode : EnumProperty(
         name = "Mode",
-        items = get_modes,
+        items=modes,
         update = update_sockets)
 
     make_faces: BoolProperty(

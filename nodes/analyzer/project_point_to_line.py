@@ -330,16 +330,15 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
     You can use number of points and lines as many as you wish
     """
     bl_idname = 'SvProjectPointToLine'
-    bl_label = 'Project point to line'
+    bl_label = 'Project Points to Line'
     bl_icon = 'PARTICLE_POINT'
 
     def switch_res_mode(self, context):
-        with self.sv_throttle_tree_update():
-            if self.set_res:
-                self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
-            else:
-                self.inputs.remove(self.inputs['Resolution'])
-            self.process_node(context)
+        if self.set_res:
+            self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
+        else:
+            self.inputs.remove(self.inputs['Resolution'])
+        self.process_node(context)
 
     resolution: FloatProperty(name='resolution',
                                description='the less the more accurate',

@@ -26,7 +26,6 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
 
@@ -43,7 +42,7 @@ def parse_to_path(p):
     ops are:
     name - global name to use
     attr - attribute to get using getattr(obj,attr)
-    key - key for accesing via obj[key]
+    key - key for accessing via obj[key]
     '''
 
     if isinstance(p, ast.Attribute):
@@ -192,8 +191,7 @@ class SvPropNodeMixin():
             return
 
         self.bad_prop = False
-        with self.sv_throttle_tree_update():
-            self.execute_inside_throttle()
+        self.execute_inside_throttle()
         updateNode(self, context)
     
     def type_assesment(self):
@@ -222,14 +220,22 @@ class SvPropNodeMixin():
     prop_name: StringProperty(name='', update=verify_prop)
 
 
-class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, SvAnimatableNode):
+class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Get property '''
     bl_idname = 'SvGetPropNodeMK2'
-    bl_label = 'Get property MK2'
+    bl_label = 'Get Property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
-    def execute_inside_throttle(self):    
+    @property
+    def is_scene_dependent(self):
+        return bool(self.outputs)
+
+    @property
+    def is_animation_dependent(self):
+        return bool(self.outputs)
+
+    def execute_inside_throttle(self):  # the name of the method does not have any meaning now
         s_type = self.type_assesment()
 
         outputs = self.outputs
@@ -238,8 +244,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
         elif s_type:
             outputs.new(s_type, "Data")
     
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 
@@ -256,7 +261,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
 class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Set property '''
     bl_idname = 'SvSetPropNodeMK2'
-    bl_label = 'Set property MK2'
+    bl_label = 'Set Property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
 
@@ -297,9 +302,6 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
-
-        #with self.sv_throttle_tree_update():
-            # changes here should not reflect back into the nodetree?
 
         try:
             if isinstance(obj, (int, float, bpy_prop_array)):

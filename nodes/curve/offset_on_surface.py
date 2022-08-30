@@ -1,12 +1,9 @@
-
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvCurveOffsetOnSurface
 from sverchok.utils.surface import SvSurface
 
@@ -55,10 +52,10 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             (SvCurveOffsetOnSurface.BY_LENGTH, "Curve length", "Use offset curve value according to curve's length", 1)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['OffsetCurve'].hide_safe = self.offset_type == 'CONST'
         self.inputs['Offset'].hide_safe = self.offset_type != 'CONST'
+        updateNode(self, context)
 
     offset_type : EnumProperty(
             name = "Offset type",
@@ -69,7 +66,7 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     offset_curve_type : EnumProperty(
             name = "Offset curve usage",
-            description = "How offset curve is evaluated along the curve being offseted",
+            description = "How offset curve is evaluated along the curve being offsetted",
             items = offset_curve_types,
             default = SvCurveOffsetOnSurface.BY_PARAMETER,
             update = updateNode)

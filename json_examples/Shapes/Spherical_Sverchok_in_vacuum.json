@@ -130,7 +130,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         0.6284880042076111,
@@ -379,13 +379,13 @@
     [
       "Vector Lerp",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Reroute.001",
       "Output",
-      "Mesh viewer",
+      "Mesh Viewer",
       "faces"
     ]
   ]

@@ -9,10 +9,12 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node
+from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
-class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
+
+class SvMergeMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Merge two 2d meshes
 
@@ -20,10 +22,9 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     Only X and Y coordinate takes in account
     """
     bl_idname = 'SvMergeMesh2D'
-    bl_label = 'Merge mesh 2D'
+    bl_label = 'Merge Mesh 2D'
     bl_icon = 'AUTOMERGE_ON'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         [self.outputs.remove(sock) for sock in self.outputs[2:]]
@@ -36,6 +37,7 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
             new_socks.append(self.outputs.new('SvStringsSocket', 'Face index B'))
         [[self.id_data.links.new(sock, link) for link in links[sock.name]]
                                              for sock in new_socks if sock.name in links]
+        updateNode(self, context)
 
 
     simple_mask: bpy.props.BoolProperty(name='Simple mask', update=update_sockets, default=True,

@@ -126,7 +126,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvMatrixApplyJoinNode'
-    bl_label = 'Matrix Apply'
+    bl_label = 'Matrix Apply to Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_APPLY_JOIN'
 
@@ -150,6 +150,14 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs[0], self.outputs[0]),
+            (self.inputs[1], self.outputs[1]),
+            (self.inputs[2], self.outputs[2]),
+        ]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "do_join")

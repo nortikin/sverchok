@@ -1,4 +1,4 @@
-Align mesh by mesh
+Align Mesh by Mesh
 ==================
 
 .. image:: https://user-images.githubusercontent.com/28003269/70231673-36b99a80-1774-11ea-9163-3ffbad2148f7.png
@@ -21,7 +21,7 @@ Outputs
 -------
 
 - **Verts** - moved vertices of move input.
-- **Move vector** - vector which should be applied ot moving mesh.
+- **Move vector** - vector which should be applied to moving mesh.
 
 Options
 -------
@@ -49,7 +49,7 @@ Examples
 
 .. image:: https://user-images.githubusercontent.com/28003269/59979532-33818680-95fa-11e9-8e0c-e63ab4ba8fef.png
 
-**Also it is possible to align object only to part of mesh for this just cut unuseful part of mesh before align node.**
+**Also it is possible to align object only to part of mesh, for this just cut unnecessary part of mesh before align node.**
 
 .. image:: https://user-images.githubusercontent.com/28003269/59979719-409f7500-95fc-11e9-8df8-62610b36799d.gif
 

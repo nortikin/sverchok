@@ -33,9 +33,14 @@ from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.extra_categories import get_extra_categories
-from sverchok.core.update_system import set_first_run
 from sverchok.ui.presets import apply_default_preset
 from sverchok.utils.sv_json_import import JSONImporter
+
+temp_details = {
+    'not_enabled_nodes': {},
+    'node_count': 0
+}
+
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -109,9 +114,9 @@ def include_submenus(node_cats):
 
 def juggle_and_join(node_cats):
     '''
-    this step post processes the extended catagorization used
+    this step post processes the extended categorization used
     by ctrl+space dynamic menu, and attempts to merge previously
-    joined catagories. Why? Because the default menu gets very
+    joined categories. Why? Because the default menu gets very
     long if there are too many categories.
 
     The only real alternative to this approach is to write a
@@ -420,6 +425,23 @@ def strformated_tree(nodes):
 
     return "".join(lstr)
 
+def log_non_enabled_nodes():
+    """ 
+    this function will output a formatted log of the nodes that are not currently enabled 
+    """
+    msg = "The following nodes are not enabled (probably due to missing dependencies)"
+    logger.info(f"sv: {msg}\n{strformated_tree(temp_details['not_enabled_nodes'])}")    
+
+def log_node_count():
+    """
+    this will log the node count at startup, but can also be a place to log the current node count - if we want.
+    """
+    logger.info(f"sv: {temp_details['node_count']} nodes at startup.")
+
+def log_details():
+    log_non_enabled_nodes()
+    log_node_count()
+
 
 def make_categories():
     original_categories = make_node_cats()
@@ -453,7 +475,8 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
 
-    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{strformated_tree(nodes_not_enabled)}")
+    # logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
+    temp_details['not_enabled_nodes'] = nodes_not_enabled
 
     return node_categories, node_count, original_categories
 
@@ -570,7 +593,6 @@ def reload_menu():
     register_node_add_operators()
 
     build_help_remap(original_categories)
-    set_first_run(False)
     print("Reload complete, press update")
 
 def register_node_add_operators():
@@ -600,6 +622,8 @@ def register():
     global logger
     logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
+    temp_details['node_count'] = node_count
+
     if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
 
@@ -615,11 +639,9 @@ def register():
                     )
 
     bpy.utils.register_class(SvResetNodeSearchOperator)
-
     register_node_panels("SVERCHOK", menu)
 
     build_help_remap(original_categories)
-    print(f"sv: {node_count} nodes.")
 
 def unregister():
     unregister_node_panels()

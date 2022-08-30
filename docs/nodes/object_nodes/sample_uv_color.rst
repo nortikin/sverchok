@@ -1,11 +1,11 @@
-Sample UV texture color on Mesh
-========
+Sample UV Texture Color on Mesh
+===============================
 
 Functionality
 -------------
 
 Takes vector in local object space and returns color of corresponding pixel on UV map.
-Works most accurately on triangulated meshes. Quads are ok if not distorted much. Object must have UV layer unwraped.
+Works most accurately on triangulated meshes. Quads are ok if not distorted much. Object must have UV layer unwrapped.
 Vertical and horizontal resolution of the image must be exactly the same for this node to work properly.
 
 Inputs

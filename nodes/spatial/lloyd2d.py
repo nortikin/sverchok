@@ -6,11 +6,10 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
-from sverchok.utils.geom import center
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.voronoi import lloyd2d
 from sverchok.utils.field.scalar import SvScalarField
 

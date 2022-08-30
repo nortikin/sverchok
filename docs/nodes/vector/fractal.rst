@@ -1,5 +1,5 @@
-Fractal
-=======
+Vector Fractal
+==============
 
 This fractal node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 

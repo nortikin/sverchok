@@ -21,10 +21,10 @@
     "List Join": "Frame.008",
     "List Join.001": "Frame.008",
     "List Split": "Frame.004",
-    "Matrix Apply": "Frame.004",
+    "Matrix Apply to Mesh": "Frame.004",
     "Matrix In": "Frame",
     "Matrix In.001": "Frame.007",
-    "Mesh viewer": "Frame.005",
+    "Mesh Viewer": "Frame.005",
     "Move": "Frame.001",
     "Move.001": "Frame.004",
     "Move.002": "Frame.004",
@@ -41,8 +41,8 @@
     "Randomize.001": "Frame.006",
     "Randomize.002": "Frame.006",
     "Rotate": "Frame.001",
-    "Rotation difference": "Frame",
-    "Rotation difference.001": "Frame.007",
+    "Rotation Difference": "Frame",
+    "Rotation Difference.001": "Frame.007",
     "Scalar Math": "Frame.002",
     "Scalar Math.001": "Frame.004",
     "Scalar Math.002": "Frame.006",
@@ -53,12 +53,12 @@
     "Vector Math": "Frame",
     "Vector Math.001": "Frame.007",
     "Vector Math.002": "Frame.008",
-    "Vector in": "Frame.007",
-    "Vector in.001": "Frame.004",
-    "Vector in.002": "Frame.004",
-    "Vector in.003": "Frame",
-    "Vector in.004": "Frame.006",
-    "Vector in.005": "Frame.006"
+    "Vector In": "Frame.007",
+    "Vector In.001": "Frame.004",
+    "Vector In.002": "Frame.004",
+    "Vector In.003": "Frame",
+    "Vector In.004": "Frame.006",
+    "Vector In.005": "Frame.006"
   },
   "groups": {},
   "nodes": {
@@ -519,7 +519,7 @@
       "params": {},
       "width": 140.0
     },
-    "Matrix Apply": {
+    "Matrix Apply to Mesh": {
       "bl_idname": "SvMatrixApplyJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -562,7 +562,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         0.6284880042076111,
@@ -931,7 +931,7 @@
       "params": {},
       "width": 140.0
     },
-    "Rotation difference": {
+    "Rotation Difference": {
       "bl_idname": "SvRotationDifference",
       "custom_socket_props": {},
       "height": 100.0,
@@ -950,7 +950,7 @@
       },
       "width": 140.0
     },
-    "Rotation difference.001": {
+    "Rotation Difference.001": {
       "bl_idname": "SvRotationDifference",
       "custom_socket_props": {
         "0": {
@@ -1147,7 +1147,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1162,7 +1162,7 @@
       },
       "width": 100.0
     },
-    "Vector in.001": {
+    "Vector In.001": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1175,7 +1175,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector in.002": {
+    "Vector In.002": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1188,7 +1188,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector in.003": {
+    "Vector In.003": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1205,7 +1205,7 @@
       },
       "width": 100.0
     },
-    "Vector in.004": {
+    "Vector In.004": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1220,7 +1220,7 @@
       },
       "width": 100.0
     },
-    "Vector in.005": {
+    "Vector In.005": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1299,7 +1299,7 @@
       0
     ],
     [
-      "Vector in.004",
+      "Vector In.004",
       0,
       "Move.004",
       1
@@ -1323,7 +1323,7 @@
       0
     ],
     [
-      "Vector in.005",
+      "Vector In.005",
       0,
       "Move.005",
       1
@@ -1371,13 +1371,13 @@
       0
     ],
     [
-      "Vector in.003",
+      "Vector In.003",
       0,
       "Matrix In",
       1
     ],
     [
-      "Rotation difference",
+      "Rotation Difference",
       0,
       "Matrix In",
       2
@@ -1385,25 +1385,25 @@
     [
       "Move",
       0,
-      "Rotation difference",
+      "Rotation Difference",
       0
     ],
     [
       "Vector Math",
       0,
-      "Rotation difference",
+      "Rotation Difference",
       1
     ],
     [
       "Number Range.002",
       0,
-      "Vector in.003",
+      "Vector In.003",
       0
     ],
     [
       "Number Range.002",
       0,
-      "Vector in.003",
+      "Vector In.003",
       1
     ],
     [
@@ -1421,7 +1421,7 @@
     [
       "Scalar Math.001",
       0,
-      "Vector in.001",
+      "Vector In.001",
       2
     ],
     [
@@ -1433,11 +1433,11 @@
     [
       "Number Range.001",
       0,
-      "Vector in.002",
+      "Vector In.002",
       2
     ],
     [
-      "Vector in.002",
+      "Vector In.002",
       0,
       "List Split",
       0
@@ -1457,35 +1457,35 @@
     [
       "Move.001",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0
     ],
     [
       "IcoSphere",
       1,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1
     ],
     [
       "IcoSphere",
       2,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       2
     ],
     [
       "Matrix In",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       3
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0,
       "Move.002",
       0
     ],
     [
-      "Vector in.001",
+      "Vector In.001",
       0,
       "Move.002",
       1
@@ -1497,13 +1497,13 @@
       0
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1,
       "Bevel",
       1
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       2,
       "Bevel",
       2
@@ -1599,15 +1599,15 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
-      "Rotation difference.001",
+      "Rotation Difference.001",
       0
     ],
     [
       "Vector Math.001",
       0,
-      "Rotation difference.001",
+      "Rotation Difference.001",
       1
     ],
     [
@@ -1653,7 +1653,7 @@
       0
     ],
     [
-      "Rotation difference.001",
+      "Rotation Difference.001",
       0,
       "Matrix In.001",
       2
@@ -1697,25 +1697,25 @@
     [
       "Bevel",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Bevel",
       1,
-      "Mesh viewer",
+      "Mesh Viewer",
       1
     ],
     [
       "Bevel",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "Matrix In.001",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       4
     ]
   ]

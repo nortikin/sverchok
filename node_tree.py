@@ -4,55 +4,45 @@
 #  
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
-
-import sys
+import inspect
 import time
-import textwrap
 from contextlib import contextmanager
+from itertools import chain, cycle
+from typing import Iterable
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
-from bpy.types import NodeTree
+from bpy.types import NodeTree, NodeSocket
 
-from sverchok import data_structure
+from sverchok.core.sv_custom_exceptions import SvNoDataError
+import sverchok.core.events as ev
+from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
-
-from sverchok.core.update_system import (
-    build_update_list,
-    process_from_node, process_from_nodes,
-    process_tree,
-    get_original_node_color,
-    is_first_run)
-
-from sverchok.core.links import SvLinks
-from sverchok.core.node_id_dict import SvNodesDict
-
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
-from sverchok.utils.logging import debug
+from sverchok.utils.logging import debug, catch_log_error
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
+from sverchok.ui import bgl_callback_nodeview as sv_bgl
 
 
-class SvNodeTreeCommon(object):
-    '''
-    Common methods shared between Sverchok node trees
-    '''
-
-    # auto update toggle of the node tree
-    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
-    has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
-
-    # for throttle method usage when links are created in the tree via Python
-    skip_tree_update: BoolProperty(default=False)  # usage only via throttle_update method
+class SvNodeTreeCommon:
+    """Common class for all Sverchok trees (regular trees and group ones)"""
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
-    sv_links = SvLinks()  # cached Python links
-    nodes_dict = SvNodesDict()  # cached Python nodes
+    sv_show_time_nodes: BoolProperty(
+        name="Node times",
+        default=False,
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)))
+    show_time_mode: EnumProperty(
+        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        description="Mode of showing node update timings",
+    )
 
     @property
     def tree_id(self):
@@ -60,42 +50,6 @@ class SvNodeTreeCommon(object):
         if not self.tree_id_memory:
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
-
-    def sv_update(self):
-        """
-        the method checks if anything changed inside the tree
-        and update it if necessary
-        """
-        self.sv_links.create_new_links(self)
-        if self.sv_links.links_have_changed(self):
-            self.has_changed = True
-            build_update_list(self)
-            process_from_nodes(self.sv_links.get_nodes(self))
-            self.sv_links.store_links_cache(self)
-
-    def animation_update(self):
-        """Find animatable nodes and update from them"""
-        animated_nodes = []
-        for node in self.nodes:
-            if hasattr(node, 'is_animatable'):
-                if node.is_animatable:
-                    animated_nodes.append(node)
-        process_from_nodes(animated_nodes)
-
-    @contextmanager
-    def throttle_update(self):
-        """ usage
-        with tree.throttle_update():
-            tree.nodes.new(...)
-            tree.links.new(...)
-        tree should be updated manually if needed
-        """
-        previous_state = self.skip_tree_update
-        self.skip_tree_update = True
-        try:
-            yield self
-        finally:
-            self.skip_tree_update = previous_state
 
     def update_gl_scale_info(self, origin=None):
         """
@@ -127,6 +81,15 @@ class SvNodeTreeCommon(object):
             finally:
                 del self['init_tree']
 
+    def update_ui(self, nodes_errors, update_time):
+        """ The method get information about node statistic of last update from the handler to show in view space
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode"""
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update)
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -157,38 +120,23 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # From the user perspective, some of node parameters
         # got new parameter values, so the setup should be recalculated;
-        # but techically, node properties were not changed
+        # but technically, node properties were not changed
         # (only other properties were shown in UI), so enabling/disabling
         # of draft mode does not automatically trigger tree update.
         # Here we trigger it manually.
 
         if draft_nodes:
-            process_from_nodes(draft_nodes)
+            self.update_nodes(draft_nodes)
 
-    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
-    sv_show_debug_time_prints: BoolProperty(
-        name="Debug Prints", default=True, options=set(),
-        description="setting this to False will suppress debug node times printing to console")
-    
-    # something related with heat map feature
-    # looks like it keeps dictionary of nodes and their user defined colors in string format
-    sv_user_colors: StringProperty(default="")
-
-    # option whether error message of nodes should be shown in tree space or not
-    # for showing error message all tree should be reevaluated what is not nice
-    sv_show_error_in_tree: BoolProperty(
-        description="This will show Node Exceptions in the node view, right beside the node",
-        name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
-
-    sv_show_error_details: BoolProperty(
-            name = "Show error details",
-            description = "Display exception stack in the node view as well",
-            default = False,
-            update=lambda s, c: process_tree(s),
-            options=set())
+    sv_process: BoolProperty(
+        name="Process",
+        default=True,
+        description='Update upon tree and node property changes',
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        options=set(),
+    )
+    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
 
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
@@ -196,61 +144,42 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         default = False,
         options=set())
 
-    # if a nodetree consists of several disjoint graphs this option determines the order of their evaluation.
-    sv_subtree_evaluation_order: EnumProperty(
-        name="Subtree eval order",
-        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
-        description=textwrap.dedent("""\
-            This will give you control over the order in which subset graphs are evaluated
-            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
-            2) None does no sorting
-        """),
-        default="None", update=lambda s, c: process_tree(s), options=set()
-    )
-
     # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
     sv_draft: BoolProperty(
         name="Draft",
         description="Draft (simplified processing) mode",
         default=False,
-        update=on_draft_mode_changed)
+        update=on_draft_mode_changed,
+        options=set(),
+    )
+    sv_scene_update: BoolProperty(name="Scene update", description="Update upon changes in the scene", options=set(),
+                                  default=True)
 
     def update(self):
-        """
-        This method is called if collection of nodes or links of the tree was changed
-        First of all it checks is it worth bothering and then gives initiative to `update system`
-        """
-        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
-            return
-        # this is a no-op if there's no drawing
-        clear_exception_drawing_with_bgl(self.nodes)
-        if is_first_run():
-            return
-        if self.skip_tree_update or not self.sv_process:
-            return
+        """This method is called if collection of nodes or links of the tree was changed"""
+        handle_event(ev.TreeEvent(self))
 
-        self.sv_update()
-        self.has_changed = False
+    def force_update(self):
+        """Update whole tree from scratch"""
+        # ideally we would never like to use this method but we live in the real world
+        handle_event(ev.ForceEvent(self))
 
-    def update_nodes(self, nodes):
+    def update_nodes(self, nodes, cancel=True):
         """This method expects to get list of its nodes which should be updated"""
-        if self.id_data.skip_tree_update:
-            # this can be called by node groups which do not know whether the tree is throttled
-            return
-        if len(nodes) == 1:
-            # this function actually doing something different unlike `process_from_nodes` function
-            # the difference is that process_from_nodes can also update other outdated nodes
-            process_from_node(nodes[0])
-        process_from_nodes(nodes)
+        return handle_event(ev.PropertyEvent(self, nodes))
 
-    def process_ani(self):
+    def scene_update(self):
+        """This method should be called by scene changes handler
+        it ignores events related with S
+        sverchok trees in other cases it updates nodes which read data from Blender"""
+        handle_event(ev.SceneEvent(self))
+
+    def process_ani(self, frame_changed: bool, animation_playing: bool):
         """
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        if self.sv_animate:
-            self.animation_update()
-            # process_tree(self)
+        handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))
 
 
 class UpdateNodes:
@@ -266,6 +195,26 @@ class UpdateNodes:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    def update_interactive_mode(self, context):
+        if self.is_interactive:
+            self.process_node(context)
+
+    is_interactive: BoolProperty(default=True, description="Update node upon changes in the scene",
+                                 update=update_interactive_mode, name="Interactive")
+    is_scene_dependent = False  # if True and is_interactive then the node will be updated upon scene changes
+
+    def refresh_node(self, context):
+        if self.refresh:
+            self.refresh = False
+            self.process_node(context)
+
+    refresh: BoolProperty(name="Update Node", description="Update Node", update=refresh_node)
+    is_animatable: BoolProperty(name="Animate Node",
+                                description="Update Node on frame change",
+                                default=True,
+                                update=lambda s, c: s.process_node(c))  # it would be better to have special event
+    is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
 
     def sv_init(self, context):
         """
@@ -295,34 +244,17 @@ class UpdateNodes:
         """
         pass
 
-    def sv_throttle_tree_update(self):
-        """
-        It will temporary switch off updating node tree upon adding/removing node/links in a node tree
-
-        class MyNode:
-            def property_update(self, context):
-                with self.throttle_tree_update():
-                    self.inputs.remove('MySocket')
-        """
-        return data_structure.throttle_tree_update(self)
-
     def init(self, context):
         """
         this function is triggered upon node creation,
-        - throttle the node
         - delegates further initialization information to sv_init
-        - sets node color
         """
-        ng = self.id_data
-        if ng.bl_idname in {'SverchCustomTreeType', }:
-            ng.nodes_dict.load_node(self)
-        with ng.throttle_update():
-            try:
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
-            self.set_color()
+        if self.sv_default_color:
+            self.use_custom_color = True
+            self.color = self.sv_default_color
+
+        with catch_log_error():
+            self.sv_init(context)
 
     def sv_new_input(self, socket_type, name, **attrib_dict):
         socket = self.inputs.new(socket_type, name)
@@ -331,39 +263,23 @@ class UpdateNodes:
         return socket
 
     def free(self):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_free() instead
-        """
+        """Called upon the node removal"""
+        # custom free function
         self.sv_free()
 
-        for s in self.outputs:
+        # free sockets memory
+        for s in chain(self.inputs, self.outputs):
             s.sv_forget()
 
-        node_tree = self.id_data
-        if node_tree.bl_idname in {'SverchCustomTreeType', }:
-            node_tree.nodes_dict.forget_node(self)
-
-        if hasattr(self, "has_3dview_props"):  # todo remove
-            print("about to remove this node's props from Sv3DProps")
-            try:
-                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-            except:
-                print(f'failed to remove {self.name} from tree={self.id_data.name}')
+        # remove tree space drawings
+        self.update_ui()
 
     def copy(self, original):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_copy() instead.
-        """
-        settings = get_original_node_color(self.id_data, original.name)
-        if settings is not None:
-            self.use_custom_color, self.color = settings
-
+        """Called upon the node being copied"""
         self.n_id = ""
+        for sock in chain(self.inputs, self.outputs):
+            sock.s_id = ''
         self.sv_copy(original)
-        if self.id_data.bl_idname in {'SverchCustomTreeType', }:
-            self.id_data.nodes_dict.load_node(self)
 
     def update(self):
         """
@@ -375,32 +291,37 @@ class UpdateNodes:
 
         self.sv_update()
 
+    def update_ui(self, error=None, update_time=None):
+        """updating tree contextual information -> node colors, text
+        node_id only for usage of a group tree"""
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        exception_color = sv_settings.exception_color
+        no_data_color = sv_settings.no_data_color
+        error_pref = "error"
+        update_pref = "update_time"
+
+        # update error colors
+        if error is not None:
+            color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            self.set_temp_color(color)
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, "UP")
+        else:
+            sv_bgl.callback_disable(error_pref + self.node_id)
+            self.set_temp_color()
+
+        # show update timing
+        if update_time is not None:
+            update_time = int(update_time * 1000)
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP", dynamic_location=False)
+        else:
+            sv_bgl.callback_disable(update_pref + self.node_id)
+
     def insert_link(self, link):
         """It will be triggered only if one socket is connected with another by user"""
 
     def process_node(self, context):
-        '''
-        Doesn't work as intended, inherited functions can't be used for bpy.props
-        update= ...
-        Still this is called from updateNode
-        '''
-        if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.skip_tree_update:
-                return
-
-            # self.id_data.has_changed = True
-
-            if data_structure.DEBUG_MODE:
-                a = time.perf_counter()
-                process_from_node(self)
-                b = time.perf_counter()
-                debug("Partial update from node %s in %s", self.name, round(b - a, 4))
-            else:
-                process_from_node(self)
-        elif self.id_data.bl_idname == "SvGroupTree":
-            self.id_data.update_nodes([self])
-        else:
-            pass
+        """Call this method to revaluate the node tree whenever node properties was changed"""
+        self.id_data.update_nodes([self])
 
 
 class NodeUtils:
@@ -418,6 +339,12 @@ class NodeUtils:
             name = self.bl_label
         if not name:
             name = self.__class__.__name__
+
+        # add information about the module location
+        frame, _, line, *_ = inspect.stack()[2]
+        module = inspect.getmodule(frame)
+        module_name = module.__name__ if module is not None else ''
+        name = f'{module_name} {line} ({name})'
         return sverchok.utils.logging.getLogger(name)
 
     def debug(self, msg, *args, **kwargs):
@@ -453,7 +380,7 @@ class NodeUtils:
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
         """
-        fail gracefuly?
+        fail gracefully?
         This function acknowledges that the identifier being passed can be a string or an object proper.
         for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
         be stored with that data in .blends, here we try to permit older blends having data stored as a string,
@@ -498,18 +425,53 @@ class NodeUtils:
         return None
 
     def safe_socket_remove(self, kind, key, failure_message=None):
-        with self.sv_throttle_tree_update():
-            sockets = getattr(self, kind)
-            if key in sockets:
-                sockets.remove(sockets[key])
-            else:
-                canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
-                self.debug(failure_message or canned_msg)
+        sockets = getattr(self, kind)
+        if key in sockets:
+            sockets.remove(sockets[key])
+        else:
+            canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
+            self.debug(failure_message or canned_msg)
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     """Base class for all nodes"""
     _docstring = None  # A cache for docstring property
+
+    def draw_buttons(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, 'is_animatable', icon='ANIM', icon_only=True)
+            if self.is_scene_dependent:
+                row.prop(self, 'is_interactive', icon='SCENE_DATA', icon_only=True)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, 'refresh', icon='FILE_REFRESH')
+        self.sv_draw_buttons(context, layout)
+
+    def sv_draw_buttons(self, context, layout):
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, 'is_animatable', icon='ANIM')
+            if self.is_scene_dependent:
+                row.prop(self, 'is_interactive', icon='SCENE_DATA')
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, 'refresh', icon='FILE_REFRESH')
+        self.sv_draw_buttons_ext(context, layout)
+
+    def sv_draw_buttons_ext(self, context, layout):
+        self.sv_draw_buttons(context, layout)
+
+    @property
+    def sv_internal_links(self) -> Iterable[tuple[NodeSocket, NodeSocket]]:
+        """Override the property to change logic of connecting sockets
+        when the node is muted.
+        Also, there are some basic implementations `utils/nodes_mixins/sockets_config`"""
+        for link in self.internal_links:
+            yield link.from_socket, link.to_socket
 
     @classproperty
     def docstring(cls):
@@ -534,9 +496,28 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         """
         return recursive_framed_location_finder(self, self.location[:])
 
-    def set_color(self):  # todo set_default_color ?
-        color = color_def.get_color(self.bl_idname)
-        if color:
+    @property
+    def sv_default_color(self):
+        return color_def.get_color(self.bl_idname)
+
+    def set_temp_color(self, color=None):
+        """This method memorize its initial color and override it with given one
+        if given color is None it tries to return its initial color or do nothing"""
+
+        if color is None:
+            # looks like the node should return its initial color (user choice)
+            if 'user_color' in self:
+                self.use_custom_color = self['use_user_color']
+                del self['use_user_color']
+                self.color = self['user_color']
+                del self['user_color']
+
+        # set temporary color
+        else:
+            # save overridden color (only once)
+            if 'user_color' not in self:
+                self['use_user_color'] = self.use_custom_color
+                self['user_color'] = self.color
             self.use_custom_color = True
             self.color = color
 

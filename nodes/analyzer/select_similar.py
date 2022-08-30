@@ -62,7 +62,7 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvSelectSimilarNode'
-    bl_label = 'Select similar'
+    bl_label = 'Select Similar'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SELECT_SIMILAR'
 

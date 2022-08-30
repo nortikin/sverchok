@@ -21,7 +21,6 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, 
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.modules.statistics_functions import *
 from sverchok.utils.logging import debug
 
@@ -323,7 +322,7 @@ class SvTimerOperatorCallback(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class SvTimerNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvTimerNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Timer, Elapse
     Tooltip: Manage elapsed time via Start, Stop, Pause, Reset, Expire operations.
@@ -331,6 +330,10 @@ class SvTimerNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvTimerNode'
     bl_label = 'Timer'
     bl_icon = 'PREVIEW_RANGE'
+
+    @property
+    def is_animation_dependent(self):
+        return not self.inputs['Operation'].is_linked
 
     timers: CollectionProperty(name="Timers", type=SvTimerPropertyGroup)
 
@@ -370,7 +373,7 @@ class SvTimerNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         default=0, min=0)
 
     normalize: BoolProperty(
-        name="normalize", description="Display times as percetage of the duration",
+        name="normalize", description="Display times as percentage of the duration",
         default=False, update=updateNode)
 
     inhibit_update: BoolProperty(
@@ -429,9 +432,8 @@ class SvTimerNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         col = layout.column(align=True)
         col.prop(self, "normalize", text="Normalize Time")
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        self.draw_animatable_buttons(layout)
         layout.prop(self, "absolute")
         layout.prop(self, "sticky")
 

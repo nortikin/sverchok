@@ -369,7 +369,7 @@
         },
         "bl_idname": "SvScriptNodeLite"
       },
-      "Vector out": {
+      "Vector Out": {
         "attributes": {
           "location": [
             -24.597192764282227,
@@ -538,7 +538,7 @@
         "to_socket": "Curve"
       },
       {
-        "from_node": "Vector out",
+        "from_node": "Vector Out",
         "from_socket": "Z",
         "to_node": "Formula",
         "to_socket": "z"
@@ -550,7 +550,7 @@
         "to_socket": "x"
       },
       {
-        "from_node": "Vector out",
+        "from_node": "Vector Out",
         "from_socket": "Z",
         "to_node": "Formula.002",
         "to_socket": "y"
@@ -588,7 +588,7 @@
       {
         "from_node": "Evaluate Curve",
         "from_socket": "Vertices",
-        "to_node": "Vector out",
+        "to_node": "Vector Out",
         "to_socket": "Vectors"
       },
       {

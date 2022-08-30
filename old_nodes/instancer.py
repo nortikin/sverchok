@@ -150,15 +150,13 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         if not matrices:
             return
 
-        with self.sv_throttle_tree_update():
+        self.ensure_collection()
+        for obj_index, matrix in enumerate(matrices):
+            obj_name = f'{self.basedata_name}.{obj_index:04d}'
+            make_or_update_instance(self, obj_name, matrix)
 
-            self.ensure_collection()
-            for obj_index, matrix in enumerate(matrices):
-                obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, matrix)
-
-            num_objects = len(matrices)
-            self.remove_non_updated_objects(num_objects)
+        num_objects = len(matrices)
+        self.remove_non_updated_objects(num_objects)
 
     def ensure_collection(self):
         collections = bpy.data.collections

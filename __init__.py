@@ -43,16 +43,17 @@
 bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
-    "version": (0, 6, 0, 0),
-    "blender": (2, 81, 0),
+    "version": (1, 1, 0),
+    "blender": (2, 93, 0),
     "location": "Node Editor",
     "category": "Node",
     "description": "Parametric node-based geometry programming",
     "warning": "",
-    "wiki_url": "http://nikitron.cc.ua/sverch/html/main.html",
+    "wiki_url": "https://nortikin.github.io/sverchok/docs/main.html",
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
+VERSION = 'v1.1.0-beta'  # looks like the only way to have custom format for the version
 
 import sys
 import importlib
@@ -66,22 +67,26 @@ if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
 from sverchok.core import sv_registration_utils, init_architecture, make_node_list
-from sverchok.core import reload_event, handle_reload_event
+from sverchok.core import interupted_activation_detected, reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
 from sverchok.utils.profile import profiling_startup
 
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
-node_list = make_node_list(nodes)
 
-if "bpy" in locals():
-    reload_event = True
-    node_list = handle_reload_event(nodes, imported_modules)
+if "nodes" not in locals():
+    raise interupted_activation_detected()
+else:
 
+    node_list = make_node_list(nodes)
 
-import bpy
-import sverchok
+    if "bpy" in locals():
+        reload_event = True
+        node_list = handle_reload_event(nodes, imported_modules)
+
+    import bpy
+    import sverchok
 
 def register():
     with profiling_startup():

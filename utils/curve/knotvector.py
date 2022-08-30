@@ -44,29 +44,23 @@ def generate(degree, num_ctrlpts, clamped=True):
     if degree == 0 or num_ctrlpts == 0:
         raise ValueError("Input values should be different than zero.")
 
-    # Number of repetitions at the start and end of the array
-    num_repeat = degree
+    if clamped:
+        num_repeat = degree
+        num_segments = num_ctrlpts - (degree + 1)
+        zeros = np.zeros((num_repeat,))
+        growing = np.linspace(0.0, 1.0, num = num_segments+2)
+        ones = np.ones((num_repeat,))
+        return np.concatenate((zeros, growing, ones))
+    else:
+        num_knots = degree + num_ctrlpts + 1
+        return np.linspace(0.0, 1.0, num=num_knots)
 
-    # Number of knots in the middle
-    num_segments = num_ctrlpts - (degree + 1)
+def find_span(knot_vector, num_ctrlpts, knot):
+    span = 0  # Knot span index starts from zero
+    while span < num_ctrlpts and knot_vector[span] <= knot:
+        span += 1
 
-    if not clamped:
-        # No repetitions at the start and end
-        num_repeat = 0
-        # Should conform the rule: m = n + p + 1
-        num_segments = degree + num_ctrlpts - 1
-
-    # First knots
-    knot_vector = [0.0 for _ in range(0, num_repeat)]
-
-    # Middle knots
-    knot_vector += list(np.linspace(0.0, 1.0, num_segments + 2))
-
-    # Last knots
-    knot_vector += [1.0 for _ in range(0, num_repeat)]
-
-    # Return auto-generated knot vector
-    return np.array(knot_vector)
+    return span - 1
 
 def from_tknots(degree, tknots):
     n = len(tknots)
@@ -160,10 +154,11 @@ def elevate_degree(knot_vector, delta=1):
 
 def insert(knot_vector, u, count=1):
     idx = np.searchsorted(knot_vector, u)
-    result = knot_vector
+    result = knot_vector.tolist()
     for i in range(count):
-        result = np.insert(result, idx, u)
-    return result
+        result.insert(idx, u)
+        #result = np.insert(result, idx, u)
+    return np.asarray(result)
 
 def rescale(knot_vector, new_t_min, new_t_max):
     t_min = knot_vector[0]
@@ -181,8 +176,12 @@ def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
     #print(f"kv {knot_vector} => {pairs}")
     for k, count in pairs:
-        if abs(k - u) < tolerance:
-            return count
+        if tolerance is None:
+            if k == u:
+                return count
+        else:
+            if abs(k - u) < tolerance:
+                return count
     return 0
 
 def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6):
@@ -259,10 +258,23 @@ def check(degree, knot_vector, num_ctrlpts):
 
     # Check ascending order
     prev_knot = knot_vector[0]
-    for knot in knot_vector:
+    for i, knot in enumerate(knot_vector):
         if prev_knot > knot:
-            return "Knot vector items are not all non-decreasing"
+            print(knot_vector)
+            return f"Knot vector items are not all non-decreasing: u[{i-1}] = {prev_knot} > u[{i}] = {knot}"
         prev_knot = knot
 
+    return None
+
+def check_multiplicity(degree, knot_vector, tolerance=1e-6):
+    ms = to_multiplicity(knot_vector, tolerance)
+    n = len(ms)
+    for idx, (u, count) in enumerate(ms):
+        if idx == 0 or idx == n-1:
+            if count > degree+1:
+                return f"First/Last knot u={u} multiplicity {count} is more than degree+1 {degree+1}"
+        else:
+            if count > degree:
+                return f"Inner knot u={u} multiplicity {count} is more than degree {degree}"
     return None
 

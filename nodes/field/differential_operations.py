@@ -1,17 +1,12 @@
 
-import numpy as np
-
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 
-from sverchok.utils.field.scalar import (SvScalarField,
-                SvVectorFieldDivergence, SvScalarFieldLaplacian)
-from sverchok.utils.field.vector import ( SvVectorField,
-                SvScalarFieldGradient, SvVectorFieldRotor)
+from sverchok.utils.field.scalar import (SvVectorFieldDivergence, SvScalarFieldLaplacian)
+from sverchok.utils.field.vector import (SvScalarFieldGradient, SvVectorFieldRotor)
 from sverchok.utils.modules.sockets import SvDynamicSocketsHandler, SocketInfo
 
 sockets_handler = SvDynamicSocketsHandler()
@@ -49,7 +44,7 @@ class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Field differential operations
     """
     bl_idname = 'SvExFieldDiffOpsNode'
-    bl_label = 'Field Differential Operation'
+    bl_label = 'Field Differential Operations'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_NABLA'
 
@@ -67,7 +62,6 @@ class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'operation', text='')
         layout.prop(self, 'step')
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         actual_inputs, actual_outputs = get_sockets(self.operation)
         actual_inputs = dict(actual_inputs)
@@ -83,6 +77,7 @@ class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
             socket.hide_safe = registered.id not in actual_outputs
             if not socket.hide_safe:
                 socket.name = actual_outputs[registered.id]
+        updateNode(self, context)
 
     operation : EnumProperty(
         name = "Operation",

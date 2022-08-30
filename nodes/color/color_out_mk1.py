@@ -16,15 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import colorsys
 import bpy
-from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
-from mathutils import Color
+from bpy.props import BoolProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, dataCorrect, dataCorrect_np
-from sverchok.utils.sv_itertools import sv_zip_longest
+from sverchok.data_structure import updateNode, dataCorrect_np
 from sverchok.utils.modules.color_utils import rgb_to_hsv, rgb_to_hsl
 from numpy import ndarray, array
 
@@ -92,7 +88,8 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         else:
 
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            layout.label(text=socket.name+ '. ' + str(socket.objects_number))
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'selected_mode', expand=True)
         # layout.prop(self, 'use_alpha')
@@ -110,12 +107,12 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         color_input = self.inputs['Colors']
         if color_input.is_linked:
-            abc = self.inputs['Colors'].sv_get()
+            abc = self.inputs['Colors'].sv_get(deepcopy=False)
             data = dataCorrect_np(abc)
         else:
             data = [[self.unit_color[:]]]
 
-        if self.output_numpy:
+        if self.output_numpy or isinstance(data[0], ndarray):
             unpack_func = unpack_np if isinstance(data[0], ndarray) else unpack_list_to_np
         else:
             unpack_func = unpack_list

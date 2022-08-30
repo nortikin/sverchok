@@ -137,7 +137,7 @@ class LSystem:
         the vertices are to be joined in a ring, copied and transformed
         by the 1st matrix and this ring joined to the previous ring.
 
-        The ring dosen't have to be planar.
+        The ring doesn't have to be planar.
         outputs lists of vertices, edges and faces
         """
 
@@ -306,7 +306,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     maxmats: IntProperty(
-        name='maxmats', description='maximum nunber of matrices',
+        name='maxmats', description='maximum number of matrices',
         default=1000, min=1, options={'ANIMATABLE'},
         update=updateNode)
 
@@ -452,7 +452,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
-        for shape in shape_names:  # isnt it plain wrong? i mean why not just shape_names[-1] if need to get last one?
+        for shape in shape_names:  # isn't it plain wrong? i mean why not just shape_names[-1] if need to get last one?
             self.outputs[shape].sv_set(mat_dict[shape])
 
 

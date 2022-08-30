@@ -1,4 +1,4 @@
-sn functor b
+SN Functor B
 ============
 
 "ScriptNode Functor Version B" is an implementation of a script node, which is better described by the examples in the thread where this node was developed. This node is not used generally, because it is not entirely a completed project and i want to potentially radically change the way the node is syntactically controlled.
@@ -43,11 +43,6 @@ sverchok nodes.
 the **draw_buttons** is optional, and is called by the baseclass.
 
 the **process** function is performed whenever the node is told to update, to understand when this happens you should
-read up on how Sverchok implements the update mechanism. If you want to do stuff inside this function that would cause the nodetree to update then you will want to wrap that code in::
-
-    with self.sv_throttle_tree_update():
-        # the code you execute here will have no side effect of triggering another call up nodetree.process
-        # this avoids infinite recursions.
-
+read up on how Sverchok implements the update mechanism.
 
 https://github.com/nortikin/sverchok/issues/2312

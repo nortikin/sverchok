@@ -9,7 +9,7 @@ import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
-from sverchok.utils.geom import Spline
+from sverchok.utils.geom import Spline, bounding_box
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.algorithms import concatenate_curves
@@ -235,52 +235,74 @@ class SvBezierCurve(SvCurve):
         coeffs = np.array(coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv1(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C1", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
-    def second_derivative_array(self, ts):
+    def second_derivative_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv2(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C2", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         coeffs = [self.coeff_deriv3(k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         #print("C3", coeffs)
         return np.dot(coeffs.T, self.points)
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
         if n >= 1:
-            first = self.tangent_array(ts)
+            first = self.tangent_array(ts, tangent_delta=tangent_delta)
             result.append(first)
         if n >= 2:
-            second = self.second_derivative_array(ts)
+            second = self.second_derivative_array(ts, tangent_delta=tangent_delta)
             result.append(second)
         if n >= 3:
-            third = self.third_derivative_array(ts)
+            third = self.third_derivative_array(ts, tangent_delta=tangent_delta)
             result.append(third)
         return result
+
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
 
     def get_degree(self):
         return self.degree
 
+    def is_rational(self):
+        return False
+
     def get_control_points(self):
         return self.points
 
-    def elevate_degree(self, delta=1):
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
         points = elevate_bezier_degree(self.degree, self.points, delta)
         return SvBezierCurve(points)
+
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(self.degree, len(self.points))
@@ -288,11 +310,11 @@ class SvBezierCurve(SvCurve):
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
 
-    def concatenate(self, curve2):
+    def concatenate(self, curve2, tolerance=None):
         curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2)
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
@@ -364,10 +386,10 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
+    def tangent(self, t, tangent_delta=None):
+        return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         c0 = -3*(1 - ts)**2
         c1 = 3*(1-ts)**2 - 6*(1-ts)*ts
         c2 = 6*(1-ts)*ts - 3*ts**2
@@ -378,7 +400,7 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def second_derivative(self, t):
+    def second_derivative(self, t, tangent_delta=None):
         return self.second_derivative_array(np.array([t]))[0]
 
     def second_derivative_array(self, ts):
@@ -391,7 +413,7 @@ class SvCubicBezierCurve(SvCurve):
 
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def third_derivative_array(self, ts):
+    def third_derivative_array(self, ts, tangent_delta=None):
         c0 = np.full_like(ts, -6)[:,np.newaxis]
         c1 = np.full_like(ts, 18)[:,np.newaxis]
         c2 = np.full_like(ts, -18)[:,np.newaxis]
@@ -399,7 +421,7 @@ class SvCubicBezierCurve(SvCurve):
         p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
-    def derivatives_array(self, n, ts):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         result = []
         if n >= 1:
             first = self.tangent_array(ts)
@@ -415,6 +437,9 @@ class SvCubicBezierCurve(SvCurve):
     def get_degree(self):
         return 3
 
+    def is_rational(self):
+        return False
+
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
 
@@ -425,15 +450,34 @@ class SvCubicBezierCurve(SvCurve):
                 degree = 3, knotvector = knotvector,
                 control_points = control_points)
 
-    def elevate_degree(self, delta=1):
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
         points = elevate_bezier_degree(3, self.get_control_points(), delta)
         return SvBezierCurve(points)
 
-    def concatenate(self, curve2):
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
+
+    def reparametrize(self, new_t_min, new_t_max):
+        return self.to_nurbs().reparametrize(new_t_min, new_t_max)
+
+    def concatenate(self, curve2, tolerance=None):
         curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2)
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)

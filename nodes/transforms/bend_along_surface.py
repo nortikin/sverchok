@@ -34,7 +34,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Bend mesh along surface (2-D spline)
     '''
     bl_idname = 'SvBendAlongSurfaceNode'
-    bl_label = 'Bend object along surface'
+    bl_label = 'Bend Object Along Surface'
     bl_icon = 'SURFACE_NSURFACE'
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),

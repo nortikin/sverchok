@@ -14,6 +14,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import match_long_repeat
+from sverchok.utils.nodes_mixins.sockets_config import TransformNode
 
 
 def align(vectors, position, axis):
@@ -27,13 +28,13 @@ def align(vectors, position, axis):
         return (x_min + x_max) / 2
 
 
-class SvAlignMeshByMesh(bpy.types.Node, SverchCustomTreeNode):
+class SvAlignMeshByMesh(TransformNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Align mesh
     relatively to bounding box of base mesh
     """
     bl_idname = 'SvAlignMeshByMesh'
-    bl_label = 'Align mesh by mesh'
+    bl_label = 'Align Mesh by Mesh'
     bl_icon = 'SNAP_ON'
 
     align_enum = [('L', ' ', '', 'BACK', 1),

@@ -1,5 +1,5 @@
-Extrude separate faces lite
-========
+Extrude Separate Faces Lite
+============================
 
 Functionality
 -------------

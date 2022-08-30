@@ -8,11 +8,12 @@
 import random
 
 import bpy
-from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty, IntProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty, IntProperty
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, repeat_last_for_length, get_data_nesting_level
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, repeat_last_for_length,\
+    get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
@@ -36,7 +37,6 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POPULATE_SOLID'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
@@ -44,6 +44,7 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['RadiusField'].hide_safe = self.distance_mode != 'FIELD'
         self.inputs['MinDistance'].hide_safe = self.distance_mode != 'CONST'
         self.outputs['Radiuses'].hide_safe = self.distance_mode != 'FIELD'
+        updateNode(self, context)
 
     modes = [
             ('VOLUME', "Volume", "Generate points inside solid body", 0),

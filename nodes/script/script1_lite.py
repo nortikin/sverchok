@@ -19,7 +19,7 @@
 import os
 import sys
 import ast
-import json
+import textwrap
 import traceback
 import numpy as np
 
@@ -30,22 +30,21 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
 
-from sverchok.utils.snlite_utils import vectorize, ddir
+from sverchok.utils.snlite_utils import vectorize, ddir, sv_njit, sv_njit_clear
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.console_print import console_print
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode, throttled
-
+from sverchok.data_structure import updateNode
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
-READY_COLOR = (0, 0.8, 0.95)
+READY_COLOR = (0, 0.6, 0.8)
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
+template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils', 'templates']
 
-defaults = [0] * 32
-
-template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
+#defaults = [0] * 32
 
 class SNLITE_EXCEPTION(Exception): pass
 
@@ -74,7 +73,7 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
     bl_idname = "node.scriptlite_ui_callback"
     bl_label = "SNLite callback"
     bl_options = {'INTERNAL'}
-    fn_name: bpy.props.StringProperty(default='')
+    fn_name: StringProperty(default='')
 
     def execute(self, context):
         getattr(context.node, self.fn_name)()
@@ -86,7 +85,7 @@ class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
     bl_idname = "node.scriptlite_custom_callback"
     bl_label = "custom SNLite callback"
     bl_options = {'INTERNAL'}
-    cb_name: bpy.props.StringProperty(default='')
+    cb_name: StringProperty(default='')
 
     def execute(self, context):
         context.node.custom_callback(context, self)
@@ -97,7 +96,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
     bl_label = "SNLite load"
-    filepath: bpy.props.StringProperty()
+    filepath: StringProperty()
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
@@ -106,57 +105,86 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' snl SN Lite /// a lite version of SN '''
+class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
+
+    """
+    Triggers: snl
+    Tooltip: Script Node Lite
+    
+    This code represents a conscious weighing of conveniences to the user, vs somewhat harder to understand
+    code under the hood. This code evolved as design specs changed, while providing continued support for
+    previous implementation details.
+    """
 
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
-    def custom_enum_func(self, context):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets']['custom_enum']
-            if enum_list:
+    @property
+    def current_node_dict(self):
+        return self.node_dict.get(hash(self))
+    
+    def reset_node_dict_instance(self):
+        self.node_dict[hash(self)] = {}
+
+    def return_enumeration(self, enum_name=""):
+        if (ND := self.current_node_dict):
+            if (enum_list := ND['sockets'][enum_name]):
                 return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
 
-    def custom_enum_func_2(self, context):
-        ND = self.node_dict.get(hash(self))
-        if ND:
-            enum_list = ND['sockets']['custom_enum_2']
-            if enum_list:
-                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
-
-        return [("A", "A", '', 0), ("B", "B", '', 1)]
-
+    def extract_code(self, ast_node, joined=False):
+        code_lines = self.script_str.split('\n')[ast_node.lineno-1:ast_node.end_lineno]
+        return '\n'.join(code_lines) if joined else code_lines
 
     def custom_callback(self, context, operator):
-        ND = self.node_dict.get(hash(self))
-        if ND:
+        if (ND := self.current_node_dict):
             ND['sockets']['callbacks'][operator.cb_name](self, context)
 
-
     def make_operator(self, new_func_name, force=False):
-        ND = self.node_dict.get(hash(self))
-        if ND:
+        if (ND := self.current_node_dict):
             callbacks = ND['sockets']['callbacks']
             if not (new_func_name in callbacks) or force:
                 # here node refers to an ast node (a syntax tree node), not a node tree node
                 ast_node = self.get_node_from_function_name(new_func_name)
-                slice_begin, slice_end = ast_node.body[0].lineno-1, ast_node.body[-1].lineno
-                code = '\n'.join(self.script_str.split('\n')[slice_begin-1:slice_end+1])
-
+                code = self.extract_code(ast_node, joined=True)
+                # locals().update(self.make_new_locals())  # maybe..
+                locals().update(self.snlite_aliases)
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
+
+    @property
+    def sv_internal_links(self):
+        if (ND := self.current_node_dict) and 'sockets' in ND:
+            if (func := ND['sockets'].get("sv_internal_links")):
+                return func(self)
+        
+        return list(zip(self.inputs[:], self.outputs[:]))
 
 
     script_name: StringProperty()
     script_str: StringProperty()
     node_dict = {}
+    user_dict = {}
 
     halt_updates: BoolProperty(name="snlite halting token")
+
+    def get_user_dict(self):
+        if not self.user_dict.get(hash(self)):
+            self.user_dict[hash(self)] = {}
+        return self.user_dict[hash(self)]
+
+    def reset_user_dict(self, hard=False):
+        if hard:
+            # will reset all user_dicts in all instances of snlite.
+            # you probably don't want to do this, but for debugging it can be useful.
+            self.user_dict = {}
+
+        self.user_dict[hash(self)] = {}
+
 
     def updateNode2(self, context):
         if not self.halt_updates:
@@ -180,22 +208,22 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     n_id: StringProperty(default='')
 
     custom_enum: bpy.props.EnumProperty(
-        items=custom_enum_func, description="custom enum", update=updateNode
-    )
+        items=keep_enum_reference(
+            lambda self, c: self.return_enumeration(enum_name='custom_enum')),
+        description="enum 1", update=updateNode)
     custom_enum_2: bpy.props.EnumProperty(
-        items=custom_enum_func_2, description="custom enum 2", update=updateNode
-    )
-
+        items=keep_enum_reference(
+            lambda self, c: self.return_enumeration(enum_name='custom_enum_2')),
+        description="enum 2", update=updateNode)
 
     snlite_raise_exception: BoolProperty(name="raise exception")
 
     def draw_label(self):
         if self.script_name:
-            return 'SN: ' + self.script_name
+            return f"SN: {self.script_name}"
         else:
             return self.bl_label
 
-    @throttled
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -205,15 +233,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for idx, (socket_description) in enumerate(v):
             """
             Socket description at the moment of typing is list of: [
-            socket_type: str, 
-            socket_name: str, 
-            default: int value, float value or None,
-            nested: int]
+                socket_type: str, 
+                socket_name: str, 
+                default: int value, float value or None,
+                nested: int]
             """
             default_value = socket_description[2]
 
             if socket_description is UNPARSABLE:
-                print(socket_description, idx, 'was unparsable')
+                self.info(f"{socket_description}, {idx}, was unparsable")
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
@@ -262,11 +290,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             for _ in range(num_to_remove):
                 sockets.remove(sockets[-1])
 
-
     def update_sockets(self):
         socket_info = parse_sockets(self)
-        if not socket_info['inputs']:
-            return
+        #if not socket_info['inputs']:
+        #    return
 
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}):
@@ -278,17 +305,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             self.flush_excess_sockets(k, v)
 
-        self.node_dict[hash(self)] = {}
-        self.node_dict[hash(self)]['sockets'] = socket_info
-
+        self.reset_node_dict_instance()
+        self.current_node_dict['sockets'] = socket_info
         return True
-
-
-
 
     def sv_init(self, context):
         self.use_custom_color = False
-
 
     def load(self):
         if not self.script_name:
@@ -297,6 +319,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
         if text and hasattr(text, "as_string"):
             self.script_str = text.as_string()
+            # self.process_node(None)
+
         else:
             self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
@@ -306,16 +330,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.injected_state = False
             self.process()
 
-
     def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
-        self.node_dict[hash(self)] = {}
+        self.reset_node_dict_instance()
         for socket_set in [self.inputs, self.outputs]:
             socket_set.clear()
 
     def sv_copy(self, node):
-        self.node_dict[hash(self)] = {}
+        self.reset_node_dict_instance()
         self.load()
         self.n_id = ""
 
@@ -323,7 +346,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not all([self.script_name, self.script_str]):
             return
         self.process_script()
-
 
     def make_new_locals(self):
 
@@ -334,12 +356,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
-        ND = self.node_dict.get(hash(self))
+        ND = self.current_node_dict
         if not ND:
             self.info('hash invalidated')
             self.injected_state = False
             self.update_sockets()
-            ND = self.node_dict.get(hash(self))
+            ND = self.current_node_dict
             self.load()
 
         socket_info = ND['sockets']
@@ -359,80 +381,100 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                     if t and t[0] and len(t[0]) > 0:
                         val = t[0][0]
 
+            # setting the label of the connected socket.
+            if len(sock_desc) == 5:
+                display_name = sock_desc[4]
+                if display_name:
+
+                    # if label is not yet set or the label is currently
+                    # different to the proposed label, change it.
+                    if not s.label or (s.label != display_name):
+                       s.label = display_name
+
+            else:
+                if s.label:
+                    s.label = ''
+
             local_dict[s.name] = val
 
         return local_dict
 
+    def detect_indentation_from_snippet(self, lines):
+        for line in lines:
+            if line.startswith(" "): return "    "
+            elif line.startswith("\t"): return "\t"
+        print(f"no indentation detected..{lines}")
+        return "  "
+
     def get_node_from_function_name(self, func_name):
         """
-        this seems to get enough info for a snlite stateful setup function.
-        "node" here refers to a node/function in the self.script_str after being parsed 
-
+        "node" here refers to an ast.node entity for the named function
+        found in the self.script_str 
         """
         tree = ast.parse(self.script_str)
         for node in tree.body:
             if isinstance(node, ast.FunctionDef) and node.name == func_name:
                 return node
 
-
-    def get_setup_code(self):
-        ast_node = self.get_node_from_function_name('setup')
-        if ast_node:
-            begin_setup = ast_node.body[0].lineno - 1
-            end_setup = ast_node.body[-1].lineno
-            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-            return 'def setup():\n\n' + code + '\n    return locals()\n'
-
-
-    def get_ui_code(self):
-        ast_node = self.get_node_from_function_name('ui')
-        if ast_node:
-            begin_setup = ast_node.body[0].lineno - 1
-            end_setup = ast_node.body[-1].lineno
-            code = '\n'.join(self.script_str.split('\n')[begin_setup:end_setup])
-            return 'def ui(self, context, layout):\n\n' + code + '\n\n'
-
+    def get_function_code(self, func_name, end=""):
+        if (ast_node:= self.get_node_from_function_name(func_name)):
+            
+            if not end:
+                return self.extract_code(ast_node, joined=True)
+            else:
+                # snlite will inject tail-code
+                code = self.extract_code(ast_node)
+                indentation = self.detect_indentation_from_snippet(code)
+                code.append(f"{indentation}{end}\n")
+                return "\n".join(code)
 
     def inject_state(self, local_variables):
-        setup_result = self.get_setup_code()
-        if setup_result:
+        if (setup_result := self.get_function_code("setup", end="return locals()")):
             exec(setup_result, local_variables, local_variables)
             setup_locals = local_variables.get('setup')()
             local_variables.update(setup_locals)
             local_variables['socket_info']['setup_state'] = setup_locals
             self.injected_state = True
 
+    def inject_function(self, local_variables, func_name=None, end=""):
+        if (result := self.get_function_code(func_name, end="pass")):
+            exec(result, local_variables, local_variables)
+            func = local_variables.get(func_name)
+            local_variables['socket_info'][func_name] = func
 
-    def inject_draw_buttons(self, local_variables):
-        draw_ui_result = self.get_ui_code()
-        if draw_ui_result:
-            exec(draw_ui_result, local_variables, local_variables)
-            ui_func = local_variables.get('ui')
-            local_variables['socket_info']['drawfunc'] = ui_func
-
-
-    def process_script(self):
-        __local__dict__ = self.make_new_locals()
-        locals().update(__local__dict__)
-        locals().update({
+    @property
+    def snlite_aliases(self):
+        return {
             'vectorize': vectorize,
             'bpy': bpy,
             'np': np,
             'ddir': ddir,
+            'get_user_dict': self.get_user_dict,
+            'reset_user_dict': self.reset_user_dict,
+            'cprint': lambda message: console_print(message, self),
+            'console_print': console_print,
+            'sv_njit': sv_njit,
+            'sv_njit_clear': sv_njit_clear,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
-        })
+        }
+
+    def process_script(self):
+        __local__dict__ = self.make_new_locals()
+        locals().update(__local__dict__)
+        locals().update(self.snlite_aliases)
 
         for output in self.outputs:
             locals().update({output.name: []})
 
         try:
-            socket_info = self.node_dict[hash(self)]['sockets']
+            socket_info = self.current_node_dict['sockets']
 
             # inject once!
             if not self.injected_state:
                 self.inject_state(locals())
-                self.inject_draw_buttons(locals())
+                self.inject_function(locals(), func_name="ui", end="pass")
+                self.inject_function(locals(), func_name="sv_internal_links")
             else:
                 locals().update(socket_info['setup_state'])
 
@@ -475,13 +517,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for socket_name in requirements:
             if self.inputs.get(socket_name):
                 obtained_data = self.inputs[socket_name].sv_get(default=None)
-                # print(f"{obtained_data} from {socket_name}")
                 if obtained_data is None:
                     continue
                 try:
-                    if obtained_data and obtained_data[0]:
-                        required_count += 1
-                except:
+                    if obtained_data:
+                        if isinstance(obtained_data[0], np.ndarray) and obtained_data[0].any():
+                            required_count += 1
+                            continue
+                        if obtained_data[0]:
+                            required_count += 1
+                except Exception as err:
+                    # print("ending early 2", err)
                     ...
         
         requirements_met = required_count == len(requirements)
@@ -492,25 +538,21 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def custom_draw(self, context, layout):
-        tk = self.node_dict.get(hash(self))
+        tk = self.current_node_dict
         if not tk or not tk.get('sockets'):
             return
 
-        snlite_info = tk['sockets']
-        if snlite_info:
+        if (snlite_info := tk['sockets']):
 
             # snlite supplied custom file handler solution
-            fh = snlite_info.get('display_file_handler')
-            if fh:
+            if (fh := snlite_info.get('display_file_handler')):
                 layout.prop_search(self, 'user_filename', bpy.data, 'texts', text='filename')
 
             # user supplied custom draw function
-            f = snlite_info.get('drawfunc')
-            if f:
+            if (f := snlite_info.get('ui')):
                 f(self, context, layout)
 
-
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         sn_callback = 'node.scriptlite_ui_callback'
 
         if not self.script_str:
@@ -518,8 +560,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
+            self.wrapper_tracked_ui_draw_op(row, "node.sv_snlite_script_search", text="", icon="VIEWZOOM")
         else:
-            self.draw_animatable_buttons(layout, icon_only=True)
             col = layout.column(align=True)
             row = col.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
@@ -527,8 +569,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.custom_draw(context, layout)
 
-
-    def draw_buttons_ext(self, _, layout):
+    def sv_draw_buttons_ext(self, _, layout):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()
@@ -556,11 +597,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if include_name == new_text.name:
                     continue
 
-                print('| in', self.name, 'the importer encountered')
-                print('| an include called', include_name, '. While trying')
-                print('| to write this file to bpy.data.texts another file')
-                print('| with the same name was encountered. The importer')
-                print('| automatically made a datablock called', new_text.name)
+                multi_string_msg = textwrap.dedent(f"""\
+                | in {self.name} the importer encountered
+                | an include called {include_name}. While trying
+                | to write this file to bpy.data.texts another file
+                | with the same name was encountered. The importer
+                | automatically made a datablock called {new_text.name}.
+                """)
+                self.info(multi_string_msg)
 
     def load_from_json(self, node_data: dict, import_version: float):
 
@@ -584,21 +628,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             script_content = self.script_str
 
         if script_name:
-            with self.sv_throttle_tree_update():
-                texts = bpy.data.texts
-                if script_name and not (script_name in texts):
+            texts = bpy.data.texts
+            if script_name and not (script_name in texts):
+                new_text = texts.new(script_name)
+                new_text.from_string(script_content)
+            elif script_name and (script_name in texts):
+                # This was added to fix existing texts with the same name but no / different content.
+                if texts[script_name].as_string() == script_content:
+                    self.debug(f'SN skipping text named "{script_name}" - their content are the same')
+                else:
+                    self.info(f'SN text named "{script_name}" already found, but content differs')
                     new_text = texts.new(script_name)
                     new_text.from_string(script_content)
-                elif script_name and (script_name in texts):
-                    # This was added to fix existing texts with the same name but no / different content.
-                    if texts[script_name].as_string() == script_content:
-                        self.debug(f'SN skipping text named "{script_name}" - their content are the same')
-                    else:
-                        self.info(f'SN text named "{script_name}" already found, but content differs')
-                        new_text = texts.new(script_name)
-                        new_text.from_string(script_content)
-                        script_name = new_text.name
-                        self.info(f'SN text named replaced with "{script_name}"')
+                    script_name = new_text.name
+                    self.info(f'SN text named replaced with "{script_name}"')
 
             self.script_name = script_name
             self.script_str = script_content
@@ -607,10 +650,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         # this check and function call is needed to allow loading node trees directly
         # from a .blend in order to export them via create_dict_of_tree
-        if not self.node_dict or not self.node_dict.get(hash(self)):
+        if not self.node_dict or not self.current_node_dict:
             self.make_new_locals()
 
-        storage = self.node_dict[hash(self)]['sockets']
+        storage = self.current_node_dict['sockets']
         includes = storage['includes']
         if includes:
             node_data['includes'] = {}

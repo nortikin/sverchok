@@ -9,7 +9,7 @@
 from itertools import cycle
 
 from mathutils import Vector, Matrix
-from mathutils.geometry import tessellate_polygon as tessellate, normal
+from mathutils.geometry import tessellate_polygon as tessellate
 from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
@@ -17,10 +17,7 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-import sverchok
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
@@ -522,6 +519,14 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
+    replacement_nodes = [('SvMeshViewer',
+                            dict(Vertices = 'vertices',
+                                 Edges = 'edges',
+                                 Polygons = 'faces',
+                                 Matrix = 'matrix'
+                            ),
+                        None)]
+
     node_dict = {}
 
     selected_draw_mode: EnumProperty(
@@ -699,12 +704,13 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
+        layout.separator()
+        self.node_replacement_menu(context, layout)
 
     def bake(self):
-        with self.sv_throttle_tree_update():
-            bpy.ops.node.sverchok_mesh_baker_mk3(
-                node_name=self.name, tree_name=self.id_data.name
-            )
+        bpy.ops.node.sverchok_mesh_baker_mk3(
+            node_name=self.name, tree_name=self.id_data.name
+        )
 
     def sv_init(self, context):
         new_input = self.sv_new_input
@@ -748,7 +754,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def draw_property_socket(self, socket, context, layout):
         drawing_verts = socket.name == "Vertices"
         prop_to_show = "point_size" if drawing_verts else "line_width"
-        text = f"{socket.name}. {SvGetSocketInfo(socket)}"
+        text = f"{socket.name}. {str(socket.objects_number)}"
         layout.label(text=text)
         layout.prop(self, prop_to_show, text="px")
 
@@ -775,7 +781,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         else:
             if draw_name:
                 reduced_name = socket.name[:2] + ". Col"
-                layout.label(text=reduced_name+ '. ' + SvGetSocketInfo(socket))
+                layout.label(text=reduced_name+ '. ' + str(socket.objects_number))
 
     def create_config(self):
         config = lambda: None
@@ -821,13 +827,12 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
             if socket_acquired_attrs:
-                with self.id_data.throttle_update():  # avoiding recursion
-                    try:
-                        for k, new_value in socket_acquired_attrs[0].items():
-                            print(f"setattr(node, {k}, {new_value})")
-                            setattr(self, k, new_value)  # it will trigger process method again
-                    except Exception as err:
-                        print('error inside socket_acquired_attrs: ', err)
+                try:
+                    for k, new_value in socket_acquired_attrs[0].items():
+                        print(f"setattr(node, {k}, {new_value})")
+                        setattr(self, k, new_value)  # it will trigger process method again
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
 
     def get_data(self):
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]

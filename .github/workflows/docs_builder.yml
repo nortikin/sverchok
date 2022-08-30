@@ -1,0 +1,42 @@
+# This action is triggered whenever push to the docs folder of the master branch is made.
+# It generates HTML pages from the docs folder of the master branch and push them to the gh-pages branch.
+
+name: Build documentation pages
+on:
+  push:
+    branches: 'master'
+    paths: 'docs/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Sphinx
+        run: pip install -U Sphinx
+      
+      - name: Install Theme
+        run: pip install sphinx-rtd-theme
+        
+      - name: Checkout master
+        uses: actions/checkout@master
+        with:
+          path: 'master'
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@master
+        with:
+          path: 'gh_pages'
+          ref: 'gh-pages'
+        
+      - name: Build docs
+        run: sphinx-build -b html "${GITHUB_WORKSPACE}/master/docs" "${GITHUB_WORKSPACE}/gh_pages/docs"
+      
+      - name: Push changes in gh-pages
+        run: |
+          cd "${GITHUB_WORKSPACE}/gh_pages"
+          date > generated.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "update documentation bot"
+          git push

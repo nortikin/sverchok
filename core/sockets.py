@@ -16,6 +16,9 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+import inspect
+import sys
+from typing import Set
 
 from mathutils import Matrix, Quaternion
 import bpy
@@ -23,9 +26,8 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.socket_conversions import ConversionPolicies
-from sverchok.core.socket_data import (
-    SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
-    SvNoDataError, sentinel)
+from sverchok.core.socket_data import sv_get_socket, sv_set_socket, sv_forget_socket
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 
 from sverchok.data_structure import (
     enum_item_4,
@@ -51,7 +53,6 @@ if FreeCAD is not None:
     import Part
     STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
 
-DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -71,6 +72,17 @@ def update_interface(self, context):
     input_node = group_node.active_input()
     if input_node:
         group_tree.update_nodes([input_node])
+
+
+def socket_type_names() -> Set[str]:
+    names = set()
+    for name, member in inspect.getmembers(sys.modules[__name__]):
+        is_module_cls = inspect.isclass(member) and member.__module__ == __name__
+        if is_module_cls:
+            if NodeSocket in member.__bases__:
+                names.add(member.bl_idname)
+    return names
+
 
 class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
     bl_label = "Sockets Options"
@@ -95,10 +107,6 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
 
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
-
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context, 'node') and hasattr(context, 'socket')
 
     def draw(self, context):
         node = context.node
@@ -135,13 +143,12 @@ class SvSocketProcessing():
         if self.skip_wrap_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_wrap_mode_update = True
-                if self.use_unwrap:
-                    self.use_wrap = False
-            finally:
-                self.skip_wrap_mode_update = False
+        try:
+            self.skip_wrap_mode_update = True
+            if self.use_unwrap:
+                self.use_wrap = False
+        finally:
+            self.skip_wrap_mode_update = False
 
         process_from_socket(self, context)
 
@@ -149,13 +156,12 @@ class SvSocketProcessing():
         if self.skip_wrap_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_wrap_mode_update = True
-                if self.use_wrap:
-                    self.use_unwrap = False
-            finally:
-                self.skip_wrap_mode_update = False
+        try:
+            self.skip_wrap_mode_update = True
+            if self.use_wrap:
+                self.use_unwrap = False
+        finally:
+            self.skip_wrap_mode_update = False
 
         process_from_socket(self, context)
 
@@ -173,13 +179,12 @@ class SvSocketProcessing():
         if self.skip_simplify_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_simplify_mode_update = True
-                if self.use_flatten:
-                    self.use_simplify = False
-            finally:
-                self.skip_simplify_mode_update = False
+        try:
+            self.skip_simplify_mode_update = True
+            if self.use_flatten:
+                self.use_simplify = False
+        finally:
+            self.skip_simplify_mode_update = False
 
         process_from_socket(self, context)
 
@@ -187,13 +192,12 @@ class SvSocketProcessing():
         if self.skip_simplify_mode_update:
             return
 
-        with self.node.sv_throttle_tree_update():
-            try:
-                self.skip_simplify_mode_update = True
-                if self.use_simplify:
-                    self.use_flatten = False
-            finally:
-                self.skip_simplify_mode_update = False
+        try:
+            self.skip_simplify_mode_update = True
+            if self.use_simplify:
+                self.use_flatten = False
+        finally:
+            self.skip_simplify_mode_update = False
 
         process_from_socket(self, context)
 
@@ -314,6 +318,7 @@ class SvSocketCommon(SvSocketProcessing):
     """
 
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+    default_conversion_name = ConversionPolicies.DEFAULT.conversion_name
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
     link_menu_handler : StringProperty(default='') # To specify additional entries in the socket link menu
@@ -332,6 +337,7 @@ class SvSocketCommon(SvSocketProcessing):
     nesting_level: IntProperty(default=2)
     default_mode: EnumProperty(items=enum_item_4(['NONE', 'EMPTY_LIST', 'MATRIX', 'MASK']), default='EMPTY_LIST')
     pre_processing: EnumProperty(items=enum_item_4(['NONE', 'ONE_ITEM']), default='NONE')
+    s_id: StringProperty(options={'SKIP_SAVE'})
 
     def get_link_parameter_node(self):
         return self.quick_link_to_node
@@ -343,10 +349,10 @@ class SvSocketCommon(SvSocketProcessing):
         """
         Intended to return name of property related with socket owned by its node
         Name can be replaced by twin property name in draft mode of a tree
-        If does not have 'missing_dependecy' attribute it can return empty list, reasons unknown
+        If does not have 'missing_dependency' attribute it can return empty list, reasons unknown
         """
         node = self.node
-        if hasattr(node, 'missing_dependecy'):
+        if hasattr(node, 'missing_dependency'):
             return []
         if node and hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode() and hasattr(node.id_data, 'sv_draft') and node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
@@ -364,7 +370,11 @@ class SvSocketCommon(SvSocketProcessing):
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.node.node_id + self.identifier))
+        _id = self.s_id
+        if not _id:
+            self.s_id = str(hash(self.node.node_id + self.identifier + ('o' if self.is_output else 'i')))
+            _id = self.s_id
+        return _id
 
     @property
     def index(self):
@@ -385,38 +395,30 @@ class SvSocketCommon(SvSocketProcessing):
         # handles both input and output.
         if self.is_linked and value:
             for link in self.links:
-                self.id_data.sv_links.remove(self.id_data, link)
                 self.id_data.links.remove(link)
 
         self.hide = value
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+    def sv_get(self, default=..., deepcopy=True):
         """
-        The method is used for getting input socket data
+        The method is used for getting socket data
         In most cases the method should not be overridden
-        If socket uses custom implicit_conversion it should implements default_conversion_name attribute
         Also a socket can use its default_property
         Order of getting data (if available):
-        1. writen socket data
+        1. written socket data
         2. node default property
         3. socket default property
         4. script default property
         5. Raise no data error
         :param default: script default property
         :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
-        :param implicit_conversions: if needed automatic conversion data from one socket type to another
         :return: data bound to the socket
         """
+        if self.is_output:
+            return sv_get_socket(self, False)
 
-        if self.is_linked and not self.is_output:
-            other = self.other
-            if implicit_conversions is None:
-                if hasattr(self, 'default_conversion_name'):
-                    implicit_conversions = ConversionPolicies.get_conversion(self.default_conversion_name)
-                else:
-                    implicit_conversions = DEFAULT_CONVERSION
-
-            return self.convert_data(SvGetSocket(self, other, deepcopy), implicit_conversions, other)
+        if self.is_linked:
+            return sv_get_socket(self, deepcopy)
 
         prop_name = self.get_prop_name()
         if prop_name:
@@ -427,23 +429,29 @@ class SvSocketCommon(SvSocketProcessing):
             default_property = self.default_property
             return format_bpy_property(default_property)
 
-        if default is not sentinel:
+        if default is not ...:
             return default
 
         raise SvNoDataError(self)
 
     def sv_set(self, data):
-        """Set output data"""
-        data = self.postprocess_output(data)
-        SvSetSocket(self, data)
+        """Set data, provide context in case the node can be evaluated several times in different context"""
+        if self.is_output:
+            data = self.postprocess_output(data)
+
+        # it's expensive to call sv_get method to update the number in other places
+        self.objects_number = len(data)
+
+        sv_set_socket(self, data)
 
     def sv_forget(self):
         """Delete socket memory"""
-        SvForgetSocket(self)
+        sv_forget_socket(self)
 
     def replace_socket(self, new_type, new_name=None):
         """Replace a socket with a socket of new_type and keep links,
         return the new socket, the old reference might be invalid"""
+        self.sv_forget()
         return replace_socket(self, new_type, new_name)
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
@@ -540,34 +548,9 @@ class SvSocketCommon(SvSocketProcessing):
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
 
+
     def draw_color(self, context, node):
         return self.color
-
-    def convert_data(self, source_data, implicit_conversions=DEFAULT_CONVERSION, other=None):
-
-        if other.bl_idname == self.bl_idname:
-            return source_data
-
-        return implicit_conversions.convert(self, other, source_data)
-
-    def update_objects_number(self):
-        """
-        Should be called each time after process method of the socket owner
-        It will update number of objects to show in socket labels
-        """
-        try:
-            if self.is_output:
-                objects_info = SvGetSocketInfo(self)
-                self.objects_number = int(objects_info) if objects_info else 0
-            else:
-                data = self.sv_get(deepcopy=False, default=[])
-                self.objects_number = len(data) if data else 0
-        except LookupError:
-            pass
-        except Exception as e:
-            warning(f"Socket='{self.name}' of node='{self.node.name}' can't update number of objects on the label. "
-                    f"Cause is '{e}'")
-            self.objects_number = 0
 
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
@@ -646,15 +629,17 @@ class SvFormulaSocket(NodeSocket, SvSocketCommon):
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name
 
     def draw(self, context, layout, node, text):
-        layout.label(text=self.name+ '. ' + SvGetSocketInfo(self))
+        layout.label(text=self.name+ '. ' + str(self.objects_number))
         layout.prop(self,'depth',text='Depth')
         layout.prop(self,'transform',text='')
+
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
     bl_label = "Text Socket"
 
     color = (0.68,  0.85,  0.90, 1)
+    quick_link_to_node: StringProperty()
 
     default_property: StringProperty(update=process_from_socket)
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name
@@ -897,9 +882,15 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     quick_link_to_node: StringProperty()  # this can be overridden by socket instances
 
-    default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
+    default_property_type: bpy.props.EnumProperty(  # for internal usage
+        description="Switch between float and int without node updating",
+        items=[(i, i, '') for i in ['float', 'int']])
+
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
     default_int_property: bpy.props.IntProperty(update=process_from_socket)
+
+    show_property_type: BoolProperty(
+        description="Add icon to switch default type")
 
     def get_link_parameter_node(self):
         if self.quick_link_to_node:
@@ -946,10 +937,14 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         if prop_origin and prop_name:
             layout.prop(prop_origin, prop_name)
         elif self.use_prop:
+            row = layout.row(align=True)
             if self.default_property_type == 'float':
-                layout.prop(self, 'default_float_property', text=self.name)
+                row.prop(self, 'default_float_property', text=self.name)
             elif self.default_property_type == 'int':
-                layout.prop(self, 'default_int_property', text=self.name)
+                row.prop(self, 'default_int_property', text=self.name)
+            if self.show_property_type:
+                icon = 'IPO_LINEAR' if self.default_property_type == 'float' else 'IPO_CONSTANT'
+                row.operator(SvSwitchDefaultOp.bl_idname, icon=icon, text='')
 
     def draw_menu_items(self, context, layout):
         self.draw_simplify_modes(layout)
@@ -1367,43 +1362,41 @@ class SvInputLinkMenuOp(bpy.types.Operator):
             return False
 
         if self.option == '__SV_PARAM_CREATE__':
-            with node.sv_throttle_tree_update():
-                new_node = tree.nodes.new(socket.get_link_parameter_node())
-                new_node.label = socket.label or socket.name
-                socket.setup_parameter_node(new_node)
-                links_number = len([s for s in node.inputs if s.is_linked])
-                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
-                tree.links.new(new_node.outputs[0], socket)
+            new_node = tree.nodes.new(socket.get_link_parameter_node())
+            new_node.label = socket.label or socket.name
+            socket.setup_parameter_node(new_node)
+            links_number = len([s for s in node.inputs if s.is_linked])
+            new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+            tree.links.new(new_node.outputs[0], socket)
 
-                if node.parent:
-                    new_node.parent = node.parent
-                    new_node.location = new_node.absolute_location
+            if node.parent:
+                new_node.parent = node.parent
+                new_node.location = new_node.absolute_location
 
             new_node.process_node(context)
 
         elif self.option == '__SV_WIFI_CREATE__':
-            with node.sv_throttle_tree_update():
-                label = socket.label or socket.name
-                param_node = tree.nodes.new(socket.get_link_parameter_node())
-                param_node.label = label
+            label = socket.label or socket.name
+            param_node = tree.nodes.new(socket.get_link_parameter_node())
+            param_node.label = label
 
-                wifi_in_node = tree.nodes.new('WifiInNode')
-                wifi_in_node.label = f"WiFi In - {label}"
-                wifi_in_node.gen_var_name()
-                wifi_var = wifi_in_node.var_name
+            wifi_in_node = tree.nodes.new('WifiInNode')
+            wifi_in_node.label = f"WiFi In - {label}"
+            wifi_in_node.gen_var_name()
+            wifi_var = wifi_in_node.var_name
 
-                wifi_out_node = tree.nodes.new('WifiOutNode')
-                wifi_out_node.label = f"WiFi Out - {label}"
-                wifi_out_node.var_name = wifi_var
+            wifi_out_node = tree.nodes.new('WifiOutNode')
+            wifi_out_node.label = f"WiFi Out - {label}"
+            wifi_out_node.var_name = wifi_var
 
-                socket.setup_parameter_node(param_node)
+            socket.setup_parameter_node(param_node)
 
-                tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
-                tree.links.new(wifi_out_node.outputs[0], socket)
+            tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
+            tree.links.new(wifi_out_node.outputs[0], socket)
 
-                setup_new_node_location(wifi_out_node, node)
-                setup_new_node_location(wifi_in_node, wifi_out_node)
-                setup_new_node_location(param_node, wifi_in_node)
+            setup_new_node_location(wifi_out_node, node)
+            setup_new_node_location(wifi_in_node, wifi_out_node)
+            setup_new_node_location(param_node, wifi_in_node)
 
             param_node.process_node(context)
 
@@ -1450,6 +1443,24 @@ class SvInputLinkMenuOp(bpy.types.Operator):
         wm.invoke_search_popup(self)
         return {'FINISHED'}
 
+
+class SvSwitchDefaultOp(bpy.types.Operator):
+    """Either Float or Integer"""
+    bl_idname = "node.sv_switch_default"
+    bl_label = "Switch default value of string socket"
+    bl_options = {'INTERNAL', 'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'socket')
+
+    def execute(self, context):
+        s = context.socket
+        s.default_property_type = 'float' if s.default_property_type == 'int' else 'int'
+        process_from_socket(s, context)
+        return {'FINISHED'}
+
+
 classes = [
     SV_MT_SocketOptionsMenu, SV_MT_AllSocketsOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
@@ -1459,7 +1470,8 @@ classes = [
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
     SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp, SvInputLinkMenuOp
+    SvSocketHelpOp, SvInputLinkMenuOp,
+    SvSwitchDefaultOp,
 ]
 
 def socket_interface_classes():
@@ -1489,13 +1501,17 @@ def socket_interface_classes():
             prop_args['name'] = "Default value"
             prop_args['update'] = lambda s, c: s.id_data.update_sockets()
             socket_interface_attributes['__annotations__'] = {}
-            socket_interface_attributes['__annotations__']['default_value'] = (prop_func, prop_args)
+            socket_interface_attributes['__annotations__']['default_value'] = socket_cls.__annotations__['default_property']
 
             def draw(self, context, layout):
                 col = layout.column()
                 col.prop(self, 'default_value')
                 col.prop(self, 'hide_value')
-            socket_interface_attributes['draw'] = draw
+        else:
+            def draw(self, context, layout):
+                pass
+
+        socket_interface_attributes['draw'] = draw
         yield type(
             f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterface,), socket_interface_attributes)
 

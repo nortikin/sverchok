@@ -24,7 +24,7 @@ valid, it will try to automatically fix it.  If this automatic fix process
 fails, the node will raise an exception (become red) and processing will stop.
 
 **NOTE**: some operations with Solid objects which are not "valid" are known to
-cause crashes. So it is strongly recomended to have "Validate" parameter turned
+cause crashes. So it is strongly recommended to have "Validate" parameter turned
 on.
 
 Solid Face object can be created with nodes from "Make Face" submenu (such as

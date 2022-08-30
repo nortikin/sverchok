@@ -1,3 +1,4 @@
+from typing import Type, Dict
 
 import bpy
 
@@ -28,11 +29,41 @@ def catch_log_error():
     try:
         yield
     except Exception as e:
-        frame, _, line, *_ = inspect.stack()[2]  # third frame is where the context manager was used
+        frame, _, line, *_ = inspect.trace()[-1]
         module = inspect.getmodule(frame)
         name = module.__name__ or "<Unknown Module>"
         try_initialize()
-        logging.getLogger(f'{name} {line}').error(e)
+        _logger = logging.getLogger(f'{name} {line}')
+        _logger.error(e)
+        if _logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
+
+
+def log_error(err):
+    """Should be used in except statement"""
+    for frame, _, line, *_ in inspect.trace()[::-1]:
+        module = inspect.getmodule(frame)
+        if module is None:  # looks like frame points into non Python module
+            continue  # try to find the module before
+        else:
+            name = module.__name__ or "<Unknown Module>"
+            try_initialize()
+            _logger = logging.getLogger(f'{name}:{line} ')
+            _logger.error(err)
+            if _logger.isEnabledFor(logging.DEBUG):
+                traceback.print_exc()
+            break
+
+
+@contextmanager
+def fix_error_msg(msgs: Dict[Type[Exception], str]):
+    try:
+        yield
+    except Exception as e:
+        err_class = type(e)
+        if err_class in msgs:
+            e.args = (msgs[err_class], )
+        raise
 
 
 def get_log_buffer(log_buffer_name):
@@ -115,9 +146,6 @@ def try_initialize():
             if prefs.log_to_buffer:
                 buffer = get_log_buffer(prefs.log_buffer_name)
                 if buffer is not None:
-                    if prefs.log_to_buffer_clean:
-                        buffer.clear()
-                        logging.debug("Internal text buffer cleared")
                     handler = TextBufferHandler(prefs.log_buffer_name)
                     handler.setFormatter(logging.Formatter(log_format))
                     logging.getLogger().addHandler(handler)
@@ -160,7 +188,16 @@ def try_initialize():
                     ("yes" if prefs.log_to_console else "no"))
             initialized = True
 
-# Convinience functions
+
+def clear_internal_buffer():
+    """It clears only BLender text editor"""
+    with sv_preferences() as prefs:
+        if prefs.log_to_buffer_clean:
+            get_log_buffer(prefs.log_buffer_name).clear()
+            logging.debug("Internal text buffer cleared")
+
+
+# Convenience functions
 
 def with_module_logger(method_name):
     """
@@ -168,6 +205,8 @@ def with_module_logger(method_name):
     Logger name is obtained from caller module name.
     """
     def wrapper(*args, **kwargs):
+        if not is_enabled_for(method_name.upper()):
+            return
         frame, _, line, *_ = inspect.stack()[1]
         module = inspect.getmodule(frame)
         name = module.__name__ or "<Unknown Module>"
@@ -209,6 +248,15 @@ def setLevel(level):
     logging.getLogger().setLevel(level)
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
+
+
+def is_enabled_for(log_level="DEBUG") -> bool:
+    """This check should be used for improving performance of calling disabled loggers"""
+    rates = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "EXCEPTION": 50}
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    current_level = rates.get(addon.preferences.log_level, 0)
+    given_level = rates.get(log_level, 0)
+    return given_level >= current_level
 
 
 consoleHandler = None

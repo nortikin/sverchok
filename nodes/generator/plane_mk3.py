@@ -28,7 +28,7 @@ from sverchok.utils.modules.matrix_utils import matrix_apply_np
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 dimensionsItems = [
     ("SIZE", 'Size', 'Define size by total size'),
-    ("NUMBER", 'Num', 'Define size by numer of steps and step size'),
+    ("NUMBER", 'Num', 'Define size by number of steps and step size'),
     ("STEPS", 'Steps', 'Define size by total size'),
     ("SIZE_STEPS", 'Si+St', 'Define size by total size'),
 ]
@@ -347,7 +347,7 @@ class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode)
 
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=(False, False, False),
         size=3, update=updateNode)
@@ -410,7 +410,7 @@ class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
         layout.prop(self, "list_match_local", text="Local Match", expand=False)
 
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.row()
         for i in range(3):
             r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
@@ -421,7 +421,7 @@ class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         layout.prop_menu_enum(self, "correct_output", text="Simplify Output")
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
 
         for i in range(3):
             layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)

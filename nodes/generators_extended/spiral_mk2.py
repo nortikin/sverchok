@@ -272,8 +272,8 @@ def make_cornu_spiral(settings):
 
     es = prepareExponentialSettings(2, exponent + 1e-5)  # used for easing
 
-    verts1 = []  # pozitive spiral verts
-    verts2 = []  # nagative spiral verts
+    verts1 = []  # positive spiral verts
+    verts2 = []  # negative spiral verts
     norms = []
     add_vert1 = verts1.append
     add_vert2 = verts2.append
@@ -456,8 +456,9 @@ class SvSpiralNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.presets = " "
         updateNode(self, context)
 
-    def preset_items(self, context):
-        return [(k, k.title(), "", "", s[0]) for k, s in sorted(spiral_presets.items(), key=lambda k: k[1][0])]
+    preset_items = [
+        (k, k.title(), "", "", s[0])
+        for k, s in sorted(spiral_presets.items(), key=lambda k: k[1][0])]
 
     def update_presets(self, context):
         self.updating = True

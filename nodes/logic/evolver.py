@@ -10,7 +10,7 @@ import ast
 import random
 import time
 from collections import namedtuple
-from typing import NamedTuple
+from typing import NamedTuple, Union
 import numpy as np
 
 import bpy
@@ -18,9 +18,9 @@ from mathutils.noise import seed_set, random
 from bpy.props import (
     BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty)
 
+from sverchok.core.update_system import UpdateTree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.utils.listutils import (
     listinput_getI,
@@ -28,6 +28,8 @@ from sverchok.utils.listutils import (
     listinput_setI,
     listinput_setF
     )
+from sverchok.utils.handle_blender_data import keep_enum_reference
+
 
 def check_memory_prop(tx):
     if len(tx) > 1:
@@ -292,7 +294,7 @@ def is_valid_node(node, genotype_frame):
     return False
 
 
-def get_genes(target_tree, genotype_frame):
+def get_genes(target_tree, genotype_frame) -> list[Union[NumberGene, ListInputGene, NumberMultiGene]]:
     genes = []
     for node in target_tree.nodes:
         if is_valid_node(node, genotype_frame):
@@ -356,16 +358,19 @@ class DNA:
                 agent_gene = gene.init_val
                 self.genes.append(agent_gene)
 
-
-
-    def evaluate_fitness(self, tree, update_list, node):
+    def evaluate_fitness(self, tree, node, s_tree: UpdateTree, exec_order):
         try:
             tree.sv_process = False
             for gen_data, agent_gene in zip(self.genes_def, self.genes):
                 gen_data.set_node_with_gene(tree, agent_gene)
 
             tree.sv_process = True
-            do_update(update_list, tree.nodes)
+            for node in exec_order:
+                try:
+                    s_tree.update_node(node, suppress=False)
+                except Exception:
+                    raise
+
             agent_fitness = node.inputs[0].sv_get(deepcopy=False)[0]
             if isinstance(agent_fitness, list):
                 agent_fitness = agent_fitness[0]
@@ -404,10 +409,12 @@ class Population:
         self.tree = tree
         self.time_start = time.time()
         self.genes = get_genes(tree, genotype_frame)
-        self.update_list = make_tree_from_nodes([g.name for g in self.genes], tree)
-        self.population_g = []
+        self.population_g: list[DNA] = []
         self.init_population(node.population_n)
 
+        self._tree = UpdateTree.get(tree)
+        exec_order = self._tree.nodes_from([tree.nodes[g.name] for g in self.genes])
+        self.exec_order = self._tree.sort_nodes(exec_order)
 
     def init_population(self, population_n):
 
@@ -429,12 +436,13 @@ class Population:
             for i in range(population_n-len(previous_population)):
                 self.population_g.append(DNA(self.genes))
 
-    def  evaluate_fitness_g(self):
+    def evaluate_fitness_g(self):
         try:
             for agent in self.population_g:
-                agent.evaluate_fitness(self.tree, self.update_list, self.node)
+                agent.evaluate_fitness(self.tree, self.node, self._tree, self.exec_order)
         finally:
             self.tree.sv_process = True
+
     def population_genes(self):
         return [agent.genes for agent in self.population_g]
 
@@ -548,21 +556,8 @@ class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
         np.random.seed(node.r_seed)
         population = Population(genotype_frame, node, tree)
         population.evolve()
-        update_list = make_tree_from_nodes([node.name], tree)
-        do_update(update_list, tree.nodes)
+        node.process_node(None)
 
-
-def set_fittest(tree, genes, agent, update_list):
-    '''sets the nodetree with the best value'''
-    try:
-        tree.sv_process = False
-        for gen_data, agent_gene in zip(genes, agent):
-            gen_data.set_node_with_gene(tree, agent_gene)
-
-        tree.sv_process = True
-        do_update(update_list, tree.nodes)
-    finally:
-        tree.sv_process = True
 
 class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -571,14 +566,15 @@ class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
 
     def sv_execute(self, context, node):
         tree = node.id_data
-        
+
         data = evolver_mem[node.node_id]
         genes = data["genes"]
         population = data["population"]
-        update_list = make_tree_from_nodes([g.name for g in genes], tree)
-        set_fittest(tree, genes, population[0], update_list)
+        for gen_data, agent_gene in zip(genes, population[0]):
+            gen_data.set_node_with_gene(tree, agent_gene)
 
 
+@keep_enum_reference
 def get_framenodes(base_node, _):
 
     items = [
@@ -596,7 +592,7 @@ def get_framenodes(base_node, _):
 class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Genetics algorithm
-    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technic
+    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technique
     """
     bl_idname = 'SvEvolverNode'
     bl_label = 'Evolver'
@@ -634,7 +630,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         ]
     mode: EnumProperty(
         name="Mode",
-        description="Set Fitness as maximun or as minimum",
+        description="Set Fitness as maximum or as minimum",
         items=mode_items,
         update=props_changed
         )
@@ -675,7 +671,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         )
     fitness_booster: IntProperty(
         name="Fitness boost",
-        description="Fittest population will be more probable to be choosen (power)",
+        description="Fittest population will be more probable to be chosen (power)",
         default=3,
         min=1,
         update=props_changed

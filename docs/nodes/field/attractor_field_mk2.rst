@@ -22,7 +22,7 @@ This node has the following inputs:
   * If attractor type is **Point**, then this is the attracting point itself;
   * if attractor type is **Line**, then this is the point lying on the attracting line;
   * if attractor type is **Plane**, then this is the point lying on the attracting plane.
-  * if attractor type is **Mesh - Faces** or **Mesh - Faces**, then this is the set of mesh vertices.
+  * if attractor type is **Mesh - Faces** or **Mesh - Edges**, then this is the set of mesh vertices.
   * If attractor type is **Circle**, then this is the center of the circle.
 
   It is possible to provide several attracting points. The default value is `(0, 0, 0)` (origin).
@@ -91,19 +91,19 @@ This node has the following parameters:
   parameter is set to **Point**. The metric to be used to calculate distances.
   The available options are:
 
-  * **Euclidian**
+  * **Euclidean**
   * **Manhattan**
   * **Chebyshev**
   * **Custom**. A generic Minkowski metric defined by formula
     ``sum(abs(dx_i)**P)**(1.0/P)``, where P is defined in the Exponent
     parameter.
    
-  The default value is **Euclidian**.
+  The default value is **Euclidean**.
 
 * **Exponent**. This parameter is available only when **Attractor** parameter
   is set to **Point**, and **Metric** parameter is set to **Custom**. Exponent
   for generic Minkowski distance. The available values are from 1.0 to
-  infinity. The default value is 2.0, which defines Euclidian metric.
+  infinity. The default value is 2.0, which defines Euclidean metric.
 * **Falloff type**. The force falloff type to be used. The available values are:
 
    * **None - R**. Do not use falloff: the force amplitude is proportional to the distance from the attractor object (grows with the distance).

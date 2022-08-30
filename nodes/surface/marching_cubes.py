@@ -2,18 +2,22 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from bpy.props import FloatProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.sockets import setup_new_node_location
-from sverchok.data_structure import updateNode, throttle_and_update_node, match_long_repeat
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.marching_cubes import isosurface_np
 from sverchok.dependencies import mcubes, skimage
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 if skimage is not None:
     import skimage.measure
+
+    try:
+        from skimage.measure import marching_cubes_lewiner as skimage_marching_cubes
+    except ImportError:
+        from skimage.measure import marching_cubes as skimage_marching_cubes
 
 # This node can work without dependencies, but slower.
 
@@ -80,13 +84,13 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             min = 4,
             update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['VertexNormals'].hide_safe = self.implementation != 'skimage'
         self.inputs['Samples'].hide_safe = self.sample_mode != 'UNI'
         self.inputs['SamplesX'].hide_safe = self.sample_mode != 'XYZ'
         self.inputs['SamplesY'].hide_safe = self.sample_mode != 'XYZ'
         self.inputs['SamplesZ'].hide_safe = self.sample_mode != 'XYZ'
+        updateNode(self, context)
 
     sample_modes = [
             ('UNI', "Uniform", "Use uniform sampling - equal number of samples along X, Y and Z", 0),
@@ -106,18 +110,16 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             samples_z = 'samples_z_draft'
         )
 
-    def get_modes(self, context):
-        modes = []
-        if skimage is not None:
-            modes.append(("skimage", "SciKit-Image", "SciKit-Image", 0))
-        if mcubes is not None:
-            modes.append(("mcubes", "PyMCubes", "PyMCubes", 1))
-        modes.append(('python', "Pure Python", "Pure Python implementation", 2))
-        return modes
+    modes = []
+    if skimage is not None:
+        modes.append(("skimage", "SciKit-Image", "SciKit-Image", 0))
+    if mcubes is not None:
+        modes.append(("mcubes", "PyMCubes", "PyMCubes", 1))
+    modes.append(('python', "Pure Python", "Pure Python implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_modes,
+            items=modes,
             update = update_sockets)
 
     class BoundsMenuHandler():
@@ -240,7 +242,7 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
                 new_verts, new_faces = new_verts.tolist(), new_faces.tolist()
                 new_normals = []
             elif self.implementation == 'skimage':
-                new_verts, new_faces, normals, values = skimage.measure.marching_cubes_lewiner(
+                new_verts, new_faces, normals, values = skimage_marching_cubes(
                         func_values, level = value,
                         step_size = 1)
                 new_verts = self.scale_back(b1n, b2n, samples_x, samples_y, samples_z, new_verts)

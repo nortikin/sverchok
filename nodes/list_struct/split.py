@@ -73,20 +73,20 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             data = self.inputs['Data'].sv_get(deepcopy=False)
             sizes = self.inputs['Split'].sv_get(deepcopy=False)[0]
             if self.unwrap:
-                out = self.get(data, self.level_unwrap, sizes)
+                out = self.get_(data, self.level_unwrap, sizes)
             elif self.level:
-                out = self.get(data, self.level, sizes)
+                out = self.get_(data, self.level, sizes)
             else:
                 out = split(data, sizes[0])
             self.outputs['Split'].sv_set(out)
 
-    def get(self, data, level, size):
+    def get_(self, data, level, size):  # get is buid-in method for nodes
         if not isinstance(data, (list, tuple)):
             return data
         if not isinstance(data[0], (list, tuple, np.ndarray, str)):
             return data
         if level > 1:  # find level to work on
-            return [self.get(d, level - 1, size) for d in data]
+            return [self.get_(d, level - 1, size) for d in data]
         elif level == 1:  # execute the chosen function
             sizes = repeat_last(size)
             if self.unwrap:

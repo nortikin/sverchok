@@ -138,7 +138,7 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
                 inputs_AZ.remove(s)
 
     def update_sockets(self):
-        ''' Upate sockets based on selected operation '''
+        ''' Update sockets based on selected operation '''
         inputs = self.inputs
 
         if self.operation in Q_operations:  # Q or Q+S operations
@@ -239,7 +239,7 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         other_sockets = list(filter(lambda s: s.name not in ABC and not s.hide, inputs))
 
-        # collect the remaning visible inputs
+        # collect the remaining visible inputs
         for socket in other_sockets:
             values = socket.sv_get()[0]
             if socket.name == "Scale":

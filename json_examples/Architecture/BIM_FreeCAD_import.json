@@ -1,0 +1,214 @@
+{
+    "export_version": "1.0",
+    "main_tree": {
+        "nodes": {
+            "Solid to Mesh": {
+                "attributes": {
+                    "location": [-172.0555419921875, -92.670654296875]
+                },
+                "inputs": {
+                    "Solid": {
+                        "bl_idname": "SvSolidSocket",
+                        "name": "Solid"
+                    },
+                    "Face": {
+                        "bl_idname": "SvSurfaceSocket",
+                        "name": "Face",
+                        "attributes": {
+                            "hide": true
+                        }
+                    },
+                    "Precision": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Precision",
+                        "properties": {
+                            "prop_name": "precision"
+                        }
+                    },
+                    "Surface Deviation": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Surface Deviation",
+                        "attributes": {
+                            "hide": true
+                        },
+                        "properties": {
+                            "prop_name": "surface_deviation"
+                        }
+                    },
+                    "Angle Deviation": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Angle Deviation",
+                        "attributes": {
+                            "hide": true
+                        },
+                        "properties": {
+                            "prop_name": "angle_deviation"
+                        }
+                    },
+                    "Max Edge Length": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Max Edge Length",
+                        "attributes": {
+                            "hide": true
+                        },
+                        "properties": {
+                            "prop_name": "max_edge_length"
+                        }
+                    }
+                },
+                "outputs": {
+                    "Verts": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "Verts"
+                    },
+                    "Faces": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Faces"
+                    }
+                },
+                "bl_idname": "SvSolidToMeshNodeMk2"
+            },
+            "Mesh Viewer": {
+                "attributes": {
+                    "location": [0.250732421875, -96.33154296875],
+                    "color": [0.6284880042076111, 0.931007981300354, 1.0],
+                    "use_custom_color": true
+                },
+                "inputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "edges",
+                        "properties": {
+                            "custom_draw": "draw_edges_props"
+                        }
+                    },
+                    "faces": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "faces"
+                    },
+                    "material_idx": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "material_idx"
+                    },
+                    "matrix": {
+                        "bl_idname": "SvMatrixSocket",
+                        "name": "matrix",
+                        "properties": {
+                            "custom_draw": "draw_matrix_props"
+                        }
+                    }
+                },
+                "outputs": {
+                    "Objects": {
+                        "bl_idname": "SvObjectSocket",
+                        "name": "Objects"
+                    }
+                },
+                "bl_idname": "SvMeshViewer"
+            },
+            "Read FCStd": {
+                "attributes": {
+                    "location": [-347.26959228515625, -92.47030639648438]
+                },
+                "properties": {
+                    "selected_label": ""
+                },
+                "inputs": {
+                    "File Path": {
+                        "bl_idname": "SvFilePathSocket",
+                        "name": "File Path"
+                    },
+                    "Part Filter": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Part Filter"
+                    }
+                },
+                "outputs": {
+                    "Solid": {
+                        "bl_idname": "SvSolidSocket",
+                        "name": "Solid"
+                    }
+                },
+                "bl_idname": "SvReadFCStdNode"
+            },
+            "File Path": {
+                "attributes": {
+                    "location": [-531.9314575195312, -95.40472412109375]
+                },
+                "properties": {
+                    "files": [{
+                            "name": "ArchDetail.FCStd"
+                        }
+                    ],
+                    "directory": "/home/ololo/Documents/BLENDER/MODELS/",
+                    "files_num": 1
+                },
+                "outputs": {
+                    "File Path": {
+                        "bl_idname": "SvFilePathSocket",
+                        "name": "File Path"
+                    }
+                },
+                "bl_idname": "SvFilePathNode"
+            },
+            "Note": {
+                "attributes": {
+                    "location": [-518.4567260742188, 89.04129028320312],
+                    "width": 400.0,
+                    "color": [0.5, 0.5, 1.0],
+                    "use_custom_color": true
+                },
+                "properties": {
+                    "n_id": "-7289117756019158704",
+                    "text": "2022 | you need to install freecad libs to get it work. for now python 3.9 supported, so elder blender needed in fact. Follow wiki instructions.\nOpen file in <freecad root folder>\\data\\examples\\ArchDetail.FCStd"
+                    "show_text": false
+                },
+                "inputs": {
+                    "Text In": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Text In",
+                        "attributes": {
+                            "hide": true
+                        }
+                    }
+                },
+                "outputs": {
+                    "Text Out": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Text Out",
+                        "attributes": {
+                            "hide": true
+                        }
+                    }
+                },
+                "bl_idname": "NoteNode"
+            }
+        },
+        "links": [{
+                "from_node": "Read FCStd",
+                "from_socket": "Solid",
+                "to_node": "Solid to Mesh",
+                "to_socket": "Solid"
+            }, {
+                "from_node": "Solid to Mesh",
+                "from_socket": "Verts",
+                "to_node": "Mesh Viewer",
+                "to_socket": "vertices"
+            }, {
+                "from_node": "Solid to Mesh",
+                "from_socket": "Faces",
+                "to_node": "Mesh Viewer",
+                "to_socket": "faces"
+            }, {
+                "from_node": "File Path",
+                "from_socket": "File Path",
+                "to_node": "Read FCStd",
+                "to_socket": "File Path"
+            }
+        ]
+    }
+}

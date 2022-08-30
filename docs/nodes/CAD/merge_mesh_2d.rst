@@ -1,4 +1,4 @@
-Merge mesh 2d
+Merge Mesh 2d
 =============
 
 .. image:: https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png
@@ -38,7 +38,7 @@ if there is at least one edge which has a lot of overlapping with other edges.
 Category
 --------
 
-CAD -> Merge mesh 2D
+CAD -> Merge Mesh 2D
 
 Inputs
 ------

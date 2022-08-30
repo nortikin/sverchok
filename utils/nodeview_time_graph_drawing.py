@@ -17,6 +17,10 @@ import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
+
+# https://github.com/nortikin/sverchok/commit/c0ef777acef561a5e9cd308ec05c1382b9006de8
+
+
 display_dict = {} # 'sverchok': None}
 
 def get_drawing_state(ng):

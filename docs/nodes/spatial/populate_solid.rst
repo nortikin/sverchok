@@ -18,7 +18,7 @@ object according to the provided Scalar Field. It has two modes:
   field is greater than threshold;
 * Generate points according to the value of scalar field: put more points in
   areas where the value of scalar field is greater. More precisely, the
-  probability of the vertex appearence at some point is proportional to the
+  probability of the vertex appearance at some point is proportional to the
   value of the scalar field at that point.
 
 This node can make sure that generated points are not too close to one another.
@@ -44,7 +44,7 @@ This node has the following inputs:
   this input is not connected, the node will generate evenly distributed
   points. This input is mandatory, if **Proportional** parameter is checked.
 * **Count**. The number of points to be generated. The default value is 50.
-* **MinDistance**. This input is avaliable only when **Distance** parameter is
+* **MinDistance**. This input is available only when **Distance** parameter is
   set to **Min. Distance**. Minimum allowable distance between generated
   points. If set to zero, there will be no restriction on distance between
   points. Default value is 0.
@@ -81,7 +81,7 @@ This node has the following parameters:
 
    * **Min. Distance**. The user provides minimum distance between any two
      points in the **MinDistance** input.
-   * **RadiusField**. The user defines a radius of a shpere that should be
+   * **RadiusField**. The user defines a radius of a sphere that should be
      empty around each generated point, by providing a scalar field in the
      **RadiusField** input. The node makes sure that these spheres will not
      intersect.

@@ -2,12 +2,12 @@
   "export_version": "0.10",
   "framed_nodes": {
     "Assign Materials List": "Output",
-    "Calculate normals": "Tangent Move",
+    "Calculate Normals": "Tangent Move",
     "Matrix In": "Tangent Move",
     "Matrix Math": "Tangent Move",
     "Matrix Out": "Tangent Move",
     "Matrix Track To": "Tangent Move",
-    "Mesh viewer": "Output",
+    "Mesh Viewer": "Output",
     "Move": "Bottom Flat",
     "Move.002": "Tangent Move",
     "Note.001": "Tangent Move",
@@ -18,9 +18,9 @@
     "Proportional Edit Falloff": "Bottom Flat",
     "Scale": "Fractal",
     "Scale.002": "Fractal",
-    "Select mesh elements by location.001": "Bottom Flat",
+    "Select Mesh Elements by Location.001": "Bottom Flat",
     "Vector Noise": "Fractal",
-    "Vector in": "Bottom Flat"
+    "Vector In": "Bottom Flat"
   },
   "groups": {},
   "nodes": {
@@ -59,7 +59,7 @@
       "params": {},
       "width": 599.3994140625
     },
-    "Calculate normals": {
+    "Calculate Normals": {
       "bl_idname": "SvGetNormalsNodeMk2",
       "custom_socket_props": {
         "0": {
@@ -92,7 +92,7 @@
       "params": {},
       "width": 606.992431640625
     },
-    "Inset faces": {
+    "Inset Faces": {
       "bl_idname": "SvInsetFaces",
       "custom_socket_props": {},
       "height": 100.0,
@@ -169,7 +169,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -535,7 +535,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "0": {
@@ -567,7 +567,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location.001": {
+    "Select Mesh Elements by Location.001": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "0": {
@@ -664,7 +664,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -682,7 +682,7 @@
   },
   "update_lists": [
     [
-      "Mesh viewer",
+      "Mesh Viewer",
       0,
       "Assign Materials List",
       0
@@ -690,31 +690,31 @@
     [
       "Move.002",
       0,
-      "Inset faces",
+      "Inset Faces",
       0
     ],
     [
       "Reroute.002",
       "Output",
-      "Inset faces",
+      "Inset Faces",
       "Edges"
     ],
     [
       "Reroute.001",
       "Output",
-      "Inset faces",
+      "Inset Faces",
       "Faces"
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2,
-      "Inset faces",
+      "Inset Faces",
       3
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2,
-      "Inset faces",
+      "Inset Faces",
       4
     ],
     [
@@ -736,7 +736,7 @@
       1
     ],
     [
-      "Calculate normals",
+      "Calculate Normals",
       1,
       "Matrix Track To",
       3
@@ -750,29 +750,29 @@
     [
       "Reroute.003",
       "Output",
-      "Mesh viewer",
+      "Mesh Viewer",
       "vertices"
     ],
     [
       "Reroute.004",
       "Output",
-      "Mesh viewer",
+      "Mesh Viewer",
       "faces"
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       3,
-      "Mesh viewer",
+      "Mesh Viewer",
       3
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       0,
       "Move",
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -796,13 +796,13 @@
       1
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       0,
       "Proportional Edit Falloff",
       0
     ],
     [
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0,
       "Proportional Edit Falloff",
       1
@@ -832,7 +832,7 @@
       "Input"
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       "Faces",
       "Reroute.004",
       "Input"
@@ -852,31 +852,31 @@
     [
       "Torus",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Torus",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
       "Torus",
       2,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       2
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       0,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       0
     ],
     [
-      "Inset faces",
+      "Inset Faces",
       2,
-      "Select mesh elements by location.001",
+      "Select Mesh Elements by Location.001",
       2
     ],
     [
@@ -894,13 +894,13 @@
     [
       "Reroute",
       "Output",
-      "Calculate normals",
+      "Calculate Normals",
       "Vertices"
     ],
     [
       "Reroute.001",
       "Output",
-      "Calculate normals",
+      "Calculate Normals",
       "Polygons"
     ]
   ]

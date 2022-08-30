@@ -8,11 +8,11 @@
 import random
 
 import bpy
-from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty, IntProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty, IntProperty
 
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, repeat_last_for_length
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, repeat_last_for_length
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
@@ -38,11 +38,11 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     replacement_nodes = [('SvPopulateSolidMk2Node', None, None)]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
         self.inputs['FaceMask'].hide_safe = self.gen_mode != 'SURFACE'
+        updateNode(self, context)
 
     modes = [
             ('VOLUME', "Volume", "Generate points inside solid body", 0),

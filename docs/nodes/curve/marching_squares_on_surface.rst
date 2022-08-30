@@ -11,7 +11,7 @@ This node requires SkImage_ library to work.
 Functionality
 -------------
 
-This node uses Marching Squres_ algorithm to find iso-lines of a scalar field
+This node uses Marching Squares_ algorithm to find iso-lines of a scalar field
 on an arbitrary surface, i.e. lines for which the value of scalar field equals
 to the given value at each point. The lines are generated as mesh - vertices
 and edges. You can use one of interpoolation nodes to build Curve objects from

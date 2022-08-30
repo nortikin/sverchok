@@ -29,6 +29,12 @@ Methods
 
 - Maximum edge length: If this number is smaller the mesh becomes finer. The smallest value is 0.
 
+**Trivial**: ...
+
+**Lenient**: This mode is based on Yorik van Havre's Blender FCStd importer code, but modified for speed. This mode produces tris, quads and ngons. It may not have coherent polygon normals. This handles curves and polygons with holes. This mode attempts to remove any duplicate/reverse faces. 
+
+If you really want to understand these algorithms, you should read the source code - it is the best reference.
+
 
 Examples
 --------

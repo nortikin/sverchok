@@ -9,9 +9,9 @@
     "Frame.005": "Frame.007",
     "IcoSphere": "Frame.006",
     "List Decompose": "Frame.002",
-    "List Del Levels": "Frame.005",
-    "List Del Levels.001": "Frame.004",
-    "List Del Levels.002": "Frame.003",
+    "List Delete Levels": "Frame.005",
+    "List Delete Levels.001": "Frame.004",
+    "List Delete Levels.002": "Frame.003",
     "List Input": "Frame.006",
     "List Join.002": "Frame.005",
     "List Join.003": "Frame.004",
@@ -238,7 +238,7 @@
       },
       "width": 140.0
     },
-    "List Del Levels": {
+    "List Delete Levels": {
       "bl_idname": "ListLevelsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -253,7 +253,7 @@
       },
       "width": 140.0
     },
-    "List Del Levels.001": {
+    "List Delete Levels.001": {
       "bl_idname": "ListLevelsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -268,7 +268,7 @@
       },
       "width": 140.0
     },
-    "List Del Levels.002": {
+    "List Delete Levels.002": {
       "bl_idname": "ListLevelsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -503,7 +503,7 @@
       "params": {
         "n_id": "-7274830787456972808",
         "show_text": false,
-        "text": "Nikitron | 2020 | List_multymask SNL node"
+        "text": "Nikitron | 2020 | List_multimask SNL node"
       },
       "use_custom_color": true,
       "width": 400.0
@@ -800,7 +800,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels",
+      "List Delete Levels",
       0,
       "Area.004",
       1
@@ -812,7 +812,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels.001",
+      "List Delete Levels.001",
       0,
       "Area.005",
       1
@@ -824,7 +824,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels.002",
+      "List Delete Levels.002",
       0,
       "Area.006",
       1
@@ -844,19 +844,19 @@
     [
       "List Decompose",
       2,
-      "List Del Levels",
+      "List Delete Levels",
       0
     ],
     [
       "List Decompose",
       1,
-      "List Del Levels.001",
+      "List Delete Levels.001",
       0
     ],
     [
       "List Decompose",
       0,
-      "List Del Levels.002",
+      "List Delete Levels.002",
       0
     ],
     [
@@ -950,7 +950,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels.002",
+      "List Delete Levels.002",
       0,
       "Viewer Draw.001",
       2
@@ -968,7 +968,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels.001",
+      "List Delete Levels.001",
       0,
       "Viewer Draw.002",
       2
@@ -986,7 +986,7 @@
       "Vertices"
     ],
     [
-      "List Del Levels",
+      "List Delete Levels",
       0,
       "Viewer Draw.003",
       2

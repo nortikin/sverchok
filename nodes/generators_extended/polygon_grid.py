@@ -248,7 +248,7 @@ def tiles_triangular(vert_list, edge_list, poly_list, tile, grid):
 
 class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Hexagonal, Triangular, Ortogonal,
+    Triggers: Hexagonal, Triangular, Orthogonal,
     Tooltip: Create polygon array assambled to fill the plane. Triangles, Hexagons and Squares
     """
     bl_idname = 'SvPolygonGridNode'

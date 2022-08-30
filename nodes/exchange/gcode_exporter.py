@@ -49,11 +49,11 @@ def convert_to_text(list):
 
 class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Export gcode from vertices position
+    Triggers: Export G-code from vertices position
     Tooltip: Generate a gcode file from a list of vertices
     """
     bl_idname = 'SvExportGcodeNode'
-    bl_label = 'Export Gcode'
+    bl_label = 'Export G-code'
     bl_icon = 'COPYDOWN'
 
     last_e: FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
@@ -130,7 +130,7 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
         row = col.row(align=True)
         row.scale_y = 4.0
-        row.operator(TEXT_IO_CALLBACK, text='Export Gcode').fn_name = 'process'
+        row.operator(TEXT_IO_CALLBACK, text='Export G-code').fn_name = 'process'
 
     def update_socket(self, context):
         self.update()

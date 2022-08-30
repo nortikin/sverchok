@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
-from mathutils import Vector, Matrix
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
+from mathutils import Vector
 from mathutils.kdtree import KDTree
-import math
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
-from sverchok.utils.math import inverse, inverse_square, inverse_cubic, inverse_exp, gauss
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
+import sverchok.utils.math as falloff_functions
+
 
 def get_avg_vector(vectors):
     result = Vector((0,0,0))
@@ -35,7 +35,7 @@ def get_avg_vector(vectors):
 class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
     '''Attraction vectors calculator'''
     bl_idname = 'SvAttractorNode'
-    bl_label = 'Vector Attraction'
+    bl_label = 'Vectors Attraction'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VECTOR_ATTRACTION'
 
@@ -53,10 +53,10 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             ("gauss", "Gauss - Exp(-R^2/2)", "", 4)
         ]
 
-    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
+        updateNode(self, context)
 
     attractor_type: EnumProperty(
         name="Attractor type", items=types, default='Point', update=update_type)
@@ -112,7 +112,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'clamp')
 
     def _falloff(self, coefficient, rho):
-        func = globals()[self.falloff_type]
+        func = getattr(falloff_functions, self.falloff_type)
         return func(coefficient, rho)
 
     def falloff(self, amplitude, coefficient, rho):

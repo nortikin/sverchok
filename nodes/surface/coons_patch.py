@@ -1,15 +1,13 @@
 
 import numpy as np
-from math import pi
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface.coons import coons_surface
+from sverchok.utils.surface.coons import coons_surface, GENERIC, NURBS_ONLY, NURBS_IF_POSSIBLE
 
 class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -26,6 +24,19 @@ class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    nurbs_options = [
+            (GENERIC, "Generic", "Create a generic Surface object", 0),
+            (NURBS_ONLY, "Always NURBS", "Create a NURBS surface from NURBS curves. Fail if it is not possible to generate a NURBS surface", 1),
+            (NURBS_IF_POSSIBLE, "NURBS if possible", "Try to create a NURBS surface from NURBS curves. If it is not possible, create a generic Surface object", 2)
+        ]
+
+    use_nurbs : EnumProperty(
+        name = "NURBS option",
+        description = "Whether to generate a NURBS or generic surface",
+        items = nurbs_options,
+        default = NURBS_IF_POSSIBLE,
+        update = updateNode)
+
     max_rho : FloatProperty(
         name = "Max. distance",
         min = 0.0,
@@ -33,13 +44,13 @@ class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
         precision = 4,
         update = updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Curves'].hide_safe = self.input_mode != 'LIST'
         self.inputs['Curve1'].hide_safe = self.input_mode == 'LIST'
         self.inputs['Curve2'].hide_safe = self.input_mode == 'LIST'
         self.inputs['Curve3'].hide_safe = self.input_mode == 'LIST'
         self.inputs['Curve4'].hide_safe = self.input_mode == 'LIST'
+        updateNode(self, context)
 
     modes = [
             ('LIST', "List of curves", "Input is provided as a list of curves, which must have 4 items", 0),
@@ -57,6 +68,7 @@ class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'check')
         if self.check:
             layout.prop(self, 'max_rho')
+        layout.prop(self, 'use_nurbs', text='')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curves")
@@ -109,7 +121,7 @@ class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
         for curves in self.get_input():
             if self.check:
                 self.run_check(curves)
-            surface = coons_surface(*curves)
+            surface = coons_surface(*curves, use_nurbs=self.use_nurbs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

@@ -9,9 +9,7 @@ import numpy as np
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
 def interp_v3l_v3v3(a, b, t):
@@ -21,7 +19,7 @@ def interp_v3l_v3v3(a, b, t):
     else: return ((1.0 - t) * a) + (t * b)
 
 
-class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: SvSweepModulator
@@ -31,6 +29,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_idname = 'SvSweepModulator'
     bl_label = 'Sweep Modulator'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+    is_scene_dependent = True
+    is_animation_dependent = True
 
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
     active: bpy.props.BoolProperty(name="active", update=updateNode)
@@ -49,8 +49,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         onew("SvStringsSocket", "Edges")
         onew("SvStringsSocket", "Faces")
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "active", text="ACTIVATE")
         row = layout.row(align=True)
@@ -108,7 +107,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         num_path_verts = len(path_verts)
 
         # -- use the depsgraph for the bevelled objects
-        sv_depsgraph = get_sv_depsgraph()
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         shape_a = sv_depsgraph.objects[construct.shape_a.name]
         shape_b = sv_depsgraph.objects[construct.shape_b.name]
         shape_a_data = shape_a.to_mesh()
@@ -200,16 +199,11 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         finally:
             if not construct.complete:
                 return
-            
-            set_sv_depsgraph_need(True)
-            with self.sv_throttle_tree_update():
-                v, e, f = self.sweep_between(construct)
-                self.outputs['Verts'].sv_set([v])
-                self.outputs['Edges'].sv_set([e])
-                self.outputs['Faces'].sv_set([f])
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)        
+            v, e, f = self.sweep_between(construct)
+            self.outputs['Verts'].sv_set([v])
+            self.outputs['Edges'].sv_set([e])
+            self.outputs['Faces'].sv_set([f])
 
 
 classes = [SvSweepModulator]

@@ -211,9 +211,9 @@ A set of extra parameters are available on the property panel. These parameters 
 +=========================+============+============+===============================================+
 | **Angle Units**         | Enum       | DEGREES    | Interprets the angle values based on          |
 |                         |  RADIANS   |            | the selected angle units:                     |
-|                         |  DEGREES   |            |   Radians = 0 - 2pi                           |
-|                         |  UNITIES   |            |   Degrees = 0 - 360                           |
-|                         |            |            |   Unities = 0 - 1                             |
+|                         |  DEGREES   |            | Radians = 0 - 2pi                             |
+|                         |  UNITIES   |            | Degrees = 0 - 360                             |
+|                         |            |            | Unities = 0 - 1                               |
 +-------------------------+------------+------------+-----------------------------------------------+
 
 
@@ -222,7 +222,7 @@ Outputs
 
 **Vertices* and **Edges**
 All outputs will be generated when connected.
-When **Separate** is off the output generates a continous list of vertices and edges (regardless of number of arms), otherwise it generates separate lists of vertices and edges for each arm.
+When **Separate** is off the output generates a continuous list of vertices and edges (regardless of number of arms), otherwise it generates separate lists of vertices and edges for each arm.
 
 
 Example of usage

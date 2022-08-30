@@ -113,10 +113,10 @@ class SvSolidEdgeCurve(SvCurve):
             t_out.append(self.curve.value(t))
         return np.array(t_out)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         return np.array(self.edge.tangentAt(t))
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         tangents = []
         for t in ts:
             tangents.append(self.edge.tangentAt(t))
@@ -160,11 +160,11 @@ class SvFreeCadCurve(SvCurve):
     def evaluate_array(self, ts):
         return np.vectorize(self.evaluate, signature='()->(3)')(ts)
 
-    def tangent(self, t):
+    def tangent(self, t, tangent_delta=None):
         p = self.edge.tangentAt(t)
         return np.array(self._convert(p))
 
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)
 
     def get_u_bounds(self):
@@ -292,14 +292,49 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     def evaluate_array(self, ts):
         return np.vectorize(self.evaluate, signature='()->(3)')(ts)
     
-    def tangent(self, t):
-        v = self.curve.tangent(t)
+    def tangent(self, t, tangent_delta=None):
+        p, v = self.curve.getD1(t)
         if not isinstance(v, tuple):
             v = self._convert(v)
         return np.array(v)
     
-    def tangent_array(self, ts):
+    def tangent_array(self, ts, tangent_delta=None):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)    
+
+    def second_derivative(self, t, tangent_delta = None):
+        p, v1, v = self.curve.getD2(t)
+        if not isinstance(v, tuple):
+            v = self._convert(v)
+        return np.array(v)
+
+    def second_derivative_array(self, ts, tangent_delta=None):
+        return np.vectorize(self.second_derivative, signature='()->(3)')(ts)    
+
+    def third_derivative(self, t, tangent_delta = None):
+        p, v1, v2, v = self.curve.getD3(t)
+        if not isinstance(v, tuple):
+            v = self._convert(v)
+        return np.array(v)
+
+    def third_derivative_array(self, ts, tangent_delta=None):
+        return np.vectorize(self.third_derivative, signature='()->(3)')(ts)    
+
+    def derivatives_array(self, n, ts, tangent_delta=None):
+        first_derivatives = []
+        second_derivatives = []
+        third_derivatives = []
+
+        for t in ts:
+            p, v1, v2, v3 = self.curve.getD3(t)
+            first_derivatives.append(self._convert(v1))
+            second_derivatives.append(self._convert(v2))
+            third_derivatives.append(self._convert(v3))
+
+        first_derivatives = np.array(first_derivatives)
+        second_derivatives = np.array(second_derivatives)
+        third_derivatives = np.array(third_derivatives)
+
+        return [first_derivatives, second_derivatives, third_derivatives][:n]
 
     def get_u_bounds(self):
         if self.u_bounds is None:
@@ -324,9 +359,28 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     def get_weights(self):
         return np.array(self.curve.getWeights())
 
-    def insert_knot(self, u, count=1):
+    def insert_knot(self, u, count=1, if_possible=False):
         curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
         curve.curve.insertKnot(u, count)
+        return curve
+
+    def remove_knot(self, u, count=1, tolerance=1e-4, if_possible=False):
+        curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
+        ms = sv_knotvector.to_multiplicity(self.get_knotvector())
+        idx = None
+        M = None
+        for i, (u1, m) in enumerate(ms):
+            if u1 == u:
+                idx = i
+                if count == 'ALL':
+                    M = 0
+                elif count == 'ALL_BUT_ONE':
+                    M = 1
+                else:
+                    M = m - count
+                break
+        if idx is not None:
+            curve.curve.removeKnot(idx+1, M, tolerance)
         return curve
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsCurve

@@ -17,18 +17,19 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
+from bpy.props import BoolProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRecalcNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Recalc face normals '''
     bl_idname = 'SvRecalcNormalsNode'
-    bl_label = 'Recalc normals'
+    bl_label = 'Recalculate Normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RECALC_NORMALS'
 

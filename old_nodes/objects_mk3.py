@@ -9,13 +9,10 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
@@ -71,7 +68,7 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: obj Input Scene Objects pydata
     Tooltip: Get Scene Objects into Sverchok Tree
@@ -81,6 +78,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
+    is_animation_dependent = True
 
     replacement_nodes = [('SvGetObjectsData',
                           None,
@@ -95,10 +93,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    def modifiers_handle(self, context):
-        set_sv_depsgraph_need(self.modifiers)
-        updateNode(self, context)
-
     groupname: StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
@@ -106,7 +100,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False, update=modifiers_handle)
+        default=False, update=updateNode)
 
     vergroups: BoolProperty(
         name='Vergroups',
@@ -174,10 +168,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         else:
             layout.label(text='--None--')
 
-
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
+    def sv_draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row()
 
@@ -197,9 +188,8 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         row.prop(self, "vergroups", text="VeGr", toggle=True)
         self.draw_obj_names(layout)
 
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         layout.prop(self, 'draw_3dpanel', text="To Control panel")
-        self.draw_animatable_buttons(layout)
 
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
@@ -226,9 +216,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     def get_materials_from_mesh(self, mesh):
         return [face.material_index for face in mesh.polygons[:]]
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
 
         if not self.object_names:
@@ -247,7 +234,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         materials_out = []
 
         if self.modifiers:
-            sv_depsgraph = get_sv_depsgraph()
+            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
@@ -262,43 +249,38 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
-            # code inside this context can trigger dependancy graph update events,
-            # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
-            # not doing so would trigger recursive updates and Blender would likely become unresponsive.
-            with self.sv_throttle_tree_update():
+            mtrx = obj.matrix_world
+            if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
+                mtrx_out.append(mtrx)
+                continue
+            try:
+                if obj.mode == 'EDIT' and obj.type == 'MESH':
+                    # Mesh objects do not currently return what you see
+                    # from 3dview while in edit mode when using obj.to_mesh.
+                    me = obj.data
+                    bm = bmesh.from_edit_mesh(me)
+                    vers, edgs, pols = pydata_from_bmesh(bm)
+                    materials = self.get_materials_from_bmesh(bm)
+                    del bm
+                else:
 
-                mtrx = obj.matrix_world
-                if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
-                    mtrx_out.append(mtrx)
-                    continue
-                try:
-                    if obj.mode == 'EDIT' and obj.type == 'MESH':
-                        # Mesh objects do not currently return what you see
-                        # from 3dview while in edit mode when using obj.to_mesh.
-                        me = obj.data
-                        bm = bmesh.from_edit_mesh(me)
-                        vers, edgs, pols = pydata_from_bmesh(bm)
-                        materials = self.get_materials_from_bmesh(bm)
-                        del bm
+                    if self.modifiers:
+                        obj = sv_depsgraph.objects[obj.name]
+                        obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
+                        obj_data = obj.to_mesh()
 
-                        if self.modifiers:
-                            obj = sv_depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                        else:
-                            obj_data = obj.to_mesh()
+                    if obj_data.polygons:
+                        pols = [list(p.vertices) for p in obj_data.polygons]
+                    vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
+                    materials = self.get_materials_from_mesh(obj_data)
+                    edgs = obj_data.edge_keys
 
-                        if obj_data.polygons:
-                            pols = [list(p.vertices) for p in obj_data.polygons]
-                        vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
-                        materials = self.get_materials_from_mesh(obj_data)
-                        edgs = obj_data.edge_keys
-
-                        obj.to_mesh_clear()
+                    obj.to_mesh_clear()
 
 
-                except Exception as err:
-                    print('failure in process between frozen area', self.name, err)
+            except Exception as err:
+                print('failure in process between frozen area', self.name, err)
 
             vers_out.append(vers)
             edgs_out.append(edgs)

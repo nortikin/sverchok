@@ -262,7 +262,7 @@ def mark_crop_faces(mesh, mode, crop_name='crop', del_flag='del'):
 
 
 def get_face_mask_by_flag(mesh, flag, del_flag='del'):
-    # returns mask of faces where 1 mean that face has given flag
+    # returns mask of faces where 1 means that face has given flag
     out = [0 for face in mesh.faces if del_flag not in face.flags]
     for i, face in enumerate(mesh.faces):
         if del_flag in face.flags:
@@ -301,7 +301,7 @@ if bl_crop_mesh is not None:
         """
         Crop given faces by another set of faces by Blender internal function
         :param verts: list of Sv vertices
-        :param faces: list of faces wich should be cropped
+        :param faces: list of faces which should be cropped
         :param verts_crop: list of Sv vertices
         :param faces_crop: list of faces by which mesh should be cropped
         :param mode: 'inner' or 'outer'

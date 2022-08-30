@@ -3,7 +3,7 @@ Objects
 *******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    get_asset_properties_mk2
    lattice_analyzer
@@ -19,3 +19,5 @@ Objects
    set_loop_normals
    set_mesh_attribute
    set_collection
+   copy_modifiers
+   named_attribute

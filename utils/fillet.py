@@ -4,19 +4,21 @@ from math import tan, sin, pi
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.curve import SvCircle
+from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve.bezier import SvBezierCurve
 
 class ArcFilletData(object):
-    def __init__(self, center, matrix, normal, radius, p1, p2, angle):
+    def __init__(self, center, matrix, normal, radius, p1, p2, v2, angle):
         self.center = center
         self.normal = normal
         self.radius = radius
         self.p1 = p1
         self.p2 = p2
+        self.vertex = np.array(v2)
         self.angle = angle
         self.matrix = matrix
 
-    def get_curve(self):
+    def get_circular_arc(self):
         center = np.array(self.center)
         normal = np.array(self.normal)
         p1 = np.array(self.p1)
@@ -27,6 +29,10 @@ class ArcFilletData(object):
         circle.u_bounds = (0.0, self.angle)
         #circle.u_bounds = (-self.angle, 0.0)
         return circle
+
+    def get_bezier_arc(self):
+        cpts = np.array([self.p1, self.vertex, self.p2])
+        return SvBezierCurve(cpts)
 
 def calc_fillet(v1, v2, v3, radius):
     if not isinstance(v1, Vector):
@@ -61,5 +67,5 @@ def calc_fillet(v1, v2, v3, radius):
     matrix = Matrix([to_p1, -binormal, normal]).to_4x4().inverted()
     matrix.translation = center
 
-    return ArcFilletData(center, matrix, normal, radius, p1, p2, big_angle)
+    return ArcFilletData(center, matrix, normal, radius, p1, p2, v2, big_angle)
 

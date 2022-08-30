@@ -3,7 +3,7 @@ Script
 ******
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    formula_mk5
    formula_interpolate

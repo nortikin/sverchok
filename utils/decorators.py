@@ -16,9 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import time
 import functools
 import inspect
 import warnings
+from sverchok.utils.logging import info
+from sverchok.utils.ascii_print import str_color
 
 string_types = (type(b''), type(u''))
 
@@ -100,6 +103,25 @@ def deprecated(argument):
         return wrapped
 
         
+def duration(func):
 
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
 
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        duration = (time.time() - start_time) * 1000
 
+        # display_args = (f"\n    {args=}" if args else "")
+        # display_kwargs = (f"\n    {kwargs=}" if kwargs else "")
+        func_name = str_color(func.__name__, 31)
+        duration = str_color(f"{duration:.5g} ms", 32)
+        
+        msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
+        try:
+            info(msg)
+        except:
+            print(msg)
+
+        return result
+    return wrapped

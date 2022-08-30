@@ -135,8 +135,21 @@ class SvgDimension():
             text_svg += self.text_attributes.draw(document)
         text_svg += '>'
         precision = self.node.decimal_precision
-        p_format = "{:10."+str(precision)+"f}"
-        text_svg += p_format.format((dim_loc_b - dim_loc_a).length)
+        if self.node.units_real == 'Metric':
+            p_format = "{:10."+str(precision)+"f}"
+            text_svg += p_format.format((dim_loc_b - dim_loc_a).length)
+        else:
+            feets = (dim_loc_b - dim_loc_a).length//0.3048
+            if feets < 2:
+                inches = ((dim_loc_b - dim_loc_a).length/0.0254)
+            else:
+                p_format = "{:10.0f}"
+                inches = (((dim_loc_b - dim_loc_a).length%0.3048)/0.0254)
+                text_svg += p_format.format(feets)
+                text_svg += "ft"
+            p_format = "{:10."+str(precision)+"f}"
+            text_svg += p_format.format(inches)
+            text_svg += "in"
         text_svg += f' {self.node.units}'
         text_svg += '</text>'
 
@@ -146,10 +159,10 @@ class SvgDimension():
 class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Text SVG
-    Tooltip: Creates SVG Dimesions
+    Tooltip: Creates SVG Dimensions
     """
     bl_idname = 'SvSvgDimensionNode'
-    bl_label = 'Dimension SVG'
+    bl_label = 'Dimensions SVG'
     bl_icon = 'MESH_CIRCLE'
     sv_icon = 'SV_DIMENSION_SVG'
 
@@ -201,6 +214,14 @@ class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
         description='units',
         default='',
         update=updateNode)
+
+    units_real: EnumProperty(
+        name='Units_real',
+        description='Dimentions feets or meters',
+        items=enum_item_4(['Metric', 'Imperialistic']),
+        default='Metric',
+        update=updateNode)
+
     text: StringProperty(
         name='Text',
         description='Text',
@@ -231,6 +252,7 @@ class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "line_extension", expand=False)
         layout.prop(self, "decimal_precision", expand=False)
         layout.prop(self, "units", expand=False)
+        layout.prop(self, "units_real", expand=True)
         layout.prop(self, "font_family", expand=False)
         if self.font_family == 'user':
             layout.prop(self, "user_font")
@@ -263,3 +285,5 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSvgDimensionNode)
+
+if __name__ == '__main__': register()

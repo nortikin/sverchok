@@ -1,5 +1,5 @@
-Bezier In
-=========
+Bezier Input
+============
 
 Functionality
 -------------
@@ -28,9 +28,12 @@ Parameters
 This node has the following parameters:
 
 * **Sort**. If checked, the node will sort selected objects by name. Checked by default.
-* **Apply matricess**. If checked, the node will apply all transforms to
+* **Apply matrices**. If checked, the node will apply all transforms to
   Blender's objects before bringing the coordinates into Sverchok. Checked by
   default.
+* **Concatenate segments**. If checked, join Bezier segments of the curve into
+  a single Curve object; otherwise, output a separate Curve object for each
+  segment.
 
 In the lower part of the node, the list of currently imported objects is shown.
 

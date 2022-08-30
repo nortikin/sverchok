@@ -20,7 +20,7 @@
 import bpy
 
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core.update_system import process_tree, build_update_list
+import sverchok.core.tasks as ts
 
 
 class SvToggleProcess(bpy.types.Operator):
@@ -84,61 +84,6 @@ class SvToggleDraft(bpy.types.Operator):
                             region.tag_redraw()
 
 
-class SverchokUpdateContext(bpy.types.Operator):
-    """Update current Sverchok node tree"""
-    bl_idname = "node.sverchok_update_context"
-    bl_label = "Update current node tree"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        try:
-            bpy.context.window.cursor_set("WAIT")
-            ng = context.space_data.node_tree
-            if ng:
-                build_update_list(ng)
-                process_tree(ng)
-        except:
-            pass
-        finally:
-            bpy.context.window.cursor_set("DEFAULT")
-
-        return {'FINISHED'}
-
-
-class SverchokUpdateContextForced(bpy.types.Operator):
-    """Update current Sverchok node tree (even if it's processing is disabled)"""
-    bl_idname = "node.sverchok_update_context_force"
-    bl_label = "Update current node tree - forced mode"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        try:
-            bpy.context.window.cursor_set("WAIT")
-            ng = context.space_data.node_tree
-            if ng:
-                try:
-                    prev_process_state = ng.sv_process
-                    ng.sv_process = True
-                    build_update_list(ng)
-                    process_tree(ng)
-                finally:
-                    ng.sv_process = prev_process_state
-        except:
-            pass
-        finally:
-            bpy.context.window.cursor_set("DEFAULT")
-
-        return {'FINISHED'}
-
-
 class EnterExitGroupNodes(bpy.types.Operator):
     bl_idname = 'node.enter_exit_group_nodes'
     bl_label = "Enter exit from group nodes"
@@ -159,6 +104,20 @@ class EnterExitGroupNodes(bpy.types.Operator):
             return False
 
 
+class PressingEscape(bpy.types.Operator):
+    bl_idname = 'node.sv_abort_nodes_updating'
+    bl_label = 'Abort nodes updating'
+
+    def execute(self, context):
+        if ts.tasks:
+            ts.tasks.cancel()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type in {'SverchCustomTreeType'}
+
+
 nodeview_keymaps = []
 
 
@@ -167,6 +126,10 @@ def add_keymap():
     kc = wm.keyconfigs.addon
     if kc:
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
+
+        # ctrl+G        | make node group from selected
+        kmi = km.keymap_items.new("node.add_group_tree_from_selected", 'G', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
 
         # TAB           | enter or exit node groups depending on selection and edit_tree type
         kmi = km.keymap_items.new('node.enter_exit_group_nodes', 'TAB', 'PRESS')
@@ -205,10 +168,12 @@ def add_keymap():
 
         # F5 | Trigger update of context node tree
         kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS')
+        kmi.properties.force_mode = False
         nodeview_keymaps.append((km, kmi))
 
-        # Ctrl + F5 | Trigger update of context node tree, forced mode
-        kmi = km.keymap_items.new('node.sverchok_update_context_force', 'F5', 'PRESS', ctrl=True)
+        # Ctrl-F5 | Trigger update of context node tree
+        kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS', ctrl=True)
+        kmi.properties.force_mode = True
         nodeview_keymaps.append((km, kmi))
 
         # F6 | Toggle processing mode of the active node tree
@@ -257,12 +222,6 @@ def add_keymap():
         kmi = km.keymap_items.new('node.zoom_to_node', 'Z', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
-        # 3D View
-        km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.sv_obj_modal_update', 'F5', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.mode='toggle'
-        nodeview_keymaps.append((km, kmi))
-
 
 def remove_keymap():
 
@@ -278,7 +237,8 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
-classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes]
+classes = [SvToggleProcess, SvToggleDraft, EnterExitGroupNodes,
+           PressingEscape]
 
 
 def register():

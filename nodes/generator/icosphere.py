@@ -28,6 +28,11 @@ from sverchok.utils.sv_bmesh_utils import numpy_data_from_bmesh
 from sverchok.utils.math import from_cylindrical
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
+# icosphere parameter rename on sept 13 2021 - this will allow both to exist.
+# https://github.com/blender/blender/commit/9b2b32a3338d873529a9b2c402feae4e9d25afdf
+old_icosphere = "diameter=" in bmesh.ops.create_icosphere.__doc__
+size_param = "diameter" if old_icosphere else "radius"
+
 
 def icosahedron_cylindrical(r):
 
@@ -122,7 +127,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     #     items=list_match_modes, default="REPEAT",
     #     update=updateNode)
     out_np: BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays slows this node but may improve performance of nodes it is connected to",
         default=(False, False, False),
         size=3, update=updateNode)
@@ -140,7 +145,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "subdivisions_max")
         layout.prop(self, "list_match")
-        layout.label(text="Ouput Numpy:")
+        layout.label(text="Output Numpy:")
         r = layout.row(align=True)
         for i in range(3):
             r.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
@@ -170,9 +175,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
 
             bm = bmesh.new()
             bmesh.ops.create_icosphere(
-                bm,
-                subdivisions=subdivisions,
-                diameter=radius)
+                bm, **{size_param: radius, "subdivisions": subdivisions})
 
             verts, edges, faces, _ = numpy_data_from_bmesh(bm, self.out_np)
             bm.free()

@@ -51,7 +51,7 @@ you pass series of values to one of inputs, you will get series of vectors.
 Examples of usage
 -----------------
 
-An archimedian spiral:
+An archimedean spiral:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5840892/91800812-a1ba-11e4-84b3-c9347ed1b397.png
 

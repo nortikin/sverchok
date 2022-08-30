@@ -63,12 +63,18 @@ def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
     finally:
         bmesh.update_edit_mesh(mesh)
 
+def bmesh_from_pydata(
+        verts=None, edges=[], faces=[],
+        markup_face_data=False, markup_edge_data=False, markup_vert_data=False,
+        normal_update=False, index_edges=False):
 
-def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
-                      markup_vert_data=False, normal_update=False):
-    ''' verts is necessary, edges/faces are optional
-        normal_update, will update verts/edges/faces normals at the end
-    '''
+    """
+    verts              : necessary
+    edges / faces      : optional
+    normal_update      : optional - will update verts/edges/faces normals at the end
+    index_edges (bool) : optional - will make it possible for users of the bmesh to manually 
+                         iterate over any edges or do index lookups
+    """
 
     bm = bmesh.new()
     bm_verts = bm.verts
@@ -105,6 +111,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
             if markup_edge_data:
                 bm_edge[initial_index_layer] = idx
 
+    if has_element(edges) or index_edges:
         bm.edges.index_update()
 
     if markup_vert_data:
@@ -389,7 +396,7 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
                 * 'vert_init_index': indexes of the output vertices in the original mesh
                 * 'edge_init_index': indexes of the output edges in the original mesh
                 * 'face_init_index': indexes of the output faces in the original mesh
-                * 'verts': correclty reordered vert_data (if present)
+                * 'verts': correctly reordered vert_data (if present)
                 * 'edges': correctly reordered edge_data (if present)
                 * 'faces': correctly reordered face_data (if present)
     """
@@ -529,9 +536,11 @@ def truncate_vertices(bm):
     new_bm_add_vert = new_bm.verts.new
     new_bm_add_face = new_bm.faces.new
     edge_centers = dict()
+
     for edge in bm.edges:
         center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
         edge_centers[edge.index] = new_bm_add_vert(center_co)
+ 
     for face in bm.faces:
         new_face = [edge_centers[edge.index] for edge in face.edges]
         old_normal = face.normal
@@ -539,6 +548,7 @@ def truncate_vertices(bm):
         if new_normal.dot(old_normal) < 0:
             new_face = list(reversed(new_face))
         new_bm_add_face(new_face)
+
     for vertex in bm.verts:
         new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
         if len(new_face) > 2:
@@ -665,7 +675,7 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
     * wave_path_prev_index : int, output; the index of the face, to which you
       should step to follow the shortest path to initial faces. Filled only if
       find_shortest_path is set to True.
-    * wave_path_prev_distance : float, output; the euclidian distance to the
+    * wave_path_prev_distance : float, output; the euclidean distance to the
       face mentioned in wave_path_prev_index. Filled only if find_shortest_path
       is set to True.
     * wave_path_distance: float, output; total length of the shortest to the

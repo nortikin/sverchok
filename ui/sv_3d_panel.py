@@ -8,8 +8,6 @@
 
 import bpy
 
-from sverchok.core.update_system import process_from_nodes
-
 
 class SV_PT_3DPanel(bpy.types.Panel):
     """Panel to manipulate parameters in Sverchok layouts"""
@@ -21,11 +19,6 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
     def draw(self, context):
         col = self.layout.column()
-        if context.scene.SvShowIn3D_active:
-            col.operator('wm.sv_obj_modal_update', text='Stop live update', icon='CANCEL').mode = 'end'
-        else:
-            col.operator('wm.sv_obj_modal_update', text='Start live update', icon='EDITMODE_HLT').mode = 'start'
-
         col.operator('node.sverchok_update_all', text='Update all trees')
         col.operator('node.sv_scan_properties', text='Scan for props')
 
@@ -170,6 +163,7 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
                 row.prop(tree, 'sv_show',
                          icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
                 row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+                row.prop(tree, 'sv_scene_update', icon='SCENE_DATA', text=' ')
                 row.prop(tree, "sv_process", toggle=True, text="P")
                 row.prop(tree, "sv_draft", toggle=True, text="D")
 
@@ -425,90 +419,6 @@ class SvPopupEditLabel(bpy.types.Operator):
             self.layout.prop(self, 'new_tree_name')
 
 
-class Sv3DViewObjInUpdater(bpy.types.Operator, object):
-    """For automatic trees reevaluation upon changes in 3D space"""
-    bl_idname = "wm.sv_obj_modal_update"
-    bl_label = "start n stop obj updating"
-
-    _timer = None
-    mode: bpy.props.StringProperty(default='toggle')
-    node_name: bpy.props.StringProperty(default='')
-    node_group: bpy.props.StringProperty(default='')
-    speed: bpy.props.FloatProperty(default=1 / 13)
-
-    def modal(self, context, event):
-
-        if not context.scene.SvShowIn3D_active:
-            self.cancel(context)
-            return {'FINISHED'}
-
-        if not (event.type == 'TIMER'):
-            return {'PASS_THROUGH'}
-
-        objects_nodes_set = {
-            'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode', 'SvGetObjectsData'
-        }
-
-        obj_nodes = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                if ng.sv_process:
-                    nodes = []
-                    for n in ng.nodes:
-                        if n.bl_idname in objects_nodes_set:
-                            nodes.append(n)
-                    if nodes:
-                        obj_nodes.append(nodes)
-
-        ''' reaches here only if event is TIMER and self.active '''
-        for n in obj_nodes:
-            # print('calling process on:', n.name, n.id_data)
-            process_from_nodes(n)
-
-        return {'PASS_THROUGH'}
-
-    def start(self, context):
-        context.scene.SvShowIn3D_active = True
-
-        # rate can only be set in event_timer_add (I think...)
-        # self.speed = 1 / context.node.updateRate
-
-        wm = context.window_manager
-        self._timer = wm.event_timer_add(self.speed, window=context.window)
-        wm.modal_handler_add(self)
-        self.report({'INFO'}, "Live Update mode enabled")
-
-    def stop(self, context):
-        context.scene.SvShowIn3D_active = False
-
-    def toggle(self, context):
-        if context.scene.SvShowIn3D_active:
-            self.stop(context)
-        else:
-            self.start(context)
-
-    def event_dispatcher(self, context, type_op):
-        if type_op == 'start':
-            self.start(context)
-        elif type_op == 'end':
-            self.stop(context)
-        else:
-            self.toggle(context)
-
-    def execute(self, context):
-        # n  = context.node
-        # self.node_name = context.node.name
-        # self.node_group = context.node.id_data.name
-
-        self.event_dispatcher(context, self.mode)
-        return {'RUNNING_MODAL'}
-
-    def cancel(self, context):
-        wm = context.window_manager
-        wm.event_timer_remove(self._timer)
-        self.report({'INFO'}, "Live Update mode disabled")
-
-
 classes = [
     SV_PT_3DPanel,
     SV_UL_NodeTreePropertyList,
@@ -518,7 +428,6 @@ classes = [
     Sv3dPropRemoveItem,
     Sv3DNodeProperties,
     SvPopupEditLabel,
-    Sv3DViewObjInUpdater,
 ]
 
 

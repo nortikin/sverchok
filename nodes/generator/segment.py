@@ -153,7 +153,7 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
     list_match_global: bpy.props.EnumProperty(
-        name="List Match Gobal",
+        name="List Match Global",
         description="Behavior on different list lengths, multiple objects level",
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)

@@ -113,7 +113,7 @@ def view_node(tree):
     it is a list with two items.
     The first item is a list with tuples, every tuple need to have the node bl_idanme and offset to the previous node
     The second item is a list with tuples, every tuple indicates a link.
-    The link is defined by two pairs of numbers, refering to output and input
+    The link is defined by two pairs of numbers, referring to output and input
     The first number of every pair indicates the node being 0 the active node 1 the first needed node and so on
     The second nmber of every pair indicates de socket index.
 
@@ -132,9 +132,6 @@ def view_node(tree):
     existing_node = nodes.active
     node_list = [existing_node]
     output_map = existing_node.viewer_map
-    
-    previous_state = tree.sv_process
-    tree.sv_process = False
 
     for node in output_map[0]:
         bl_idname_new_node, offset = node
@@ -147,8 +144,7 @@ def view_node(tree):
         output_s, input_s = link
         links.new(node_list[output_s[0]].outputs[output_s[1]],
                   node_list[input_s[0]].inputs[input_s[1]])
-    tree.sv_process = previous_state
-    tree.update()
+
 
 def add_connection(tree, bl_idname_new_node, offset):
 
@@ -175,7 +171,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             connect_idx_viewer(tree, existing_node, new_node)
 
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
-            # we can't determin thru cursor location which socket was nearest the rightclick
+            # we can't determine thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
             for socket in outputs:
                 if socket.hide:
@@ -188,8 +184,6 @@ def add_connection(tree, bl_idname_new_node, offset):
             # existing_node.process_node(None)
 
         elif bl_idname_new_node == 'SvViewerDrawMk4':
-            previous_state = tree.sv_process
-            tree.sv_process = False
             if 'verts' in output_map:
                 links.new(outputs[output_map['verts']], inputs[0])
                 if 'faces' in output_map:
@@ -226,8 +220,6 @@ def add_connection(tree, bl_idname_new_node, offset):
                 offset_node_location(existing_node, new_node, offset)
                 frame_adjust(existing_node, new_node)
                 links.new(outputs[output_map['solid']], new_node.inputs[0])
-            tree.sv_process = previous_state
-            tree.update()
             # existing_node.process_node(None)
 
         else:

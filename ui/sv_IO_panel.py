@@ -147,7 +147,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             return {'CANCELLED'}
 
         indent = None if self.compact else 2
-        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesnt expect sort_keys = True
+        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesn't expect sort_keys = True
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -167,7 +167,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
             with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
                 myzip.write(destination_path, arcname=base)
-                info('wrote:', final_archivename)
+                info('wrote: %s', final_archivename)
 
         return {'FINISHED'}
 
@@ -326,7 +326,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
             context.window_manager.clipboard = gist_url  # full destination url
             info(gist_url)
-            self.report({'WARNING'}, "Copied gist URL to clipboad")
+            self.report({'WARNING'}, "Copied gist URL to clipboard")
 
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
             return {'FINISHED'}

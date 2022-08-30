@@ -8,7 +8,6 @@
 import bpy
 from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty, IntProperty
 
-from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.alpha_shape import alpha_shape

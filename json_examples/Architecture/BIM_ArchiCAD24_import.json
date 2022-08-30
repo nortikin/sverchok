@@ -1,0 +1,415 @@
+{
+    "export_version": "1.0",
+    "main_tree": {
+        "nodes": {
+            "Mesh Viewer": {
+                "attributes": {
+                    "location": [511.502685546875, 476.802734375],
+                    "color": [0.0774407684803009, 0.3384043276309967, 1.0],
+                    "use_custom_color": true
+                },
+                "properties": {
+                    "base_data_name": "Beta"
+                },
+                "inputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "edges",
+                        "properties": {
+                            "custom_draw": "draw_edges_props"
+                        }
+                    },
+                    "faces": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "faces"
+                    },
+                    "material_idx": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "material_idx"
+                    },
+                    "matrix": {
+                        "bl_idname": "SvMatrixSocket",
+                        "name": "matrix",
+                        "properties": {
+                            "custom_draw": "draw_matrix_props"
+                        }
+                    }
+                },
+                "outputs": {
+                    "Objects": {
+                        "bl_idname": "SvObjectSocket",
+                        "name": "Objects"
+                    }
+                },
+                "bl_idname": "SvMeshViewer"
+            },
+            "Mesh Viewer.001": {
+                "attributes": {
+                    "location": [511.502685546875, 74.662353515625],
+                    "color": [0.0774407684803009, 0.3384043276309967, 1.0],
+                    "use_custom_color": true
+                },
+                "properties": {
+                    "base_data_name": "Gamma"
+                },
+                "inputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "edges",
+                        "properties": {
+                            "custom_draw": "draw_edges_props"
+                        }
+                    },
+                    "faces": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "faces"
+                    },
+                    "material_idx": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "material_idx"
+                    },
+                    "matrix": {
+                        "bl_idname": "SvMatrixSocket",
+                        "name": "matrix",
+                        "properties": {
+                            "custom_draw": "draw_matrix_props"
+                        }
+                    }
+                },
+                "outputs": {
+                    "Objects": {
+                        "bl_idname": "SvObjectSocket",
+                        "name": "Objects"
+                    }
+                },
+                "bl_idname": "SvMeshViewer"
+            },
+            "Recalculate Normals": {
+                "attributes": {
+                    "location": [205.02899169921875, 356.03302001953125]
+                },
+                "inputs": {
+                    "Vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "Vertices"
+                    },
+                    "Edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Edges"
+                    },
+                    "Polygons": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Polygons"
+                    },
+                    "Mask": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Mask"
+                    }
+                },
+                "outputs": {
+                    "Vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "Vertices"
+                    },
+                    "Edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Edges"
+                    },
+                    "Polygons": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Polygons"
+                    }
+                },
+                "bl_idname": "SvRecalcNormalsNode"
+            },
+            "Recalculate Normals.001": {
+                "attributes": {
+                    "location": [205.02899169921875, 29.29400634765625]
+                },
+                "inputs": {
+                    "Vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "Vertices"
+                    },
+                    "Edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Edges"
+                    },
+                    "Polygons": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Polygons"
+                    },
+                    "Mask": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Mask"
+                    }
+                },
+                "outputs": {
+                    "Vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "Vertices"
+                    },
+                    "Edges": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Edges"
+                    },
+                    "Polygons": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Polygons"
+                    }
+                },
+                "bl_idname": "SvRecalcNormalsNode"
+            },
+            "UV Connection": {
+                "attributes": {
+                    "location": [22.858535766601562, 360.64276123046875]
+                },
+                "properties": {
+                    "cap_V": true,
+                    "cicl_check_V": true,
+                    "slice_check": false
+                },
+                "inputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "vertices 1": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices 1"
+                    },
+                    "vertices 2": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices 2"
+                    },
+                    "vertices 3": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices 3"
+                    }
+                },
+                "outputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "data": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "data"
+                    }
+                },
+                "bl_idname": "LineConnectNodeMK2"
+            },
+            "UV Connection.001": {
+                "attributes": {
+                    "location": [22.858535766601562, 33.90374755859375]
+                },
+                "properties": {
+                    "cap_V": true,
+                    "cicl_check_V": true,
+                    "slice_check": false
+                },
+                "inputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "vertices 1": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices 1"
+                    },
+                    "vertices 2": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices 2"
+                    }
+                },
+                "outputs": {
+                    "vertices": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "vertices"
+                    },
+                    "data": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "data"
+                    }
+                },
+                "bl_idname": "LineConnectNodeMK2"
+            },
+            "Scripted Node Lite": {
+                "attributes": {
+                    "location": [-267.4409484863281, 347.7237243652344],
+                    "color": [0.800000011920929, 0.0, 0.0],
+                    "use_custom_color": true
+                },
+                "properties": {
+                    "n_id": "-8395574406026981625",
+                    "script_name": "ArchiCADline.py",
+                    "script_str": "from archicad import ACConnection\n# https://github.com/nortikin/sverchok/issues/4058 issue of this\n\n\n\"\"\"\nin  PropertyID s   d=1 n=2\nout GUIDS  s\nout IDs s\nout GUIDwalls s\nout GUIDslabs s\nout GUIDroofs s\nout GUIDwindows s\nout GUIDdoors s\nout BOUNDSwalls v\nout BOUNDSslabs v\nout BOUNDSroofs v\nout BOUNDSwindows v\nout BOUNDSdoors v\n\"\"\"\n\nconn = ACConnection.connect()\nassert conn\nacc = conn.commands\nact = conn.types\n\nelementIds = acc.GetAllElements()\n\n# get GUID - senceless\nfor element in elementIds:\n    el = element.elementId.guid\n    if str(PropertyID) in el.hex:\n        info = conn.types.ElementClassification(element.elementId, conn.types.ClassificationId(conn.types.ClassificationSystemId(element.elementId.guid)))\n        GUIDS.append([el.hex,info])\n\n# get by types\ndef bboxes(objs):\n    points = []\n    for i in acc.Get3DBoundingBoxes(objs):\n        m = list(i.boundingBox3D.to_dict().values())\n        x,y,z,x1,y1,z1 = m\n        point = [[x,y,z],[x,y1,z],[x1,y1,z],[x1,y,z]],[[x,y,z1],[x,y1,z1],[x1,y1,z1],[x1,y,z1]]\n        #point = [mima[3]-mima[0],mima[4]-mima[1],mima[5]-mima[2]]\n        points.append(point)\n    return points\n\nwalls = conn.commands.GetElementsByType('Wall')\nGUIDwalls.append(walls)\nBOUNDSwalls.extend(bboxes(walls))\n\nslabs = conn.commands.GetElementsByType('Slab')\nGUIDslabs.append(slabs)\nBOUNDSslabs.extend(bboxes(slabs))\n\nroofs = conn.commands.GetElementsByType('Roof')\nGUIDroofs.append(roofs)\nBOUNDSroofs.extend(bboxes(roofs))\n\nwindows = conn.commands.GetElementsByType('Window')\nGUIDwindows.append(windows)\nBOUNDSwindows.extend(bboxes(windows))\n\ndoors = conn.commands.GetElementsByType('Door')\nGUIDdoors.append(doors)\nBOUNDSdoors.extend(bboxes(doors))\n\ndef ByProp(propID):\n    # get element IDs as in ArchiCAD usually used\n    elementIdBuiltInPropertyUserId = act.BuiltInPropertyUserId(propID)\n    elementIdPropertyId = acc.GetPropertyIds([elementIdBuiltInPropertyUserId])[0].propertyId\n\n    propertyValuesForElements = acc.GetPropertyValuesOfElements(elementIds, [elementIdPropertyId])\n\n    elementIdPropertyValues = [] #set()\n    for propertyValuesForElement in propertyValuesForElements:\n        if propertyValuesForElement.propertyValues[0].propertyValue.status == 'normal':\n            elementIdPropertyValue = propertyValuesForElement.propertyValues[0].propertyValue.value\n            elementIdPropertyValues.append(elementIdPropertyValue) # add(elementIdPropertyValue)\n\n        #if elementIdPropertyValue in elementIdPropertyValues:\n            #print(f\"Conflict: multiple elements have '{elementIdPropertyValue}' as element ID.\")\n    return [list(elementIdPropertyValues)]\nIDs = ByProp('Wall_OutsideLength')#'General_ElementID')",
+                    "snlite_raise_exception": true
+                },
+                "inputs": {
+                    "PropertyID": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "PropertyID",
+                        "properties": {
+                            "use_prop": true,
+                            "default_property_type": "int",
+                            "default_int_property": 1
+                        }
+                    }
+                },
+                "outputs": {
+                    "GUIDS": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDS"
+                    },
+                    "IDs": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "IDs"
+                    },
+                    "GUIDwalls": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDwalls"
+                    },
+                    "GUIDslabs": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDslabs"
+                    },
+                    "GUIDroofs": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDroofs"
+                    },
+                    "GUIDwindows": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDwindows"
+                    },
+                    "GUIDdoors": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "GUIDdoors"
+                    },
+                    "BOUNDSwalls": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "BOUNDSwalls"
+                    },
+                    "BOUNDSslabs": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "BOUNDSslabs"
+                    },
+                    "BOUNDSroofs": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "BOUNDSroofs"
+                    },
+                    "BOUNDSwindows": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "BOUNDSwindows"
+                    },
+                    "BOUNDSdoors": {
+                        "bl_idname": "SvVerticesSocket",
+                        "name": "BOUNDSdoors"
+                    }
+                },
+                "bl_idname": "SvScriptNodeLite"
+            },
+            "Stethoscope MK2": {
+                "attributes": {
+                    "location": [16.69964599609375, 604.5053100585938],
+                    "color": [0.15000000596046448, 1.0, 0.8600000143051147],
+                    "use_custom_color": true
+                },
+                "properties": {
+                    "text_color": [0.949999988079071, 0.949999988079071, 0.949999988079071],
+                    "compact": true,
+                    "line_width": 82,
+                    "location_theta": 1.0,
+                    "num_elements": 1
+                },
+                "inputs": {
+                    "Data": {
+                        "bl_idname": "SvStringsSocket",
+                        "name": "Data"
+                    }
+                },
+                "bl_idname": "SvStethoscopeNodeMK2"
+            }
+        },
+        "links": [{
+                "from_node": "Recalculate Normals",
+                "from_socket": "Vertices",
+                "to_node": "Mesh Viewer",
+                "to_socket": "vertices"
+            }, {
+                "from_node": "Recalculate Normals",
+                "from_socket": "Polygons",
+                "to_node": "Mesh Viewer",
+                "to_socket": "faces"
+            }, {
+                "from_node": "Recalculate Normals.001",
+                "from_socket": "Vertices",
+                "to_node": "Mesh Viewer.001",
+                "to_socket": "vertices"
+            }, {
+                "from_node": "Recalculate Normals.001",
+                "from_socket": "Polygons",
+                "to_node": "Mesh Viewer.001",
+                "to_socket": "faces"
+            }, {
+                "from_node": "UV Connection",
+                "from_socket": "vertices",
+                "to_node": "Recalculate Normals",
+                "to_socket": "Vertices"
+            }, {
+                "from_node": "UV Connection",
+                "from_socket": "data",
+                "to_node": "Recalculate Normals",
+                "to_socket": "Polygons"
+            }, {
+                "from_node": "UV Connection.001",
+                "from_socket": "vertices",
+                "to_node": "Recalculate Normals.001",
+                "to_socket": "Vertices"
+            }, {
+                "from_node": "UV Connection.001",
+                "from_socket": "data",
+                "to_node": "Recalculate Normals.001",
+                "to_socket": "Polygons"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "BOUNDSwalls",
+                "to_node": "UV Connection",
+                "to_socket": "vertices"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "BOUNDSslabs",
+                "to_node": "UV Connection",
+                "to_socket": "vertices 1"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "BOUNDSroofs",
+                "to_node": "UV Connection",
+                "to_socket": "vertices 2"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "BOUNDSwindows",
+                "to_node": "UV Connection.001",
+                "to_socket": "vertices"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "BOUNDSdoors",
+                "to_node": "UV Connection.001",
+                "to_socket": "vertices 1"
+            }, {
+                "from_node": "Scripted Node Lite",
+                "from_socket": "IDs",
+                "to_node": "Stethoscope MK2",
+                "to_socket": "Data"
+            }
+        ]
+    }
+}

@@ -54,7 +54,7 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
     Keys of first given dictionary in a list are taken in account
     """
     bl_idname = 'SvDictionaryOut'
-    bl_label = 'Dictionary out'
+    bl_label = 'Dictionary Out'
     bl_icon = 'OUTLINER_DATA_GP_LAYER'
 
     def sv_init(self, context):
@@ -75,17 +75,16 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
             # handle dictionary with metadata
             if self['order'] != list(out_dict.inputs.keys()):
                 # order is changed, sockets should be rebuild
-                with self.sv_throttle_tree_update():
-                    links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-                    self.outputs.clear()
-                    new_order = []
-                    new_socks = []
-                    for key, data in out_dict.inputs.items():
-                        sock = self.outputs.new(data['type'], data['name'])
-                        new_order.append(key)
-                        new_socks.append(sock)
-                    self['order'] = new_order
-                    [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
+                links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+                self.outputs.clear()
+                new_order = []
+                new_socks = []
+                for key, data in out_dict.inputs.items():
+                    sock = self.outputs.new(data['type'], data['name'])
+                    new_order.append(key)
+                    new_socks.append(sock)
+                self['order'] = new_order
+                [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
                                                                 for other_socket in links[sock.name]]
             else:
                 # order is unchanged but renaming of sockets should be done anywhere
@@ -95,14 +94,13 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
         else:
             # handle dictionary without metadata
             if self['order'] != list(self.inputs['Dict'].sv_get()[0].keys()):
-                with self.sv_throttle_tree_update():
-                    links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-                    self.outputs.clear()
-                    new_socks = [self.outputs.new(get_socket_type(data), key) for key, data in
-                                 self.inputs['Dict'].sv_get()[0].items()]
-                    self['order'] = list(self.inputs['Dict'].sv_get()[0].keys())
-                    [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
-                                                                for other_socket in links[sock.name]]
+                links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+                self.outputs.clear()
+                new_socks = [self.outputs.new(get_socket_type(data), key) for key, data in
+                             self.inputs['Dict'].sv_get()[0].items()]
+                self['order'] = list(self.inputs['Dict'].sv_get()[0].keys())
+                [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
+                                                            for other_socket in links[sock.name]]
 
     def process(self):
 

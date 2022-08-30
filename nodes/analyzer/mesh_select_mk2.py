@@ -159,7 +159,7 @@ def by_normal(vertices, edges, faces, percent, direction):
     return out_face_mask
 
 def by_outside(vertices, edges, faces, percent, center):
-    face_normals, _ = calc_mesh_normals(vertices, edges, faces)
+    face_normals = pols_normals(vertices, faces, output_numpy=True)
     center = Vector(center[0])
 
     def get_center(face):
@@ -268,7 +268,7 @@ class SvMeshSelectNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode)
     Tooltip: Select vertices, edges, faces by geometric criteria
     '''
     bl_idname = 'SvMeshSelectNodeMk2'
-    bl_label = 'Select mesh elements'
+    bl_label = 'Select Mesh Elements'
     bl_icon = 'UV_SYNC_SELECT'
 
     modes = [

@@ -6,10 +6,10 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, throttle_and_update_node, zip_long_repeat,
+from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      ensure_nesting_level, get_data_nesting_level)
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
@@ -45,7 +45,6 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         default="ITX",
         update=updateNode)
 
-    @throttle_and_update_node
     def update_mode(self, context):
         self.inputs['Solid A'].hide_safe = self.nest_objs
         self.inputs['Solid B'].hide_safe = self.nest_objs
@@ -54,6 +53,7 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['EdgeSources'].hide_safe = not self.generate_masks
         self.outputs['FacesMask'].hide_safe = not self.generate_masks
         self.outputs['FaceSources'].hide_safe = not self.generate_masks
+        updateNode(self, context)
 
     nest_objs: BoolProperty(
         name="Accumulate nested",

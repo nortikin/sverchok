@@ -17,16 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathutils
 import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, match_long_repeat, match_cross)
-from sverchok.utils.logging import debug, info, error
+
 
 class FakeObj(object):
 
@@ -56,13 +54,22 @@ class FakeObj(object):
             return [True, tv[0], tv[1], tv[2]]
 
 
-
-class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Insolation by RayCast Object '''
     bl_idname = 'SvOBJInsolationNode'
     bl_label = 'Object ID Insolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSOLATION'
+
+    @property
+    def is_scene_dependent(self):
+        return ((not self.inputs['Predator'].is_linked and self.inputs['Predator'].object_ref_pointer)
+                or (not self.inputs['Victim'].is_linked and self.inputs['Victim'].object_ref_pointer))
+
+    @property
+    def is_animation_dependent(self):
+        return ((not self.inputs['Predator'].is_linked and self.inputs['Predator'].object_ref_pointer)
+                or (not self.inputs['Victim'].is_linked and self.inputs['Victim'].object_ref_pointer))
 
     mode: BoolProperty(name='input mode', default=False, update=updateNode)
     #mode2 = BoolProperty(name='output mode', default=False, update=updateNode)
@@ -79,13 +86,9 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         so('SvVerticesSocket', "Centers")
         #so('SvVerticesSocket', "HitP")
         so('SvStringsSocket',  "Hours")
-        # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
+        # self.inputs[2].prop[2] = -1  # z down   # <--- maybe?
 
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
-
-    def draw_buttons_ext(self, context, layout):
-        self.draw_animatable_buttons(layout)
+    def sv_draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self,    "mode",   text="In Mode")
         row.prop(self,    "sort_critical",text="Limit")
@@ -137,7 +140,6 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 rec.data.vertex_colors.new(name='SvInsol')
             colors = rec.data.vertex_colors['SvInsol'].data
             for i, pol in enumerate(rec.data.polygons):
-                self.debug(pol.loop_indices,OutS[0][i])
                 for co in pol.loop_indices:
                     colors[co].color = OutS[0][i]
 

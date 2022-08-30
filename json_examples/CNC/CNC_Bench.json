@@ -6,7 +6,7 @@
     "A Number.003": "Frame.001",
     "A Number.006": "Frame.001",
     "A Number.008": "Frame.001",
-    "Duplicate objects along edge": "Frame.003",
+    "Duplicate Objects Along Edge": "Frame.003",
     "Edgenet to Paths": "Frame.002",
     "File Path": "Frame.002",
     "Fill / Stroke SVG": "Frame.002",
@@ -14,10 +14,10 @@
     "Line": "Frame",
     "List Length": "Frame.002",
     "List Slice": "Frame.002",
-    "Matrix Apply": "Frame.002",
+    "Matrix Apply to Mesh": "Frame.002",
     "Matrix In": "Frame",
     "Matrix In.001": "Frame.002",
-    "Mesh viewer": "Frame.003",
+    "Mesh Viewer": "Frame.003",
     "Move": "Frame.002",
     "Move.001": "Frame.003",
     "Noise Displace": "Frame",
@@ -27,7 +27,7 @@
     "Oscillator.002": "Frame.001",
     "Path SVG": "Frame.002",
     "Plane": "Frame.002",
-    "Profile Parametric Mk3": "Frame.001",
+    "Profile Parametric MK3": "Frame.001",
     "SVG Document": "Frame.002",
     "Scalar Math.001": "Frame",
     "Solidify": "Frame.003",
@@ -72,7 +72,7 @@
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
-      "label": "Material Thikness",
+      "label": "Material Thickness",
       "location": [
         1074.882568359375,
         937.3634796142578
@@ -130,7 +130,7 @@
       },
       "width": 140.0
     },
-    "Duplicate objects along edge": {
+    "Duplicate Objects Along Edge": {
       "bl_idname": "SvDuplicateAlongEdgeNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -310,7 +310,7 @@
       },
       "width": 140.0
     },
-    "Matrix Apply": {
+    "Matrix Apply to Mesh": {
       "bl_idname": "SvMatrixApplyJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -360,7 +360,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -586,7 +586,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Profile Parametric Mk3": {
+    "Profile Parametric MK3": {
       "bl_idname": "SvProfileNodeMK3",
       "custom_socket_props": {},
       "height": 100.0,
@@ -693,41 +693,41 @@
     [
       "Fill Holes",
       0,
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       0
     ],
     [
       "Fill Holes",
       1,
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       1
     ],
     [
       "Fill Holes",
       2,
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       2
     ],
     [
       "Noise Displace",
       0,
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       5
     ],
     [
       "Line",
       1,
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       6
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0,
       "Edgenet to Paths",
       0
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1,
       "Edgenet to Paths",
       1
@@ -739,7 +739,7 @@
       0
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       1,
       "Fill Holes",
       1
@@ -751,7 +751,7 @@
       0
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
       "List Length",
       0
@@ -769,21 +769,21 @@
       2
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       1,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1
     ],
     [
       "List Slice",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       3
     ],
     [
@@ -801,19 +801,19 @@
     [
       "Solidify",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Solidify",
       1,
-      "Mesh viewer",
+      "Mesh Viewer",
       1
     ],
     [
       "Solidify",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
@@ -823,7 +823,7 @@
       0
     ],
     [
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0,
       "Move.001",
       0
@@ -879,37 +879,37 @@
     [
       "Oscillator",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       0
     ],
     [
       "Oscillator.001",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       1
     ],
     [
       "Oscillator.002",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       2
     ],
     [
       "A Number.003",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       3
     ],
     [
       "A Number.008",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       4
     ],
     [
       "A Number.006",
       0,
-      "Profile Parametric Mk3",
+      "Profile Parametric MK3",
       5
     ],
     [
@@ -937,25 +937,25 @@
       0
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0,
       "Viewer Draw.003",
       0
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1,
       "Viewer Draw.003",
       1
     ],
     [
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       0,
       "Solidify",
       0
     ],
     [
-      "Duplicate objects along edge",
+      "Duplicate Objects Along Edge",
       2,
       "Solidify",
       2

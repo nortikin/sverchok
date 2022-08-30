@@ -50,7 +50,7 @@ try:
     pip_d.message = "PIP is available"
     pip_d.module = pip
 except ImportError:
-    pip_d.message = "PIP is not installed"
+    pip_d.message = "sv: PIP is not installed"
     debug(pip_d.message)
     pip = None
 
@@ -71,7 +71,7 @@ try:
     scipy_d.message = "SciPy is available"
     scipy_d.module = scipy
 except ImportError:
-    scipy_d.message = "SciPy package is not available. Voronoi nodes and RBF-based nodes will not be available."
+    scipy_d.message = "sv: SciPy package is not available. Voronoi nodes and RBF-based nodes will not be available."
     info(scipy_d.message)
     scipy = None
 
@@ -82,7 +82,7 @@ try:
     geomdl_d.message = "geomdl package is available"
     geomdl_d.module = geomdl
 except ImportError:
-    geomdl_d.message = "geomdl package is not available, some NURBS related nodes will not be available"
+    geomdl_d.message = "sv: geomdl package is not available, some NURBS related nodes will not be available"
     info(geomdl_d.message)
     geomdl = None
 
@@ -93,7 +93,7 @@ try:
     skimage_d.message = "SciKit-Image package is available"
     skimage_d.module = skimage
 except ImportError:
-    skimage_d.message = "SciKit-Image package is not available; SciKit-based implementation of Marching Cubes and Marching Squares will not be available"
+    skimage_d.message = "sv: SciKit-Image package is not available; SciKit-based implementation of Marching Cubes and Marching Squares will not be available"
     info(skimage_d.message)
     skimage = None
 
@@ -103,7 +103,7 @@ try:
     mcubes_d.message = "PyMCubes package is available"
     mcubes_d.module = mcubes
 except ImportError:
-    mcubes_d.message = "PyMCubes package is not available. PyMCubes-based implementation of Marching Cubes will not be available"
+    mcubes_d.message = "sv: PyMCubes package is not available. PyMCubes-based implementation of Marching Cubes will not be available"
     info(mcubes_d.message)
     mcubes = None
 
@@ -114,7 +114,7 @@ try:
     circlify_d.message = "Circlify package is available"
     circlify_d.module = circlify
 except ImportError:
-    circlify_d.message = "Circlify package is not available. Circlify node will not be available"
+    circlify_d.message = "sv: Circlify package is not available. Circlify node will not be available"
     info(circlify_d.message)
     circlify = None
 
@@ -124,23 +124,45 @@ try:
     freecad_d.message = "FreeCAD package is available"
     freecad_d.module = FreeCAD
 except ImportError:
-    freecad_d.message = "FreeCAD package is not available, Solids nodes will not be available"
+    freecad_d.message = "sv: FreeCAD package is not available, Solids nodes will not be available"
     info(freecad_d.message)
     FreeCAD = None
 
-cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://www.freecadweb.org/")
+cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://cython.org/")
 cython_d.pip_installable = True
 try:
     import Cython
     cython_d.message = "Cython package is available"
     cython_d.module = Cython
 except ImportError:
-    cython_d.message = "Cython package is not available, Enhanched KDTree search will not be available"
+    cython_d.message = "sv: Cython package is not available, Enhanched KDTree search will not be available"
     info(cython_d.message)
     Cython = None
 
+numba_d = sv_dependencies["numba"] = SvDependency("Numba", "https://numba.pydata.org/")
+numba_d.pip_installable = True
+try:
+    import numba
+    numba_d.message = "Numba package is available"
+    numba_d.module = numba
+except ImportError:
+    numba_d.message = "sv: Numba package is not available, njit compiled functions will not be available"
+    info(numba_d.message)
+    numba = None
+
+pyOpenSubdiv_d = sv_dependencies["pyOpenSubdiv"] = SvDependency("pyOpenSubdiv","https://github.com/GeneralPancakeMSTR/pyOpenSubdivision")
+pyOpenSubdiv_d.pip_installable = True
+try:
+    import pyOpenSubdiv
+    pyOpenSubdiv_d.message = "pyOpenSubdiv package is available"
+    pyOpenSubdiv_d.module = pyOpenSubdiv
+except ImportError:
+    pyOpenSubdiv_d.message = "sv: pyOpenSubdiv package is not available, the OpenSubdivision node (Catmull-Clark subdivision) will not be available"
+    info(pyOpenSubdiv_d.message)
+    pyOpenSubdiv = None 
+
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:
-    info("Dependencies available: %s.", ", ".join(good_names))
+    info("sv: Dependencies available: %s.", ", ".join(good_names))
 else:
-    info("No dependencies are available.")
+    info("sv: No dependencies are available.")

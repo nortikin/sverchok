@@ -67,7 +67,7 @@ For certain interpolation types the node provides extra parameters on the proper
 
 * Elastic
   Extra parameters to adjust the base and the exponent of the damping oscillation as well as the number of bounces (oscillations).
- The defaults are 1.6, 6.0 and 6.
+  The defaults are 1.6, 6.0 and 6.
 
 Outputs
 -------

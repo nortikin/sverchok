@@ -1,13 +1,12 @@
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
@@ -20,29 +19,21 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Build NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
         self.inputs['Knots'].hide_safe = self.knot_mode == 'AUTO'
+        updateNode(self, context)
 
-    def get_implementations(self, context):
-        items = []
-        i = 0
-        if geomdl is not None:
-            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
-            i += 1
-            items.append(item)
-        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
-        items.append(item)
-        i += 1
-        if FreeCAD is not None:
-            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation",i)
-            items.append(item)
-        return items
+    implementations = []
+    if geomdl is not None:
+        implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append((SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append((SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
-            items = get_implementations,
+            items=implementations,
             update = updateNode)
 
     surface_modes = [

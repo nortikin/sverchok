@@ -17,12 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import mathutils
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, match_long_repeat)
 
@@ -49,12 +47,14 @@ class FakeObj(object):
             return [True, tv[0], tv[1], tv[2]]
 
 
-class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' RayCast Object '''
     bl_idname = 'SvOBJRayCastNodeMK2'
     bl_label = 'Object ID Raycast MK2'  # new is nonsense name
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RAYCASTER_OBJECT_ID'
+    is_animation_dependent = True
+    is_scene_dependent = True
 
     mode: BoolProperty(name='input mode', default=False, update=updateNode)
     mode2: BoolProperty(name='output mode', default=False, update=updateNode)
@@ -69,15 +69,11 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         so('SvVerticesSocket', "HitNorm")
         so('SvStringsSocket', "FaceINDEX")
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
-
-    def draw_buttons(self, context, layout):
-        self.draw_animatable_buttons(layout, icon_only=True)
         
-    def draw_buttons_ext(self, context, layout):
+    def sv_draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self,    "mode",   text="In Mode")
         row.prop(self,    "mode2",   text="Out Mode")
-        self.draw_animatable_buttons(layout)
 
     def process(self):
         o,s,e = self.inputs

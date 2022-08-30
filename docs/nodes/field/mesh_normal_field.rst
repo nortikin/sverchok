@@ -26,8 +26,8 @@ This node has the following inputs:
 * **Vertices**. Vertices of the mesh. This input is mandatory.
 * **Faces**. Faces of the mesh. This input is mandatory.
 
-Parmeters
----------
+Parameters
+----------
 
 This node has the following parameters:
 

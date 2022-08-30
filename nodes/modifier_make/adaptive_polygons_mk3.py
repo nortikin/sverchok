@@ -36,7 +36,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import barycentric_transform
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, throttle_and_update_node,
+from sverchok.data_structure import (updateNode,
                                      match_long_repeat,
                                      numpy_list_match_modes,
                                      cycle_for_length, make_repeaters, make_cyclers,
@@ -49,6 +49,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements
+from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)
@@ -265,7 +266,7 @@ class DonorData():
         self.face_data_i = []
 
 
-class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptivePolygonsNodeMk3(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Tessellate (Tissue)
     Tooltip: Generate an adapted copy of donor object along each face of recipient object.
@@ -303,7 +304,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, max=3.0, min=0.0, update=updateNode)
 
     z_offset: FloatProperty(
-        name="Z offet",
+        name="Z offset",
         default=0.0,
         update=updateNode)
 
@@ -418,7 +419,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     transform_description = ''.join([f'{p[3]} = {p[1]} ({p[2]})\n' for p in transform_modes])
     transform_dict = {p[0]: p[3] for p in transform_modes}
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         show_width = self.mask_mode == 'TRANSFORM' or 'FRAME' in self.quads_as or 'FRAME'in self.tris_as or 'FRAME'in self.ngons_as
         self.inputs['FrameWidth'].hide_safe = not show_width
@@ -431,6 +431,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.inputs['PolyMask'].prop_name = ''
             self.inputs['PolyMask'].label = 'Polygon Mask'
+        updateNode(self, context)
 
     skip_modes = [
         ("SKIP", "Skip", "Do not output anything", 0),
@@ -566,6 +567,15 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FaceRecptIdx")
 
         self.update_sockets(context)
+
+    @property
+    def sv_internal_links(self):
+        return [
+            (self.inputs['Vertices Donor'], self.outputs[0]),
+            (self.inputs['Edges Donor'], self.outputs[1]),
+            (self.inputs['Polygons Donor'], self.outputs[2]),
+            (self.inputs['FaceData Donor'], self.outputs[3]),
+        ]
 
     def draw_enum_socket(self, socket, context, layout):
 
@@ -1121,7 +1131,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             # triangle will be processed as degenerated Quad,
             # where third and fourth vertices coincide.
             # In Tissue addon, this is the only mode possible for Quads.
-            # Someone may like that behaivour, so we allow it with setting...
+            # Someone may like that behaviour, so we allow it with setting...
             #
             # This can process NGons in even worse way:
             # it will take first three vertices and the last one

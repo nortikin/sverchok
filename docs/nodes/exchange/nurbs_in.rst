@@ -1,5 +1,5 @@
-NURBS In
-========
+NURBS Input
+===========
 
 Dependencies
 ------------
@@ -44,7 +44,7 @@ This node has the following parameters:
   The default option is **Geomdl**, when it is available; otherwise, built-in implementation is used.
 
 * **Sort**. If checked, the node will sort selected objects by name. Checked by default.
-* **Apply matricess**. If checked, the node will apply all transforms to
+* **Apply matrices**. If checked, the node will apply all transforms to
   Blender's objects before bringing the coordinates into Sverchok. Checked by
   default.
 

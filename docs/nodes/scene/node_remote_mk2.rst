@@ -1,4 +1,4 @@
-node remote
+Node Remote
 ===========
 
 .. image:: https://user-images.githubusercontent.com/619340/78023039-3ada7b00-7356-11ea-91dc-27da9c4302ec.png

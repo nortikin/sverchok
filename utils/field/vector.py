@@ -152,6 +152,7 @@ class SvVectorFieldLambda(SvVectorField):
             return np.vectorize(self.function,
                         signature = "(),(),(),(3)->(),(),()")(xs, ys, zs, Vs)
         else:
+            Vs = Vs.T
             return self.function_numpy(xs, ys, zs, Vs)
 
     def evaluate(self, x, y, z):
@@ -166,6 +167,7 @@ class SvVectorFieldBinOp(SvVectorField):
         self.function = function
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = f"<BinOp ({field1}, {field2})>"
 
     def evaluate(self, x, y, z):
         return self.function(self.field1.evaluate(x, y, z), self.field2.evaluate(x, y, z))
@@ -658,8 +660,8 @@ class SvRotationVectorField(SvVectorField):
         direction2 = np.dot(direction, direction)
         points = np.stack((xs, ys, zs)).T
         to_center = self.center[np.newaxis, :] - points
-        proyection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
-        vectors = np.cross(to_center - proyection, direction)
+        projection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
+        vectors = np.cross(to_center - projection, direction)
 
         if self.falloff is not None:
             norms = np.linalg.norm(vectors, axis=1, keepdims=True)

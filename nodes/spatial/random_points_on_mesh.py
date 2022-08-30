@@ -16,7 +16,7 @@ from mathutils import Vector
 from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node, numpy_full_list
+from sverchok.data_structure import updateNode, numpy_full_list
 from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 from sverchok.utils.geom import calc_bounds
 from sverchok.utils.sv_mesh_utils import point_inside_mesh
@@ -148,22 +148,22 @@ def random_points_on_edges(verts: List[List[float]],
     edges_dir = v_edges[:, 1] - v_edges[:, 0]
     weights = get_weights(edges_dir, input_weights, proportional)
     np.random.seed(seed)
-
-    chosen_edges = np.random.choice(np.arange(len(edges)),
+    indices = np.arange(len(edges))
+    chosen_edges = np.random.choice(indices,
                                     random_points_total,
                                     replace=True,
                                     p=weights)
 
     edges_with_points, points_total_per_edge = np.unique(chosen_edges, return_counts=True)
-
     t_s = np.random.uniform(low=0, high=1, size=random_points_total)
     direc = np.repeat(edges_dir[edges_with_points], points_total_per_edge, axis=0)
     orig = np.repeat(v_edges[edges_with_points, 0], points_total_per_edge, axis=0)
 
+    chosen_indices = np.repeat(indices[edges_with_points], points_total_per_edge, axis=0)
     random_points = orig + direc * t_s[:, np.newaxis]
 
     return (random_points if out_np[0] else random_points.tolist(),
-            chosen_edges if out_np[1] else chosen_edges.tolist())
+            chosen_indices if out_np[1] else chosen_indices.tolist())
 
 
 class TriangulatedMesh:
@@ -313,11 +313,11 @@ class TriangulatedMesh:
 
 class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: random points vertices
+    Triggers: Random points on mesh
     Tooltip: distribute points on given mesh
     """
     bl_idname = 'SvRandomPointsOnMesh'
-    bl_label = 'Random points on mesh'
+    bl_label = 'Populate Mesh'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
     viewer_map = [
@@ -342,13 +342,13 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['Face index'].hide_safe = self.mode == 'VOLUME'
         self.inputs['Face weight'].hide_safe = self.mode == 'VOLUME'
         self.outputs[1].label = 'Edge index'  if self.mode == 'EDGES' else 'Face index'
         self.inputs[1].label = 'Edges'  if self.mode == 'EDGES' else 'Faces'
         self.inputs[2].label = 'Edge Weight'  if self.mode == 'EDGES' else 'Face Weight'
+        updateNode(self, context)
 
     modes = [('SURFACE', "Surface", "Surface", 0),
              ('VOLUME', "Volume", "Volume", 1),
@@ -383,7 +383,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     out_np: bpy.props.BoolVectorProperty(
-        name="Ouput Numpy",
+        name="Output Numpy",
         description="Output NumPy arrays",
         default=(False, False),
         size=2, update=updateNode)

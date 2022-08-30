@@ -1,4 +1,4 @@
-node name: Viewer text mk3
+node name: Viewer Text MK3
 
 Socket DATA0; type EDGES/POLYGONS/OTHERS: 
 (1) object(s)

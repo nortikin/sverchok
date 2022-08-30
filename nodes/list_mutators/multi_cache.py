@@ -20,7 +20,7 @@ from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
     '''Clear Cache'''
-    bl_idname = "node.multy_cache_reset"
+    bl_idname = "node.multi_cache_reset"
     bl_label = "Multi Cache Reset"
 
     def sv_execute(self, context, node):
@@ -31,7 +31,7 @@ class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
 class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Store List
-    Tooltip: Stores a Numerical List in mutiple memory buckets
+    Tooltip: Stores a Numerical List in multiple memory buckets
     """
     bl_idname = 'SvMultiCacheNode'
     bl_label = 'Multi Cache'
@@ -39,7 +39,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_MULTI_CACHE'
 
     in_bucket: IntProperty(
-        name='In Bucket', description="Identifier of the bucket where data will be strored",
+        name='In Bucket', description="Identifier of the bucket where data will be stored",
         default=0,
         update=updateNode)
     out_bucket: IntProperty(
@@ -68,7 +68,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'pause_recording')
         layout.prop(self, 'unwrap')
-        self.wrapper_tracked_ui_draw_op(layout, "node.multy_cache_reset", icon='X', text="RESET")
+        self.wrapper_tracked_ui_draw_op(layout, "node.multi_cache_reset", icon='X', text="RESET")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Data')

@@ -67,18 +67,18 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
         update=update_sockets_and_node)
     center: FloatVectorProperty(
         name='Center',
-        description='Bunding Shpere center',
+        description='Bounding Sphere center',
         default=(0,0,0),
         size=3,
         update=updateNode)
     radius: FloatProperty(
         name='Radius',
-        description='Bunding Shpere radius',
+        description='Bounding Sphere radius',
         default=0.0,
         update=updateNode)
     normal: FloatVectorProperty(
         name='Normal',
-        description='Bunding Shpere center',
+        description='Bounding Sphere center',
         default=(0, 0, 0),
         size=3,
         update=updateNode)

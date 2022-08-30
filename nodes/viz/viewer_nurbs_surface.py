@@ -5,16 +5,15 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 from itertools import zip_longest
 import traceback
 
 import bpy
-from mathutils import Matrix, Vector
+from mathutils import Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (throttle_and_update_node, updateNode, ensure_nesting_level,
+from sverchok.data_structure import (updateNode, ensure_nesting_level,
                                      zip_long_repeat, fullList)
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
@@ -79,9 +78,9 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
+        updateNode(self, context)
 
     input_mode : EnumProperty(
             name = "Input mode",
@@ -124,14 +123,14 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     degree_u : IntProperty(
             name = "Degree U",
             description = "Degree of the surface in the U direction",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
     degree_v : IntProperty(
             name = "Degree V",
             description = "Degree of the surface in the V direction",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
@@ -206,78 +205,76 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         else:
             vertices_s = ensure_nesting_level(vertices_s, 4)
             
-        # we need to suppress depsgraph updates emminating from this part of the process/            
-        with self.sv_throttle_tree_update():
-            inputs = zip_long_repeat(vertices_s, weights_s, u_size_s, degree_u_s, degree_v_s)
-            object_index = 0
-            for vertices, weights, u_size, degree_u, degree_v in inputs:
-                if not vertices or not weights:
-                    continue
-                object_index += 1
+        inputs = zip_long_repeat(vertices_s, weights_s, u_size_s, degree_u_s, degree_v_s)
+        object_index = 0
+        for vertices, weights, u_size, degree_u, degree_v in inputs:
+            if not vertices or not weights:
+                continue
+            object_index += 1
 
-                if isinstance(u_size, (list, tuple)):
-                    u_size = u_size[0]
-                if isinstance(degree_u, (tuple, list)):
-                    degree_u = degree_u[0]
-                if isinstance(degree_v, (tuple, list)):
-                    degree_v = degree_v[0]
-                if self.input_mode == '1D':
-                    fullList(weights, len(vertices))
-                else:
-                    if isinstance(weights[0], (int, float)):
-                        weights = [weights]
-                    fullList(weights, len(vertices))
-                    for verts_u, weights_u in zip(vertices, weights):
-                        fullList(weights_u, len(verts_u))
+            if isinstance(u_size, (list, tuple)):
+                u_size = u_size[0]
+            if isinstance(degree_u, (tuple, list)):
+                degree_u = degree_u[0]
+            if isinstance(degree_v, (tuple, list)):
+                degree_v = degree_v[0]
+            if self.input_mode == '1D':
+                fullList(weights, len(vertices))
+            else:
+                if isinstance(weights[0], (int, float)):
+                    weights = [weights]
+                fullList(weights, len(vertices))
+                for verts_u, weights_u in zip(vertices, weights):
+                    fullList(weights_u, len(verts_u))
 
-                surface_object = self.create_surface(object_index)
-                self.debug("Object: %s", surface_object)
-                if not surface_object:
-                    continue
+            surface_object = self.create_surface(object_index)
+            self.debug("Object: %s", surface_object)
+            if not surface_object:
+                continue
 
-                if self.input_mode == '1D':
-                    n_v = u_size
-                    n_u = len(vertices) // n_v
+            if self.input_mode == '1D':
+                n_v = u_size
+                n_u = len(vertices) // n_v
 
-                    vertices = grouper(vertices, n_u)
-                    weights = grouper(weights, n_u)
-                else:
-                    n_v = len(vertices)
-                    n_u = len(vertices[0])
+                vertices = grouper(vertices, n_u)
+                weights = grouper(weights, n_u)
+            else:
+                n_v = len(vertices)
+                n_u = len(vertices[0])
 
-                surface_object.data.splines.clear()
-                for vertices_row, weights_row in zip(vertices, weights):
-                    spline = surface_object.data.splines.new(type='NURBS')
-                    spline.use_bezier_u = False
-                    spline.use_bezier_v = False
-                    spline.points.add(n_u - 1)
+            surface_object.data.splines.clear()
+            for vertices_row, weights_row in zip(vertices, weights):
+                spline = surface_object.data.splines.new(type='NURBS')
+                spline.use_bezier_u = False
+                spline.use_bezier_v = False
+                spline.points.add(n_u - 1)
 
-                    for p, new_co, new_weight in zip(spline.points, vertices_row, weights_row):
-                        p.co = Vector(list(new_co) + [new_weight])
-                        p.select = True
+                for p, new_co, new_weight in zip(spline.points, vertices_row, weights_row):
+                    p.co = Vector(list(new_co) + [new_weight])
+                    p.select = True
 
-                    spline.use_cyclic_v = self.is_cyclic_u
-                    spline.use_cyclic_u = self.is_cyclic_v
-                    spline.use_endpoint_u = not self.is_cyclic_v and self.use_endpoint_v
-                    spline.use_endpoint_v = not self.is_cyclic_u and self.use_endpoint_u
+                spline.use_cyclic_v = self.is_cyclic_u
+                spline.use_cyclic_u = self.is_cyclic_v
+                spline.use_endpoint_u = not self.is_cyclic_v and self.use_endpoint_v
+                spline.use_endpoint_v = not self.is_cyclic_u and self.use_endpoint_u
 
-                surface_object = self.find_surface(object_index)
-                bpy.context.view_layer.objects.active = surface_object
-                bpy.ops.object.mode_set(mode = 'EDIT')
-                bpy.ops.curve.make_segment()
-                bpy.ops.object.mode_set(mode = 'OBJECT')
-                spline = surface_object.data.splines[0]
-                spline.order_u = degree_u + 1
-                spline.order_v = degree_v + 1
-                spline.resolution_u = self.resolution_v
-                spline.resolution_v = self.resolution_u
-                spline.use_smooth = self.smooth
+            surface_object = self.find_surface(object_index)
+            bpy.context.view_layer.objects.active = surface_object
+            bpy.ops.object.mode_set(mode = 'EDIT')
+            bpy.ops.curve.make_segment()
+            bpy.ops.object.mode_set(mode = 'OBJECT')
+            spline = surface_object.data.splines[0]
+            spline.order_u = degree_u + 1
+            spline.order_v = degree_v + 1
+            spline.resolution_u = self.resolution_v
+            spline.resolution_v = self.resolution_u
+            spline.use_smooth = self.smooth
 
-            self.remove_non_updated_objects(object_index)
-            self.set_corresponding_materials()
-            objects = self.get_children()
+        self.remove_non_updated_objects(object_index)
+        self.set_corresponding_materials()
+        objects = self.get_children()
 
-            self.outputs['Objects'].sv_set(objects)
+        self.outputs['Objects'].sv_set(objects)
 
 classes = [SvNurbsSurfaceOutNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

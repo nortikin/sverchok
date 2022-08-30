@@ -1,6 +1,6 @@
 > ### This file is parsed by menu.py
 >
-> The following strict rules apply to editing this file:
+> The following rules apply to editing this file:
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
@@ -39,7 +39,7 @@
     SvWFCTextureNode
     SvTorusKnotNodeMK2
     SvRingNodeMK2
-    SvEllipseNodeMK2
+    SvEllipseNodeMK3
     SvSuperEllipsoidNode
     SvRegularSolid
     SvConicSectionNode
@@ -49,7 +49,7 @@
 
 ## Curves @ Primitives
     SvExLineCurveNode
-    SvExCircleNode
+    SvCircleCurveMk2Node
     SvEllipseCurveNode
     SvRoundedRectangleNode
     SvArc3ptCurveNode
@@ -68,6 +68,16 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    SvNurbsCurveNodesNode
+    ---
+    SvNurbsCurveMovePointNode
+    ---
+    SvCurveInsertKnotNode
+    SvCurveRemoveKnotNode
+    SvRefineNurbsCurveNode
+    SvCurveRemoveExcessiveKnotsNode
+    ---
+    SvAdaptivePlotNurbsCurveNode
 
 ## Curves @ Bezier
     SvBezierSplineNode
@@ -102,6 +112,7 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
+    SvIntersectNurbsCurvesNode
     SvExNearestPointOnCurveNode
     SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode
@@ -132,9 +143,14 @@
     SvNurbsLoftNode
     SvNurbsSweepNode
     SvNurbsBirailNode
+    SvGordonSurfaceNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
+    ---
+    SvSurfaceInsertKnotNode
+    SvSurfaceRemoveKnotNode
+    SvSurfaceRemoveExcessiveKnotsNode
 
 ## Surfaces
     SvExPlaneSurfaceNode
@@ -147,6 +163,7 @@
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
+    SvBendCurveSurfaceNode
     SvExExtrudeCurveVectorNode
     SvExExtrudeCurveCurveSurfaceNode
     SvExExtrudeCurvePointNode
@@ -268,7 +285,7 @@
     SvBBoxNodeMk3
     SvComponentAnalyzerNode
     SvDiameterNode
-    SvVolumeNode
+    SvVolumeNodeMK2
     SvAreaNode
     DistancePPNode
     SvDistancePointLineNode
@@ -369,6 +386,7 @@
     SvTriangulateNode
     SvMakeMonotone
     ---
+    SvSplitMeshElements
     PolygonBoomNode
     SvEdgeBoomNode
     SvDissolveMeshElements
@@ -393,6 +411,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
+    SvOpenSubdivisionNode
     SvSubdivideNodeMK2
     SvSubdivideToQuadsNode
     SvOffsetLineNode
@@ -558,7 +577,7 @@
     SvTextureEvaluateNodeMk2
 
 ## Logic
-    SvLogicNode
+    SvLogicNodeMK2
     SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
@@ -585,6 +604,7 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvBezierCurveOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     ---
@@ -615,6 +635,7 @@
     SvGTextNode
     ---
     SvStringsToolsNode
+    SvSimpleTextNode
 
 ## BPY Data
     SvGetPropNode
@@ -626,11 +647,13 @@
     SvSortObjsNode
     SvFilterObjsNode
     SvSetMeshAttributeNode
+    SvNamedMeshAttributeNode
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
     SvSetCollection
+    SvCopyModifiersNode
 
 ## Scene
     SvGetObjectsData
@@ -661,7 +684,13 @@
     SvExportSolidNode
     SvReceiveFromSorcarNode
     SvExportGcodeNode
-
+    SvReadFCStdNode
+    SvReadFCStdModNode
+    SvWriteFCStdNode
+    SvReadFCStdSketchNode
+    SvFCStdSpreadsheetNode
+    SvApproxSubdtoNurbsNode
+    
 ## Script
     SvFormulaNodeMk5
     SvFormulaInterpolateNode

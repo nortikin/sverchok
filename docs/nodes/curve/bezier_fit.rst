@@ -31,7 +31,7 @@ This node has the following parameter:
 
 * **Metric**. This parameter is available in the N panel only. It defines the
   metric to be used for calculation of curve's T parameter which correspond to
-  specified vertices. The default value is **Euclidian**. Usually you do not
+  specified vertices. The default value is **Euclidean**. Usually you do not
   have to adjust this parameter.
 
 Outputs
@@ -45,7 +45,7 @@ This node has the following outputs:
 Example of usage
 ----------------
 
-Take points fro Greasepencil drawing and approximate them with a smooth curve:
+Take points from Greasepencil drawing and approximate them with a smooth curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/86514558-7fc9ee00-be2c-11ea-8399-811e14ba38b7.png
 

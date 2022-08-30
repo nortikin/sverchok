@@ -20,7 +20,7 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import levelsOflist, throttle_tree_update, multi_socket, updateNode
+from sverchok.data_structure import levelsOflist, multi_socket
 
 socket_types = {
     "SvVerticesSocket": "VERTICES",
@@ -106,8 +106,7 @@ def do_text(node, out_string):
     
     if node.frame:
         # adding a frame if it doesn't exist, will create a depsgraph update
-        with throttle_tree_update(node):
-            makeframe(node.id_data)
+        makeframe(node.id_data)
 
 def prep_text(node, num_lines):
     """ main preparation function for text """
@@ -165,7 +164,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     multisocket lets you insert many outputs
     """
     bl_idname = 'ViewerNodeTextMK3'
-    bl_label = 'Viewer text mk3'
+    bl_label = 'Viewer Text MK3'
     bl_icon = 'FILE_TEXT'
 
     autoupdate: BoolProperty(name='update', default=False)

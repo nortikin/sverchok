@@ -85,7 +85,7 @@ The same parabola but with "even distribution" turned on:
 
 .. image:: https://user-images.githubusercontent.com/284644/67162281-e3ce8400-f37b-11e9-8a46-fd3face4738d.png
 
-Classic elipse is defined by a cone and a plane which intersects the cone at some random angle:
+Classic ellipse is defined by a cone and a plane which intersects the cone at some random angle:
 
 .. image:: https://user-images.githubusercontent.com/284644/67162287-e4671a80-f37b-11e9-967d-f45fa43c40af.png
 

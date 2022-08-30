@@ -5,7 +5,7 @@ Functionality
 -------------
 
 This node generates a new (rhomboidal / diamond-like) mesh, by replacing each
-edge of original mesh by a rhombus (connecting centers of two incidential
+edge of original mesh by a rhombus (connecting centers of two incidental
 faces). This can give interesting topology, especially in combination with
 "dual mesh" and/or "triangulate" and/or "join triangles" and/or "limited
 dissolve" nodes.
