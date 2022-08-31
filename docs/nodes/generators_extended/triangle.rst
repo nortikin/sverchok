@@ -51,7 +51,7 @@ In the N-Panel (and on the right-click menu) you can find:
 
 **Tolerance**: Removing Doubles Tolerance (only active when "Remove Doubles" is True)
 
-**Flat output**: Flatten output by list-joining level 1 and unwarping it (default set to True)
+**Flat output**: Flatten output by list-joining level 1 and unwraping it (default set to True)
 
 **Match List Global**: Define how list with different lengths should be matched. Refers to the matching of groups (level 1)
 
