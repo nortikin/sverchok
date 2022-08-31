@@ -96,6 +96,16 @@ for reference.
   in which distance between neighbour knots is different in different places.
   For example, ``0 0 0.5 0.6 1.5 1.7 1.9 2 2 2`` is a non-uniform (and clamped)
   knot vector.
+* **Node values**, **Node points**. Also known as Greville abscissaes and
+  Greville points, average knot values, or simply edit points. The values of
+  NURBS curve's T parameter, defined as: ``t[i] = sum(u[i+j] for j from 1 to p)
+  / p``, where ``u`` is curve's knotvector, and ``p`` is curve's degree.  NURBS
+  curve *node points* (or Greville points) are points at the curve at parameter
+  values equal to node values.  The number of curve's nodes is equal to the
+  number of curve's control points.  Node points of the curve are positioned on
+  the curve near corresponding control points. So in many NURBS algorithms,
+  node points are used to define the shape of NURBS curve, instead of control
+  points.
 
 .. _Book: https://www.springer.com/gp/book/9783642973857
 
@@ -159,7 +169,7 @@ Blender's internal NURBS support is currently limited in two aspects:
 
 So, Sverchok has limited features in interacting with Blender's native NURBS objects:
 
-* **NURBS In** node can bring arbitrary Blender's NURBS curves or surfaces
+* **NURBS Input** node can bring arbitrary Blender's NURBS curves or surfaces
   from scene to Sverchok space;
 * **NURBS Curve Out** and **NURBS Surface Out** nodes allow to generate
   Blender's NURBS objects in scene, but without possibility to specify

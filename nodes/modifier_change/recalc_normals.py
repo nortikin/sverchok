@@ -29,7 +29,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 class SvRecalcNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     ''' Recalc face normals '''
     bl_idname = 'SvRecalcNormalsNode'
-    bl_label = 'Recalc normals'
+    bl_label = 'Recalculate Normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RECALC_NORMALS'
 

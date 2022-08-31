@@ -37,7 +37,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         0.6284880042076111,
@@ -79,7 +79,7 @@
       "use_custom_color": true,
       "width": 400.0
     },
-    "Random points on mesh": {
+    "Populate Mesh": {
       "bl_idname": "SvRandomPointsOnMesh",
       "custom_socket_props": {},
       "height": 100.0,
@@ -123,17 +123,17 @@
     [
       "Cricket",
       0,
-      "Random points on mesh",
+      "Populate Mesh",
       0
     ],
     [
       "Cricket",
       1,
-      "Random points on mesh",
+      "Populate Mesh",
       1
     ],
     [
-      "Random points on mesh",
+      "Populate Mesh",
       0,
       "Scripted Node Lite",
       0
@@ -147,19 +147,19 @@
     [
       "Scripted Node Lite",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Scripted Node Lite",
       1,
-      "Mesh viewer",
+      "Mesh Viewer",
       1
     ],
     [
       "Scripted Node Lite",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ]
   ]

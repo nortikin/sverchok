@@ -52,7 +52,7 @@ ANGLE_UNITS_ITEMS = [
 
 class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Hexagonal, Triangular, Ortogonal,
+    Triggers: Hexagonal, Triangular, Orthogonal,
     Tooltip: Create polygon array assambled to fill the plane. Triangles, Hexagons and Squares
     """
     bl_idname = 'SvPentagonTilerNode'

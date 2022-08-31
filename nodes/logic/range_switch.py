@@ -192,7 +192,7 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([input_val, input_b1, input_b2])
 
-        # update the numberr of switches based on number of inputs
+        # update the number of switches based on number of inputs
         old_switch_count = len(self.switches)
         new_switch_count = len(parameters[0])
 

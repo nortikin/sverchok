@@ -423,10 +423,10 @@ class UpdateTree(SearchTree):
 
     @classmethod
     def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -> Generator['SvNode', None, None]:
-        """Thi generator is for the triggers. It can update outdated nodes and
+        """This generator is for the triggers. It can update outdated nodes and
         update UI. Should be used only with main trees, the group trees should
-        use different method to separate profiling statistics. Whe it called the
-        tree should have information of what is outdated"""
+        use different method to separate profiling statistics. When it's called
+        the tree should have information of what is outdated"""
 
         # print(f"UPDATE NODES {event.type=}, {event.tree.name=}")
         up_tree = cls.get(tree, refresh_tree=True)
@@ -552,7 +552,7 @@ class UpdateTree(SearchTree):
                      from_nodes: frozenset['SvNode'] = None,
                      to_nodes: frozenset['SvNode'] = None)\
                      -> list[tuple['SvNode', list[NodeSocket]]]:
-        """Sort nodes of the tree in proper execution order. Whe all given
+        """Sort nodes of the tree in proper execution order. When all given
         parameters are None it uses all tree nodes
         :from_nodes: if given it sorts only next nodes from given ones
         :to_nodes: if given it sorts only previous nodes from given

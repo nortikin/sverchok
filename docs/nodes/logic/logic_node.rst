@@ -1,5 +1,5 @@
-Logic
-=====
+Logic Functions
+===============
 
 Functionality
 -------------

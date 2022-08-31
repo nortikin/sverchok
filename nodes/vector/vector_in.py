@@ -63,7 +63,7 @@ def numpy_pack_vecs(X_, Y_, Z_, output_numpy):
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
-    bl_label = 'Vector in'
+    bl_label = 'Vector In'
     sv_icon = 'SV_VECTOR_IN'
 
     x_: FloatProperty(name='X', description='X', default=0.0, precision=3, update=updateNode)

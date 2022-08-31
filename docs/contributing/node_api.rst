@@ -73,7 +73,7 @@ and in upper case.
         Tooltip: It adds an attribute to a mesh
         """
         bl_idname = 'SvSetMeshAttributeNode'
-        bl_label = 'Set mesh attribute'
+        bl_label = 'Set Mesh Attribute'
         bl_icon = 'SORTALPHA'
 
         def draw_label(self):
@@ -331,7 +331,7 @@ idea. Now it's only used in Dictionary output node. The problem is that this can
 easily lead to losses of user connections what breaks node setups. For example
 in Geometry Nodes project there was a decision that sockets should be
 independent to data layer. So to generate such nodes is not recommended now.
-If there is now way but to have this functionality possible solution could be
+If there is no way but to have this functionality possible solution could be
 to add a button to a node which would recreate sockets explicitly.
 
 .. code-block:: python
@@ -555,7 +555,7 @@ There are helping functions / generators to perform data matching in
 .. _experimental_vectorization:
 
 .. note::
-   There are two experimental approaches to automatize data matching. One can
+   There are two experimental approaches to automate data matching. One can
    be found in ``utils.nodes_mixins.recursive_nodes`` and another in
    ``utils.vectorize`` modules. Both of them can handle not only list of
    objects but and nested to each other lists of objects with arbitrary
@@ -575,7 +575,7 @@ There are helping functions / generators to perform data matching in
 .. note::
    In future vectorization should leve the nodes area and arrive to execution
    system. In this case nodes only have to add information to sockets to give to
-   execution system to now how to match data.
+   execution system to know how to match data.
 
 Data structure
 ^^^^^^^^^^^^^^
@@ -696,7 +696,7 @@ from ``utils.logging`` module or by using ``node.debug``, ``node.info`` and
 other aliases.
 
 If a node rises an error it will appear in console in next format: ``data and
-time [loging level] module name:line number : error name``
+time [logging level] module name:line number : error name``
 
 Traceback is switch off for all logging levels except debug one. If you need it
 make sure that you have appropriate logging level in the settings.
@@ -886,7 +886,7 @@ Improve existing node
 ^^^^^^^^^^^^^^^^^^^^^
 
 First is when you add extra functionality to some node. It's possible by adding
-extra buttons, sockets, modes. Whe you add something like this you should ensure
+extra buttons, sockets, modes. When you add something like this you should ensure
 that default behaviour will be unchanged.
 
 New socket, in most cases, can be placed anywhere among existing ones but it
@@ -921,15 +921,19 @@ applied to changes which were made in not released version of Sverchok. In this
 case changes can be done with breaking backward compatibility.
 
 Creating new version should be done togather with keeping previous one. In most
-cases it's enough **to move** module of current node into old_nodes folder. It
+cases it's enough **to copy** module of current node into old_nodes folder. It
 should be done more carefully if in the module together with the node something
 else is registered.
 
-New version of the node should be created **in new file** in the same place and
-with the same name as version of previous node. Class of a new version should
-get ``MKn`` suffix where *n* is index of new version. The same should be done to
+New version of the node should be created **in the same module** of initial
+node by adding suffix to node class. Convention of the suffix is
+``MKn`` where *n* is index of new version. The same should be done to
 ``bl_idname`` attribute of the class. New version of the node can implement
 anything what can be implemented in new node.
+
+.. note::
+   By changing class name and its ``bl_idname`` attribute, don't forget to fix
+   these names in the registration functions and in the ``index.md`` file.
 
 When new version is introduced it's convenient to add replacement operator to
 the old version of the node which automatically replace old node with new one

@@ -1,4 +1,4 @@
-Points inside Solid
+Points Inside Solid
 ===================
 
 Dependencies

@@ -28,7 +28,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     """
 
     bl_idname = 'SvMeshViewer'
-    bl_label = 'Mesh viewer'
+    bl_label = 'Mesh Viewer'
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
@@ -104,7 +104,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         if self.hide:
             return f"MeV {self.base_data_name}"
         else:
-            return "Mesh viewer"
+            return "Mesh Viewer"
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

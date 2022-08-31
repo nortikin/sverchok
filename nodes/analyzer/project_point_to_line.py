@@ -330,7 +330,7 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
     You can use number of points and lines as many as you wish
     """
     bl_idname = 'SvProjectPointToLine'
-    bl_label = 'Project point to line'
+    bl_label = 'Project Points to Line'
     bl_icon = 'PARTICLE_POINT'
 
     def switch_res_mode(self, context):

@@ -68,9 +68,13 @@
     SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
+    SvNurbsCurveNodesNode
+    ---
+    SvNurbsCurveMovePointNode
     ---
     SvCurveInsertKnotNode
     SvCurveRemoveKnotNode
+    SvRefineNurbsCurveNode
     SvCurveRemoveExcessiveKnotsNode
     ---
     SvAdaptivePlotNurbsCurveNode
@@ -471,7 +475,7 @@
     ListShuffleNode
     SvListSortNode
     ListFlipNode
-    SvListLevelsNode
+    SvListLevelsNodeMK2
 
 ## Dictionary
     SvDictionaryIn

@@ -1,4 +1,4 @@
-List index
+List Index
 ==========
 
 .. image:: https://user-images.githubusercontent.com/28003269/107849746-c8ac4100-6e16-11eb-8434-5237f3920cf2.png
@@ -10,7 +10,7 @@ This node searches items in given data and returns their indexes. It's equivalen
 Category
 --------
 
-List -> List main -> List index
+List -> List main -> List Index
 
 Inputs
 ------

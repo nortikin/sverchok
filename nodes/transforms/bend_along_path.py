@@ -33,7 +33,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Bend mesh along path (1-D spline)
     '''
     bl_idname = 'SvBendAlongPathNode'
-    bl_label = 'Bend object along path'
+    bl_label = 'Bend Object Along Path'
     bl_icon = 'CURVE_NCURVE'
 
     algorithms = [

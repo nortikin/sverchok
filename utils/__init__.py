@@ -126,7 +126,7 @@ utils_modules = [
     "sv_curve_utils", "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "snlite_script_searcher",
-    "context_managers", "sv_node_utils", "sv_noise_utils",
+    "context_managers", "sv_node_utils", "sv_noise_utils", "pip_utils",
     "profile", "logging", "testing", "sv_requests", "sv_shader_sources", "tree_structure",
     "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "modules.edge_utils", "modules.polygon_utils",
     "wfc_algorithm", "handle_blender_data", "nodes_mixins.generating_objects", "decorators_compilation",
@@ -146,6 +146,7 @@ utils_modules = [
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
     "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
     "quad_grid",
+    "curve.nurbs_algorithms",
     # extra addons
     "sv_extra_addons"
 

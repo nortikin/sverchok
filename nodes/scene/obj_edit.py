@@ -32,7 +32,7 @@ class SvObjEditCallback(bpy.types.Operator):
 class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
     ''' Objects Set Edit/Object Mode'''
     bl_idname = 'SvObjEdit'
-    bl_label = 'Obj Edit mode'
+    bl_label = 'Obj Edit Mode'
     bl_icon = 'EDITMODE_HLT'
 
     obj_passed_in: StringProperty()

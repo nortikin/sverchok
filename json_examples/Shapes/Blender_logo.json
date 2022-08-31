@@ -299,7 +299,7 @@
       },
       "width": 140.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -383,7 +383,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -489,7 +489,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move",
       1
@@ -525,7 +525,7 @@
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0,
       "Proportional Edit Falloff",
       1
@@ -533,13 +533,13 @@
     [
       "Mesh Join.002",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Mesh Join.002",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
@@ -569,13 +569,13 @@
     [
       "Perspective",
       0,
-      "Vector in",
+      "Vector In",
       0
     ],
     [
       "Perspective",
       0,
-      "Vector in",
+      "Vector In",
       1
     ],
     [

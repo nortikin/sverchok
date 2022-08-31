@@ -18,7 +18,7 @@ class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
     Tooltip: Returns index of item position in given data or -1 if item is not in data
     """
     bl_idname = 'SvIndexListNode'
-    bl_label = 'List index'
+    bl_label = 'List Index'
     bl_icon = 'VIEWZOOM'
 
     def update_mode(self, context):

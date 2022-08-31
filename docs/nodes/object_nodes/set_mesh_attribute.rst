@@ -1,4 +1,4 @@
-Set mesh attribute
+Set Mesh Attribute
 ==================
 
 .. image:: https://user-images.githubusercontent.com/28003269/118392568-5e8c7d80-b64b-11eb-9e0b-34fe624174cb.png
@@ -22,7 +22,7 @@ or like this `[['attr_name'], ['attr_name']]`. In both cases the names will be a
 Category
 --------
 
-BPY Data -> Set mesh attribute
+BPY Data -> Set Mesh Attribute
 
 Inputs
 ------

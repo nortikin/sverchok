@@ -190,7 +190,7 @@ class SvOffsetLineNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNo
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvOffsetLineNode'
-    bl_label = 'Offset line'
+    bl_label = 'Offset Line'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OFFSET_LINE'
 

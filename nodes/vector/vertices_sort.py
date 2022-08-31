@@ -184,7 +184,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
              ("DIST",   "Dist", "Distance",     2),
              ("AXIS",   "Axis", "Axial sort",   3),
              ("CONNEX", "Connect", "Sort by connections",   4),
-             ("AXYZ", "Auto XYZ", "Sort by carthesian coordinates in automatically detected reference frame", 5),
+             ("AXYZ", "Auto XYZ", "Sort by cartesian coordinates in automatically detected reference frame", 5),
              ("ADIR", "Auto Direction", "Sort along automatically detected direction", 6),
              ("ACYL", "Auto Phi / Z", "Sort in circular order on automatically detected plane", 7),
              ("USER",   "User", "User defined", 10)]

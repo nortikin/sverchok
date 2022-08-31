@@ -30,7 +30,7 @@ class SvMaskToIndexNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Splits the true and false indices from a mask list
     '''
     bl_idname = 'SvMaskToIndexNode'
-    bl_label = 'Mask to Index'
+    bl_label = 'Mask To Index'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MASK_TO_INDEX'
 

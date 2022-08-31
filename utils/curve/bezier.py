@@ -310,11 +310,11 @@ class SvBezierCurve(SvCurve):
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
 
-    def concatenate(self, curve2):
+    def concatenate(self, curve2, tolerance=None):
         curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2)
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
@@ -473,11 +473,11 @@ class SvCubicBezierCurve(SvCurve):
     def reparametrize(self, new_t_min, new_t_max):
         return self.to_nurbs().reparametrize(new_t_min, new_t_max)
 
-    def concatenate(self, curve2):
+    def concatenate(self, curve2, tolerance=None):
         curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2)
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)

@@ -34,7 +34,7 @@ def unpack_list_to_np(obj):
 class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vectors out '''
     bl_idname = 'VectorsOutNode'
-    bl_label = 'Vector out'
+    bl_label = 'Vector Out'
     sv_icon = 'SV_VECTOR_OUT'
     output_numpy: BoolProperty(
         name='Output NumPy',

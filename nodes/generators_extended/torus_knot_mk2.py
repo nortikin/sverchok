@@ -329,7 +329,7 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     point_density: IntProperty(
         name="Point Density",
         default=10, min=1,
-        description="Number of points per unit length used with adaptive resolutin",
+        description="Number of points per unit length used with adaptive resolution",
         update=updateNode)
 
     # VECTORS options

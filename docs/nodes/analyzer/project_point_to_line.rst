@@ -1,4 +1,4 @@
-Project points to line
+Project Points to Line
 ======================
 
 .. image:: https://user-images.githubusercontent.com/28003269/57965425-316e3d00-7955-11e9-9d2b-016f9ebce9aa.png

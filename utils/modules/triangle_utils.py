@@ -41,7 +41,7 @@ def triang_A_a_b_c(A, a, b, c):
 
 def triang_A_B_a_b(A, B, a, b):
     '''Two verts and the length of the other two sides'''
-    # Adapted from circle interections function in Contour2D node
+    # Adapted from circle intersections function in Contour2D node
     ang_base = atan2(B[1] - A[1], B[0] - A[0])
     dist = sqrt((B[0] - A[0]) * (B[0] - A[0]) + (B[1] - A[1]) * (B[1] - A[1]))
     mask = (a + b) > dist

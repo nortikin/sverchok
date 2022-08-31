@@ -46,7 +46,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
 
     bl_idname = 'SvMetaballOutNode'
-    bl_label = 'Metaball'
+    bl_label = 'Metaball Viewer'
     bl_icon = 'META_BALL'
     sv_icon = 'SV_METABALL'
 

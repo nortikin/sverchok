@@ -53,7 +53,7 @@ def nearest_point_in_mesh(verts, faces, points, safe_check=True):
 def nearest_in_range(verts, faces, points, distance, safe_check=True, flat_output=True):
     '''
     verts, faces and points: Expects multiple objects lists (level of nesting 3)
-    distace: expects a list with level of nesting of 2
+    distance: expects a list with level of nesting of 2
     '''
     output = [[] for i in range(4)]
     for bvh, pts, dist in zip(svmesh_to_bvh_lists(verts, faces, safe_check), points, distance):

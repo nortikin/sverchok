@@ -318,7 +318,7 @@
       "params": {},
       "width": 140.0
     },
-    "List Mask (out).001": {
+    "List Mask (Out).001": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -333,7 +333,7 @@
       },
       "width": 140.0
     },
-    "List Mask (out).002": {
+    "List Mask (Out).002": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -444,7 +444,7 @@
       },
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -465,7 +465,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Mesh viewer.001": {
+    "Mesh Viewer.001": {
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
@@ -700,7 +700,7 @@
       },
       "width": 140.0
     },
-    "Vector out": {
+    "Vector Out": {
       "bl_idname": "VectorsOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -740,7 +740,7 @@
       2
     ],
     [
-      "List Mask (out).001",
+      "List Mask (Out).001",
       3,
       "Line",
       3
@@ -784,25 +784,25 @@
     [
       "Transform Select",
       0,
-      "List Mask (out).001",
+      "List Mask (Out).001",
       0
     ],
     [
       "Reroute",
       "Output",
-      "List Mask (out).001",
+      "List Mask (Out).001",
       "mask"
     ],
     [
       "Pulga Physics.001",
       3,
-      "List Mask (out).002",
+      "List Mask (Out).002",
       0
     ],
     [
       "Reroute",
       "Output",
-      "List Mask (out).002",
+      "List Mask (Out).002",
       "mask"
     ],
     [
@@ -818,7 +818,7 @@
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       2,
       "Math MK2.002",
       0
@@ -838,31 +838,31 @@
     [
       "Pulga Physics.001",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Reroute.002",
       "Output",
-      "Mesh viewer",
+      "Mesh Viewer",
       "faces"
     ],
     [
       "Solidify.001",
       0,
-      "Mesh viewer.001",
+      "Mesh Viewer.001",
       0
     ],
     [
       "Solidify.001",
       2,
-      "Mesh viewer.001",
+      "Mesh Viewer.001",
       2
     ],
     [
       "Matrix In.002",
       0,
-      "Mesh viewer.001",
+      "Mesh Viewer.001",
       4
     ],
     [
@@ -1010,21 +1010,21 @@
       1
     ],
     [
-      "List Mask (out).002",
+      "List Mask (Out).002",
       3,
       "Vector Rewire",
       0
     ],
     [
-      "List Mask (out).002",
+      "List Mask (Out).002",
       3,
       "Vector Rewire.001",
       0
     ],
     [
-      "List Mask (out).001",
+      "List Mask (Out).001",
       3,
-      "Vector out",
+      "Vector Out",
       0
     ],
     [

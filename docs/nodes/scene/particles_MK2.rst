@@ -1,4 +1,4 @@
-particles MK2
+Particles MK2
 =============
 
 This node has Object socket input, from which to obtain the particle system.

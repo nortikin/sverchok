@@ -24,7 +24,7 @@ from numpy import ndarray
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float2Int '''
     bl_idname = 'Float2IntNode'
-    bl_label = 'Float to Int'
+    bl_label = 'Float to Integer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FLOAT_TO_INT'
 

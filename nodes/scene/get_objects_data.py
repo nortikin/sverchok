@@ -13,15 +13,20 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
+from sverchok.utils.logging import debug
+
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
+
+
+class ReadingObjectDataError(Exception):
+    pass
 
 
 class SVOB3B_UL_NamesList(bpy.types.UIList):
@@ -107,14 +112,10 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    def modifiers_handle(self, context):
-        set_sv_depsgraph_need(self.modifiers)
-        updateNode(self, context)
-
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False, update=modifiers_handle)
+        default=False, update=updateNode)
 
     vergroups: BoolProperty(
         name='Vergroups',
@@ -257,9 +258,6 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     def get_materials_from_bmesh(self, bm):
         return [face.material_index for face in bm.faces[:]]
 
-    def sv_free(self):
-        set_sv_depsgraph_need(False)
-
     def process(self):
 
         objs = self.inputs[0].sv_get(default=[[]])
@@ -274,8 +272,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         o_vs, o_es, o_ps, o_vn, o_mi, o_pa, o_pc, o_pn, o_ms, o_ob = [s.is_linked for s in self.outputs[:10]]
         vs, es, ps, vn, mi, pa, pc, pn, ms = [[] for s in self.outputs[:9]]
         if self.modifiers:
-            sv_depsgraph = get_sv_depsgraph()
-
+            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
         out_np = self.out_np if not self.output_np_all else [True for i in range(7)]
         if isinstance(objs[0], list):
@@ -322,7 +319,10 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
                     del bm
                 else:
 
-                    if self.modifiers:
+                    # https://developer.blender.org/T99661
+                    if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
+                        raise ReadingObjectDataError("Does not support curves in edit mode in Blender 3.2")
+                    elif self.modifiers:
                         obj = sv_depsgraph.objects[obj.name]
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
@@ -355,8 +355,12 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
 
                     obj.to_mesh_clear()
 
+            except ReadingObjectDataError:
+                raise
             except Exception as err:
-                print('failure in process between frozen area', self.name, err)
+                # it's not clear which cases this try catch should handle
+                # probably it should skip wrong object types
+                debug('failure in process between frozen area', self.name, err)
 
             if o_ms:
                 ms.append(mtrx)

@@ -1,4 +1,4 @@
-Mesh viewer
+Mesh Viewer
 ===========
 
 .. image:: https://user-images.githubusercontent.com/28003269/91057173-ec48b880-e637-11ea-9933-b9cef83aac65.png
@@ -14,7 +14,7 @@ in case if topology of the mesh remains unchanged.
 Category
 --------
 
-Viz -> Mesh viewer
+Viz -> Mesh Viewer
 
 Inputs
 ------

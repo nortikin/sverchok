@@ -292,8 +292,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def update_sockets(self):
         socket_info = parse_sockets(self)
-        if not socket_info['inputs']:
-            return
+        #if not socket_info['inputs']:
+        #    return
 
         for k, v in socket_info.items():
             if not (k in {'inputs', 'outputs'}):

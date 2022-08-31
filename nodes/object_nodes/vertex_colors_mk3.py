@@ -85,7 +85,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''
 
     bl_idname = 'SvVertexColorNodeMK3'
-    bl_label = 'Vertex color mk3'
+    bl_label = 'Vertex Color MK3'
     bl_icon = 'COLOR'
 
     modes = [

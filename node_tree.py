@@ -120,7 +120,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # From the user perspective, some of node parameters
         # got new parameter values, so the setup should be recalculated;
-        # but techically, node properties were not changed
+        # but technically, node properties were not changed
         # (only other properties were shown in UI), so enabling/disabling
         # of draft mode does not automatically trigger tree update.
         # Here we trigger it manually.

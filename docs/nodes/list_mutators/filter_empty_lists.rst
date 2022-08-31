@@ -1,5 +1,5 @@
-filter empty lists
-==================
+Filter Empty Objects
+====================
 
 start out due to this issue: https://github.com/nortikin/sverchok/pull/2089
 

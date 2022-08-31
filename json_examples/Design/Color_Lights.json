@@ -3,7 +3,7 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Color in MK1": {
+    "Color In MK1": {
       "bl_idname": "SvColorsInNodeMK1",
       "height": 100.0,
       "hide": false,
@@ -226,7 +226,7 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "collection": "",
       "color": [
@@ -284,7 +284,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
@@ -303,35 +303,35 @@
     [
       "Plane",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Plane",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "List Input",
       0,
-      "Color in MK1",
+      "Color In MK1",
       0
     ],
     [
       "List Input.002",
       0,
-      "Color in MK1",
+      "Color In MK1",
       1
     ],
     [
       "List Input.001",
       0,
-      "Color in MK1",
+      "Color In MK1",
       2
     ],
     [
-      "Color in MK1",
+      "Color In MK1",
       0,
       "List Split",
       0
@@ -343,7 +343,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Move.001",
       1

@@ -23,17 +23,17 @@
     "List Input.002": "Frame.008",
     "List Join": "Frame.004",
     "List Join.001": "Frame.004",
-    "List Mask (out)": "Frame.008",
-    "List Mask Join (in)": "Frame.008",
+    "List Mask (Out)": "Frame.008",
+    "List Mask Join (In)": "Frame.008",
     "List Split": "Frame.006",
-    "Matrix Apply": "Frame.007",
+    "Matrix Apply to Mesh": "Frame.007",
     "Matrix Deform": "Frame.005",
     "Matrix In": "Frame.005",
     "Matrix In.001": "Frame.006",
     "Matrix Math": "Frame.007",
     "Merge by Distance": "Frame.004",
     "Mesh Join.001": "Frame.004",
-    "Mesh viewer": "Frame.006",
+    "Mesh Viewer": "Frame.006",
     "Move": "Frame.002",
     "Move.001": "Frame.007",
     "Number Range": "Frame.005",
@@ -60,10 +60,10 @@
     "Surface from Curves": "Frame.001",
     "UV Connection": "Frame.003",
     "UV Connection.001": "Frame.003",
-    "Vector in": "Frame.003",
-    "Vector in.001": "Frame.005",
-    "Vector in.002": "Frame.005",
-    "Vector out": "Frame.003",
+    "Vector In": "Frame.003",
+    "Vector In.001": "Frame.005",
+    "Vector In.002": "Frame.005",
+    "Vector Out": "Frame.003",
     "Viewer Draw Mk3": "Frame.003",
     "Viewer Draw Mk3.001": "Frame.002",
     "Viewer Draw Mk3.002": "Frame.003",
@@ -719,7 +719,7 @@
       "params": {},
       "width": 140.0
     },
-    "List Mask (out)": {
+    "List Mask (Out)": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -732,7 +732,7 @@
       "params": {},
       "width": 140.0
     },
-    "List Mask Join (in)": {
+    "List Mask Join (In)": {
       "bl_idname": "SvMaskJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -758,7 +758,7 @@
       "params": {},
       "width": 140.0
     },
-    "Matrix Apply": {
+    "Matrix Apply to Mesh": {
       "bl_idname": "SvMatrixApplyJoinNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -900,7 +900,7 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "color": [
         0.6284880042076111,
@@ -1480,7 +1480,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1495,7 +1495,7 @@
       },
       "width": 100.0
     },
-    "Vector in.001": {
+    "Vector In.001": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1510,7 +1510,7 @@
       },
       "width": 100.0
     },
-    "Vector in.002": {
+    "Vector In.002": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1523,7 +1523,7 @@
       "params": {},
       "width": 100.0
     },
-    "Vector out": {
+    "Vector Out": {
       "bl_idname": "VectorsOutNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -1925,7 +1925,7 @@
       5
     ],
     [
-      "List Mask (out)",
+      "List Mask (Out)",
       3,
       "Flip Curve",
       0
@@ -1981,31 +1981,31 @@
     [
       "Split Curve",
       0,
-      "List Mask (out)",
+      "List Mask (Out)",
       0
     ],
     [
       "List Input.002",
       0,
-      "List Mask (out)",
+      "List Mask (Out)",
       1
     ],
     [
       "List Input.002",
       0,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       0
     ],
     [
       "Flip Curve",
       0,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       1
     ],
     [
-      "List Mask (out)",
+      "List Mask (Out)",
       4,
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       2
     ],
     [
@@ -2017,25 +2017,25 @@
     [
       "Bisect",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0
     ],
     [
       "Bisect",
       1,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1
     ],
     [
       "Bisect",
       2,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       2
     ],
     [
       "Matrix Math",
       0,
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       3
     ],
     [
@@ -2045,7 +2045,7 @@
       0
     ],
     [
-      "Vector in.001",
+      "Vector In.001",
       0,
       "Matrix Deform",
       3
@@ -2057,7 +2057,7 @@
       4
     ],
     [
-      "Vector in.002",
+      "Vector In.002",
       0,
       "Matrix In",
       0
@@ -2083,19 +2083,19 @@
     [
       "Bisect",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Bisect",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "Matrix In.001",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       4
     ],
     [
@@ -2249,25 +2249,25 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Stethoscope MK2",
       0
     ],
     [
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       0,
       "Stethoscope MK2.001",
       0
     ],
     [
-      "List Mask Join (in)",
+      "List Mask Join (In)",
       0,
       "Surface from Curves",
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "UV Connection",
       0
@@ -2279,39 +2279,39 @@
       1
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "UV Connection.001",
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       0,
-      "Vector in",
+      "Vector In",
       0
     ],
     [
-      "Vector out",
+      "Vector Out",
       1,
-      "Vector in",
+      "Vector In",
       1
     ],
     [
       "A Number.001",
       0,
-      "Vector in",
+      "Vector In",
       2
     ],
     [
       "Number Range",
       0,
-      "Vector in.002",
+      "Vector In.002",
       0
     ],
     [
       "Scripted Node Lite",
       0,
-      "Vector out",
+      "Vector Out",
       0
     ],
     [
@@ -2417,19 +2417,19 @@
       2
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       0,
       "Viewer Draw Mk3.008",
       0
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       1,
       "Viewer Draw Mk3.008",
       1
     ],
     [
-      "Matrix Apply",
+      "Matrix Apply to Mesh",
       2,
       "Viewer Draw Mk3.008",
       2

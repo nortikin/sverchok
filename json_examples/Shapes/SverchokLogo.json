@@ -7,8 +7,8 @@
     "Circle (Curve)": "Frame.001",
     "Color in": "Frame.012",
     "Contour 2D": "Frame.006",
-    "Edges to faces 2D": "Frame.006",
-    "Edges to faces 2D.001": "Frame.005",
+    "Edges to Faces 2D": "Frame.006",
+    "Edges to Faces 2D.001": "Frame.005",
     "Evaluate Curve": "Frame.003",
     "Evaluate Curve.001": "Frame.002",
     "Evaluate Curve.002": "Frame.001",
@@ -21,14 +21,14 @@
     "List Input.002": "Frame.012",
     "List Join": "Frame.006",
     "List Join.001": "Frame.006",
-    "List Mask (out)": "Frame.006",
-    "List Mask (out).001": "Frame.005",
-    "List Mask (out).002": "Frame.005",
-    "Logic functions": "Frame.005",
+    "List Mask (Out)": "Frame.006",
+    "List Mask (Out).001": "Frame.005",
+    "List Mask (Out).002": "Frame.005",
+    "Logic Functions": "Frame.005",
     "Merge by Distance": "Frame.012",
-    "Merge mesh 2D": "Frame.005",
+    "Merge Mesh 2D": "Frame.005",
     "Mesh Join.001": "Frame.006",
-    "Select mesh elements by location": "Frame.006",
+    "Select Mesh Elements by Location": "Frame.006",
     "Viewer Draw": "Frame.006",
     "Viewer Draw.001": "Frame.001",
     "Viewer Draw.002": "Frame.002",
@@ -190,7 +190,7 @@
       },
       "width": 140.0
     },
-    "Edges to faces 2D": {
+    "Edges to Faces 2D": {
       "bl_idname": "SvEdgesToFaces2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -203,7 +203,7 @@
       "params": {},
       "width": 140.0
     },
-    "Edges to faces 2D.001": {
+    "Edges to Faces 2D.001": {
       "bl_idname": "SvEdgesToFaces2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -545,7 +545,7 @@
       "params": {},
       "width": 140.0
     },
-    "List Mask (out)": {
+    "List Mask (Out)": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -560,7 +560,7 @@
       },
       "width": 140.0
     },
-    "List Mask (out).001": {
+    "List Mask (Out).001": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -575,7 +575,7 @@
       },
       "width": 140.0
     },
-    "List Mask (out).002": {
+    "List Mask (Out).002": {
       "bl_idname": "MaskListNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -590,7 +590,7 @@
       },
       "width": 140.0
     },
-    "Logic functions": {
+    "Logic Functions": {
       "bl_idname": "SvLogicNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -636,7 +636,7 @@
       },
       "width": 140.0
     },
-    "Merge mesh 2D": {
+    "Merge Mesh 2D": {
       "bl_idname": "SvMergeMesh2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -696,7 +696,7 @@
       "use_custom_color": true,
       "width": 400.0
     },
-    "Select mesh elements by location": {
+    "Select Mesh Elements by Location": {
       "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
@@ -893,13 +893,13 @@
   },
   "update_lists": [
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0,
       "Area",
       0
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       1,
       "Area",
       1
@@ -925,13 +925,13 @@
     [
       "Contour 2D",
       0,
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0
     ],
     [
       "Contour 2D",
       1,
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       1
     ],
     [
@@ -953,69 +953,69 @@
       0
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       1,
-      "List Mask (out).001",
+      "List Mask (Out).001",
       0
     ],
     [
-      "Logic functions",
+      "Logic Functions",
       0,
-      "List Mask (out).001",
+      "List Mask (Out).001",
       1
     ],
     [
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       1,
-      "List Mask (out).002",
+      "List Mask (Out).002",
       0
     ],
     [
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       3,
-      "List Mask (out).002",
+      "List Mask (Out).002",
       1
     ],
     [
       "Area",
       0,
-      "Logic functions",
+      "Logic Functions",
       0
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       0,
       "Merge by Distance",
       0
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       1,
       "Merge by Distance",
       1
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0,
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       0
     ],
     [
-      "List Mask (out).001",
+      "List Mask (Out).001",
       4,
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       1
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0,
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       2
     ],
     [
-      "List Mask (out).001",
+      "List Mask (Out).001",
       3,
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       3
     ],
     [
@@ -1073,13 +1073,13 @@
       6
     ],
     [
-      "Merge mesh 2D",
+      "Merge Mesh 2D",
       0,
       "Viewer Draw.005",
       0
     ],
     [
-      "List Mask (out).002",
+      "List Mask (Out).002",
       4,
       "Viewer Draw.005",
       2
@@ -1099,13 +1099,13 @@
     [
       "Contour 2D",
       0,
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       0
     ],
     [
-      "List Mask (out)",
+      "List Mask (Out)",
       3,
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       1
     ],
     [
@@ -1159,35 +1159,35 @@
     [
       "Contour 2D",
       1,
-      "List Mask (out)",
+      "List Mask (Out)",
       0
     ],
     [
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1,
-      "List Mask (out)",
+      "List Mask (Out)",
       1
     ],
     [
       "Contour 2D",
       0,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       0
     ],
     [
       "Contour 2D",
       1,
-      "Select mesh elements by location",
+      "Select Mesh Elements by Location",
       1
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       0,
       "Viewer Draw",
       0
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       1,
       "Viewer Draw",
       2

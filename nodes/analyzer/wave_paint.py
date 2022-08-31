@@ -33,7 +33,7 @@ class SvWavePainterNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvWavePainterNode'
-    bl_label = 'Wave Paint'
+    bl_label = 'Wave Painter'
     bl_icon = 'FILTER'
 
     face_modes = [

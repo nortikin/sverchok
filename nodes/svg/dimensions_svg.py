@@ -162,7 +162,7 @@ class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Creates SVG Dimensions
     """
     bl_idname = 'SvSvgDimensionNode'
-    bl_label = 'Dimension SVG'
+    bl_label = 'Dimensions SVG'
     bl_icon = 'MESH_CIRCLE'
     sv_icon = 'SV_DIMENSION_SVG'
 

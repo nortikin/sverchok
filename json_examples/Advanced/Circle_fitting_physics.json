@@ -35,7 +35,7 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh viewer": {
+    "Mesh Viewer": {
       "bl_idname": "SvMeshViewer",
       "collection": "",
       "color": [
@@ -159,25 +159,25 @@
     [
       "Circle",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       0
     ],
     [
       "Circle",
       1,
-      "Mesh viewer",
+      "Mesh Viewer",
       1
     ],
     [
       "Circle",
       2,
-      "Mesh viewer",
+      "Mesh Viewer",
       2
     ],
     [
       "Pulga Physics",
       0,
-      "Mesh viewer",
+      "Mesh Viewer",
       4
     ]
   ]

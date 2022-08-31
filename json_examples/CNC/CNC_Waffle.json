@@ -8,8 +8,8 @@
     "Cross Section": "Frame.001",
     "Cross Section.001": "Frame.001",
     "Cross Section.002": "Frame.001",
-    "Edges to faces 2D": "Frame.004",
-    "Edges to faces 2D.001": "Frame.004",
+    "Edges to Faces 2D": "Frame.004",
+    "Edges to Faces 2D.001": "Frame.004",
     "Extrude Separate Faces": "Frame.003",
     "Frame": "Frame.005",
     "Frame.001": "Frame.005",
@@ -150,7 +150,7 @@
       },
       "width": 140.0
     },
-    "Edges to faces 2D": {
+    "Edges to Faces 2D": {
       "bl_idname": "SvEdgesToFaces2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -165,7 +165,7 @@
       },
       "width": 140.0
     },
-    "Edges to faces 2D.001": {
+    "Edges to Faces 2D.001": {
       "bl_idname": "SvEdgesToFaces2D",
       "custom_socket_props": {},
       "height": 100.0,
@@ -743,35 +743,35 @@
     [
       "Wafel.003",
       0,
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       0
     ],
     [
       "Wafel.003",
       1,
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       1
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       0,
       "VD Experimental.001",
       0
     ],
     [
-      "Edges to faces 2D",
+      "Edges to Faces 2D",
       1,
       "VD Experimental.001",
       2
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0,
       "VD Experimental.002",
       0
     ],
     [
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       1,
       "VD Experimental.002",
       2
@@ -809,13 +809,13 @@
     [
       "Wafel",
       0,
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       0
     ],
     [
       "Wafel",
       1,
-      "Edges to faces 2D.001",
+      "Edges to Faces 2D.001",
       1
     ],
     [

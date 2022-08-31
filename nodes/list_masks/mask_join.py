@@ -26,7 +26,7 @@ from sverchok.data_structure import changable_sockets, updateNode, list_match_mo
 class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Mask Join'''
     bl_idname = 'SvMaskJoinNodeMK2'
-    bl_label = 'List Mask Join (in)'
+    bl_label = 'List Mask Join (In)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MASK_JOIN'
 

@@ -1,5 +1,5 @@
-easing
-======
+Easing 0..1
+===========
 
 This node offers a finite list of interpolation functions. We've collected the easing functions in a visual document here
 

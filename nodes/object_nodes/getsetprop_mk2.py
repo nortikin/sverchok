@@ -223,7 +223,7 @@ class SvPropNodeMixin():
 class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Get property '''
     bl_idname = 'SvGetPropNodeMK2'
-    bl_label = 'Get property MK2'
+    bl_label = 'Get Property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
@@ -261,7 +261,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Set property '''
     bl_idname = 'SvSetPropNodeMK2'
-    bl_label = 'Set property MK2'
+    bl_label = 'Set Property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
 

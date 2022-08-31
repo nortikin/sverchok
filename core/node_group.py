@@ -725,6 +725,7 @@ class UngroupGroupTree(bpy.types.Operator):
     """Put sub nodes into current layout and delete current group node"""
     bl_idname = 'node.ungroup_group_tree'
     bl_label = "Ungroup group tree"
+    bl_options = {'INTERNAL'}
 
     @classmethod
     def poll(cls, context):

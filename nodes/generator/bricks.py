@@ -228,7 +228,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Create a brick wall or honeycomb-like structure.
     """
     bl_idname = 'SvBricksNode'
-    bl_label = 'Bricks grid'
+    bl_label = 'Bricks Grid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BRICKS'
 

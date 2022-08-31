@@ -23,7 +23,7 @@ class SvMakeMonotone(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     One object - one polygon
     """
     bl_idname = 'SvMakeMonotone'
-    bl_label = 'Make monotone'
+    bl_label = 'Make Monotone'
     bl_icon = 'MOD_MESHDEFORM'
 
     accuracy: bpy.props.IntProperty(name='Accuracy', description='Some errors of the node '

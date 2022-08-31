@@ -27,7 +27,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     lamp_types = [
         ("POINT", "Point", "Omnidirectional point light source", "LAMP_POINT", 0),
         ("SUN", "Sun", "Constant direction parallel light source", "LAMP_SUN", 1),
-        ("SPOT", "Spot", "Direcitonal cone light source", "LAMP_SPOT", 2),
+        ("SPOT", "Spot", "Directional cone light source", "LAMP_SPOT", 2),
         ("AREA", "Area", "Directional area light source", "LAMP_AREA", 3)
     ]
 

@@ -1,4 +1,4 @@
-csg boolean mk2
+CSG Boolean MK2
 ===============
 
 This node implements the 3 boolean *3d Mesh* functions; Intersect, Join, Difference. 

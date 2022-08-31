@@ -27,9 +27,9 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
-    ''' Triangulate mesh '''
+    ''' Triangulate Mesh '''
     bl_idname = 'SvTriangulateNode'
-    bl_label = 'Triangulate mesh'
+    bl_label = 'Triangulate Mesh'
     bl_icon = 'MOD_TRIANGULATE'
 
     quad_modes = [

@@ -308,7 +308,7 @@ class SvInsetFaces(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
     Most options on N panel
     """
     bl_idname = 'SvInsetFaces'
-    bl_label = 'Inset faces'
+    bl_label = 'Inset Faces'
     bl_icon = 'MESH_GRID'
     sv_icon = 'SV_INSET'
 

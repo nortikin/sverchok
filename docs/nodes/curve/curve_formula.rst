@@ -62,15 +62,15 @@ This node has the following parameters:
 
 * **Formula 1**, **Formula 2**, **Formula 3**. Formulas for 3 components
   defining curve points in the used coordinate system. Default values define
-  simple helix curve in the carthesian coordinates.
+  simple helix curve in the cartesian coordinates.
 * **Output**. This defined the coordinate system being used, and thus it
   defines the exact meaning of formula parameters. The available modes are:
 
-   * **Carthesian**. Three formulas will define correspondingly X, Y and Z coordinates.
+   * **Cartesian**. Three formulas will define correspondingly X, Y and Z coordinates.
    * **Cylindrical**. Three formulas will define correspondingly Rho, Phi and Z coordinates.
    * **Spherical**. Three formulas will define correspondingly Rho, Phi and Theta coordinates.
 
-   The default mode is **Carthesian**.
+   The default mode is **Cartesian**.
 
 * **Vectorize**. This parameter is available in the N panel only. If enabled,
   then to evaluate formulas for a series of input values, the node will use

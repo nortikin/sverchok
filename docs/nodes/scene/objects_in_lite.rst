@@ -1,4 +1,4 @@
-objects in lite
+Objects in Lite
 ===============
 
 this node stores the object you pick up, and uses the stored information until you pick up the object manually again (kind of like a cache). This node is useful for storing scene objects (mesh based..) inside the iojson gists.

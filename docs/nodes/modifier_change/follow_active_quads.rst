@@ -1,4 +1,4 @@
-Follow active quads
+Follow Active Quads
 ===================
 
 .. image:: https://user-images.githubusercontent.com/28003269/72198433-af340b00-3446-11ea-95f3-caa61581220a.png
@@ -20,7 +20,7 @@ Default unwrapping is quad with sides equal 1.
 Category
 --------
 
-Modifiers -> Modifier change -> Follow active quads
+Modifiers -> Modifier change -> Follow Active Quads
 
 Inputs
 ------

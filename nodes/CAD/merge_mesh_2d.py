@@ -22,7 +22,7 @@ class SvMergeMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
     Only X and Y coordinate takes in account
     """
     bl_idname = 'SvMergeMesh2D'
-    bl_label = 'Merge mesh 2D'
+    bl_label = 'Merge Mesh 2D'
     bl_icon = 'AUTOMERGE_ON'
 
     def update_sockets(self, context):

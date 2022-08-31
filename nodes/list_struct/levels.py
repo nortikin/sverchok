@@ -17,26 +17,29 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty, BoolVectorProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, describe_data_shape_by_level, list_levels_adjust, SIMPLE_DATA_TYPES,\
-    changable_sockets
+from sverchok.data_structure import (updateNode, describe_data_shape_by_level, list_levels_adjust, SIMPLE_DATA_TYPES,
+                                     changable_sockets)
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.logging import info
+from sverchok.utils.logging import debug
+from sverchok.utils.handle_blender_data import correct_collection_length
+
 ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
 if FreeCAD is not None:
     import Part
     ALL_TYPES = ALL_TYPES + (Part.Shape,)
 
-class SvNestingLevelEntry(bpy.types.PropertyGroup):
+
+class SvNestingLevelEntryMK2(bpy.types.PropertyGroup):
     def update_entry(self, context):
         if hasattr(context, 'node'):
             updateNode(context.node, context)
         else:
-            info("Node is not defined in this context, so will not update the node.")
+            debug("Node is not defined in this context, so will not update the node.")
 
     description : StringProperty(options = {'SKIP_SAVE'}, default="?")
     flatten : BoolProperty(
@@ -50,105 +53,74 @@ class SvNestingLevelEntry(bpy.types.PropertyGroup):
                 default=False,
                 update=update_entry)
 
-class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvListLevelsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Levels
     Tooltip: List nesting levels manipulation
     '''
-    bl_idname = 'SvListLevelsNode'
+    bl_idname = 'SvListLevelsNodeMK2'
     bl_label = 'List Levels'
     bl_icon = 'OUTLINER'
 
-    levels_config : CollectionProperty(type=SvNestingLevelEntry)
-    prev_nesting_level : IntProperty(default = 0, options = {'SKIP_SAVE'})
-    flatten_mem: BoolVectorProperty(size=32, default=[False for i in range(32)])
-    wrap_mem: BoolVectorProperty(size=32, default=[False for i in range(32)])
+    levels_config : CollectionProperty(type=SvNestingLevelEntryMK2)
+    nesting: IntProperty(description="How much nested levels should be shown")
 
     def draw_buttons(self, context, layout):
-        n = len(self.levels_config)
-        if not n:
+        if not self.nesting:
             layout.label(text="No data passed")
             return
-        grid = layout.grid_flow(row_major=True, columns=5, align=True)
 
-        grid.label(text='Depth')
-        grid.label(text='Nesting')
-        grid.label(text='Shape')
-        grid.label(text='Flatten')
-        grid.label(text='Wrap')
+        # https://blender.stackexchange.com/questions/51256/how-to-create-uilist-with-auto-aligned-three-columns/51263#51263
+        lvl_split = 0.08
+        shape_split = 0.6
+        flat_split = 0.5
 
-        for i, entry in enumerate(self.levels_config):
-            nesting = n-i-1
-            level_str = str(i)
-            if i == 0:
-                level_str += " (outermost)"
-            elif nesting == 0:
-                level_str += " (innermost)"
-            grid.label(text=level_str)
-            grid.label(text=str(nesting))
-            grid.label(text=entry.description)
+        col = layout.column()
+        col.label(text='Lvl|Shape|Flatten|Wrap')
+
+        for i, entry in zip(range(self.nesting), self.levels_config):
+            nesting = self.nesting - i - 1
+            row = col.split(factor=lvl_split)
+            row.label(text=f"{i+1}")
+            row = row.split(factor=shape_split)
+            row.label(text=entry.description)
+            row = row.split(factor=flat_split)
             if nesting < 2:
-                grid.label(icon='X', text='')
+                row.label(icon='X', text='')
             else:
-                grid.prop(entry, 'flatten', text='')
-            grid.prop(entry, 'wrap', text='')
-
-    def sv_update(self):
-        self.update_buttons(False)
-
-    def update_buttons(self, update_during_process):
-        try:
-            data = self.inputs['Data'].sv_get(default=[])
-        except LookupError:
-            data = []
-        if not data:
-            self.prev_nesting_level = 0
-            for i, l in enumerate(self.levels_config):
-                self.flatten_mem[i] = l.flatten
-                self.wrap_mem[i] = l.wrap
-
-            self.levels_config.clear()
-            return
-
-
-        changable_sockets(self, 'Data', ['Data', ])
-        nesting, descriptions = describe_data_shape_by_level(data, include_numpy_nesting=False)
-        rebuild_list = self.prev_nesting_level != nesting
-        self.prev_nesting_level = nesting
-
-        if rebuild_list:
-            self.levels_config.clear()
-            for i, descr in enumerate(descriptions):
-                l = self.levels_config.add()
-                l.description = descr
-                l.flatten = self.flatten_mem[i]
-                l.wrap = self.wrap_mem[i]
-
-        else:
-            for entry, descr in zip(self.levels_config, descriptions):
-                entry.description = descr
+                row.prop(entry, 'flatten', text='')
+            row.prop(entry, 'wrap', text='')
 
     def sv_init(self, context):
-        self.width = 300
         self.inputs.new('SvStringsSocket', 'Data')
         self.outputs.new('SvStringsSocket', 'Data')
 
-    def sv_copy(self, original):
-        self.prev_nesting_level = 0
+    def sv_update(self):
+        changable_sockets(self, 'Data', ['Data', ])
 
     def process(self):
-        if not self.inputs['Data'].is_linked:
-            return
-        self.update_buttons(True)
-        if not self.outputs['Data'].is_linked:
-            return
-
         data = self.inputs['Data'].sv_get(default=[], deepcopy=False)
-        result = list_levels_adjust(data, self.levels_config, data_types=ALL_TYPES)
+
+        nesting, descriptions = describe_data_shape_by_level(data, include_numpy_nesting=False)
+        nesting += 1
+        self.nesting = nesting if data else 0
+        if len(self.levels_config) < nesting:
+            correct_collection_length(self.levels_config, nesting)
+
+        for entry, description in zip(self.levels_config, descriptions):
+            entry.description = description
+
+        if data:
+            result = list_levels_adjust(data, self.levels_config, data_types=ALL_TYPES)
+        else:
+            result = []
 
         self.outputs['Data'].sv_set(result)
 
-classes = [SvNestingLevelEntry, SvListLevelsNode]
+
+classes = [SvNestingLevelEntryMK2, SvListLevelsNodeMK2]
+
 
 def register():
     for name in classes:

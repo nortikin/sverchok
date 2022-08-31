@@ -15,7 +15,7 @@
     "Number Range.004": "Frame.002",
     "Number Range.005": "Frame.002",
     "UV Connection": "Frame.002",
-    "Vector in": "Frame.002"
+    "Vector In": "Frame.002"
   },
   "groups": {},
   "nodes": {
@@ -310,7 +310,7 @@
       },
       "width": 140.0
     },
-    "Vector in": {
+    "Vector In": {
       "bl_idname": "GenVectorsNode",
       "custom_socket_props": {},
       "height": 100.0,
@@ -406,7 +406,7 @@
       0
     ],
     [
-      "Vector in",
+      "Vector In",
       0,
       "Matrix Deform",
       3

@@ -21,7 +21,7 @@ hand, is usable in cases when you do not know formulas for your surface - for
 example, it was received by some approximation.
 
 At the first step of it's algorithm, this node evaluates the surface in points
-of a carthesian grid, and selects the closest of them. This point is then used
+of a cartesian grid, and selects the closest of them. This point is then used
 as an initial guess for the more precise algorithm.
 
 In case there are several points on the surface with equal distance to the

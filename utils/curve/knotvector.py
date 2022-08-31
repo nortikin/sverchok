@@ -44,29 +44,16 @@ def generate(degree, num_ctrlpts, clamped=True):
     if degree == 0 or num_ctrlpts == 0:
         raise ValueError("Input values should be different than zero.")
 
-    # Number of repetitions at the start and end of the array
-    num_repeat = degree
-
-    # Number of knots in the middle
-    num_segments = num_ctrlpts - (degree + 1)
-
-    if not clamped:
-        # No repetitions at the start and end
-        num_repeat = 0
-        # Should conform the rule: m = n + p + 1
-        num_segments = degree + num_ctrlpts - 1
-
-    # First knots
-    knot_vector = [0.0 for _ in range(0, num_repeat)]
-
-    # Middle knots
-    knot_vector += list(np.linspace(0.0, 1.0, num_segments + 2))
-
-    # Last knots
-    knot_vector += [1.0 for _ in range(0, num_repeat)]
-
-    # Return auto-generated knot vector
-    return np.array(knot_vector)
+    if clamped:
+        num_repeat = degree
+        num_segments = num_ctrlpts - (degree + 1)
+        zeros = np.zeros((num_repeat,))
+        growing = np.linspace(0.0, 1.0, num = num_segments+2)
+        ones = np.ones((num_repeat,))
+        return np.concatenate((zeros, growing, ones))
+    else:
+        num_knots = degree + num_ctrlpts + 1
+        return np.linspace(0.0, 1.0, num=num_knots)
 
 def find_span(knot_vector, num_ctrlpts, knot):
     span = 0  # Knot span index starts from zero

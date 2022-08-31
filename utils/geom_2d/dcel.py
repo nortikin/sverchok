@@ -455,7 +455,7 @@ class DCELMesh:
                     # it is possible to get into endless loop,
                     # when leftmost point of a loop has left attribute with tail
                     # which leis right from left side of the loop and joined to it
-                    # it will be batter to make next jump immediately
+                    # it will be better to make next jump immediately
                     # but if one of ccw half edges of tail has outer face it means it is boundary face
                     # or if it is inner component then next hole is found and should be iterated
                     # or if twin of one of ccw half edges of tail ahs outer face it means we also het into next hole

@@ -15,7 +15,7 @@ class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate a cylindric pipe surface
     """
     bl_idname = 'SvPipeSurfaceNode'
-    bl_label = 'Pipe (Surface)'
+    bl_label = 'Pipe Surface Along Curve'
     bl_icon = 'MOD_THICKNESS'
     sv_icon = 'SV_PIPE_SURFACE'
 

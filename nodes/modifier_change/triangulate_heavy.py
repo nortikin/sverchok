@@ -33,9 +33,9 @@ out the bug in the original node.
 
 
 class SvHeavyTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
-    ''' Triangulate mesh (Heavy)'''
+    ''' Triangulate Mesh (Heavy)'''
     bl_idname = 'SvHeavyTriangulateNode'
-    bl_label = 'Triangulate mesh (heavy)'
+    bl_label = 'Triangulate Mesh (Heavy)'
     bl_icon = 'MOD_TRIANGULATE'
 
     def sv_init(self, context):

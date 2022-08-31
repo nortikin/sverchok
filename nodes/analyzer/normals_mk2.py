@@ -36,7 +36,7 @@ class SvGetNormalsNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode)
     Tooltip: Calculate normals of faces and vertices
     '''
     bl_idname = 'SvGetNormalsNodeMk2'
-    bl_label = 'Calculate normals'
+    bl_label = 'Calculate Normals'
     bl_icon = 'SNAP_NORMAL'
 
     implementation_items = [
