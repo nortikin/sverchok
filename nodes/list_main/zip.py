@@ -25,7 +25,10 @@ from sverchok.utils.listutils import preobrazovatel
 
 
 class ZipNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Zip node '''
+    ''' List Zip. Minimal level is 1.
+    Level 1:   [[1, 2, 3]], [['a', 'b', 'c']]   => [[ [1, 'a'], [2, 'b'], [3, 'c'] ]]
+    Level 1: [ [[1, 2, 3]], [['a', 'b', 'c']] ] => [[[ [1, 2, 3], ['a', 'b', 'c'] ]]]
+    '''
     bl_idname = 'ZipNode'
     bl_label = 'List Zip'
     bl_icon = 'OUTLINER_OB_EMPTY'

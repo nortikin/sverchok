@@ -1,7 +1,7 @@
 List Index
 ==========
 
-.. image:: https://user-images.githubusercontent.com/28003269/107849746-c8ac4100-6e16-11eb-8434-5237f3920cf2.png
+.. image:: https://user-images.githubusercontent.com/14288520/187533476-0cce7810-4f52-4997-92d9-6ffac7c0669f.png
 
 Functionality
 -------------
@@ -40,3 +40,7 @@ Examples
 **Finding index of maximum value in array of random values**
 
 .. image:: https://user-images.githubusercontent.com/28003269/107858186-57878080-6e4c-11eb-84a4-3f23260caa9f.png
+
+**Finding several indices:**
+
+.. image:: https://user-images.githubusercontent.com/14288520/187533943-79991e77-371a-48ad-bc93-5073691c2beb.png
