@@ -19,7 +19,7 @@ Analyzers
    intersect_circle_circle
    intersect_plane_plane
    kd_tree_MK2
-   kd_tree_edges_mk2
+   kd_tree_edges
    kd_tree_path
    linked_verts
    mesh_filter

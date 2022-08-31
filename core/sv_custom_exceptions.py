@@ -75,3 +75,7 @@ class ImplicitConversionProhibited(Exception):
 
     def __str__(self):
         return self.message
+
+
+class DependencyError(Exception):
+    """Raise when some library is not installed"""
