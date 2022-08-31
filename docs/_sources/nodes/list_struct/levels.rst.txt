@@ -29,24 +29,18 @@ Each row of the table describes one nesting level of input data, and defines
 what do you want to do with data at this nesting level. The table has the
 following columns:
 
-* **Depth**. This shows the nesting depth of this level, i.e. how deeply nested
+* **Level**. This shows the nesting depth of this level, i.e. how deeply nested
   this data is, counting from the outermost list. Outermost list always has
-  depth of 0, one that is nested in it has depth of 1, and so on.
-* **Nesting**. This shows how many nesting levels are inside each item of data
-  at this level. At the innermost nesting level, each item of the list is an
-  "atomic object", for example it can be integer number, floating-point number,
-  surface or curve, and so on, but not a list or tuple. So, the innermost data
-  level has nesting level equal to 0 (zero). A list which consists of atomic
-  objects has nesting level of 1, and so on.
+  depth of 1, one that is nested in it has depth of 2, and so on.
 * **Shape**. This describes the shape of data at this level. For lists or
   tuples, it shows whether this is a list or tuple, and also the number of
   items in it, in square brackets. For atomic objects, it shows the type of the
   data ("float", or "int", or "SvSurface", and so on).
 * **Flatten**. This column contains a checkbox. If checked, the node will
   concatenate all lists contained in list at this nesting level. Obviously,
-  atomic objects (nesting of 0) do not contain any nested objects, so for the
+  atomic objects (integers, floats etc.) do not contain any nested objects, so for the
   innermost level this checkbox is not available. For lists that contain atomic
-  objects (nesting of 1), this checkbox is not available either, as there are
+  objects, this checkbox is not available either, as there are
   no nested lists too. This checkbox does transform data only at one level, it
   does not "go deeper" automatically. So, if you check this checkbox, you
   always decrease nesting level of whole data by 1. To give some examples,
@@ -72,33 +66,33 @@ Examples of Usage
 
 By default, all checkboxes are disabled, so the node does nothing:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511959-8e17fe20-ce5e-4127-a88b-bb1dc84b916e.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598033-b1489f12-a949-4a14-842c-b77b4d1a94c0.png
 
 Let's wrap each number into a separate list (this is what "Graft" option of output socket menus does as well):
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511970-6767616b-7f4f-4672-85d8-2ecf96cc4111.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598129-4cd1cb55-4122-43dd-b175-d5ed36b353d9.png
 
 By enabling "Wrap" at the next level, we put each vertex into a separate list:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129513146-33f5e2c7-345b-414e-bbf6-561b3dacabd7.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598191-b9da1499-c19b-46b4-8564-6e548ca2a2a0.png
 
 The next level - put each list of vertices (object) into a separate list:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511986-c4bf1bac-f8a6-44a9-b187-b532210f89f8.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598252-75720f20-48a9-4760-8c97-661867e9843a.png
 
 And the outermost level - put the whole data structure into additional pair of square brackets:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511989-bf1b69d4-b916-4771-a289-30d0761cf60c.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598332-9e6ef1a8-80de-4ca4-9991-659c24c6fdc9.png
 
 By enabling "Flatten" at the deepest available level, we concatenate vertices data into lists of numbers:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129511997-5fe4d9bd-ce06-40cc-811e-f41de1ec3378.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598388-c978e176-e697-4535-ba5b-c7e7612182d4.png
 
 By flattening at the outermost level, we concatenate lists of vertices into a single list of vertices:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129512002-d194d402-d80f-4a4f-a3e6-4afb281fd191.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598453-09121868-9fc0-4078-90f9-21d5dc50a40c.png
 
 If we enable both Flatten flags, we concatenate lists of vertices into lists of numbers, AND we concatenate lists of numbers into a single list of numbers:
 
-.. image:: https://user-images.githubusercontent.com/9460236/129512012-38d5314a-d799-4fb5-ad50-b6792e2907e4.png
+.. image:: https://user-images.githubusercontent.com/28003269/187598519-c849fde8-352a-43a5-b638-787e0e9d425c.png
 
