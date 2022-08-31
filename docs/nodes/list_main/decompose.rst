@@ -38,7 +38,10 @@ Example of usage
 
 **Decomposed simple list in 2 level:**
 
-.. image::  https://cloud.githubusercontent.com/assets/5783432/18610849/4b14c4fc-7d38-11e6-90ac-6dcad29b0a7d.png
+.. image::  https://user-images.githubusercontent.com/14288520/187661007-c9b8a9c2-d62c-4d32-9f3b-c9326ec411a5.png
+
+:doc:`Number->Number range </nodes/number/number_range>`, 
+:doc:`Text->Stethoscope MK2 </nodes/text/stethoscope_v28>`
 
 **Use 'Auto set' button:**
 
