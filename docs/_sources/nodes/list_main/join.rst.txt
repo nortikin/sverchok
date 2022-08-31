@@ -1,6 +1,8 @@
 List Join
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187512380-c7e79c39-f868-489a-879d-dd3a063dea53.png
+
 Functionality
 -------------
 
@@ -71,3 +73,10 @@ Outputs
 -------
 
 **data** adaptable socket
+
+Examples
+--------
+
+**Combine Bezier Spline Curves with 'List Join' node to Create a Surface**
+
+.. image:: https://user-images.githubusercontent.com/14288520/187514973-08b68caf-2024-4316-b2d5-834d49f96712.png

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="List Math" href="func.html" />
-    <link rel="prev" title="Constant List" href="constant.html" /> 
+    <link rel="next" title="List Statistics" href="statistics.html" />
+    <link rel="prev" title="List Math" href="func.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,7 +69,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_main_index.html">List Main</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="join.html">List Join</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constant.html">Constant List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zip.html">List Zip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="levels.html">List Delete Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="length.html">List Length</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sum_mk2.html">List Summa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="match.html">List Match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="func.html">List Math</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Decompose</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -78,13 +85,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="func.html">List Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="join.html">List Join</a></li>
-<li class="toctree-l3"><a class="reference internal" href="length.html">List Length</a></li>
-<li class="toctree-l3"><a class="reference internal" href="levels.html">List Delete Levels</a></li>
-<li class="toctree-l3"><a class="reference internal" href="match.html">List Match</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sum_mk2.html">List Summa</a></li>
-<li class="toctree-l3"><a class="reference internal" href="zip.html">List Zip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="statistics.html">List Statistics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="index.html">List Index</a></li>
 </ul>
@@ -137,6 +137,7 @@
              
   <section id="list-decompose">
 <h1>List Decompose<a class="headerlink" href="#list-decompose" title="Permalink to this heading">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/14288520/187529767-1291c5cd-40cd-45b6-a44c-78c02e8c33c5.png" src="https://user-images.githubusercontent.com/14288520/187529767-1291c5cd-40cd-45b6-a44c-78c02e8c33c5.png" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Inverse to list join node. Separate list at some level of data to several sockets. Sockets count the same as items count in exact level.</p>
@@ -191,8 +192,18 @@ chosen level</p></td>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Decomposed simple list in 2 level:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18610849/4b14c4fc-7d38-11e6-90ac-6dcad29b0a7d.png" src="https://cloud.githubusercontent.com/assets/5783432/18610849/4b14c4fc-7d38-11e6-90ac-6dcad29b0a7d.png" />
+<p><strong>Decomposed simple list in 2 level:</strong></p>
+<img alt="https://user-images.githubusercontent.com/14288520/187661007-c9b8a9c2-d62c-4d32-9f3b-c9326ec411a5.png" src="https://user-images.githubusercontent.com/14288520/187661007-c9b8a9c2-d62c-4d32-9f3b-c9326ec411a5.png" />
+<p><a class="reference internal" href="../number/number_range.html"><span class="doc">Number-&gt;Number range</span></a>,
+<a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Text-&gt;Stethoscope MK2</span></a></p>
+<p><strong>Use ‘Auto set’ button:</strong></p>
+<ol class="arabic simple">
+<li><p>Set Level</p></li>
+<li><p>Press Auto set</p></li>
+</ol>
+<img alt="https://user-images.githubusercontent.com/14288520/187530201-2c9fa567-486e-49d6-9c7c-8138b5dfcbe1.png" src="https://user-images.githubusercontent.com/14288520/187530201-2c9fa567-486e-49d6-9c7c-8138b5dfcbe1.png" />
+<p><strong>Decompose list of Bezier Curves:</strong></p>
+<img alt="https://user-images.githubusercontent.com/14288520/187531176-a495c440-f76b-49a4-adc5-5bd66e65a869.png" src="https://user-images.githubusercontent.com/14288520/187531176-a495c440-f76b-49a4-adc5-5bd66e65a869.png" />
 </section>
 </section>
 
@@ -200,8 +211,8 @@ chosen level</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="constant.html" class="btn btn-neutral float-left" title="Constant List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="func.html" class="btn btn-neutral float-right" title="List Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="func.html" class="btn btn-neutral float-left" title="List Math" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="statistics.html" class="btn btn-neutral float-right" title="List Statistics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

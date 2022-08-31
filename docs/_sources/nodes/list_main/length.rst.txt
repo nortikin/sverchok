@@ -1,6 +1,8 @@
 List Length
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187519011-8e55b053-801f-43f1-9d45-727a11633ca1.png
+
 Functionality
 -------------
 
@@ -14,7 +16,7 @@ Takes any kind of data.
 Parameters
 ----------
 
-**Level:** Set the level at which to observe the List.
+**Level:** Set the level at which to observe the List. Min Level is 0.
 
 Outputs
 -------
