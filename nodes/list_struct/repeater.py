@@ -24,7 +24,9 @@ from sverchok.data_structure import (updateNode, changable_sockets, fixed_iter)
 
 
 class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List repeater '''
+    ''' List repeater
+    [[0,1,2,3,]] L=1,*3 => [[ [0,1,2,3], [0,1,2,3], [0,1,2,3] ]]
+    '''
     bl_idname = 'ListRepeaterNode'
     bl_label = 'List Repeater'
     bl_icon = 'OUTLINER_OB_EMPTY'

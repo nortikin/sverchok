@@ -1,6 +1,9 @@
 List Sort
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187995646-ed8c3c53-3fad-4882-9175-6cf9bd037bf3.png
+  :target: https://user-images.githubusercontent.com/14288520/187995646-ed8c3c53-3fad-4882-9175-6cf9bd037bf3.png
+
 Functionality
 -------------
 
@@ -28,13 +31,40 @@ Examples
 --------
 
 Sorting a list of random numbers:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_00.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_00.png
+
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
 
 Sorting a List of Objects:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_01.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_01.png
+
+* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
 
 Sorting faces based on theirs center Z coordinate:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_02.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_02.png
+
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Examples of sorting at different levels:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_03.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_03.png
+
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* List->List Struct-> :doc:`List Reverse </nodes/list_struct/reverse>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

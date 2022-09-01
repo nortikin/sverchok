@@ -61,7 +61,7 @@ Example of usage
 .. image:: https://user-images.githubusercontent.com/14288520/187531176-a495c440-f76b-49a4-adc5-5bd66e65a869.png
     :target: https://user-images.githubusercontent.com/14288520/187531176-a495c440-f76b-49a4-adc5-5bd66e65a869.png
 
-* Curve-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
+* Curve->Bezier-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Curve-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
