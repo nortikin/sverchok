@@ -167,11 +167,12 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         return solver.src_curve.tangent_array(self.us)
 
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
-    def __init__(self, us1, us2, weights = None):
+    def __init__(self, us1, us2, weights = None, relative_u=False):
         if len(us1) != len(us2):
             raise Exception("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
+        self.relative_u = relative_u
         if weights is None:
             self.weights = None
         else:
@@ -181,15 +182,15 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return f"<Self-intersections at {self.us1} x {self.us2}>"
 
     @staticmethod
-    def single(u1, u2, weight=None):
+    def single(u1, u2, weight=None, relative_u=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurveSelfIntersections([u1], [u2], weights)
+        return SvNurbsCurveSelfIntersections([u1], [u2], weights, relative_u=relative_u)
 
     def copy(self):
-        return SvNurbsCurveSelfIntersections(self.us1, self.us2, self.weights)
+        return SvNurbsCurveSelfIntersections(self.us1, self.us2, self.weights, self.relative_u)
 
     def get_weights(self):
         weights = self.weights
@@ -199,6 +200,8 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return weights
 
     def add(self, other):
+        if other.relative_u != self.relative_u:
+            return None
         g = self.copy()
         g.us1 = np.concatenate((g.us1, other.us1))
         g.us2 = np.concatenate((g.us2, other.us2))
@@ -206,10 +209,16 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return g
 
     def calc_alphas(self, solver):
+        us1 = self.us1
+        us2 = self.us2
+        if self.relative_u:
+            u_min, u_max = solver.knotvector[0], solver.knotvector[-1]
+            us1 = u_min + (u_max - u_min) * us1
+            us2 = u_min + (u_max - u_min) * us2
         p = solver.degree
-        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(self.us1) for k in range(solver.n_cpts)]
+        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us1) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
-        betas = [solver.basis.fraction(k,p, solver.curve_weights)(self.us2) for k in range(solver.n_cpts)]
+        betas = [solver.basis.fraction(k,p, solver.curve_weights)(us2) for k in range(solver.n_cpts)]
         betas = np.array(betas) # (n_cpts, n_points)
         return alphas, betas
 
@@ -243,11 +252,12 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return A, B
 
 class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
-    def __init__(self, us1, us2, weights = None):
+    def __init__(self, us1, us2, weights = None, relative_u=False):
         if len(us1) != len(us2):
             raise Exception("Lengths of us1 and us2 must be equal")
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
+        self.relative_u = relative_u
         if weights is None:
             self.weights = None
         else:
@@ -257,21 +267,27 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         return f"<Equal tangents at {self.us1} x {self.us2}>"
 
     @staticmethod
-    def single(u1, u2, weight=None):
+    def single(u1, u2, weight=None, relative_u=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurveCotangents([u1], [u2], weights)
+        return SvNurbsCurveCotangents([u1], [u2], weights, relative_u=relative_u)
 
     def copy(self):
-        return SvNurbsCurveCotangents(self.us1, self.us2, self.weights)
+        return SvNurbsCurveCotangents(self.us1, self.us2, self.weights, self.relative_u)
 
     def calc_alphas(self, solver):
+        us1 = self.us1
+        us2 = self.us2
+        if self.relative_u:
+            u_min, u_max = solver.knotvector[0], solver.knotvector[-1]
+            us1 = u_min + (u_max - u_min) * us1
+            us2 = u_min + (u_max - u_min) * us2
         p = solver.degree
-        alphas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(self.us1) for k in range(solver.n_cpts)]
+        alphas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us1) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
-        betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(self.us2) for k in range(solver.n_cpts)]
+        betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us2) for k in range(solver.n_cpts)]
         betas = np.array(betas) # (n_cpts, n_points)
         return alphas, betas
 
