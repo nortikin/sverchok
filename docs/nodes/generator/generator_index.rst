@@ -1,6 +1,6 @@
-**********
-Generators
-**********
+*********
+Generator
+*********
 
 .. toctree::
    :maxdepth: 1

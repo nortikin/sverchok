@@ -1,5 +1,5 @@
-Segment generator
-=================
+Segment
+=======
 
 .. image:: https://user-images.githubusercontent.com/28003269/72606242-ac01b900-3937-11ea-9cb5-1e7b67c00bca.png
 
