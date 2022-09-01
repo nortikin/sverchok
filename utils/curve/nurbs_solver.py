@@ -28,24 +28,28 @@ class SvNurbsCurveGoal(object):
         raise Exception("Not implemented")
 
 class SvNurbsCurvePoints(SvNurbsCurveGoal):
-    def __init__(self, us, points, weights = None):
+    def __init__(self, us, points, weights = None, relative=False):
         self.us = np.asarray(us)
         self.vectors = np.asarray(points)
+        self.relative = relative
         if weights is None:
             self.weights = None
         else:
             self.weights = np.asarray(weights)
 
+    def __repr__(self):
+        return f"<Points at {self.us} = {self.vectors}, relative={self.relative}>"
+
     @staticmethod
-    def single(u, point, weight=None):
+    def single(u, point, weight=None, relative=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurvePoints([u], [point], weights)
+        return SvNurbsCurvePoints([u], [point], weights, relative=relative)
 
     def copy(self):
-        return SvNurbsCurvePoints(self.us, self.vectors, self.weights)
+        return SvNurbsCurvePoints(self.us, self.vectors, self.weights, relative=self.relative)
 
     def get_weights(self):
         weights = self.weights
@@ -59,6 +63,8 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return weights
 
     def add(self, other):
+        if other.relative != self.relative:
+            return None
         g = self.copy()
         g.us = np.concatenate((g.us, other.us))
         g.vectors = np.concatenate((g.vectors, other.vectors))
@@ -70,6 +76,9 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
         return alphas
+
+    def get_src_points(self, solver):
+        return solver.src_curve.evaluate_array(self.us)
 
     def get_n_defined_control_points(self):
         return len(self.us)
@@ -97,32 +106,51 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
                 for dim_idx in range(ndim):
                     A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx] * alpha
 
+        if solver.src_curve is None:
+            if self.relative:
+                raise Exception("Can not solve relative constraint without original curve")
+            else:
+                src_points = None
+        else:
+            if self.relative:
+                src_points = None
+            else:
+                src_points = self.get_src_points(solver)
+
         for pt_idx, point in enumerate(vectors):
+            if src_points is not None:
+                point = point - src_points[pt_idx]
             B[pt_idx*3:pt_idx*3+3,0] = weights[pt_idx] * point[np.newaxis]
 
         return A, B
 
 class SvNurbsCurveTangents(SvNurbsCurvePoints):
-    def __init__(self, us, tangents, weights = None):
+    def __init__(self, us, tangents, weights = None, relative=False):
         self.us = np.asarray(us)
         self.vectors = np.asarray(tangents)
+        self.relative = relative
         if weights is None:
             self.weights = None
         else:
             self.weights = np.asarray(weights)
 
+    def __repr__(self):
+        return f"<Tangents at {self.us} = {self.vectors}, relative={self.relative}>"
+
     @staticmethod
-    def single(u, tangent, weight=None):
+    def single(u, tangent, weight=None, relative=False):
         if weight is None:
             weights = None
         else:
             weights = [weight]
-        return SvNurbsCurveTangents([u], [tangent], weights)
+        return SvNurbsCurveTangents([u], [tangent], weights, relative=relative)
 
     def copy(self):
-        return SvNurbsCurveTangents(self.us, self.vectors, self.weights)
+        return SvNurbsCurveTangents(self.us, self.vectors, self.weights, relative=self.relative)
 
     def add(self, other):
+        if self.relative != other.relative:
+            return None
         g = self.copy()
         g.us = np.concatenate((g.us, other.us))
         g.vectors = np.concatenate((g.vectors, other.vectors))
@@ -134,6 +162,9 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
         betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us) for k in range(solver.n_cpts)]
         betas = np.array(betas) # (n_cpts, n_points)
         return betas
+    
+    def get_src_points(self, solver):
+        return solver.src_curve.tangent_array(self.us)
 
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     def __init__(self, us1, us2, weights = None):
@@ -145,6 +176,9 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
             self.weights = None
         else:
             self.weights = np.asarray(weights)
+
+    def __repr__(self):
+        return f"<Self-intersections at {self.us1} x {self.us2}>"
 
     @staticmethod
     def single(u1, u2, weight=None):
@@ -219,6 +253,9 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         else:
             self.weights = np.asarray(weights)
 
+    def __repr__(self):
+        return f"<Equal tangents at {self.us1} x {self.us2}>"
+
     @staticmethod
     def single(u1, u2, weight=None):
         if weight is None:
@@ -239,8 +276,16 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         return alphas, betas
 
 class SvNurbsCurveSolver(SvCurve):
-    def __init__(self, degree):
-        self.degree = degree
+    def __init__(self, degree=None, src_curve=None):
+        if degree is None and src_curve is None:
+            raise Exception("Either degree or src_curve must be provided")
+        elif degree is not None and src_curve is not None:
+            raise Exception("If src_curve is provided, then degree must not be provided")
+        self.src_curve = src_curve
+        if src_curve is not None and degree is None:
+            self.degree = src_curve.get_degree()
+        else:
+            self.degree = degree
         self.n_cpts = None
         self.curve_weights = None
         self.knotvector = None
@@ -248,7 +293,7 @@ class SvNurbsCurveSolver(SvCurve):
         self.A = self.B = None
 
     def copy(self):
-        solver = SvNurbsCurveSolver(self.degree)
+        solver = SvNurbsCurveSolver(degree=self.degree, src_curve=self.src_curve)
         solver.n_cpts = self.n_cpts
         solver.curve_weights = self.curve_weights
         solver.knotvector = self.knotvector
@@ -306,10 +351,19 @@ class SvNurbsCurveSolver(SvCurve):
         goals = []
         for clazz in goal_dict:
             clz_goals = goal_dict[clazz]
-            goal = clz_goals[0]
+            #print(f"Merging goals of class {clazz}: {clz_goals}")
+            merged_goal = clz_goals[0]
+            g = merged_goal
             for other_goal in clz_goals[1:]:
-                goal = goal.add(other_goal)
-            goals.append(goal)
+                g = merged_goal.add(other_goal)
+                #print(f"{merged_goal} + {other_goal} = {g}")
+                if g is not None:
+                    merged_goal = g
+                else:
+                    goals.append(merged_goal)
+                    merged_goal = other_goal
+            goals.append(merged_goal)
+        #print(f"Merge result: {goals}")
         self.goals = goals
 
     def _init(self):
@@ -334,13 +388,13 @@ class SvNurbsCurveSolver(SvCurve):
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
 
-    def solve(self, src_curve = None, implementation = SvNurbsMaths.NATIVE):
+    def solve(self, implementation = SvNurbsMaths.NATIVE):
         self._init()
 
         ndim = 3
         n = self.n_cpts
         n_equations, n_unknowns = self.A.shape
-        print(f"A: {self.A.shape}")
+        #print(f"A: {self.A.shape}")
         if n_equations == n_unknowns:
             A1 = np.linalg.inv(self.A)
             X = (A1 @ self.B).T
@@ -352,10 +406,10 @@ class SvNurbsCurveSolver(SvCurve):
             print(residues)
             
         d_cpts = X.reshape((n, ndim))
-        if src_curve is None:
+        if self.src_curve is None:
             return SvNurbsCurve.build(implementation, self.degree, self.knotvector, d_cpts, self.curve_weights)
         else:
-            cpts = src_curve.get_control_points() + d_cpts
+            cpts = self.src_curve.get_control_points() + d_cpts
             return SvNurbsCurve.build(implementation, self.degree, self.knotvector, cpts, self.curve_weights)
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
