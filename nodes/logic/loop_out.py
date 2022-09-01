@@ -155,46 +155,40 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             self.update_sockets_for_each_mode()
 
-    def bad_inner_loops(self, intersection):
-        inner_loops_out, inner_loops_in = [],[]
-        ng = self.id_data
+    @property
+    def loop_in_node(self):
+        """Should be called only from process method"""
+        return UpdateTree.get(self.id_data).node_from_input(self.inputs[0])
+
+    @staticmethod
+    def check_bad_inner_loops(intersection):
+        inner_loops_out, inner_loops_in = [], []
         for node in intersection:
-            if ng.nodes[node].bl_idname == 'SvLoopOutNode':
+            if node.bl_idname == 'SvLoopOutNode':
                 inner_loops_out.append(node)
-            if ng.nodes[node].bl_idname == 'SvLoopInNode':
+            if node.bl_idname == 'SvLoopInNode':
                 inner_loops_in.append(node)
         for node in inner_loops_out:
-            if not ng.nodes[node].ready():
-                return True
-
-            inner_loop_in_node = ng.nodes[node].inputs[0].links[0].from_socket.node
-            if not inner_loop_in_node.name in inner_loops_in:
-                print("Inner Loop not well connected")
-                return True
-            inner_loops_in.remove(inner_loop_in_node.name)
+            inner_loop_in_node = node.loop_in_node
+            if inner_loop_in_node is None:
+                raise RuntimeError(f'"{node.name}" does not connect to a Loop in node')
+            if inner_loop_in_node not in inner_loops_in:
+                raise RuntimeError(f'"{inner_loop_in_node.name}" should inside the loop')
+            inner_loops_in.remove(inner_loop_in_node)
 
         if inner_loops_in:
-            return True
-
-        return False
-
-    def ready(self):
-        if not self.inputs[0].is_linked:
-            print("Inner Loop not connected")
-            return False
-        if not any([socket.is_linked for socket in self.outputs]):
-            return False
-        loop_in_node = self.inputs[0].links[0].from_socket.node
-        if not loop_in_node.bl_idname == 'SvLoopInNode':
-            print("Inner Loop not well connected")
-            return False
-        return True
+            loop_in_names = ', '.join(f'"{n.name}"' for n in inner_loops_in)
+            is_are = "is" if len(inner_loops_in) == 1 else "are"
+            raise RuntimeError(f'{loop_in_names} {is_are} not connected to Loop'
+                               f' out node inside the main loop')
 
     def process(self):
-        if not self.ready():
-            return
+        loop_in_node = self.loop_in_node
 
-        loop_in_node = self.inputs[0].links[0].from_socket.node
+        if loop_in_node is None:
+            return
+        if loop_in_node.bl_idname != 'SvLoopInNode':
+            raise RuntimeError("Connection to Loop In Node is expected")
 
         self.inputs[1].label = socket_labels[loop_in_node.mode]
         if loop_in_node.mode == 'Range':
@@ -206,6 +200,12 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
         list_match = list_match_func[loop_in_node.list_match]
         params = list_match([inp.sv_get(deepcopy=False, default=[]) for inp in loop_in_node.inputs[1:-1]])
 
+        tree = UpdateTree.get(self.id_data)
+        from_nodes = tree.nodes_from([loop_in_node])
+        to_nodes = tree.nodes_to([self])
+        loop_nodes = from_nodes.intersection(to_nodes)
+        self.check_bad_inner_loops((n for n in loop_nodes))
+
         if len(params[0]) == 1:
             if not self.inputs['Break'].sv_get(deepcopy=False, default=[[False]])[0][0]:
                 for inp, outp in zip(self.inputs[2:], self.outputs):
@@ -214,16 +214,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                 for outp in self.outputs:
                     outp.sv_set([])
         else:
-            tree = UpdateTree.get(self.id_data)
-            from_nodes = tree.nodes_from([loop_in_node])
-            to_nodes = tree.nodes_to([self])
-            loop_nodes = from_nodes.intersection(to_nodes)
             sort_loop_nodes = tree.sort_nodes(loop_nodes)
             break_socket = tree.previous_sockets(self)[1]
-
-            if self.bad_inner_loops((n.name for n in loop_nodes)):
-                raise Exception("Loops inside not well connected")
-
             do_print = loop_in_node.print_to_console
             idx = 0
             out_data = [[] for inp in self.inputs[2:]]
@@ -272,6 +264,13 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
 
     def range_mode(self, loop_in_node):
         iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
+
+        tree = UpdateTree.get(self.id_data)
+        from_nodes = tree.nodes_from([loop_in_node])
+        to_nodes = tree.nodes_to([self])
+        loop_nodes = from_nodes.intersection(to_nodes)
+        self.check_bad_inner_loops((n for n in loop_nodes))
+
         if iterations == 0:
             for inp, outp in zip(loop_in_node.inputs[1:-1], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
@@ -281,16 +280,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
             for inp, outp in zip(self.inputs[2:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
         else:
-            tree = UpdateTree.get(self.id_data)
-            from_nodes = tree.nodes_from([loop_in_node])
-            to_nodes = tree.nodes_to([self])
-            loop_nodes = from_nodes.intersection(to_nodes)
             sort_loop_nodes = tree.sort_nodes(loop_nodes)
             break_socket = tree.previous_sockets(self)[1]
-
-            if self.bad_inner_loops((n.name for n in loop_nodes)):  # todo pass real nodes
-                raise Exception("Loops inside not well connected")
-
             do_print = loop_in_node.print_to_console
 
             # the nodes should be cleared out from last loop data

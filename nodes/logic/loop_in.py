@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty
-
+from sverchok.core.update_system import UpdateTree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_4, numpy_list_match_modes
 from sverchok.utils.sv_node_utils import frame_adjust
@@ -174,14 +174,17 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
                     self.outputs.move(len(self.outputs)-1, idx+3)
         for inp, outp in zip(self.inputs[1:], self.outputs[3:]):
             outp.label = inp.label
-        if self.outputs:
-            if self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
-                self.linked_to_loop_out = True
-            else:
-                self.linked_to_loop_out = False
+
+    @property
+    def loop_out_nodes(self):
+        """Should be called only from process method"""
+        # the support of several Loop Out nodes is not intentional.
+        # It's possible to overcome the limitation of connection to
+        # Loop Out socket by copying Loop Out node with links (Ctrl+Shift+D)
+        return UpdateTree.get(self.id_data).nodes_from_socket(self.outputs[0])
 
     def process(self):
-
+        self.linked_to_loop_out = bool(self.loop_out_nodes)
 
         self.outputs[0].sv_set([["Link to Loop Out node"]])
         self.outputs[1].sv_set([[0]])
