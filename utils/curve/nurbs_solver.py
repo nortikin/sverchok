@@ -417,3 +417,12 @@ class SvNurbsCurveSolver(SvCurve):
         solver.guess_curve_params()
         return solver.solve(implementation = implementation)
 
+def adjust_curve_points(curve, us_bar, vectors):
+    n_target_points = len(us_bar)
+    if len(vectors) != n_target_points:
+        raise Exception("Number of U parameters must be equal to number of vectors")
+
+    solver = SvNurbsCurveSolver(curve=curve)
+    solver.add_goal(SvNurbsCurvePoints(us_bar, vectors))
+    return solver.to_nurbs()
+

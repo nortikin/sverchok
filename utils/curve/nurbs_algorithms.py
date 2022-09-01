@@ -918,38 +918,6 @@ def move_curve_point_by_inserting_knot(curve, u_bar, vector):
         cpts[k+1] += vector
     return curve2.copy(control_points = cpts)
 
-def adjust_curve_points(curve, us_bar, vectors):
-    n_target_points = len(us_bar)
-    if len(vectors) != n_target_points:
-        raise Exception("Number of U parameters must be equal to number of vectors")
-
-    ndim = 3
-    cpts = curve.get_control_points().copy()
-    curve_weights = curve.get_weights()
-    n = len(cpts)
-    if n_target_points >= n:
-        raise Exception("Number of adjusted points must be less than the number of curve's control points")
-    p = curve.get_degree()
-    kv = curve.get_knotvector()
-    basis = SvNurbsBasisFunctions(kv)
-    alphas = [basis.fraction(k,p, curve_weights)(us_bar) for k in range(n)]
-    alphas = np.array(alphas) # (n, n_target_points)
-    A = np.zeros((n_target_points*ndim, n*ndim))
-    for pt_idx in range(n_target_points):
-        u_bar = us_bar[pt_idx]
-        for i in range(n):
-            alpha = alphas[i][pt_idx]
-            for k in range(ndim):
-                A[ndim*pt_idx + k, ndim*i + k] = alpha
-    A1 = np.linalg.pinv(A)
-    B = np.zeros((ndim*n_target_points,1))
-    for i, vector in enumerate(vectors):
-        B[i*3:i*3+3,0] = vector[np.newaxis]
-    X = (A1 @ B).T
-    d_cpts = X.reshape((n, ndim))
-    cpts = cpts + d_cpts
-    return curve.copy(control_points = cpts)
-
 def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
         scale = 1.0,
         direction = None,
