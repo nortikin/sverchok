@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="List Slice" href="slice.html" />
-    <link rel="prev" title="List Shift" href="shift_mk2.html" /> 
+    <link rel="next" title="List Sort" href="sort.html" />
+    <link rel="prev" title="List Reverse" href="reverse.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -70,12 +70,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_struct_index.html">List Structure</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shift_mk2.html">List Shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slice.html">List Slice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split.html">List Split</a></li>
+<li class="toctree-l3"><a class="reference internal" href="start_end.html">List First &amp; Last</a></li>
 <li class="toctree-l3"><a class="reference internal" href="item.html">List Item</a></li>
 <li class="toctree-l3"><a class="reference internal" href="item_insert.html">List Item Insert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reverse.html">List Reverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shift_mk2.html">List Shift</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Shuffle</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -84,12 +86,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="slice.html">List Slice</a></li>
-<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sort.html">List Sort</a></li>
-<li class="toctree-l3"><a class="reference internal" href="split.html">List Split</a></li>
-<li class="toctree-l3"><a class="reference internal" href="start_end.html">List First &amp; Last</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="levels.html">List Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
@@ -139,6 +139,7 @@
              
   <section id="list-shuffle">
 <h1>List Shuffle<a class="headerlink" href="#list-shuffle" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187994149-88dec5a7-e39c-4752-b736-80d0c01f9327.png"><img alt="https://user-images.githubusercontent.com/14288520/187994149-88dec5a7-e39c-4752-b736-80d0c01f9327.png" src="https://user-images.githubusercontent.com/14288520/187994149-88dec5a7-e39c-4752-b736-80d0c01f9327.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Shuffle (randomize) the order of input lists.</p>
@@ -181,6 +182,11 @@ Other, the list with the selected items deleted.</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>The shuffle operation is based on the python random.shuffle. <a class="reference external" href="https://docs.python.org/3.4/library/random.html?highlight=shuffle#random.shuffle">https://docs.python.org/3.4/library/random.html?highlight=shuffle#random.shuffle</a></p>
 <p>Trying various inputs, adjusting the parameters, and piping the output to a <em>Debug Print</em> (or stethoscope) node will be the fastest way to acquaint yourself with the inner workings of the <em>List Shuffle</em> Node.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187994179-bbc77d38-d352-48d6-add8-7346645fba0d.png"><img alt="https://user-images.githubusercontent.com/14288520/187994179-bbc77d38-d352-48d6-add8-7346645fba0d.png" src="https://user-images.githubusercontent.com/14288520/187994179-bbc77d38-d352-48d6-add8-7346645fba0d.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -188,8 +194,8 @@ Other, the list with the selected items deleted.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="shift_mk2.html" class="btn btn-neutral float-left" title="List Shift" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="slice.html" class="btn btn-neutral float-right" title="List Slice" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="reverse.html" class="btn btn-neutral float-left" title="List Reverse" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sort.html" class="btn btn-neutral float-right" title="List Sort" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

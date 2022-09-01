@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="List Masks" href="../list_masks/list_masks_index.html" />
-    <link rel="prev" title="List First &amp; Last" href="start_end.html" /> 
+    <link rel="next" title="List Slice Lite" href="slice_lite.html" />
+    <link rel="prev" title="List Flip" href="flip.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -70,18 +70,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_struct_index.html">List Structure</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="item.html">List Item</a></li>
-<li class="toctree-l3"><a class="reference internal" href="item_insert.html">List Item Insert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reverse.html">List Reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shift_mk2.html">List Shift</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shuffle.html">List Shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="slice.html">List Slice</a></li>
-<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sort.html">List Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split.html">List Split</a></li>
 <li class="toctree-l3"><a class="reference internal" href="start_end.html">List First &amp; Last</a></li>
+<li class="toctree-l3"><a class="reference internal" href="item.html">List Item</a></li>
+<li class="toctree-l3"><a class="reference internal" href="item_insert.html">List Item Insert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reverse.html">List Reverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shuffle.html">List Shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sort.html">List Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Levels</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -89,6 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
@@ -138,6 +138,7 @@
              
   <section id="list-levels">
 <h1>List Levels<a class="headerlink" href="#list-levels" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png"><img alt="https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png" src="https://user-images.githubusercontent.com/14288520/188002611-0f681313-5bf5-4f83-a5c3-4221af3d83ae.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node allows the user to manipulate with nesting structure of data by setting checkboxes. It allows to:</p>
@@ -202,21 +203,68 @@ structure.</p>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>By default, all checkboxes are disabled, so the node does nothing:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598033-b1489f12-a949-4a14-842c-b77b4d1a94c0.png" src="https://user-images.githubusercontent.com/28003269/187598033-b1489f12-a949-4a14-842c-b77b4d1a94c0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002648-3e992748-06d7-42a9-aeed-e917b183d1c5.png"><img alt="https://user-images.githubusercontent.com/14288520/188002648-3e992748-06d7-42a9-aeed-e917b183d1c5.png" src="https://user-images.githubusercontent.com/14288520/188002648-3e992748-06d7-42a9-aeed-e917b183d1c5.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Let’s wrap each number into a separate list (this is what “Graft” option of output socket menus does as well):</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598129-4cd1cb55-4122-43dd-b175-d5ed36b353d9.png" src="https://user-images.githubusercontent.com/28003269/187598129-4cd1cb55-4122-43dd-b175-d5ed36b353d9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002682-f598ec87-90f5-46e3-a4c0-2ba0f4de3f23.png"><img alt="https://user-images.githubusercontent.com/14288520/188002682-f598ec87-90f5-46e3-a4c0-2ba0f4de3f23.png" src="https://user-images.githubusercontent.com/14288520/188002682-f598ec87-90f5-46e3-a4c0-2ba0f4de3f23.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>By enabling “Wrap” at the next level, we put each vertex into a separate list:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598191-b9da1499-c19b-46b4-8564-6e548ca2a2a0.png" src="https://user-images.githubusercontent.com/28003269/187598191-b9da1499-c19b-46b4-8564-6e548ca2a2a0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002711-0a43caf7-cf5a-4e89-9422-9eadd2de44c1.png"><img alt="https://user-images.githubusercontent.com/14288520/188002711-0a43caf7-cf5a-4e89-9422-9eadd2de44c1.png" src="https://user-images.githubusercontent.com/14288520/188002711-0a43caf7-cf5a-4e89-9422-9eadd2de44c1.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>The next level - put each list of vertices (object) into a separate list:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598252-75720f20-48a9-4760-8c97-661867e9843a.png" src="https://user-images.githubusercontent.com/28003269/187598252-75720f20-48a9-4760-8c97-661867e9843a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002729-8e60dcd0-ac12-4d83-97cc-bd9534ffdfb5.png"><img alt="https://user-images.githubusercontent.com/14288520/188002729-8e60dcd0-ac12-4d83-97cc-bd9534ffdfb5.png" src="https://user-images.githubusercontent.com/14288520/188002729-8e60dcd0-ac12-4d83-97cc-bd9534ffdfb5.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>And the outermost level - put the whole data structure into additional pair of square brackets:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598332-9e6ef1a8-80de-4ca4-9991-659c24c6fdc9.png" src="https://user-images.githubusercontent.com/28003269/187598332-9e6ef1a8-80de-4ca4-9991-659c24c6fdc9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002754-ff585102-c296-43ba-9041-6b9eb2285be1.png"><img alt="https://user-images.githubusercontent.com/14288520/188002754-ff585102-c296-43ba-9041-6b9eb2285be1.png" src="https://user-images.githubusercontent.com/14288520/188002754-ff585102-c296-43ba-9041-6b9eb2285be1.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>By enabling “Flatten” at the deepest available level, we concatenate vertices data into lists of numbers:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598388-c978e176-e697-4535-ba5b-c7e7612182d4.png" src="https://user-images.githubusercontent.com/28003269/187598388-c978e176-e697-4535-ba5b-c7e7612182d4.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188003925-ccf47ee0-07f1-4ee5-b1ad-4666f94fea9f.png"><img alt="https://user-images.githubusercontent.com/14288520/188003925-ccf47ee0-07f1-4ee5-b1ad-4666f94fea9f.png" src="https://user-images.githubusercontent.com/14288520/188003925-ccf47ee0-07f1-4ee5-b1ad-4666f94fea9f.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>By flattening at the outermost level, we concatenate lists of vertices into a single list of vertices:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598453-09121868-9fc0-4078-90f9-21d5dc50a40c.png" src="https://user-images.githubusercontent.com/28003269/187598453-09121868-9fc0-4078-90f9-21d5dc50a40c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188003950-3bc52742-46e9-4dca-b508-44ba143604eb.png"><img alt="https://user-images.githubusercontent.com/14288520/188003950-3bc52742-46e9-4dca-b508-44ba143604eb.png" src="https://user-images.githubusercontent.com/14288520/188003950-3bc52742-46e9-4dca-b508-44ba143604eb.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>If we enable both Flatten flags, we concatenate lists of vertices into lists of numbers, AND we concatenate lists of numbers into a single list of numbers:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/187598519-c849fde8-352a-43a5-b638-787e0e9d425c.png" src="https://user-images.githubusercontent.com/28003269/187598519-c849fde8-352a-43a5-b638-787e0e9d425c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188003979-cbfcdc08-8477-4126-a1a2-f38c436fd3f1.png"><img alt="https://user-images.githubusercontent.com/14288520/188003979-cbfcdc08-8477-4126-a1a2-f38c436fd3f1.png" src="https://user-images.githubusercontent.com/14288520/188003979-cbfcdc08-8477-4126-a1a2-f38c436fd3f1.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188002634-8ff0edf1-da21-4dd9-af2f-503a17ca4eba.png"><img alt="https://user-images.githubusercontent.com/14288520/188002634-8ff0edf1-da21-4dd9-af2f-503a17ca4eba.png" src="https://user-images.githubusercontent.com/14288520/188002634-8ff0edf1-da21-4dd9-af2f-503a17ca4eba.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/zip.html"><span class="doc">List Zip</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -224,8 +272,8 @@ structure.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="start_end.html" class="btn btn-neutral float-left" title="List First &amp; Last" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../list_masks/list_masks_index.html" class="btn btn-neutral float-right" title="List Masks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="flip.html" class="btn btn-neutral float-left" title="List Flip" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="slice_lite.html" class="btn btn-neutral float-right" title="List Slice Lite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="List Slice Lite" href="slice_lite.html" />
-    <link rel="prev" title="List Shuffle" href="shuffle.html" /> 
+    <link rel="next" title="List Split" href="split.html" />
+    <link rel="prev" title="List Repeater" href="repeater.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -70,13 +70,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_struct_index.html">List Structure</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="item.html">List Item</a></li>
-<li class="toctree-l3"><a class="reference internal" href="item_insert.html">List Item Insert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reverse.html">List Reverse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shift_mk2.html">List Shift</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shuffle.html">List Shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repeater.html">List Repeater</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Slice</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -86,11 +81,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sort.html">List Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split.html">List Split</a></li>
 <li class="toctree-l3"><a class="reference internal" href="start_end.html">List First &amp; Last</a></li>
+<li class="toctree-l3"><a class="reference internal" href="item.html">List Item</a></li>
+<li class="toctree-l3"><a class="reference internal" href="item_insert.html">List Item Insert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reverse.html">List Reverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shuffle.html">List Shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sort.html">List Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">List Flip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="levels.html">List Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slice_lite.html">List Slice Lite</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
@@ -140,6 +140,7 @@
              
   <section id="list-slice">
 <h1>List Slice<a class="headerlink" href="#list-slice" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187927363-e884daad-0fb7-46ab-b4bd-9c37db8014d4.png"><img alt="https://user-images.githubusercontent.com/14288520/187927363-e884daad-0fb7-46ab-b4bd-9c37db8014d4.png" src="https://user-images.githubusercontent.com/14288520/187927363-e884daad-0fb7-46ab-b4bd-9c37db8014d4.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Select a slice from a list. The node is <em>data type agnostic</em>, meaning it makes no assumptions about the data you feed it. It should accepts any type of data native to Sverchok..
@@ -196,7 +197,8 @@ Other, the list with the slices removed.</p>
 [0, 1]
 &gt;&gt;&gt; l[-1:2]
 []</p>
-<img alt="slice multiple objects from one list (may be many objects also)" src="https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187927397-eaaec673-f32d-489a-8749-7eecfba79070.png"><img alt="https://user-images.githubusercontent.com/14288520/187927397-eaaec673-f32d-489a-8749-7eecfba79070.png" src="https://user-images.githubusercontent.com/14288520/187927397-eaaec673-f32d-489a-8749-7eecfba79070.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png"><img alt="slice multiple objects from one list (may be many objects also)" src="https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png" /></a>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
@@ -207,8 +209,8 @@ Other, the list with the slices removed.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="shuffle.html" class="btn btn-neutral float-left" title="List Shuffle" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="slice_lite.html" class="btn btn-neutral float-right" title="List Slice Lite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="repeater.html" class="btn btn-neutral float-left" title="List Repeater" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="split.html" class="btn btn-neutral float-right" title="List Split" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
