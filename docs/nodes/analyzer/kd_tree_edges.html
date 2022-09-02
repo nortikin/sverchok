@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compass 3D &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>KDT Closest Edges &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Circle Intersection" href="intersect_circle_circle.html" />
-    <link rel="prev" title="Angles at the Edges" href="edge_angles.html" /> 
+    <link rel="next" title="KDT Closest Path" href="kd_tree_path.html" />
+    <link rel="prev" title="KDT Closest Verts" href="kd_tree_MK2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,18 +69,20 @@
 <li class="toctree-l3"><a class="reference internal" href="distance_line_line.html">Distance Line Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deformation.html">Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edge_angles.html">Angles at the Edges</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Compass 3D</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_line_sphere.html">Compass 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_circle_circle.html">Circle Intersection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_plane_plane.html">Plane Intersection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="kd_tree_MK2.html">KDT Closest Verts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="kd_tree_edges.html">KDT Closest Edges</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">KDT Closest Edges</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fast-mode">Fast Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#max-queries-mode">Max Queries Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#no-skip-mode">No Skip Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="kd_tree_path.html">KDT Closest Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="linked_verts.html">Linked Verts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_filter.html">Mesh Filter</a></li>
@@ -153,9 +155,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="analyzer_index.html">Analyzers</a> &raquo;</li>
-      <li>Compass 3D</li>
+      <li>KDT Closest Edges</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/analyzer/intersect_line_sphere.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/analyzer/kd_tree_edges.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -163,81 +165,75 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="compass-3d">
-<h1>Compass 3D<a class="headerlink" href="#compass-3d" title="Permalink to this heading">¶</a></h1>
+  <section id="kdt-closest-edges">
+<h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Permalink to this heading">¶</a></h1>
+<p><em>Alias: KDTree Edges</em></p>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>The node is designed to get the intersection between a sphere and one endless straight line.</p>
-<p>This problem has three possible solutions:</p>
-<blockquote>
-<div><p>No intersection: the distance of the center of the sphere to the line is bigger than its radius</p>
-<p>One intersection: the line is tangent to the sphere.</p>
-<p>Two intersections: the line passes through the sphere intersecting it surface in two points.</p>
-</div></blockquote>
-<p>The line by two vector creating one segment.</p>
+<p>On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree.
+It will return the Edges it can make between those vertices pairs that satisfy the constraints
+imposed by the 4 parameters.</p>
 </section>
-<section id="inputs-parameters">
-<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Verts, a pool of vertices to iterate through</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 20%" />
-<col style="width: 13%" />
-<col style="width: 67%" />
+<col style="width: 15%" />
+<col style="width: 9%" />
+<col style="width: 76%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Param</p></th>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Type</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Vertices</strong></p></td>
-<td><p>Vector</p></td>
-<td><p>Points to calculate</p></td>
+<tr class="row-even"><td><p>mindist</p></td>
+<td><p>float</p></td>
+<td><p>Minimum Distance to accept a pair</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Edges</strong></p></td>
-<td><p>Int List</p></td>
-<td><p>Edges data to define the segments (to define the line)</p></td>
+<tr class="row-odd"><td><p>maxdist</p></td>
+<td><p>float</p></td>
+<td><p>Maximum Distance to accept a pair</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Center</strong></p></td>
-<td><p>Vectors</p></td>
-<td><p>It will get the first and last vertices’s to define the line segment</p></td>
+<tr class="row-even"><td><p>maxNum</p></td>
+<td><p>int</p></td>
+<td><p>Max number of edges to associate with the incoming vertex</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Radius</strong></p></td>
-<td><p>Float</p></td>
-<td><p>Radius of the intersecting sphere</p></td>
+<tr class="row-odd"><td><p>Skip</p></td>
+<td><p>int</p></td>
+<td><p>Skip first n found matches if possible</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
-<p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Output NumPy</strong>: to get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.</p>
-<p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups (one line per group)</p>
-<p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching of tolerances and vertices</p>
+<section id="fast-mode">
+<h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Permalink to this heading">¶</a></h2>
+<p>This mode requires Scipy dependency. It can be from 3 to 10 times faster but lacks of ‘maxNum’ and ‘Skip’ properties</p>
+<img alt="https://user-images.githubusercontent.com/10011941/101905604-017e2e80-3bb8-11eb-894d-67a3c6c51e93.png" src="https://user-images.githubusercontent.com/10011941/101905604-017e2e80-3bb8-11eb-894d-67a3c6c51e93.png" />
+</section>
+<section id="max-queries-mode">
+<h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Permalink to this heading">¶</a></h2>
+<p>This mode requires Scipy dependency. In this mode the maxNum property is used to determine how many points will be verified so it will produce less connections that the complete mode</p>
+<img alt="https://user-images.githubusercontent.com/10011941/101905663-15c22b80-3bb8-11eb-8625-4e48085a2dfe.png" src="https://user-images.githubusercontent.com/10011941/101905663-15c22b80-3bb8-11eb-8625-4e48085a2dfe.png" />
+</section>
+<section id="no-skip-mode">
+<h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Permalink to this heading">¶</a></h2>
+<p>This mode requires Scipy dependency. This is similar to the existing mode but the way the maximum connections is coded produces different results sorting the filter by minimum vertex index</p>
+<img alt="https://user-images.githubusercontent.com/10011941/101906167-d3e5b500-3bb8-11eb-9b71-e11b3fb5c316.png" src="https://user-images.githubusercontent.com/10011941/101906167-d3e5b500-3bb8-11eb-9b71-e11b3fb5c316.png" />
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Intersect Line</strong>: Returns True if the there is valid intersection.</p>
-<p><strong>Intersection A</strong>: Returns the intersection nearer to the end point of the segment. In case of no intersection returns the closest point on the line.</p>
-<p><strong>Intersection B</strong>: Returns the intersection nearer to the start point of the segment. In case of no intersection returns the closest point on the line.</p>
-<p><strong>Int. A in segment</strong>: Returns True if A intersection is over the segment.</p>
-<p><strong>Int. B in segment</strong>: Returns True if B intersection is over the segment.</p>
-<p><strong>First in segment</strong>: Returns the first valid value between Int. A, Int. B and Closest point.</p>
-<p><strong>Int. with segment</strong>: Returns True if the closest point is between the input vertices.</p>
-<p><strong>All Segment int.</strong>: Returns a flat list of all the intersections.</p>
-</section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Basic explanation of Compass 3d intersections.</p>
-<img alt="compass_3d_sverchok_blender_example.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_example.png" />
-<p>In this example the node is used to join one arc with one line with segments of 6 units.</p>
-<img alt="compass_3d_sverchok_blender_first_intersection_arc_line_constant_dist.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_first_intersection_arc_line_constant_dist.png" />
-<p>In this example the node is used find all intersections of one sphere over the edges of a cylinder.</p>
-<img alt="all_intersections_sphere_cylinder.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_all_intersections_sphere_cylinder.png" />
-<p>In this example the node is used to simulate a mechanism. The yellow line keeps constant length while connects a moving point with a horizontal rail</p>
-<img alt="compass_3d_sverchok_blender_mechanism.gif" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_mechanism.gif" />
+<ul class="simple">
+<li><p>Edges, which can connect the pool of incoming Verts to each other.</p></li>
+</ul>
 </section>
 </section>
 
@@ -245,8 +241,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="edge_angles.html" class="btn btn-neutral float-left" title="Angles at the Edges" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="intersect_circle_circle.html" class="btn btn-neutral float-right" title="Circle Intersection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="kd_tree_MK2.html" class="btn btn-neutral float-left" title="KDT Closest Verts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kd_tree_path.html" class="btn btn-neutral float-right" title="KDT Closest Path" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
