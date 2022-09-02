@@ -96,9 +96,19 @@ def add_temporal_stethoscope(nodes, links, existing_node):
             connected_to = i +1
             break
 
+    def to_skip(sock):
+        if sock.hide:
+            return True
+        elif not sock.enabled:
+            return True
+        elif sock.bl_idname == 'SvLoopControlSocket':
+            return True
+        else:
+            return False
+
     for i in range(len(outputs)):
         socket = outputs[(i + connected_to)%len(outputs)]
-        if socket.hide:
+        if to_skip(socket):
             continue
         links.new(socket, inputs[0])
         break
