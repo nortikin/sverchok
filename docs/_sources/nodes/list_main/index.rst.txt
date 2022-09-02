@@ -16,18 +16,18 @@ List -> List main -> List Index
 Inputs
 ------
 
-- **data** - where to search items
-- **Item** - what to search in data
+* **data** - where to search items
+* **Item** - what to search in data
 
 In use range mode:
 
-- **Start index** - index from which to start searching (inclusive)
-- **End index** - index where to finish searching (exclusive)
+* **Start index** - index from which to start searching (inclusive)
+* **End index** - index where to finish searching (exclusive)
 
 Outputs
 -------
 
-- **Index** - An index of an item in data. If there is no such item -1 value will be returned.
+* **Index** - An index of an item in data. If there is no such item -1 value will be returned.
 
 Options
 -------

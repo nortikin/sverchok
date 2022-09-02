@@ -17,19 +17,19 @@ Shifting data in selected level on selected integer value as:
 Inputs
 ------
 
-**data** - list of data any type to shift
-**Shift** - value that defines shift
+* **data** - list of data any type to shift
+* **Shift** - value that defines shift
 
 Properties
 ----------
 
-**level** - manipulation level, 0 - is objects shifting
-**enclose** - close data when shifting, that way ending cut numbers turns to beginning
+* **level** - manipulation level, 0 - is objects shifting
+* **enclose** - close data when shifting, that way ending cut numbers turns to beginning
 
 Outputs
 -------
 
-**data** - shifter data, adaptive socket
+* **data** - shifter data, adaptive socket
 
 Examples
 --------

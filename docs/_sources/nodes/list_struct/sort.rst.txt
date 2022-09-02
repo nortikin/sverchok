@@ -14,21 +14,39 @@ The node will sort the data based on the keys list. I not keys list is supplied 
 Inputs
 ------
 
-**Data**: Any kind of data.
-**Keys**: List with the  desired order of the data
+* **Data**: Any kind of data.
+* **Keys**: List with the  desired order of the data (new positions)
 
 Parameters
 ----------
 
-**Level:** Set the level at which to observe the List. Level 1 is top level (totally zoomed out), higher levels get more granular (zooming in) until no higher level is found (atomic). The node will just sort the data at the level selected.
+* **Level:** Set the level at which to observe the List. Level 1 is top level (totally zoomed out), higher levels get more granular (zooming in) until no higher level is found (atomic). The node will just sort the data at the level selected.
 
 Outputs
 -------
 
-**Data**: Sorted data. Depends on incoming data and can be nested.
+* **Data**: Sorted data. Depends on incoming data and can be nested.
 
 Examples
 --------
+
+.. image:: https://user-images.githubusercontent.com/14288520/188199920-cae91075-e413-4804-b4f7-4759986d9242.png
+  :target: https://user-images.githubusercontent.com/14288520/188199920-cae91075-e413-4804-b4f7-4759986d9242.png
+
+* List->List Struct-> :doc:`List Shuffle </nodes/list_struct/shuffle>`
+* Text-> :doc:`Simple Text </nodes/text/simple_text>`
+* Text-> :doc:`String Tools </nodes/text/string_tools>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/188199934-419325ec-3eb8-453f-8040-66b430a9c445.png
+  :target: https://user-images.githubusercontent.com/14288520/188199934-419325ec-3eb8-453f-8040-66b430a9c445.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Simple Text </nodes/text/simple_text>`
+* Text-> :doc:`String Tools </nodes/text/string_tools>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+
 
 Sorting a list of random numbers:
 

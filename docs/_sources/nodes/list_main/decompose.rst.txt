@@ -31,7 +31,7 @@ Parameters
 Outputs
 -------
 
-- **data** - multisocket
+* **data** - multisocket
 
 
 Example of usage

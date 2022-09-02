@@ -142,27 +142,33 @@
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187999003-a4180572-59d1-47ed-9d02-839bbb58115a.png"><img alt="https://user-images.githubusercontent.com/14288520/187999003-a4180572-59d1-47ed-9d02-839bbb58115a.png" src="https://user-images.githubusercontent.com/14288520/187999003-a4180572-59d1-47ed-9d02-839bbb58115a.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>Flips the data on selected level.
-[[[1,2,3],[4,5,6],[7,8,9]],[[3,3,3],[1,1,1],[8,8,8]]] (two objects, three vertices)
-with level 2 turns to:
-[[[1, 2, 3], [3, 3, 3]], [[4, 5, 6], [1, 1, 1]], [[7, 8, 9], [8, 8, 8]]] (three objects, two vertices)
-with level 3 turns to:
-[[1, 4, 7], [2, 5, 8], [3, 6, 9], [3, 1, 8], [3, 1, 8], [3, 1, 8]] (six objects with three digits)</p>
+<p>Flips the data on selected level.</p>
+<p>[[[1,2,3],[4,5,6],[7,8,9]],[[3,3,3],[1,1,1],[8,8,8]]] (two objects, three vertices)</p>
+<p>with level 2 turns to:</p>
+<p>[[[1, 2, 3], [3, 3, 3]], [[4, 5, 6], [1, 1, 1]], [[7, 8, 9], [8, 8, 8]]] (three objects, two vertices)</p>
+<p>with level 3 turns to:</p>
+<p>[[1, 4, 7], [2, 5, 8], [3, 6, 9], [3, 1, 8], [3, 1, 8], [3, 1, 8]] (six objects with three digits)</p>
 <p>last example is not straight result, more as deviation.
 Ideally Flip has to work with preserving data levels and with respect to other levels structure.
 But for now working level is 2</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>data</strong> - data to flip</p>
+<ul class="simple">
+<li><p><strong>data</strong> - data to flip</p></li>
+</ul>
 </section>
 <section id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this heading">¶</a></h2>
-<p><strong>level</strong> - level to deal with</p>
+<ul class="simple">
+<li><p><strong>level</strong> - level to deal with</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>data</strong> - flipped data</p>
+<ul class="simple">
+<li><p><strong>data</strong> - flipped data</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
