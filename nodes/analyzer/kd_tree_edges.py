@@ -18,23 +18,20 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, EnumProperty
-import mathutils
-import numpy as np
+from sverchok.core.sv_custom_exceptions import DependencyError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_4, list_match_func, list_match_modes
 from sverchok.utils.sv_KDT_utils import kdt_closest_edges, scipy_kdt_closest_edges_fast, scipy_kdt_closest_max_queried, scipy_kdt_closest_edges_no_skip
 from sverchok.dependencies import scipy
 
-def fast_mode():
-    return scipy is not None
 
-class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    '''
+class SvKDTreeEdgesNodeMK3(SverchCustomTreeNode, bpy.types.Node):
+    """
     Triggers: Create Edges by distance
     Tooltip: Join verts pairs by defining distance range and number of connections
-    '''
-    bl_idname = 'SvKDTreeEdgesNodeMK2'
-    bl_label = 'KDT Closest Edges MK2'
+    """
+    bl_idname = 'SvKDTreeEdgesNodeMK3'
+    bl_label = 'KDT Closest Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_KDT_EDGES'
 
@@ -59,10 +56,12 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['skip'].hide_safe = self.mode in ['Fast', 'No_Skip']
 
         updateNode(self, context)
+
     mode: EnumProperty(
         name='Mode', description='Implementation used',
         items=enum_item_4(['Fast', 'Max Queried', 'No Skip', 'Complete']),
-        default='Fast', update=update_sockets)
+        default='Complete', update=update_sockets)
+
     list_match: EnumProperty(
         name="List Match",
         description="Behavior on different list lengths",
@@ -80,14 +79,17 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def draw_buttons(self, context, layout):
-        if fast_mode():
-            layout.prop(self, 'mode')
+        layout.prop(self, 'mode')
+
     def draw_buttons_ext(self, context, layout):
-        if fast_mode():
-            layout.prop(self, 'mode')
+        layout.prop(self, 'mode')
         layout.prop(self, 'list_match')
 
     def process(self):
+        if self.mode != 'Complete' and scipy is None:
+            raise DependencyError(f'Current mode="{self.mode}" requires scipy'
+                                  f' library to be installed')
+
         inputs = self.inputs
         outputs = self.outputs
 
@@ -95,25 +97,31 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
         params = [inputs['Verts'].sv_get(deepcopy=False)]
         match = list_match_func[self.list_match]
-        if fast_mode() and self.mode != 'Complete':
-            if self.mode == 'Fast':
-                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:3]])
-                result = [scipy_kdt_closest_edges_fast(vs, min_d, max_d) for vs, min_d, max_d  in zip(*match(params))]
-            elif self.mode == 'Max_Queried':
-                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
-                result = [scipy_kdt_closest_max_queried(vs, min_d, max_d, max_num, skip) for vs, min_d, max_d, max_num, skip  in zip(*match(params))]
-            elif self.mode == 'No_Skip':
-                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
-                result = [scipy_kdt_closest_edges_no_skip(vs, min_d, max_d, max_num, skip) for vs, min_d, max_d, max_num, skip  in zip(*match(params))]
 
-        else:
+        if self.mode == 'Fast':
+            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:3]])
+            result = [scipy_kdt_closest_edges_fast(vs, min_d, max_d)
+                      for vs, min_d, max_d in zip(*match(params))]
+        elif self.mode == 'Max_Queried':
+            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
+            result = [scipy_kdt_closest_max_queried(vs, min_d, max_d, max_num, skip)
+                      for vs, min_d, max_d, max_num, skip in zip(*match(params))]
+        elif self.mode == 'No_Skip':
+            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
+            result = [scipy_kdt_closest_edges_no_skip(vs, min_d, max_d, max_num, skip)
+                      for vs, min_d, max_d, max_num, skip in zip(*match(params))]
+        elif self.mode == 'Complete':
             params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
             result = [kdt_closest_edges(p[0], p[1:]) for p in zip(*match(params))]
+        else:
+            raise TypeError(f"Unknown {self.mode=}")
+
         outputs['Edges'].sv_set(result)
 
+
 def register():
-    bpy.utils.register_class(SvKDTreeEdgesNodeMK2)
+    bpy.utils.register_class(SvKDTreeEdgesNodeMK3)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvKDTreeEdgesNodeMK2)
+    bpy.utils.unregister_class(SvKDTreeEdgesNodeMK3)
