@@ -24,7 +24,9 @@ from sverchok.data_structure import changable_sockets, updateNode
 
 
 class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Mask Join'''
+    '''Mix two data list together by mask:
+    mask: [1,0,0,1,1], data True: [10,11,12], data False: [20,21] => [10,20,21,11,12]
+    '''
     bl_idname = 'SvMaskJoinNode'
     bl_label = 'List Mask Join (In)'
     bl_icon = 'OUTLINER_OB_EMPTY'

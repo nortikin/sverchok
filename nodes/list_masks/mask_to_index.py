@@ -27,7 +27,7 @@ import numpy as np
 class SvMaskToIndexNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Index list from mask list
-    Tooltip: Splits the true and false indices from a mask list
+    Tooltip: Splits the true and false indices from a mask list\n\t[0,0,1,0,1,1] =>\n\t\tTrue Index: [2,4,5]\n\t\tFalse Index: [0,1,3]
     '''
     bl_idname = 'SvMaskToIndexNode'
     bl_label = 'Mask To Index'
