@@ -22,18 +22,18 @@ out level 3 =       [[[[], []], [[], []]]]
 Inputs
 ------
 
-**data** multisocket
+* **data** multisocket
 
 Properties
 ----------
 
-**level** integer to operate level of conjunction
-**unwrap** boolean to unwrap from additional level, added when zipped 
+* **level** integer to operate level of conjunction
+* **unwrap** boolean to unwrap from additional level, added when zipped 
 
 Outputs
 -------
 
-**data** adaptable socket
+* **data** adaptable socket
 
 
 Examples

@@ -43,7 +43,7 @@ def key_sort(data, keys, level, idx):
 class SvListSortNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Order List Items
-    Tooltip: Sort List by value or using custom keys
+    Tooltip: Sort List by value or using custom keys\n\t['a0','b1','c2','d3','e4'], new order (3,2,0,1) => ['a0'(3), 'b1'(2), 'c2'(0), 'd3'(1)] => ['c2','d3','b1','a0']
     """
     bl_idname = 'SvListSortNode'
     bl_label = 'List Sort'

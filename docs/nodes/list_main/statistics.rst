@@ -71,11 +71,8 @@ The fonts used for this node are monospace fonts for best text alignment.
 
 Outputs
 -------
-**Name(s)**
-The name(s) of the statistical value(s) computed corresponding to the selected statistical function.
-
-**Value(s)**
-The statistical quantity of the input values corresponding to the selected function. For a vectorized input the output values are a series of quantities corresponding to the selected function.
+* **Name(s)** The name(s) of the statistical value(s) computed corresponding to the selected statistical function.
+* **Value(s)** The statistical quantity of the input values corresponding to the selected function. For a vectorized input the output values are a series of quantities corresponding to the selected function.
 
 When "All Statistics" is selected the **Names** and **Values** outputs will list the names and the corresponding values for all the statistical functions.
 

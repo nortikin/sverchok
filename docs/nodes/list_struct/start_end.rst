@@ -12,19 +12,19 @@ First and last items of data on some level
 Inputs
 ------
 
-**Data** - data to take items
+* **Data** - data to take items
 
 Properties
 ----------
 
-**level** - level to take first and last items
+* **level** - level to take first and last items
 
 Outputs
 -------
 
-**Middl** - all between first and last items
-**First** - First item
-**Last** - Last item
+* **Middl** - all between first and last items
+* **First** - First item
+* **Last** - Last item
 
 Examples
 --------

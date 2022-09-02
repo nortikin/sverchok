@@ -51,29 +51,29 @@ level 2 Match + Mix + Wrap:
 Inputs
 ------
 
-**data** multisocket
+* **data** multisocket
 
 Parameters
 ----------
 
-**Match**: length of lists will be matched before joining
-**Match mode**: how length of lists should be matched (Repeat Last, Cycle, Match Short...)
-**Mix** to mix (not zip) data inside
-**Wrap** to wrap additional level
-**Levels** level of joining
+* **Match**: length of lists will be matched before joining
+* **Match mode**: how length of lists should be matched (Repeat Last, Cycle, Match Short...)
+* **Mix** to mix (not zip) data inside
+* **Wrap** to wrap additional level
+* **Levels** level of joining
 
 Advanced Parameters
 -------------------
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**NumPy Mode**: When enabled the node will expect and produce lists of NumPy arrays. It will be faster when joining NumPy Arrays but due the nature of the implementation it will fail when trying to join arrays with different axis number.
+* **NumPy Mode**: When enabled the node will expect and produce lists of NumPy arrays. It will be faster when joining NumPy Arrays but due the nature of the implementation it will fail when trying to join arrays with different axis number.
 
 
 Outputs
 -------
 
-**data** adaptable socket
+* **data** adaptable socket
 
 Examples
 --------
