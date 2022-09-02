@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Mask To Index" href="mask_to_index.html" />
-    <link rel="prev" title="List Mask In" href="mask_join.html" /> 
+    <link rel="prev" title="List Mask Join In" href="mask_join.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -72,7 +72,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_masks_index.html">List Masks</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="mask.html">List Mask (Out)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mask_join.html">List Mask In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mask_join.html">List Mask Join In</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mask Converter</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -132,6 +132,7 @@
              
   <section id="mask-converter">
 <h1>Mask Converter<a class="headerlink" href="#mask-converter" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png"><img alt="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png" src="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node allows to convert masks that are to be applied to different types of mesh elements. For example, it can convert mask on vertices to mask for faces, or mask for edges to mask for vertices, and so on.</p>
@@ -178,12 +179,32 @@
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Select face of cube by selecting its vertices, and extrude it:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/25284911/57c33020-26da-11e7-93c8-c1148dbd8efc.png" src="https://cloud.githubusercontent.com/assets/284644/25284911/57c33020-26da-11e7-93c8-c1148dbd8efc.png" />
-<p>Select faces of sphere with small area, and move corresponding vertices:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" src="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" />
-<p>Select edges of randomly selected faces:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" src="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" />
+<p><strong>Show part of cube with vertex selected by edges:</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png"><img alt="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png" src="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/vertices_mask.html"><span class="doc">Mask Vertices</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<p><strong>Select face of cube by selecting its vertices, and extrude it:</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png"><img alt="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png" src="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_region.html"><span class="doc">Extrude Region</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<p><strong>Select faces of sphere with small area, and move corresponding vertices:</strong></p>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" src="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" /></a>
+<p><strong>Select edges of randomly selected faces:</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png"><img alt="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" src="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" /></a>
 </section>
 </section>
 
@@ -191,7 +212,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="mask_join.html" class="btn btn-neutral float-left" title="List Mask In" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mask_join.html" class="btn btn-neutral float-left" title="List Mask Join In" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="mask_to_index.html" class="btn btn-neutral float-right" title="Mask To Index" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

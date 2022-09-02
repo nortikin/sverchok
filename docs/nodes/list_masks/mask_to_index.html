@@ -72,7 +72,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="list_masks_index.html">List Masks</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="mask.html">List Mask (Out)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mask_join.html">List Mask In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mask_join.html">List Mask Join In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mask_convert.html">Mask Converter</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mask To Index</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -131,22 +131,36 @@
              
   <section id="mask-to-index">
 <h1>Mask To Index<a class="headerlink" href="#mask-to-index" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188231993-f6fed026-cf27-4498-9c7b-57f4cf7aae0d.png"><img alt="https://user-images.githubusercontent.com/14288520/188231993-f6fed026-cf27-4498-9c7b-57f4cf7aae0d.png" src="https://user-images.githubusercontent.com/14288520/188231993-f6fed026-cf27-4498-9c7b-57f4cf7aae0d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node use transforms a mask list ( [0,1,0..] or [False, True, False..]) in to two lists, one with the True (or 1) indexes and the other with the false (or 0) indexes.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Mask:</strong> Input socket for True / False Data list.</p>
+<ul class="simple">
+<li><p><strong>Mask:</strong> Input socket for True / False Data list.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>True Index:</strong> Input socket for True Data list.</p>
-<p><strong>False Index:</strong> Input socket for False Data list.</p>
+<ul class="simple">
+<li><p><strong>True Index:</strong> Input socket for True Data list.</p></li>
+<li><p><strong>False Index:</strong> Input socket for False Data list.</p></li>
+</ul>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
-<img alt="compass_3d_sverchok_blender_example.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/list_mask/mask_to_index/mask_to_index.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188232004-789ce3b9-b6d9-4a8e-9796-c60f3fcb9b51.png"><img alt="https://user-images.githubusercontent.com/14288520/188232004-789ce3b9-b6d9-4a8e-9796-c60f3fcb9b51.png" src="https://user-images.githubusercontent.com/14288520/188232004-789ce3b9-b6d9-4a8e-9796-c60f3fcb9b51.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/list_mask/mask_to_index/mask_to_index.png"><img alt="compass_3d_sverchok_blender_example.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/list_mask/mask_to_index/mask_to_index.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
