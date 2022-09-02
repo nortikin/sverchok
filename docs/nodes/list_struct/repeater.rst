@@ -37,7 +37,7 @@ Removes any extra layers of wrapping (brackets or parentheses) found at the curr
 Outputs
 -------
 
-Lists (nested). The type of *Data out* will be appropriate for the operations defined by the parameters of the Node.
+* **Lists** (nested). The type of *Data out* will be appropriate for the operations defined by the parameters of the Node.
 
 Examples
 --------

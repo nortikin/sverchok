@@ -17,7 +17,7 @@ Takes any kind of data.
 Parameters
 ----------
 
-**Level:** Set the level at which to observe the List. Min Level is 0.
+* **Level:** Set the level at which to observe the List. Min Level is 0.
 
 Outputs
 -------

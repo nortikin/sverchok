@@ -36,8 +36,8 @@ Affects the output order.
 Outputs
 -------
 
-Item, the selected items on the specified level.
-Other, the list with the selected items deleted.
+* **Item**, the selected items on the specified level.
+* **Other**, the list with the selected items deleted.
 
 Examples
 --------

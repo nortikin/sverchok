@@ -18,7 +18,7 @@ Parameters
 ----------
 
 
-**Level:** Set the level at which to observe the List.
+* **Level:** Set the level at which to observe the List.
 
 Outputs
 -------

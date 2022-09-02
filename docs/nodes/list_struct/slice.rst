@@ -42,8 +42,8 @@ Stop point for the slice.
 Outputs
 -------
 
-Slice, the selected slices.
-Other, the list with the slices removed.
+* **Slice**, the selected slices.
+* **Other**, the list with the slices removed.
 
 Examples
 --------
