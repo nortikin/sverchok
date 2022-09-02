@@ -1317,9 +1317,13 @@ def changable_sockets(node, inputsocketname, outputsocketname):
 
 
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
-    '''
+    """
     Replace a socket with a socket of new_type and keep links
-    '''
+
+    is_linked attribute of replaced socket will be False
+    whether it is connected or not - https://developer.blender.org/T82318
+    """
+    # note: it seems impossible to replace one socket more efficient
 
     socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index

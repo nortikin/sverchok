@@ -172,6 +172,11 @@ class SearchTree:
         If input socket is not linked the output socket will be None"""
         return [self._from_sock.get(s) for s in node.inputs]
 
+    def socket_from_input(self, in_socket: NodeSocket) -> Optional[NodeSocket]:
+        """It expects input socket and returns opposite connected socket to it.
+        If socket is not connected it returns None"""
+        return self._from_sock.get(in_socket)
+
     def update_node(self, node: 'SvNode', suppress=True):
         """Fetches data from previous node, makes data conversion if connected
         sockets have different types, calls process method of the given node
