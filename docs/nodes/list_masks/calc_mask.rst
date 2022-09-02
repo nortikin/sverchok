@@ -1,6 +1,9 @@
 Calculate Mask
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/188239156-763c7489-c590-4781-a643-6337ad71a60a.png
+  :target: https://user-images.githubusercontent.com/14288520/188239156-763c7489-c590-4781-a643-6337ad71a60a.png
+
 Functionality
 -------------
 
@@ -53,7 +56,18 @@ equal to number of items in the **Set** input.
 Example of usage
 ----------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/188239166-059d2c9c-3be4-4bb5-887f-dd8b004e6ad2.png
+  :target: https://user-images.githubusercontent.com/14288520/188239166-059d2c9c-3be4-4bb5-887f-dd8b004e6ad2.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
 This node can, for example, be used to apply **Inset Special** node iteratively:
 
 .. image:: https://user-images.githubusercontent.com/284644/58757902-82715a00-852d-11e9-9288-369607f5229d.png
+  :target: https://user-images.githubusercontent.com/284644/58757902-82715a00-852d-11e9-9288-369607f5229d.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* CAD-> :doc:`Inset Special </nodes/CAD/inset_special_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

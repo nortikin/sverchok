@@ -32,7 +32,7 @@ import numpy as np
 class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: List Item Out
-    Tooltip: Get elements from list at desired indexes\n\tL=[[5,6,7,8]], i=[0,0,2,1], lvl:2 => item: [[5,5,7,6]], other: [[8]];  lvl:1 => item: [[5,6,7,8], [5,6,7,8]], other: []
+    Tooltip: Get elements from list at desired indexes\n\tL=[[5,6,7,8]], i=[0,0,2,1],\n\t\tlvl:2 => item: [[5,5,7,6]], other: [[8]]\n\t\tlvl:1 => item: [[5,6,7,8], [5,6,7,8]], other: []
     '''
     bl_idname = 'SvListItemNode'
     bl_label = 'List Item'
