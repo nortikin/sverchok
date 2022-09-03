@@ -5,14 +5,14 @@ List Main
 .. toctree::
    :maxdepth: 1
 
-   constant
-   decompose
-   func
    join
-   length
-   levels
-   match
-   sum_mk2
+   constant
    zip
+   levels
+   length
+   sum_mk2
+   match
+   func
+   decompose
    statistics
    index

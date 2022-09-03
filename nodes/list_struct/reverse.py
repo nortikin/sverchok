@@ -26,7 +26,7 @@ from numpy import ndarray
 class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Invert list order
-    Tooltip: Reverse the elements order of a list
+    Tooltip: Reverse the elements order of a list\n\t[[1,2,3,4]] => [[4,3,2,1]]
     '''
     bl_idname = 'ListReverseNode'
     bl_label = 'List Reverse'

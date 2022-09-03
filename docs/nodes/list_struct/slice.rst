@@ -1,5 +1,10 @@
 List Slice
 ==========
+
+.. image:: https://user-images.githubusercontent.com/14288520/187927363-e884daad-0fb7-46ab-b4bd-9c37db8014d4.png
+  :target: https://user-images.githubusercontent.com/14288520/187927363-e884daad-0fb7-46ab-b4bd-9c37db8014d4.png
+
+
 Functionality
 -------------
 
@@ -37,8 +42,8 @@ Stop point for the slice.
 Outputs
 -------
 
-Slice, the selected slices.
-Other, the list with the slices removed.
+* **Slice**, the selected slices.
+* **Other**, the list with the slices removed.
 
 Examples
 --------
@@ -55,8 +60,12 @@ Some slice examples.
 >>> l[-1:2]
 []
 
+.. image:: https://user-images.githubusercontent.com/14288520/187927397-eaaec673-f32d-489a-8749-7eecfba79070.png
+  :target: https://user-images.githubusercontent.com/14288520/187927397-eaaec673-f32d-489a-8749-7eecfba79070.png
+
 .. image:: https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png
- :alt: slice multiple objects from one list (may be many objects also)
+  :target: https://cloud.githubusercontent.com/assets/5783432/5229789/771e02b8-7725-11e4-8970-ac33c87f55ec.png
+  :alt: slice multiple objects from one list (may be many objects also)
 
 Notes
 -----

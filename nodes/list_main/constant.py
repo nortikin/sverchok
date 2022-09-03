@@ -26,7 +26,7 @@ from sverchok.data_structure import zip_long_repeat, updateNode, ensure_nesting_
 class SvConstantListNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: constant list
-    Tooltip: Make a list by repeating a constant value
+    Tooltip: Make a list by repeating a constant value.\n\t[[1]], (lvl:1,len:4): [ [1,1,1,1] ]\n\t[[1,2]] (lvl:1, len:3) => [ 1,1,1, 2,2,2 ]\n\t[[1,2]] (lvl:2, len:3) => [ [1,1,1], [2,2,2] ]
     """
     bl_idname = 'SvConstantListNode'
     bl_label = 'Constant List'

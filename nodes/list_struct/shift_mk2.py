@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, changable_sockets)
 class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Offset list items
-    Tooltip: Shift the order of the elements in a list [1,2,3] --> [2,3,1]
+    Tooltip: Shift the order of the elements in a list\n\t[1,2,3] --> [2,3,1]
     '''
     bl_idname = 'ShiftNodeMK2'
     bl_label = 'List Shift'

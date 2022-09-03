@@ -1,6 +1,9 @@
 List Item
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187971764-8db7c649-349a-4641-8eb5-7177e89875cd.png
+  :target: https://user-images.githubusercontent.com/14288520/187971764-8db7c649-349a-4641-8eb5-7177e89875cd.png
+
 Functionality
 -------------
 
@@ -32,10 +35,22 @@ A list of indexes of the items to select, allow negative index python indexing s
 Outputs
 -------
 
-Item, the selected items on the specified level.
-Other, the list with the selected items deleted.
+* **Item**, the selected items on the specified level.
+* **Other**, the list with the selected items deleted.
 
 Examples
 --------
 
 Trying various inputs, adjusting the parameters, and piping the output to a *Debug Print* (or stethoscope) node will be the fastest way to acquaint yourself with the inner workings of the *List Item* Node.
+
+.. image:: https://user-images.githubusercontent.com/14288520/187971779-869195ac-8805-4a96-acee-48660b6096a8.png
+  :target: https://user-images.githubusercontent.com/14288520/187971779-869195ac-8805-4a96-acee-48660b6096a8.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/187973547-84721898-e7e1-4a98-b3ce-aa8ab9cf9165.png
+  :target: https://user-images.githubusercontent.com/14288520/187973547-84721898-e7e1-4a98-b3ce-aa8ab9cf9165.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

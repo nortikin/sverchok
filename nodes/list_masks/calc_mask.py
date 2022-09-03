@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, calc_mask
 class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Calculate Mask
-    Tooltip: Calculate mask from two sets of objects
+    Tooltip: Calculate mask from two sets of objects\n\tSubset: [[0,1,2,3,0]], Set: [[0,5,1,4]] (lvl:0) => [[True, False, True, False]]
     """
     bl_idname = 'SvCalcMaskNode'
     bl_label = 'Calculate Mask'

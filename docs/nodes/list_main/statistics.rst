@@ -1,6 +1,9 @@
 List Statistics
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/187748171-58c72008-67ec-4951-9f69-7f0eb1ab6f96.png
+    :target: https://user-images.githubusercontent.com/14288520/187748171-58c72008-67ec-4951-9f69-7f0eb1ab6f96.png
+
 Functionality
 -------------
 
@@ -17,44 +20,44 @@ Parameters
 
 The **Function** parameter allows to select the statistical function to compute the corresponding statistical quantity for the input values.
 
-+----------------+----------------------+---------+-------------------------------------------+
-| Param          | Type                 | Default | Description                               |
-+================+======================+=========+===========================================+
-| **Function**   | Enum                 | Average | The statistical function applied to       |
-|                |  All Statistics      |         | the input values.                         |
-|                |  Selected Statistics |         |                                           |
-|                |                      |         |                                           |
-|                |  Sum                 |         |                                           |
-|                |  Sum Of Squares      |         |                                           |
-|                |  Sum Of Inverse      |         | For "All Statistics" selection the node   |
-|                |  Product             |         | computes and outputs the statistical      |
-|                |  Average             |         | quantities for all the statistical        |
-|                |  Geometric Mean      |         | functions along with their corresponding  |
-|                |  Harmonic Mean       |         | names.                                    |
-|                |  Variance            |         |                                           |
-|                |  Standard Deviation  |         |                                           |
-|                |  Standard Error      |         |                                           |
-|                |  Root Mean Square    |         | For "Selected Statistics" selection the   |
-|                |  Skewness            |         | node computes and outputs the statistical |
-|                |  Kurtosis            |         | quantities for the selected statistical   |
-|                |  Minimum             |         | functions along with their corresponding  |
-|                |  Maximum             |         | names.                                    |
-|                |  Range               |         |                                           |
-|                |  Median              |         |                                           |
-|                |  Percentile          |         |                                           |
-|                |  Histogram           |         |                                           |
-|                |  Count               |         |                                           |
-+----------------+----------------------+---------+-------------------------------------------+
-| **Percentage** | Float                | 0.75    | The percentage value for the              |
-|                |                      |         | percentile function. [1]                  |
-+----------------+----------------------+---------+-------------------------------------------+
-| **Normalize**  | Boolean              | False   | Flag to normalize the histogram bins      |
-|                |                      |         | to the given normalize size. [2]          |
-+----------------+----------------------+---------+-------------------------------------------+
-| **Bins**       | Int                  | 10      | The number of bins in the histogram. [2]  |
-+----------------+----------------------+---------+-------------------------------------------+
-| **Size**       | Float                | 10.00   | The normalized size of the histogram.[2]  |
-+----------------+----------------------+---------+-------------------------------------------+
++----------------+------------------------+---------+-------------------------------------------+
+| Param          | Type                   | Default | Description                               |
++================+========================+=========+===========================================+
+| **Function**   | Enum                   | Average | The statistical function applied to       |
+|                |  * All Statistics      |         | the input values.                         |
+|                |  * Selected Statistics |         |                                           |
+|                |                        |         |                                           |
+|                |  * Sum                 |         |                                           |
+|                |  * Sum Of Squares      |         |                                           |
+|                |  * Sum Of Inverse      |         | For "All Statistics" selection the node   |
+|                |  * Product             |         | computes and outputs the statistical      |
+|                |  * Average             |         | quantities for all the statistical        |
+|                |  * Geometric Mean      |         | functions along with their corresponding  |
+|                |  * Harmonic Mean       |         | names.                                    |
+|                |  * Variance            |         |                                           |
+|                |  * Standard Deviation  |         |                                           |
+|                |  * Standard Error      |         |                                           |
+|                |  * Root Mean Square    |         | For "Selected Statistics" selection the   |
+|                |  * Skewness            |         | node computes and outputs the statistical |
+|                |  * Kurtosis            |         | quantities for the selected statistical   |
+|                |  * Minimum             |         | functions along with their corresponding  |
+|                |  * Maximum             |         | names.                                    |
+|                |  * Range               |         |                                           |
+|                |  * Median              |         |                                           |
+|                |  * Percentile          |         |                                           |
+|                |  * Histogram           |         |                                           |
+|                |  * Count               |         |                                           |
++----------------+------------------------+---------+-------------------------------------------+
+| **Percentage** | Float                  | 0.75    | The percentage value for the              |
+|                |                        |         | percentile function. [1]                  |
++----------------+------------------------+---------+-------------------------------------------+
+| **Normalize**  | Boolean                | False   | Flag to normalize the histogram bins      |
+|                |                        |         | to the given normalize size. [2]          |
++----------------+------------------------+---------+-------------------------------------------+
+| **Bins**       | Int                    | 10      | The number of bins in the histogram. [2]  |
++----------------+------------------------+---------+-------------------------------------------+
+| **Size**       | Float                  | 10.00   | The normalized size of the histogram.[2]  |
++----------------+------------------------+---------+-------------------------------------------+
 
 Notes:
 [1] : The **Percentage** input socket is available only for the **Percentile** function.
@@ -68,12 +71,24 @@ The fonts used for this node are monospace fonts for best text alignment.
 
 Outputs
 -------
-**Name(s)**
-The name(s) of the statistical value(s) computed corresponding to the selected statistical function.
-
-**Value(s)**
-The statistical quantity of the input values corresponding to the selected function. For a vectorized input the output values are a series of quantities corresponding to the selected function.
+* **Name(s)** The name(s) of the statistical value(s) computed corresponding to the selected statistical function.
+* **Value(s)** The statistical quantity of the input values corresponding to the selected function. For a vectorized input the output values are a series of quantities corresponding to the selected function.
 
 When "All Statistics" is selected the **Names** and **Values** outputs will list the names and the corresponding values for all the statistical functions.
 
+
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/187533079-ada585a4-d1cf-4eb0-ba80-8faae3f53222.png
+    :target: https://user-images.githubusercontent.com/14288520/187533079-ada585a4-d1cf-4eb0-ba80-8faae3f53222.png
+
+* Number-> :doc:`Random </nodes/number/random>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/187532896-f7fe6bdd-d25e-40f4-99bf-d2373f75b9c0.png
+    :target: https://user-images.githubusercontent.com/14288520/187532896-f7fe6bdd-d25e-40f4-99bf-d2373f75b9c0.png
+
+* Number-> :doc:`Random </nodes/number/random>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

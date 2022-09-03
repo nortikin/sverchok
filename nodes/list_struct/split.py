@@ -30,7 +30,10 @@ def split(data, size):
 
 
 class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Split '''
+    ''' List Split
+    [[0,1,2,3,4,5]] [lvl:1, size:1] => [ [0], [1], [2], [3], [4], [5] ]
+    [[0,1,2,3,4,5]] [lvl:1, size:3] => [ [0,1,2], [3,4,5] ]
+    '''
     bl_idname = 'SvListSplitNode'
     bl_label = 'List Split'
     bl_icon = 'OUTLINER_OB_EMPTY'

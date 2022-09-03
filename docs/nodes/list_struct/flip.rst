@@ -1,14 +1,22 @@
 List Flip
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187999003-a4180572-59d1-47ed-9d02-839bbb58115a.png
+  :target: https://user-images.githubusercontent.com/14288520/187999003-a4180572-59d1-47ed-9d02-839bbb58115a.png
+
 Functionality
 -------------
 
 Flips the data on selected level.
+
 [[[1,2,3],[4,5,6],[7,8,9]],[[3,3,3],[1,1,1],[8,8,8]]] (two objects, three vertices)
+
 with level 2 turns to:
+
 [[[1, 2, 3], [3, 3, 3]], [[4, 5, 6], [1, 1, 1]], [[7, 8, 9], [8, 8, 8]]] (three objects, two vertices)
+
 with level 3 turns to:
+
 [[1, 4, 7], [2, 5, 8], [3, 6, 9], [3, 1, 8], [3, 1, 8], [3, 1, 8]] (six objects with three digits)
 
 last example is not straight result, more as deviation.
@@ -18,20 +26,25 @@ But for now working level is 2
 Inputs
 ------
 
-**data** - data to flip
+* **data** - data to flip
 
 Properties
 ----------
 
-**level** - level to deal with
+* **level** - level to deal with
 
 Outputs
 -------
 
-**data** - flipped data
+* **data** - flipped data
 
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/5603155/cd1cc280-9386-11e4-9998-a066258ca94b.jpg
+.. image:: https://user-images.githubusercontent.com/14288520/187999021-e519b2c7-2718-46e6-86ac-e19d8cea2283.png
   :alt: flip
+  :target: https://user-images.githubusercontent.com/14288520/187999021-e519b2c7-2718-46e6-86ac-e19d8cea2283.png
+
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

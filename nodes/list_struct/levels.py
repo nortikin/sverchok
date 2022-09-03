@@ -57,7 +57,7 @@ class SvNestingLevelEntryMK2(bpy.types.PropertyGroup):
 class SvListLevelsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Levels
-    Tooltip: List nesting levels manipulation
+    Tooltip: List nesting levels manipulation\n\t[[0,1,2,3,4]] (Flatten) => [0,1,2,3,4]\n\t[[0,1,2,3,4]] (Wrap) => [[[0,1,2,3,4]]]
     '''
     bl_idname = 'SvListLevelsNodeMK2'
     bl_label = 'List Levels'

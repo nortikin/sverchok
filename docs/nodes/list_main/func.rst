@@ -1,6 +1,9 @@
 List Math
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187527983-9ecef862-b83b-460e-bc7a-eda13ca91252.png
+  :target: https://user-images.githubusercontent.com/14288520/187527983-9ecef862-b83b-460e-bc7a-eda13ca91252.png
+
 Functionality
 -------------
 
@@ -29,7 +32,7 @@ Logical OR          Return True if any value in the list is logical True
 Logical AND         Return True if all values in the list are logical True
 =================== ======================================
 
-**Warp:** Adds one level of warping (output becomes [output])
+**Wrap:** Adds one level of wraping (output becomes [output])
 
 Outputs
 -------
@@ -41,7 +44,11 @@ The output is always going to be a number, integer or float, depending on the in
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4191546/dd4edc6e-378e-11e4-8015-8f66ec59b68e.png
+.. image:: https://user-images.githubusercontent.com/14288520/187716616-57161d36-4b66-4680-b5bc-e94304944c46.png
   :alt: ListMathDemo1.PNG
+  :target: https://user-images.githubusercontent.com/14288520/187716616-57161d36-4b66-4680-b5bc-e94304944c46.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
 
 In this example the node shows all the possible outputs.

@@ -91,7 +91,7 @@ def mask_data(list_a, mask_l, level, flags, idx=0):
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Split data with Mask
-    Tooltip: Filter data with a boolean list ([False, True] or [0,1])
+    Tooltip: Filter data with a boolean list ([False, True] or [0,1])\n\t[10,11,12,13,14] mask [0,1,1,0,1]\n\t\tmask: [F,T,T,F,T]\n\t\tind_true: [1,2,4]\n\t\tind_fals: [0,3]\n\t\tdataT: [11,12,14]\n\t\tdataF: [10,13]
     '''
     bl_idname = 'MaskListNode'
     bl_label = 'List Mask (Out)'

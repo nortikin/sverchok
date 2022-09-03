@@ -28,7 +28,7 @@ from numpy import random as np_random, ndarray, array
 class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Randomize list order
-    Tooltip: Change randomly the order of the elements in a list
+    Tooltip: Change randomly the order of the elements in a list\n\t [[0,1,2,3,4,5]] => [[4,2,1,0,5,3]]
     '''
     bl_idname = 'ListShuffleNode'
     bl_label = 'List Shuffle'

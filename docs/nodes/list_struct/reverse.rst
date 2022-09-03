@@ -1,6 +1,9 @@
 List Reverse
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/187989090-d505d1bd-601d-47bc-bfeb-4b7026949a30.png
+  :target: https://user-images.githubusercontent.com/14288520/187989090-d505d1bd-601d-47bc-bfeb-4b7026949a30.png
+
 Functionality
 -------------
 
@@ -15,7 +18,7 @@ Parameters
 ----------
 
 
-**Level:** Set the level at which to observe the List.
+* **Level:** Set the level at which to observe the List.
 
 Outputs
 -------
@@ -25,7 +28,11 @@ Depends on incoming data and can be nested. Level 0 is top level (totally zoomed
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4190715/1452079c-3788-11e4-8ce2-716b5046cf56.png
-  :alt: ListReverseDemo1.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/187989115-28629d0a-d37b-4d17-9ac5-82ac7cf4dad4.png
+  :target: https://user-images.githubusercontent.com/14288520/187989115-28629d0a-d37b-4d17-9ac5-82ac7cf4dad4.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* List->List Main-> :doc:`List Zip </nodes/list_main/zip>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 In this example the node reverse a list a integers

@@ -1,6 +1,9 @@
 Constant List
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/187515870-f8b16699-e1f4-49bd-b398-5077539e2aba.png
+  :target: https://user-images.githubusercontent.com/14288520/187515870-f8b16699-e1f4-49bd-b398-5077539e2aba.png
+
 Functionality
 -------------
 
@@ -48,25 +51,61 @@ Examples of usage
 
 A simple example:
 
-.. image:: https://user-images.githubusercontent.com/284644/74590945-286de180-5035-11ea-8c88-949ce11beb1c.png
+.. image:: https://user-images.githubusercontent.com/14288520/187686031-a9e200c0-de63-4021-950f-c4cff8c855a9.png
+  :target: https://user-images.githubusercontent.com/14288520/187686031-a9e200c0-de63-4021-950f-c4cff8c855a9.png
+
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
 
 If **Output level** would be 1 in this setup, the result would be `[0.06,
 0.06, 0.06]`. If **Output level** would be 3, the result would be `[[[0.06,
-0.06, 0.06]]]`.
+0.06, 0.06]]]`:
+
+.. image:: https://user-images.githubusercontent.com/14288520/187686049-9e05a419-95f7-46c8-bc62-08beaee85589.png
+  :target: https://user-images.githubusercontent.com/14288520/187686049-9e05a419-95f7-46c8-bc62-08beaee85589.png
+
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
 
 More complex example:
 
-.. image:: https://user-images.githubusercontent.com/284644/74590944-27d54b00-5035-11ea-8d62-6aeeac135e6e.png
+.. image:: https://user-images.githubusercontent.com/14288520/187686059-70276803-32bd-4855-8bc3-4e2616bb0e0e.png
+  :target: https://user-images.githubusercontent.com/14288520/187686059-70276803-32bd-4855-8bc3-4e2616bb0e0e.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
+
 
 If **Output level** would be 1 in this setup, the result would be `[1, 1, 1, 2,
 2, 2, 2, 2]`. If **Output level** would be 3, the result would be `[[[1, 1, 1],
-[2, 2, 2, 2, 2]]]`.
+[2, 2, 2, 2, 2]]]`:
+
+.. image:: https://user-images.githubusercontent.com/14288520/187686070-80366925-2893-470d-b6af-6651d6825b26.png
+  :target: https://user-images.githubusercontent.com/14288520/187686070-80366925-2893-470d-b6af-6651d6825b26.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
 
 Another complex example:
 
-.. image:: https://user-images.githubusercontent.com/284644/74590942-273cb480-5035-11ea-9ed7-84da04e3d590.png
+.. image:: https://user-images.githubusercontent.com/14288520/187688679-f97b4d33-989f-4406-8fb7-fec0df09a056.png
+  :target: https://user-images.githubusercontent.com/14288520/187688679-f97b4d33-989f-4406-8fb7-fec0df09a056.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`
 
 If **Output level** would be 1 in this setup, the result would be `[1, 1, 1, 2,
 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4]`. If **Output level** would be 2, the
 result would be `[[1, 1, 1], [2, 2, 2, 2, 2], [3, 3, 3], [4, 4, 4, 4, 4]]`.
 
+.. image:: https://user-images.githubusercontent.com/14288520/187688692-bcf57546-26b8-4f01-85a6-280942092053.png
+  :target: https://user-images.githubusercontent.com/14288520/187688692-bcf57546-26b8-4f01-85a6-280942092053.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Text-> :doc:`Data Shape </nodes/text/shape>`

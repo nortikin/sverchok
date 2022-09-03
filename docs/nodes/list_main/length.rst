@@ -1,6 +1,9 @@
 List Length
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/187519011-8e55b053-801f-43f1-9d45-727a11633ca1.png
+  :target: https://user-images.githubusercontent.com/14288520/187519011-8e55b053-801f-43f1-9d45-727a11633ca1.png
+
 Functionality
 -------------
 
@@ -14,7 +17,7 @@ Takes any kind of data.
 Parameters
 ----------
 
-**Level:** Set the level at which to observe the List.
+* **Level:** Set the level at which to observe the List. Min Level is 0.
 
 Outputs
 -------
@@ -27,8 +30,18 @@ Examples
 
 Often a few experiments with input hooked-up to a debug node will make the exact working of this Node instantly clearer than any explanation. 
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186453/1a375026-3761-11e4-8e41-11b57736be1a.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/187696438-05bf888a-086e-4a49-a6e6-0752ce3ef475.png
   :alt: ListLengthDemo1.PNG
+  :target: https://user-images.githubusercontent.com/14288520/187696438-05bf888a-086e-4a49-a6e6-0752ce3ef475.png
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186454/1a3de7b0-3761-11e4-9520-79b331ad6822.PNG
+* Vector-> :doc:`Vector X/Y/Z </nodes/vector/axis_input_mk2>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/187696469-0fba9dff-0423-406c-9a19-7ef0d607d996.png
   :alt: ListLengthDemo2.PNG
+  :target: https://user-images.githubusercontent.com/14288520/187696469-0fba9dff-0423-406c-9a19-7ef0d607d996.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

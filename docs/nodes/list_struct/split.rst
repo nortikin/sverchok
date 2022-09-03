@@ -1,5 +1,9 @@
 List Split
 ==========
+
+.. image:: https://user-images.githubusercontent.com/14288520/187968085-a2e503ea-5173-40b2-add1-ded7aa2dcc22.png
+  :target: https://user-images.githubusercontent.com/14288520/187968085-a2e503ea-5173-40b2-add1-ded7aa2dcc22.png
+
 Functionality
 -------------
 
@@ -52,3 +56,9 @@ Examples
 --------
 
 Trying various inputs, adjusting the parameters, and piping the output to a *Debug Print* (or stethoscope) node will be the fastest way to acquaint yourself with the inner workings of the *List Item* Node.
+
+.. image:: https://user-images.githubusercontent.com/14288520/187968105-3093b440-92a3-4ed2-9359-8f8ef1567fab.png
+  :target: https://user-images.githubusercontent.com/14288520/187968105-3093b440-92a3-4ed2-9359-8f8ef1567fab.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

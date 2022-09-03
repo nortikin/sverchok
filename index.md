@@ -298,7 +298,7 @@
     SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
-    SvKDTreeEdgesNodeMK2
+    SvKDTreeEdgesNodeMK3
     SvKDTreePathNode
     SvNearestPointOnMeshNode
     SvBvhOverlapNodeNew

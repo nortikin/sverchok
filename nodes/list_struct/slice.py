@@ -33,7 +33,10 @@ from numpy import ndarray, arange, delete
 
 
 class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Slice '''
+    ''' List Slice
+    [0,1,2,3,4,5] [1:-1] => [1,2,3,4]
+    [0,1,2,3,4,5] [1: 3] => [1,2]
+    '''
     bl_idname = 'ListSliceNode'
     bl_label = 'List Slice'
     bl_icon = 'OUTLINER_OB_EMPTY'

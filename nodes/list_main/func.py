@@ -71,7 +71,7 @@ numpy_func_dict = {
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Average, Sum, Min...
-    Tooltip: Operations with list, sum, average, min, max
+    Tooltip: Operations with list: minimum, maximum, average, sum, cumulative cum, logical or, logical and
     '''
     bl_idname = 'ListFuncNode'
     bl_label = 'List Math'
@@ -103,7 +103,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "func_", text="Functions:")
+        layout.prop(self, "func_", text="Functions")
         layout.prop(self, "wrap", text="Wrap")
 
     def draw_buttons_ext(self, context, layout):

@@ -123,7 +123,10 @@ def walk_face(face, from_edge=None, return_sorted=True):
 
 
 class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
-    '''vertex -> edges and so on'''
+    '''Convert selected elements to:
+vertex -> edges and faces indexes
+edges -> vertex and faces indexes
+faces -> vertex and edges indexes'''
     bl_idname = 'SvMaskConvertNode'
     bl_label = 'Mask Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'

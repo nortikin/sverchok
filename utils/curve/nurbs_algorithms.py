@@ -645,30 +645,6 @@ def offset_nurbs_curve(curve, offset_vector,
     offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
     return offset_curve
 
-def curve_to_cubic_nurbs(curve, ts, tolerance=1e-6):
-    points = curve.evaluate_array(ts)
-    tangents = curve.tangent_array(ts)
-    #tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
-    #tangents /= float(len(ts))
-    #tangents /= 17.0
-    #print("Ts", ts)
-    #print("Tgs", tangents)
-    point_pairs = zip(points, points[1:])
-    tangent_pairs = zip(tangents, tangents[1:])
-    t_pairs = zip(ts, ts[1:])
-    segments = []
-    for (t1, t2), (p1, p2), (tg1, tg2) in zip(t_pairs, point_pairs, tangent_pairs):
-        print(f"Dt: {t1} - {t2}")
-        dt = t2 - t1
-        tg11 = tg1 * dt
-        tg21 = tg2 * dt
-        print(f"Tg: {tg11}, {tg21}")
-        segment = SvBezierCurve.from_points_and_tangents(p1, tg11, tg21, p2)  
-        segments.append(segment)
-    curve = concatenate_nurbs_curves(segments, tolerance)
-    return curve
-    #return remove_excessive_knots(curve, tolerance)
-
 def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
     """
     Adjust the given curve so that at parameter u_bar it goes through
