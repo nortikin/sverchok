@@ -1,6 +1,9 @@
 Filter Empty Objects
 ====================
 
+.. image:: https://user-images.githubusercontent.com/14288520/188285872-c31fdf41-c0b3-4c30-a1cb-b7d6e1f5869f.png
+  :target: https://user-images.githubusercontent.com/14288520/188285872-c31fdf41-c0b3-4c30-a1cb-b7d6e1f5869f.png
+
 start out due to this issue: https://github.com/nortikin/sverchok/pull/2089
 
 
