@@ -42,6 +42,12 @@ Also keep in mind that output lists can be empty in case if no values feat in ra
 Examples
 --------
 
+.. image:: https://user-images.githubusercontent.com/14288520/188332064-9c2c2c5c-112a-4057-8d57-64c1b7892660.png
+  :target: https://user-images.githubusercontent.com/14288520/188332064-9c2c2c5c-112a-4057-8d57-64c1b7892660.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
 **Find closest value to 5 in random range from 0 to 10**
 
 .. image:: https://user-images.githubusercontent.com/28003269/90544116-bae36f00-e197-11ea-9138-90d79dad6176.png
