@@ -1,6 +1,9 @@
 List Modifier
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/188284567-9572e0d9-6d72-49a8-833d-fa08d54a71a3.png
+  :target: https://user-images.githubusercontent.com/14288520/188284567-9572e0d9-6d72-49a8-833d-fa08d54a71a3.png
+
 This node offers an assortment of list modification functions. The node has both Unary and Binary modes.
 
 -  In Unary mode it will use the input of either sockets, it will use data1 first, then check data2
@@ -80,7 +83,7 @@ Behaviour
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
 
-*output as list*
+* **output as list**
 
 The boolean switch to *output as list* will be on by default,
 essentially it will wrap the output as a list because true sets don’t

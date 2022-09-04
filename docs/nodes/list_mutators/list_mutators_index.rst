@@ -7,8 +7,8 @@ List Mutators
 
    modifier
    unique_items
+   filter_empty_lists
    polygon_sort
    combinatorics
-   filter_empty_lists
    find_closest
    multi_cache

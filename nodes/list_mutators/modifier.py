@@ -83,7 +83,19 @@ num_inputs = {no_space(k): v for v, _, k, _ in node_item_list}
 
 
 class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Modifier'''
+    ''' List Modifier:
+Set
+Ordered Set by input
+Unique Consecutives
+Sequential Set
+Sequential Set Rev
+Normalize
+Accumulating Sum
+Mask Subset
+Intersection
+Union
+Difference
+Symmetric Diff'''
     bl_idname = 'SvListModifierNode'
     bl_label = 'List Modifier'
     bl_icon = 'MODIFIER'

@@ -1,6 +1,9 @@
 Datetime Strings
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/188286396-a6eadfd8-61a2-40d0-9ce9-c3e8ac16609f.png
+  :target: https://user-images.githubusercontent.com/14288520/188286396-a6eadfd8-61a2-40d0-9ce9-c3e8ac16609f.png
+
 This is a beta node. Please visit  https://github.com/nortikin/sverchok/pull/2137
 
 This node processes dates formatted as text, and lets you convert them into an ordinal (a day indication, an integer). It also supports the subordinal (float, what percent into the day, *seconds / total_seconds_in_day* ).
@@ -84,3 +87,10 @@ Python Docs: https://docs.python.org/3.6/library/datetime.html#strftime-and-strp
 +-----+--------------------------+-----------------------------------------------------------------------------------------------+
 | %%  | %                        | A literal '%' character.                                                                      |
 +-----+--------------------------+-----------------------------------------------------------------------------------------------+
+
+.. image:: https://user-images.githubusercontent.com/14288520/188286400-954eb1e4-2f32-4c95-a0a0-f6c0a41fdcee.png
+  :target: https://user-images.githubusercontent.com/14288520/188286400-954eb1e4-2f32-4c95-a0a0-f6c0a41fdcee.png
+
+* Text-> :doc:`Simple Text </nodes/text/simple_text>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
