@@ -1,7 +1,8 @@
 Find Closest Value
 ==================
 
-.. image:: https://user-images.githubusercontent.com/28003269/107801210-3ace4880-6d79-11eb-9fe4-440caef9f73f.png
+.. image:: https://user-images.githubusercontent.com/14288520/188329301-79f8a510-26f8-4259-8844-142f04f57052.png
+  :target: https://user-images.githubusercontent.com/14288520/188329301-79f8a510-26f8-4259-8844-142f04f57052.png
 
 Functionality
 -------------
@@ -44,7 +45,9 @@ Examples
 **Find closest value to 5 in random range from 0 to 10**
 
 .. image:: https://user-images.githubusercontent.com/28003269/90544116-bae36f00-e197-11ea-9138-90d79dad6176.png
+    :target: https://user-images.githubusercontent.com/28003269/90544116-bae36f00-e197-11ea-9138-90d79dad6176.png
 
 **Searching value in input data in range between 3.97 to 5.03**
 
 .. image:: https://user-images.githubusercontent.com/28003269/107801848-0dce6580-6d7a-11eb-9562-0d09c8c05779.png
+    :target: https://user-images.githubusercontent.com/28003269/107801848-0dce6580-6d7a-11eb-9562-0d09c8c05779.png
