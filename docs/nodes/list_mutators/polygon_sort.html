@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Combinatorics" href="combinatorics.html" />
-    <link rel="prev" title="Unique Items" href="unique_items.html" /> 
+    <link rel="prev" title="Filter Empty Objects" href="filter_empty_lists.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,6 +74,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="list_mutators_index.html">List Mutators</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="modifier.html">List Modifier</a></li>
 <li class="toctree-l3"><a class="reference internal" href="unique_items.html">Unique Items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="filter_empty_lists.html">Filter Empty Objects</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Polygon Sort</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -84,7 +85,6 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="combinatorics.html">Combinatorics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="filter_empty_lists.html">Filter Empty Objects</a></li>
 <li class="toctree-l3"><a class="reference internal" href="find_closest.html">Find Closest Value</a></li>
 <li class="toctree-l3"><a class="reference internal" href="multi_cache.html">Multi Cache</a></li>
 </ul>
@@ -134,6 +134,7 @@
              
   <section id="polygon-sort">
 <h1>Polygon Sort<a class="headerlink" href="#polygon-sort" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188287885-e2b96646-045e-41ee-888c-7c85eff0b3df.png"><img alt="https://user-images.githubusercontent.com/14288520/188287885-e2b96646-045e-41ee-888c-7c85eff0b3df.png" src="https://user-images.githubusercontent.com/14288520/188287885-e2b96646-045e-41ee-888c-7c85eff0b3df.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Polygon Sort node sorts the input polygons by various criteria: distance, area and normal angle.</p>
@@ -147,10 +148,10 @@
 <p>All parameters except <strong>Mode</strong> and <strong>Descending</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 17%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 60%" />
+<col style="width: 16%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 62%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -164,11 +165,13 @@
 <td><p>Enum</p></td>
 <td><p>“D”</p></td>
 <td><dl class="simple">
-<dt>The sorting direction mode:</dt><dd><p>P  : Sort by the the distance to a point P
-D  : Sort by the projection along a direction D
-A  : Sort by the area of the polygons
-NP : Sort by the normal angle relative to point P
-ND : Sort by the normal angle relative to direction D</p>
+<dt>The sorting direction mode:</dt><dd><ul class="simple">
+<li><p><strong>P</strong>  : Sort by the the distance to a point P</p></li>
+<li><p><strong>D</strong>  : Sort by the projection along a direction D</p></li>
+<li><p><strong>A</strong>  : Sort by the area of the polygons</p></li>
+<li><p><strong>ND</strong> : Sort by the normal angle relative to direction D</p></li>
+<li><p><strong>NP</strong> : Sort by the normal angle relative to point P</p></li>
+</ul>
 </dd>
 </dl>
 </td>
@@ -205,30 +208,31 @@ ND : Sort by the normal angle relative to direction D</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Indices</strong>
-The indices of the sorted polygons.</p>
-<p><strong>Vertices</strong>
-The input vertices.</p>
-<p><strong>Polygons</strong>
-The sorted polygons.</p>
-<p><strong>Quantities</strong>
-The quantity by which the polygons are sorted. Depending on the selected mode the output quantities are either Distances, Projections, Angles or Areas.</p>
+<ul class="simple">
+<li><p><strong>Indices</strong> : The indices of the sorted polygons.</p></li>
+<li><p><strong>Vertices</strong> : The input vertices.</p></li>
+<li><p><strong>Polygons</strong> : The sorted polygons.</p></li>
+<li><p><strong>Quantities</strong> : The quantity by which the polygons are sorted. Depending on the selected mode the output quantities are either Distances, Projections, Angles or Areas.</p></li>
+</ul>
 <p>Note: The output will be generated when the output sockets are connected.</p>
 </section>
 <section id="modes">
 <h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
-<p>The modes correspond to different sorting criteria and each one has a quanitity by which the polygons are sorted.
-* P : In this mode the polygons are sorted by the distance from the center of each polygon to the given point P.
-* D : In this mode the polygons are sorted by the projection component of polygon center vector along the given direction D.
-* A : In this mode the polygons are sorted by the area of the polygons.
-* ND : In this mode the polygons are sorted by the angle between the polygon normal and the given direction vector D.
-* NP : In this mode the polygons are sorted by the angle between the polygon normal and the vector pointing form the center of the polygon to the given point P.</p>
+<p>The modes correspond to different sorting criteria and each one has a quanitity by which the polygons are sorted.</p>
+<ul class="simple">
+<li><p><strong>Point</strong> (P) : In this mode the polygons are sorted by the distance from the center of each polygon to the given point P.</p></li>
+<li><p><strong>Direction</strong> (D) : In this mode the polygons are sorted by the projection component of polygon center vector along the given direction D.</p></li>
+<li><p><strong>Area</strong> (A) : In this mode the polygons are sorted by the area of the polygons.</p></li>
+<li><p><strong>Normal Angle Point</strong> (NP) : In this mode the polygons are sorted by the angle between the polygon normal and the vector pointing form the center of the polygon to the given point P.</p></li>
+<li><p><strong>Normal Angle Direction</strong> (ND) : In this mode the polygons are sorted by the angle between the polygon normal and the given direction vector D.</p></li>
+</ul>
 </section>
 <section id="presets">
 <h2>Presets<a class="headerlink" href="#presets" title="Permalink to this heading">¶</a></h2>
 <p>The node provides a set of predefined sort directions: along X, Y and Z. These buttons will set the mode to “D” and the sorting vector (Direction) to one of the X, Y or Z directions: (1,0,0), (0,1,0) and (0,0,1) respectively. The preset buttons are only visible as long as the sorting vector socket is not connected.</p>
 <p>References:
-The algorithm to compute the area is based on descriptions found at this address: <a class="reference external" href="http://geomalgorithms.com/a01-_area.html#3D%20Polygons">http://geomalgorithms.com/a01-_area.html#3D%20Polygons</a></p>
+The algorithm to compute the area is based on descriptions found at this address: <a class="reference external" href="http://geomalgorithms.com/a01-_area.html#3D%20Polygons">http://geomalgorithms.com/a01-_area.html#3D%20Polygons</a> (not available)</p>
+<p><a class="reference external" href="https://web.archive.org/web/20210421151955/http://geomalgorithms.com/a01-_area.html">https://web.archive.org/web/20210421151955/http://geomalgorithms.com/a01-_area.html</a> (see Polygons)</p>
 </section>
 </section>
 
@@ -236,7 +240,7 @@ The algorithm to compute the area is based on descriptions found at this address
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="unique_items.html" class="btn btn-neutral float-left" title="Unique Items" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="filter_empty_lists.html" class="btn btn-neutral float-left" title="Filter Empty Objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="combinatorics.html" class="btn btn-neutral float-right" title="Combinatorics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
