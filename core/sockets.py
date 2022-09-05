@@ -308,6 +308,11 @@ class SvSocketProcessing():
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
+    def copy_options(self, other):
+        for identifier, prop in SvSocketProcessing.__annotations__.items():
+            if isinstance(prop, bpy.props._PropertyDeferred):
+                setattr(self, identifier, getattr(other, identifier))
+
 
 class SvSocketCommon(SvSocketProcessing):
     """

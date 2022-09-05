@@ -119,27 +119,25 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs.remove(self.outputs[-1])
 
     def rebuild_out_sockets(self):
-        links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-        self.outputs.clear()
-        new_socks = []
-        for i, (sock_a, sock_b) in enumerate(zip(list(self.inputs)[1::2], list(self.inputs)[2::2])):
+        for i, (sock_a, sock_b, sock_out) in enumerate(zip(
+                list(self.inputs)[1::2],
+                list(self.inputs)[2::2],
+                self.outputs)):
             sock_a_link = get_other_socket(sock_a) if sock_a.links else None
             sock_b_link = get_other_socket(sock_b) if sock_b.links else None
             if sock_a_link and sock_b_link:
                 if sock_a_link.bl_idname == sock_b_link.bl_idname:
-                    new_socks.append(self.outputs.new(sock_a_link.bl_idname, f"Out_{i}"))
+                    new_type = sock_a_link.bl_idname
                 else:
-                    new_socks.append(self.outputs.new("SvStringsSocket", f"Out_{i}"))
+                    new_type = "SvStringsSocket"
             elif sock_a_link and getattr(self, sock_b.prop_name) == 'None':
-                new_socks.append(self.outputs.new(sock_a_link.bl_idname, f"Out_{i}"))
+                new_type = sock_a_link.bl_idname
             elif sock_b_link and getattr(self, sock_a.prop_name) == 'None':
-                new_socks.append(self.outputs.new(sock_b_link.bl_idname, f"Out_{i}"))
+                new_type = sock_b_link.bl_idname
             else:
-                new_socks.append(self.outputs.new("SvStringsSocket", f"Out_{i}"))
-        new_links = [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
-                                                                for other_socket in links[sock.name]]
-        for link in new_links:
-            link.is_valid = True
+                new_type = "SvStringsSocket"
+            if sock_out.bl_idname != new_type:
+                sock_out.replace_socket(new_type)
 
     switch_state: bpy.props.EnumProperty(items=input_items[:2], name="state", default="False", update=update_node)
     socket_number: bpy.props.IntProperty(name="count", min=1, max=10, default=1, update=change_sockets)
