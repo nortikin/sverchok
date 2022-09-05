@@ -815,7 +815,9 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
 
     # fix values for unpainted vertices
     for vert in bm.verts:
-        if not vert[is_reached]:
+        if not vert[is_reached] and not is_obstacle(vert):
+            # is obstacle can be removed in next version to be consistent with
+            # unreached parts of the mesh
             vert[index] = -1
             if find_shortest_path:
                 vert[path_distance] = -1
