@@ -171,7 +171,7 @@ def make_polys(P, M, cap_bottom, cap_top, separate):
 class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Cylinder, Tube
-    Tooltip: Generate cylinder based meshes
+    Tooltip: Generate cylinder based meshes [def]\n\tCap B/T [On/On]\n\tCenter ([On]/Off)\n\t[Rad]/Deg/Uni\n\tRadius Top/Bottom [1/1]\n\tParallels/Meridians [2/32]\n\tHeight [2]\n\tTwist [0]\n\tPhase [0]\n\tScale [1]\n\tPar/Mer Profile
     """
     bl_idname = 'SvCylinderNodeMK2'
     bl_label = 'Cylinder'

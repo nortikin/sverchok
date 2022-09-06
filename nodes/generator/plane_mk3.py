@@ -25,12 +25,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
 
-directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
+directionItems = [("XY", "XY", "XY Plane"), ("YZ", "YZ", "YZ Plane"), ("ZX", "ZX", "ZX Plane")]
 dimensionsItems = [
-    ("SIZE", 'Size', 'Define size by total size'),
-    ("NUMBER", 'Num', 'Define size by number of steps and step size'),
-    ("STEPS", 'Steps', 'Define size by total size'),
-    ("SIZE_STEPS", 'Si+St', 'Define size by total size'),
+    ("SIZE", 'Size', 'Define size by total size and define number of steps'),
+    ("NUMBER", 'Num', 'Define size by number of steps and step size. List of steps are multiobjects.'),
+    ("STEPS", 'Steps', 'Define size by steps size'),
+    ("SIZE_STEPS", 'Si+St', 'Define size by total size (Si) and define steps (St)'),
 ]
 def extend_lists(data, result):
     for d, r in zip(data, result):
@@ -225,7 +225,7 @@ plane_func_dict = {
 class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Grid,
-    Tooltip: Generate a Plane primitive.
+    Tooltip: Generate a Plane. [def]\n\nOrient: [XY] / YZ / ZX (Ortho)\nSize: [Size],Num,Steps,Si+St\nSize X/Y: [10.], Num X/Y: [2]\nNum X/Y: [2], Step X/Y: [1.]\nStep X/Y <-List\nSize X/Y: [10.], Step X/Y
     """
 
     bl_idname = 'SvPlaneNodeMk3'

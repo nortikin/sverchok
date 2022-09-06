@@ -86,7 +86,10 @@ def icosahedron(r):
     return vertices, edges, faces
 
 class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
-    "IcoSphere primitive"
+    """IcoSphere. [default]
+    Subdivisions, min (0): [2]
+    Radius, min (0): [1.0]
+    """
 
     bl_idname = 'SvIcosphereNode'
     bl_label = 'IcoSphere'
@@ -106,7 +109,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         return self['subdivisions']
 
     subdivisions: IntProperty(
-        name = "Subdivisions", description = "How many times to recursively subdivide the sphere",
+        name = "Subdivisions", description = "How many times to recursively subdivide the sphere. min=0",
         default=2, min=0,
         set = set_subdivisions, get = get_subdivisions,
         update=updateNode)
@@ -119,7 +122,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     radius: FloatProperty(
         name = "Radius",
         default=1.0, min=0.0,
-        update=updateNode)
+        update=updateNode, description="Sphere radius. min=0")
 
     # list_match: EnumProperty(
     #     name="List Match",

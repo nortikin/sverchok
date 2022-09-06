@@ -39,7 +39,13 @@ direction_items = [
 
 Lengths = namedtuple('Lengths', ['size', 'number', 'step', 'step_size'])
 LENGTH = Lengths('Size', 'Num', 'Step', 'St+Si')
-length_items = [(i, i, '') for i in LENGTH]
+#length_items = [(i, i, '') for i in LENGTH]
+length_items = [
+    ('Size', 'Size', 'Define size by total size and define number of steps'),
+    ('Num', 'Num', 'Define size by number of steps and step size. List of steps are multiobjects.'),
+    ('Step', 'Step', 'Define size by steps size'),
+    ('St+Si', 'St+Si', 'Define size by total size (Si) and define steps (St)'),
+]
 
 
 def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=None,
@@ -207,7 +213,7 @@ def split_lines_to_objects(verts, edges):
 class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Line, segment.
-    Tooltip: Generate line.
+    Tooltip: Generate line. [default]\n\tOrientation: [X], Y, Z, Origin+Point, Origin+Direction\n\tSize: [Size], Num, Step, St+Si (Step+Size)\n\tNum verts: [2]\n\tSize: [10.0]
     """
     bl_idname = 'SvLineNodeMK4'
     bl_label = 'Line'

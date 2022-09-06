@@ -98,14 +98,17 @@ def make_all_arcs(v, nv, make_edges):
 
 class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
 
-    ''' Arc from 3 points '''
+    ''' Arc from 3 points. [default]
+    Num Verts: [20]
+    arc_pts <- List verts. Count of Points is %3=0
+    '''
     bl_idname = 'svBasicArcNode'
     bl_label = '3pt Arc'
     bl_icon = 'SPHERECURVE'
 
     num_verts: IntProperty(
-        name='num_verts',
-        description='Num Vertices',
+        name='Num Verts',
+        description='Num Vertices for approximation. min=3',
         default=20, min=3,
         update=updateNode)
 

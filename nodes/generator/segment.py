@@ -125,11 +125,12 @@ def iter_last(l):
 
 
 class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
-    """
-    Triggers: 2pt Line
-
-    Can subdivide output edge
-    Vertices can be as numpy array
+    """ Triggers: 2pt Line. [default]
+    Cuts/Steps [Cuts]:
+        Cuts - Number of steps
+        Steps - List of Proportional Steps
+    A/B - Start/End Point (A)[[0,]], (B)[[.5,]] or List of Points (Verts)
+    Num cuts - Subdivide edges [0]
     """
     bl_idname = 'SvSegmentGenerator'
     bl_label = 'Segment'
@@ -145,10 +146,10 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
             self.inputs['Steps'].hide_safe = False
         updateNode(self, context)
 
-    split_mode: bpy.props.EnumProperty(items=[(n, n, '') for n in SPLIT_MODE], update=update_node)
-    a: bpy.props.FloatVectorProperty(name='A', update=updateNode)
-    b: bpy.props.FloatVectorProperty(name='B', default=(0.5, 0.5, 0.5), update=updateNode)
-    cuts_number: bpy.props.IntProperty(name='Num cuts', min=0, update=updateNode)
+    split_mode: bpy.props.EnumProperty(items=[(n, n, '') for n in SPLIT_MODE], update=update_node, description="Cuts - Number of Cuts / Steps - List of Proportional Steps")
+    a: bpy.props.FloatVectorProperty(name='A', update=updateNode, description="Origin point or List of Origin Points (Verts)")
+    b: bpy.props.FloatVectorProperty(name='B', default=(0.5, 0.5, 0.5), update=updateNode, description="Target point or List of Target Points (Verts)")
+    cuts_number: bpy.props.IntProperty(name='Num cuts', min=0, update=updateNode, description="Number of Cuts / List of Proportional Steps")
     as_numpy: bpy.props.BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
