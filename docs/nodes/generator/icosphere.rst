@@ -1,6 +1,9 @@
 IcoSphere Node
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png
+  :target: https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png
+
 Functionality
 -------------
 
@@ -11,8 +14,8 @@ Inputs
 
 This node has the following inputs:
 
-- **Subdivisions**
-- **Radius**
+- **Subdivisions** - How many times to recursively subdivide the sphere. min=0.
+- **Radius** - Sphere radius. min=0.
 
 Parameters
 ----------
@@ -37,5 +40,6 @@ Example of usage
 
 Simple example:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24826849/e7c6f03c-1c60-11e7-9e41-c7450237e315.png
+.. image:: https://user-images.githubusercontent.com/14288520/188708570-5c9fda27-d754-4876-ad46-db798efdf798.png
+  :target: https://user-images.githubusercontent.com/14288520/188708570-5c9fda27-d754-4876-ad46-db798efdf798.png
 

@@ -1,7 +1,8 @@
 Segment
 =======
 
-.. image:: https://user-images.githubusercontent.com/28003269/72606242-ac01b900-3937-11ea-9cb5-1e7b67c00bca.png
+.. image:: https://user-images.githubusercontent.com/14288520/188512106-e151f579-82d5-4cb5-8e41-c67d87f02151.png
+  :target: https://user-images.githubusercontent.com/14288520/188512106-e151f579-82d5-4cb5-8e41-c67d87f02151.png
 
 Functionality
 -------------
@@ -45,14 +46,26 @@ Parameters
 Example of usage
 ----------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/188512120-e3410fd7-eda8-4697-8ef6-04b60dbb6845.png
+  :target: https://user-images.githubusercontent.com/14288520/188512120-e3410fd7-eda8-4697-8ef6-04b60dbb6845.png
 
-.. image:: https://user-images.githubusercontent.com/28003269/72215874-bdf7ec00-3532-11ea-9e50-41234fe02862.png
-  :alt: LineDemo4.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/188512135-6084a8b5-c15b-494b-a44c-6a0f6e50578c.gif
+  :target: https://user-images.githubusercontent.com/14288520/188512135-6084a8b5-c15b-494b-a44c-6a0f6e50578c.gif
+
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 The AB mode will output a divided segment for each vector pair, the step can be used to change the proportions of the divisions
 
+.. image:: https://user-images.githubusercontent.com/14288520/188512311-9ea7e002-ca3d-47ee-b639-f055d4b9e4b4.png
+  :target: https://user-images.githubusercontent.com/14288520/188512311-9ea7e002-ca3d-47ee-b639-f055d4b9e4b4.png
 
-.. image:: https://user-images.githubusercontent.com/28003269/72215940-b5ec7c00-3533-11ea-92e5-e3965487a8c1.png
-  :alt: LineDemo5.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/188512296-6287d7eb-ae38-4087-9a31-1fe433deea93.gif
+  :target: https://user-images.githubusercontent.com/14288520/188512296-6287d7eb-ae38-4087-9a31-1fe433deea93.gif
+
+* Modifiers->Modifier Make :doc:`UV Connections </nodes/modifier_make/uv_connect>`
+* Modifiers->Modifier Make :doc:`WireFrame </nodes/modifier_make/wireframe>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Advanced example using the node to create a paraboloid grid

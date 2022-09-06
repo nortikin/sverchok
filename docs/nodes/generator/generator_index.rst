@@ -5,22 +5,23 @@ Generator
 .. toctree::
    :maxdepth: 1
 
-   basic_3pt_arc
-   basic_spline
-   quad_spline
+   line_mk4
+   segment
+   plane_mk3
+   ngon
    box_mk2
-   bricks
    circle
    cylinder_mk2
-   image
-   line_mk4
-   ngon
-   plane_mk3
-   random_vector_mk3
    sphere
    icosphere
-   suzanne
    torus_mk2
-   formula_shape
-   segment
+   suzanne
    cricket
+
+   basic_spline
+   quad_spline
+   basic_3pt_arc
+   random_vector_mk3
+   image
+   bricks
+   formula_shape

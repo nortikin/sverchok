@@ -1,6 +1,9 @@
 2 Point Spline
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/188749135-04deebda-04b6-4a20-bad6-96eb96d4ecec.png
+  :target: https://user-images.githubusercontent.com/14288520/188749135-04deebda-04b6-4a20-bad6-96eb96d4ecec.png
+
 Functionality
 -------------
 
@@ -9,19 +12,19 @@ Single section Bezier Spline. Creates a *Spline Curve* from 2 sets of points. An
 Inputs
 ------
 
-+-----------+--------+-------------------------------------------------------------+
-| Parameter | Type   | Description                                                 |
-+===========+========+=============================================================+
-| num verts | int    | per curve this sets how many verts define the curve         |
-+-----------+--------+-------------------------------------------------------------+
-| knot 1    | Vector | These place and adjust the shape of the curve. The knots    |
-+-----------+--------+ are vectors on the curve, the controls are vectors to which |
-| control 1 | Vector | the curve is mathematically attracted                       |
-+-----------+--------+                                                             |
-| control 2 | Vector |                                                             |
-+-----------+--------+                                                             |
-| knot 2    | Vector |                                                             |
-+-----------+--------+-------------------------------------------------------------+
++------------+--------+-------------------------------------------------------------+
+| Parameter  | Type   | Description                                                 |
++============+========+=============================================================+
+| Num Verts  | int    | per curve this sets how many verts define the curve         |
++------------+--------+-------------------------------------------------------------+
+| knot 1     | Vector | These place and adjust the shape of the curve. The knots    |
++------------+--------+ are vectors on the curve, the controls are vectors to which |
+| control 1  | Vector | the curve is mathematically attracted                       |
++------------+--------+                                                             |
+| control 2  | Vector |                                                             |
++------------+--------+                                                             |
+| knot 2     | Vector |                                                             |
++------------+--------+-------------------------------------------------------------+
 
 The node accepts these 
 The node will adjust to make sure the length of 
@@ -55,7 +58,10 @@ Passing hnd.Verts and hnd.Edges to a ViewerDraw node helps visualize the Handles
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3362071/c3b7f346-fb05-11e3-9af7-35dfda973712.png
+.. image:: https://user-images.githubusercontent.com/14288520/188749150-1712fa73-1ec7-4003-a2aa-4e06920a4e1f.png
+  :target: https://user-images.githubusercontent.com/14288520/188749150-1712fa73-1ec7-4003-a2aa-4e06920a4e1f.png
+
 .. image:: https://cloud.githubusercontent.com/assets/619340/3362910/c18e4eea-fb0e-11e3-9a80-4624d30c65e9.gif
+    :target: https://cloud.githubusercontent.com/assets/619340/3362910/c18e4eea-fb0e-11e3-9a80-4624d30c65e9.gif
 
 See the progress of how this node came to life `here <https://github.com/nortikin/sverchok/issues/247>`_ (gifs, screenshots)

@@ -26,15 +26,20 @@ from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 
 
 class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Circle '''
+    ''' Circle. [default]
+        Radius (float): [1.0]
+        Num verts (int), min 3: [24]
+        Degrees (float, range 0-360): [360]
+        Mode: [False - Segment], True - Sector
+'''
     bl_idname = 'SvCircleNode'
     bl_label = 'Circle'
     bl_icon = 'MESH_CIRCLE'
 
     rad_: FloatProperty(name='Radius', description='Radius', default=1.0, update=updateNode)
-    vert_: IntProperty(name='num Verts', description='Vertices', default=24, min=3, update=updateNode)
-    mode_: BoolProperty(name='mode_', description='Mode', default=0,  update=updateNode)
-    degr_: FloatProperty(name='Degrees', description='Degrees', default=360.0, min=0, max=360.0,  update=updateNode)
+    vert_: IntProperty(name='num Verts', description='Vertices. Min 3.', default=24, min=3, update=updateNode)
+    mode_: BoolProperty(name='mode_', description='Mode. False - Segment, True - Sector', default=0,  update=updateNode)
+    degr_: FloatProperty(name='Degrees', description='Degrees. Range: 0.0-360.0', default=360.0, min=0, max=360.0,  update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'

@@ -137,7 +137,7 @@ def torus_polygons(N1, N2, t):
 class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Torus, Donut
-    Tooltip: Generate toroidal meshes
+    Tooltip: Generate toroidal meshes. [default]\n\tDims [R:r]/eR:iR\n\tMajor/Minor Radius: [1.0/.25]\n\tRevolution Sections: [32]\n\tSpin Sections: [16]\n\tRevolution/Spin Phase: [0]\n\tRevolution/Spin Exponent: [1.0]\n\tSpin Twist[0]
     """
     bl_idname = 'SvTorusNodeMK2'
     bl_label = 'Torus'

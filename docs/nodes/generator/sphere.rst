@@ -1,6 +1,9 @@
 Sphere
 ========
 
+.. image:: https://user-images.githubusercontent.com/14288520/188705207-d867778f-3c69-42ba-a9b6-e5372e14ee0f.png
+  :target: https://user-images.githubusercontent.com/14288520/188705207-d867778f-3c69-42ba-a9b6-e5372e14ee0f.png
+
 Functionality
 -------------
 
@@ -45,6 +48,7 @@ Example of usage
 ----------------
 
 .. image:: https://cloud.githubusercontent.com/assets/5990821/4187465/2a08ffdc-376a-11e4-8359-b4f98567dedb.png
+  :target: https://cloud.githubusercontent.com/assets/5990821/4187465/2a08ffdc-376a-11e4-8359-b4f98567dedb.png
   :alt: SphereDemo1.PNG
 
 As you can see, lot of different outputs can be generated with this node.

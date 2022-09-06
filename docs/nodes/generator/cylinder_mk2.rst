@@ -1,6 +1,9 @@
 Cylinder MK2
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/188698444-3c371e60-6887-4359-86e2-47bfc66568e5.png
+  :target: https://user-images.githubusercontent.com/14288520/188698444-3c371e60-6887-4359-86e2-47bfc66568e5.png
+
 Functionality
 -------------
 
@@ -11,16 +14,16 @@ Inputs
 
 All inputs are vectorized and they will accept single or multiple values.
 
-- **Radius Top**
-- **Radius Bottom**
-- **Parallels**
-- **Meridians**
-- **Height**
-- **Twist**
-- **Phase**
-- **Scale**
-- **Parallels Profile** [1]
-- **Meridians Profile** [1]
+- **Radius T** - Top Radius
+- **Radius B** - Bottom Radius
+- **Parallels** - Number of Parallels
+- **Meridians** - Number of meridians
+- **Height** - The height of the cylinder
+- **Twist** - Rotate parallel verts by this angle around Z from bottom to top
+- **Phase** - Rotate all verts by this angle around Z axis
+- **Scale** - scale the entire mesh (radii & height)
+- **Parallels Profile** - parallels profile [1]
+- **Meridians Profile** - meridians profile [1]
 
 [1] : The profiles inputs do not take input values from the node, but can take multiple values form the outside nodes.
 
@@ -90,4 +93,14 @@ Depending on the type of the inputs the node will generate only one or multiples
 
 If **Separate** is True, the node will output the parallel sections as separate lists (verts, edges and polys).
 
+**Examples**
 
+.. image:: https://user-images.githubusercontent.com/14288520/188701121-947eabdc-b13d-45f6-9ea5-4204162a0c97.png
+  :target: https://user-images.githubusercontent.com/14288520/188701121-947eabdc-b13d-45f6-9ea5-4204162a0c97.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/188700994-0a9c858e-0a6f-49c3-8215-16681c7802f8.gif
+  :target: https://user-images.githubusercontent.com/14288520/188700994-0a9c858e-0a6f-49c3-8215-16681c7802f8.gif
+
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

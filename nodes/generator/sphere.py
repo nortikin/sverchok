@@ -94,7 +94,11 @@ def sphere_faces(U, V):
 
 
 class SphereNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Sphere '''
+    '''UV Sphere. [default]
+    Radius: [1.0]
+    U, min 3: [24]
+    V, min 3: [24]
+    '''
     bl_idname = 'SphereNode'
     bl_label = 'Sphere'
     bl_icon = 'MESH_UVSPHERE'

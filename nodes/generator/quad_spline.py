@@ -29,7 +29,7 @@ from sverchok.utils.geom import interpolate_quadratic_bezier
 class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bezier Quadratic Curve Spline
-    Tooltip: Generate quadratic Bezier curve by two end points and one control point.
+    Tooltip: Generate quadratic Bezier curve by two end points and one control point. [default]\n\tNum Verts: [10]\n\tKnot1\n\tKnot2\n\tHandle
     """
     bl_idname = 'SvQuadraticSplineNode'
     bl_label = '2pt Quadratic Spline'
@@ -37,7 +37,7 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_QUAD_SPLINE'
 
     num_verts: IntProperty(
-            name = "Divisions",
+            name = "Num Verts",
             description = "Number of vertices",
             default = 10, min = 3,
             update=updateNode)
