@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="2 Point Spline" href="basic_spline.html" />
-    <link rel="prev" title="Generator" href="generator_index.html" /> 
+    <link rel="next" title="Random Vector" href="random_vector_mk3.html" />
+    <link rel="prev" title="Quadratic Spline" href="quad_spline.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,6 +51,20 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">3 Point Arc</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -59,24 +73,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
 <li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
-<li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -145,6 +145,7 @@
              
   <section id="point-arc">
 <h1>3 Point Arc<a class="headerlink" href="#point-arc" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png"><img alt="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png" src="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Given a <em>start coordinate</em>, a <em>through coordinate</em>, and an <em>end coordinate</em> this Node will find the Arc that passes through those points.</p>
@@ -159,12 +160,12 @@
 </ul>
 </div></blockquote>
 </li>
-<li><p>num verts is either</p>
+<li><p>Num Verts is either</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>constant</p></li>
 <li><p>unique</p></li>
-<li><p>or repeats last value if the number of arcs exceeds the number of values in the <cite>num_vert</cite> list</p></li>
+<li><p>or repeats last value if the number of arcs exceeds the number of values in the <cite>Num Verts</cite> list</p></li>
 </ul>
 </div></blockquote>
 </li>
@@ -174,7 +175,7 @@
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>The UI is quite minimal.</p>
 <ul class="simple">
-<li><p><strong>num verts</strong> can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.</p></li>
+<li><p><strong>Num Verts</strong> can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.</p></li>
 </ul>
 </section>
 <section id="output">
@@ -187,10 +188,10 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" src="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif"><img alt="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" src="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" /></a>
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/254">here</a> (gifs, screenshots)</p>
 <p>Basic example:</p>
-<p>..image:: <a class="reference external" href="https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png">https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png</a></p>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png"><img alt="https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png" src="https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png" /></a>
 </section>
 </section>
 
@@ -198,8 +199,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="generator_index.html" class="btn btn-neutral float-left" title="Generator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="basic_spline.html" class="btn btn-neutral float-right" title="2 Point Spline" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="quad_spline.html" class="btn btn-neutral float-left" title="Quadratic Spline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="random_vector_mk3.html" class="btn btn-neutral float-right" title="Random Vector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

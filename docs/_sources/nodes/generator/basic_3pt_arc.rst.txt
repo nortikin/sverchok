@@ -1,6 +1,9 @@
 3 Point Arc
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png
+  :target: https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png
+
 Functionality
 -------------
 
@@ -13,11 +16,11 @@ Inputs
 
     - must be (len % 3 == 0 )
 
-- num verts is either
+- Num Verts is either
 
     - constant
     - unique
-    - or repeats last value if the number of arcs exceeds the number of values in the `num_vert` list
+    - or repeats last value if the number of arcs exceeds the number of values in the `Num Verts` list
 
 
 Parameters
@@ -26,7 +29,7 @@ Parameters
 The UI is quite minimal.
 
 
-- **num verts** can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.
+- **Num Verts** can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.
 
 
 Output
@@ -40,9 +43,11 @@ Examples
 --------
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif
+    :target: https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif
 
 See the progress of how this node came to life `here <https://github.com/nortikin/sverchok/issues/254>`_ (gifs, screenshots)
 
 Basic example:
 
-..image:: https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png
+.. image:: https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png
+    :target: https://cloud.githubusercontent.com/assets/1275858/23209252/c5936418-f8f8-11e6-8e1c-3b1bbbf83202.png

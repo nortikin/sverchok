@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Suzanne Node" href="suzanne.html" />
+    <link rel="next" title="Torus" href="torus_mk2.html" />
     <link rel="prev" title="Sphere" href="sphere.html" /> 
 </head>
 
@@ -51,18 +51,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">IcoSphere Node</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -72,11 +67,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -145,6 +145,7 @@
              
   <section id="icosphere-node">
 <h1>IcoSphere Node<a class="headerlink" href="#icosphere-node" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png"><img alt="https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png" src="https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates an IcoSphere primitive. In case of zero subdivisions, it simply produces right icosahedron.</p>
@@ -153,8 +154,8 @@
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Subdivisions</strong></p></li>
-<li><p><strong>Radius</strong></p></li>
+<li><p><strong>Subdivisions</strong> - How many times to recursively subdivide the sphere. min=0.</p></li>
+<li><p><strong>Radius</strong> - Sphere radius. min=0.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -178,7 +179,7 @@
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/24826849/e7c6f03c-1c60-11e7-9e41-c7450237e315.png" src="https://cloud.githubusercontent.com/assets/284644/24826849/e7c6f03c-1c60-11e7-9e41-c7450237e315.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188708570-5c9fda27-d754-4876-ad46-db798efdf798.png"><img alt="https://user-images.githubusercontent.com/14288520/188708570-5c9fda27-d754-4876-ad46-db798efdf798.png" src="https://user-images.githubusercontent.com/14288520/188708570-5c9fda27-d754-4876-ad46-db798efdf798.png" /></a>
 </section>
 </section>
 
@@ -187,7 +188,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="sphere.html" class="btn btn-neutral float-left" title="Sphere" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="suzanne.html" class="btn btn-neutral float-right" title="Suzanne Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="torus_mk2.html" class="btn btn-neutral float-right" title="Torus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

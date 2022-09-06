@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Plane" href="plane_mk3.html" />
-    <link rel="prev" title="Line" href="line_mk4.html" /> 
+    <link rel="next" title="Box" href="box_mk2.html" />
+    <link rel="prev" title="Plane" href="plane_mk3.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,15 +51,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">NGon</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -68,15 +62,21 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -145,7 +145,7 @@
              
   <section id="ngon">
 <h1>NGon<a class="headerlink" href="#ngon" title="Permalink to this heading">¶</a></h1>
-<p><em>destination after Beta: generators</em></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png"><img alt="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" src="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>NGon generator creates regular (or not exactly, see below) polygons of given
@@ -258,17 +258,17 @@ node does not create degenerated polygons.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Sides=5, Shift=0, RandomR=0, RandomPhi=0 (default values):</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" src="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" src="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" /></a>
 <p>Sides=6, RandomPhi=0.3:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" src="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" src="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" /></a>
 <p>Sides=6, RandomR=0.3:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" src="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" src="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" /></a>
 <p>Sides=7, Shift=1, RandomR=0.24, RandomPhi=0.15:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" src="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" src="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" /></a>
 <p>Sides=29, Shift=9, RandomR=0, RandomPhi=0:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" src="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" src="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" /></a>
 <p>Example of use of <strong>Divisions</strong> input:</p>
-<img alt="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" src="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png"><img alt="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" src="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" /></a>
 </section>
 </section>
 
@@ -276,8 +276,8 @@ node does not create degenerated polygons.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="line_mk4.html" class="btn btn-neutral float-left" title="Line" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="plane_mk3.html" class="btn btn-neutral float-right" title="Plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plane_mk3.html" class="btn btn-neutral float-left" title="Plane" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="box_mk2.html" class="btn btn-neutral float-right" title="Box" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Random Vector" href="random_vector_mk3.html" />
-    <link rel="prev" title="NGon" href="ngon.html" /> 
+    <link rel="next" title="NGon" href="ngon.html" />
+    <link rel="prev" title="Segment" href="segment.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,16 +51,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Plane</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-and-parameters">Inputs and Parameters</a></li>
@@ -69,14 +61,22 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -145,6 +145,8 @@
              
   <section id="plane">
 <h1>Plane<a class="headerlink" href="#plane" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188589996-04c36fed-4aa5-4516-9eb6-a0d2b8367f52.png"><img alt="https://user-images.githubusercontent.com/14288520/188589996-04c36fed-4aa5-4516-9eb6-a0d2b8367f52.png" src="https://user-images.githubusercontent.com/14288520/188589996-04c36fed-4aa5-4516-9eb6-a0d2b8367f52.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188585376-c4853550-2093-4b10-b9f9-f94185508387.png"><img alt="https://user-images.githubusercontent.com/14288520/188585376-c4853550-2093-4b10-b9f9-f94185508387.png" src="https://user-images.githubusercontent.com/14288520/188585376-c4853550-2093-4b10-b9f9-f94185508387.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Plane generator creates a grid in the plane XY/YZ or ZX, the node offers different methods to define the size of the grid and the spacing between the points.</p>
@@ -241,16 +243,50 @@ All outputs will be generated. Depending on the type of the inputs, the node wil
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188587154-3bd2509a-7060-42a5-a4dd-c3020b02ac5d.png"><img alt="https://user-images.githubusercontent.com/14288520/188587154-3bd2509a-7060-42a5-a4dd-c3020b02ac5d.png" src="https://user-images.githubusercontent.com/14288520/188587154-3bd2509a-7060-42a5-a4dd-c3020b02ac5d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188587078-258847a6-f6df-4cab-84a5-6ca136388bd4.gif"><img alt="https://user-images.githubusercontent.com/14288520/188587078-258847a6-f6df-4cab-84a5-6ca136388bd4.gif" src="https://user-images.githubusercontent.com/14288520/188587078-258847a6-f6df-4cab-84a5-6ca136388bd4.gif" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Generating the same grid with different modes:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
 <p>Using the ‘Steps’ mode to control the grid spacing</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png" />
-<p>In the ‘Steps + Size’ mode the step list is used to control the proportion of the spacing between Vertices</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<p>In the ‘Si + St’ mode (Size + Steps) the step list is used to control the proportion of the spacing between Vertices</p>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>With the list matching in ‘cycle’ advanced rhythms can be achieved.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>The matrix input is be vectorized and accepts many lists of matrixes, note in this example that the ‘Flat Output’ of the ‘Matrix In’ node is un-checked.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <ul class="simple">
 <li><p>The first ‘Line’ node generates one line with two verts.</p></li>
 <li><p>The second ‘Line’ node generates two lines with five verts.</p></li>
@@ -264,8 +300,8 @@ All outputs will be generated. Depending on the type of the inputs, the node wil
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ngon.html" class="btn btn-neutral float-left" title="NGon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="random_vector_mk3.html" class="btn btn-neutral float-right" title="Random Vector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="segment.html" class="btn btn-neutral float-left" title="Segment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ngon.html" class="btn btn-neutral float-right" title="NGon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

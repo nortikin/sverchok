@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Box" href="box_mk2.html" />
+    <link rel="next" title="3 Point Arc" href="basic_3pt_arc.html" />
     <link rel="prev" title="2 Point Spline" href="basic_spline.html" /> 
 </head>
 
@@ -51,7 +51,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
 <li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Quadratic Spline</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -61,22 +72,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="box_mk2.html">Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
-<li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -145,6 +145,7 @@
              
   <section id="quadratic-spline">
 <h1>Quadratic Spline<a class="headerlink" href="#quadratic-spline" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188749135-04deebda-04b6-4a20-bad6-96eb96d4ecec.png"><img alt="https://user-images.githubusercontent.com/14288520/188749135-04deebda-04b6-4a20-bad6-96eb96d4ecec.png" src="https://user-images.githubusercontent.com/14288520/188749135-04deebda-04b6-4a20-bad6-96eb96d4ecec.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a single section of quadratic Bezier spline. To generate a quadratic spline, you have to provide two end points (“knots”) and one control point (“handle”).</p>
@@ -153,7 +154,7 @@
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Divisions</strong>. Number of vertices to generate. Default value is 10.</p></li>
+<li><p><strong>Num Verts</strong>. Number of vertices to generate. Default value is 10.</p></li>
 <li><p><strong>Knot 1</strong>. The beginning point of the curve.</p></li>
 <li><p><strong>Knot 2</strong>. The ending point of the curve.</p></li>
 <li><p><strong>Handle</strong>. The control point for the curve.</p></li>
@@ -177,9 +178,17 @@
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/67594672-4eb5fb80-f77e-11e9-8b1c-ad9689349ca7.png" src="https://user-images.githubusercontent.com/284644/67594672-4eb5fb80-f77e-11e9-8b1c-ad9689349ca7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188751459-e155c353-7ebe-42e5-9c81-206061ab24ec.png"><img alt="https://user-images.githubusercontent.com/14288520/188751459-e155c353-7ebe-42e5-9c81-206061ab24ec.png" src="https://user-images.githubusercontent.com/14288520/188751459-e155c353-7ebe-42e5-9c81-206061ab24ec.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Vectorization example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/67594673-4f4e9200-f77e-11e9-8fba-daf74251ac00.png" src="https://user-images.githubusercontent.com/284644/67594673-4f4e9200-f77e-11e9-8fba-daf74251ac00.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188752243-5e09bde9-3af0-488e-868d-8603e246b7b7.png"><img alt="https://user-images.githubusercontent.com/14288520/188752243-5e09bde9-3af0-488e-868d-8603e246b7b7.png" src="https://user-images.githubusercontent.com/14288520/188752243-5e09bde9-3af0-488e-868d-8603e246b7b7.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -188,7 +197,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="basic_spline.html" class="btn btn-neutral float-left" title="2 Point Spline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="box_mk2.html" class="btn btn-neutral float-right" title="Box" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="basic_3pt_arc.html" class="btn btn-neutral float-right" title="3 Point Arc" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Bricks Grid" href="bricks.html" />
-    <link rel="prev" title="Quadratic Spline" href="quad_spline.html" /> 
+    <link rel="next" title="Circle" href="circle.html" />
+    <link rel="prev" title="NGon" href="ngon.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,9 +51,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Box</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -63,21 +64,20 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="circle.html">Circle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="line_mk4.html">Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ngon.html">NGon</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plane_mk3.html">Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_mk2.html">Torus</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l3"><a class="reference internal" href="segment.html">Segment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suzanne.html">Suzanne Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cricket.html">cricket</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_spline.html">2 Point Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_spline.html">Quadratic Spline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic_3pt_arc.html">3 Point Arc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_vector_mk3.html">Random Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bricks.html">Bricks Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_shape.html">Formula Shape</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
@@ -146,6 +146,7 @@
              
   <section id="box">
 <h1>Box<a class="headerlink" href="#box" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188669831-ad397459-d35c-4657-8bb4-b1dcfa4af392.png"><img alt="https://user-images.githubusercontent.com/14288520/188669831-ad397459-d35c-4657-8bb4-b1dcfa4af392.png" src="https://user-images.githubusercontent.com/14288520/188669831-ad397459-d35c-4657-8bb4-b1dcfa4af392.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Offers a Box primitive with variable X,Y and Z divisions, and overall Size.</p>
@@ -154,16 +155,18 @@
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and the data will be matched according to the advanced properties ‘Match List Global’ and ‘Match List Local’</p>
 <ul class="simple">
-<li><p>Size: Base size of the box</p></li>
-<li><p>Div X: Divisions along X axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
-<li><p>Div Y: Divisions along Y axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
-<li><p>Div Z: Divisions along Z axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
-<li><p>Matrix: Input to control position, scale and rotation of the box</p></li>
+<li><p><strong>Size</strong>: Base size of the box</p></li>
+<li><p><strong>Div X</strong>: Divisions along X axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
+<li><p><strong>Div Y</strong>: Divisions along Y axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
+<li><p><strong>Div Z</strong>: Divisions along Z axis, it will cast incoming <cite>floats</cite> to <cite>int</cite>.</p></li>
+<li><p><strong>Matrix</strong>: Input to control position, scale and rotation of the box</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p><em>Origin</em>: Set where the origin of the box will be. It can be Center, Bottom (bottom center) or Corner (the bottom left front corner)</p>
+<ul class="simple">
+<li><p><strong>Origin</strong>: Set where the origin of the box will be. It can be Center, Bottom (bottom center) or Corner (the bottom left front corner)</p></li>
+</ul>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
@@ -191,15 +194,42 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Basic example generating a box 5 x 3  x 1</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_0.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_0.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_0.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>All inputs are vectorized, note that to match the first inputs structure the <em>Flat Output</em> checkbox of the Matrix In node is un-checked.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188686962-13dad19a-1bcb-4547-8f42-7ff7a82bb678.png"><img alt="https://user-images.githubusercontent.com/14288520/188686962-13dad19a-1bcb-4547-8f42-7ff7a82bb678.png" src="https://user-images.githubusercontent.com/14288520/188686962-13dad19a-1bcb-4547-8f42-7ff7a82bb678.png" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>The <em>Flat Output</em> checkbox of the second Matrix In node is un-checked. On the first 6 boxes are generated, on the second just 3 boxes are created.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188686507-01c9981a-03fb-4f98-8b9f-394fd27ada4e.png"><img alt="https://user-images.githubusercontent.com/14288520/188686507-01c9981a-03fb-4f98-8b9f-394fd27ada4e.png" src="https://user-images.githubusercontent.com/14288520/188686507-01c9981a-03fb-4f98-8b9f-394fd27ada4e.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Boxes in the corner of boxes repeatedly</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Different data shapes output depending on “Simplify Output” advanced property</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/shape.html"><span class="doc">Data Shape</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/note.html"><span class="doc">Note</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -207,8 +237,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="quad_spline.html" class="btn btn-neutral float-left" title="Quadratic Spline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="bricks.html" class="btn btn-neutral float-right" title="Bricks Grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ngon.html" class="btn btn-neutral float-left" title="NGon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="circle.html" class="btn btn-neutral float-right" title="Circle" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
