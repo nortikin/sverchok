@@ -61,7 +61,8 @@ This node has the following outputs:
   number of steps which should be taken from initially selected faces
   (vertices), to take to this face (vertex), starting from 1 for initially
   selected faces. In other words, this is the number of the wave front. This
-  output will contain 0 for obstacle faces / vertices.
+  output will contain 0 for obstacle faces / vertices and -1 if faces /
+  vertices are unreachable from selected elements.
 - **WaveDistance**. For each face (or vertex) of the mesh, this contains the
   length of the shortest path from initially selected faces (vertices) to this
   face (vertex). The path is considered to be consisting of single steps from
@@ -69,7 +70,8 @@ This node has the following outputs:
   neighbour vertices is the Euclidean distance between such vertices. The
   length of step between neighbour faces is calculated as Euclidean distance
   between the centers of such faces. This input will contain 0 for initially
-  selected faces as well as for obstacle faces.
+  selected faces as well as for obstacle faces and -1 for elements which are
+  unreachable from selected ones.
 - **StartIdx**. For each face (or vertex) of the mesh, this contains the index
   of one of initially selected faces / vertices, which is the nearest from this
   face / vertex, in terms of the shortest path described above.
