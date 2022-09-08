@@ -51,15 +51,15 @@ def smooth_numbers(params, constants, matching_f):
 class SvSmoothNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Ease values
-    Tooltip: Smooth the values of a numerical list.
+    Tooltip: Smooth the values of a numerical list by reducing the difference between consecutive numbers. [default]\n\tValues: <= List[numbers]\n\tIterations: [1]\n\tFactor: [1.]
     """
     bl_idname = 'SvSmoothNumbersNode'
     bl_label = 'Smooth Numbers'
     bl_icon = 'SMOOTHCURVE'
 
 
-    factor: FloatProperty(default=1.0, min=-1, max=1, name='Factor', update=updateNode)
-    iterations: IntProperty(default=1, min=0, name='Iterations', update=updateNode)
+    factor: FloatProperty(default=1.0, min=-1, max=1, name='Factor', update=updateNode, description="smoothing factor")
+    iterations: IntProperty(default=1, min=0, name='Iterations', update=updateNode, description="Number of smoothing iterations")
     cyclic: BoolProperty(
         name='Cyclic',
         description='Smooth first value with last value',

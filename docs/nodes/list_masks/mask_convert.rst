@@ -86,3 +86,17 @@ Examples of usage
 .. image:: https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png
   :target: https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png
 
+Filter vertices and edges if some faces hided:
+
+.. image:: https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png
+  :target: https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* Logic-> :doc:`Logic Functions (Not) </nodes/logic/logic_node>`
+* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/188969187-0dafea41-0015-4eda-ae8d-ae8384b7f060.gif
+  :target: https://user-images.githubusercontent.com/14288520/188969187-0dafea41-0015-4eda-ae8d-ae8384b7f060.gif

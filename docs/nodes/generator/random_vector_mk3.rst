@@ -50,6 +50,14 @@ Notes
 Seed is applied per output, not for the whole operation
 A unit vector has length of 1, a convex hull of random unit vectors will approximate a sphere with radius off 1.
 
+Remark
+------
+
+For random numeric list see:
+
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>` (int/float, range)
+* Number-> :doc:`Random </nodes/number/random>` (float, count, 0-1)
+
 Examples
 --------
 

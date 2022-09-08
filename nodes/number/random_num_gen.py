@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, fullList
 class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Random thru a range
-    Tooltip: Generate a random number (int of float) thru a given range (inclusive) .
+    Tooltip: Generate a random number (int of float) thru a given range (inclusive)\n\tInt with Unique and Weighted\n\tFloat with Functions of Distribution (Uniform, Beta, Binomial and other)
     """
     bl_idname = 'SvRndNumGen'
     bl_label = 'Random Num Gen'

@@ -54,7 +54,14 @@ easingItems = [
 
 
 class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Mix Numbers '''
+    '''Mix Numbers. [def]
+    Integer / [Float]
+    Interpolation: [Linear], Sinus, Quadratic, Cubic, Quartic, Quintic, Exponential, Circular, Back, Bounce, Elastic
+    Easing: In / Out / [In-Out]
+    Val_1: [0]
+    Val_2: [1]
+    Factor: [0]
+    '''
     bl_idname = 'SvMixNumbersNode'
     bl_label = 'Mix Numbers'
     bl_icon = 'NONE' #'IPO'

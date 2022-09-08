@@ -69,7 +69,7 @@ A practical reason to use the node is when you need a series of copies of edge o
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Transforms-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Modifier->Modifier Change :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

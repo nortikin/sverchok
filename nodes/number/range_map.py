@@ -55,10 +55,9 @@ def map_range(params, constant, matching_f):
     return result
 
 class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' '''
     """
     Triggers: Map a range from one to another
-    Tooltip:  Map input list setting setting input range limits and output range limits
+    Tooltip:  Map input list setting input range limits and output range limits\n\tList Limits (On/Off)\n\tClamps (On/Off)\n\tValue: [.0]\n\tOld Min: [.0]\n\tOld Max: [1.]\n\tNew Min: [.0]\n\tNew Max: [10.]
 
     """
     bl_idname = 'SvMapRangeNode'
