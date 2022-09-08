@@ -40,7 +40,13 @@ def fibonacci(x1, x2, count, maxValue):
 
 
 class SvGenFibonacci(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator range list of floats'''
+    ''' Generator of specified number of items from Fibonacci sequence. (list of floats). [default]
+    x1: [1.0]
+    x2: [1.0]
+    count: [10]
+    max: [10.0]
+    result (max=0): 1, 1, 2, 3, 5, 8, 13, 21 ...
+    '''
     bl_idname = 'SvGenFibonacci'
     bl_label = 'Fibonacci Sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'

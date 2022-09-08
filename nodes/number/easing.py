@@ -139,7 +139,10 @@ def simple28_grid_xy(x, y, args):
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Curved interpolation'''
+    """Curved interpolation In/Out/InOut. [default]
+    Easing function: Linear, Cubic, Circular and other
+    Float Input (range 0.0-1.0): [.0]
+    """
     bl_idname = 'SvEasingNode'
     bl_label = 'Easing 0..1'
     sv_icon = 'SV_EASING'
@@ -158,7 +161,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
     in_float: FloatProperty(
         min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='input to the easy function', update=updateNode
+        description='Input to the easy function', update=updateNode
     )
 
     selected_theme_mode: EnumProperty(

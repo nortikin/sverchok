@@ -54,8 +54,7 @@ def curve_mapper(params, constant, matching_f):
 class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Manual Curve remap
-    Tooltip:  Map input list using a manually defined curve
-
+    Tooltip: Map all the incoming values using the curve you define manually through the interface
     """
     bl_idname = 'SvCurveMapperNode'
     bl_label = 'Curve Mapper'

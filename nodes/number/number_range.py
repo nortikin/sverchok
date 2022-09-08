@@ -48,7 +48,12 @@ def range_step_count(start, step, count, n_type, out_numpy):
 
 
 class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator range list of floats'''
+    ''' Generator range list of Int or Floats. [default]
+    Int/[Float]
+    [Range]: start/stop/step
+      Count: start/stop/count
+       Step: start/step/count
+    '''
     bl_idname = 'SvGenNumberRange'
     bl_label = 'Number Range'
     bl_icon = 'IPO_LINEAR'

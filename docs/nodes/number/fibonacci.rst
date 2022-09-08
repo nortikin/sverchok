@@ -1,6 +1,9 @@
 Fibonacci Sequence
 ==================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189181489-6896836d-2249-4df1-8651-47752bb9fcaf.png
+  :target: https://user-images.githubusercontent.com/14288520/189181489-6896836d-2249-4df1-8651-47752bb9fcaf.png
+
 Functionality
 -------------
 
@@ -45,10 +48,20 @@ inputs, then this node will produce several sequences.
 Example of usage
 ----------------
 
-Given simplest nodes setup:
+No scale (max=0). Real Fibonacci values:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5691665/22a8bc0e-98f5-11e4-9ecc-924addf22178.png
+.. image:: https://user-images.githubusercontent.com/14288520/189183869-023d705c-a53b-4705-896d-4b7a0d6beec1.png
+  :target: https://user-images.githubusercontent.com/14288520/189183869-023d705c-a53b-4705-896d-4b7a0d6beec1.png
 
-you will have something like:
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5691664/227c9d0e-98f5-11e4-87c9-fb6f552e1b89.png
+Rescale to max value:
+
+.. image:: https://user-images.githubusercontent.com/14288520/189183892-b59c5f64-29a0-4caf-8546-3b8f51c0709f.png
+  :target: https://user-images.githubusercontent.com/14288520/189183892-b59c5f64-29a0-4caf-8546-3b8f51c0709f.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
