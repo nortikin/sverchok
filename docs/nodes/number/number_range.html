@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Map Range" href="range_map.html" />
-    <link rel="prev" title="Random Num Gen" href="random_num_gen.html" /> 
+    <link rel="next" title="List Input" href="list_input.html" />
+    <link rel="prev" title="Scalar Math" href="scalar_mk4.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,15 +63,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Number Range</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-and-parameters">Inputs and Parameters</a></li>
@@ -80,12 +73,19 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -142,6 +142,7 @@
              
   <section id="number-range">
 <h1>Number Range<a class="headerlink" href="#number-range" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189115322-4a372035-4a9e-4901-967e-212f52b066a5.png"><img alt="https://user-images.githubusercontent.com/14288520/189115322-4a372035-4a9e-4901-967e-212f52b066a5.png" src="https://user-images.githubusercontent.com/14288520/189115322-4a372035-4a9e-4901-967e-212f52b066a5.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates sequences of numbers, the node offers different number types and different methods to create the sequence.</p>
@@ -150,9 +151,9 @@
 <h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 11%" />
 <col style="width: 10%" />
-<col style="width: 79%" />
+<col style="width: 9%" />
+<col style="width: 80%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -163,33 +164,42 @@
 <tbody>
 <tr class="row-even"><td><p><em>Number Type</em></p></td>
 <td><p>Enum</p></td>
-<td><p>Float: Decimal numbers. (Double precision float: sign bit, 11 bits exponent, 52 bits mantissa)
-Int: Integer numbers (Integer from -9223372036854775808 to 9223372036854775807)</p></td>
+<td><ul class="simple">
+<li><p><strong>Float</strong>: Decimal numbers. (Double precision float: sign bit, <strong>11</strong> bits exponent, <strong>52</strong> bits mantissa)</p></li>
+<li><p><strong>Int</strong>: Integer numbers (Integer from <strong>-9223372036854775808</strong> to <strong>9223372036854775807</strong>)</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td><p><em>Range Type</em></p></td>
 <td><p>Enum</p></td>
-<td><p>Range: Define range by setting start, step and stop.
-Count: Define range by setting start, stop and count number (divisions).
-Step: Define range by setting start, step and count number.</p></td>
+<td><ul class="simple">
+<li><p><strong>Range</strong>: Define range by setting <strong>start</strong>, <strong>step</strong> and <strong>stop</strong>.</p></li>
+<li><p><strong>Count</strong>: Define range by setting <strong>start</strong>, <strong>stop</strong> and <strong>count</strong> number (divisions).</p></li>
+<li><p><strong>Step</strong>: Define range by setting <strong>start</strong>, <strong>step</strong> and <strong>count</strong> number.</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-even"><td><p><em>Start</em></p></td>
-<td><p>Float/ Int</p></td>
+<td><p>Float / Int</p></td>
 <td><p>value to start at</p></td>
 </tr>
 <tr class="row-odd"><td><p><em>Step</em></p></td>
-<td><p>Float/ Int</p></td>
-<td><p>value of the skip distance to the next value. The Step value is considered the absolute
-difference between successive numbers.</p></td>
+<td><p>Float / Int</p></td>
+<td><p>value of the skip distance to the next value.</p>
+<p>The Step value is considered the absolute difference between</p>
+<p>successive numbers.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><em>Stop</em></p></td>
-<td><p>Float/ Int</p></td>
+<td><p>Float / Int</p></td>
 <td><p>Last value or limit of the range. If this value is lower than the start value then the
 sequence will be of descending values.</p></td>
 </tr>
 <tr class="row-odd"><td><p><em>Count</em></p></td>
-<td><p>Float/ Int</p></td>
-<td><p>Number of values to produce.
-<strong>Never negative</strong> - negative produces an empty list</p></td>
+<td><p>Float / Int</p></td>
+<td><p>Number of values to produce.</p>
+<p><strong>Never negative</strong> - negative produces an empty list</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -197,19 +207,29 @@ sequence will be of descending values.</p></td>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster)</p>
-<p><strong>List Match</strong>: Define how list with different lengths should be matched</p>
-<p><strong>Flat Output</strong>: Keeps the output list depth</p>
+<ul class="simple">
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster)</p></li>
+<li><p><strong>List Match</strong>: Define how list with different lengths should be matched</p></li>
+<li><p><strong>Flat Output</strong>: Keeps the output list depth</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p>Range: Lists of sequences</p>
+<ul class="simple">
+<li><p><strong>Range</strong>: Lists of sequences</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png" src="https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png"><img alt="https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png" src="https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>With the ‘Flat Output’ activated the output will be [[..],[..],…] and it can be plugged to another Number Range Node.</p>
-<img alt="https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png" src="https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png"><img alt="https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png" src="https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -217,8 +237,8 @@ sequence will be of descending values.</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="random_num_gen.html" class="btn btn-neutral float-left" title="Random Num Gen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="range_map.html" class="btn btn-neutral float-right" title="Map Range" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="scalar_mk4.html" class="btn btn-neutral float-left" title="Scalar Math" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="list_input.html" class="btn btn-neutral float-right" title="List Input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

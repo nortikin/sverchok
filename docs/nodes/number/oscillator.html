@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Easing 0..1" href="easing.html" />
-    <link rel="prev" title="Smooth Numbers" href="smooth_numbers.html" /> 
+    <link rel="next" title="Smooth Numbers" href="smooth_numbers.html" />
+    <link rel="prev" title="Exponential Sequence" href="exponential.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,20 +63,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Oscillator</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
@@ -85,7 +85,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -142,6 +142,7 @@
              
   <section id="oscillator">
 <h1>Oscillator<a class="headerlink" href="#oscillator" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189187965-a980e3c1-25f7-49c0-90f4-72b1ba8a77a6.png"><img alt="https://user-images.githubusercontent.com/14288520/189187965-a980e3c1-25f7-49c0-90f4-72b1ba8a77a6.png" src="https://user-images.githubusercontent.com/14288520/189187965-a980e3c1-25f7-49c0-90f4-72b1ba8a77a6.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a oscillation signal from a lineal range.</p>
@@ -178,8 +179,11 @@ This node has the following parameters:</p>
 </tr>
 <tr class="row-odd"><td><p><strong>Period</strong></p></td>
 <td><p>Float</p></td>
-<td><p>Time (Value) to make a full cycle of the wave. If you want to use the
-frequency as input remember that 1/frequency = period</p></td>
+<td><p>Time (Value) to make a full cycle of the wave.</p>
+<p>If you want to use the
+frequency as input remember that</p>
+<p>1/frequency = period</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Phase</strong></p></td>
 <td><p>Float</p></td>
@@ -191,8 +195,10 @@ frequency as input remember that 1/frequency = period</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Wave</strong></p></td>
 <td><p>Vertices</p></td>
-<td><p>On Custom mode you can input a path of points (more than 1 vector)
-to create a custom wave. The node will evaluate the Y value</p></td>
+<td><p>On Custom mode you can input a path of points</p>
+<p>(more than 1 vector) to create a custom wave.</p>
+<p>The node will evaluate the Y value</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -200,10 +206,12 @@ to create a custom wave. The node will evaluate the Y value</p></td>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Wave Interpolation</strong>: (On Custom mode) Define how the wave should be interpolated (Linear or Cubic)</p>
-<p><strong>Wave Knots Mode</strong>: (On Custom mode) Define how the wave knots should be interpolated (Manhattan, Euclidan, Points or Chebyshev)</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster)</p>
-<p><strong>List Match</strong>: Define how list with different lengths should be matched</p>
+<ul class="simple">
+<li><p><strong>Wave Interpolation</strong>: (On Custom mode) Define how the wave should be interpolated (Linear or Cubic)</p></li>
+<li><p><strong>Wave Knots Mode</strong>: (On Custom mode) Define how the wave knots should be interpolated (Manhattan - Manhattan distance metric, Euclidan - Eudlcian distance metric, Points - Points based, Chebyshev - Chebyshev distance)</p></li>
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster)</p></li>
+<li><p><strong>List Match</strong>: Define how list with different lengths should be matched</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -214,13 +222,40 @@ inputs, then this node will produce several sequences.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generating basic waves:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>The “Wave” mode allows you to use a custom wave shape:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="random_num_gen.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>As with the musical synths you can create complex waves out of mixing the basics:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Surface modeled by a combination of Oscillator nodes.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -228,8 +263,8 @@ inputs, then this node will produce several sequences.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="smooth_numbers.html" class="btn btn-neutral float-left" title="Smooth Numbers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="easing.html" class="btn btn-neutral float-right" title="Easing 0..1" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="exponential.html" class="btn btn-neutral float-left" title="Exponential Sequence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="smooth_numbers.html" class="btn btn-neutral float-right" title="Smooth Numbers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

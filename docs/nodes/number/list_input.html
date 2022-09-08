@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Mix Numbers" href="mix_numbers.html" />
-    <link rel="prev" title="Float to Integer" href="float_to_int.html" /> 
+    <link rel="next" title="Random Num Gen" href="random_num_gen.html" />
+    <link rel="prev" title="Number Range" href="number_range.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,10 +63,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Input</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -75,17 +74,18 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -142,11 +142,14 @@
              
   <section id="list-input">
 <h1>List Input<a class="headerlink" href="#list-input" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png"><img alt="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png" src="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Provides a way to create a flat list of <em>Integers</em>, <em>Floats</em>, or <em>Vectors</em>.
 The length of the list is hardcoded to a maximum of <strong>32</strong> elements for integer or float and <strong>10</strong> vectors,
-we believe that if you need  more then you should use a Text File and the Text In node.</p>
+we believe that if you need  more then you should use a Text File</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png"><img alt="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png" src="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png" /></a>
+<p>and the <a class="reference internal" href="../text/text_in_mk2.html"><span class="doc">Text-&gt;Text In+</span></a> node.</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -165,7 +168,11 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Useful when you have no immediate need to generate such lists programmatically.</p>
-<img alt="https://user-images.githubusercontent.com/28003269/70140711-c7c63e00-16ae-11ea-9266-e4f24586e448.png" src="https://user-images.githubusercontent.com/28003269/70140711-c7c63e00-16ae-11ea-9266-e4f24586e448.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/70140711-c7c63e00-16ae-11ea-9266-e4f24586e448.png"><img alt="https://user-images.githubusercontent.com/28003269/70140711-c7c63e00-16ae-11ea-9266-e4f24586e448.png" src="https://user-images.githubusercontent.com/28003269/70140711-c7c63e00-16ae-11ea-9266-e4f24586e448.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png"><img alt="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png" src="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -173,8 +180,8 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="float_to_int.html" class="btn btn-neutral float-left" title="Float to Integer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="mix_numbers.html" class="btn btn-neutral float-right" title="Mix Numbers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="number_range.html" class="btn btn-neutral float-left" title="Number Range" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="random_num_gen.html" class="btn btn-neutral float-right" title="Random Num Gen" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

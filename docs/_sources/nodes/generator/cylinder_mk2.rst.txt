@@ -104,3 +104,9 @@ If **Separate** is True, the node will output the parallel sections as separate 
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+See also
+--------
+
+Example of a manual meridian profile:
+* Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`

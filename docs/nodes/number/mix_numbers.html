@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Mix Inputs" href="mix_inputs.html" />
-    <link rel="prev" title="List Input" href="list_input.html" /> 
+    <link rel="prev" title="Curve Mapper" href="curve_mapper.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,11 +63,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mix Numbers</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
@@ -77,15 +82,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -142,10 +142,12 @@
              
   <section id="mix-numbers">
 <h1>Mix Numbers<a class="headerlink" href="#mix-numbers" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189170552-03896cda-6344-4748-924e-ec779cd76092.png"><img alt="https://user-images.githubusercontent.com/14288520/189170552-03896cda-6344-4748-924e-ec779cd76092.png" src="https://user-images.githubusercontent.com/14288520/189170552-03896cda-6344-4748-924e-ec779cd76092.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node mixes two values using a given factor and a selected interpolation and easing functions.</p>
 <p>For a factor of 0.0 it outputs the first value while the factor of 1.0 it outputs the last value. For every factor value between 0-1 it will output a value between the first and second input value. (*)</p>
+<p>Lite version of <a class="reference internal" href="mix_inputs.html"><span class="doc">Number-&gt;Mix Inputs</span></a>.</p>
 <p>Note:
 (*) The Back and Elastic interpolations will generate outputs that are not strictly confined to the first-second value interval, but they will output values that start at first and end at second value.</p>
 </section>
@@ -178,58 +180,59 @@ Float</p>
 <td><p>Float</p></td>
 <td><p>Type of inputs values to interpolate.
 When Float is selected the input value1 and value2
-expect float values
-When Int is selected the input value1 and value2
-expect int values.</p></td>
+expect float values</p>
+<p>When Int is selected the input value1 and value2
+expect int values.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Interpolation</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Linear
-Sinusoidal
-Quadratic
-Cubic
-Quadric
-Quintic
-Exponential
-Circular
-Back
-Bounce
-Elastic</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Linear</p></li>
+<li><p>Sinusoidal</p></li>
+<li><p>Quadratic</p></li>
+<li><p>Cubic</p></li>
+<li><p>Quadric</p></li>
+<li><p>Quintic</p></li>
+<li><p>Exponential</p></li>
+<li><p>Circular</p></li>
+<li><p>Back</p></li>
+<li><p>Bounce</p></li>
+<li><p>Elastic</p></li>
+</ul>
 </td>
 <td><p>Linear</p></td>
-<td><dl class="simple">
-<dt>Type of interpolation.</dt><dd><p>f(x) ~ x
-f(x) ~ sin(x)
-f(x) ~ x*2
-f(x) ~ x^3
-f(x) ~ x^4
-f(x) ~ x^5
-f(x) ~ e^x
-f(x) ~ sqrt(1-x*x)
-f(x) ~ x*x*x - x*sin(x)
-f(x) ~ series of geometric progression parabolas
-f(x) ~ sin(x) * e^x</p>
-</dd>
-</dl>
+<td><p>Type of interpolation.</p>
+<ul class="simple">
+<li><p>f(x) ~ x</p></li>
+<li><p>f(x) ~ sin(x)</p></li>
+<li><p>f(x) ~ x*2</p></li>
+<li><p>f(x) ~ x^3</p></li>
+<li><p>f(x) ~ x^4</p></li>
+<li><p>f(x) ~ x^5</p></li>
+<li><p>f(x) ~ e^x</p></li>
+<li><p>f(x) ~ sqrt(1-x*x)</p></li>
+<li><p>f(x) ~ x*x*x - x*sin(x)</p></li>
+<li><p>f(x) ~ series of geometric progression parabolas</p></li>
+<li><p>f(x) ~ sin(x) * e^x</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-even"><td><p><strong>Easing</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>Ease In
-Ease Out
-Ease In-Out</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>Ease In</p></li>
+<li><p>Ease Out</p></li>
+<li><p>Ease In-Out</p></li>
+</ul>
 </td>
 <td><p>Ease In-Out</p></td>
-<td><dl class="simple">
-<dt>Type of easing.</dt><dd><p>Ease In = slowly departs the starting value
-Ease Out = slowly approaches the ending value
-Ease In-Out = slowly departs and approaches values</p>
-</dd>
-</dl>
+<td><p>Type of easing.</p>
+<ul class="simple">
+<li><p>Ease In = slowly departs the starting value</p></li>
+<li><p>Ease Out = slowly approaches the ending value</p></li>
+<li><p>Ease In-Out = slowly departs and approaches values</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Value1</strong></p></td>
@@ -272,6 +275,28 @@ The defaults are 1.6, 6.0 and 6.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li></li>
+</ol>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189172710-31bded10-ad4e-4a2c-8ae0-d580271ec948.png"><img alt="https://user-images.githubusercontent.com/14288520/189172710-31bded10-ad4e-4a2c-8ae0-d580271ec948.png" src="https://user-images.githubusercontent.com/14288520/189172710-31bded10-ad4e-4a2c-8ae0-d580271ec948.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189172757-4996b307-99d7-4c68-afdb-957af880635f.gif"><img alt="https://user-images.githubusercontent.com/14288520/189172757-4996b307-99d7-4c68-afdb-957af880635f.gif" src="https://user-images.githubusercontent.com/14288520/189172757-4996b307-99d7-4c68-afdb-957af880635f.gif" /></a>
+<ol class="arabic simple" start="2">
+<li></li>
+</ol>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189170595-bb67e4ad-7939-416b-ad0b-cea60655ebee.png"><img alt="https://user-images.githubusercontent.com/14288520/189170595-bb67e4ad-7939-416b-ad0b-cea60655ebee.png" src="https://user-images.githubusercontent.com/14288520/189170595-bb67e4ad-7939-416b-ad0b-cea60655ebee.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189170633-4e6a9ce8-b9a5-4712-983a-4534d1e52812.gif"><img alt="https://user-images.githubusercontent.com/14288520/189170633-4e6a9ce8-b9a5-4712-983a-4534d1e52812.gif" src="https://user-images.githubusercontent.com/14288520/189170633-4e6a9ce8-b9a5-4712-983a-4534d1e52812.gif" /></a>
 <p>Given simplest nodes setup:</p>
 <p>#</p>
 <p>you will have something like:</p>
@@ -283,7 +308,7 @@ The defaults are 1.6, 6.0 and 6.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="list_input.html" class="btn btn-neutral float-left" title="List Input" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="curve_mapper.html" class="btn btn-neutral float-left" title="Curve Mapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="mix_inputs.html" class="btn btn-neutral float-right" title="Mix Inputs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

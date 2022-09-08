@@ -1,13 +1,14 @@
 Random
 ======
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186017/0f076f00-375d-11e4-92ce-30af77e41307.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/189146711-488eca42-a734-498a-b6de-9f28b3d8a1f2.png
+  :target: https://user-images.githubusercontent.com/14288520/189146711-488eca42-a734-498a-b6de-9f28b3d8a1f2.png
   :alt: NumberRandomDemo1.PNG
 
 Functionality
 -------------
 
-Produces a list of random numbers from a seed value.
+Produces a list of random numbers (0.0-1.0) from a seed value.
 
 
 Inputs & Parameters
@@ -31,11 +32,28 @@ A list, or nested lists.
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186018/0f61f4b6-375d-11e4-99c8-6f7ef62598b3.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/189147541-7b5561dd-3fdf-4b70-b3b9-2ec7239eb5da.png
+  :target: https://user-images.githubusercontent.com/14288520/189147541-7b5561dd-3fdf-4b70-b3b9-2ec7239eb5da.png
   :alt: NumberRandomDemo2.PNG
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Notes
 -----
 
 Providing a float values as a Seed parameter may be unconventional, if you are uncomfortable with it you 
-could place a *FloatToInt* node before the Seed parameter. We may add more Random Nodes in future.
+could place a :doc:`Number->Float to Integer </nodes/number/float_to_int>` node before the Seed parameter. We may add more Random Nodes in future.
+
+
+
+Remark
+------
+
+For random numeric list see:
+
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>` (int/float, range)
+
+For random vector list see:
+
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`

@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Random" href="random.html" />
+    <link rel="next" title="Fibonacci Sequence" href="fibonacci.html" />
     <link rel="prev" title="Mix Numbers" href="mix_numbers.html" /> 
 </head>
 
@@ -63,11 +63,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mix Inputs</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -76,15 +81,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -141,10 +141,12 @@
              
   <section id="mix-inputs">
 <h1>Mix Inputs<a class="headerlink" href="#mix-inputs" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png"><img alt="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png" src="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node mixes two values of different types using a given factor, a selected interpolation and easing function.</p>
 <p>For a factor of 0.0 it outputs the first value, for the factor of 1.0 it outputs the last value and for any other factor in between 0-1 it outputs an interpolated value between the first and second input value. An exception to this are the “Back” and “Elastic” interpolations which generate output values that are not strictly confined to the first-second value interval, but they will output values that start at first and end at second value.</p>
+<p>Extended version of <a class="reference internal" href="mix_numbers.html"><span class="doc">Number-&gt;Mix Numbers</span></a>.</p>
 </section>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
@@ -168,67 +170,67 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Mode</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Int
-Float
-Vector
-Color
-Matrix
-Quaternion</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Int</p></li>
+<li><p>Float</p></li>
+<li><p>Vector</p></li>
+<li><p>Color</p></li>
+<li><p>Matrix</p></li>
+<li><p>Quaternion</p></li>
+</ul>
 </td>
 <td><p>Float</p></td>
 <td><p>The type of inputs values to mix.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Interpolation</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Linear
-Sinusoidal
-Quadratic
-Cubic
-Quadric
-Quintic
-Exponential
-Circular
-Back
-Bounce
-Elastic</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Linear</p></li>
+<li><p>Sinusoidal</p></li>
+<li><p>Quadratic</p></li>
+<li><p>Cubic</p></li>
+<li><p>Quadric</p></li>
+<li><p>Quintic</p></li>
+<li><p>Exponential</p></li>
+<li><p>Circular</p></li>
+<li><p>Back</p></li>
+<li><p>Bounce</p></li>
+<li><p>Elastic</p></li>
+</ul>
 </td>
 <td><p>Linear</p></td>
-<td><dl class="simple">
-<dt>Type of interpolation.</dt><dd><p>f(x) ~ x
-f(x) ~ sin(x)
-f(x) ~ x*2
-f(x) ~ x^3
-f(x) ~ x^4
-f(x) ~ x^5
-f(x) ~ e^x
-f(x) ~ sqrt(1-x*x)
-f(x) ~ x*x*x - x*sin(x)
-f(x) ~ series of geometric progression parabolas
-f(x) ~ sin(x) * e^x</p>
-</dd>
-</dl>
+<td><p>Type of interpolation.</p>
+<ul class="simple">
+<li><p>f(x) ~ x</p></li>
+<li><p>f(x) ~ sin(x)</p></li>
+<li><p>f(x) ~ x*2</p></li>
+<li><p>f(x) ~ x^3</p></li>
+<li><p>f(x) ~ x^4</p></li>
+<li><p>f(x) ~ x^5</p></li>
+<li><p>f(x) ~ e^x</p></li>
+<li><p>f(x) ~ sqrt(1-x*x)</p></li>
+<li><p>f(x) ~ x*x*x - x*sin(x)</p></li>
+<li><p>f(x) ~ series of geometric progression parabolas</p></li>
+<li><p>f(x) ~ sin(x) * e^x</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-even"><td><p><strong>Easing</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>Ease In
-Ease Out
-Ease In-Out</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>Ease In</p></li>
+<li><p>Ease Out</p></li>
+<li><p>Ease In-Out</p></li>
+</ul>
 </td>
 <td><p>Ease In-Out</p></td>
-<td><dl class="simple">
-<dt>Type of easing.</dt><dd><p>Ease In = slowly departs the starting value
-Ease Out = slowly approaches the ending value
-Ease In-Out = slowly departs and approaches values</p>
-</dd>
-</dl>
+<td><p>Type of easing.</p>
+<ul class="simple">
+<li><p>Ease In = slowly departs the starting value</p></li>
+<li><p>Ease Out = slowly approaches the ending value</p></li>
+<li><p>Ease In-Out = slowly departs and approaches values</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Mirror</strong></p></td>
@@ -263,13 +265,13 @@ Ease In-Out = slowly departs and approaches values</p>
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
 <p>For certain interpolation types the node provides extra parameters on the Property Panel.</p>
 <ul class="simple">
-<li><p>Exponential
+<li><p><strong>Exponential</strong>
 Extra parameters to adjust the base and the exponent of the exponential function. The Defaults are 2 and 10.0.</p></li>
-<li><p>Back
+<li><p><strong>Back</strong>
 Extra parameters to adjust the scale of the overshoot. The default is 1.0.</p></li>
-<li><p>Bounce
+<li><p><strong>Bounce</strong>
 Extra parameters to adjust the attenuation of the bounce and the number of bounces. The defaults are 0.5 and 4.</p></li>
-<li><p>Elastic
+<li><p><strong>Elastic</strong>
 Extra parameters to adjust the base and the exponent of the damping oscillation as well as the number of bounces (oscillations). The defaults are 1.6, 6.0 and 6.</p></li>
 </ul>
 </section>
@@ -284,7 +286,7 @@ Extra parameters to adjust the base and the exponent of the damping oscillation 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="mix_numbers.html" class="btn btn-neutral float-left" title="Mix Numbers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="random.html" class="btn btn-neutral float-right" title="Random" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fibonacci.html" class="btn btn-neutral float-right" title="Fibonacci Sequence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Oscillator" href="oscillator.html" />
-    <link rel="prev" title="Scalar Math" href="scalar_mk4.html" /> 
+    <link rel="next" title="Vector" href="../vector/vector_index.html" />
+    <link rel="prev" title="Oscillator" href="oscillator.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,19 +63,21 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Smooth Numbers</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#input-and-output">Input and Output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
@@ -83,8 +85,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -141,6 +141,7 @@
              
   <section id="smooth-numbers">
 <h1>Smooth Numbers<a class="headerlink" href="#smooth-numbers" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189191850-160c4369-0afa-46c2-af21-8673dc287ed6.png"><img alt="https://user-images.githubusercontent.com/14288520/189191850-160c4369-0afa-46c2-af21-8673dc287ed6.png" src="https://user-images.githubusercontent.com/14288520/189191850-160c4369-0afa-46c2-af21-8673dc287ed6.png" /></a>
 <p>This node smooths a number list by reducing the difference between consecutive numbers.</p>
 <p>This node will accept flat Numpy arrays and can will out them if <em>Output Numpy</em> is activated.</p>
 <p>This node will accept any list shape (vectorized).</p>
@@ -180,18 +181,26 @@
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
-<p><strong>Cyclic</strong>: Smooth first value with last value and last with first.</p>
+<ul class="simple">
+<li><p><strong>Cyclic</strong>: Smooth first value with last value and last with first.</p></li>
+</ul>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster).</p>
-<p><strong>List Match</strong>: Define how list with different lengths should be matched.</p>
+<ul class="simple">
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster).</p></li>
+<li><p><strong>List Match</strong>: Define how list with different lengths should be matched.</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Basic example:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/98470033-5f97aa80-21e3-11eb-865a-141797498440.png" src="https://user-images.githubusercontent.com/10011941/98470033-5f97aa80-21e3-11eb-865a-141797498440.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/98470033-5f97aa80-21e3-11eb-865a-141797498440.png"><img alt="https://user-images.githubusercontent.com/10011941/98470033-5f97aa80-21e3-11eb-865a-141797498440.png" src="https://user-images.githubusercontent.com/10011941/98470033-5f97aa80-21e3-11eb-865a-141797498440.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_2d.html"><span class="doc">Viewer 2D</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -199,8 +208,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scalar_mk4.html" class="btn btn-neutral float-left" title="Scalar Math" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="oscillator.html" class="btn btn-neutral float-right" title="Oscillator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="oscillator.html" class="btn btn-neutral float-left" title="Oscillator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../vector/vector_index.html" class="btn btn-neutral float-right" title="Vector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

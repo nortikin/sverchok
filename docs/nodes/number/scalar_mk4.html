@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Smooth Numbers" href="smooth_numbers.html" />
+    <link rel="next" title="Number Range" href="number_range.html" />
     <link rel="prev" title="A Number" href="numbers.html" /> 
 </head>
 
@@ -63,17 +63,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Scalar Math</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -82,9 +71,20 @@
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exponential.html">Exponential Sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -141,6 +141,8 @@
              
   <section id="scalar-math">
 <h1>Scalar Math<a class="headerlink" href="#scalar-math" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189060032-dcbef5e5-05da-4b6e-8e45-9926e72e5dc0.png"><img alt="https://user-images.githubusercontent.com/14288520/189060032-dcbef5e5-05da-4b6e-8e45-9926e72e5dc0.png" src="https://user-images.githubusercontent.com/14288520/189060032-dcbef5e5-05da-4b6e-8e45-9926e72e5dc0.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189060063-894e9fb9-9ce1-4683-b5a1-37df332d33aa.png"><img alt="https://user-images.githubusercontent.com/14288520/189060063-894e9fb9-9ce1-4683-b5a1-37df332d33aa.png" src="https://user-images.githubusercontent.com/14288520/189060063-894e9fb9-9ce1-4683-b5a1-37df332d33aa.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node can transform incoming values by a selected function (trigonometric,
@@ -148,37 +150,49 @@ or other mathematical function, and also provide some useful math constants)</p>
 </section>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189060093-98879685-76e8-48eb-8a42-a8ba4158ca13.png"><img alt="https://user-images.githubusercontent.com/14288520/189060093-98879685-76e8-48eb-8a42-a8ba4158ca13.png" src="https://user-images.githubusercontent.com/14288520/189060093-98879685-76e8-48eb-8a42-a8ba4158ca13.png" /></a>
 <p><strong>float</strong> or <strong>int</strong></p>
 <p>This node will accept lists of flat NumPy arrays [Not available for GCD or Round-N]</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 38%" />
-<col style="width: 62%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>class</strong></p></td>
 <td><p><strong>type</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>Trig</p></td>
-<td><p>Sine, Cosine,
-Tangent, Arcsine,
-Arccosine, Arctangent,
-acosh, asinh, atanh,
-cosh, sinh, tanh.</p></td>
+<td><ul class="simple">
+<li><p>Sine, Cosine, Tangent</p></li>
+<li><p>Arcsin, Arccosine, Arctangent, atan2,</p></li>
+<li><p>acosh, asinh</p></li>
+<li><p>sinh, cosh, tanh</p></li>
+<li><p>Sin(x*y), Cos(x*y)</p></li>
+<li><p>y * sin(x), y * cos(x)</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Math</p></td>
-<td><p>Squareroot, Negate,
-Degrees, Radians,
-Absolute, Ceiling,
-Round, Round N, Fmod
-modulo, floor,
-Exponent, log,
-log1p,log10,
-Add, Subtract, Multiply
-Divide, Int Division,
-x-1, x+1, x * 2,
-x/2, x ^ 2, ^,
-Min, Max, Mean, GCD</p></td>
+<td><ul class="simple">
+<li><p>Add, Sub, Multiply, Divide, Int Division</p></li>
+<li><p>Squareroot, Exponent, Power y, Power 2</p></li>
+<li><p>Log, Log10, Log1p</p></li>
+<li><p>Absolute, Negate</p></li>
+<li><p>Ceiling, Floor</p></li>
+<li><p>Min, Max</p></li>
+<li><p>Round, Round N</p></li>
+<li><p>Fmod, Modulo</p></li>
+<li><p>Mean</p></li>
+<li><p>GCD (Greatest Common Divisor)</p></li>
+<li><p>Degrees, Radians</p></li>
+<li><p>pi * x, tau * x, e * x, phi * x</p></li>
+<li><p>x + 1, x - 1, x * 2, x / 2</p></li>
+<li><p>1 / x</p></li>
+<li><p>tau * (x-1 /x)</p></li>
+<li><p>Power y (signed)</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-even"><td><p>constants</p></td>
 <td><p>pi, e, phi, tau.</p></td>
@@ -188,11 +202,14 @@ Min, Max, Mean, GCD</p></td>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189060741-53d8c63e-c7b5-47cb-9aa7-c7c5c6a7bd1a.png"><img alt="https://user-images.githubusercontent.com/14288520/189060741-53d8c63e-c7b5-47cb-9aa7-c7c5c6a7bd1a.png" src="https://user-images.githubusercontent.com/14288520/189060741-53d8c63e-c7b5-47cb-9aa7-c7c5c6a7bd1a.png" /></a>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Input 1 Type</strong>: offers int / float selection for socket 1.</p>
-<p><strong>Input 2 Type</strong>: offers int / float selection for socket 2.</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available for GCD or Round-N]</p>
-<p><strong>List Match</strong>: Define how list with different lengths should be matched.  [Not available for GCD or Round-N]</p>
+<ul class="simple">
+<li><p><strong>Input 1 Type</strong>: offers int / float selection for socket 1.</p></li>
+<li><p><strong>Input 2 Type</strong>: offers int / float selection for socket 2.</p></li>
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available for GCD or Round-N]</p></li>
+<li><p><strong>List Match</strong>: Define how list with different lengths should be matched.  [Not available for GCD or Round-N]</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -205,7 +222,7 @@ Min, Max, Mean, GCD</p></td>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="numbers.html" class="btn btn-neutral float-left" title="A Number" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="smooth_numbers.html" class="btn btn-neutral float-right" title="Smooth Numbers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="number_range.html" class="btn btn-neutral float-right" title="Number Range" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

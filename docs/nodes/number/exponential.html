@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Fibonacci Sequence" href="fibonacci.html" />
-    <link rel="prev" title="Curve Mapper" href="curve_mapper.html" /> 
+    <link rel="next" title="Oscillator" href="oscillator.html" />
+    <link rel="prev" title="Fibonacci Sequence" href="fibonacci.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,7 +63,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_mapper.html">Curve Mapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Exponential Sequence</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
@@ -71,20 +83,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="list_input.html">List Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random.html">Random</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l3"><a class="reference internal" href="number_range.html">Number Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_map.html">Map Range</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numbers.html">A Number</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="oscillator.html">Oscillator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easing.html">Easing 0..1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_numbers.html">Smooth Numbers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
@@ -141,7 +141,7 @@
              
   <section id="exponential-sequence">
 <h1>Exponential Sequence<a class="headerlink" href="#exponential-sequence" title="Permalink to this heading">¶</a></h1>
-<p><em>destination after Beta: Number</em></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189185050-cfe71e89-3201-4b88-a6aa-8c72aedd5d2f.png"><img alt="https://user-images.githubusercontent.com/14288520/189185050-cfe71e89-3201-4b88-a6aa-8c72aedd5d2f.png" src="https://user-images.githubusercontent.com/14288520/189185050-cfe71e89-3201-4b88-a6aa-8c72aedd5d2f.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node produces specified number of items from exponential sequence, defined by formula x_n = x0*exp(alpha*n)
@@ -176,8 +176,9 @@ This node has the following parameters:</p>
 <td><p>Enum: Log or
 Base</p></td>
 <td><p>Log</p></td>
-<td><p>If Log, then x_n = x0*exp(alpha*n).
-If Base, then x_n = x0*base^n.</p></td>
+<td><p>If Log, then x_n = x0*exp(alpha*n).</p>
+<p>If Base, then x_n = x0*base^n.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>X0</strong></p></td>
 <td><p>Float</p></td>
@@ -187,14 +188,16 @@ If Base, then x_n = x0*base^n.</p></td>
 <tr class="row-even"><td><p><strong>Alpha</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.1</p></td>
-<td><p>Coefficient in formula exp(alpha*n). Used only in
-Log mode.</p></td>
+<td><p>Coefficient in formula exp(alpha*n).</p>
+<p>Used only in Log mode.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Base</strong></p></td>
 <td><p>Float</p></td>
 <td><p>2.0</p></td>
-<td><p>Exponential base in formula base^n. Used only in
-Base mode.</p></td>
+<td><p>Exponential base in formula base^n.</p>
+<p>Used only in Base mode.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>N from</strong></p></td>
 <td><p>Int</p></td>
@@ -210,8 +213,10 @@ Base mode.</p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
 <td><p>If non-zero, then all output sequence will be
-re-scaled so that maximum of absolute values will
-be equal to number specified.</p></td>
+re-scaled</p>
+<p>so that maximum of absolute values will</p>
+<p>be equal to number specified.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -225,9 +230,9 @@ inputs, then this node will produce several sequences.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Given simplest nodes setup:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png" src="https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png" src="https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png" /></a>
 <p>you will have something like:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png" src="https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png" src="https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png" /></a>
 </section>
 </section>
 
@@ -235,8 +240,8 @@ inputs, then this node will produce several sequences.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="curve_mapper.html" class="btn btn-neutral float-left" title="Curve Mapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="fibonacci.html" class="btn btn-neutral float-right" title="Fibonacci Sequence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fibonacci.html" class="btn btn-neutral float-left" title="Fibonacci Sequence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="oscillator.html" class="btn btn-neutral float-right" title="Oscillator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
