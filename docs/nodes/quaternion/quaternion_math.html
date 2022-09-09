@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quaternion Math Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Quaternion Math &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -67,10 +67,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="quaternion_index.html">Quaternion</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="quaternion_in_mk2.html">Quaternion In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quaternion_in_mk2.html#extra-parameters">Extra Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quaternion_out_mk2.html">Quaternion Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quaternion_out_mk2.html#extra-parameters">Extra Parameters</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Quaternion Math Node</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Quaternion Math</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#operations">Operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#output">Output</a></li>
@@ -118,7 +116,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="quaternion_index.html">Quaternion</a> &raquo;</li>
-      <li>Quaternion Math Node</li>
+      <li>Quaternion Math</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/quaternion/quaternion_math.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -128,8 +126,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="quaternion-math-node">
-<h1>Quaternion Math Node<a class="headerlink" href="#quaternion-math-node" title="Permalink to this heading">¶</a></h1>
+  <section id="quaternion-math">
+<h1>Quaternion Math<a class="headerlink" href="#quaternion-math" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png"><img alt="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png" src="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png"><img alt="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png" src="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png" /></a>
 <p>The Quaternion Math node performs various artithmetic operations on quaternions.</p>
 <p>The available arithmetic operations and their corresponding inputs/outputs are:</p>
 <table class="docutils align-default">
@@ -147,75 +147,83 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>ADD
-SUB
-MULTIPLY
-DIVIDE
-ROTATE
-DOT
-DISTANCE
-NEGATE
-CONJUGATE
-INVERT
-NORMALIZE
-SCALE
-QUADRANCE
-MAGNITUDE</p></td>
-<td><p>NQ
-QQ
-NQ
-QQ
-QQ
-QQ
-QQ
-Q
-Q
-Q
-Q
-QS
-Q
-Q</p></td>
-<td><p>Q
-Q
-Q
-Q
-Q
-S
-S
-Q
-Q
-Q
-Q
-Q
-S
-S</p></td>
-<td><p>Add multiple quaternions
-Subtract two quaternions
-Multiply multiple quaternions
-Divide two quaternions
-Rotate a quaternion around another
-Dot product two quaternions
-Distance between two quaternions
-Negate a quaternion
-Conjugate a quaternion
-Invert a quaternion
-Normalize a quaternion
-Scale a quaternion by given factor
-Quadrance of a quaternion
-Magnitude of a quaternion</p></td>
+<tr class="row-even"><td><p>ADD</p>
+<p>SUB</p>
+<p>MULTIPLY</p>
+<p>DIVIDE</p>
+<p>ROTATE</p>
+<p>DOT</p>
+<p>DISTANCE</p>
+<p>NEGATE</p>
+<p>CONJUGATE</p>
+<p>INVERT</p>
+<p>NORMALIZE</p>
+<p>SCALE</p>
+<p>QUADRANCE</p>
+<p>MAGNITUDE</p>
+</td>
+<td><p>NQ</p>
+<p>QQ</p>
+<p>NQ</p>
+<p>QQ</p>
+<p>QQ</p>
+<p>QQ</p>
+<p>QQ</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>QS</p>
+<p>Q</p>
+<p>Q</p>
+</td>
+<td><p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>S</p>
+<p>S</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>Q</p>
+<p>S</p>
+<p>S</p>
+</td>
+<td><p>Add multiple quaternions</p>
+<p>Subtract two quaternions</p>
+<p>Multiply multiple quaternions</p>
+<p>Divide two quaternions</p>
+<p>Rotate a quaternion around another</p>
+<p>Dot product two quaternions</p>
+<p>Distance between two quaternions</p>
+<p>Negate a quaternion</p>
+<p>Conjugate a quaternion</p>
+<p>Invert a quaternion</p>
+<p>Normalize a quaternion</p>
+<p>Scale a quaternion by given factor</p>
+<p>Quadrance of a quaternion</p>
+<p>Magnitude of a quaternion</p>
+</td>
 </tr>
 </tbody>
 </table>
 <p>where:</p>
-<p>NQ = arbitrary number of quaternion inputs
-QQ = two quaternion inputs
-Q  = one quaternion input
-QS = one quaternion + scalar value
-S  = scalar value</p>
+<ul class="simple">
+<li><p>NQ = arbitrary number of quaternion inputs</p></li>
+<li><p>QQ = two quaternion inputs</p></li>
+<li><p>Q  = one quaternion input</p></li>
+<li><p>QS = one quaternion + scalar value</p></li>
+<li><p>S  = scalar value</p></li>
+</ul>
 <p>For the operations that take multiple quaternion inputs (NQ &amp; QQ) the node provides a PRE / POST option, which lets the node execute the operation on the quaternion inputs in a direct or reverse order. The exceptions to this rule are the ADD, DOT and DISTANCE operations for which the order of quaternions is irrelevant.</p>
-<p>For quaternion inputs A and B:
-PRE  = A op B
-POST = B op A</p>
+<p>For quaternion inputs A and B:</p>
+<ul class="simple">
+<li><p>PRE  = A op B</p></li>
+<li><p>POST = B op A</p></li>
+</ul>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>The input to the node are lists of quaternions as well as control parameters (like scale etc). For certain operations the node takes arbitrary number of quaternion input lists, for others it takes only two quaternion input lists and for some only one quaternion input list.</p>
@@ -223,91 +231,107 @@ POST = B op A</p>
 </section>
 <section id="operations">
 <h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>ADD : adds the components of two or more quaternions</p></li>
-</ul>
-<p>q1 = (w1, x1, y1, z1)
-q2 = (w2, x2, y2, z2)</p>
-<p>q1 + q2 = (w1 + w2, x1 + x2, y1 + y2, z1 + z1)</p>
-<ul class="simple">
-<li><p>SUB : subtracts the components of two quaternions</p></li>
-</ul>
-<p>q1 = (w1, x1, y1, z1)
-q2 = (w2, x2, y2, z2)</p>
-<p>q1 - q2 = (w1 - w2, x1 - x2, y1 - y2, z1 - z2)</p>
-<ul class="simple">
-<li><p>MULTIPLY : multiplies two or more quaternions</p></li>
-</ul>
-<p>q1 = (w1, x1, y1, z1) = (w1, V1), where V1 = (x1, y1, z1)
-q2 = (w2, x2, y2, z2) = (w2, V2), where V2 = (x2, y2, z2)</p>
-<p>q1 x q2 = (w1 * w2 - V1 * V2, w1 * V1 + w2 * V2 + V1 x V2)</p>
+<ul>
+<li><p><strong>ADD</strong> : adds the components of two or more quaternions</p>
+<p>q1 = (w1, x1, y1, z1)</p>
+<p>q2 = (w2, x2, y2, z2)</p>
+<blockquote>
+<div><p>q1 + q2 = (w1 + w2, x1 + x2, y1 + y2, z1 + z1)</p>
+</div></blockquote>
+</li>
+<li><p><strong>SUB</strong> : subtracts the components of two quaternions</p>
+<p>q1 = (w1, x1, y1, z1)</p>
+<p>q2 = (w2, x2, y2, z2)</p>
+<blockquote>
+<div><p>q1 - q2 = (w1 - w2, x1 - x2, y1 - y2, z1 - z2)</p>
+</div></blockquote>
+</li>
+<li><p><strong>MULTIPLY</strong> : multiplies two or more quaternions</p>
+<p>q1 = (w1, x1, y1, z1) = (w1, V1), where V1 = (x1, y1, z1)</p>
+<p>q2 = (w2, x2, y2, z2) = (w2, V2), where V2 = (x2, y2, z2)</p>
+<blockquote>
+<div><p>q1 x q2 = (w1 * w2 - V1 * V2, w1 * V1 + w2 * V2 + V1 x V2)</p>
+</div></blockquote>
 <p>where V1 * V2 is dot product of vectors V1 &amp; V2
 and V1 x V2 is the cross product of vectors V1 &amp; V2</p>
-<ul class="simple">
-<li><p>DIVIDE : divide two quaternions (multiply one quaternion with inverse of the other)</p></li>
-</ul>
+</li>
+<li><p><strong>DIVIDE</strong> : divide two quaternions (multiply one quaternion with inverse of the other)</p>
 <p>q1 = (w1, x1, y1, z1)
 q2 = (w2, x2, y2, z2)</p>
-<p>q1 / q2 = q1 x inverse(q2)</p>
-<ul class="simple">
-<li><p>ROTATE : rotates one quaternion around the other quaternion</p></li>
-<li><p>DOT : the dot product of two quaternions</p></li>
-</ul>
-<p>q1 = (w1, x1, y1, z1)
-q2 = (w2, x2, y2, z2)</p>
-<p>q1 * q2 = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2</p>
-<ul class="simple">
-<li><p>DISTANCE : the distance between two quaternions</p></li>
-</ul>
-<p>q1 = (w1, x1, y1, z1)
-q2 = (w2, x2, y2, z2)</p>
-<p>Distance(q1, q2) = Magnitude(q1 - q2)</p>
-<ul class="simple">
-<li><p>NEGATE : negates a quaternion</p></li>
-</ul>
+<blockquote>
+<div><p>q1 / q2 = q1 x inverse(q2)</p>
+</div></blockquote>
+</li>
+<li><p><strong>ROTATE</strong> : rotates one quaternion around the other quaternion</p></li>
+<li><p><strong>DOT</strong> : the dot product of two quaternions</p>
+<p>q1 = (w1, x1, y1, z1)</p>
+<p>q2 = (w2, x2, y2, z2)</p>
+<blockquote>
+<div><p>q1 * q2 = w1 * w2 + x1 * x2 + y1 * y2 + z1 * z2</p>
+</div></blockquote>
+</li>
+<li><p><strong>DISTANCE</strong> : the distance between two quaternions</p>
+<p>q1 = (w1, x1, y1, z1)</p>
+<p>q2 = (w2, x2, y2, z2)</p>
+<blockquote>
+<div><p>Distance(q1, q2) = Magnitude(q1 - q2)</p>
+</div></blockquote>
+</li>
+<li><p><strong>NEGATE</strong> : negates a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Negate(q) = (-w, -x, -y, -z)</p>
-<ul class="simple">
-<li><p>CONJUGATE : conjugates a quaternion</p></li>
-</ul>
+<blockquote>
+<div><p>Negate(q) = (-w, -x, -y, -z)</p>
+</div></blockquote>
+</li>
+<li><p><strong>CONJUGATE</strong> : conjugates a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Conjugate(q) = (w, -x, -y, -z)</p>
-<ul class="simple">
-<li><p>INVERT : inverts a quaternion</p></li>
-</ul>
+<blockquote>
+<div><p>Conjugate(q) = (w, -x, -y, -z)</p>
+</div></blockquote>
+</li>
+<li><p><strong>INVERT</strong> : inverts a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Inverse(q) = Conjugate(q) / Magnitude(q)^2</p>
-<ul class="simple">
-<li><p>NORMALIZE : normalizes a quaternion</p></li>
-</ul>
+<blockquote>
+<div><p>Inverse(q) = Conjugate(q) / Magnitude(q)^2</p>
+</div></blockquote>
+</li>
+<li><p><strong>NORMALIZE</strong> : normalizes a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Normalize(q) = (w/m, x/m, y/m, z/m)</p>
+<blockquote>
+<div><p>Normalize(q) = (w/m, x/m, y/m, z/m)</p>
 <p>where m = Magnitude(q)</p>
-<ul class="simple">
-<li><p>SCALE : scales the components of a quaternion</p></li>
-</ul>
+</div></blockquote>
+</li>
+<li><p><strong>SCALE</strong> : scales the components of a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>s - (float) the scale factor
-sf = (sw, sx, sy, sz) - (array of bools) filters which component is scaled</p>
+<p>s - (float) the scale factor</p>
+<p>sf = (sw, sx, sy, sz) - (array of bools) filters which component is scaled</p>
 <p>S = (s if sw else 1, s if sx else 1, s if sy else 1, s if sz else 1)</p>
-<p>scale(q, S) = (w * Sw, x * Sx, y * Sy, z * Sz)</p>
-<ul class="simple">
-<li><p>QUADRANCE : the quadreance of a quaternion</p></li>
-</ul>
+<blockquote>
+<div><p>scale(q, S) = (w * Sw, x * Sx, y * Sy, z * Sz)</p>
+</div></blockquote>
+</li>
+<li><p><strong>QUADRANCE</strong> : the quadreance of a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Quadrance(q) = w * w + x * x + y * y + z * z</p>
+<blockquote>
+<div><p>Quadrance(q) = w * w + x * x + y * y + z * z</p>
 <p>Note: essentially this is the dot product of the quaternion with itself, and also equal to square of the magnitude.</p>
-<ul class="simple">
-<li><p>MAGNITUDE : the magnitude of a quaternion</p></li>
-</ul>
+</div></blockquote>
+</li>
+<li><p><strong>MAGNITUDE</strong> : the magnitude of a quaternion</p>
 <p>q = (w, x, y, z)</p>
-<p>Magnitude(q) = sqrt(w * w + x * x + y * y + z * z)</p>
+<blockquote>
+<div><p>Magnitude(q) = sqrt(w * w + x * x + y * y + z * z)</p>
 <p>Note: this is essentially the square root of the quadrance (the length of the quaternion).</p>
+</div></blockquote>
+</li>
+</ul>
 </section>
 <section id="output">
 <h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
-<p><strong>Quaternions</strong> or <strong>Values</strong>
-Depending on the operation the output to the node is either a quaternion list or scalar value list.</p>
+<ul class="simple">
+<li><p><strong>Quaternions</strong> or <strong>Values</strong> Depending on the operation the output to the node is either a quaternion list or scalar value list.</p></li>
+</ul>
 <p>The node computes the results (quaternions or scalar values) only when the output socket is connected.</p>
 </section>
 </section>

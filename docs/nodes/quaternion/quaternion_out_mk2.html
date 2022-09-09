@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Quaternion Math Node" href="quaternion_math.html" />
+    <link rel="next" title="Quaternion Math" href="quaternion_math.html" />
     <link rel="prev" title="Quaternion In" href="quaternion_in_mk2.html" /> 
 </head>
 
@@ -67,17 +67,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="quaternion_index.html">Quaternion</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="quaternion_in_mk2.html">Quaternion In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quaternion_in_mk2.html#extra-parameters">Extra Parameters</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Quaternion Out</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#modes">Modes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#extra-parameters">Extra Parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#extra-parameters">Extra Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="quaternion_math.html">Quaternion Math Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quaternion_math.html">Quaternion Math</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotation_difference.html">Rotation difference</a></li>
 </ul>
 </li>
@@ -132,6 +129,8 @@
              
   <section id="quaternion-out">
 <h1>Quaternion Out<a class="headerlink" href="#quaternion-out" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189335341-65240d77-18aa-4af4-b172-2d2751693f81.png"><img alt="https://user-images.githubusercontent.com/14288520/189335341-65240d77-18aa-4af4-b172-2d2751693f81.png" src="https://user-images.githubusercontent.com/14288520/189335341-65240d77-18aa-4af4-b172-2d2751693f81.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189335364-2e83b6cc-571a-4558-a48c-511a124a0be1.png"><img alt="https://user-images.githubusercontent.com/14288520/189335364-2e83b6cc-571a-4558-a48c-511a124a0be1.png" src="https://user-images.githubusercontent.com/14288520/189335364-2e83b6cc-571a-4558-a48c-511a124a0be1.png" /></a>
 <p>Quaternion Out node converts a quaternion into various formats for a selected mode.</p>
 <section id="modes">
 <h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
@@ -148,45 +147,48 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>WXYZ</p></td>
-<td><p>Converts a quaternion into its W, X, Y, Z components. [1]</p></td>
+<td><p>Converts a quaternion into its W, X, Y, Z components. <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>SCALAR-VECTOR</p></td>
-<td><p>Converts a quaternion into its Scalar &amp; Vector components. [1]</p></td>
+<td><p>Converts a quaternion into its Scalar &amp; Vector components.
+<strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>EULER</p></td>
 <td><p>Converts a quaternion into X, Y, Z angles corresponding
-to the Euler rotation given an Euler rotation order. [2,3]</p></td>
+to the Euler rotation given an Euler rotation order. <strong>[2,3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>AXIS-ANGLE</p></td>
-<td><p>Converts a quaternion into the Axis &amp; Angle of rotation. [2]</p></td>
+<td><p>Converts a quaternion into the Axis &amp; Angle of rotation.
+<strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>MATRIX</p></td>
 <td><p>Converts a quaternion into an orthogonal 4x4 rotation matrix.</p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : For WXYZ and SCALAR-VECTOR modes the node provides a “Normalize” option to normalize the input quaternion before outputting its components. All the other modes automatically normalize the quaternion.
-[2] : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians, Degrees or Unities (0-1 range).
-[3] : For EULER mode the node provides the option to select the Euler rotation order: “XYZ”, “XZY”, “YXZ”, “YZX”, “ZXY” or “ZYX”.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : For WXYZ and SCALAR-VECTOR modes the node provides a “Normalize” option to normalize the input quaternion before outputting its components. All the other modes automatically normalize the quaternion.</p></li>
+<li><p><strong>[2]</strong> : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians (1.0-2pi), Degrees (1.0-360.0) or Unities (0.0-1.0 range).</p></li>
+<li><p><strong>[3]</strong> : For EULER mode the node provides the option to select the Euler rotation order: “XYZ”, “XZY”, “YXZ”, “YZX”, “ZXY” or “ZYX”.</p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Quaternions</strong>
-The node takes a list of (one or more) quaternions and based on the selected mode
-it converts the quaternions into the corresponding components.</p>
-</section>
+<ul class="simple">
+<li><p><strong>Quaternions</strong> The node takes a list of (one or more) quaternions and based on the selected mode it converts the quaternions into the corresponding components.</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
-<h1>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h1>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
 <p>A set of extra parameters are available on the property panel.
 These parameters do not receive external input.</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 24%" />
-<col style="width: 13%" />
+<col style="width: 14%" />
 <col style="width: 12%" />
-<col style="width: 51%" />
+<col style="width: 50%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Extra Param</p></th>
@@ -197,22 +199,26 @@ These parameters do not receive external input.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RADIANS
-DEGREES
-UNITIES</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RADIANS</p></li>
+<li><p>DEGREES</p></li>
+<li><p>UNITIES</p></li>
+</ul>
 </td>
 <td><p>DEGREES</p></td>
 <td><p>Interprets the angle values based on
-the selected angle units:
-Radians = 0 - 2pi
-Degrees = 0 - 360
-Unities = 0 - 1</p></td>
+the selected angle units:</p>
+<ul class="simple">
+<li><p>Radians = 0.0 - 2pi</p></li>
+<li><p>Degrees = 0.0 - 360.0</p></li>
+<li><p>Unities = 0.0 - 1.0</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
+</section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Based on the selected <strong>Mode</strong> the node makes available the corresponding output sockets:</p>
@@ -234,18 +240,21 @@ Unities = 0 - 1</p></td>
 <td><p>Scalar (float) &amp; Vector (vector)</p></td>
 </tr>
 <tr class="row-even"><td><p>EULER</p></td>
-<td><p>X, Y, Z angles (floats) [1]</p></td>
+<td><p>X, Y, Z angles (floats) <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>AXIS-ANGLE</p></td>
-<td><p>Axis (vector) &amp; Angle (float) [1]</p></td>
+<td><p>Axis (vector) &amp; Angle (float)
+<strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>MATRIX</p></td>
 <td><p>Matrix (4x4 matrix)</p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : The angles are by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The angles are by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 <p>The modes WXYZ and SCALAR-VECTOR are the same except the WXYZ mode outputs the components as 4 floats (W, X, Y and Z), while the SCALAR-VECTOR mode outputs the components as a scalar (W) and a vector (XYZ).</p>
 <p>The node only generates the conversion when the output sockets are connected.</p>
 </section>
@@ -256,7 +265,7 @@ Unities = 0 - 1</p></td>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="quaternion_in_mk2.html" class="btn btn-neutral float-left" title="Quaternion In" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="quaternion_math.html" class="btn btn-neutral float-right" title="Quaternion Math Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="quaternion_math.html" class="btn btn-neutral float-right" title="Quaternion Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
