@@ -35,8 +35,12 @@ def iter_last(l):
 class SvRotationDifference(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Quaternion
-
-    creates quaternion which represent rotation from vertices A to vertices B
+Creates quaternion which represent rotation from vertices A to vertices B
+In:
+    verts_a: list of tuple(float, float, float)
+    verts_b: list of tuple(float, float, float)
+Out:
+    list of quaternions
     """
     bl_idname = 'SvRotationDifference'
     bl_label = 'Rotation Difference'

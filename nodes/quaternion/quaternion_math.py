@@ -74,7 +74,7 @@ ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Quaternions, Math
-    Tooltip: Compute various arithmetic operations on quaternions
+    Tooltip: Compute various arithmetic operations on quaternions\n\tAdd\n\tSub Pre/Post\n\tMult Pre/Post\n\tDiv\n\tRot\n\tDot\n\tDist\n\tNegate\n\tConjugate\n\tInvert\n\tNorm\n\tScale WXYZ\n\tQuadrance\n\tMagnitude
     """
     bl_idname = 'SvQuaternionMathNode'
     bl_label = 'Quaternion Math'

@@ -138,7 +138,7 @@ def math_numpy(params, constant, matching_f):
     return result
 
 class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
-    """Scalar: Add, Subtruct, Sine, Cosine, Log, Power...
+    """Scalar: Add, Subtruct, Sine, Cosine, Log, Power and other.
     constants: pi, e, phi, tau
     input: x / x & y
     """

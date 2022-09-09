@@ -41,9 +41,9 @@ class AngleUnits:
     @classmethod
     def get_blender_enum(cls):
         return [
-            (AngleUnits.RADIANS, "Rad", "Radians", "", 0),
-            (AngleUnits.DEGREES, "Deg", "Degrees", "", 1),
-            (AngleUnits.UNITIES, "Uni", "Unities", "", 2)
+            (AngleUnits.RADIANS, "Radians", "Radians (0-2pi)", "", 0),
+            (AngleUnits.DEGREES, "Degrees", "Degrees (0.0-360.0)", "", 1),
+            (AngleUnits.UNITIES, "Unities", "Unities (0.0-1.0)", "", 2)
         ]
 
 
