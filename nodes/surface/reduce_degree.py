@@ -10,18 +10,30 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve
-from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.surface import SvSurface
+from sverchok.utils.surface.nurbs import SvNurbsSurface
 
-class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Reduce Degree
-    Tooltip: Reduce degree of a NURBS curve
+    Triggers: Reduce Surface Degree
+    Tooltip: Reduce the degree of a NURBS surface
     """
-    bl_idname = 'SvCurveReduceDegreeNode'
-    bl_label = 'Reduce Degree (NURBS Curve)'
+    bl_idname = 'SvSurfaceReduceDegreeNode'
+    bl_label = 'Reduce Degree (NURBS Surface)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_INSERT_KNOT'
+    sv_icon = 'SV_SURFACE_INSERT_KNOT'
+
+    directions = [
+            ('U', "U", "U direction", 0),
+            ('V', "V", "V direction", 1)
+        ]
+
+    direction : EnumProperty(
+            name = "Parameter",
+            description = "By which parameter to elevate degree",
+            items = directions,
+            default = 'U',
+            update = updateNode)
 
     modes = [
             ('DELTA', "Reduce by", "Specify difference between current degree and target degree", 0),
@@ -55,65 +67,59 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
 
     if_possible : BoolProperty(
             name = "If possible",
-            description = "Don't fail when trying to reduce the curve's degree too many times, just reduce it as much as possible",
+            description = "Don't fail when trying to reduce the surface's degree too many times, just reduce it as much as possible",
             default = False,
             update = updateNode)
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'direction', expand=True)
         layout.prop(self, 'mode', text='')
         layout.prop(self, 'if_possible')
 
     def sv_init(self, context):
-        self.inputs.new('SvCurveSocket', "Curve")
+        self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', 'Degree').prop_name = 'degree'
         self.inputs.new('SvStringsSocket', 'Tolerance').prop_name = 'tolerance'
-        self.outputs.new('SvCurveSocket', 'Curve')
-        self.outputs.new('SvStringsSocket', 'Error')
+        self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        curve_s = self.inputs['Curve'].sv_get()
+        surface_s = self.inputs['Surface'].sv_get()
         degree_s = self.inputs['Degree'].sv_get()
         tolerance_s = self.inputs['Tolerance'].sv_get()
 
-        input_level = get_data_nesting_level(curve_s, data_types=(SvCurve,))
+        input_level = get_data_nesting_level(surface_s, data_types=(SvSurface,))
         flat_output = input_level < 2
-        curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
+        surface_s = ensure_nesting_level(surface_s, 2, data_types=(SvSurface,))
         degree_s = ensure_nesting_level(degree_s, 2)
         tolerance_s = ensure_nesting_level(tolerance_s, 2)
 
-        curves_out = []
-        error_out = []
-        for params in zip_long_repeat(curve_s, degree_s, tolerance_s):
-            new_curves = []
-            new_errors = []
-            for curve, degree, tolerance in zip_long_repeat(*params):
-                curve = SvNurbsCurve.to_nurbs(curve)
-                if curve is None:
-                    raise Exception("One of curves is not NURBS")
+        surfaces_out = []
+        for params in zip_long_repeat(surface_s, degree_s, tolerance_s):
+            new_surfaces = []
+            for surface, degree, tolerance in zip_long_repeat(*params):
+                surface = SvNurbsSurface.get(surface)
+                if surface is None:
+                    raise Exception("One of surfaces is not NURBS")
                 if self.mode == 'DELTA':
                     kwargs = dict(delta = degree)
                 else:
                     kwargs = dict(target = degree)
-                curve, error = curve.reduce_degree(tolerance=tolerance, return_error=True, if_possible = self.if_possible, **kwargs)
-                new_curves.append(curve)
-                new_errors.append(error)
+                surface = surface.reduce_degree(self.direction, tolerance=tolerance, **kwargs)
+                new_surfaces.append(surface)
             if flat_output:
-                curves_out.extend(new_curves)
-                error_out.extend(new_errors)
+                surfaces_out.extend(new_surfaces)
             else:
-                curves_out.append(new_curves)
-                error_out.append(new_errors)
+                surfaces_out.append(new_surfaces)
 
-        self.outputs['Curve'].sv_set(curves_out)
-        self.outputs['Error'].sv_set(error_out)
+        self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
-    bpy.utils.register_class(SvCurveReduceDegreeNode)
+    bpy.utils.register_class(SvSurfaceReduceDegreeNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveReduceDegreeNode)
+    bpy.utils.unregister_class(SvSurfaceReduceDegreeNode)
 
