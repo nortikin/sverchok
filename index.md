@@ -77,6 +77,9 @@
     SvRefineNurbsCurveNode
     SvCurveRemoveExcessiveKnotsNode
     ---
+    SvCurveElevateDegreeNode
+    SvCurveReduceDegreeNode
+    ---
     SvAdaptivePlotNurbsCurveNode
 
 ## Curves @ Bezier

@@ -420,6 +420,7 @@ class SvNurbsCurve(SvCurve):
                 result = reduced_segments[0]
                 for segment in reduced_segments[1:]:
                     result = result.concatenate(segment, remove_knots=True, tolerance=tolerance)
+                    max_error = max(max_error, tolerance)
                 result = result.reparametrize(src_t_min, src_t_max)
                 return result, max_error, True
 
