@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import sqrt
 
 from sverchok.utils.math import binomial
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -126,6 +127,7 @@ def reduce_bezier_degree_once(self_degree, control_points):
         for i in range(p-2, r, -1): # reverse order
             new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
         error = np.linalg.norm(control_points[r+1] - 0.5*(new_control_points[r] + new_control_points[r+1]))
+        # directly follows from eq. 5.43
         error *= bezier_coefficient(p, r+1, 0.5)
     else:
         for i in range(1, r):
@@ -136,7 +138,17 @@ def reduce_bezier_degree_once(self_degree, control_points):
         p_r = (control_points[r+1] - (1 - alpha[r+1])*new_control_points[r+1]) / alpha[r+1]
         new_control_points[r] = 0.5 * (p_l + p_r)
         error = np.linalg.norm(p_l - p_r)
-        error *= 0.5 * (1 - alpha[r])
+        # See eq. 5.44. Knowing that r == (p-1)/2 and p is odd, and
+        # knowing properties of binomial coefficients, we know that
+        # C(p,r) == C(p, r+1); from that, one can write that
+        # B[r,p](u) - B[r+1,p](u) = C(p,r) * u^r * (1-u)^(r+1) * (1 - 2*u)        (*)
+        # By manually differentiating this, one can find out that it
+        # reaches maximums at u = (p +- sqrt(p)) / (2*p)
+        # (both maximums are equal due to symmetry).
+        max_u = (p - sqrt(p)) / (2*p)
+        # from (*); it's quite obvious that this is positive since max_u < 1/2
+        b_error = binomial(p,r) * max_u**r * (1 - max_u)**(r+1) * (1 - 2*max_u)
+        error *= 0.5 * (1 - alpha[r]) * b_error
     return new_control_points, error
 
 def reduce_bezier_degree(self_degree, control_points, delta=1):

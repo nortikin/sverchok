@@ -423,16 +423,27 @@ class SvNurbsCurve(SvCurve):
                 result = result.reparametrize(src_t_min, src_t_max)
                 return result, max_error, True
 
-        max_error = 0.0
+        total_error = 0.0
         result = self
         for i in range(delta):
-            result, error, ok = reduce_degree_once(result)
-            if not ok:
+            try:
+                result, error, ok = reduce_degree_once(result)
+            except CantReduceDegreeException as e:
+                raise CantReduceDegreeException(f"At iteration #{i}: {e}") from e
+            if not ok: # if if_possible would be false, we would get an exception
                 break
-            error = max(max_error, error)
-        print(f"Curve degree reduction error: {max_error}")
+            total_error += error
+            if total_error > tolerance:
+                if if_possible:
+                    if return_error:
+                        return result, error
+                    else:
+                        return result
+                else:
+                    raise CantReduceDegreeException(f"Tolerance exceeded at iteration #{i}, error is {total_error}")
+        print(f"Curve degree reduction error: {total_error}")
         if return_error:
-            return result, max_error
+            return result, total_error
         else:
             return result
 
