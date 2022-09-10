@@ -18,8 +18,10 @@ from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
-        nurbs_divide, elevate_bezier_degree, from_homogenous,
-        CantInsertKnotException, CantRemoveKnotException
+        nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
+        from_homogenous,
+        CantInsertKnotException, CantRemoveKnotException,
+        CantReduceDegreeException
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
@@ -194,7 +196,7 @@ class SvNurbsCurve(SvCurve):
             if remove_knots == True:
                 remove_knots = p-1
             join_point = kv1[-1]
-            result = result.remove_knot(join_point, count=remove_knots, if_possible=True)
+            result = result.remove_knot(join_point, count=remove_knots, if_possible=True, tolerance=tolerance)
         return result
 
     def lerp_to(self, curve2, coefficient):
@@ -370,10 +372,69 @@ class SvNurbsCurve(SvCurve):
             segments = [segment.elevate_degree(orig_delta, orig_target) for segment in segments]
             result = segments[0]
             for segment in segments[1:]:
-                result = result.concatenate(segment)
+                result = result.concatenate(segment, remove_knots=True)
             result = result.reparametrize(src_t_min, src_t_max)
             return result
             #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
+
+    def reduce_degree(self, delta=None, target=None, tolerance=1e-6, return_error=False, if_possible=False):
+        orig_delta, orig_target = delta, target
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        orig_degree = self.get_degree()
+        if delta is None:
+            delta = orig_degree - target
+            if delta < 0:
+                raise Exception(f"Curve already has degree {orig_degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
+        def reduce_degree_once(curve):
+            if curve.is_bezier():
+                old_control_points = curve.get_homogenous_control_points()
+                control_points, error = reduce_bezier_degree(curve.get_degree(), old_control_points, 1)
+                if tolerance is not None and error > tolerance:
+                    if if_possible:
+                        return curve, error, False
+                    else:
+                        raise CantReduceDegreeException(f"For degree {curve.get_degree()}, error {error} is greater than tolerance {tolerance}")
+                control_points, weights = from_homogenous(control_points)
+                knotvector = sv_knotvector.reduce_degree(curve.get_knotvector(), 1)
+                curve = SvNurbsCurve.build(curve.get_nurbs_implementation(),
+                        curve.get_degree()-1, knotvector, control_points, weights)
+                return curve, error, True
+            else:
+                src_t_min, src_t_max = curve.get_u_bounds()
+                segments = curve.to_bezier_segments(to_bezier_class=False)
+                reduced_segments = []
+                max_error = 0.0
+                for i, segment in enumerate(segments):
+                    try:
+                        s, error, ok = reduce_degree_once(segment)
+                    except CantReduceDegreeException as e:
+                        raise CantReduceDegreeException(f"At segment #{i}: {e}") from e
+                    max_error = max(max_error, error)
+                    reduced_segments.append(s)
+                result = reduced_segments[0]
+                for segment in reduced_segments[1:]:
+                    result = result.concatenate(segment, remove_knots=True, tolerance=tolerance)
+                result = result.reparametrize(src_t_min, src_t_max)
+                return result, max_error, True
+
+        max_error = 0.0
+        result = self
+        for i in range(delta):
+            result, error, ok = reduce_degree_once(result)
+            if not ok:
+                break
+            error = max(max_error, error)
+        print(f"Curve degree reduction error: {max_error}")
+        if return_error:
+            return result, max_error
+        else:
+            return result
 
     def reparametrize(self, new_t_min, new_t_max):
         kv = self.get_knotvector()

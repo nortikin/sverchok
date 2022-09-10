@@ -262,7 +262,6 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
                 raise Exception("Can not solve relative constraint without original curve")
             else:
                 points1, points2 = self.calc_vectors(solver)
-                print(f"Pts1: {points1}, Pts2: {points2}")
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
                     for dim_idx in range(ndim):
                         B[pt_idx*3:pt_idx*3+3,0] = weights[pt_idx] * (pt2 - pt1)[np.newaxis]
@@ -309,11 +308,51 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us2) for k in range(solver.n_cpts)]
         betas = np.array(betas) # (n_cpts, n_points)
         return alphas, betas
+    
+    def get_equations(self, solver):
+        ndim = 3
+        us1 = self.us1
+        us2 = self.us2
+        p = solver.degree
+
+        n_points = len(us1)
+        n_equations = ndim * n_points
+        n_unknowns = ndim * solver.n_cpts
+
+        alphas, betas = self.calc_alphas(solver)
+
+        weights = self.get_weights()
+
+        A = np.zeros((n_equations, n_unknowns))
+        B = np.zeros((n_equations, 1))
+
+        weight = 1
+
+        for pt_idx in range(n_points):
+            for cpt_idx in range(solver.n_cpts):
+                alpha = alphas[cpt_idx][pt_idx]
+                beta = betas[cpt_idx][pt_idx]
+                for dim_idx in range(ndim):
+                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weight * (alpha - beta)
+
+        if self.relative:
+            if solver.src_curve is None:
+                raise Exception("Can not solve relative constraint without original curve")
+            else:
+                points1, points2 = self.calc_vectors(solver)
+                for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
+                    for dim_idx in range(ndim):
+                        B[pt_idx*3:pt_idx*3+3,0] = weight * (pt2 - pt1)[np.newaxis]
+
+        print("A", A)
+        print("B", B)
+        return A, B
 
     def calc_vectors(self, solver):
         points1 = solver.src_curve.tangent_array(self.us1)
         points2 = solver.src_curve.tangent_array(self.us2)
-        return -points1, -points2
+        print(f"Tg1: {points1}, Tg2: {points2}")
+        return points1, points2
 
 class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
     def __init__(self, cpt_idxs, cpt_vectors, weights = None, relative=True):

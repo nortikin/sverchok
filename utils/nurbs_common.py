@@ -84,6 +84,10 @@ def nurbs_divide_flat(numerator, denominator):
     result[good] = numerator[good] / denominator[good]
     return result
 
+def bezier_coefficient(n, k, ts):
+    C = binomial(n, k)
+    return C * ts**k * (1 - ts)**(n-k)
+
 def elevate_bezier_degree(self_degree, control_points, delta=1):
     # See "The NURBS book" (2nd edition), p.5.5, eq. 5.36
     t = delta
@@ -103,6 +107,45 @@ def elevate_bezier_degree(self_degree, control_points, delta=1):
         point = numerator.sum(axis=0) / denominator
         new_points.append(point)
     return np.array(new_points)
+
+def reduce_bezier_degree_once(self_degree, control_points):
+    # See "The NURBS Book" (2nd edition), p.5.6 eq. 5.40, 5.41, 5.42
+    # Also, from eq. 5.43 and 5.44 there, we derive estimations of error
+    # bounds more precise than those which are given in eq. 5.45, 5.46
+    # in the same paragraph later.
+    p = self_degree
+    r = (p-1) // 2
+    ndim = control_points.shape[1]
+    alpha = [float(i) / float(p) for i in range(p)]
+    new_control_points = np.zeros((p, ndim))
+    new_control_points[0] = control_points[0]
+    new_control_points[p-1] = control_points[p]
+    if p % 2 == 0:
+        for i in range(1, r+1):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        error = np.linalg.norm(control_points[r+1] - 0.5*(new_control_points[r] + new_control_points[r+1]))
+        error *= bezier_coefficient(p, r+1, 0.5)
+    else:
+        for i in range(1, r):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        p_l = (control_points[r] - alpha[r]*new_control_points[r-1]) / (1 - alpha[r])
+        p_r = (control_points[r+1] - (1 - alpha[r+1])*new_control_points[r+1]) / alpha[r+1]
+        new_control_points[r] = 0.5 * (p_l + p_r)
+        error = np.linalg.norm(p_l - p_r)
+        error *= 0.5 * (1 - alpha[r])
+    return new_control_points, error
+
+def reduce_bezier_degree(self_degree, control_points, delta=1):
+    max_error = 0.0
+    degree = self_degree
+    for i in range(delta):
+        control_points, error = reduce_bezier_degree_once(degree, control_points)
+        max_error = max(max_error, error)
+    return control_points, max_error
 
 def from_homogenous(control_points):
     if control_points.ndim == 2: # curve
@@ -254,5 +297,8 @@ class CantInsertKnotException(Exception):
     pass
 
 class CantRemoveKnotException(Exception):
+    pass
+
+class CantReduceDegreeException(Exception):
     pass
 

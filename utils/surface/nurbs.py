@@ -6,7 +6,7 @@ from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions,
         nurbs_divide, from_homogenous,
-        CantRemoveKnotException
+        CantRemoveKnotException, CantReduceDegreeException
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
@@ -86,6 +86,81 @@ class SvNurbsSurface(SvSurface):
 
     def remove_knot(self, direction, parameter, count=1, tolerance=None, if_possible=False):
         raise Exception("Not implemented!")
+
+    def get_degree_u(self):
+        raise Exception("Not implemented!")
+
+    def get_degree_v(self):
+        raise Exception("Not implemented!")
+
+    def get_knotvector_u(self):
+        """
+        returns: np.array of shape (X,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_knotvector_v(self):
+        """
+        returns: np.array of shape (X,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_control_points(self):
+        """
+        returns: np.array of shape (n_u, n_v, 3)
+        """
+        raise Exception("Not implemented!")
+
+    def get_weights(self):
+        """
+        returns: np.array of shape (n_u, n_v)
+        """
+        raise Exception("Not implemented!")
+
+    def iso_curve(self, fixed_direction, param):
+        raise Exception("Not implemented")
+
+    def get_homogenous_control_points(self):
+        """
+        returns: np.array of shape (m, n, 4)
+        """
+        points = self.get_control_points()
+        weights = np.transpose(self.get_weights()[np.newaxis], axes=(1,2,0))
+        weighted = weights * points
+        return np.concatenate((weighted, weights), axis=2)
+
+    def get_min_u_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the U direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_u()
+        degree = self.get_degree_u()
+        return sv_knotvector.get_min_continuity(kv, degree)
+
+    def get_min_v_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the V direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_v()
+        degree = self.get_degree_v()
+        return sv_knotvector.get_min_continuity(kv, degree)
+    
+    def get_min_continuity(self):
+        """
+        Return minimum continuity degree of the surface (guaranteed by knotvectors):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        c_u = self.get_min_u_continuity()
+        c_v = self.get_min_v_continuity()
+        return min(c_u, c_v)
 
     def swap_uv(self):
         degree_u = self.get_degree_u()
@@ -174,80 +249,91 @@ class SvNurbsSurface(SvSurface):
                     self.get_knotvector_u(), fixed_u_knotvector,
                     new_points, new_weights)
 
-    def get_degree_u(self):
-        raise Exception("Not implemented!")
+    def reduce_degree(self, direction, delta=None, target=None, tolerance=1e-6):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        if direction == SvNurbsSurface.U:
+            degree = self.get_degree_u()
+        else:
+            degree = self.get_degree_v()
+        if delta is None:
+            delta = degree - target
+            if delta < 0:
+                raise Exception(f"Surface already has degree {degree}, which is less than target {target}")
+        if delta == 0:
+            return self
 
-    def get_degree_v(self):
-        raise Exception("Not implemented!")
+        implementation = self.get_nurbs_implementation()
 
-    def get_knotvector_u(self):
-        """
-        returns: np.array of shape (X,)
-        """
-        raise Exception("Not implemented!")
+        if direction == SvNurbsSurface.U:
+            new_points = []
+            new_weights = []
+            new_u_degree = None
+            remaining_tolerance = tolerance
+            max_error = 0.0
+            for i in range(self.get_control_points().shape[1]):
+                fixed_v_points = self.get_control_points()[:,i]
+                fixed_v_weights = self.get_weights()[:,i]
+                fixed_v_curve = SvNurbsMaths.build_curve(implementation,
+                                    self.get_degree_u(), self.get_knotvector_u(),
+                                    fixed_v_points, fixed_v_weights)
+                try:
+                    fixed_v_curve, error = fixed_v_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True)
+                except CantReduceDegreeException as e:
+                    raise CantReduceDegreeException(f"At parallel #{i}: {e}") from e
+                max_error = max(max_error, error)
+                fixed_v_knotvector = fixed_v_curve.get_knotvector()
+                new_u_degree = fixed_v_curve.get_degree()
+                fixed_v_points = fixed_v_curve.get_control_points()
+                fixed_v_weights = fixed_v_curve.get_weights()
+                new_points.append(fixed_v_points)
+                new_weights.append(fixed_v_weights)
 
-    def get_knotvector_v(self):
-        """
-        returns: np.array of shape (X,)
-        """
-        raise Exception("Not implemented!")
+            new_points = np.transpose(np.array(new_points), axes=(1,0,2))
+            new_weights = np.array(new_weights).T
 
-    def get_control_points(self):
-        """
-        returns: np.array of shape (n_u, n_v, 3)
-        """
-        raise Exception("Not implemented!")
+            print(f"Surface degree reduction error: {max_error}")
 
-    def get_weights(self):
-        """
-        returns: np.array of shape (n_u, n_v)
-        """
-        raise Exception("Not implemented!")
+            return SvNurbsSurface.build(self.get_nurbs_implementation(),
+                    new_u_degree, self.get_degree_v(),
+                    fixed_v_knotvector, self.get_knotvector_v(),
+                    new_points, new_weights)
 
-    def get_homogenous_control_points(self):
-        """
-        returns: np.array of shape (m, n, 4)
-        """
-        points = self.get_control_points()
-        weights = np.transpose(self.get_weights()[np.newaxis], axes=(1,2,0))
-        weighted = weights * points
-        return np.concatenate((weighted, weights), axis=2)
+        elif direction == SvNurbsSurface.V:
+            new_points = []
+            new_weights = []
+            new_v_degree = None
+            remaining_tolerance = tolerance
+            max_error = 0.0
+            for i in range(self.get_control_points().shape[0]):
+                fixed_u_points = self.get_control_points()[i,:]
+                fixed_u_weights = self.get_weights()[i,:]
+                fixed_u_curve = SvNurbsMaths.build_curve(implementation,
+                                    self.get_degree_v(), self.get_knotvector_v(),
+                                    fixed_u_points, fixed_u_weights)
+                try:
+                    fixed_u_curve, error = fixed_u_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True)
+                except CantReduceDegreeException as e:
+                    raise CantReduceDegreeException(f"At parallel #{i}: {e}") from e
+                max_error = max(max_error, error)
+                fixed_u_knotvector = fixed_u_curve.get_knotvector()
+                new_v_degree = fixed_u_curve.get_degree()
+                fixed_u_points = fixed_u_curve.get_control_points()
+                fixed_u_weights = fixed_u_curve.get_weights()
+                new_points.append(fixed_u_points)
+                new_weights.append(fixed_u_weights)
 
-    def get_min_u_continuity(self):
-        """
-        Return minimum continuity degree of the surface in the U direction (guaranteed by knotvector):
-        0 - point-wise continuity only (C0),
-        1 - tangent continuity (C1),
-        2 - 2nd derivative continuity (C2), and so on.
-        """
-        kv = self.get_knotvector_u()
-        degree = self.get_degree_u()
-        return sv_knotvector.get_min_continuity(kv, degree)
+            new_points = np.array(new_points)
+            new_weights = np.array(new_weights)
 
-    def get_min_v_continuity(self):
-        """
-        Return minimum continuity degree of the surface in the V direction (guaranteed by knotvector):
-        0 - point-wise continuity only (C0),
-        1 - tangent continuity (C1),
-        2 - 2nd derivative continuity (C2), and so on.
-        """
-        kv = self.get_knotvector_v()
-        degree = self.get_degree_v()
-        return sv_knotvector.get_min_continuity(kv, degree)
-    
-    def get_min_continuity(self):
-        """
-        Return minimum continuity degree of the surface (guaranteed by knotvectors):
-        0 - point-wise continuity only (C0),
-        1 - tangent continuity (C1),
-        2 - 2nd derivative continuity (C2), and so on.
-        """
-        c_u = self.get_min_u_continuity()
-        c_v = self.get_min_v_continuity()
-        return min(c_u, c_v)
+            print(f"Surface degree reduction error: {max_error}")
 
-    def iso_curve(self, fixed_direction, param):
-        raise Exception("Not implemented")
+            return SvNurbsSurface.build(implementation,
+                    self.get_degree_u(), new_v_degree,
+                    self.get_knotvector_u(), fixed_u_knotvector,
+                    new_points, new_weights)
 
     def cut_u(self, u):
         u_min, u_max = self.get_u_min(), self.get_u_max()
