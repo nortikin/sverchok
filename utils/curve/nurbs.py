@@ -391,7 +391,7 @@ class SvNurbsCurve(SvCurve):
         if delta == 0:
             return self
 
-        def reduce_degree_once(curve):
+        def reduce_degree_once(curve, tolerance):
             if curve.is_bezier():
                 old_control_points = curve.get_homogenous_control_points()
                 control_points, error = reduce_bezier_degree(curve.get_degree(), old_control_points, 1)
@@ -412,7 +412,8 @@ class SvNurbsCurve(SvCurve):
                 max_error = 0.0
                 for i, segment in enumerate(segments):
                     try:
-                        s, error, ok = reduce_degree_once(segment)
+                        s, error, ok = reduce_degree_once(segment, tolerance)
+                        print(f"Curve segment #{i}: error = {error}")
                     except CantReduceDegreeException as e:
                         raise CantReduceDegreeException(f"At segment #{i}: {e}") from e
                     max_error = max(max_error, error)
@@ -420,20 +421,23 @@ class SvNurbsCurve(SvCurve):
                 result = reduced_segments[0]
                 for segment in reduced_segments[1:]:
                     result = result.concatenate(segment, remove_knots=True, tolerance=tolerance)
-                    max_error = max(max_error, tolerance)
+                    #max_error = max(max_error, tolerance)
                 result = result.reparametrize(src_t_min, src_t_max)
                 return result, max_error, True
 
         total_error = 0.0
+        remaining_tolerance = tolerance
         result = self
         for i in range(delta):
             try:
-                result, error, ok = reduce_degree_once(result)
+                result, error, ok = reduce_degree_once(result, remaining_tolerance)
             except CantReduceDegreeException as e:
                 raise CantReduceDegreeException(f"At iteration #{i}: {e}") from e
             if not ok: # if if_possible would be false, we would get an exception
                 break
+            print(f"Iteration #{i}, error = {error}")
             total_error += error
+            remaining_tolerance -= error
             if total_error > tolerance:
                 if if_possible:
                     if return_error:
