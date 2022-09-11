@@ -1,6 +1,9 @@
 Vector X | Y | Z
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189370754-8f8083e2-75b9-4c55-af21-a7bda06349af.png
+  :target: https://user-images.githubusercontent.com/14288520/189370754-8f8083e2-75b9-4c55-af21-a7bda06349af.png
+
 Functionality
 -------------
 
@@ -12,7 +15,10 @@ Sometimes a Vector is needed which only has a value in one of the 3 axes. For in
 
 The added bonus is that the minimized state of the Node can show what type of Vector it represents.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3489193/bfdd92d8-051b-11e4-84f5-0f140c5458b2.gif
+.. image:: https://user-images.githubusercontent.com/14288520/189370094-f76392f3-4540-4c50-b27d-feac04b567a6.png
+  :target: https://user-images.githubusercontent.com/14288520/189370094-f76392f3-4540-4c50-b27d-feac04b567a6.png
+
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Parameters
 ----------

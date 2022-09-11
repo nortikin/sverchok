@@ -75,7 +75,11 @@ avail_fractal = enum_from(fractal_options)
 
 
 class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Fractal node'''
+    '''Vector Fractal node. [default]
+    In: Vertices, Seed, HFactor, Lacunarity, Octaves
+    Params: Type1 ([Fractal]/Terrain, Rygded, Hybrid), Type2 ([Perlin]/Blender/Voronoi/CellNoise)
+    Out: Value. Floats in the range [0.0 to 1.0]
+    '''
     bl_idname = 'SvVectorFractal'
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'

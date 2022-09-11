@@ -1,6 +1,9 @@
 Vector Fractal
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189541357-ddf35d58-b09b-4d7c-b96d-77c755e972e2.png
+  :target: https://user-images.githubusercontent.com/14288520/189541357-ddf35d58-b09b-4d7c-b96d-77c755e972e2.png
+
 This fractal node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 
 Inputs & Parameters
@@ -48,11 +51,23 @@ Inputs & Parameters
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/1275858/22591683/15af2118-ea16-11e6-9851-b697926cefb8.png
+.. image:: https://user-images.githubusercontent.com/14288520/189541446-f587f199-02da-4ed2-b2cb-0ea72a3535e5.png
+  :target: https://user-images.githubusercontent.com/14288520/189541446-f587f199-02da-4ed2-b2cb-0ea72a3535e5.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Selected Statistic: List->List Main-> :doc:`List Statistics </nodes/list_main/statistics>`
+* Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
+* List->List Struct-> :doc:`List First & Last </nodes/list_struct/start_end>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189541519-593b3653-95dc-41c9-89d4-ddc4f2be1cfe.gif
+  :target: https://user-images.githubusercontent.com/14288520/189541519-593b3653-95dc-41c9-89d4-ddc4f2be1cfe.gif
 
 Basic example with a Vector rewire node.
 
-json file: https://gist.github.com/kalwalt/5ef4f6b6018724874e3c51eaa255930c
+json file: https://gist.github.com/satabol/bda8eb2d753d19c08ab50261c4ab319b
 
 Notes
 -----

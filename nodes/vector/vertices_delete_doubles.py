@@ -23,7 +23,13 @@ from sverchok.data_structure import levelsOflist
 
 
 class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Delete doubles vertices '''
+    ''' Delete doubles vertices.
+    In:
+        verts: [[(x,y,z), ...]]
+    Out:
+        verts: [[(x,y,z), ...]]
+    [[(1,1,2), (1,1,2), (1,0,-2)]] => [[(1,1,2), (1,0,-2)]]
+    '''
     bl_idname = 'VertsDelDoublesNode'
     bl_label = 'Vector X Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'

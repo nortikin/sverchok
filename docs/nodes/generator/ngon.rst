@@ -49,14 +49,19 @@ All parameters can be given by the node or an external input.
 | Param          | Type          | Default     | Description                                                 |
 +================+===============+=============+=============================================================+
 | **Radius**     | Float         | 1.00        | Radius of escribed circle. When ``RandomR`` is zero,        |
+|                |               |             |                                                             |
 |                |               |             | then all vertices will be at this distance from origin.     |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **N Sides**    | Int           | 5           | Number of sides of polygon to generate. With higher         |
+|                |               |             |                                                             |
 |                |               |             | values and ``Shift`` = 0, ``RandomR`` = 0, ``RandomPhi``    |
+|                |               |             |                                                             |
 |                |               |             | = 0, you will get the same output as from Circle node.      |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **Divisions**  | Int           | 1           | Divide each side of the polygon to specified number of      |
+|                |               |             |                                                             |
 |                |               |             | segments. For example, with ``Divisions`` = 2, there will   |
+|                |               |             |                                                             |
 |                |               |             | be an additional vertex at the middle of each side.         |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **RandomR**    | Float         | 0.0         | Amplitude of randomization of vertices along radius.        |
@@ -67,8 +72,11 @@ All parameters can be given by the node or an external input.
 |                |               |             | ``RandomPhi`` != 0.                                         |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **Shift**      | Int           | 0           | Also known as "star factor". When this is zero, each vertex |
+|                |               |             |                                                             |
 |                |               |             | is connected by edge to next one, and you will get usual    |
+|                |               |             |                                                             |
 |                |               |             | polygon. Otherwise, n'th vertex will be connected to        |
+|                |               |             |                                                             |
 |                |               |             | (n+shift+1)'th. In this case, you will get sort of star.    |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 

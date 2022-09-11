@@ -92,7 +92,21 @@ def recurse_fxy(l1, l2, func, level, min_l2_level):
 
 
 class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector: Add, Dot P..'''
+    '''Vector Math Functions:
+    Add
+    Sub
+    Length
+    Distance
+    Normalize
+    Negate
+    Project
+    Reflect
+    Multiply
+    Round
+    Scalar
+    Swap
+    and other
+    '''
     bl_idname = 'SvVectorMathNodeMK3'
     bl_label = 'Vector Math'
     bl_icon = 'THREE_DOTS'

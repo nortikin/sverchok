@@ -5,22 +5,25 @@ Vector
 .. toctree::
    :maxdepth: 1
 
-   attractor
-   axis_input_mk2
-   drop
-   interpolation_stripes
-   interpolation_mk3
-   math_mk3
-   noise_mk3
-   fractal
-   lerp
-   vector_rewire
    vector_in
    vector_out
-   vector_polar_in
-   vector_polar_out
+   axis_input_mk2
+   math_mk3
    vertices_delete_doubles
+   vector_rewire
+
    vertices_sort
    quad_grid
-   variable_lacunarity
+   drop
+   vector_polar_in
+   vector_polar_out
+   attractor
+
+   lerp
+   interpolation_stripes
+   interpolation_mk3
+   
+   noise_mk3
    turbulence
+   variable_lacunarity
+   fractal

@@ -1,6 +1,9 @@
 Vectors Attraction
 ==================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189442071-9b5734dc-8702-4bfb-8b0c-d1d63531b502.png
+  :target: https://user-images.githubusercontent.com/14288520/189442071-9b5734dc-8702-4bfb-8b0c-d1d63531b502.png
+
 Functionality
 -------------
 
@@ -83,25 +86,60 @@ Examples of usage
 
 Most obvious case, just a plane attracted by single point:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23908413/28c3d12a-08fe-11e7-9995-58fef78910b3.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442196-a246ba9d-1852-4b88-93ac-d01748d698a6.png
+  :target: https://user-images.githubusercontent.com/14288520/189442196-a246ba9d-1852-4b88-93ac-d01748d698a6.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Plane attracted by single point, with Clamp unchecked:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24082405/3b84b186-0cef-11e7-94d6-c58d4fcd62e9.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442237-8847f013-e8db-4f07-baba-7ca61cc48a54.png
+  :target: https://user-images.githubusercontent.com/14288520/189442237-8847f013-e8db-4f07-baba-7ca61cc48a54.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Not so obvious, plane attracted by circle (red points):
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23908410/283bd220-08fe-11e7-96e3-7b895a801e8e.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442273-3dd6fc22-3aaa-45f9-bbad-a0cf277ce5b2.png
+  :target: https://user-images.githubusercontent.com/14288520/189442273-3dd6fc22-3aaa-45f9-bbad-a0cf277ce5b2.png
+
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Coefficients can be used without directions:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23908414/28d14b02-08fe-11e7-8bb5-585a6226c4f1.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442305-c6a53789-56be-4927-bdda-7671ac23df0a.png
+  :target: https://user-images.githubusercontent.com/14288520/189442305-c6a53789-56be-4927-bdda-7671ac23df0a.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
+* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 
 Torus attracted by a line along X axis:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23908411/28ab67ac-08fe-11e7-8659-5ebb90771864.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442343-9454a24b-796f-4cb7-ade8-82f61bcc16bc.png
+  :target: https://user-images.githubusercontent.com/14288520/189442343-9454a24b-796f-4cb7-ade8-82f61bcc16bc.png
+
+* Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Sphere attracted by a plane:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23908415/28e0d950-08fe-11e7-8695-3aa3bd249710.png
+.. image:: https://user-images.githubusercontent.com/14288520/189442379-e73afdc2-54c5-4721-90bc-9e69a0470fb9.png
+  :target: https://user-images.githubusercontent.com/14288520/189442379-e73afdc2-54c5-4721-90bc-9e69a0470fb9.png
 
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

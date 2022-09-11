@@ -147,7 +147,14 @@ def pols_edges(obj, unique_edges=False):
     return polygons_to_edges(obj, unique_edges)
 
 class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector sort'''
+    '''Vector sort.
+    In:
+        Vertices, PolyEdge
+    Params:
+        Mode: XYZ, Dist, Axis, Connect, Auto XYZ, Auto Direction, Auto Phi / Z, User
+    Out:
+        Vertices, PolyEdge, Item Order
+    '''
     bl_idname = 'SvVertSortNode'
     bl_label = 'Vector Sort'
     bl_icon = 'SORTSIZE'
