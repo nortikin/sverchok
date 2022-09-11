@@ -35,7 +35,7 @@ class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvCurveSocket', "Curve")
 
-    def draw_buttons_ext(self, context, layout):
+    def draw_buttons(self, context, layout):
         layout.prop(self, 'tolerance')
 
     def process(self):
