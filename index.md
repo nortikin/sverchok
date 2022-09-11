@@ -603,6 +603,8 @@
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D
+    SvCurveViewerDrawNode
+    SvSurfaceViewerDrawNode
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
