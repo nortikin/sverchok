@@ -13,7 +13,7 @@ from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.logging import info
+from sverchok.utils.logging import info, getLogger
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.dependencies import geomdl
 
@@ -249,7 +249,7 @@ class SvNurbsSurface(SvSurface):
                     self.get_knotvector_u(), fixed_u_knotvector,
                     new_points, new_weights)
 
-    def reduce_degree(self, direction, delta=None, target=None, tolerance=1e-6):
+    def reduce_degree(self, direction, delta=None, target=None, tolerance=1e-6, logger=None):
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
@@ -264,6 +264,9 @@ class SvNurbsSurface(SvSurface):
                 raise Exception(f"Surface already has degree {degree}, which is less than target {target}")
         if delta == 0:
             return self
+
+        if logger is None:
+            logger = getLogger()
 
         implementation = self.get_nurbs_implementation()
 
@@ -280,7 +283,7 @@ class SvNurbsSurface(SvSurface):
                                     self.get_degree_u(), self.get_knotvector_u(),
                                     fixed_v_points, fixed_v_weights)
                 try:
-                    fixed_v_curve, error = fixed_v_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True)
+                    fixed_v_curve, error = fixed_v_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True, logger=logger)
                 except CantReduceDegreeException as e:
                     raise CantReduceDegreeException(f"At parallel #{i}: {e}") from e
                 max_error = max(max_error, error)
@@ -294,7 +297,7 @@ class SvNurbsSurface(SvSurface):
             new_points = np.transpose(np.array(new_points), axes=(1,0,2))
             new_weights = np.array(new_weights).T
 
-            print(f"Surface degree reduction error: {max_error}")
+            logger.debug(f"Surface degree reduction error: {max_error}")
 
             return SvNurbsSurface.build(self.get_nurbs_implementation(),
                     new_u_degree, self.get_degree_v(),
@@ -314,7 +317,7 @@ class SvNurbsSurface(SvSurface):
                                     self.get_degree_v(), self.get_knotvector_v(),
                                     fixed_u_points, fixed_u_weights)
                 try:
-                    fixed_u_curve, error = fixed_u_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True)
+                    fixed_u_curve, error = fixed_u_curve.reduce_degree(delta=delta, tolerance=remaining_tolerance, return_error=True, logger=logger)
                 except CantReduceDegreeException as e:
                     raise CantReduceDegreeException(f"At parallel #{i}: {e}") from e
                 max_error = max(max_error, error)
@@ -328,7 +331,7 @@ class SvNurbsSurface(SvSurface):
             new_points = np.array(new_points)
             new_weights = np.array(new_weights)
 
-            print(f"Surface degree reduction error: {max_error}")
+            logger.debug(f"Surface degree reduction error: {max_error}")
 
             return SvNurbsSurface.build(implementation,
                     self.get_degree_u(), new_v_degree,

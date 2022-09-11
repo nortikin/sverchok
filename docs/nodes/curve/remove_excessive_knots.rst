@@ -23,9 +23,8 @@ Parameters
 
 This node has the following parameter:
 
-* **Tolerance**. This parameter is available in the N panel only. This defines
-  how much is it allowed to change the shape of the curve by knot removal
-  procedure. The default value is ``10^-6``.
+* **Tolerance**. This defines how much is it allowed to change the shape of the
+  curve by knot removal procedure. The default value is ``10^-6``.
 
 Outputs
 -------
