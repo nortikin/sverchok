@@ -42,6 +42,8 @@ Surface
    insert_knot
    remove_knot
    remove_excessive_knots
+   elevate_degree
+   reduce_degree
    intersect_curve_surface
    nearest_point
    ortho_project
