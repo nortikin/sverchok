@@ -54,7 +54,7 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     if_possible : BoolProperty(
-            name = "If possible",
+            name = "Only if possible",
             description = "Don't fail when trying to reduce the curve's degree too many times, just reduce it as much as possible",
             default = False,
             update = updateNode)
@@ -68,7 +68,7 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Degree').prop_name = 'degree'
         self.inputs.new('SvStringsSocket', 'Tolerance').prop_name = 'tolerance'
         self.outputs.new('SvCurveSocket', 'Curve')
-        self.outputs.new('SvStringsSocket', 'Error')
+        #self.outputs.new('SvStringsSocket', 'Error')
         self.update_sockets(context)
 
     def process(self):
@@ -86,10 +86,8 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
         tolerance_s = ensure_nesting_level(tolerance_s, 2)
 
         curves_out = []
-        error_out = []
         for params in zip_long_repeat(curve_s, degree_s, tolerance_s):
             new_curves = []
-            new_errors = []
             for curve, degree, tolerance in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
@@ -98,18 +96,14 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
                     kwargs = dict(delta = degree)
                 else:
                     kwargs = dict(target = degree)
-                curve, error = curve.reduce_degree(tolerance=tolerance, return_error=True, if_possible = self.if_possible, **kwargs)
+                curve = curve.reduce_degree(tolerance=tolerance, if_possible = self.if_possible, **kwargs)
                 new_curves.append(curve)
-                new_errors.append(error)
             if flat_output:
                 curves_out.extend(new_curves)
-                error_out.extend(new_errors)
             else:
                 curves_out.append(new_curves)
-                error_out.append(new_errors)
 
         self.outputs['Curve'].sv_set(curves_out)
-        self.outputs['Error'].sv_set(error_out)
 
 def register():
     bpy.utils.register_class(SvCurveReduceDegreeNode)
