@@ -898,3 +898,26 @@ class TaylorTests(SverchokTestCase):
         expected_result = True
         self.assertEquals(result, expected_result)
 
+class CurveDegreeTests(SverchokTestCase):
+    def test_elevate_degree(self):
+        """Elevate NURBS curve degree 2 -> 3"""
+        cpts = np.array([[-3,0.0,0], [0, 3, 0], [3,0,0]])
+        degree = 2
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+        new_curve = curve.elevate_degree(delta = 1)
+        result = new_curve.get_control_points()
+        expected = np.array([[-3,0,0], [-1,2,0], [1,2,0], [3,0,0]])
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
+    def test_reduce_degree(self):
+        """Reduce NURBS curve degree 3 -> 2"""
+        cpts = np.array([[-3,0,0], [-1,2,0], [1,2,0], [3,0,0]])
+        degree = 3
+        knotvector = sv_knotvector.generate(degree, len(cpts))
+        curve = SvNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, cpts)
+        new_curve = curve.reduce_degree(delta = 1)
+        result = new_curve.get_control_points()
+        expected = np.array([[-3,0.0,0], [0, 3, 0], [3,0,0]])
+        self.assert_numpy_arrays_equal(result, expected, precision=8)
+
