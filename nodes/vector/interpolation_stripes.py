@@ -115,7 +115,10 @@ vector_out = {
 
 
 class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Interpolate Stripes'''
+    '''Performs cubic spline STRIPES interpolation based on input points.
+    In: Vertices, Interval X/Y, Attractor (vert)
+    Params: Factor,Scale,Function(simple/mult/sin/cos/pow/sqrt)
+    Out: StripeOut,In,Shape,Coefs'''
     bl_idname = 'SvInterpolationStripesNode'
     bl_label = 'Vector Stripes'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -148,10 +151,10 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         default="SIMPLE",
         update=mode_change)
 
-    factor: FloatProperty(name="factor", default=1.0, precision=5, update=updateNode)
-    minimum: FloatProperty(name="minimum", default=0.0, min=0.0, max=0.5, precision=5, update=updateNode)
-    maximum: FloatProperty(name="maximum", default=1.0, min=0.5, max=1.0, precision=5, update=updateNode)
-    scale: FloatProperty(name="scale", default=1.0, precision=5, update=updateNode)
+    factor: FloatProperty(name="factor", default=1.0, precision=5, update=updateNode, description="is multiplyer AFTER produce function as sinus/cosinus/etc")
+    minimum: FloatProperty(name="minimum", default=0.0, min=0.0, max=0.5, precision=5, update=updateNode, description="minimum value of stripe width (0.0 to 0.5)")
+    maximum: FloatProperty(name="maximum", default=1.0, min=0.5, max=1.0, precision=5, update=updateNode, description="maximum value of stripe width (0.5 to 1.0)")
+    scale: FloatProperty(name="scale", default=1.0, precision=5, update=updateNode, description="is multiplyer BEFORE produce function as sinus/cosinus/etc")
     t_in_x: FloatProperty(name="tU", default=.5, min=0, max=1, precision=5, update=updateNode)
     t_in_y: FloatProperty(name="tV", default=.5, min=0, max=1, precision=5, update=updateNode)
 

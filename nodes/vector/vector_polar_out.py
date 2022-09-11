@@ -51,7 +51,7 @@ def numpy_cartesian_to_polar(vs, coordinates, angles_mode, out_numpy):
 class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Spheric/ Cylindric coordinates
-    Tooltip: Get cylindrical or spherical coordinates from vectors
+    Tooltip: Get cylindrical or spherical coordinates from vectors.\n\tIn: Vectors\n\tParams: [Cylinder]/Sphere; [Radians]/Degree\n\tOut: rho, phi, z/theta
     '''
     bl_idname = 'VectorPolarOutNode'
     bl_label = 'Vector Polar Output'

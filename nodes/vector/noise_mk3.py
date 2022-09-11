@@ -87,9 +87,7 @@ for idx, new_type in enumerate(noise_numpy_types.keys()):
 class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Noise
-    Tooltip: Affect input verts with a noise function.
-
-    A short description for reader of node code
+    Tooltip: Affect input verts with a noise function.\n\tIn: Vertices, Seed, Noise Matrix\n\tParams: Out Type [Scalar]/Vector; Noise Type: Blender/Perlin/Voronoi/CellNoise/Gradient and other\n\tOut: Floats [0.0 to 1.0] / Vectors
     """
 
     bl_idname = 'SvNoiseNodeMK3'

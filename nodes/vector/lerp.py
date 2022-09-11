@@ -33,7 +33,11 @@ def interp_v3_v3v3(a, b, t=0.5):
 
 
 class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
-    ''' Linear Interpolation between two vectors '''
+    '''Linear Interpolation between two vectors (+extrapolate).[def]
+    In: Vert_1, Vert_2, Factor (List)
+    Mode: [Lerp]/Evaluate
+    Out: EvPoint (List)
+    '''
     bl_idname = 'SvVectorLerp'
     bl_label = 'Vector Lerp'
     bl_icon = 'OUTLINER_OB_EMPTY'

@@ -53,7 +53,12 @@ def numpy_polar_to_cartesian(ps, coordinates, angles_mode, out_numpy):
 
 
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Generate vectors by spherical or cylindrical coordinates'''
+    '''Generate vectors by spherical or cylindrical coordinates. [default]
+    In: rho [.0], phi [.0], Z[.0]/theta[.0]
+    Mode: [Cylinder]/Sphere
+    Angle: [Radians]/Degree
+    Out: Vector
+    '''
     bl_idname = 'VectorPolarInNode'
     bl_label = 'Vector Polar Input'
     bl_icon = 'OUTLINER_OB_EMPTY'

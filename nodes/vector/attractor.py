@@ -33,7 +33,14 @@ def get_avg_vector(vectors):
     return result / len(vectors)
 
 class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Attraction vectors calculator'''
+    '''Attraction vectors calculator.[def]
+In: Verts,Center,Dir,Amplde[.5],Coeffs[.5]
+Attractor: [Point]/Line/Plane
+Points Mode: [Average]/Near
+Falloff: Inv-1/R/^2/^3; InvExp-Exp(-R)|(-R^2/2)
+Clamp [On]/Off, 
+Out: Vectors, Dir, Coeffs
+'''
     bl_idname = 'SvAttractorNode'
     bl_label = 'Vectors Attraction'
     bl_icon = 'OUTLINER_OB_EMPTY'

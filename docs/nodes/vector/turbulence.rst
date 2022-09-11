@@ -1,6 +1,9 @@
 Vector Turbulence
 =================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189534743-2d4cd1ab-0ebf-4637-b9ae-1744bde603a3.png
+  :target: https://user-images.githubusercontent.com/14288520/189534743-2d4cd1ab-0ebf-4637-b9ae-1744bde603a3.png
+
 This Vector Turbulence node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.
 May output scalars or vectors.
 For some noise types, if your output goes to the texture viewer you need to remap them, otherwise your texture
@@ -31,10 +34,13 @@ Inputs & Parameters
 |                | See mathutils.noise docs ( Noise_ )                                     |
 +----------------+-------------------------------------------------------------------------+
 | Octaves        | Accepts integers values                                                 |
+|                |                                                                         |
 |                | The number of different noise frequencies used.                         |
 +----------------+-------------------------------------------------------------------------+
 | Hard           | Accepts bool values: Hard( True ) or Soft( False )                      |
+|                |                                                                         |
 |                | Specifies whether returned turbulence                                   |
+|                |                                                                         |
 |                | is hard (sharp transitions) or soft (smooth transitions).               |
 +----------------+-------------------------------------------------------------------------+
 | Amplitude      | Accepts float values. The amplitude scaling factor.                     |
@@ -45,6 +51,7 @@ Inputs & Parameters
 
 Range table
 -----------
+
 Scalar values from turbulence node with size(n.verts)=64x64, step=0.05, octaves=3, amplitude=0.5, frequency=2.0, random seed=0.
 Plug a map range node in the scalar output and map it to the desired range (min=0, max=1) as in the image below.
 
@@ -72,13 +79,27 @@ Plug a map range node in the scalar output and map it to the desired range (min=
 | Cellnoise      | 0.9668738842010498   | 1.5000858306884766  | 0.1691771298646927   |
 +----------------+----------------------+---------------------+----------------------+
 
-.. image:: https://cloud.githubusercontent.com/assets/1275858/23551043/81474db0-0014-11e7-9a40-233c30f75ce7.png
+.. image:: https://user-images.githubusercontent.com/14288520/189534748-aac04542-bb00-4ce8-b199-812150925285.png
+  :target: https://user-images.githubusercontent.com/14288520/189534748-aac04542-bb00-4ce8-b199-812150925285.png
 
-
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
 
 Examples
 --------
-.. image:: https://cloud.githubusercontent.com/assets/1275858/22593143/744dbdae-ea1d-11e6-8945-16a8be9f597c.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/189534901-110976a3-79ef-47b1-844f-9f1393838691.png
+  :target: https://user-images.githubusercontent.com/14288520/189534901-110976a3-79ef-47b1-844f-9f1393838691.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
+* Selected Statistics: List->List Main-> :doc:`List Statistics </nodes/list_main/statistics>`
+* List->List Struct-> :doc:`List First & Last </nodes/list_struct/start_end>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Basic example with a Scalar output and Vector rewire node.
 

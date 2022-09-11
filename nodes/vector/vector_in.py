@@ -61,7 +61,14 @@ def numpy_pack_vecs(X_, Y_, Z_, output_numpy):
     return series_vec
 
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator vectors '''
+    ''' Generator vectors. Inputs vector from ranges or number values either integer of floats.
+    In (float/int or Lists):
+        X: [[0]]
+        Y: [[0]]
+        Z: [[0]]
+    Out:
+        [[[0,0,0]]]
+    '''
     bl_idname = 'GenVectorsNode'
     bl_label = 'Vector In'
     sv_icon = 'SV_VECTOR_IN'

@@ -34,7 +34,8 @@ Parameters
 | Param         | Type          | Default      | Description                                             |
 +===============+===============+==============+=========================================================+
 | **Cute modes**| Enum          | "Cuts"       | **Cuts** - cut line evenly                              |
-|               |               |              | **Steps** - cut line proportionally by given steps      |
+|               |               |              |                                                         |
+|               | Cuts/Steps    |              | **Steps** - cut line proportionally by given steps      |
 +---------------+---------------+--------------+---------------------------------------------------------+
 | **Split to    | Boolean       |              |                                                         |
 | objects**     | (N panel)     | True         | Each line will be put to separate object any way        |
@@ -63,7 +64,7 @@ The AB mode will output a divided segment for each vector pair, the step can be 
 .. image:: https://user-images.githubusercontent.com/14288520/188512296-6287d7eb-ae38-4087-9a31-1fe433deea93.gif
   :target: https://user-images.githubusercontent.com/14288520/188512296-6287d7eb-ae38-4087-9a31-1fe433deea93.gif
 
-* Modifiers->Modifier Make :doc:`UV Connections </nodes/modifier_make/uv_connect>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Modifiers->Modifier Make :doc:`WireFrame </nodes/modifier_make/wireframe>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

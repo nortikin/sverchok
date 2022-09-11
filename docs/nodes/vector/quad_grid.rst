@@ -1,6 +1,9 @@
 Sort Quad Grid
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189407906-66eb8edb-86a9-42c9-a643-84ae8030f1fb.png
+  :target: https://user-images.githubusercontent.com/14288520/189407906-66eb8edb-86a9-42c9-a643-84ae8030f1fb.png
+
 Functionality
 -------------
 
@@ -66,8 +69,19 @@ Examples of usage
 Take manually subdivided plane (on the left) and sort it's vertices:
 
 .. image:: https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png
+  :target: https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png
+
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
 
 Use together with "Build NURBS Surface" node:
 
 .. image:: https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png
+  :target: https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png
 
+* Surface-> :doc:`Build Nurbs Surface </nodes/surface/nurbs_surface>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`

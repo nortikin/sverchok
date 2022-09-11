@@ -38,7 +38,7 @@ def make_range(number, end_point):
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: Interp. Vector List
-    Tooltip: Interpolate a list of vertices in a linear or cubic fashion
+    Tooltip: Interpolate a list of vertices in a linear or cubic fashion\n\tIn: vertices, intervals\n\tParams: Cubic/Linear; Cyclic, Int Range\n\tOut: Vertices, Tangent, Unit Tangent
     """
     bl_idname = 'SvInterpolationNodeMK3'
     bl_label = 'Vector Interpolation'

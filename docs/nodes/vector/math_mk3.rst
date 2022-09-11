@@ -1,5 +1,8 @@
-Vector Math Node
-----------------
+Vector Math
+===========
+
+.. image:: https://user-images.githubusercontent.com/14288520/189374626-d367341c-28a0-40b2-8f2f-64c9bdef88fe.png
+  :target: https://user-images.githubusercontent.com/14288520/189374626-d367341c-28a0-40b2-8f2f-64c9bdef88fe.png
 
 This is a versatile node. You can perform 1 operation on 1000's of
 list-elements, or perform operations pairwise on two lists of 1000's of
@@ -21,12 +24,12 @@ implementation and the "Output NumPy" parameter activated.
 Input and Output
 ^^^^^^^^^^^^^^^^
 
-========= ==========================================================
+========= ================================================================================
 socket    description
-========= ==========================================================
-inputs    Expect a Vector and Scalar (v,s), or two Vectors (u, v)  
-outputs   Will output a Scalar (s), or a Vector (w).
-========= ==========================================================
+========= ================================================================================
+inputs    Expect a **Vector** and **Scalar** (**v**, **s**), or two Vectors (**u**, **v**)  
+outputs   Will output a **Scalar** (**s**), or a **Vector** (**w**).
+========= ================================================================================
 
 Depending on the mode you choose the sockets are automatically changed to   
 accommodate the expected inputs and outputs types
@@ -76,6 +79,14 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Implementation**: MathUtils or NumPy. NumPy is the default and is usually faster.
+* **Implementation**: MathUtils or NumPy. NumPy is the default and is usually faster.
+* **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available in the MathUtils implementation]
 
-**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available in the MathUtils implementation]
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/189379355-ee107c39-02ba-43c5-9d33-51001ab48592.png
+  :target: https://user-images.githubusercontent.com/14288520/189379355-ee107c39-02ba-43c5-9d33-51001ab48592.png
+
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
