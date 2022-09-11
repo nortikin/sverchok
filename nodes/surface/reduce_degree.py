@@ -108,7 +108,10 @@ class SvSurfaceReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
                     kwargs = dict(delta = degree)
                 else:
                     kwargs = dict(target = degree)
-                surface = surface.reduce_degree(self.direction, tolerance=tolerance, **kwargs)
+                surface = surface.reduce_degree(self.direction,
+                            tolerance = tolerance,
+                            logger = self.get_logger(),
+                            **kwargs)
                 new_surfaces.append(surface)
             if flat_output:
                 surfaces_out.extend(new_surfaces)

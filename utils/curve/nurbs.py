@@ -377,7 +377,7 @@ class SvNurbsCurve(SvCurve):
             return result
             #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
 
-    def reduce_degree(self, delta=None, target=None, tolerance=1e-6, return_error=False, if_possible=False):
+    def reduce_degree(self, delta=None, target=None, tolerance=1e-6, return_error=False, if_possible=False, logger=None):
         orig_delta, orig_target = delta, target
         if delta is None and target is None:
             delta = 1
@@ -390,6 +390,9 @@ class SvNurbsCurve(SvCurve):
                 raise Exception(f"Curve already has degree {orig_degree}, which is greater than target {target}")
         if delta == 0:
             return self
+
+        if logger is None:
+            logger = getLogger()
 
         def reduce_degree_once(curve, tolerance):
             if curve.is_bezier():
@@ -413,7 +416,7 @@ class SvNurbsCurve(SvCurve):
                 for i, segment in enumerate(segments):
                     try:
                         s, error, ok = reduce_degree_once(segment, tolerance)
-                        print(f"Curve segment #{i}: error = {error}")
+                        logger.debug(f"Curve segment #{i}: error = {error}")
                     except CantReduceDegreeException as e:
                         raise CantReduceDegreeException(f"At segment #{i}: {e}") from e
                     max_error = max(max_error, error)
@@ -435,7 +438,7 @@ class SvNurbsCurve(SvCurve):
                 raise CantReduceDegreeException(f"At iteration #{i}: {e}") from e
             if not ok: # if if_possible would be false, we would get an exception
                 break
-            print(f"Iteration #{i}, error = {error}")
+            logger.debug(f"Iteration #{i}, error = {error}")
             total_error += error
             remaining_tolerance -= error
             if total_error > tolerance:
@@ -446,7 +449,7 @@ class SvNurbsCurve(SvCurve):
                         return result
                 else:
                     raise CantReduceDegreeException(f"Tolerance exceeded at iteration #{i}, error is {total_error}")
-        print(f"Curve degree reduction error: {total_error}")
+        logger.debug(f"Curve degree reduction error: {total_error}")
         if return_error:
             return result, total_error
         else:
@@ -1365,7 +1368,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         if not if_possible and (removed_count < count):
             raise CantRemoveKnotException(f"Asked to remove knot t={u} for {count} times, but could remove it only {removed_count} times")
-        #print(f"Removed knot t={u} for {removed_count} times")
+        if logger is not None:
+            logger.debug(f"Removed knot t={u} for {removed_count} times")
         return curve
 
 
