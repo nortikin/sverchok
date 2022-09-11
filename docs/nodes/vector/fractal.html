@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Vector Lerp" href="lerp.html" />
-    <link rel="prev" title="Vector Noise" href="noise_mk3.html" /> 
+    <link rel="next" title="Matrix" href="../matrix/matrix_index.html" />
+    <link rel="prev" title="Variable Lacunarity" href="variable_lacunarity.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,14 +64,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Fractal</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
@@ -79,17 +89,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#links">Links</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
-<li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -145,6 +144,7 @@
              
   <section id="vector-fractal">
 <h1>Vector Fractal<a class="headerlink" href="#vector-fractal" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189541357-ddf35d58-b09b-4d7c-b96d-77c755e972e2.png"><img alt="https://user-images.githubusercontent.com/14288520/189541357-ddf35d58-b09b-4d7c-b96d-77c755e972e2.png" src="https://user-images.githubusercontent.com/14288520/189541357-ddf35d58-b09b-4d7c-b96d-77c755e972e2.png" /></a>
 <p>This fractal node takes a list of Vectors and outputs a list of equal length containing Floats in the range 0.0 to 1.0.</p>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
@@ -210,9 +210,19 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://cloud.githubusercontent.com/assets/1275858/22591683/15af2118-ea16-11e6-9851-b697926cefb8.png" src="https://cloud.githubusercontent.com/assets/1275858/22591683/15af2118-ea16-11e6-9851-b697926cefb8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189541446-f587f199-02da-4ed2-b2cb-0ea72a3535e5.png"><img alt="https://user-images.githubusercontent.com/14288520/189541446-f587f199-02da-4ed2-b2cb-0ea72a3535e5.png" src="https://user-images.githubusercontent.com/14288520/189541446-f587f199-02da-4ed2-b2cb-0ea72a3535e5.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Selected Statistic: List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/statistics.html"><span class="doc">List Statistics</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/start_end.html"><span class="doc">List First &amp; Last</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_texture.html"><span class="doc">Texture Viewer</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189541519-593b3653-95dc-41c9-89d4-ddc4f2be1cfe.gif"><img alt="https://user-images.githubusercontent.com/14288520/189541519-593b3653-95dc-41c9-89d4-ddc4f2be1cfe.gif" src="https://user-images.githubusercontent.com/14288520/189541519-593b3653-95dc-41c9-89d4-ddc4f2be1cfe.gif" /></a>
 <p>Basic example with a Vector rewire node.</p>
-<p>json file: <a class="reference external" href="https://gist.github.com/kalwalt/5ef4f6b6018724874e3c51eaa255930c">https://gist.github.com/kalwalt/5ef4f6b6018724874e3c51eaa255930c</a></p>
+<p>json file: <a class="reference external" href="https://gist.github.com/satabol/bda8eb2d753d19c08ab50261c4ab319b">https://gist.github.com/satabol/bda8eb2d753d19c08ab50261c4ab319b</a></p>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
@@ -230,8 +240,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="noise_mk3.html" class="btn btn-neutral float-left" title="Vector Noise" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="lerp.html" class="btn btn-neutral float-right" title="Vector Lerp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="variable_lacunarity.html" class="btn btn-neutral float-left" title="Variable Lacunarity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../matrix/matrix_index.html" class="btn btn-neutral float-right" title="Matrix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

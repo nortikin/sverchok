@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Vector Out" href="vector_out.html" />
-    <link rel="prev" title="Vector Rewire" href="vector_rewire.html" /> 
+    <link rel="prev" title="Vector" href="vector_index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,17 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
-<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector In</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -85,13 +74,23 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -147,6 +146,7 @@
              
   <section id="vector-in">
 <h1>Vector In<a class="headerlink" href="#vector-in" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189356797-4908a913-cdcc-49e9-8100-0bbcc5e3e9b1.png"><img alt="https://user-images.githubusercontent.com/14288520/189356797-4908a913-cdcc-49e9-8100-0bbcc5e3e9b1.png" src="https://user-images.githubusercontent.com/14288520/189356797-4908a913-cdcc-49e9-8100-0bbcc5e3e9b1.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Inputs vector from ranges or number values either integer of floats.</p>
@@ -156,19 +156,25 @@
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>x</strong> - value or series of values
-<strong>y</strong> - value or series of values
-<strong>z</strong> - value or series of values</p>
+<ul class="simple">
+<li><p><strong>x</strong> - value or series of values</p></li>
+<li><p><strong>y</strong> - value or series of values</p></li>
+<li><p><strong>z</strong> - value or series of values</p></li>
+</ul>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Implementation</strong>: Python or NumPy. Python is the default and is usually faster if you input regular lists and want to get regular list. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays.</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists.</p>
+<ul class="simple">
+<li><p><strong>Implementation</strong>: Python or NumPy. Python is the default and is usually faster if you input regular lists and want to get regular list. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays.</p></li>
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vector</strong> - Vertex or series of vertices</p>
+<ul class="simple">
+<li><p><strong>Vector</strong> - Vertex or series of vertices</p></li>
+</ul>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
@@ -179,9 +185,32 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="with vector out" src="https://cloud.githubusercontent.com/assets/5783432/4905358/0a4e7df4-644f-11e4-8ff1-1530c7aac8dc.png" />
-<img alt="generating line" src="https://cloud.githubusercontent.com/assets/5783432/4905359/0a56565a-644f-11e4-91b3-24ac4d78cb11.png" />
-<img alt="object mode" src="https://user-images.githubusercontent.com/28003269/34647574-202304d2-f39f-11e7-8113-87047546b81e.gif" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189362245-d966cf84-da93-4da5-b137-bf578c3f2c6f.png"><img alt="https://user-images.githubusercontent.com/14288520/189362245-d966cf84-da93-4da5-b137-bf578c3f2c6f.png" src="https://user-images.githubusercontent.com/14288520/189362245-d966cf84-da93-4da5-b137-bf578c3f2c6f.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189359236-785757e5-a1c4-4dfa-86d9-65780cee1bd9.png"><img alt="with vector out" src="https://user-images.githubusercontent.com/14288520/189359236-785757e5-a1c4-4dfa-86d9-65780cee1bd9.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Sine X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189359252-e2bc72dd-03b2-427a-8c49-9d6cb8aaeeac.png"><img alt="generating line" src="https://user-images.githubusercontent.com/14288520/189359252-e2bc72dd-03b2-427a-8c49-9d6cb8aaeeac.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Sine X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189359290-0879acdc-1ebb-4351-a9f1-789f387b834b.png"><img alt="object mode" src="https://user-images.githubusercontent.com/14288520/189359290-0879acdc-1ebb-4351-a9f1-789f387b834b.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Gist: <a class="reference external" href="https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed">https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed</a></p>
 </section>
 </section>
@@ -190,7 +219,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vector_rewire.html" class="btn btn-neutral float-left" title="Vector Rewire" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vector_index.html" class="btn btn-neutral float-left" title="Vector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="vector_out.html" class="btn btn-neutral float-right" title="Vector Out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

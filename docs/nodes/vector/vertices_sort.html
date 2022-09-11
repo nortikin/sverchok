@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Sort Quad Grid" href="quad_grid.html" />
-    <link rel="prev" title="Vector X Doubles" href="vertices_delete_doubles.html" /> 
+    <link rel="prev" title="Vector Rewire" href="vector_rewire.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,22 +64,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
-<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Sort</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -89,8 +79,17 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -146,6 +145,7 @@
              
   <section id="vector-sort">
 <h1>Vector Sort<a class="headerlink" href="#vector-sort" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189396617-37828a11-a86c-4cb1-b3e9-364188bc47a9.png"><img alt="https://user-images.githubusercontent.com/14288520/189396617-37828a11-a86c-4cb1-b3e9-364188bc47a9.png" src="https://user-images.githubusercontent.com/14288520/189396617-37828a11-a86c-4cb1-b3e9-364188bc47a9.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This Node sort the sequence of index according to python sort, with different criteria.</p>
@@ -159,10 +159,10 @@ and optional inputs(Vector, matrix and user data)</p>
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 16%" />
-<col style="width: 17%" />
+<col style="width: 18%" />
+<col style="width: 19%" />
 <col style="width: 13%" />
-<col style="width: 53%" />
+<col style="width: 51%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -175,7 +175,9 @@ and optional inputs(Vector, matrix and user data)</p>
 <tr class="row-even"><td><p><strong>Vertices</strong></p></td>
 <td><p>Vector</p></td>
 <td></td>
-<td><p>vertices from nodes generators or lists (in, out)</p></td>
+<td><p>vertices from nodes generators or lists</p>
+<p>(in, out)</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>PolyEdge</strong></p></td>
 <td><p>Int</p></td>
@@ -183,29 +185,43 @@ and optional inputs(Vector, matrix and user data)</p>
 <td><p>index of polygons or edges     (in, out)</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Sortmode</strong></p></td>
-<td><p>XYZ, Dist,
-Axis, Connect,
-Auto XYZ,
-Auto Direction,
-Auto Phi / Z,
-User</p></td>
+<td><ul class="simple">
+<li><p>XYZ</p></li>
+<li><p>Dist</p></li>
+<li><p>Axis</p></li>
+<li><p>Connect</p></li>
+<li><p>Auto XYZ</p></li>
+<li><p>Auto Direction</p></li>
+<li><p>Auto Phi / Z</p></li>
+<li><p>User</p></li>
+</ul>
+</td>
 <td><p>XYZ</p></td>
-<td><p>will sort the index according to different criteria</p></td>
+<td><p>will sort the index according to different</p>
+<p>criteria</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Reverse</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Reverse the sorting order. Available for
-<strong>Auto Direction</strong> and <strong>Auto Phi / Z</strong> modes.</p></td>
+<td><p>Reverse the sorting order. Available for</p>
+<p><strong>Auto Direction</strong> and <strong>Auto Phi / Z</strong> modes.</p>
+</td>
 </tr>
-<tr class="row-even"><td><p><strong>Reverse X</strong>,
-<strong>Reverse Y</strong>,
-<strong>Reverse Z</strong></p></td>
+<tr class="row-even"><td><ul class="simple">
+<li><p><strong>Reverse X</strong></p></li>
+<li><p><strong>Reverse Y</strong></p></li>
+<li><p><strong>Reverse Z</strong></p></li>
+</ul>
+</td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Reverse the sorting order when sorting by X, Y or
-Z, correspondingly. Available for <strong>XYZ</strong> and
-<strong>Auto XYZ</strong> modes only.</p></td>
+<td><p>Reverse the sorting order when sorting by X,</p>
+<p>Y or Z, correspondingly. Available for <strong>XYZ</strong></p>
+<blockquote>
+<div><p>and <strong>Auto XYZ</strong> modes only.</p>
+</div></blockquote>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Item order</strong></p></td>
 <td><p>Int</p></td>
@@ -261,13 +277,44 @@ and the sorted list of Vertices.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist:</p>
-<img alt="https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png" src="https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png"><img alt="https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png" src="https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/polyline_viewer.html"><span class="doc">Polyline Viewer</span></a></p></li>
+</ul>
 <p>The <em>Connect</em> mode it is meant to work with paths. Sorting the vertices along the edges.
 The “Search for limits” option will handle discontinities in the path.</p>
 <p>Example used to sort the vertices after the <em>Mesh Filter</em> node</p>
-<img alt="https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png" src="https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png"><img alt="https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png" src="https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzer-&gt; <a class="reference internal" href="../analyzer/mesh_filter.html"><span class="doc">Mesh Filter</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/delete_loose.html"><span class="doc">Delete Loose</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Example after <em>Subdivide</em> node to prepare vertices for <em>Vector Evaluation</em> node and/or <em>UV Connection</em> node</p>
-<img alt="https://user-images.githubusercontent.com/10011941/35187937-6352b0c0-fe2d-11e7-864c-a3893f94f6dc.png" src="https://user-images.githubusercontent.com/10011941/35187937-6352b0c0-fe2d-11e7-864c-a3893f94f6dc.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189404210-e5b63541-e9c6-46b0-a7b0-690f155d96bb.png"><img alt="https://user-images.githubusercontent.com/14288520/189404210-e5b63541-e9c6-46b0-a7b0-690f155d96bb.png" src="https://user-images.githubusercontent.com/14288520/189404210-e5b63541-e9c6-46b0-a7b0-690f155d96bb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make <a class="reference internal" href="../modifier_change/subdivide_mk2.html"><span class="doc">Subdivide</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="lerp.html"><span class="doc">Vector Lerp</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/shift_mk2.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189396653-a808aeea-608e-4653-b819-1ded6cd2aad2.png"><img alt="https://user-images.githubusercontent.com/14288520/189396653-a808aeea-608e-4653-b819-1ded6cd2aad2.png" src="https://user-images.githubusercontent.com/14288520/189396653-a808aeea-608e-4653-b819-1ded6cd2aad2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/populate_surface.html"><span class="doc">Populate Mesh</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>link to pull request: <a class="reference external" href="https://github.com/nortikin/sverchok/pull/88">https://github.com/nortikin/sverchok/pull/88</a></p>
 </section>
 </section>
@@ -276,7 +323,7 @@ The “Search for limits” option will handle discontinities in the path.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="vertices_delete_doubles.html" class="btn btn-neutral float-left" title="Vector X Doubles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vector_rewire.html" class="btn btn-neutral float-left" title="Vector Rewire" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="quad_grid.html" class="btn btn-neutral float-right" title="Sort Quad Grid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

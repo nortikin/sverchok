@@ -173,10 +173,10 @@
 <p>The <strong>Separate</strong>, <strong>Cap T</strong>, <strong>Cap B</strong>, <strong>Center</strong> and the <strong>Angle Units</strong> can be given by the node only. The other parameters can take values either from the node or the external nodes.</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 24%" />
+<col style="width: 23%" />
 <col style="width: 9%" />
 <col style="width: 9%" />
-<col style="width: 57%" />
+<col style="width: 59%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -199,14 +199,16 @@
 <tr class="row-even"><td><p><strong>Parallels</strong></p></td>
 <td><p>Int</p></td>
 <td><p>2</p></td>
-<td><p>The number of parallel lines.
-This is also the number of points in a meridian.</p></td>
+<td><p>The number of parallel lines.</p>
+<p>This is also the number of points in a meridian.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Meridians</strong></p></td>
 <td><p>Int</p></td>
 <td><p>32</p></td>
-<td><p>The number of meridian lines.
-This is also the number of points in a parallel.</p></td>
+<td><p>The number of meridian lines.</p>
+<p>This is also the number of points in a parallel.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Height</strong></p></td>
 <td><p>Float</p></td>
@@ -216,24 +218,26 @@ This is also the number of points in a parallel.</p></td>
 <tr class="row-odd"><td><p><strong>Twist</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The amount of rotation around the z-axis of the
-parallel lines from the bottom to the top parallel.</p></td>
+<td><p>The amount of rotation around the z-axis of the</p>
+<p>parallel lines from the bottom to the top parallel.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Phase</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The amount of rotation around the z-axis of all the
-vertices in the mesh.</p></td>
+<td><p>The amount of rotation around the z-axis of all the</p>
+<p>vertices in the mesh.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Parallels Profile</strong></p></td>
 <td><p>[Float]</p></td>
 <td><p>[ ]</p></td>
-<td><p>The scale modulating the radius of the parallels. [1]</p></td>
+<td><p>The scale modulating the radius of the parallels. <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Meridians Profile</strong></p></td>
 <td><p>[Float]</p></td>
 <td><p>[ ]</p></td>
-<td><p>The scale modulating the radius of the meridians. [1]</p></td>
+<td><p>The scale modulating the radius of the meridians. <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Caps T</strong></p></td>
 <td><p>Boolean</p></td>
@@ -248,7 +252,7 @@ vertices in the mesh.</p></td>
 <tr class="row-odd"><td><p><strong>Separate</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Separate the parallels into separate lists. [2]</p></td>
+<td><p>Separate the parallels into separate lists. <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Center</strong></p></td>
 <td><p>Boolean</p></td>
@@ -256,33 +260,36 @@ vertices in the mesh.</p></td>
 <td><p>Center the cylinder around the origin.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RAD
-DEG
-UNI</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RAD</p></li>
+<li><p>DEG</p></li>
+<li><p>UNI</p></li>
+</ul>
 </td>
 <td><p>RAD</p></td>
-<td><dl class="simple">
-<dt>The <strong>Twist</strong> and <strong>Phase</strong> angles are interpreted as</dt><dd><p>RAD : Radians [0, 2*pi]
-DEG : Degrees [0, 360]
-UNI : Unities [0, 1]</p>
-</dd>
-</dl>
+<td><p>The <strong>Twist</strong> and <strong>Phase</strong> angles are interpreted as</p>
+<ul class="simple">
+<li><p>RAD : Radians [0.0, 2*pi]</p></li>
+<li><p>DEG : Degrees [0.0, 360.0]</p></li>
+<li><p>UNI : Unities [0.0, 1.0]</p></li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : If connected the profiles need to have lists of at least 2 values.
-[2] : This splits the verts, edges, and polys into separate parallel sections.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : If connected the profiles need to have lists of at least 2 values.</p></li>
+<li><p><strong>[2]</strong> : This splits the verts, edges, and polys into separate parallel sections.</p></li>
+</ul>
 </section>
 <section id="extended-parameters">
 <h2>Extended Parameters<a class="headerlink" href="#extended-parameters" title="Permalink to this heading">¶</a></h2>
 <p>The Property Panel provides additional parameters.</p>
-<p><strong>Cyclic</strong>
-This parameter is used for treating the connected <strong>Parallels Profile</strong> as a cyclic spline curve and it is useful to ensure smooth parallel curves whenever there’s discontinuity in the value and/or in the tangent of the starting/ending points of the profile.</p>
+<ul class="simple">
+<li><p><strong>Cyclic</strong> This parameter is used for treating the connected <strong>Parallels Profile</strong> as a cyclic spline curve and it is useful to ensure smooth parallel curves whenever there’s discontinuity in the value and/or in the tangent of the starting/ending points of the profile.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -290,6 +297,7 @@ This parameter is used for treating the connected <strong>Parallels Profile</str
 All outputs will be generated when the output sockets are connected.
 Depending on the type of the inputs the node will generate only one or multiples independent cylinder shapes.</p>
 <p>If <strong>Separate</strong> is True, the node will output the parallel sections as separate lists (verts, edges and polys).</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189488345-2daba527-0aa0-463d-bd0d-4dfbbc0d59af.png"><img alt="https://user-images.githubusercontent.com/14288520/189488345-2daba527-0aa0-463d-bd0d-4dfbbc0d59af.png" src="https://user-images.githubusercontent.com/14288520/189488345-2daba527-0aa0-463d-bd0d-4dfbbc0d59af.png" /></a>
 <p><strong>Examples</strong></p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188701121-947eabdc-b13d-45f6-9ea5-4204162a0c97.png"><img alt="https://user-images.githubusercontent.com/14288520/188701121-947eabdc-b13d-45f6-9ea5-4204162a0c97.png" src="https://user-images.githubusercontent.com/14288520/188701121-947eabdc-b13d-45f6-9ea5-4204162a0c97.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188700994-0a9c858e-0a6f-49c3-8215-16681c7802f8.gif"><img alt="https://user-images.githubusercontent.com/14288520/188700994-0a9c858e-0a6f-49c3-8215-16681c7802f8.gif" src="https://user-images.githubusercontent.com/14288520/188700994-0a9c858e-0a6f-49c3-8215-16681c7802f8.gif" /></a>
@@ -301,8 +309,10 @@ Depending on the type of the inputs the node will generate only one or multiples
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
-<p>Example of a manual meridian profile:
-* Number-&gt; <a class="reference internal" href="../number/curve_mapper.html"><span class="doc">Curve Mapper</span></a></p>
+<p>Example of a manual meridian profile:</p>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/curve_mapper.html"><span class="doc">Curve Mapper</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Vector Rewire" href="vector_rewire.html" />
-    <link rel="prev" title="Vector Fractal" href="fractal.html" /> 
+    <link rel="next" title="Vector Interpolation Stripes" href="interpolation_stripes.html" />
+    <link rel="prev" title="Vectors Attraction" href="attractor.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,15 +64,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Lerp</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -81,16 +84,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -146,6 +145,7 @@
              
   <section id="vector-lerp">
 <h1>Vector Lerp<a class="headerlink" href="#vector-lerp" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png"><img alt="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png" src="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node’s primary function is to perform the linear interpolation between two Vectors, or streams of Vectors.
@@ -153,7 +153,6 @@ If we have two Vectors A and B, and a factor 0.5, then the output of the node wi
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403415/97f342a2-e616-11e6-8494-668a28c3cfb9.png" src="https://cloud.githubusercontent.com/assets/619340/22403415/97f342a2-e616-11e6-8494-668a28c3cfb9.png" />
 <p>Vector Evaluate needs two Vertex stream inputs (each containing 1 or more vertices). If one list is shorter than the other then the shortest stream is extended to match the length of the longer stream by repeating the last valid vector found in the shorter stream.</p>
 </section>
 <section id="parameters">
@@ -176,13 +175,15 @@ If we have two Vectors A and B, and a factor 0.5, then the output of the node wi
 <tr class="row-even"><td><p>mode</p></td>
 <td><p>Enum</p></td>
 <td><p>Lerp</p></td>
-<td><ul class="simple">
-<li><p><strong>Lerp</strong> will linear interpolate once between
-each corresponding Vector</p></li>
-<li><p><strong>Evaluate</strong> will repeatedly interpolate
-between each member of vectors A and B for
-all items in Factor input (see example)</p></li>
-</ul>
+<td><p><strong>Lerp</strong> will linear interpolate once between</p>
+<blockquote>
+<div><p>each corresponding Vector</p>
+</div></blockquote>
+<p><strong>Evaluate</strong> will repeatedly interpolate</p>
+<blockquote>
+<div><p>between each member of vectors A and B for</p>
+<p>all items in Factor input (see example)</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Vertex A</strong></p></td>
@@ -198,9 +199,10 @@ all items in Factor input (see example)</p></li>
 <tr class="row-odd"><td><p><strong>Factor</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.50</p></td>
-<td><p>distance ratio between vertices A and B.
-values outside of the 0.0…1.0 range are
-extrapolated on the infinite line A, B</p></td>
+<td><p>distance ratio between vertices A and B.</p>
+<p>values outside of the 0.0…1.0 range are</p>
+<p>extrapolated on the infinite line A, B</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -212,17 +214,50 @@ extrapolated on the infinite line A, B</p></td>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p><strong>0.5</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" src="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" src="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p><strong>-0.5</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png" src="https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png" src="https://cloud.githubusercontent.com/assets/619340/22403447/e18ff24c-e617-11e6-82cd-abd28c22a517.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p><strong>1.5</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png" src="https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png" src="https://cloud.githubusercontent.com/assets/619340/22403454/fc9b6030-e617-11e6-9f18-822fb0ab5a50.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p><strong>range float `0.0 … 1.0   n=10`  Evaluate</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png" src="https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png" src="https://cloud.githubusercontent.com/assets/619340/22403473/72919a98-e618-11e6-8ada-955595368766.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p><strong>range float `0.0 … 1.0   n=10`  Lerp</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png" src="https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png" src="https://cloud.githubusercontent.com/assets/619340/22403494/ec8b0fd2-e618-11e6-8830-96b01f31bcd4.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p><strong>Lerp interpolation with noise</strong></p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/22403515/aedf276c-e619-11e6-91e3-bfabc94be1ab.png" src="https://cloud.githubusercontent.com/assets/619340/22403515/aedf276c-e619-11e6-91e3-bfabc94be1ab.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189450649-f1f3bb7a-f9e3-4968-9985-d1d641b82132.png"><img alt="https://user-images.githubusercontent.com/14288520/189450649-f1f3bb7a-f9e3-4968-9985-d1d641b82132.png" src="https://user-images.githubusercontent.com/14288520/189450649-f1f3bb7a-f9e3-4968-9985-d1d641b82132.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>A*SCALAR: Vector-&gt; <a class="reference internal" href="math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189450678-2f4e6fbd-0d48-4abf-be47-b7d7c8091267.gif"><img alt="https://user-images.githubusercontent.com/14288520/189450678-2f4e6fbd-0d48-4abf-be47-b7d7c8091267.gif" src="https://user-images.githubusercontent.com/14288520/189450678-2f4e6fbd-0d48-4abf-be47-b7d7c8091267.gif" /></a>
 <p>The development thread also has examples: <a class="reference external" href="https://github.com/nortikin/sverchok/issues/1098">https://github.com/nortikin/sverchok/issues/1098</a></p>
 </section>
 </section>
@@ -231,8 +266,8 @@ extrapolated on the infinite line A, B</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="fractal.html" class="btn btn-neutral float-left" title="Vector Fractal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vector_rewire.html" class="btn btn-neutral float-right" title="Vector Rewire" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="attractor.html" class="btn btn-neutral float-left" title="Vectors Attraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="interpolation_stripes.html" class="btn btn-neutral float-right" title="Vector Interpolation Stripes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

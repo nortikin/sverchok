@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Variable Lacunarity" href="variable_lacunarity.html" />
+    <link rel="next" title="Vector Drop" href="drop.html" />
     <link rel="prev" title="Vector Sort" href="vertices_sort.html" /> 
 </head>
 
@@ -64,22 +64,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
-<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Sort Quad Grid</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -89,8 +79,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -146,6 +145,7 @@
              
   <section id="sort-quad-grid">
 <h1>Sort Quad Grid<a class="headerlink" href="#sort-quad-grid" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189407906-66eb8edb-86a9-42c9-a643-84ae8030f1fb.png"><img alt="https://user-images.githubusercontent.com/14288520/189407906-66eb8edb-86a9-42c9-a643-84ae8030f1fb.png" src="https://user-images.githubusercontent.com/14288520/189407906-66eb8edb-86a9-42c9-a643-84ae8030f1fb.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Consider you want to use a quad grid, i.e. a mesh made of quads only, arranged
@@ -204,9 +204,21 @@ the index of this vertex in the input list of vertices.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Take manually subdivided plane (on the left) and sort it’s vertices:</p>
-<img alt="https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png" src="https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png"><img alt="https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png" src="https://user-images.githubusercontent.com/284644/93013046-65e02080-f5be-11ea-9d0b-7369cf76b9e2.png" /></a>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In</span></a></p></li>
+</ul>
 <p>Use together with “Build NURBS Surface” node:</p>
-<img alt="https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png" src="https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png"><img alt="https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png" src="https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png" /></a>
+<ul class="simple">
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/nurbs_surface.html"><span class="doc">Build Nurbs Surface</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -215,7 +227,7 @@ the index of this vertex in the input list of vertices.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="vertices_sort.html" class="btn btn-neutral float-left" title="Vector Sort" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="variable_lacunarity.html" class="btn btn-neutral float-right" title="Variable Lacunarity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="drop.html" class="btn btn-neutral float-right" title="Vector Drop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

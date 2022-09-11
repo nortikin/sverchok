@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vector Math Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Vector Math &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Vector Noise" href="noise_mk3.html" />
-    <link rel="prev" title="Vector Interpolation" href="interpolation_mk3.html" /> 
+    <link rel="next" title="Vector X Doubles" href="vertices_delete_doubles.html" />
+    <link rel="prev" title="Vector X | Y | Z" href="axis_input_mk2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,30 +64,29 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
-<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Math Node</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Math</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#input-and-output">Input and Output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modes">Modes</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -131,7 +130,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="vector_index.html">Vector</a> &raquo;</li>
-      <li>Vector Math Node</li>
+      <li>Vector Math</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/vector/math_mk3.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -141,8 +140,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="vector-math-node">
-<h1>Vector Math Node<a class="headerlink" href="#vector-math-node" title="Permalink to this heading">¶</a></h1>
+  <section id="vector-math">
+<h1>Vector Math<a class="headerlink" href="#vector-math" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189374626-d367341c-28a0-40b2-8f2f-64c9bdef88fe.png"><img alt="https://user-images.githubusercontent.com/14288520/189374626-d367341c-28a0-40b2-8f2f-64c9bdef88fe.png" src="https://user-images.githubusercontent.com/14288520/189374626-d367341c-28a0-40b2-8f2f-64c9bdef88fe.png" /></a>
 <p>This is a versatile node. You can perform 1 operation on 1000’s of
 list-elements, or perform operations pairwise on two lists of 1000’s of
 elements, even if they are nested. It is therefore what we call
@@ -160,8 +160,8 @@ implementation and the “Output NumPy” parameter activated.
 <h2>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 13%" />
-<col style="width: 87%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>socket</p></th>
@@ -170,10 +170,10 @@ implementation and the “Output NumPy” parameter activated.
 </thead>
 <tbody>
 <tr class="row-even"><td><p>inputs</p></td>
-<td><p>Expect a Vector and Scalar (v,s), or two Vectors (u, v)</p></td>
+<td><p>Expect a <strong>Vector</strong> and <strong>Scalar</strong> (<strong>v</strong>, <strong>s</strong>), or two Vectors (<strong>u</strong>, <strong>v</strong>)</p></td>
 </tr>
 <tr class="row-odd"><td><p>outputs</p></td>
-<td><p>Will output a Scalar (s), or a Vector (w).</p></td>
+<td><p>Will output a <strong>Scalar</strong> (<strong>s</strong>), or a <strong>Vector</strong> (<strong>w</strong>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -341,21 +341,31 @@ but in case they aren’t then here is a quick overview:</p>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
 <section id="advanced-parameters">
-<h1>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h1>
+<h3>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h3>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Implementation</strong>: MathUtils or NumPy. NumPy is the default and is usually faster.</p>
-<p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available in the MathUtils implementation]</p>
+<ul class="simple">
+<li><p><strong>Implementation</strong>: MathUtils or NumPy. NumPy is the default and is usually faster.</p></li>
+<li><p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available in the MathUtils implementation]</p></li>
+</ul>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h3>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189379355-ee107c39-02ba-43c5-9d33-51001ab48592.png"><img alt="https://user-images.githubusercontent.com/14288520/189379355-ee107c39-02ba-43c5-9d33-51001ab48592.png" src="https://user-images.githubusercontent.com/14288520/189379355-ee107c39-02ba-43c5-9d33-51001ab48592.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="interpolation_mk3.html" class="btn btn-neutral float-left" title="Vector Interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="noise_mk3.html" class="btn btn-neutral float-right" title="Vector Noise" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="axis_input_mk2.html" class="btn btn-neutral float-left" title="Vector X | Y | Z" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vertices_delete_doubles.html" class="btn btn-neutral float-right" title="Vector X Doubles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,6 +1,9 @@
 Vector In
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189356797-4908a913-cdcc-49e9-8100-0bbcc5e3e9b1.png
+  :target: https://user-images.githubusercontent.com/14288520/189356797-4908a913-cdcc-49e9-8100-0bbcc5e3e9b1.png
+
 Functionality
 -------------
 
@@ -14,24 +17,22 @@ It can also output Numpy arrays (flat arrays) when using the activating the "Out
 Inputs
 ------
 
-**x** - value or series of values
-**y** - value or series of values
-**z** - value or series of values
+* **x** - value or series of values
+* **y** - value or series of values
+* **z** - value or series of values
 
 Advanced Parameters
 -------------------
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Implementation**: Python or NumPy. Python is the default and is usually faster if you input regular lists and want to get regular list. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays.
-
-**Output NumPy**: Get NumPy arrays in stead of regular lists.
+* **Implementation**: Python or NumPy. Python is the default and is usually faster if you input regular lists and want to get regular list. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays.
+* **Output NumPy**: Get NumPy arrays in stead of regular lists.
 
 Outputs
 -------
 
-**Vector** - Vertex or series of vertices
-
+* **Vector** - Vertex or series of vertices
 
 Operators
 ---------
@@ -43,13 +44,37 @@ This node has two buttons:
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4905358/0a4e7df4-644f-11e4-8ff1-1530c7aac8dc.png
+.. image:: https://user-images.githubusercontent.com/14288520/189362245-d966cf84-da93-4da5-b137-bf578c3f2c6f.png
+  :target: https://user-images.githubusercontent.com/14288520/189362245-d966cf84-da93-4da5-b137-bf578c3f2c6f.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189359236-785757e5-a1c4-4dfa-86d9-65780cee1bd9.png
+  :target: https://user-images.githubusercontent.com/14288520/189359236-785757e5-a1c4-4dfa-86d9-65780cee1bd9.png
   :alt: with vector out
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4905359/0a56565a-644f-11e4-91b3-24ac4d78cb11.png
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Sine X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189359252-e2bc72dd-03b2-427a-8c49-9d6cb8aaeeac.png
+  :target: https://user-images.githubusercontent.com/14288520/189359252-e2bc72dd-03b2-427a-8c49-9d6cb8aaeeac.png
   :alt: generating line
 
-.. image:: https://user-images.githubusercontent.com/28003269/34647574-202304d2-f39f-11e7-8113-87047546b81e.gif
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Sine X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189359290-0879acdc-1ebb-4351-a9f1-789f387b834b.png
+  :target: https://user-images.githubusercontent.com/14288520/189359290-0879acdc-1ebb-4351-a9f1-789f387b834b.png
   :alt: object mode
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Gist: https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed

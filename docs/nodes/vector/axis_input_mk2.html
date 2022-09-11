@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Vector Drop" href="drop.html" />
-    <link rel="prev" title="Vectors Attraction" href="attractor.html" /> 
+    <link rel="next" title="Vector Math" href="math_mk3.html" />
+    <link rel="prev" title="Vector Out" href="vector_out.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,7 +64,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector X | Y | Z</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -72,24 +73,22 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
 <li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -145,6 +144,7 @@
              
   <section id="vector-x-y-z">
 <h1>Vector X | Y | Z<a class="headerlink" href="#vector-x-y-z" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189370754-8f8083e2-75b9-4c55-af21-a7bda06349af.png"><img alt="https://user-images.githubusercontent.com/14288520/189370754-8f8083e2-75b9-4c55-af21-a7bda06349af.png" src="https://user-images.githubusercontent.com/14288520/189370754-8f8083e2-75b9-4c55-af21-a7bda06349af.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Sometimes a Vector is needed which only has a value in one of the 3 axes. For instance the rotation vector of the <em>Matrix In</em> node. Or the Axis parameter in the <em>Lathe Node</em>. Instead of using a <em>Vector</em> Node it can be useful to add this Node instead, which lets you easily toggle between:</p>
@@ -154,7 +154,10 @@
 </pre></div>
 </div>
 <p>The added bonus is that the minimized state of the Node can show what type of Vector it represents.</p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/3489193/bfdd92d8-051b-11e4-84f5-0f140c5458b2.gif" src="https://cloud.githubusercontent.com/assets/619340/3489193/bfdd92d8-051b-11e4-84f5-0f140c5458b2.gif" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189370094-f76392f3-4540-4c50-b27d-feac04b567a6.png"><img alt="https://user-images.githubusercontent.com/14288520/189370094-f76392f3-4540-4c50-b27d-feac04b567a6.png" src="https://user-images.githubusercontent.com/14288520/189370094-f76392f3-4540-4c50-b27d-feac04b567a6.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -177,8 +180,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="attractor.html" class="btn btn-neutral float-left" title="Vectors Attraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="drop.html" class="btn btn-neutral float-right" title="Vector Drop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="vector_out.html" class="btn btn-neutral float-left" title="Vector Out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="math_mk3.html" class="btn btn-neutral float-right" title="Vector Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

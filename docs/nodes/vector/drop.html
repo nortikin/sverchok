@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Vector Interpolation Stripes" href="interpolation_stripes.html" />
-    <link rel="prev" title="Vector X | Y | Z" href="axis_input_mk2.html" /> 
+    <link rel="next" title="Vector Polar Input" href="vector_polar_in.html" />
+    <link rel="prev" title="Sort Quad Grid" href="quad_grid.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,8 +64,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Drop</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -73,23 +79,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_stripes.html">Vector Interpolation Stripes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -145,6 +144,7 @@
              
   <section id="vector-drop">
 <h1>Vector Drop<a class="headerlink" href="#vector-drop" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189416082-af9b8af3-b405-49cc-8894-b5fd15ada232.png"><img alt="https://user-images.githubusercontent.com/14288520/189416082-af9b8af3-b405-49cc-8894-b5fd15ada232.png" src="https://user-images.githubusercontent.com/14288520/189416082-af9b8af3-b405-49cc-8894-b5fd15ada232.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Reverse operation to Matrix apply.
@@ -153,16 +153,32 @@ Than vector drop subtract matrix from vertices.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong> - Vectors input to transform
-<strong>Matrix</strong> - Matrix to subtract from vertices</p>
+<ul class="simple">
+<li><p><strong>Vectors</strong> - Vectors input to transform</p></li>
+<li><p><strong>Matrixes</strong> - Matrix to subtract from vertices</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong> - vertices</p>
+<p><strong>Vectors</strong> - vertices</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="vector drop" src="https://cloud.githubusercontent.com/assets/5783432/4905667/60572716-6452-11e4-98f3-296387ada7a9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189416105-c7b9ec1f-9ebd-4c8b-be56-bd9670349acc.png"><img alt="https://user-images.githubusercontent.com/14288520/189416105-c7b9ec1f-9ebd-4c8b-be56-bd9670349acc.png" src="https://user-images.githubusercontent.com/14288520/189416105-c7b9ec1f-9ebd-4c8b-be56-bd9670349acc.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html"><span class="doc">Component Analyzer</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/polygons_boom.html"><span class="doc">Polygon Boom</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/slice.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_2d.html"><span class="doc">Viewer 2D</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189416117-b9c89036-1e36-4046-8b37-1b578cb993d7.png"><img alt="https://user-images.githubusercontent.com/14288520/189416117-b9c89036-1e36-4046-8b37-1b578cb993d7.png" src="https://user-images.githubusercontent.com/14288520/189416117-b9c89036-1e36-4046-8b37-1b578cb993d7.png" /></a>
 </section>
 </section>
 
@@ -170,8 +186,8 @@ Than vector drop subtract matrix from vertices.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="axis_input_mk2.html" class="btn btn-neutral float-left" title="Vector X | Y | Z" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="interpolation_stripes.html" class="btn btn-neutral float-right" title="Vector Interpolation Stripes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="quad_grid.html" class="btn btn-neutral float-left" title="Sort Quad Grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vector_polar_in.html" class="btn btn-neutral float-right" title="Vector Polar Input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

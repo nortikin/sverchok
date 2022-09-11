@@ -1,6 +1,9 @@
 Vector Sort
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189396617-37828a11-a86c-4cb1-b3e9-364188bc47a9.png
+  :target: https://user-images.githubusercontent.com/14288520/189396617-37828a11-a86c-4cb1-b3e9-364188bc47a9.png
+
 Functionality
 -------------
 
@@ -15,33 +18,40 @@ and optional inputs(Vector, matrix and user data)
 Parameters
 ----------
 
-+----------------+-----------------+-------------+----------------------------------------------------+
-| Param          | Type            | Default     | Description                                        |
-+================+=================+=============+====================================================+
-| **Vertices**   | Vector          |             | vertices from nodes generators or lists (in, out)  |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **PolyEdge**   | Int             |             | index of polygons or edges     (in, out)           |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Sortmode**   | XYZ, Dist,      | XYZ         | will sort the index according to different criteria|
-|                | Axis, Connect,  |             |                                                    |
-|                | Auto XYZ,       |             |                                                    |
-|                | Auto Direction, |             |                                                    |
-|                | Auto Phi / Z,   |             |                                                    |
-|                | User            |             |                                                    |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Reverse**    | Boolean         | False       | Reverse the sorting order. Available for           |
-|                |                 |             | **Auto Direction** and **Auto Phi / Z** modes.     |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Reverse X**, | Boolean         | False       | Reverse the sorting order when sorting by X, Y or  |
-| **Reverse Y**, |                 |             | Z, correspondingly. Available for **XYZ** and      |
-| **Reverse Z**  |                 |             | **Auto XYZ** modes only.                           |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Item order** | Int             |             | output the index sequence                          |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Mat**        | Matrix          |             | Matrix for the **Axis** mode.                      |
-+----------------+-----------------+-------------+----------------------------------------------------+
-| **Base Point** | Vector          |             | Central point for the **Dist** mode.               |
-+----------------+-----------------+-------------+----------------------------------------------------+
++------------------+-------------------+-------------+----------------------------------------------------+
+| Param            | Type              | Default     | Description                                        |
++==================+===================+=============+====================================================+
+| **Vertices**     | Vector            |             | vertices from nodes generators or lists            |
+|                  |                   |             |                                                    |
+|                  |                   |             | (in, out)                                          |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **PolyEdge**     | Int               |             | index of polygons or edges     (in, out)           |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **Sortmode**     | * XYZ             | XYZ         | will sort the index according to different         |
+|                  | * Dist            |             |                                                    |
+|                  | * Axis            |             | criteria                                           |
+|                  | * Connect         |             |                                                    |
+|                  | * Auto XYZ        |             |                                                    |
+|                  | * Auto Direction  |             |                                                    |
+|                  | * Auto Phi / Z    |             |                                                    |
+|                  | * User            |             |                                                    |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **Reverse**      | Boolean           | False       | Reverse the sorting order. Available for           |
+|                  |                   |             |                                                    |
+|                  |                   |             | **Auto Direction** and **Auto Phi / Z** modes.     |
++------------------+-------------------+-------------+----------------------------------------------------+
+| * **Reverse X**  | Boolean           | False       | Reverse the sorting order when sorting by X,       |
+|                  |                   |             |                                                    |
+| * **Reverse Y**  |                   |             | Y or Z, correspondingly. Available for **XYZ**     |
+|                  |                   |             |                                                    |
+| * **Reverse Z**  |                   |             |  and **Auto XYZ** modes only.                      |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **Item order**   | Int               |             | output the index sequence                          |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **Mat**          | Matrix            |             | Matrix for the **Axis** mode.                      |
++------------------+-------------------+-------------+----------------------------------------------------+
+| **Base Point**   | Vector            |             | Central point for the **Dist** mode.               |
++------------------+-------------------+-------------+----------------------------------------------------+
 
 The sorting modes work as follows:
 
@@ -83,6 +93,11 @@ Example of usage
 Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist:
 
 .. image:: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
+  :target: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
+
+* Generator->Generatots Extended-> :doc:`Hilbert </nodes/generators_extended/hilbert>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Polyline Viewer </nodes/viz/polyline_viewer>`
 
 The *Connect* mode it is meant to work with paths. Sorting the vertices along the edges.
 The "Search for limits" option will handle discontinities in the path.
@@ -90,9 +105,36 @@ The "Search for limits" option will handle discontinities in the path.
 Example used to sort the vertices after the *Mesh Filter* node
 
 .. image:: https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png
+  :target: https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Analyzer-> :doc:`Mesh Filter </nodes/analyzer/mesh_filter>`
+* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Example after *Subdivide* node to prepare vertices for *Vector Evaluation* node and/or *UV Connection* node
 
-.. image:: https://user-images.githubusercontent.com/10011941/35187937-6352b0c0-fe2d-11e7-864c-a3893f94f6dc.png
+.. image:: https://user-images.githubusercontent.com/14288520/189404210-e5b63541-e9c6-46b0-a7b0-690f155d96bb.png
+  :target: https://user-images.githubusercontent.com/14288520/189404210-e5b63541-e9c6-46b0-a7b0-690f155d96bb.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Modifiers->Modifier Make :doc:`Subdivide </nodes/modifier_change/subdivide_mk2>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector Lerp </nodes/vector/lerp>`
+* List->List Struct-> :doc:`List Length </nodes/list_struct/shift_mk2>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189396653-a808aeea-608e-4653-b819-1ded6cd2aad2.png
+  :target: https://user-images.githubusercontent.com/14288520/189396653-a808aeea-608e-4653-b819-1ded6cd2aad2.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Spacial-> :doc:`Populate Mesh </nodes/spatial/populate_surface>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 link to pull request: https://github.com/nortikin/sverchok/pull/88

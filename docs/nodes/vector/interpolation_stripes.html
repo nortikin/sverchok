@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Vector Interpolation" href="interpolation_mk3.html" />
-    <link rel="prev" title="Vector Drop" href="drop.html" /> 
+    <link rel="prev" title="Vector Lerp" href="lerp.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -64,9 +64,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="vector_index.html">Vector</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="axis_input_mk2.html">Vector X | Y | Z</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="drop.html">Vector Drop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attractor.html">Vectors Attraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Vector Interpolation Stripes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#input-output">Input &amp; Output</a></li>
@@ -76,21 +86,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html">Vector Math Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="math_mk3.html#advanced-parameters">Advanced Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lerp.html">Vector Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_in.html">Vector In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_out.html">Vector Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vector_polar_out.html">Vector Polar Output</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_delete_doubles.html">Vector X Doubles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vertices_sort.html">Vector Sort</a></li>
-<li class="toctree-l3"><a class="reference internal" href="quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="turbulence.html">Vector Turbulence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="variable_lacunarity.html">Variable Lacunarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal.html">Vector Fractal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
@@ -146,6 +145,7 @@
              
   <section id="vector-interpolation-stripes">
 <h1>Vector Interpolation Stripes<a class="headerlink" href="#vector-interpolation-stripes" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189498648-71764116-89a3-489d-9806-a17974710d5d.png"><img alt="https://user-images.githubusercontent.com/14288520/189498648-71764116-89a3-489d-9806-a17974710d5d.png" src="https://user-images.githubusercontent.com/14288520/189498648-71764116-89a3-489d-9806-a17974710d5d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Performs cubic spline STRIPES interpolation based on input points by creating a function <code class="docutils literal notranslate"><span class="pre">x,y,z</span> <span class="pre">=</span> <span class="pre">f(t)</span></code> with <code class="docutils literal notranslate"><span class="pre">tU=[0,1]</span></code>, <code class="docutils literal notranslate"><span class="pre">tU=[0,1]</span></code> and attractor vertex.
@@ -185,9 +185,10 @@ Stripes outputs as two lines of points for each object, so UVconnect node can ha
 </tr>
 <tr class="row-even"><td><p>output</p></td>
 <td><p>vStripes</p></td>
-<td><p>Interpolated points as grouped stripes
-[[a,b],[a,b],[a,b]], where a and b groups
-[v,v,v,v,v], where v - is vertex</p></td>
+<td><p>Interpolated points as grouped stripes</p>
+<p>[[a,b],[a,b],[a,b]], where a and b groups</p>
+<p>[v,v,v,v,v], where v - is vertex</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>output</p></td>
 <td><p>vShape</p></td>
@@ -202,19 +203,49 @@ Stripes outputs as two lines of points for each object, so UVconnect node can ha
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p><strong>Factor</strong> - is multiplyer after produce function as sinus/cosinus/etc.
-<strong>Scale</strong> - is multiplyer before produce function as sinus/cosinus/etc.
-<strong>Function</strong> - popup function between Simple/Multiplied/Sinus/Cosinus/Power/Square</p>
+<ul class="simple">
+<li><p><strong>Factor</strong> - is multiplyer after produce function as sinus/cosinus/etc.</p></li>
+<li><p><strong>Scale</strong> - is multiplyer before produce function as sinus/cosinus/etc.</p></li>
+<li><p><strong>Function</strong> - popup function between Simple/Multiplied/Sinus/Cosinus/Power/Square</p></li>
+</ul>
 </section>
 <section id="parameters-extended">
 <h2>Parameters extended<a class="headerlink" href="#parameters-extended" title="Permalink to this heading">¶</a></h2>
-<p><strong>minimum</strong> - minimum value of stripe width (0.0 to 0.5)
-<strong>maximum</strong> - maximum value of stripe width (0.5 to 1.0)</p>
+<ul class="simple">
+<li><p><strong>minimum</strong> - minimum value of stripe width (0.0 to 0.5)</p></li>
+<li><p><strong>maximum</strong> - maximum value of stripe width (0.5 to 1.0)</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Making surface with stripes separated in two groups of nodes for UVconnect node to process:</p>
-<img alt="interpolation stripes" src="https://cloud.githubusercontent.com/assets/5783432/20041842/bc459a26-a488-11e6-98ec-345e58bbcdc9.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/20041842/bc459a26-a488-11e6-98ec-345e58bbcdc9.png"><img alt="interpolation stripes" src="https://cloud.githubusercontent.com/assets/5783432/20041842/bc459a26-a488-11e6-98ec-345e58bbcdc9.png" /></a>
+<ul class="simple">
+<li><p>Modifiers-&gt;Modifier Change <a class="reference internal" href="../modifier_change/mesh_separate.html"><span class="doc">Separate Loose Parts</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189498715-ce12c260-ea62-46de-8a03-c304b6ccedd0.png"><img alt="https://user-images.githubusercontent.com/14288520/189498715-ce12c260-ea62-46de-8a03-c304b6ccedd0.png" src="https://user-images.githubusercontent.com/14288520/189498715-ce12c260-ea62-46de-8a03-c304b6ccedd0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/curve_frame.html"><span class="doc">Curve Frame</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_out_mk2.html"><span class="doc">Matrix Out</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/start_end.html"><span class="doc">List First &amp; Last</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189498730-a8dbe296-f0f3-4db2-8492-2beb7dc54304.gif"><img alt="https://user-images.githubusercontent.com/14288520/189498730-a8dbe296-f0f3-4db2-8492-2beb7dc54304.gif" src="https://user-images.githubusercontent.com/14288520/189498730-a8dbe296-f0f3-4db2-8492-2beb7dc54304.gif" /></a>
 </section>
 </section>
 
@@ -222,7 +253,7 @@ Stripes outputs as two lines of points for each object, so UVconnect node can ha
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="drop.html" class="btn btn-neutral float-left" title="Vector Drop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lerp.html" class="btn btn-neutral float-left" title="Vector Lerp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="interpolation_mk3.html" class="btn btn-neutral float-right" title="Vector Interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
