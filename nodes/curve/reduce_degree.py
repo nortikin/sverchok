@@ -21,7 +21,7 @@ class SvCurveReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCurveReduceDegreeNode'
     bl_label = 'Reduce Degree (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_INSERT_KNOT'
+    sv_icon = 'SV_REDUCE_CURVE_DEGREE'
 
     modes = [
             ('DELTA', "Reduce by", "Specify difference between current degree and target degree", 0),

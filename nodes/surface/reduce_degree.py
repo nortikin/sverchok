@@ -21,7 +21,7 @@ class SvSurfaceReduceDegreeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceReduceDegreeNode'
     bl_label = 'Reduce Degree (NURBS Surface)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SURFACE_INSERT_KNOT'
+    sv_icon = 'SV_REDUCE_SURFACE_DEGREE'
 
     directions = [
             ('U', "U", "U direction", 0),

@@ -21,7 +21,7 @@ class SvSurfaceElevateDegreeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceElevateDegreeNode'
     bl_label = 'Elevate Degree (NURBS Surface)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SURFACE_INSERT_KNOT'
+    sv_icon = 'SV_ELEVATE_SURFACE_DEGREE'
 
     directions = [
             ('U', "U", "U direction", 0),

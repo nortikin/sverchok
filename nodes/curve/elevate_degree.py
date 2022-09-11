@@ -21,7 +21,7 @@ class SvCurveElevateDegreeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCurveElevateDegreeNode'
     bl_label = 'Elevate Degree (NURBS Curve)'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_INSERT_KNOT'
+    sv_icon = 'SV_ELEVATE_CURVE_DEGREE'
 
     modes = [
             ('DELTA', "Elevate by", "Specify difference between current degree and target degree", 0),
