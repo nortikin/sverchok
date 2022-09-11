@@ -338,7 +338,7 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
 
     def get_u_bounds(self):
         if self.u_bounds is None:
-            return (self.curve.FirstParameter, self.curve.LastParameter)
+            return (self.curve.KnotSequence[0], self.curve.KnotSequence[-1])
         else:
             return self.u_bounds
 
