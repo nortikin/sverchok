@@ -11,6 +11,7 @@ from math import ceil, floor, isnan
 import random
 
 from sverchok.utils.logging import debug, info, exception
+from sverchok.utils.math import distribute_int
 from sverchok.utils.curve import SvCurve, SvCurveLengthSolver
 
 class CurvePopulationController(object):
@@ -71,6 +72,25 @@ class TotalCount(CurvePopulationController):
         if self.include_ends:
             ppe += 2
         return ppe
+
+def populate_t_segment(key_ts, target_count):
+    """
+    Given key values of T parameter and target number of values,
+    return list of T values distributed so that each span
+    between key T values includes number of values proportional
+    to span's size.
+    For example,
+    populate_t_segment([0, 1, 3], 7) = [0, 0.5, 1, 1.5, 2, 2.5, 3]
+    """
+    key_ts = np.asarray(key_ts)
+    count_new = target_count - len(key_ts)
+    sizes = key_ts[1:] - key_ts[:-1]
+    counts = distribute_int(count_new, sizes)
+    result = set(key_ts)
+    for count, t_max, t_min in zip(counts, key_ts[1:], key_ts[:-1]):
+        ts = np.linspace(t_min, t_max, num=count+2)[1:-1]
+        result.update(ts)
+    return np.asarray(list(sorted(result)))
 
 def populate_curve(curve, samples_t, by_length = False, by_curvature = True, population_controller = None, curvature_clip = 100, seed = None):
     if population_controller is None:
