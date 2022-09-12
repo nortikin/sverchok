@@ -36,39 +36,56 @@ def draw_points(shader, points, size, color):
     batch.draw(shader)
     bgl.glPointSize(1)
 
+class CurveData(object):
+    def __init__(self, node, curve, resolution):
+        self.node = node
+        self.curve = curve
+        self.resolution = resolution
+
+        if node.draw_line or node.draw_verts:
+            t_min, t_max = curve.get_u_bounds()
+            ts = np.linspace(t_min, t_max, num=resolution)
+            self.points = curve.evaluate_array(ts).tolist()
+
+        if node.draw_line:
+            n = len(ts)
+            self.edges = [(i,i+1) for i in range(n-1)]
+
+        if (node.draw_control_polygon or node.draw_control_points) and hasattr(curve, 'get_control_points'):
+            self.control_points = curve.get_control_points().tolist()
+        else:
+            self.control_points = None
+
+        if node.draw_control_polygon:
+            n = len(self.control_points)
+            self.control_polygon_edges = [(i,i+1) for i in range(n-1)]
+
+        if node.draw_nodes and hasattr(curve, 'calc_greville_points'):
+            self.node_points = curve.calc_greville_points().tolist()
+        else:
+            self.node_points = None
+
 def draw_curves(context, args):
     node, draw_inputs, v_shader, e_shader = args
 
     bgl.glEnable(bgl.GL_BLEND)
 
-    for curve, resolution in draw_inputs:
-        t_min, t_max = curve.get_u_bounds()
-        ts = np.linspace(t_min, t_max, num=resolution)
-        points = curve.evaluate_array(ts).tolist()
-        if (node.draw_control_polygon or node.draw_control_points) and hasattr(curve, 'get_control_points'):
-            cpts = curve.get_control_points().tolist()
-        else:
-            cpts = None
+    for item in draw_inputs:
 
         if node.draw_line:
-            n = len(ts)
-            edges = [(i,i+1) for i in range(n-1)]
-            draw_edges(e_shader, points, edges, node.line_width, node.line_color)
+            draw_edges(e_shader, item.points, item.edges, node.line_width, node.line_color)
 
-        if node.draw_control_polygon and cpts is not None:
-            n = len(cpts)
-            edges = [(i,i+1) for i in range(n-1)]
-            draw_edges(e_shader, cpts, edges, node.control_polygon_line_width, node.control_polygon_color)
+        if node.draw_control_polygon and item.control_points is not None:
+            draw_edges(e_shader, item.control_points, item.control_polygon_edges, node.control_polygon_line_width, node.control_polygon_color)
 
-        if node.draw_control_points and cpts is not None:
-            draw_points(v_shader, cpts, node.control_points_size, node.control_points_color)
+        if node.draw_control_points and item.control_points is not None:
+            draw_points(v_shader, item.control_points, node.control_points_size, node.control_points_color)
 
-        if node.draw_nodes and hasattr(curve, 'calc_greville_points'):
-            gpoints = curve.calc_greville_points().tolist()
-            draw_points(v_shader, gpoints, node.nodes_size, node.nodes_color)
+        if node.draw_nodes and item.node_points is not None:
+            draw_points(v_shader, item.node_points, node.nodes_size, node.nodes_color)
 
         if node.draw_verts:
-            draw_points(v_shader, points, node.verts_size, node.verts_color)
+            draw_points(v_shader, item.points, node.verts_size, node.verts_color)
 
     bgl.glEnable(bgl.GL_BLEND)
 
@@ -242,7 +259,7 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
                 t_curve = SvNurbsCurve.to_nurbs(curve)
                 if t_curve is None:
                     t_curve = curve
-                draw_inputs.append((t_curve, resolution))
+                draw_inputs.append(CurveData(self, t_curve, resolution))
         self.draw_all(draw_inputs)
 
     def show_viewport(self, is_show: bool):
