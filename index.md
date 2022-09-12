@@ -440,7 +440,7 @@
 
 ## List Masks
     MaskListNode
-    SvMaskJoinNode
+    SvMaskJoinNodeMK2
     SvMaskConvertNode
     SvMaskToIndexNode
     SvIndexToMaskNode
