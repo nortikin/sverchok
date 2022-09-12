@@ -36,7 +36,7 @@ Examples
 * Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * List->List Main-> :doc:`List Length </nodes/list_main/length>`
-* List->List Struct-> :doc:`List Length </nodes/list_struct/slice>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
 

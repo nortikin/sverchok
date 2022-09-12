@@ -25,7 +25,11 @@ from sverchok.data_structure import updateNode, fullList
 
 
 class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Construct a Shear Matirx '''
+    '''Construct a Shear Matirx. Change the locations of vertices in two directions.
+    In: Factor 1, Factor 2
+    Params: XY-plane / XZ-plane / YZ-plane
+    Out: Matrix
+    '''
     bl_idname = 'MatrixShearNode'
     bl_label = 'Matrix Shear'
     bl_icon = 'OUTLINER_OB_EMPTY'

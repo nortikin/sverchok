@@ -41,7 +41,7 @@ output_sockets = {
 class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper, SvRecursiveNode):
     """
     Triggers: Matrix, Out
-    Tooltip: Convert a matrix into its location, scale & rotation components
+    Tooltip: Convert a matrix into its location, scale & rotation components.\n\tIn: Matrix\n\tParams: output format (Quaternion/Euler Angles/[Axis Angles]), euler order (XYZ...ZXY)\n\tOut: Loc, Scale, Angle X/Y/Z, Quaternion
     """
     bl_idname = 'SvMatrixOutNodeMK2'
     bl_label = 'Matrix Out'

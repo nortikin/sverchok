@@ -40,8 +40,7 @@ def matrix_normal(params, T, U, match_mode):
 class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: M. from Loc & Normal
-    Tooltip:  Construct a Matirx from  Location and Normal vectors
-
+    Tooltip:  Construct a Position Matrix from a location and a Normal Vector.\n\tIn: Location, Normal\n\tParams: Track (X/Y/Z/-X/-Y/-Z), Up (X/Y/Z)\n\tOut: Matrix
     """
 
     bl_idname = 'SvMatrixNormalNode'

@@ -5,15 +5,15 @@ Matrix
 .. toctree::
    :maxdepth: 1
 
-   apply_and_join
-   deform
-   euler
-   input
-   interpolation
    matrix_in_mk4
    matrix_out_mk2
-   matrix_math
-   matrix_track_to
+   apply_and_join
+   iterate
+   deform
+   input
+   euler
    shear
    matrix_normal
-   iterate
+   matrix_track_to
+   matrix_math
+   interpolation
