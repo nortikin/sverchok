@@ -46,7 +46,7 @@ def color_ramp_mapper(params, constant, matching_f):
 class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Color Gradient
-    Tooltip:  Map input list to a defined color
+    Tooltip:  Map input list to a defined color.\n\tIn: Value\n\tParams: Color Stops, Use Alpha [On]/Off, Update Node (Btn)\n\tOut: Color
 
     """
     bl_idname = 'SvColorRampNode'

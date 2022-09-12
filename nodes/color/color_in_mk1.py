@@ -98,7 +98,7 @@ def fprop_generator(**altprops):
 class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: rgb, hsv, hsl -> color
-    Tooltip: Generator for Color data from color components
+    Tooltip: Generator for Color data from color components.\n\tIn: R,G,B,A / H,S,V,A / H,S,L,A\n\tParams: Choise [RGB]/HSV/HSL, Use Alpha [On]/Off\n\tOut: Color
 
     """
     bl_idname = 'SvColorsInNodeMK1'
@@ -125,9 +125,9 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     v_: fprop_generator(name='V', description='Value / Brightness (0..1)')
 
     mode_options = [
-        ("RGB", "RGB", "", 0),
-        ("HSV", "HSV", "", 1),
-        ("HSL", "HSL", "", 2),
+        ("RGB", "RGB", "Red, Green, Blue", 0),
+        ("HSV", "HSV", "Hue, Saturation, Value", 1),
+        ("HSL", "HSL", "Hue, Saturation, Lightness", 2),
     ]
 
     selected_mode: bpy.props.EnumProperty(

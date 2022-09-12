@@ -29,7 +29,7 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 class SvColorInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Color Input
-    Tooltip: Specify color using color picker
+    Tooltip: Specify color using color picker.\n\tNo input.\n\tParam: Use Alpha On/[Off]\n\tOut: Color: RGB/RGBA [0.0, 0.0, 0.0, 1.0]
     """
     bl_idname = "SvColorInputNode"
     bl_label = "Color Input"

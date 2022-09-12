@@ -1,6 +1,9 @@
 Color Out
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189633039-ea3d2f29-e400-4383-b643-f13cc745780e.png
+  :target: https://user-images.githubusercontent.com/14288520/189633039-ea3d2f29-e400-4383-b643-f13cc745780e.png
+
 Functionality
 -------------
 
@@ -56,4 +59,10 @@ In the N-Panel (and on the right-click menu) you can find:
 Examples
 --------
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_out/color_out_texture_hsv_sverchok_blender_example.png
+.. image:: https://user-images.githubusercontent.com/14288520/189633073-cc6a2caf-ec93-484f-aedc-ace6cccad6eb.png
+  :target: https://user-images.githubusercontent.com/14288520/189633073-cc6a2caf-ec93-484f-aedc-ace6cccad6eb.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Color-> :doc:`Texture Evaluate </nodes/color/texture_evaluate_mk2>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
