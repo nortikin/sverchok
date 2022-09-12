@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Logic" href="../logic/logic_index.html" />
-    <link rel="prev" title="Color by Formula" href="formula_color.html" /> 
+    <link rel="prev" title="Color Ramp" href="color_ramp.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -70,9 +70,9 @@
 <li class="toctree-l3"><a class="reference internal" href="color_input.html">Color Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_in_mk1.html">Color In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_out_mk1.html">Color Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="color_ramp.html">Color Ramp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_mix.html">Color Mix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_color.html">Color by Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color_ramp.html">Color Ramp</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Texture Evaluate</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
@@ -130,6 +130,7 @@
              
   <section id="texture-evaluate">
 <h1>Texture Evaluate<a class="headerlink" href="#texture-evaluate" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189663161-48c45f22-ec8a-4973-b881-6da7fb829f11.png"><img alt="https://user-images.githubusercontent.com/14288520/189663161-48c45f22-ec8a-4973-b881-6da7fb829f11.png" src="https://user-images.githubusercontent.com/14288520/189663161-48c45f22-ec8a-4973-b881-6da7fb829f11.png" /></a>
 <p>This node evaluates a  texture at specific coordinates</p>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
@@ -145,14 +146,16 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Mapping</p></td>
-<td><p>Vectors mapping mode. Offers:
-UV Coordinates (with domain 0 to 1) and
-Object (with domain -1 to 1)</p></td>
+<td><p>Vectors mapping mode. Offers:</p>
+<p>UV Coordinates (with domain 0 to 1) and</p>
+<p>Object (with domain -1 to 1)</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Channel</p></td>
-<td><p>Color channel to output
-Offers: Red, Green, Blue, Hue, Saturation, Value, Alpha, RGB Average,
-Luminosity and Color</p></td>
+<td><p>Color channel to output</p>
+<p>Offers: Red, Green, Blue, Hue, Saturation, Value, Alpha, RGB Average,</p>
+<p>Luminosity and Color</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>Use Alpha</p></td>
 <td><p>Toggle to add alpha channel (Only when Channel is set to Color)</p></td>
@@ -168,15 +171,25 @@ Luminosity and Color</p></td>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_1.png" /></a>
 <p>Mixing 3 textures</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189663199-78a379ee-0a7c-49ba-80b3-52f31f13fe6a.png"><img alt="https://user-images.githubusercontent.com/14288520/189663199-78a379ee-0a7c-49ba-80b3-52f31f13fe6a.png" src="https://user-images.githubusercontent.com/14288520/189663199-78a379ee-0a7c-49ba-80b3-52f31f13fe6a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/vertices_mask.html"><span class="doc">Mask Vertices</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Masking mesh with texture</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png" /></a>
 <p>Blender procedural textures work in 3D space</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png" /></a>
 <p>You can input multiple textures, when joined [[texture, texture,..],[..],..] they will be used in a single set of vertices with a single output list</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_5.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189665154-9b97814d-e3b0-4e15-a886-8fe0ea2b4e1a.png"><img alt="https://user-images.githubusercontent.com/14288520/189665154-9b97814d-e3b0-4e15-a886-8fe0ea2b4e1a.png" src="https://user-images.githubusercontent.com/14288520/189665154-9b97814d-e3b0-4e15-a886-8fe0ea2b4e1a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_texture.html"><span class="doc">Texture Viewer</span></a></p></li>
+</ul>
 <p>Differences between Object Mapping and UV Coordinates mapping</p>
 </section>
 </section>
@@ -185,7 +198,7 @@ Luminosity and Color</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="formula_color.html" class="btn btn-neutral float-left" title="Color by Formula" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="color_ramp.html" class="btn btn-neutral float-left" title="Color Ramp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../logic/logic_index.html" class="btn btn-neutral float-right" title="Logic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

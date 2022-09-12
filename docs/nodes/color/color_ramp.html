@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Color Mix" href="color_mix.html" />
-    <link rel="prev" title="Color Out" href="color_out_mk1.html" /> 
+    <link rel="next" title="Texture Evaluate" href="texture_evaluate_mk2.html" />
+    <link rel="prev" title="Color by Formula" href="formula_color.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -70,6 +70,8 @@
 <li class="toctree-l3"><a class="reference internal" href="color_input.html">Color Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_in_mk1.html">Color In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_out_mk1.html">Color Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color_mix.html">Color Mix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_color.html">Color by Formula</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Color Ramp</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
@@ -79,8 +81,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="color_mix.html">Color Mix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_color.html">Color by Formula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_evaluate_mk2.html">Texture Evaluate</a></li>
 </ul>
 </li>
@@ -134,6 +134,7 @@
              
   <section id="color-ramp">
 <h1>Color Ramp<a class="headerlink" href="#color-ramp" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189643169-e8791fe1-51b4-4508-8c0f-cb4691f4e117.png"><img alt="https://user-images.githubusercontent.com/14288520/189643169-e8791fe1-51b4-4508-8c0f-cb4691f4e117.png" src="https://user-images.githubusercontent.com/14288520/189643169-e8791fe1-51b4-4508-8c0f-cb4691f4e117.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node map all the incoming values turning them to colors using the gradient you define manually through the interface.</p>
@@ -169,7 +170,13 @@ To update the output you need to click in the “Update” button or perform ano
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Basic usage:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_ramp/color_ramp_sverchok_blender_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_ramp/color_ramp_sverchok_blender_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189643223-692b702c-1d7d-41d8-993f-76765d0ce2b8.png"><img alt="https://user-images.githubusercontent.com/14288520/189643223-692b702c-1d7d-41d8-993f-76765d0ce2b8.png" src="https://user-images.githubusercontent.com/14288520/189643223-692b702c-1d7d-41d8-993f-76765d0ce2b8.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_texture.html"><span class="doc">Texture Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -177,8 +184,8 @@ To update the output you need to click in the “Update” button or perform ano
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="color_out_mk1.html" class="btn btn-neutral float-left" title="Color Out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="color_mix.html" class="btn btn-neutral float-right" title="Color Mix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="formula_color.html" class="btn btn-neutral float-left" title="Color by Formula" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="texture_evaluate_mk2.html" class="btn btn-neutral float-right" title="Texture Evaluate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

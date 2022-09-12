@@ -77,9 +77,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="color_out_mk1.html">Color Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="color_ramp.html">Color Ramp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color_mix.html">Color Mix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_color.html">Color by Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color_ramp.html">Color Ramp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_evaluate_mk2.html">Texture Evaluate</a></li>
 </ul>
 </li>
@@ -135,6 +135,7 @@
 <h1>Color In<a class="headerlink" href="#color-in" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189630585-fe6276d3-e81c-4879-9d12-e1a28b7ab089.png"><img alt="https://user-images.githubusercontent.com/14288520/189630585-fe6276d3-e81c-4879-9d12-e1a28b7ab089.png" src="https://user-images.githubusercontent.com/14288520/189630585-fe6276d3-e81c-4879-9d12-e1a28b7ab089.png" /></a>
 <p>Creates color data from ranges or number values either integer of floats.</p>
 <p>With the NumPy implementation the node will accept regular lists or lists of NumPy arrays if the arrays have two axis arrays with shape [n,3]</p>
 <p>It can also output Numpy arrays (flat arrays) when using the activating the “Output NumPy” parameter.
@@ -142,8 +143,10 @@
 </section>
 <section id="inputs-and-parameters">
 <h2>Inputs and Parameters<a class="headerlink" href="#inputs-and-parameters" title="Permalink to this heading">¶</a></h2>
-<p><strong>Use Alpha</strong> - Include alpha (transparency) data in the outputs.</p>
-<p><strong>Color space</strong> - RGB, HSV and HSL inputs are available.</p>
+<ul class="simple">
+<li><p><strong>Use Alpha</strong> - Include alpha (transparency) data in the outputs.</p></li>
+<li><p><strong>Color space</strong> - RGB, HSV and HSL inputs are available.</p></li>
+</ul>
 <ul class="simple">
 <li><p>RGB:</p>
 <ul>
@@ -182,10 +185,21 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Differences between HSV and HSL:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189630656-716363b1-02bb-4eee-8538-acb696584375.png"><img alt="https://user-images.githubusercontent.com/14288520/189630656-716363b1-02bb-4eee-8538-acb696584375.png" src="https://user-images.githubusercontent.com/14288520/189630656-716363b1-02bb-4eee-8538-acb696584375.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_texture.html"><span class="doc">Texture Viewer</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Tuning noise into color data:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_noise_hsv_sverchok_blender_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_noise_hsv_sverchok_blender_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189630696-415d23f2-a1d8-4995-8000-9beb42ab1006.png"><img alt="https://user-images.githubusercontent.com/14288520/189630696-415d23f2-a1d8-4995-8000-9beb42ab1006.png" src="https://user-images.githubusercontent.com/14288520/189630696-415d23f2-a1d8-4995-8000-9beb42ab1006.png" /></a>
 <p>Gist: <a class="reference external" href="https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed">https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed</a></p>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_texture.html"><span class="doc">Texture Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 

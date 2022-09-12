@@ -1,6 +1,9 @@
 Color by Formula
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189641212-68f98b04-5fcb-4670-9821-dd46aa04b9d9.png
+  :target: https://user-images.githubusercontent.com/14288520/189641212-68f98b04-5fcb-4670-9821-dd46aa04b9d9.png
+
 Functionality
 -------------
 
@@ -26,4 +29,6 @@ resulted colors to red, green, blue and alpha elements of which was applied expr
 
 Example of usage
 ----------------
+
 .. image:: https://user-images.githubusercontent.com/22656834/37774133-44806c24-2e01-11e8-85ba-361a18315ff9.png
+    :target: https://user-images.githubusercontent.com/22656834/37774133-44806c24-2e01-11e8-85ba-361a18315ff9.png
