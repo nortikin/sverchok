@@ -75,7 +75,7 @@ def oscillator(params, constant, matching_f):
 class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sine, Saw, Square
-    Tooltip: Generate a oscillating values from a lineal values .
+    Tooltip: Generate a oscillating values from a lineal values\n\tFunction: [Sine], Square, Saw, Triangle, Custom\n\tvalue: [.0]\n\tAmplitude: [1.]\n\tPeriod: 1.\n\tPhase: [1.]\n\tOffset: [1.]\n\tWave: List(verts)
     """
     bl_idname = 'SvOscillatorNode'
     bl_label = 'Oscillator'
@@ -90,11 +90,11 @@ class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
         name="Function", description="Function choice", default="Sine",
         items=mode_Items, update=mode_change)
 
-    x_: FloatProperty(default=1.0, name='Value', update=updateNode)
-    amplitude: FloatProperty(default=1.0, name='Amplitude', update=updateNode)
-    period: FloatProperty(default=1.0, name='Period', update=updateNode)
-    phase: FloatProperty(default=1.0, name='Phase', update=updateNode)
-    addition: FloatProperty(default=1.0, name='Offset', update=updateNode)
+    x_: FloatProperty(default=1.0, name='Value', update=updateNode, description="Point(s) in time to evaluate")
+    amplitude: FloatProperty(default=1.0, name='Amplitude', update=updateNode, description="Amplitude of the wave")
+    period: FloatProperty(default=1.0, name='Period', update=updateNode, description="Time (Value) to make a full cycle of the wave")
+    phase: FloatProperty(default=1.0, name='Phase', update=updateNode, description="Starting Phase of the wave")
+    addition: FloatProperty(default=1.0, name='Offset', update=updateNode, description="Value added the wave")
 
 
     wave_interp_modes = [('SPL', 'Cubic', "Cubic Spline", 0),

@@ -130,6 +130,23 @@ class SearchTree:
 
         return set(bfs_walk(from_nodes, node_walker_to))
 
+    def node_from_input(self, in_socket: NodeSocket) -> Optional['SvNode']:
+        """It expects input socket and returns connected node to it.
+        If socket is not connected it returns None"""
+        prev_sock = self._from_sock.get(in_socket)
+        return prev_sock and self._sock_node[prev_sock]
+
+    def nodes_from_socket(self, socket: NodeSocket) -> list['SvNode']:
+        """Returns linked to the given socket nodes.
+        The list will be empy if the socket is not connected.
+        Connected input socket will always return list with one node"""
+        if socket.is_output:
+            next_socks = self._to_socks.get(socket, [])
+            return [self._sock_node[s] for s in next_socks]
+        else:
+            prev_sock = self._from_sock.get(socket)
+            return [self._sock_node[s] for s in [prev_sock] if s is not None]
+
     def nodes_to(self, to_nodes: Iterable['SvNode']) -> set['SvNode']:
         """Returns all previous nodes from given ones"""
         def node_walker_from(node_: 'SvNode'):
@@ -154,6 +171,11 @@ class SearchTree:
         """Return output sockets connected to input ones of given node
         If input socket is not linked the output socket will be None"""
         return [self._from_sock.get(s) for s in node.inputs]
+
+    def socket_from_input(self, in_socket: NodeSocket) -> Optional[NodeSocket]:
+        """It expects input socket and returns opposite connected socket to it.
+        If socket is not connected it returns None"""
+        return self._from_sock.get(in_socket)
 
     def update_node(self, node: 'SvNode', suppress=True):
         """Fetches data from previous node, makes data conversion if connected

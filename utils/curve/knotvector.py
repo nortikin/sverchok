@@ -145,12 +145,16 @@ def concatenate(kv1, kv2, join_multiplicity):
     kv_m = [(k, kv_m[k]) for k in sorted(kv_m.keys())]
     return from_multiplicity(kv_m)
 
-def elevate_degree_pairs(pairs, delta=1):
+def change_degree_pairs(pairs, delta=1):
     return [(u, count+delta) for u, count in pairs]
 
 def elevate_degree(knot_vector, delta=1):
     pairs = to_multiplicity(knot_vector)
-    return from_multiplicity(elevate_degree_pairs(pairs, delta))
+    return from_multiplicity(change_degree_pairs(pairs, delta))
+
+def reduce_degree(knot_vector, delta=1):
+    pairs = to_multiplicity(knot_vector)
+    return from_multiplicity(change_degree_pairs(pairs, -delta))
 
 def insert(knot_vector, u, count=1):
     idx = np.searchsorted(knot_vector, u)

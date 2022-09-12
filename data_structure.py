@@ -1277,9 +1277,14 @@ def update_with_kwargs(update_function, **kwargs):
 
 
 def changable_sockets(node, inputsocketname, outputsocketname):
-    '''
+    """
+    It changes types of output sockets according to type of socket (other)
+    connected to given input socket name
+    !!! It does not work if the node have outputs with the same names !!!
+    If input socket is not connected or its type is equal to type of
+    first output socket it does nothing
     arguments: node, name of socket to follow, list of socket to change
-    '''
+    """
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet,
         # - or socketname incorrect
@@ -1299,27 +1304,36 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if outputs[outputsocketname[0]].bl_idname != s_type:
             to_links = {}
             idx = {}
-            #gather info
+            # gather info
             for n in outputsocketname:
                 out_socket = outputs[n]
                 idx[n] = out_socket.index
                 to_links[n] = [l.to_socket for l in out_socket.links]
-            #remove sockets
+            # add sockets and copy options
             for n in outputsocketname:
                 out_socket = outputs[n]
-                outputs.remove(outputs[n])
-            #add sockets and place them
-            for n in outputsocketname:
                 new_out_socket = outputs.new(s_type, n)
-                outputs.move(len(outputs)-1, idx[n])
+                new_out_socket.copy_options(out_socket)
+            # remove sockets
+            for n in outputsocketname[::-1]:
+                old_sock_ind = idx[n]
+                outputs.remove(outputs[old_sock_ind])
+            # place sockets and return links
+            for i, n in enumerate(outputsocketname):
+                new_sock_ind = len(inputsocketname) - i
+                outputs.move(len(outputs)-new_sock_ind, idx[n])
                 for to_socket in to_links[n]:
                     ng.links.new(to_socket, new_out_socket)
 
 
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
-    '''
+    """
     Replace a socket with a socket of new_type and keep links
-    '''
+
+    is_linked attribute of replaced socket will be False
+    whether it is connected or not - https://developer.blender.org/T82318
+    """
+    # note: it seems impossible to replace one socket more efficient
 
     socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index
@@ -1329,8 +1343,9 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         outputs = socket.node.outputs
         to_sockets = [l.to_socket for l in socket.links]
 
-        outputs.remove(socket)
         new_socket = outputs.new(new_type, socket_name)
+        new_socket.copy_options(socket)
+        outputs.remove(socket)
         outputs.move(len(outputs)-1, socket_pos)
 
         for to_socket in to_sockets:

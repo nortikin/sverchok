@@ -50,9 +50,6 @@ class SvSurfaceRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'direction', expand=True)
-
-    def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
         layout.prop(self, 'tolerance')
 
     def process(self):

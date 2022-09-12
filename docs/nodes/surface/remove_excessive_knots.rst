@@ -26,9 +26,8 @@ This node has the following parameters:
 * **Direction**. This defines, in which parametric directions should the knot
   removal procedure be performed. The available options are **U+V** (both
   directions), **U** and **V**. The default value is **U+V**.
-* **Tolerance**. This parameter is available in the N panel only. This defines
-  how much is it allowed to change the shape of the surface by knot removal
-  procedure. The default value is ``10^-6``.
+* **Tolerance**. This defines how much is it allowed to change the shape of the
+  surface by knot removal procedure. The default value is ``10^-6``.
 
 Outputs
 -------

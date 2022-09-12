@@ -21,10 +21,10 @@ CONTROL2_SOCKET = 2
 class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bezier Hermite Spline
-    Tooltip: Generate Bezier curve spline
+    Tooltip: Generate Bezier curve spline segment
     """
     bl_idname = 'SvBezierSplineNode'
-    bl_label = 'Bezier Spline (Curve)'
+    bl_label = 'Bezier Spline Segment (Curve)'
     bl_icon = 'IPO_BEZIER'
 
     def update_sockets(self, context):

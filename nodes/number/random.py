@@ -26,7 +26,10 @@ from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class RandomNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Random numbers 0-1'''
+    ''' Random numbers 0.0-1.0.
+    Count
+    Seed
+    '''
     bl_idname = 'RandomNode'
     bl_label = 'Random'
     bl_icon = 'RNDCURVE'

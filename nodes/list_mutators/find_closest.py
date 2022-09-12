@@ -15,7 +15,13 @@ from sverchok.data_structure import repeat_last, fixed_iter
 
 
 class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
-    """Triggers: find search closest"""
+    """Triggers: find search closest
+    [[4,0,3,3]] val 5 =>
+        values: [[4]]
+        indexes: [[0]]
+    [[5,0,3,7,8]] val 5, range 2 =>
+        values: [[3,5,7]]
+        indexes: [[2,0,3]]"""
     bl_idname = 'SvFindClosestValue'
     bl_label = 'Find Closest Value'
     bl_icon = 'VIEWZOOM'
@@ -63,7 +69,7 @@ class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
                 values = np.fromiter(repeat_last(v), float, count=len_input)
                 range_values = np.fromiter(repeat_last(r), float, count=len_input)
                 l_values = values - range_values
-                l_indexes = np.searchsorted(extended_data, l_values, side='right', sorter=sorting_indexes)
+                l_indexes = np.searchsorted(extended_data, l_values, side='left', sorter=sorting_indexes)
                 r_values = values + range_values
                 r_indexes = np.searchsorted(extended_data, r_values, side='right', sorter=sorting_indexes)
                 closest_indexes = [[sorting_indexes[i] for i in range(l, r)] for l, r in zip(l_indexes, r_indexes)]

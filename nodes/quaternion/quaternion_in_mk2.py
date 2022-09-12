@@ -47,7 +47,7 @@ input_sockets = {
 class SvQuaternionInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Quaternions, In
-    Tooltip: Generate quaternions from various quaternion components
+    Tooltip: Generate quaternions from various quaternion components. [def]\n\tFormat: [WXYZ]/Scalar Vector/Euler Angles/Axis Angle/Matrix\n\tNormalize: On/[Off]\n\tComponents WXYZ\n\tEuler Order: [XYZ]..ZYX\n\tAngles XYZ\n\tAxis_Angle\n\tMatrix
     """
     bl_idname = 'SvQuaternionInNodeMK2'
     bl_label = 'Quaternion In'

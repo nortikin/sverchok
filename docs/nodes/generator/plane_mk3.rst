@@ -1,6 +1,12 @@
 Plane
 =====
 
+.. image:: https://user-images.githubusercontent.com/14288520/188589996-04c36fed-4aa5-4516-9eb6-a0d2b8367f52.png
+  :target: https://user-images.githubusercontent.com/14288520/188589996-04c36fed-4aa5-4516-9eb6-a0d2b8367f52.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/188585376-c4853550-2093-4b10-b9f9-f94185508387.png
+  :target: https://user-images.githubusercontent.com/14288520/188585376-c4853550-2093-4b10-b9f9-f94185508387.png
+
 Functionality
 -------------
 
@@ -63,25 +69,62 @@ All outputs will be generated. Depending on the type of the inputs, the node wil
 Example of usage
 ----------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/188587154-3bd2509a-7060-42a5-a4dd-c3020b02ac5d.png
+  :target: https://user-images.githubusercontent.com/14288520/188587154-3bd2509a-7060-42a5-a4dd-c3020b02ac5d.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/188587078-258847a6-f6df-4cab-84a5-6ca136388bd4.gif
+  :target: https://user-images.githubusercontent.com/14288520/188587078-258847a6-f6df-4cab-84a5-6ca136388bd4.gif
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
 Generating the same grid with different modes:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_0.png
+
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 
 Using the 'Steps' mode to control the grid spacing
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_01.png
 
-In the 'Steps + Size' mode the step list is used to control the proportion of the spacing between Vertices
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+In the 'Si + St' mode (Size + Steps) the step list is used to control the proportion of the spacing between Vertices
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_02.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 With the list matching in 'cycle' advanced rhythms can be achieved.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_03.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 The matrix input is be vectorized and accepts many lists of matrixes, note in this example that the 'Flat Output' of the 'Matrix In' node is un-checked.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/plane/plane_node_sverchok_example_04.png
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 - The first 'Line' node generates one line with two verts.
 - The second 'Line' node generates two lines with five verts.

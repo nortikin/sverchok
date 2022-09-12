@@ -16,7 +16,7 @@ from sverchok.utils.modules import sv_bmesh
 class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: cricket
-    Tooltip:  lowpoly cricket model
+    Tooltip:  Lowpoly cricket model. [default]\n\tScale: [4.0]
     
     """
 

@@ -22,7 +22,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from numpy import ndarray
 
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Float2Int '''
+    ''' Converts incoming Float values to the nearest whole number (Integer).
+    float: input List() of float values
+    [[2.07]] -> [[2]]
+    [[0.3, 0.6, 43.1, 25.87]] => [[0, 1, 43, 26]]
+    '''
     bl_idname = 'Float2IntNode'
     bl_label = 'Float to Integer'
     bl_icon = 'OUTLINER_OB_EMPTY'

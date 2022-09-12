@@ -18,10 +18,12 @@
 
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty
-
+from sverchok.core.update_system import UpdateTree, SearchTree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_4, numpy_list_match_modes
 from sverchok.utils.sv_node_utils import frame_adjust
+from sverchok.utils.nodes_mixins.loop_nodes import LoopNode
+
 
 class SvCreateLoopOut(bpy.types.Operator):
 
@@ -57,7 +59,7 @@ class SvUpdateLoopInSocketLabels(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
+class SvLoopInNode(LoopNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: For Loop Start,
     Tooltip: Start node to define a nodes for-loop.
@@ -99,6 +101,7 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             self.outputs[1].label = 'Loop Number'
             self.outputs[2].label = 'Total Loops'
+        self.sv_update()
         updateNode(self, context)
 
     mode: EnumProperty(
@@ -147,41 +150,51 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             layout.prop_menu_enum(self, 'list_match')
 
-
     def sv_update(self):
+        in_util_socks = 1
+        out_util_socks = 3
+        search_tree = SearchTree(self.id_data)  # can be invalid after replacing sockets
+        self.repeat_last_socket(search_tree, min_input=in_util_socks+1)
+        self.fix_output_types(search_tree, in_start=in_util_socks, out_start=out_util_socks)
 
-        # socket handling
-        if self.inputs[-1].links:
-            name_input = 'Data '+str(len(self.inputs)-1)
-            name_output = 'Data '+str(len(self.inputs)-2)
-            other_socket = self.inputs[-1].other
-            new_label = other_socket.label if other_socket.label else other_socket.name
-            self.inputs[-1].label = new_label
-            self.inputs.new('SvStringsSocket', name_input)
-            self.outputs.new('SvStringsSocket', name_output)
+        loop_outs = search_tree.nodes_from_socket(self.outputs[0])
+        self.linked_to_loop_out = bool(loop_outs)
+        if not loop_outs or loop_outs[0].bl_idname != 'SvLoopOutNode':
+            return
+
+        # fix Loop Out node
+        loop_out = loop_outs[0]
+        in_util_socks_other = 2
+        if loop_out.mode != self.mode:
+            loop_out.change_mode(self)
+        if self.mode == 'Range':
+            data_socks = len(self.inputs) - in_util_socks
+            self.fix_socket_number(loop_out.inputs, data_socks+in_util_socks_other-1)
+            self.fix_socket_number(loop_out.outputs, data_socks-1)
+            other_socks = [search_tree.socket_from_input(s) for s in self.inputs[in_util_socks:]]
+            self.copy_sockets(other_socks, loop_out.inputs[in_util_socks_other:], 'bl_idname')
+            self.copy_sockets(other_socks, loop_out.outputs, 'bl_idname')
+            self.copy_sockets(self.inputs[in_util_socks:], loop_out.outputs, 'label')
+            self.copy_sockets(self.inputs[in_util_socks:],
+                              loop_out.inputs[in_util_socks_other:],
+                              'label')
         else:
-            while len(self.inputs) > 2 and not self.inputs[-2].links:
-                self.inputs.remove(self.inputs[-1])
-                self.outputs.remove(self.outputs[-1])
-        # match input socket n with output socket n
-        for idx, socket in enumerate(self.inputs[1:]):
+            loop_out.repeat_last_socket(search_tree, min_input=in_util_socks_other+1)
+            loop_out.fix_output_types(search_tree, in_start=in_util_socks_other)
 
-            if socket.links:
-
-                if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
-                    self.outputs.remove(self.outputs[socket.name])
-                    self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
-                    self.outputs.move(len(self.outputs)-1, idx+3)
-        for inp, outp in zip(self.inputs[1:], self.outputs[3:]):
-            outp.label = inp.label
-        if self.outputs:
-            if self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
-                self.linked_to_loop_out = True
-            else:
-                self.linked_to_loop_out = False
+    @property
+    def loop_out_nodes(self):
+        """Should be called only from process method"""
+        # the support of several Loop Out nodes is not intentional.
+        # It's possible to overcome the limitation of connection to
+        # Loop Out socket by copying Loop Out node with links (Ctrl+Shift+D)
+        # or by using reroutes
+        nodes = UpdateTree.get(self.id_data).nodes_from_socket(self.outputs[0])
+        return [n for n in nodes if n.bl_idname == 'SvLoopOutNode']
 
     def process(self):
-
+        if len(self.loop_out_nodes) > 1:
+            raise RuntimeError("The node can be connected to one Loop Out node only")
 
         self.outputs[0].sv_set([["Link to Loop Out node"]])
         self.outputs[1].sv_set([[0]])
@@ -197,7 +210,6 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
                 lens.append(len(data))
                 outp.sv_set([data[0]])
             self.outputs[2].sv_set([[max(lens)]])
-
 
 
 def register():

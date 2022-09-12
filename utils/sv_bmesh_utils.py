@@ -652,6 +652,7 @@ def fill_verts_layer(bm, vert_mask, layer_name, layer_type, value, invert_mask =
         if mask != invert_mask:
             vert[layer] = value
 
+
 def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortest_path = False):
     """
     Given initial faces, markup all mesh faces by wave algorithm:
@@ -694,13 +695,10 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
         path_prev_index = bm.faces.layers.int.new("wave_path_prev_index")
         path_prev_distance = bm.faces.layers.float.new("wave_path_prev_distance")
         path_distance = bm.faces.layers.float.new("wave_path_distance")
+    is_reached = bm.faces.layers.int.new("is_reached")  # True for painted faces
     obstacles = bm.faces.layers.int.get("wave_obstacle")
     bm.faces.ensure_lookup_table()
     bm.faces.index_update()
-    if obstacles is None:
-        n_total = len(bm.faces)
-    else:
-        n_total = len([face for face in bm.faces if face[obstacles] == 0])
 
     if find_shortest_path:
         face_center = dict([(face.index, face.calc_center_median()) for face in bm.faces])
@@ -723,11 +721,12 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
     if find_shortest_path:
         for face in init_faces:
             face[init_index] = face.index
-    while len(done) < n_total:
+    while wave_front:
         step += 1
         new_wave_front = set()
         for face in wave_front:
             face[index] = step
+            face[is_reached] = 1
         for face in wave_front:
             if find_shortest_path:
                 this_center = face_center[face.index]
@@ -750,7 +749,18 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
         done.update(wave_front)
         wave_front = new_wave_front
 
+    # fix values for unpainted faces
+    for face in bm.faces:
+        if not face[is_reached] and not is_obstacle(face):
+            # is obstacle can be removed in next version to be consistent with
+            # unreached parts of the mesh
+            face[index] = -1
+            if find_shortest_path:
+                face[path_distance] = -1
+                face[init_index] = -1
+
     return [face[index] for face in bm.faces]
+
 
 def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortest_path = False):
     """
@@ -767,12 +777,9 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
         path_prev_distance = bm.verts.layers.float.new("wave_path_prev_distance")
         path_distance = bm.verts.layers.float.new("wave_path_distance")
     obstacles = bm.verts.layers.int.get("wave_obstacle")
+    is_reached = bm.verts.layers.int.new("is_reached")  # True for painted verts
     bm.verts.ensure_lookup_table()
     bm.verts.index_update()
-    if obstacles is None:
-        n_total = len(bm.verts)
-    else:
-        n_total = len([vert for vert in bm.verts if vert[obstacles] == 0])
 
     init_verts = [vert for vert, mask in zip(bm.verts[:], init_vert_mask) if mask]
     if not init_verts:
@@ -790,11 +797,12 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
     if find_shortest_path:
         for vert in init_verts:
             vert[init_index] = vert.index
-    while len(done) < n_total:
+    while wave_front:
         step += 1
         new_wave_front = set()
         for vert in wave_front:
             vert[index] = step
+            vert[is_reached] = 1
         for vert in wave_front:
             for other_vert in get_neighbour_verts(vert, neighbour_by_edge):
                 if is_obstacle(other_vert):
@@ -814,7 +822,18 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
         done.update(wave_front)
         wave_front = new_wave_front
 
+    # fix values for unpainted vertices
+    for vert in bm.verts:
+        if not vert[is_reached] and not is_obstacle(vert):
+            # is obstacle can be removed in next version to be consistent with
+            # unreached parts of the mesh
+            vert[index] = -1
+            if find_shortest_path:
+                vert[path_distance] = -1
+                vert[init_index] = -1
+
     return [vert[index] for vert in bm.verts]
+
 
 def bmesh_bisect(bm, point, normal, fill):
     bm.normal_update()

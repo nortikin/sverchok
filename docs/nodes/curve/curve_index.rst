@@ -57,6 +57,8 @@ Curves
    remove_knot
    refine_nurbs_curve
    remove_excessive_knots
+   elevate_degree
+   reduce_degree
    adaptive_plot_nurbs
    catenary_curve
    bezier_fit

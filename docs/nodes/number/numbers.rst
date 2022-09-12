@@ -1,6 +1,9 @@
 A Number
 ========
 
+.. image:: https://user-images.githubusercontent.com/14288520/188991980-17fc419c-a7e2-4c60-9ff9-c464277adab3.png
+  :target: https://user-images.githubusercontent.com/14288520/188991980-17fc419c-a7e2-4c60-9ff9-c464277adab3.png
+
 Functionality
 -------------
 
@@ -42,3 +45,8 @@ Examples
 --------
 
 see https://github.com/nortikin/sverchok/pull/1450 for examples
+
+.. image:: https://user-images.githubusercontent.com/14288520/188992296-6c13d18d-93d1-48cb-8614-4c3ca687be6a.gif
+  :target: https://user-images.githubusercontent.com/14288520/188992296-6c13d18d-93d1-48cb-8614-4c3ca687be6a.gif
+
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

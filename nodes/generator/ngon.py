@@ -79,7 +79,15 @@ def make_faces(nsides, shift, divs):
     return [face]
 
 class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' NGon '''
+    ''' NGon. [default]
+    Radius: [1.]
+    N Sides, min=3: [5]
+    Divisions, min=1: [1]
+    Random Radius, min=0.0: [0.]
+    Random Phi, range: 0-pi: [0.]
+    Seed: [0.0]
+    Shift (Star Factor), min=0: [0]
+'''
     bl_idname = 'SvNGonNode'
     bl_label = 'NGon'
     bl_icon = 'RNDCURVE'

@@ -8,10 +8,11 @@
 [![Sverchok CI](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml/badge.svg?event=push)](https://github.com/nortikin/sverchok/actions/workflows/test-sverchok.yml)
 [![Building documentation](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml/badge.svg)](https://github.com/nortikin/sverchok/actions/workflows/docs_builder.yml)
 <a href="https://discord.gg/pjHHhjJz8Z"><img alt="Discord" src="https://img.shields.io/discord/745273148018262158"></a>
-[![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok)](https://blender.stackexchange.com/questions/tagged/sverchok)
-![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/Proposal)
-![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/bug)
+[![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok?label=StackExchange)](https://blender.stackexchange.com/questions/tagged/sverchok)
+![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/Proposal%20:bulb:?color=%237de57b&label=Proposal)
+![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/bug%20:bug:?color=%23f4f277&label=Bug)
 
+[comment]: <> (To get more labels or edit current go to https://shields.io/, type Github in project URL field and you will get available labels which can be customized)
 
 ## English
 

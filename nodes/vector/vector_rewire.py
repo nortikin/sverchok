@@ -28,7 +28,11 @@ mode_options = [(n, n, '', idx) for idx, n in enumerate(options)]
 mode_options2 = [(n, n, '', idx) for idx, n in enumerate(options2)]
 
 class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
-    ''' Rewire components of a vector'''
+    '''Rewire components of a vector. Swap Vector components.
+    In: Vectors, scalar [.0]
+    Params: [X/Y/Z/Scalar] <=>[X/Y/Z]
+    Out: Vectors
+    '''
     bl_idname = 'SvVectorRewire'
     bl_label = 'Vector Rewire'
     bl_icon = 'OUTLINER_OB_EMPTY'

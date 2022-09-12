@@ -34,7 +34,11 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 
 
 class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Variable lacunarity node'''
+    '''Variable lacunarity node.
+    In: Vertices, Seed, Distortion
+    Params: Type1, Type2 Blender/[Perlin]/Voronoi/Cellnoise
+    Out: Value - Floats in the range -1.0 to 1.0A
+    '''
     bl_idname = 'SvLacunarityNode'
     bl_label = 'Variable Lacunarity'
     bl_icon = 'FORCE_TURBULENCE'
@@ -52,7 +56,7 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
         description="Noise type",
         update=updateNode)
 
-    distortion: FloatProperty(default=0.2, name="Distortion", update=updateNode)
+    distortion: FloatProperty(default=0.2, name="Distortion", update=updateNode, description="Accepts floats values, modulate the two noise basis")
     seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):

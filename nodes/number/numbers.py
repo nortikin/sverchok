@@ -45,7 +45,12 @@ def uset(self, value, origin, min_prop, max_prop):
 
 
 class SvNumberNode(Show3DProperties, DraftMode, bpy.types.Node, SverchCustomTreeNode):
-    ''' Integer  / Float '''
+    ''' Integer / Float input value. [default]
+    mode: [float] / int
+    limits float: min / max [-500/+500]
+    limits int: min / max [-1024/+1024]
+    a float: [0.] - input value
+    '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'
     bl_icon = 'DOT'

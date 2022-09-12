@@ -1,7 +1,8 @@
 NGon
 ====
 
-*destination after Beta: generators*
+.. image:: https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png
+  :target: https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png
 
 Functionality
 -------------
@@ -48,14 +49,19 @@ All parameters can be given by the node or an external input.
 | Param          | Type          | Default     | Description                                                 |
 +================+===============+=============+=============================================================+
 | **Radius**     | Float         | 1.00        | Radius of escribed circle. When ``RandomR`` is zero,        |
+|                |               |             |                                                             |
 |                |               |             | then all vertices will be at this distance from origin.     |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **N Sides**    | Int           | 5           | Number of sides of polygon to generate. With higher         |
+|                |               |             |                                                             |
 |                |               |             | values and ``Shift`` = 0, ``RandomR`` = 0, ``RandomPhi``    |
+|                |               |             |                                                             |
 |                |               |             | = 0, you will get the same output as from Circle node.      |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **Divisions**  | Int           | 1           | Divide each side of the polygon to specified number of      |
+|                |               |             |                                                             |
 |                |               |             | segments. For example, with ``Divisions`` = 2, there will   |
+|                |               |             |                                                             |
 |                |               |             | be an additional vertex at the middle of each side.         |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **RandomR**    | Float         | 0.0         | Amplitude of randomization of vertices along radius.        |
@@ -66,8 +72,11 @@ All parameters can be given by the node or an external input.
 |                |               |             | ``RandomPhi`` != 0.                                         |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **Shift**      | Int           | 0           | Also known as "star factor". When this is zero, each vertex |
+|                |               |             |                                                             |
 |                |               |             | is connected by edge to next one, and you will get usual    |
+|                |               |             |                                                             |
 |                |               |             | polygon. Otherwise, n'th vertex will be connected to        |
+|                |               |             |                                                             |
 |                |               |             | (n+shift+1)'th. In this case, you will get sort of star.    |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 
@@ -91,24 +100,29 @@ Examples
 Sides=5, Shift=0, RandomR=0, RandomPhi=0 (default values):
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png
 
 Sides=6, RandomPhi=0.3:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png
 
 Sides=6, RandomR=0.3:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png
 
 Sides=7, Shift=1, RandomR=0.24, RandomPhi=0.15:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png
 
 Sides=29, Shift=9, RandomR=0, RandomPhi=0:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png
 
 Example of use of **Divisions** input:
 
 .. image:: https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png
-
+    :target: https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png

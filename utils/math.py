@@ -385,6 +385,17 @@ def _gcd(a, b):
     return a
 
 def distribute_int(n, sizes):
+    """
+    Distribute the integer number (`n`) of items among several buckets of
+    different sizes, so that the number of items in each bucket is proportional
+    to bucket's size.
+    Parameters:
+    * n - total number of items (integer)
+    * sizes - sizes of buckets do distribute between (list of numbers)
+    Output:
+    * list of integers: for each bucket, the number of items to be put
+        into that bucket. Sum of all numbers in this list is always equal to `n`.
+    """
     total_size = sum(sizes)
     ratios = [size / total_size for size in sizes]
     counts = [int(n * ratio) for ratio in ratios]

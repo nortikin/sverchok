@@ -50,22 +50,22 @@ def random_vector(params, constant, matching_f):
 class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: rv Random unit Vec
-    Tooltip: Generate Random Vectors of defined magnitude.
+    Tooltip: Generate Random Vectors of defined magnitude. [default]\n\tCount, min=1: [1]\n\tSeed: [1]\n\tScale: [1.0]
     """
     bl_idname = 'RandomVectorNodeMK3'
     bl_label = 'Random Vector'
     bl_icon = 'RNDCURVE'
 
     count_inner: IntProperty(
-        name='Count', description='random', default=1, min=1,
+        name='Count', description='Number of random vectors numbers to spit out', default=1, min=1,
         options={'ANIMATABLE'}, update=updateNode)
 
     scale: FloatProperty(
-        name='Scale', description='scale for vectors', default=1.0,
+        name='Scale', description='Scale for Vectors', default=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
     seed: IntProperty(
-        name='Seed', description='random seed', default=1,
+        name='Seed', description='Random Seed', default=1,
         options={'ANIMATABLE'}, update=updateNode)
 
     list_match: EnumProperty(

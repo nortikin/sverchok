@@ -1,5 +1,5 @@
-Bezier Spline (Curve)
-=====================
+Bezier Spline Segment (Curve)
+=============================
 
 Functionality
 -------------

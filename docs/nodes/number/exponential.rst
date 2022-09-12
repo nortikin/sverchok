@@ -1,7 +1,8 @@
 Exponential Sequence
 ====================
 
-*destination after Beta: Number*
+.. image:: https://user-images.githubusercontent.com/14288520/189185050-cfe71e89-3201-4b88-a6aa-8c72aedd5d2f.png
+  :target: https://user-images.githubusercontent.com/14288520/189185050-cfe71e89-3201-4b88-a6aa-8c72aedd5d2f.png
 
 Functionality
 -------------
@@ -26,22 +27,28 @@ This node has the following parameters:
 | Parameter      | Type          | Default     | Description                                        |
 +================+===============+=============+====================================================+
 | **Mode**       | Enum: Log or  | Log         | If Log, then x_n = x0*exp(alpha*n).                |
-|                | Base          |             | If Base, then x_n = x0*base^n.                     |
+|                | Base          |             |                                                    |
+|                |               |             | If Base, then x_n = x0*base^n.                     |
 +----------------+---------------+-------------+----------------------------------------------------+
 | **X0**         | Float         | 1.0         | Item of sequence for N=0.                          |
 +----------------+---------------+-------------+----------------------------------------------------+
-| **Alpha**      | Float         | 0.1         | Coefficient in formula exp(alpha*n). Used only in  |
-|                |               |             | Log mode.                                          |
+| **Alpha**      | Float         | 0.1         | Coefficient in formula exp(alpha*n).               |
+|                |               |             |                                                    |
+|                |               |             | Used only in Log mode.                             |
 +----------------+---------------+-------------+----------------------------------------------------+
-| **Base**       | Float         | 2.0         | Exponential base in formula base^n. Used only in   |
-|                |               |             | Base mode.                                         |
+| **Base**       | Float         | 2.0         | Exponential base in formula base^n.                |
+|                |               |             |                                                    |
+|                |               |             | Used only in Base mode.                            |
 +----------------+---------------+-------------+----------------------------------------------------+
 | **N from**     | Int           | 0           | Minimal value of N.                                |
 +----------------+---------------+-------------+----------------------------------------------------+
 | **N to**       | Int           | 10          | Maximal value of N.                                |
 +----------------+---------------+-------------+----------------------------------------------------+
 | **Max**        | Float         | 0.0         | If non-zero, then all output sequence will be      |
-|                |               |             | re-scaled so that maximum of absolute values will  |
+|                |               |             | re-scaled                                          |
+|                |               |             |                                                    |
+|                |               |             | so that maximum of absolute values will            |
+|                |               |             |                                                    |
 |                |               |             | be equal to number specified.                      |
 +----------------+---------------+-------------+----------------------------------------------------+
 
@@ -59,8 +66,11 @@ Example of usage
 Given simplest nodes setup:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5692369/d73d4846-9914-11e4-9bf3-133427d8d069.png
+    
 
 you will have something like:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png
+    :target: https://cloud.githubusercontent.com/assets/284644/5692368/d6e3f8fe-9914-11e4-81cf-d6dffda3b359.png
 

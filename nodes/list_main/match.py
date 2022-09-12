@@ -95,18 +95,12 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
             while len(self.inputs) > 2 and not self.inputs[-2].links:
                 self.inputs.remove(self.inputs[-1])
                 self.outputs.remove(self.outputs[-1])
-        # check number of connections and type match input socket n with output socket n
-        count_inputs = 0
-        count_outputs = 0
+        # check type match input socket n with output socket n
         for idx, socket in enumerate(self.inputs):
-            if socket.name in self.outputs and self.outputs[socket.name].links:
-                count_outputs += 1
             if socket.links:
-                count_inputs += 1
-                if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
-                    self.outputs.remove(self.outputs[socket.name])
-                    self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
-                    self.outputs.move(len(self.outputs)-1, idx)
+                from_sock = socket.links[0].from_socket
+                if from_sock.bl_idname != self.outputs[socket.name].bl_idname:
+                    self.outputs[socket.name].replace_socket(from_sock.bl_idname)
 
     def process(self):
         # check inputs and that there is at least one output
