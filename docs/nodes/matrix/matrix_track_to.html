@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Matrix Shear" href="shear.html" />
-    <link rel="prev" title="Matrix Math" href="matrix_math.html" /> 
+    <link rel="next" title="Matrix Math" href="matrix_math.html" />
+    <link rel="prev" title="Matrix Normal" href="matrix_normal.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,15 +65,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Track To</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -83,9 +83,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -140,6 +139,7 @@
              
   <section id="matrix-track-to">
 <h1>Matrix Track To<a class="headerlink" href="#matrix-track-to" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189595208-d6f50d63-ea5f-42b5-bb7f-85d16751b606.png"><img alt="https://user-images.githubusercontent.com/14288520/189595208-d6f50d63-ea5f-42b5-bb7f-85d16751b606.png" src="https://user-images.githubusercontent.com/14288520/189595208-d6f50d63-ea5f-42b5-bb7f-85d16751b606.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates the transformation <strong>matrix</strong> given a location, a scale and a rotation defined by the given set of Track &amp; Up vectors.</p>
@@ -187,8 +187,9 @@
 <p>Z Y</p>
 </td>
 <td><p>X Y</p></td>
-<td><p>Selects which of the X,Y,Z axes are the Track
-axis and the Up axis.</p></td>
+<td><p>Selects which of the X,Y,Z axes are the Track</p>
+<p>axis and the Up axis.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Track/Up Mapping</strong></p></td>
 <td><p>Enum:</p>
@@ -262,21 +263,22 @@ axis and the Up axis.</p></td>
 <tr class="row-even"><td><p><strong>Normalize Vectors</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>Normalize the output X, Y, Z vectors and
-the rotation component of the matrix.</p>
-<p>Turn this OFF when normalization is not
-needed to optimize computation.</p>
+<td><p>Normalize the output X, Y, Z vectors and</p>
+<p>the rotation component of the matrix.</p>
+<p>Turn this OFF when normalization is not</p>
+<p>needed to optimize computation.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Flat Output</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>While active it will join the first level to
-output a regular  matrix list ([M,M,..]) that
-can be plugged  to any other node.
-If it is disabled the node will keep the
-original structure outputting a list of
-matrix lists ([[M,M,..],[M,M,..],..]).</p></td>
+<td><p>While active it will join the first level to</p>
+<p>output a regular  matrix list ([M,M,..]) that</p>
+<p>can be plugged  to any other node.</p>
+<p>If it is disabled the node will keep the</p>
+<p>original structure outputting a list of</p>
+<p>matrix lists ([[M,M,..],[M,M,..],..]).</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -285,11 +287,14 @@ matrix lists ([[M,M,..],[M,M,..],..]).</p></td>
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Matrix</strong>, <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong>.
 All outputs will be generated when connected.</p>
-<p>The <strong>Matrix</strong> is the homogeneous 4x4 matrix composed by the given location, rotation and scale : m = T * R * S. [1]</p>
-<p>The <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong> are the orthonormal vectors, oriented along the Track and Up axes. [2]</p>
-<p>Notes:
-[1] : The rotation component is ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel).
-[2] : The axes are ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel), otherwise the vectors are only orthogonal.</p>
+<p>The <strong>Matrix</strong> is the homogeneous 4x4 matrix composed by the given location, rotation and scale :</p>
+<p>m = T * R * S. <strong>[1]</strong></p>
+<p>The <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong> are the orthonormal vectors, oriented along the Track and Up axes. <strong>[2]</strong></p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The rotation component is ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel).</p></li>
+<li><p><strong>[2]</strong> : The axes are ortho-normal only if the “Normalize Vectors” option is ON (in the Property Panel), otherwise the vectors are only orthogonal.</p></li>
+</ul>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
@@ -300,8 +305,8 @@ All outputs will be generated when connected.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="matrix_math.html" class="btn btn-neutral float-left" title="Matrix Math" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="shear.html" class="btn btn-neutral float-right" title="Matrix Shear" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="matrix_normal.html" class="btn btn-neutral float-left" title="Matrix Normal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="matrix_math.html" class="btn btn-neutral float-right" title="Matrix Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

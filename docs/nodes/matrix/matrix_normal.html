@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Iterate Matrix Transformation" href="iterate.html" />
+    <link rel="next" title="Matrix Track To" href="matrix_track_to.html" />
     <link rel="prev" title="Matrix Shear" href="shear.html" /> 
 </head>
 
@@ -65,16 +65,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Normal</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -83,7 +80,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -138,6 +137,7 @@
              
   <section id="matrix-normal">
 <h1>Matrix Normal<a class="headerlink" href="#matrix-normal" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189594017-c08d8a4b-943f-41bf-aa97-3a94802b48a8.png"><img alt="https://user-images.githubusercontent.com/14288520/189594017-c08d8a4b-943f-41bf-aa97-3a94802b48a8.png" src="https://user-images.githubusercontent.com/14288520/189594017-c08d8a4b-943f-41bf-aa97-3a94802b48a8.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates a Position Matrix from a location and a Normal Vector. Is useful to place meshes in custom planes (or polygons)</p>
@@ -175,7 +175,15 @@ outputting a list of matrix lists ([[M,M,..],[M,M,..],..]).</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Using the the node to place a mesh according to a base mesh vertex normals.</p>
-<img alt="Matrix_Normal_Sverchok.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/matrix/matrix_normal/matrix_normal_sverchok_blender.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189552392-26211080-9e83-44e2-ac7d-f2909ed49b3d.png"><img alt="https://user-images.githubusercontent.com/14288520/189552392-26211080-9e83-44e2-ac7d-f2909ed49b3d.png" src="https://user-images.githubusercontent.com/14288520/189552392-26211080-9e83-44e2-ac7d-f2909ed49b3d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html"><span class="doc">Component Analyzer</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -184,7 +192,7 @@ outputting a list of matrix lists ([[M,M,..],[M,M,..],..]).</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="shear.html" class="btn btn-neutral float-left" title="Matrix Shear" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="iterate.html" class="btn btn-neutral float-right" title="Iterate Matrix Transformation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="matrix_track_to.html" class="btn btn-neutral float-right" title="Matrix Track To" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

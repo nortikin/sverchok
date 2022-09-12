@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Matrix Track To" href="matrix_track_to.html" />
-    <link rel="prev" title="Matrix Out" href="matrix_out_mk2.html" /> 
+    <link rel="next" title="Matrix Interpolation" href="interpolation.html" />
+    <link rel="prev" title="Matrix Track To" href="matrix_track_to.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,14 +65,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Math</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -82,10 +84,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -140,6 +139,7 @@
              
   <section id="matrix-math">
 <h1>Matrix Math<a class="headerlink" href="#matrix-math" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189597709-68ea2c85-c478-403f-9555-87fcc0096684.png"><img alt="https://user-images.githubusercontent.com/14288520/189597709-68ea2c85-c478-403f-9555-87fcc0096684.png" src="https://user-images.githubusercontent.com/14288520/189597709-68ea2c85-c478-403f-9555-87fcc0096684.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Matrix Math node allows for various matrix operations to be performed on the input matrices, such as: Multiply, Invert, Filter, Basis.</p>
@@ -149,13 +149,15 @@
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>A</strong></p></li>
-<li><p><strong>B</strong>  [1]</p></li>
+<li><p><strong>B</strong>  <strong>[1]</strong></p></li>
 <li><p>…</p></li>
-<li><p><strong>Z</strong>  [2]</p></li>
+<li><p><strong>Z</strong>  <strong>[2]</strong></p></li>
 </ul>
-<p>Notes:
-[1] : The second input is only available for the operations that require a second operand, like Multiply.
-[2] : For multiple input operation (e.g. Multiply) the input sockets extend to allow arbitrary number of input matrices and their socket name progress alphabetically.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The second input is only available for the operations that require a second operand, like Multiply.</p></li>
+<li><p><strong>[2]</strong> : For multiple input operation (e.g. Multiply) the input sockets extend to allow arbitrary number of input matrices and their socket name progress alphabetically.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -177,47 +179,47 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Operation</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Multiply
-Invert
-Filter
-Basis</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Multiply</p></li>
+<li><p>Invert</p></li>
+<li><p>Filter</p></li>
+<li><p>Basis</p></li>
+</ul>
 </td>
 <td><p>Multiply</p></td>
-<td><dl class="simple">
-<dt>Multiply: A,B =&gt; C = A*B  [1]</dt><dd><p>Invert: A =&gt; C = A^-1
-Filter: A =&gt; C = [AT]*[AR]*[AS]
-Basis:  A =&gt; X, Y, Z</p>
-</dd>
-</dl>
+<td><p>Multiply: A,B =&gt; C = A*B  <strong>[1]</strong></p>
+<ul class="simple">
+<li><p>Invert: A =&gt; C = A^-1</p></li>
+<li><p>Filter: A =&gt; C = [AT]*[AR]*[AS]</p></li>
+<li><p>Basis:  A =&gt; X, Y, Z</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>PrePost</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Pre
-Post</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Pre</p></li>
+<li><p>Post</p></li>
+</ul>
 </td>
 <td><p>Pre</p></td>
-<td><p>Determines the order the operands  [2]</p></td>
+<td><p>Determines the order the operands  <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Filter T</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>Filter out the Translation component  [3]</p></td>
+<td><p>Filter out the Translation component  <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Filter R</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>Filter out the Rotation component  [3]</p></td>
+<td><p>Filter out the Rotation component  <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Filter S</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>Filter out the Scale component  [3]</p></td>
+<td><p>Filter out the Scale component  <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>A</strong></p></td>
 <td><p>Matrix</p></td>
@@ -227,17 +229,17 @@ Post</p>
 <tr class="row-even"><td><p><strong>B</strong></p></td>
 <td><p>Matrix</p></td>
 <td><p>identity</p></td>
-<td><p>Second matrix input  [4]</p></td>
+<td><p>Second matrix input  <strong>[4]</strong></p></td>
 </tr>
 </tbody>
 </table>
-<dl class="simple">
-<dt>Notes:</dt><dd><p>[1] : The order of multiplication is given by the PrePost setting.
-[2] : The PrePost setting is only available for the Multiply operation.
-[3] : The Filter T/R/S toggle settings are only available for the Filter operation.
-[4] : Second input is only available for Multiply operation.</p>
-</dd>
-</dl>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The order of multiplication is given by the PrePost setting.</p></li>
+<li><p><strong>[2]</strong> : The PrePost setting is only available for the Multiply operation.</p></li>
+<li><p><strong>[3]</strong> : The Filter T/R/S toggle settings are only available for the Filter operation.</p></li>
+<li><p><strong>[4]</strong> : Second input is only available for Multiply operation.</p></li>
+</ul>
 </section>
 <section id="operations">
 <h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
@@ -255,12 +257,16 @@ This operation extacts the basis vector from the rotation part of the 4x4 homoge
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Matrix</strong>
-Outputs will be generated when connected.</p>
-<p><strong>X</strong>
-<strong>Y</strong>
-<strong>Z</strong>
-These outputs are available only for the Basis operation and will be generated when connected.</p>
+<ul class="simple">
+<li><p><strong>Matrix</strong></p></li>
+</ul>
+<p>Outputs will be generated when connected.</p>
+<ul class="simple">
+<li><p><strong>X</strong></p></li>
+<li><p><strong>Y</strong></p></li>
+<li><p><strong>Z</strong></p></li>
+</ul>
+<p>These outputs are available only for the Basis operation and will be generated when connected.</p>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
@@ -271,8 +277,8 @@ These outputs are available only for the Basis operation and will be generated w
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="matrix_out_mk2.html" class="btn btn-neutral float-left" title="Matrix Out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="matrix_track_to.html" class="btn btn-neutral float-right" title="Matrix Track To" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="matrix_track_to.html" class="btn btn-neutral float-left" title="Matrix Track To" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="interpolation.html" class="btn btn-neutral float-right" title="Matrix Interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

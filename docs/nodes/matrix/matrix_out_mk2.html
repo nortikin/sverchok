@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Matrix Math" href="matrix_math.html" />
+    <link rel="next" title="Matrix Apply to Mesh" href="apply_and_join.html" />
     <link rel="prev" title="Matrix In" href="matrix_in_mk4.html" /> 
 </head>
 
@@ -65,25 +65,25 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Out</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modes">Modes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#extra-parameters">Extra Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -138,6 +138,7 @@
              
   <section id="matrix-out">
 <h1>Matrix Out<a class="headerlink" href="#matrix-out" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189547490-4e7e7879-dfbb-4622-850b-6a8845f6956e.png"><img alt="https://user-images.githubusercontent.com/14288520/189547490-4e7e7879-dfbb-4622-850b-6a8845f6956e.png" src="https://user-images.githubusercontent.com/14288520/189547490-4e7e7879-dfbb-4622-850b-6a8845f6956e.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Matrix Out node converts a 4x4 matrix into its location, rotation and scale components. The rotation component can be represented in various formats: quaternion, axis-angle or Euler angles.</p>
@@ -159,26 +160,30 @@ how the output <em>rotation component</em> of the matrix is going to be represen
 </thead>
 <tbody>
 <tr class="row-even"><td><p>EULER</p></td>
-<td><p>Converts the rotation component of the matrix into X, Y, Z angles
-corresponding to the Euler rotation given an Euler rotation order. [1,2]</p></td>
+<td><p>Converts the rotation component of the matrix into X, Y, Z angles</p>
+<p>corresponding to the Euler rotation given an Euler rotation order. <strong>[1,2]</strong></p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>AXIS-ANGLE</p></td>
-<td><p>Converts the rotation component of the matrix into the Axis &amp; Angle of rotation. [1]</p></td>
+<td><p>Converts the rotation component of the matrix into the Axis &amp; Angle
+of rotation. <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>QUATERNION</p></td>
 <td><p>Converts the rotation component of the matrix into a quaternion.</p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians, Degrees or Unities (0-1 range).
-[2] : For EULER mode the node provides the option to select the Euler rotation order: “XYZ”, “XZY”, “YXZ”, “YZX”, “ZXY” or “ZYX”.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians, Degrees or Unities (0-1 range).</p></li>
+<li><p><strong>[2]</strong> : For EULER mode the node provides the option to select the Euler rotation order: “XYZ”, “XZY”, “YXZ”, “YZX”, “ZXY” or “ZYX”.</p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Matrix</strong>
-The node takes a list of (one or more) matrices and based on the selected mode
-it converts the matrices into the corresponding components.</p>
+<ul class="simple">
+<li><p><strong>Matrix</strong> The node takes a list of (one or more) matrices and based on the selected mode it converts the matrices into the corresponding components.</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
@@ -200,26 +205,28 @@ These parameters do not receive external input.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RADIANS
-DEGREES
-UNITIES</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RADIANS</p></li>
+<li><p>DEGREES</p></li>
+<li><p>UNITIES</p></li>
+</ul>
 </td>
 <td><p>DEGREES</p></td>
-<td><p>Interprets the angle values based on
-the selected angle units:
-Radians = 0 - 2pi
-Degrees = 0 - 360
-Unities = 0 - 1</p></td>
+<td><p>Interprets the angle values based on</p>
+<p>the selected angle units:</p>
+<ul class="simple">
+<li><p>Radians = 0 - 2pi</p></li>
+<li><p>Degrees = 0 - 360</p></li>
+<li><p>Unities = 0 - 1</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
 <section id="outputs">
-<h1>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h1>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>Based on the selected <strong>Mode</strong> the node makes available the corresponding output sockets:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -250,13 +257,14 @@ Unities = 0 - 1</p></td>
 [1] : The angles are by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
 <p>The node only generates the conversion when the output sockets are connected.</p>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="matrix_in_mk4.html" class="btn btn-neutral float-left" title="Matrix In" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="matrix_math.html" class="btn btn-neutral float-right" title="Matrix Math" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="apply_and_join.html" class="btn btn-neutral float-right" title="Matrix Apply to Mesh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

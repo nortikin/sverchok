@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Matrix Input" href="input.html" />
-    <link rel="prev" title="Matrix Deform" href="deform.html" /> 
+    <link rel="next" title="Matrix Shear" href="shear.html" />
+    <link rel="prev" title="Matrix Input" href="input.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,19 +65,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Euler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -132,6 +131,7 @@
              
   <section id="matrix-euler">
 <h1>Matrix Euler<a class="headerlink" href="#matrix-euler" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551518-13e8e6e0-6182-4fd2-a1c5-704d39ff2529.png"><img alt="https://user-images.githubusercontent.com/14288520/189551518-13e8e6e0-6182-4fd2-a1c5-704d39ff2529.png" src="https://user-images.githubusercontent.com/14288520/189551518-13e8e6e0-6182-4fd2-a1c5-704d39ff2529.png" /></a>
 <p>This node creates a transformation Matrix by defining the angles with X, Y and Z and the rotation order.</p>
 <p>On the right-click menu there is a “Flat Output” toggle. While active (as it is by default)
 it will join the first level to output a regular matrix list ([M,M,..]) that can be
@@ -143,8 +143,8 @@ outputting a list of matrix lists ([[M,M,..],[M,M,..],..]).</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="deform.html" class="btn btn-neutral float-left" title="Matrix Deform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="input.html" class="btn btn-neutral float-right" title="Matrix Input" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="input.html" class="btn btn-neutral float-left" title="Matrix Input" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="shear.html" class="btn btn-neutral float-right" title="Matrix Shear" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

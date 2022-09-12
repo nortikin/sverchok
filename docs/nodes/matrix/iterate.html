@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Quaternion" href="../quaternion/quaternion_index.html" />
-    <link rel="prev" title="Matrix Normal" href="matrix_normal.html" /> 
+    <link rel="next" title="Matrix Deform" href="deform.html" />
+    <link rel="prev" title="Matrix Apply to Mesh" href="apply_and_join.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,18 +65,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_in_mk4.html">Matrix In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
-<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Iterate Matrix Transformation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -85,6 +76,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -139,6 +138,7 @@
              
   <section id="iterate-matrix-transformation">
 <h1>Iterate Matrix Transformation<a class="headerlink" href="#iterate-matrix-transformation" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png"><img alt="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" src="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node iteratively applies affine transformation (specified by matrix) to
@@ -195,13 +195,37 @@ to output as is.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Circle as input, Iterations = 3; one matrix specifies scale by 0.65 (along all axis) and translation along X axis by 0.3:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5691511/05057312-98ec-11e4-97b9-cd24206970d5.png" src="https://cloud.githubusercontent.com/assets/284644/5691511/05057312-98ec-11e4-97b9-cd24206970d5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png"><img alt="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" src="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>One object as input, Iterations = 4; one matrix specifies scale by 0.6 along X and Y axis, and translation along Z by 1:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5691510/05039af6-98ec-11e4-9984-9cb85ec580bb.png" src="https://cloud.githubusercontent.com/assets/284644/5691510/05039af6-98ec-11e4-9984-9cb85ec580bb.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png"><img alt="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" src="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif"><img alt="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" src="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" /></a>
 <p>One Box as input, Iteration = 3, two matrices:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5691509/04d79802-98ec-11e4-9560-e6346c6ab7c8.png" src="https://cloud.githubusercontent.com/assets/284644/5691509/04d79802-98ec-11e4-9560-e6346c6ab7c8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png"><img alt="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" src="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Iterate cubes along with pentagons:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/6249157/241a50c2-b7a7-11e4-9937-adb096f1d694.png" src="https://cloud.githubusercontent.com/assets/284644/6249157/241a50c2-b7a7-11e4-9937-adb096f1d694.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png"><img alt="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" src="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -209,8 +233,8 @@ to output as is.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="matrix_normal.html" class="btn btn-neutral float-left" title="Matrix Normal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../quaternion/quaternion_index.html" class="btn btn-neutral float-right" title="Quaternion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="apply_and_join.html" class="btn btn-neutral float-left" title="Matrix Apply to Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deform.html" class="btn btn-neutral float-right" title="Matrix Deform" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

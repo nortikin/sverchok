@@ -86,3 +86,9 @@ Notes
 -------
 
 The node doesn't extrapolate. Values outside of ``[0, 1]`` are ignored.
+
+See also
+--------
+
+* Number-> :doc:`Mix Inputs </nodes/number/mix_inputs>`
+* Matrix-> :doc:`Matrix Interpolation </nodes/matrix/interpolation>`

@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Matrix Out" href="matrix_out_mk2.html" />
-    <link rel="prev" title="Matrix Interpolation" href="interpolation.html" /> 
+    <link rel="prev" title="Matrix" href="matrix_index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -65,11 +65,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix In</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -80,12 +75,16 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_out_mk2.html#outputs">Outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_and_join.html">Matrix Apply to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Matrix Deform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input.html">Matrix Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="euler.html">Matrix Euler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="shear.html">Matrix Shear</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iterate.html">Iterate Matrix Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_track_to.html">Matrix Track To</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_math.html">Matrix Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolation.html">Matrix Interpolation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
@@ -140,6 +139,7 @@
              
   <section id="matrix-in">
 <h1>Matrix In<a class="headerlink" href="#matrix-in" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189546077-7329965e-3c8e-40e8-8917-e54d80b0dc32.png"><img alt="https://user-images.githubusercontent.com/14288520/189546077-7329965e-3c8e-40e8-8917-e54d80b0dc32.png" src="https://user-images.githubusercontent.com/14288520/189546077-7329965e-3c8e-40e8-8917-e54d80b0dc32.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates homogeneous 4x4 matrices out of translation, scale and rotation components.
@@ -158,11 +158,13 @@ The rotation component can be generated based on various input formats, selectab
 <li><p><strong>Angle Y</strong>    [3,4]</p></li>
 <li><p><strong>Angle Z</strong>    [3,4]</p></li>
 </ul>
-<p>Notes:
-[1] : Input is available when “Quaternion” mode is selected
-[2] : Inputs are available when “Axis Angle” mode is selected
-[3] : Inputs are available when “Euler Angles” mode is selected
-[4] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>[1] : Input is available when “Quaternion” mode is selected</p></li>
+<li><p>[2] : Inputs are available when “Axis Angle” mode is selected</p></li>
+<li><p>[3] : Inputs are available when “Euler Angles” mode is selected</p></li>
+<li><p>[4] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 <p>The node accepts as inputs either lists of items (vectors, numbers, quaternions), such as: [[v, v, v]], [[a, a, a]], [[q, q, q]]. in which case it would generate a set of matrices: [[m, m, m]], but it also accepts lists of lists of items, such as [[v, v], [v, v, v]], in which case it will produce a set of matrices: [[m, m], [m, m, m]].</p>
 </section>
 <section id="parameters">
@@ -185,16 +187,17 @@ The rotation component can be generated based on various input formats, selectab
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Mode</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>Quaternion
-Axis Angle
-Euler Angles</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>Quaternion</p></li>
+<li><p>Axis Angle</p></li>
+<li><p>Euler Angles</p></li>
+</ul>
 </td>
 <td><p>Axis Angle</p></td>
-<td><p>Specifies how the rotation component is provided
-to the node as an input.</p></td>
+<td><p>Specifies how the rotation component is</p>
+<p>provided to the node as an input.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Location</strong></p></td>
 <td><p>Vector</p></td>
@@ -207,18 +210,22 @@ to the node as an input.</p></td>
 <td><p>The scale component of the matrix.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>Deg, Rad, Uni</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>Deg</p></li>
+<li><p>Rad</p></li>
+<li><p>Uni</p></li>
+</ul>
 </td>
 <td><p>Deg</p></td>
-<td><p>Specifies the units for the angle values. [1]</p></td>
+<td><p>Specifies the units for the angle values. <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Quaternion</strong></p></td>
 <td><p>Quaternion</p></td>
 <td><p>(1, 0, 0, 0)</p></td>
-<td><p>The rotation component given as a quaternion. [2]</p></td>
+<td><p>The rotation component given as a</p>
+<p>quaternion. <strong>[2]</strong></p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Axis</strong></p></td>
 <td><p>Vector</p></td>
@@ -228,15 +235,20 @@ to the node as an input.</p></td>
 <tr class="row-even"><td><p><strong>Angle</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The rotation angle about the given rotation axis. [4]</p></td>
+<td><p>The rotation angle about the given rotation</p>
+<p>axis. <strong>[4]</strong></p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Euler Order</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>XYZ, XZY,
-YXZ, YZX,
-ZXY, ZYX</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>XYZ</p></li>
+<li><p>XZY</p></li>
+<li><p>YXZ</p></li>
+<li><p>YZX</p></li>
+<li><p>ZXY</p></li>
+<li><p>ZYX</p></li>
+</ul>
 </td>
 <td><p>XYZ</p></td>
 <td><p>Specifies the order of the euler angle rotations.</p></td>
@@ -244,25 +256,27 @@ ZXY, ZYX</p>
 <tr class="row-even"><td><p><strong>Angle X</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The angle of rotation about the X axis. [3][4]</p></td>
+<td><p>The angle of rotation about the X axis. <strong>[3][4]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Angle Y</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The angle of rotation about the Y axis. [3][4]</p></td>
+<td><p>The angle of rotation about the Y axis. <strong>[3][4]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Angle Z</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>The angle of rotation about the Z axis. [3][4]</p></td>
+<td><p>The angle of rotation about the Z axis. <strong>[3][4]</strong></p></td>
 </tr>
 </tbody>
 </table>
-<p>NOTES:
-[1] : The “Angle Units” parameter is available for “Axis Angle” and “Euler Angle” modes. When switching the units the angle values are converted to the selected unit. Connected angle inputs are also considered to have the selected angle units.
-[2] : The quaternion is expected to be normalized (corresponding to a rotation matrix). If it is not normalized, the result is undefined.
-[3] : The XYZ angle parameters are available for “Euler Angle” mode. The order of applying these rotations is given by the “Euler Order” parameter.
-[4] : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>NOTES:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The “Angle Units” parameter is available for “Axis Angle” and “Euler Angle” modes. When switching the units the angle values are converted to the selected unit. Connected angle inputs are also considered to have the selected angle units.</p></li>
+<li><p><strong>[2]</strong> : The quaternion is expected to be normalized (corresponding to a rotation matrix). If it is not normalized, the result is undefined.</p></li>
+<li><p><strong>[3]</strong> : The XYZ angle parameters are available for “Euler Angle” mode. The order of applying these rotations is given by the “Euler Order” parameter.</p></li>
+<li><p><strong>[4]</strong> : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
@@ -289,19 +303,22 @@ These parameters do not receive external input.</p>
 <td><p>Flattens the matrix output <a class="footnote-reference brackets" href="#id3" id="id1">3</a> <a class="footnote-reference brackets" href="#id4" id="id2">4</a></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RADIANS
-DEGREES
-UNITIES</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RADIANS</p></li>
+<li><p>DEGREES</p></li>
+<li><p>UNITIES</p></li>
+</ul>
 </td>
 <td><p>DEGREES</p></td>
-<td><p>Interprets the angle values based on
-the selected angle units:
-Radians = 0 - 2pi
-Degrees = 0 - 360
-Unities = 0 - 1</p></td>
+<td><p>Interprets the angle values based on</p>
+<p>the selected angle units:</p>
+<ul class="simple">
+<li><p>Radians = 0.0 - 2pi</p></li>
+<li><p>Degrees = 0.0 - 360.0</p></li>
+<li><p>Unities = 0.0 - 1.0</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -327,6 +344,17 @@ The output is a list of one or multiple 4x4 homogeneous matrices, based on the g
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189546149-4a603282-7346-48d5-9491-5a043eac51dc.png"><img alt="https://user-images.githubusercontent.com/14288520/189546149-4a603282-7346-48d5-9491-5a043eac51dc.png" src="https://user-images.githubusercontent.com/14288520/189546149-4a603282-7346-48d5-9491-5a043eac51dc.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189546359-8f061a85-72aa-44bf-8dde-70c386cace6c.gif"><img alt="https://user-images.githubusercontent.com/14288520/189546359-8f061a85-72aa-44bf-8dde-70c386cace6c.gif" src="https://user-images.githubusercontent.com/14288520/189546359-8f061a85-72aa-44bf-8dde-70c386cace6c.gif" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -334,7 +362,7 @@ The output is a list of one or multiple 4x4 homogeneous matrices, based on the g
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="interpolation.html" class="btn btn-neutral float-left" title="Matrix Interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="matrix_index.html" class="btn btn-neutral float-left" title="Matrix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="matrix_out_mk2.html" class="btn btn-neutral float-right" title="Matrix Out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
