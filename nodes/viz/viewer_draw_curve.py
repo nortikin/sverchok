@@ -18,6 +18,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, get_data_nesting_level, ensure_nesting_level, zip_long_repeat, node_id
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.bakery import CurveData
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 
 def draw_edges(shader, points, edges, line_width, color):
@@ -35,35 +37,6 @@ def draw_points(shader, points, size, color):
     shader.uniform_float('color', color)
     batch.draw(shader)
     bgl.glPointSize(1)
-
-class CurveData(object):
-    def __init__(self, node, curve, resolution):
-        self.node = node
-        self.curve = curve
-        self.resolution = resolution
-
-        if node.draw_line or node.draw_verts:
-            t_min, t_max = curve.get_u_bounds()
-            ts = np.linspace(t_min, t_max, num=resolution)
-            self.points = curve.evaluate_array(ts).tolist()
-
-        if node.draw_line:
-            n = len(ts)
-            self.edges = [(i,i+1) for i in range(n-1)]
-
-        if (node.draw_control_polygon or node.draw_control_points) and hasattr(curve, 'get_control_points'):
-            self.control_points = curve.get_control_points().tolist()
-        else:
-            self.control_points = None
-
-        if node.draw_control_polygon:
-            n = len(self.control_points)
-            self.control_polygon_edges = [(i,i+1) for i in range(n-1)]
-
-        if node.draw_nodes and hasattr(curve, 'calc_greville_points'):
-            self.node_points = curve.calc_greville_points().tolist()
-        else:
-            self.node_points = None
 
 def draw_curves(context, args):
     node, draw_inputs, v_shader, e_shader = args
@@ -88,6 +61,18 @@ def draw_curves(context, args):
             draw_points(v_shader, item.points, node.verts_size, node.verts_color)
 
     bgl.glEnable(bgl.GL_BLEND)
+
+class SvBakeCurveOp(bpy.types.Operator, SvGenericNodeLocator):
+    """B A K E CURVES"""
+    bl_idname = "node.sverchok_curve_baker"
+    bl_label = "Bake Curves"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        curve_data = node.get_curve_data()
+        for i, item in enumerate(curve_data):
+            item.bake(f"Sv_Curve_{i}")
+        return {'FINISHED'}
 
 class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -215,6 +200,12 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'nodes_color', text="")
         row.prop(self, 'nodes_size', text="px")
 
+        row = layout.row(align=True)
+        row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
+        self.wrapper_tracked_ui_draw_op(row, SvBakeCurveOp.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
+        row.separator()
+        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', 'Curve')
         self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
@@ -232,6 +223,21 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         
         callback_enable(node_id(self), draw_data)
 
+    def get_curve_data(self):
+        curves_s = self.inputs['Curve'].sv_get()
+        resolution_s = self.inputs['Resolution'].sv_get()
+        curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
+        resolution_s = ensure_nesting_level(resolution_s, 2)
+
+        draw_inputs = []
+        for params in zip_long_repeat(curves_s, resolution_s):
+            for curve, resolution in zip_long_repeat(*params):
+                t_curve = SvNurbsCurve.to_nurbs(curve)
+                if t_curve is None:
+                    t_curve = curve
+                draw_inputs.append(CurveData(self, t_curve, resolution))
+        return draw_inputs
+
     def process(self):
         if bpy.app.background:
             return
@@ -248,18 +254,7 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Curve'].is_linked:
             return
 
-        curves_s = self.inputs['Curve'].sv_get()
-        resolution_s = self.inputs['Resolution'].sv_get()
-        curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
-        resolution_s = ensure_nesting_level(resolution_s, 2)
-
-        draw_inputs = []
-        for params in zip_long_repeat(curves_s, resolution_s):
-            for curve, resolution in zip_long_repeat(*params):
-                t_curve = SvNurbsCurve.to_nurbs(curve)
-                if t_curve is None:
-                    t_curve = curve
-                draw_inputs.append(CurveData(self, t_curve, resolution))
+        draw_inputs = self.get_curve_data()
         self.draw_all(draw_inputs)
 
     def show_viewport(self, is_show: bool):
@@ -276,6 +271,6 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_free(self):
         callback_disable(node_id(self))
 
-classes = [SvCurveViewerDrawNode]
+classes = [SvCurveViewerDrawNode, SvBakeCurveOp]
 register, unregister = bpy.utils.register_classes_factory(classes)
 

@@ -18,9 +18,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, get_data_nesting_level, ensure_nesting_level, zip_long_repeat, node_id
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.modules.polygon_utils import pols_normals
-from sverchok.utils.modules.vertex_utils import np_vertex_normals
-from sverchok.utils.math import np_dot
+from sverchok.utils.surface.bakery import SurfaceData
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 
 def draw_edges(shader, points, edges, line_width, color):
@@ -43,75 +42,6 @@ def draw_polygons(shader, points, tris, vertex_colors):
     batch = batch_for_shader(shader, 'TRIS', {"pos": points, 'color': vertex_colors}, indices=tris)
     shader.bind()
     batch.draw(shader)
-
-def make_quad_edges(n_u, n_v):
-    edges = []
-    for row in range(n_v):
-        e_row = [(i + n_u * row, (i+1) + n_u * row) for i in range(n_u-1)]
-        edges.extend(e_row)
-        if row < n_v - 1:
-            e_col = [(i + n_u * row, i + n_u * (row+1)) for i in range(n_u)]
-            edges.extend(e_col)
-    return edges
-
-def make_tris(n_u, n_v):
-    def calc_idx(row_idx, column_idx):
-        return n_u * row_idx + column_idx
-
-    tris = []
-    for row_idx in range(n_v-1):
-        for column_idx in range(n_u-1):
-            pt1 = calc_idx(row_idx, column_idx)
-            pt2 = calc_idx(row_idx, column_idx+1)
-            pt3 = calc_idx(row_idx+1, column_idx+1)
-            pt4 = calc_idx(row_idx+1, column_idx)
-            #tri1 = [pt1, pt2, pt3]
-            #tri2 = [pt1, pt3, pt4]
-            tri1 = [pt1, pt3, pt2]
-            tri2 = [pt1, pt4, pt3]
-            tris.append(tri1)
-            tris.append(tri2)
-    return tris
-
-def vert_light_factor(vecs, polygons, light):
-    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
-
-def calc_surface_data(light_vector, surface_color, n_u, n_v, points):
-    #points = points.reshape((n_u*n_v, 3))
-    tris = make_tris(n_u, n_v)
-    n_tris = len(tris)
-    light_factor = vert_light_factor(points, tris, light_vector)
-    colors = []
-    col = surface_color
-    for l_factor in light_factor:
-        colors.append([col[0]*l_factor, col[1]*l_factor, col[2]*l_factor, col[3]])
-    return tris, colors
-
-class SurfaceData(object):
-    def __init__(self, node, surface, resolution_u, resolution_v):
-        self.node = node
-        self.surface = surface
-        self.resolution_u = resolution_u
-        self.resolution_v = resolution_v
-
-        u_min, u_max = surface.get_u_bounds()
-        v_min, v_max = surface.get_v_bounds()
-        us = np.linspace(u_min, u_max, num=resolution_u)
-        vs = np.linspace(v_min, v_max, num=resolution_v)
-        us, vs = np.meshgrid(us, vs)
-        us = us.flatten()
-        vs = vs.flatten()
-        self.points = surface.evaluate_array(us, vs)#.tolist()
-        self.points_list = self.points.reshape((resolution_u*resolution_v, 3)).tolist()
-
-        if hasattr(surface, 'get_control_points'):
-            self.cpts = surface.get_control_points()
-            n_v, n_u, _ = self.cpts.shape
-            self.cpts_list = self.cpts.reshape((n_u*n_v, 3)).tolist()
-            self.control_net = make_quad_edges(n_u, n_v)
-
-        self.edges = make_quad_edges(resolution_u, resolution_v)
-        self.tris, self.tri_colors = calc_surface_data(node.light_vector, node.surface_color, resolution_u, resolution_v, self.points)
 
 def draw_surfaces(context, args):
     node, draw_inputs, v_shader, e_shader, p_shader = args
@@ -136,6 +66,18 @@ def draw_surfaces(context, args):
             draw_points(v_shader, item.points_list, node.verts_size, node.verts_color)
 
     bgl.glEnable(bgl.GL_BLEND)
+
+class SvBakeSurfaceOp(bpy.types.Operator, SvGenericNodeLocator):
+    """B A K E SURFACES"""
+    bl_idname = "node.sverchok_surface_baker"
+    bl_label = "Bake Surfaces"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def sv_execute(self, context, node):
+        surface_data = node.get_surface_data()
+        for i, item in enumerate(surface_data):
+            item.bake(f"Sv_Surface_{i}")
+        return {'FINISHED'}
 
 class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -278,6 +220,12 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'control_net_color', text="")
         row.prop(self, 'control_net_line_width', text="px")
 
+        row = layout.row(align=True)
+        row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
+        self.wrapper_tracked_ui_draw_op(row, SvBakeSurfaceOp.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
+        row.separator()
+        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'light_vector')
         self.draw_buttons(context, layout)
@@ -296,6 +244,24 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         
         callback_enable(node_id(self), draw_data)
 
+    def get_surface_data(self):
+        surfaces_s = self.inputs['Surface'].sv_get()
+        resolution_u_s = self.inputs['ResolutionU'].sv_get()
+        resolution_v_s = self.inputs['ResolutionV'].sv_get()
+
+        surfaces_s = ensure_nesting_level(surfaces_s, 2, data_types=(SvSurface,))
+        resolution_u_s = ensure_nesting_level(resolution_u_s, 2)
+        resolution_v_s = ensure_nesting_level(resolution_v_s, 2)
+
+        draw_inputs = []
+        for params in zip_long_repeat(surfaces_s, resolution_u_s, resolution_v_s):
+            for surface, resolution_u, resolution_v in zip_long_repeat(*params):
+                t_surface = SvNurbsSurface.get(surface)
+                if t_surface is None:
+                    t_surface = surface
+                draw_inputs.append(SurfaceData(self, t_surface, resolution_u, resolution_v))
+        return draw_inputs
+    
     def process(self):
         if bpy.app.background:
             return
@@ -312,21 +278,7 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Surface'].is_linked:
             return
 
-        surfaces_s = self.inputs['Surface'].sv_get()
-        resolution_u_s = self.inputs['ResolutionU'].sv_get()
-        resolution_v_s = self.inputs['ResolutionV'].sv_get()
-
-        surfaces_s = ensure_nesting_level(surfaces_s, 2, data_types=(SvSurface,))
-        resolution_u_s = ensure_nesting_level(resolution_u_s, 2)
-        resolution_v_s = ensure_nesting_level(resolution_v_s, 2)
-
-        draw_inputs = []
-        for params in zip_long_repeat(surfaces_s, resolution_u_s, resolution_v_s):
-            for surface, resolution_u, resolution_v in zip_long_repeat(*params):
-                t_surface = SvNurbsSurface.get(surface)
-                if t_surface is None:
-                    t_surface = surface
-                draw_inputs.append(SurfaceData(self, t_surface, resolution_u, resolution_v))
+        draw_inputs = self.get_surface_data()
         self.draw_all(draw_inputs)
 
     def show_viewport(self, is_show: bool):
@@ -344,6 +296,6 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         callback_disable(node_id(self))
 
 
-classes = [SvSurfaceViewerDrawNode]
+classes = [SvSurfaceViewerDrawNode, SvBakeSurfaceOp]
 register, unregister = bpy.utils.register_classes_factory(classes)
 
