@@ -385,7 +385,8 @@ def get_preset(category, name):
 def apply_default_preset(node):
     preset = get_preset(node.bl_idname, "Default")
     if preset is not None:
-        JSONImporter(preset.data).import_node_settings(node)
+        node = JSONImporter(preset.data).import_node_settings(node)
+    return node
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(

@@ -136,7 +136,7 @@ def view_node(tree):
     for node in output_map[0]:
         bl_idname_new_node, offset = node
         new_node = nodes.new(bl_idname_new_node)
-        apply_default_preset(new_node)
+        new_node = apply_default_preset(new_node)
         offset_node_location(node_list[-1], new_node, offset)
         frame_adjust(node_list[-1], new_node)
         node_list.append(new_node)
@@ -171,9 +171,9 @@ def add_connection(tree, bl_idname_new_node, offset):
         # single new node..
 
         new_node = nodes.new(bl_idname_new_node)
-        apply_default_preset(new_node)
         offset_node_location(existing_node, new_node, offset)
         frame_adjust(existing_node, new_node)
+        new_node = apply_default_preset(new_node)
 
         outputs = existing_node.outputs
         inputs = new_node.inputs

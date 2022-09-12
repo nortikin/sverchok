@@ -21,6 +21,7 @@ import bpy
 from bpy.types import Operator
 from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
 from sverchok.utils.sv_node_utils import frame_adjust
+from sverchok.ui.presets import apply_default_preset
 
 
 def offset_node_location(existing_node, new_node, offset):
@@ -39,6 +40,7 @@ def add_temporal_viewer_draw(nodes, links, existing_node, cut_links):
 
     except KeyError:
         new_node = nodes.new(bl_idname_new_node)
+        new_node = apply_default_preset(new_node)
         new_node.name = 'Temporal Viewer'
         new_node.label = 'Temporal Viewer'
         new_node.color = (0.666141, 0.203022, 0)
@@ -72,6 +74,7 @@ def add_temporal_viewer_node(nodes, links, existing_node, output_kind, new_node_
         new_node = nodes[new_node_name]
     except KeyError:
         new_node = nodes.new(new_node_bl_idname)
+        new_node = apply_default_preset(new_node)
         new_node.name = new_node_name
         new_node.label = new_node_name
         new_node.color = new_node_color
@@ -93,6 +96,7 @@ def add_temporal_stethoscope(nodes, links, existing_node):
 
     except KeyError:
         new_node = nodes.new(bl_idname_new_node)
+        new_node = apply_default_preset(new_node)
         new_node.name = 'Temporal Stethoscope'
         new_node.label = 'Temporal Stethoscope'
         new_node.color = (0.336045, 0.336045, 0.666654)

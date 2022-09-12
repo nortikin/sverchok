@@ -281,7 +281,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
             save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as node preset", icon='SOLO_ON')
             save.id_tree = ntree.name
             save.category = node.bl_idname
-
+            save.is_node_preset = True
 
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):

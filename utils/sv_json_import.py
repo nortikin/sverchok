@@ -63,7 +63,7 @@ class JSONImporter:
         if self.structure_version < 1.0:
             self._old_import_node_settings(node)
         else:
-            NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
+            return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
 
     def _old_import_node_settings(self, node: SverchCustomTreeNode):
         """

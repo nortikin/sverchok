@@ -448,6 +448,7 @@ class NodePresetFileStruct(Struct):
             # for now breaking links will be considered as desired behaviour
 
         node.process_node(bpy.context)
+        return node
 
     def _data_blocks_reader(self):
         struct_type: StrTypes
