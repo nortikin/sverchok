@@ -19,6 +19,7 @@ class SvExInterpolateNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExInterpolateNurbsCurveNode'
     bl_label = 'Interpolate NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
+    sv_icon = 'SV_INTERPOLATE_CURVE'
 
     degree : IntProperty(
             name = "Degree",
