@@ -186,7 +186,7 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
+        layout.prop(self, "activate", icon="HIDE_" + ("OFF" if self.activate else "ON"))
 
         grid = layout.column(align=True)
 
