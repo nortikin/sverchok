@@ -56,10 +56,10 @@ def draw_surfaces(context, args):
         if node.draw_edges:
             draw_edges(e_shader, item.points_list, item.edges, node.edges_line_width, node.edges_color)
 
-        if node.draw_control_net:
+        if node.draw_control_net and item.cpts_list is not None:
             draw_edges(e_shader, item.cpts_list, item.control_net, node.control_net_line_width, node.control_net_color)
 
-        if node.draw_control_points:
+        if node.draw_control_points and item.cpts_list is not None:
             draw_points(v_shader, item.cpts_list, node.control_points_size, node.control_points_color)
 
         if node.draw_verts:

@@ -108,6 +108,8 @@ class SurfaceData(object):
             n_v, n_u, _ = self.cpts.shape
             self.cpts_list = self.cpts.reshape((n_u*n_v, 3)).tolist()
             self.control_net = make_quad_edges(n_u, n_v)
+        else:
+            self.cpts_list = None
 
         self.edges = make_quad_edges(resolution_u, resolution_v)
         self.tris, self.tri_colors = calc_surface_data(node.light_vector, node.surface_color, resolution_u, resolution_v, self.points)
