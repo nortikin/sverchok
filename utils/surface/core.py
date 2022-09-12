@@ -149,6 +149,12 @@ class SvSurface(object):
     def get_domain(self):
         return (self.get_u_min(), self.get_u_max(), self.get_v_min(), self.get_v_max())
 
+    def get_u_bounds(self):
+        return (self.get_u_min(), self.get_u_max())
+
+    def get_v_bounds(self):
+        return (self.get_v_min(), self.get_v_max())
+
     @property
     def u_size(self):
         m,M = self.get_u_min(), self.get_u_max()

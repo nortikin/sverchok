@@ -21,6 +21,7 @@ import bpy
 from bpy.types import Operator
 from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
 from sverchok.utils.sv_node_utils import frame_adjust
+from sverchok.ui.presets import apply_default_preset
 
 
 def offset_node_location(existing_node, new_node, offset):
@@ -39,6 +40,7 @@ def add_temporal_viewer_draw(nodes, links, existing_node, cut_links):
 
     except KeyError:
         new_node = nodes.new(bl_idname_new_node)
+        new_node = apply_default_preset(new_node)
         new_node.name = 'Temporal Viewer'
         new_node.label = 'Temporal Viewer'
         new_node.color = (0.666141, 0.203022, 0)
@@ -67,6 +69,24 @@ def add_temporal_viewer_draw(nodes, links, existing_node, cut_links):
                 links.new(socket, inputs[3])
                 break
 
+def add_temporal_viewer_node(nodes, links, existing_node, output_kind, new_node_bl_idname, new_node_name, new_node_input_name, new_node_color, cut_links=True):
+    try:
+        new_node = nodes[new_node_name]
+    except KeyError:
+        new_node = nodes.new(new_node_bl_idname)
+        new_node = apply_default_preset(new_node)
+        new_node.name = new_node_name
+        new_node.label = new_node_name
+        new_node.color = new_node_color
+
+    new_node.parent = None
+    new_node.location = (0, 0)
+
+    offset_node_location(existing_node, new_node, [100, 250])
+    frame_adjust(existing_node, new_node)
+
+    output_map = get_output_sockets_map(existing_node)
+    links.new(existing_node.outputs[output_map[output_kind]], new_node.inputs[new_node_input_name])
 
 def add_temporal_stethoscope(nodes, links, existing_node):
     """Add Temporal Stethoscope and connects it to existing node"""
@@ -76,6 +96,7 @@ def add_temporal_stethoscope(nodes, links, existing_node):
 
     except KeyError:
         new_node = nodes.new(bl_idname_new_node)
+        new_node = apply_default_preset(new_node)
         new_node.name = 'Temporal Stethoscope'
         new_node.label = 'Temporal Stethoscope'
         new_node.color = (0.336045, 0.336045, 0.666654)
@@ -122,15 +143,42 @@ def add_temporal_viewer(context, force_stetoscope: bool, cut_links: bool):
     if not hasattr(existing_node, 'outputs') or len(existing_node.outputs) == 0:
         return
 
-    is_drawable = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])
+    is_geometry = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])
+    is_curve = any(socket.bl_idname == 'SvCurveSocket' for socket in existing_node.outputs)
+    is_surface = any(socket.bl_idname == 'SvSurfaceSocket' for socket in existing_node.outputs)
+    is_solid = any(socket.bl_idname == 'SvSolidSocket' for socket in existing_node.outputs)
     nodes = tree.nodes
     links = tree.links
 
-    if not force_stetoscope and is_drawable:
-        add_temporal_viewer_draw(nodes, links, existing_node, cut_links)
-    else:
+    if force_stetoscope:
         add_temporal_stethoscope(nodes, links, existing_node)
-
+    else:
+        if is_solid:
+            add_temporal_viewer_node(nodes, links, existing_node,
+                    output_kind = 'solid',
+                    new_node_bl_idname = 'SvSolidViewerNode',
+                    new_node_name = "Temporal Solid Viewer",
+                    new_node_input_name = 'Solid',
+                    new_node_color = (0.63, 0.374, 0.138),
+                    cut_links = cut_links)
+        elif is_surface:
+            add_temporal_viewer_node(nodes, links, existing_node,
+                    output_kind = 'surface',
+                    new_node_bl_idname = 'SvSurfaceViewerDrawNode',
+                    new_node_name = "Temporal Surface Viewer",
+                    new_node_input_name = 'Surface',
+                    new_node_color = (0.63, 0.374, 0.138),
+                    cut_links = cut_links)
+        elif is_curve:
+            add_temporal_viewer_node(nodes, links, existing_node,
+                    output_kind = 'curve',
+                    new_node_bl_idname = 'SvCurveViewerDrawNode',
+                    new_node_name = "Temporal Curve Viewer",
+                    new_node_input_name = 'Curve',
+                    new_node_color = (0.63, 0.374, 0.138),
+                    cut_links = cut_links)
+        elif is_geometry:
+            add_temporal_viewer_draw(nodes, links, existing_node, cut_links)
 
 class SvTemporalViewerOperator(Operator):
     """Connect to temporal Viewer"""
