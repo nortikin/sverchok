@@ -33,6 +33,7 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvApproxNurbsCurveMk2Node'
     bl_label = 'Approximate NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
+    sv_icon = 'SV_APPROXIMATE_CURVE'
 
     degree : IntProperty(
             name = "Degree",

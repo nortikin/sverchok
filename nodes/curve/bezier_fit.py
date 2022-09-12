@@ -40,6 +40,7 @@ else:
         bl_idname = 'SvExBezierCurveFitNode'
         bl_label = 'Approximate Bezier Curve'
         bl_icon = 'CURVE_NCURVE'
+        sv_icon = 'SV_APPROXIMATE_BEZIER'
 
         degree : IntProperty(
                 name = "Degree",
