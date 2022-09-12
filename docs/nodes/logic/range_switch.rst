@@ -1,6 +1,9 @@
 Range Switch
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png
+  :target: https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png
+
 Functionality
 -------------
 
@@ -13,11 +16,12 @@ Inputs
 All inputs will accept single or multiple values.
 
 - **Value**
-- **Boundary1** [1]
-- **Boundary2** [1]
+- **Boundary1** **[1]**
+- **Boundary2** **[1]**
 
 Notes:
-[1] : The boundary values do not have to be in increasing order or absolute.
+
+* **[1]** : The boundary values do not have to be in increasing order or absolute.
 
 
 Parameters
@@ -47,7 +51,7 @@ The **Mode** parameter allows to select one of the three switch modes: **Inside 
 +------------------+---------------+--------------+----------------------------------+
 | Param            | Type          | Default      | Description                      |
 +==================+===============+==============+==================================+
-| **Mode**         | Enum          | Pass Through | The switching mode  [1]          |
+| **Mode**         | Enum          | Pass Through | The switching mode  **[1]**      |
 |                  |  Inside ON    |              |                                  |
 |                  |  Inside OFF   |              |                                  |
 |                  |  Pass Through |              |                                  |
@@ -60,7 +64,8 @@ The **Mode** parameter allows to select one of the three switch modes: **Inside 
 +------------------+---------------+--------------+----------------------------------+
 
 Notes:
-[1] : When the mode is **Pass Through** a "Toggle State" button becomes available to allow you to set the initial state of the switch.
+
+**[1]** : When the mode is **Pass Through** a "Toggle State" button becomes available to allow you to set the initial state of the switch.
 
 
 Outputs

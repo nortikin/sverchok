@@ -46,7 +46,7 @@ def get_indices_for_groupnum(node, group_lookup):
 class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sets, Switch, Select
-    Tooltip: Switch among multiple input sets
+    Tooltip: Switch among multiple input sets.\n\tInSelected (int), Alpha_N, Beta_N,... Omega_N\n\tParams: Num Socket Per Set [2]\n\tOut: Data 0, Data 1,... Data N
 
     auto expanding feature:
         determined by "any_sockets_of_last_input_set_connected" till last visible is max groups

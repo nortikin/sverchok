@@ -62,7 +62,7 @@ Sorting a List of Objects:
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_01.png
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_01.png
 
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

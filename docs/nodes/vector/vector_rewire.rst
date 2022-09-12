@@ -14,7 +14,7 @@ Use this node to swap Vector components, for instance pass X to Y (and Y to X ).
   :alt: with vector rewire
 
 * Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Inputs

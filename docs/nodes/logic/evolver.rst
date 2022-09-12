@@ -1,6 +1,9 @@
 Evolver
 =======
 
+.. image:: https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png
+  :target: https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png
+
 This node implements a Genetics Algorithm system inspired in Galapagos (the Grasshopper plugin) and the 9th chapter of "The Nature of Code" by Daniel Shiffman https://natureofcode.com/book/chapter-9-the-evolution-of-code/
 
 The system creates a starting population, evaluates the fitness of each "agent" and creates a new population bases on the crossover of the fitter agents and a mutation chance. The new population is evaluated and mixed every iteration rising the global fitness of the population by generating fitter agents.
@@ -78,11 +81,42 @@ Examples
 Solved problem: Which is the smallest box (as the sum of faces area) in which I can fit Suzanne mesh?
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png
+
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
+* Analyzers-> :doc:`Area </nodes/analyzer/area>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
 Solved problem: Where is the point where the minimum distance to a set of points is closest to the maximum distance?
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png
+
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Analyzers-> :doc:`Distance </nodes/analyzer/distance_pp>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* SUB X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* List->List Main-> :doc:`List Math </nodes/list_main/func>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Solved problem: Which is the shortest path that cycles through all the points?
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
+    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
+
+* Analyzers-> :doc:`Path Length </nodes/analyzer/path_length_2>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
