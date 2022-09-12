@@ -1,6 +1,9 @@
 Matrix Math
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189597709-68ea2c85-c478-403f-9555-87fcc0096684.png
+  :target: https://user-images.githubusercontent.com/14288520/189597709-68ea2c85-c478-403f-9555-87fcc0096684.png
+
 Functionality
 -------------
 
@@ -12,13 +15,14 @@ Inputs
 All inputs are vectorized and they will accept single or multiple values.
 
 - **A**
-- **B**  [1]
+- **B**  **[1]**
 - ...
-- **Z**  [2]
+- **Z**  **[2]**
 
 Notes:
-[1] : The second input is only available for the operations that require a second operand, like Multiply.
-[2] : For multiple input operation (e.g. Multiply) the input sockets extend to allow arbitrary number of input matrices and their socket name progress alphabetically.
+
+* **[1]** : The second input is only available for the operations that require a second operand, like Multiply.
+* **[2]** : For multiple input operation (e.g. Multiply) the input sockets extend to allow arbitrary number of input matrices and their socket name progress alphabetically.
 
 Parameters
 ----------
@@ -30,35 +34,39 @@ All parameters except **Operation**, **PrePost** and **Filter T/R/S** can be giv
 +---------------+------------+----------+--------------------------------------------------+
 | Param         | Type       | Default  | Description                                      |
 +===============+============+==========+==================================================+
-| **Operation** | Enum:      | Multiply | Multiply: A,B => C = A*B  [1]                    |
-|               |  Multiply  |          |   Invert: A => C = A^-1                          |
-|               |  Invert    |          |   Filter: A => C = [AT]*[AR]*[AS]                |
-|               |  Filter    |          |   Basis:  A => X, Y, Z                           |
-|               |  Basis     |          |                                                  |
+| **Operation** | Enum:      | Multiply | Multiply: A,B => C = A*B  **[1]**                |
+|               |            |          |                                                  |
+|               | * Multiply |          | * Invert: A => C = A^-1                          |
+|               | * Invert   |          | * Filter: A => C = [AT]*[AR]*[AS]                |
+|               | * Filter   |          | * Basis:  A => X, Y, Z                           |
+|               | * Basis    |          |                                                  |
 +---------------+------------+----------+--------------------------------------------------+
-| **PrePost**   | Enum:      | Pre      | Determines the order the operands  [2]           |
-|               |  Pre       |          |                                                  |
-|               |  Post      |          |                                                  |
+| **PrePost**   | Enum:      | Pre      | Determines the order the operands  **[2]**       |
+|               |            |          |                                                  |
+|               | * Pre      |          |                                                  |
+|               | * Post     |          |                                                  |
 +---------------+------------+----------+--------------------------------------------------+
-| **Filter T**  | Bool       | False    | Filter out the Translation component  [3]        |
+| **Filter T**  | Bool       | False    | Filter out the Translation component  **[3]**    |
 +---------------+------------+----------+--------------------------------------------------+
-| **Filter R**  | Bool       | False    | Filter out the Rotation component  [3]           |
+| **Filter R**  | Bool       | False    | Filter out the Rotation component  **[3]**       |
 +---------------+------------+----------+--------------------------------------------------+
-| **Filter S**  | Bool       | False    | Filter out the Scale component  [3]              |
+| **Filter S**  | Bool       | False    | Filter out the Scale component  **[3]**          |
 +---------------+------------+----------+--------------------------------------------------+
 | **A**         | Matrix     | identity | First matrix input                               |
 +---------------+------------+----------+--------------------------------------------------+
-| **B**         | Matrix     | identity | Second matrix input  [4]                         |
+| **B**         | Matrix     | identity | Second matrix input  **[4]**                     |
 +---------------+------------+----------+--------------------------------------------------+
 
 Notes:
- [1] : The order of multiplication is given by the PrePost setting.
- [2] : The PrePost setting is only available for the Multiply operation.
- [3] : The Filter T/R/S toggle settings are only available for the Filter operation.
- [4] : Second input is only available for Multiply operation.
+
+* **[1]** : The order of multiplication is given by the PrePost setting.
+* **[2]** : The PrePost setting is only available for the Multiply operation.
+* **[3]** : The Filter T/R/S toggle settings are only available for the Filter operation.
+* **[4]** : Second input is only available for Multiply operation.
 
 Operations
 ----------
+
 **Multiply**
 The multiplication of the 4x4 homogeneous matrices result in a composite 4x4 homogeneous matrix having a composed Translation, a composed Rotation and a composed Scale. The order of multiplication is given by the PrePost setting, which is set to PRE-multiplication by default (C = A*B). The POST multiplication reverses the order of multiplication (C = B*A).
 
@@ -80,12 +88,14 @@ This operation extacts the basis vector from the rotation part of the 4x4 homoge
 Outputs
 -------
 
-**Matrix**
+* **Matrix**
+
 Outputs will be generated when connected.
 
-**X**
-**Y**
-**Z**
+* **X**
+* **Y**
+* **Z**
+
 These outputs are available only for the Basis operation and will be generated when connected.
 
 Example of usage

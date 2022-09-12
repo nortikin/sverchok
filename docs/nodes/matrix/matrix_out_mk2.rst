@@ -1,6 +1,9 @@
 Matrix Out
 ==========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189547490-4e7e7879-dfbb-4622-850b-6a8845f6956e.png
+  :target: https://user-images.githubusercontent.com/14288520/189547490-4e7e7879-dfbb-4622-850b-6a8845f6956e.png
+
 Functionality
 -------------
 
@@ -19,24 +22,25 @@ Regardless of the selected mode the node always outputs the **Location** and the
 | Mode       | Description                                                                           |
 +============+=======================================================================================+
 | EULER      | Converts the rotation component of the matrix into X, Y, Z angles                     |
-|            | corresponding to the Euler rotation given an Euler rotation order. [1,2]              |
+|            |                                                                                       |
+|            | corresponding to the Euler rotation given an Euler rotation order. **[1,2]**          |
 +------------+---------------------------------------------------------------------------------------+
-| AXIS-ANGLE | Converts the rotation component of the matrix into the Axis & Angle of rotation. [1]  |
+| AXIS-ANGLE | Converts the rotation component of the matrix into the Axis & Angle                   |
+|            | of rotation. **[1]**                                                                  |
 +------------+---------------------------------------------------------------------------------------+
 | QUATERNION | Converts the rotation component of the matrix into a quaternion.                      |
 +------------+---------------------------------------------------------------------------------------+
 
 Notes:
-[1] : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians, Degrees or Unities (0-1 range).
-[2] : For EULER mode the node provides the option to select the Euler rotation order: "XYZ", "XZY", "YXZ", "YZX", "ZXY" or "ZYX".
+
+* **[1]** : For EULER and AXIS-ANGLE modes, which output angles, the node provides an angle unit conversion to let the angle output values be converted to Radians, Degrees or Unities (0-1 range).
+* **[2]** : For EULER mode the node provides the option to select the Euler rotation order: "XYZ", "XZY", "YXZ", "YZX", "ZXY" or "ZYX".
 
 
 Inputs
 ------
 
-**Matrix**
-The node takes a list of (one or more) matrices and based on the selected mode
-it converts the matrices into the corresponding components.
+* **Matrix** The node takes a list of (one or more) matrices and based on the selected mode it converts the matrices into the corresponding components.
 
 
 Extra Parameters
@@ -48,15 +52,17 @@ These parameters do not receive external input.
 | Extra Param     | Type     | Default | Description                          |
 +=================+==========+=========+======================================+
 | **Angle Units** | Enum     | DEGREES | Interprets the angle values based on |
-|                 |  RADIANS |         | the selected angle units:            |
-|                 |  DEGREES |         | Radians = 0 - 2pi                    |
-|                 |  UNITIES |         | Degrees = 0 - 360                    |
-|                 |          |         | Unities = 0 - 1                      |
+|                 |          |         |                                      |
+|                 |          |         | the selected angle units:            |
+|                 | * RADIANS|         |                                      |
+|                 | * DEGREES|         | * Radians = 0 - 2pi                  |
+|                 | * UNITIES|         | * Degrees = 0 - 360                  |
+|                 |          |         | * Unities = 0 - 1                    |
 +-----------------+----------+---------+--------------------------------------+
 
 
 Outputs
-=======
+-------
 
 Based on the selected **Mode** the node makes available the corresponding output sockets:
 

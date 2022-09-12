@@ -121,8 +121,7 @@ def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: matrix mesh join
-    Tooltip: Multiply vectors on matrices with several objects in output, processes edges & faces too.
-    It can also join the output meshes in to a single one
+    Tooltip: Multiply vectors on matrices with several objects in output, processes edges & faces too. It can also join the output meshes in to a single one\n\t-\n\tIn: Verts, Edges, Faces, Matrices\n\tParam: Join On/[Off]\n\tOut:Verts, Edges, Faces
     """
 
     bl_idname = 'SvMatrixApplyJoinNode'
@@ -130,7 +129,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_APPLY_JOIN'
 
-    do_join: BoolProperty(name='Join', default=True, update=updateNode)
+    do_join: BoolProperty(name='Join', default=True, update=updateNode, description="If set, then this node will join output meshes into one mesh")
 
     implementation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),

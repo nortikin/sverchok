@@ -1,6 +1,9 @@
 Matrix Track To
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189595208-d6f50d63-ea5f-42b5-bb7f-85d16751b606.png
+  :target: https://user-images.githubusercontent.com/14288520/189595208-d6f50d63-ea5f-42b5-bb7f-85d16751b606.png
+
 Functionality
 -------------
 
@@ -30,6 +33,7 @@ Parameters
 | Param                | Type    | Default   | Description                                    |
 +======================+=========+===========+================================================+
 | **Track/Up Axes**    | Enum:   | X Y       | Selects which of the X,Y,Z axes are the Track  |
+|                      |         |           |                                                |
 |                      |         |           | axis and the Up axis.                          |
 |                      | X Y     |           |                                                |
 |                      |         |           |                                                |
@@ -81,16 +85,23 @@ A set of extra parameters are available on the property panel. These parameters 
 | Extra Param             |  Type      |  Default   |  Description                                  |
 +=========================+============+============+===============================================+
 | **Normalize Vectors**   |  Bool      |  True      |  Normalize the output X, Y, Z vectors and     |
+|                         |            |            |                                               |
 |                         |            |            |  the rotation component of the matrix.        |
 |                         |            |            |                                               |
 |                         |            |            |  Turn this OFF when normalization is not      |
+|                         |            |            |                                               |
 |                         |            |            |  needed to optimize computation.              |
 +-------------------------+------------+------------+-----------------------------------------------+
 |  **Flat Output**        | Bool       | True       |  While active it will join the first level to |
+|                         |            |            |                                               |
 |                         |            |            |  output a regular  matrix list ([M,M,..]) that|
+|                         |            |            |                                               |
 |                         |            |            |  can be plugged  to any other node.           |
+|                         |            |            |                                               |
 |                         |            |            |  If it is disabled the node will keep the     |
+|                         |            |            |                                               |
 |                         |            |            |  original structure outputting a list of      |
+|                         |            |            |                                               |
 |                         |            |            |  matrix lists ([[M,M,..],[M,M,..],..]).       |
 +-------------------------+------------+------------+-----------------------------------------------+
 
@@ -100,13 +111,16 @@ Outputs
 **Matrix**, **X**, **Y**, **Z**.
 All outputs will be generated when connected.
 
-The **Matrix** is the homogeneous 4x4 matrix composed by the given location, rotation and scale : m = T * R * S. [1]
+The **Matrix** is the homogeneous 4x4 matrix composed by the given location, rotation and scale :
 
-The **X**, **Y**, **Z** are the orthonormal vectors, oriented along the Track and Up axes. [2]
+m = T * R * S. **[1]**
+
+The **X**, **Y**, **Z** are the orthonormal vectors, oriented along the Track and Up axes. **[2]**
 
 Notes:
-[1] : The rotation component is ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel).
-[2] : The axes are ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel), otherwise the vectors are only orthogonal.
+
+* **[1]** : The rotation component is ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel).
+* **[2]** : The axes are ortho-normal only if the "Normalize Vectors" option is ON (in the Property Panel), otherwise the vectors are only orthogonal.
 
 
 Example of usage

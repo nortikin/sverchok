@@ -38,7 +38,7 @@ def matrix_euler(param, order):
 class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: from axis rotation
-    Tooltip:  Construct a Matirx from Euler rotations
+    Tooltip:  Create a transformation Matrix by defining the angles with X, Y and Z and the rotation order.\n\tIn: X/Y/Z [0.0]\n\tParams: Order ([XYZ]/.../ZYX)\n\tOut: Matrix
 
     """
     bl_idname = 'SvMatrixEulerNode'
@@ -79,14 +79,14 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvMatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "order", text="Order:")
+        layout.prop(self, "order", text="Order")
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "order", text="Order:")
+        layout.prop(self, "order", text="Order")
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def rclick_menu(self, context, layout):
-        layout.prop_menu_enum(self, "order", text="Order:")
+        layout.prop_menu_enum(self, "order", text="Order")
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def process(self):

@@ -31,7 +31,10 @@ from sverchok.data_structure import (updateNode, fullList)
 
 
 class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Interpolate between two matrices '''
+    '''Interpolate between two matrices. (See also number->mix inputs. Can do non linear iterpolation)
+    In: Factor (0.0-1.0), Matrix A, B
+    Out: Matrix C
+    '''
     bl_idname = 'MatrixInterpolationNode'
     bl_label = 'Matrix Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'

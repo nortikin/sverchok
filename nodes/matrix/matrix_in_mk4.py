@@ -107,7 +107,7 @@ def axis_angle_matrices(params, angle_units):
 class SvMatrixInNodeMK4(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Loc, Rot, Scale, Angle
-    Tooltip: Generate matrix from various components
+    Tooltip: Generate matrix from various components.\n\tIn: Location, Scale, Axis, Angle, Quaternion\n\tParams: Format (Quaternion/Euler Angles/[Axis Angle]), Euler order (XYZ...ZXY)\n\tOut: Matrix
     """
     bl_idname = 'SvMatrixInNodeMK4'
     bl_label = 'Matrix In'

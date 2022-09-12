@@ -90,4 +90,8 @@ Outputs
 
 Based on the selected **Mode** the node outputs the corresponding type value.
 
+See also
+--------
 
+* Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Matrix-> :doc:`Matrix Interpolation </nodes/matrix/interpolation>`
