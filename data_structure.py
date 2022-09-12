@@ -1320,10 +1320,11 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                 outputs.remove(outputs[old_sock_ind])
             # place sockets and return links
             for i, n in enumerate(outputsocketname):
-                new_sock_ind = len(inputsocketname) - i
-                outputs.move(len(outputs)-new_sock_ind, idx[n])
+                static_num = len(outputs) - len(outputsocketname)
+                new_sock_ind = static_num + i
+                outputs.move(new_sock_ind, idx[n])
                 for to_socket in to_links[n]:
-                    ng.links.new(to_socket, new_out_socket)
+                    ng.links.new(to_socket, outputs[n])
 
 
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
