@@ -8,6 +8,8 @@ Viz
    mesh_viewer
    viewer_2d
    viewer_draw_mk4
+   viewer_draw_curve
+   viewer_draw_surface
    vd_matrix
    viewer_idx28
    polyline_viewer

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NURBS Surface Out Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Viewer Draw Curve &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Metaball Out Node" href="viewer_metaball.html" />
-    <link rel="prev" title="NURBS Curve Out Node" href="viewer_nurbs_curve.html" /> 
+    <link rel="next" title="Viewer Draw Surface" href="viewer_draw_surface.html" />
+    <link rel="prev" title="Viewer Draw" href="viewer_draw_mk4.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,7 +77,15 @@
 <li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Viewer Draw Curve</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operators">Operators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
@@ -85,14 +93,7 @@
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">NURBS Surface Out Node</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
@@ -139,9 +140,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="viz_index.html">Viz</a> &raquo;</li>
-      <li>NURBS Surface Out Node</li>
+      <li>Viewer Draw Curve</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/viz/viewer_nurbs_surface.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/viz/viewer_draw_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -149,98 +150,71 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nurbs-surface-out-node">
-<h1>NURBS Surface Out Node<a class="headerlink" href="#nurbs-surface-out-node" title="Permalink to this heading">¶</a></h1>
+  <section id="viewer-draw-curve">
+<h1>Viewer Draw Curve<a class="headerlink" href="#viewer-draw-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node generates Blender’s NURBS Surface objects from input data. It creates
-a new Surface object or updates existing on each update of input data or
-parameters.</p>
-<p><strong>NOTE 1</strong>: Blender’s functionality for NURBS is limited. For example, there is
-no way to specify explicit knot vector.
-For information about supported features and operations for NURBS Surface
-objects, please refer to <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/surfaces/introduction.html">Blender</a> documentation.
-For more NURBS-related functions, it is possible to use the <a class="reference external" href="https://github.com/portnov/sverchok-extra">Sverchok-Extra</a> addon.</p>
-<p><strong>NOTE 2</strong>: In current implementation, this node does not create objects during
-scene update events. In many cases you will never even see this problem,
-because usually updates of node inputs or parameters happen more frequently. If
-at some moment there is no object created by this node in the scene, and you
-want it created, just press the <strong>Update All</strong> button in node editor’s N panel.</p>
+<p>This node displays Curve objects in the 3D View, using opengl. The node is
+intended to be a fast way to show you the result of your node tree.</p>
+<p>For NURBS and NURBS-like curves, the node can also additionally display:
+control points, control polygon edges, curve node points. For non-NURBS curves,
+the node just does not try to display these attributes.</p>
+<p>This node is automatically created when you select “Connect Viewer Draw” from
+right-click menu for nodes which have Curve output. Also this node pops up as a
+“temporal viewer”. when you perform control-click on such a node.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>ControlPoints</strong>. Control points of the NURBS surface. These points are
-expected to form a “rectangular grid” MxN. If the <strong>Input Mode</strong> parameter is
-set to <strong>Single List</strong> value, then this input expects one flat list of
-vertices per surface (i.e., it expects a list of lists of vertices). That
-single list will be split into rows by this node itself. If the <strong>Input
-Mode</strong> parameter is set to <strong>Separated lists</strong> value, then this input expects
-a list of lists of vertices per surface (i.e. it expects a list of lists of
-lists of vertices). This input is mandatory.</p></li>
-<li><p><strong>Weights</strong>. NURBS surface control points weight. The shape of input data
-should correspond to the shape of input data for the <strong>ControlPoints</strong> input:
-it can be either list of lists of floats (in <strong>Single List</strong> mode), or list
-of lists of lists of floats (in <strong>Separated Lists</strong> mode). This input is
-optional.</p></li>
-<li><p><strong>Degree U</strong>. The degree of the surface in the U direction. The default value is 3.</p></li>
-<li><p><strong>Degree V</strong>. The degree of the surface in the V direction. The default value is 3.</p></li>
-<li><p><strong>U Size</strong>. Number of vertices per row. This is used to split the flat list
-of control points into rows, when the <strong>Input Mode</strong> parameter is set to
-<strong>Single List</strong>. Otherwise the input is not available. The default value is
-5.</p></li>
+<li><p><strong>Curve</strong>. The curve object(s) to be displayed. This input is mandatory.</p></li>
+<li><p><strong>Resolution</strong>. Resolution for displaying the curve. The default value is 50.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following parameters:</p>
+<p>This node has one main parameter:</p>
 <ul class="simple">
-<li><p><strong>UPD</strong>. The node will process data only if this button is enabled.</p></li>
-<li><p><strong>Hide View</strong> (eye icon). Toggle visibility of generated object in viewport.</p></li>
-<li><p><strong>Hide Select</strong> (pointer icon). Toggle ability to select for generated object.</p></li>
-<li><p><strong>Hide Render</strong> (render icon). Toggle renderability for generated object.</p></li>
-<li><p><strong>Base name</strong>. Base part of name for Surface object to create (or update).
-Default is “Alpha”.</p></li>
-<li><p><strong>Select Toggle</strong>. Select / deselect generated object.</p></li>
-<li><p><strong>Material</strong>. Material to be assigned to created object.</p></li>
-<li><p><strong>Input mode</strong>. This defines how control points and their weights are specified:</p>
-<ul>
-<li><p><strong>Single List</strong>: it is expected that <strong>ControlPoints</strong> and <strong>Weights</strong>
-inputs will be provided with one flat list of control points and weights.
-The node will split that list into rows, using the value in the <strong>U Size</strong>
-input.</p></li>
-<li><p><strong>Separated Lists</strong>: it is expected that <strong>ControlPoints</strong> and <strong>Weights</strong>
-inputs will be provided with lists of control points and their weights,
-that were already split into rows.</p></li>
+<li><p><strong>Show</strong>. The node displays something only when this parameter is enabled.</p></li>
 </ul>
-</li>
-<li><p><strong>Cyclic U</strong>. Whether the surface should be cyclic (closed) in the U
-direction. Unchecked by default.</p></li>
-<li><p><strong>Cyclic V</strong>. Whether the surface should be cyclic (closed) in the V
-direction. Unchecked by default.</p></li>
-<li><p><strong>Endpoint U</strong>. Whether the surface should touch it’s end control points in
-the U direction. This option is not available if <strong>Cyclic U</strong> is checked.
-Checked by default.</p></li>
-<li><p><strong>Endpoint V</strong>. Whether the surface should touch it’s end control points in
-the V direction. This option is not available if <strong>Cyclic V</strong> is checked.
-Checked by default.</p></li>
-<li><p><strong>Smooth</strong>. Whether the created surface should be in smoothed normals mode.
-Checked by default. This parameter is available in the N panel only.</p></li>
-<li><p><strong>Resolution U</strong>, <strong>Resolition V</strong>. Surface subdivisions per segment. This
-parameter is available in the N panel only.</p></li>
+<p>Most of arameters of this node are groupped in rows; for each type of
+information this node can display, there are three parameters: whether to
+display it, the color to be used, and point size / line width to be used.</p>
+<p>The parameters of the node are (in this order):</p>
+<ul class="simple">
+<li><p><strong>Display Vertices</strong>, <strong>Vertices Color</strong>, <strong>Vertices Size</strong>. Control display
+of points on the curve (number of points is conrtolled by <strong>Resolution</strong>
+parameter). Display of points is disabled by default.</p></li>
+<li><p><strong>Display Curve Line</strong>, <strong>Curve Line Color</strong>, <strong>Curve Line Width</strong>. Control
+display of the curve itself (more precisely, the edges between curve points).
+Curve line is shown by default.</p></li>
+<li><p><strong>Display Control Points</strong>, <strong>Control Points Color</strong>, <strong>Control Points
+Size</strong>. Control display of curve’s control points, for NURBS and NURBS-like
+curves. Control points are not shown by default.</p></li>
+<li><p><strong>Display Control Polygon</strong>, <strong>Control Polygon Color</strong>, <strong>Control Polygon
+Line Width</strong>. Control display of curve’s control polygon (edges between
+control points), for NURBS and NURBS-like curves. Control polygon is not
+shown by default.</p></li>
+<li><p><strong>Display Node Points</strong>, <strong>Node Points Color</strong>, <strong>Node Points Size</strong>. Control
+display of curve’s node points, for NURBS and NURBS-like curves. Nodes are
+not shown by default.</p></li>
+</ul>
+</section>
+<section id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
+<p>This node has the following buttons:</p>
+<ul class="simple">
+<li><p><strong>BAKE</strong>. Create mesh objects in Blender scene according to curves being displayed.</p></li>
+<li><p><strong>Align</strong>. Zoom and position 3D view so that generated object is in the center.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following output:</p>
-<ul class="simple">
-<li><p><strong>Object</strong>. Generated NURBS Surface objects.</p></li>
-</ul>
+<p>This node has no outputs.</p>
 </section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/75611527-144dd800-5b3d-11ea-81e0-5b2b1c8a50c0.png" src="https://user-images.githubusercontent.com/284644/75611527-144dd800-5b3d-11ea-81e0-5b2b1c8a50c0.png" />
+<section id="example-of-usage">
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<img alt="https://user-images.githubusercontent.com/284644/189537925-b8d72553-5650-4d18-9fcc-507f70801dff.png" src="https://user-images.githubusercontent.com/284644/189537925-b8d72553-5650-4d18-9fcc-507f70801dff.png" />
 </section>
 </section>
 
@@ -248,8 +222,8 @@ parameter is available in the N panel only.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="viewer_nurbs_curve.html" class="btn btn-neutral float-left" title="NURBS Curve Out Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="viewer_metaball.html" class="btn btn-neutral float-right" title="Metaball Out Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viewer_draw_mk4.html" class="btn btn-neutral float-left" title="Viewer Draw" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_draw_surface.html" class="btn btn-neutral float-right" title="Viewer Draw Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
