@@ -53,6 +53,14 @@ The parameters of the node are (in this order):
   Control display of surface's control net (edges between control points), for
   NURBS and NURBS-like surfaces. Control net is not displayed by default.
 
+Operators
+---------
+
+This node has the following buttons:
+
+* **BAKE**. Create mesh objects in Blender scene according to curves being displayed.
+* **Align**. Zoom and position 3D view so that generated object is in the center.
+
 Outputs
 -------
 
