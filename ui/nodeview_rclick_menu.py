@@ -105,7 +105,7 @@ def conect_to_3d_viewer(tree):
     if hasattr(tree.nodes.active, 'viewer_map'):
         view_node(tree)
     else:
-        add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+        add_connection(tree, bl_idname_new_node=None, offset=[60, 0])
 
 def view_node(tree):
     '''viewer map is a node attribute to inform to the operator how to visualize
@@ -145,15 +145,27 @@ def view_node(tree):
         links.new(node_list[output_s[0]].outputs[output_s[1]],
                   node_list[input_s[0]].inputs[input_s[1]])
 
+def get_viewer_node_bl_idname(output_map, specific_bl_idname):
+    if specific_bl_idname is not None:
+        return specific_bl_idname
+    else:
+        if 'curve' in output_map:
+            return 'SvCurveViewerDrawNode'
+        elif 'surface' in output_map:
+            return 'SvSurfaceViewerDrawNode'
+        elif 'solid' in output_map:
+            return 'SvSolidViewerNode'
+        else:
+            return 'SvViewerDrawMk4'
 
 def add_connection(tree, bl_idname_new_node, offset):
 
     nodes = tree.nodes
     links = tree.links
 
-    output_map = get_output_sockets_map(nodes.active)
-
     existing_node = nodes.active
+    output_map = get_output_sockets_map(existing_node)
+    bl_idname_new_node = get_viewer_node_bl_idname(output_map, bl_idname_new_node)
 
     if isinstance(bl_idname_new_node, str):
         # single new node..
@@ -190,45 +202,18 @@ def add_connection(tree, bl_idname_new_node, offset):
                     links.new(outputs[output_map['faces']], inputs[2])
                 if 'edges' in output_map:
                     links.new(outputs[output_map['edges']], inputs[1])
-            elif 'curve' in output_map:
-
-                eval_node = nodes.new('SvExEvalCurveNode')
-                apply_default_preset(eval_node)
-                offset_node_location(existing_node, eval_node, offset)
-                frame_adjust(existing_node, eval_node)
-                offset_node_location(eval_node, new_node, offset)
-                frame_adjust(eval_node, new_node)
-                links.new(outputs[output_map['curve']], eval_node.inputs[0])
-                links.new(eval_node.outputs[0], inputs[0])
-                links.new(eval_node.outputs[1], inputs[1])
-
-            elif 'surface' in output_map:
-                eval_node = nodes.new('SvExEvalSurfaceNode')
-                apply_default_preset(eval_node)
-                offset_node_location(existing_node, eval_node, offset)
-                frame_adjust(existing_node, eval_node)
-                offset_node_location(eval_node, new_node, offset)
-                frame_adjust(eval_node, new_node)
-                links.new(outputs[output_map['surface']], eval_node.inputs[0])
-                links.new(eval_node.outputs[0], inputs[0])
-                links.new(eval_node.outputs[1], inputs[1])
-                links.new(eval_node.outputs[2], inputs[2])
-            elif 'solid' in output_map:
-                tree.nodes.remove(new_node)
-                new_node = nodes.new('SvSolidViewerNode')
-                apply_default_preset(new_node)
-                offset_node_location(existing_node, new_node, offset)
-                frame_adjust(existing_node, new_node)
-                links.new(outputs[output_map['solid']], new_node.inputs[0])
-            # existing_node.process_node(None)
+        elif bl_idname_new_node == 'SvCurveViewerDrawNode':
+            links.new(outputs[output_map['curve']], new_node.inputs['Curve'])
+        elif bl_idname_new_node == 'SvSurfaceViewerDrawNode':
+            links.new(outputs[output_map['surface']], new_node.inputs['Surface'])
+        elif bl_idname_new_node == 'SvSolidViewerNode':
+            links.new(outputs[output_map['solid']], new_node.inputs['Solid'])
 
         else:
             ...
     elif isinstance(bl_idname_new_node, list):
         # maybe vdmk2 + indexviewer
         ...
-
-
 
 class SvGenericDeligationOperator(bpy.types.Operator):
 
