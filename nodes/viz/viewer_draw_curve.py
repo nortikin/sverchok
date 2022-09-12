@@ -96,7 +96,7 @@ class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvCurveViewerDrawNode'
-    bl_label = 'Viewer Draw Curves'
+    bl_label = 'Viewer Draw Curve'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
