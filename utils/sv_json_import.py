@@ -61,7 +61,7 @@ class JSONImporter:
 
     def import_node_settings(self, node: SverchCustomTreeNode):
         if self.structure_version < 1.0:
-            self._old_import_node_settings(node)
+            return self._old_import_node_settings(node)
         else:
             return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
 
@@ -78,8 +78,7 @@ class JSONImporter:
         tree_importer = TreeImporter01(node.data.id_data, self._structure, self._fails_log)
         for node_name, node_type, node_structure in tree_importer.nodes():
             node_importer = NodeImporter01(node.data, node_structure, self._fails_log, tree_importer.file_version)
-            node_importer.import_node(apply_attributes=False)
-            break
+            return node_importer.import_node(apply_attributes=False)
 
     @property
     def has_fails(self) -> bool:
@@ -212,6 +211,7 @@ class NodeImporter01:
                 prop = BPYProperty(socket, prop_name)
                 if prop.is_valid:
                     prop.value = prop_value
+        return self._node
 
     def _node_attributes(self) -> Generator[tuple]:
         """Reads node attributes from node structure, returns (attr_name, value)"""
