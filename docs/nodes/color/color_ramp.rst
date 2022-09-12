@@ -1,6 +1,9 @@
 Color Ramp
 ==========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189643169-e8791fe1-51b4-4508-8c0f-cb4691f4e117.png
+  :target: https://user-images.githubusercontent.com/14288520/189643169-e8791fe1-51b4-4508-8c0f-cb4691f4e117.png
+
 Functionality
 -------------
 
@@ -24,9 +27,7 @@ Parameters
 ----------
 
 * **Animate Node**. Update node on frame change
-
 * **Update**. Update node
-
 * **Use Alpha** Output RGBA or RGB colors
 
 
@@ -43,4 +44,10 @@ Examples
 
 Basic usage:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_ramp/color_ramp_sverchok_blender_example.png
+.. image:: https://user-images.githubusercontent.com/14288520/189643223-692b702c-1d7d-41d8-993f-76765d0ce2b8.png
+  :target: https://user-images.githubusercontent.com/14288520/189643223-692b702c-1d7d-41d8-993f-76765d0ce2b8.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`

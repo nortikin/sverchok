@@ -4,6 +4,9 @@ Color In
 Functionality
 -------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/189630585-fe6276d3-e81c-4879-9d12-e1a28b7ab089.png
+  :target: https://user-images.githubusercontent.com/14288520/189630585-fe6276d3-e81c-4879-9d12-e1a28b7ab089.png
+
 Creates color data from ranges or number values either integer of floats.
 
 With the NumPy implementation the node will accept regular lists or lists of NumPy arrays if the arrays have two axis arrays with shape [n,3]
@@ -15,9 +18,8 @@ It can also output Numpy arrays (flat arrays) when using the activating the "Out
 Inputs and Parameters
 ---------------------
 
-**Use Alpha** - Include alpha (transparency) data in the outputs.
-
-**Color space** - RGB, HSV and HSL inputs are available.
+* **Use Alpha** - Include alpha (transparency) data in the outputs.
+* **Color space** - RGB, HSV and HSL inputs are available.
 
 - RGB:
 
@@ -65,12 +67,21 @@ Examples
 
 Differences between HSV and HSL:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_hsv_hsl_sverchok_blender_example.png
+.. image:: https://user-images.githubusercontent.com/14288520/189630656-716363b1-02bb-4eee-8538-acb696584375.png
+  :target: https://user-images.githubusercontent.com/14288520/189630656-716363b1-02bb-4eee-8538-acb696584375.png
 
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Tuning noise into color data:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_in/color_in_noise_hsv_sverchok_blender_example.png
-
+.. image:: https://user-images.githubusercontent.com/14288520/189630696-415d23f2-a1d8-4995-8000-9beb42ab1006.png
+  :target: https://user-images.githubusercontent.com/14288520/189630696-415d23f2-a1d8-4995-8000-9beb42ab1006.png
 
 Gist: https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`

@@ -1,8 +1,8 @@
 List Mask Join In
 =================
 
-.. image:: https://user-images.githubusercontent.com/14288520/188214090-da2fd597-c35c-4a90-8b96-b0b12d9c950e.png
-  :target: https://user-images.githubusercontent.com/14288520/188214090-da2fd597-c35c-4a90-8b96-b0b12d9c950e.png
+.. image:: https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png
+  :target: https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png
 
 Functionality
 -------------

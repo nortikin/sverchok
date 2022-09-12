@@ -1,6 +1,9 @@
 Color Input
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189617415-3c76a399-1438-4119-ac5a-f6a8d70e47a9.png
+  :target: https://user-images.githubusercontent.com/14288520/189617415-3c76a399-1438-4119-ac5a-f6a8d70e47a9.png
+
 Functionality
 -------------
 
@@ -28,5 +31,5 @@ This node has only one output: **Color**. It is RGB or RGBA vector, depending on
 Examples
 --------
 
-.. image:: https://user-images.githubusercontent.com/284644/36633499-b5b7108a-19b8-11e8-8e39-243d9dd42e7e.png
-
+.. image:: https://user-images.githubusercontent.com/14288520/189617473-db7d63ff-43e0-42fd-8afb-a7499e932337.png
+  :target: https://user-images.githubusercontent.com/14288520/189617473-db7d63ff-43e0-42fd-8afb-a7499e932337.png

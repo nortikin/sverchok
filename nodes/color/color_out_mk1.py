@@ -38,7 +38,7 @@ def unpack_list_to_np(obj):
 class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: col -> rgb, hsv, hsl
-    Tooltip: Generator for Color data from color components
+    Tooltip: Generator for Color data from color components.\n\tIn: Color\n\tParams: Color Space [RGB]/HSV/HSL\n\tOut: R,G,B / H,S,V / H,S,L
 
     """
     bl_idname = 'SvColorsOutNodeMK1'
@@ -51,9 +51,9 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[idx].name = socket
         updateNode(self, context)
     mode_options = [
-        ("RGB", "RGB", "", 0),
-        ("HSV", "HSV", "", 1),
-        ("HSL", "HSL", "", 2),
+        ("RGB", "RGB", "Red, Green, Blue", 0),
+        ("HSV", "HSV", "Hue, Saturation, Value", 1),
+        ("HSL", "HSL", "Hue, Saturation, Lightness", 2),
     ]
 
     selected_mode: bpy.props.EnumProperty(

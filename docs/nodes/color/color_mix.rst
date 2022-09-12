@@ -1,6 +1,9 @@
 Color Mix
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/189637346-17f6026c-f23a-45bd-881b-f9fbb1186a7c.png
+  :target: https://user-images.githubusercontent.com/14288520/189637346-17f6026c-f23a-45bd-881b-f9fbb1186a7c.png
+
 Functionality
 -------------
 
@@ -33,8 +36,23 @@ This node has only one output: **Color**. It is RGB or RGBA vector, depending on
 Examples
 --------
 
-.. image:: https://user-images.githubusercontent.com/10011941/98450826-530e4600-2140-11eb-8206-b3e4e40c8565.png
+.. image:: https://user-images.githubusercontent.com/14288520/189637424-1c11fb70-8a77-4beb-9246-d3a56ed1f444.png
+  :target: https://user-images.githubusercontent.com/14288520/189637424-1c11fb70-8a77-4beb-9246-d3a56ed1f444.png
 
-.. image:: https://user-images.githubusercontent.com/10011941/98450861-9b2d6880-2140-11eb-9c46-728aeb3ced01.png
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
 
-.. image:: https://user-images.githubusercontent.com/10011941/98450881-da5bb980-2140-11eb-861c-e45c1f483a84.png
+.. image:: https://user-images.githubusercontent.com/14288520/189637924-d205352a-dc24-4ff2-a6e6-3eaa5825cd27.png
+  :target: https://user-images.githubusercontent.com/14288520/189637924-d205352a-dc24-4ff2-a6e6-3eaa5825cd27.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189637489-60c76248-466d-4d13-bf9d-e971cc22e271.png
+  :target: https://user-images.githubusercontent.com/14288520/189637489-60c76248-466d-4d13-bf9d-e971cc22e271.png
+
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Viz-> :doc:`Texture Viewer </nodes/viz/viewer_texture>`
