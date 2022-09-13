@@ -69,11 +69,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="logic_index.html">Logic</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="logic_node.html">Logic Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="evolver.html">Evolver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="genes_holder.html">Genes Holder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="switch_MK2.html">Switch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="input_switch_mod.html">Input Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="custom_switcher.html">Custom switcher</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Range Switch</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -85,6 +83,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="loop_in.html">Loop In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="loop_out.html">Loop Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evolver.html">Evolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="genes_holder.html">Genes Holder</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
@@ -136,6 +136,7 @@
              
   <section id="range-switch">
 <h1>Range Switch<a class="headerlink" href="#range-switch" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png"><img alt="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png" src="https://user-images.githubusercontent.com/14288520/189755062-b5dd1b4e-f6a4-4ab3-8764-650d4a782ce9.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node set a switch state to ON/OFF based on a driving value relative to a given value range.</p>
@@ -145,11 +146,13 @@
 <p>All inputs will accept single or multiple values.</p>
 <ul class="simple">
 <li><p><strong>Value</strong></p></li>
-<li><p><strong>Boundary1</strong> [1]</p></li>
-<li><p><strong>Boundary2</strong> [1]</p></li>
+<li><p><strong>Boundary1</strong> <strong>[1]</strong></p></li>
+<li><p><strong>Boundary2</strong> <strong>[1]</strong></p></li>
 </ul>
-<p>Notes:
-[1] : The boundary values do not have to be in increasing order or absolute.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The boundary values do not have to be in increasing order or absolute.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -194,7 +197,7 @@ Pass Through</p>
 </dl>
 </td>
 <td><p>Pass Through</p></td>
-<td><p>The switching mode  [1]</p></td>
+<td><p>The switching mode  <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Value</strong></p></td>
 <td><p>Float</p></td>
@@ -213,8 +216,8 @@ Pass Through</p>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : When the mode is <strong>Pass Through</strong> a “Toggle State” button becomes available to allow you to set the initial state of the switch.</p>
+<p>Notes:</p>
+<p><strong>[1]</strong> : When the mode is <strong>Pass Through</strong> a “Toggle State” button becomes available to allow you to set the initial state of the switch.</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>

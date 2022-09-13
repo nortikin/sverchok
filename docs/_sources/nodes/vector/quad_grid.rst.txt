@@ -74,7 +74,7 @@ Take manually subdivided plane (on the left) and sort it's vertices:
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
 Use together with "Build NURBS Surface" node:
 
@@ -84,4 +84,4 @@ Use together with "Build NURBS Surface" node:
 * Surface-> :doc:`Build Nurbs Surface </nodes/surface/nurbs_surface>`
 * Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

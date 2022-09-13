@@ -101,12 +101,20 @@ Please, study for XOR operation:
 ~~~~~~~~~~~~~~~~
 
 .. image:: ../../assets/nodes/logic/neuro_data_in.png
+
+* List->List Main-> :doc:`List Delete Levels </nodes/list_main/levels>`
+* Text-> :doc:`Viewer Text MK3 </nodes/text/viewer_text_mk3>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
+
 .. image:: ../../assets/nodes/logic/neuro_data_in_text.png
 
 Same with expected data:
 """"""""""""""""""""""""
 
 .. image::  ../../assets/nodes/logic/neuro_etalon.png
+
+* List->List Main-> :doc:`List Delete Levels </nodes/list_main/levels>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
 
 **Node preparations**
 ~~~~~~~~~~~~~~~~~~~~~
@@ -117,6 +125,9 @@ Same with expected data:
 
 .. image:: ../../assets/nodes/logic/neuro_ansumble.png
 
+* List->List Main-> :doc:`List Delete Levels </nodes/list_main/levels>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
+
 Running learning and waiting. Interrupt Studying. I had have that result:
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -126,3 +137,7 @@ Compare result:
 """""""""""""""
 
 .. image:: ../../assets/nodes/logic/neuro_result.png
+
+* List->List Main-> :doc:`List Delete Levels </nodes/list_main/levels>`
+* Text-> :doc:`Viewer Text MK3 </nodes/text/viewer_text_mk3>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`

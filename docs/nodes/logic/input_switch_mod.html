@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Custom switcher" href="custom_switcher.html" />
+    <link rel="next" title="Neuro Elman 1 Layer" href="neuro_elman.html" />
     <link rel="prev" title="Switch" href="switch_MK2.html" /> 
 </head>
 
@@ -69,9 +69,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="logic_index.html">Logic</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="logic_node.html">Logic Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="evolver.html">Evolver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="genes_holder.html">Genes Holder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="switch_MK2.html">Switch</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Input Switch</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -82,10 +79,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#macros">Macros</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="custom_switcher.html">Custom switcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="range_switch.html">Range Switch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="loop_in.html">Loop In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="loop_out.html">Loop Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evolver.html">Evolver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="genes_holder.html">Genes Holder</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
@@ -137,6 +137,7 @@
              
   <section id="input-switch">
 <h1>Input Switch<a class="headerlink" href="#input-switch" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189748974-515ced31-f55e-4125-8593-dd2c97b93d1e.png"><img alt="https://user-images.githubusercontent.com/14288520/189748974-515ced31-f55e-4125-8593-dd2c97b93d1e.png" src="https://user-images.githubusercontent.com/14288520/189748974-515ced31-f55e-4125-8593-dd2c97b93d1e.png" /></a>
 <p>This node allows switching among an arbitrary number of sets of any type of inputs connected to the node.</p>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -158,8 +159,8 @@ These sets of inputs are created automatically, one at a time, only as the last 
 <colgroup>
 <col style="width: 18%" />
 <col style="width: 9%" />
-<col style="width: 12%" />
-<col style="width: 61%" />
+<col style="width: 11%" />
+<col style="width: 63%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -172,20 +173,22 @@ These sets of inputs are created automatically, one at a time, only as the last 
 <tr class="row-even"><td><p><strong>Set Size</strong></p></td>
 <td><p>Int</p></td>
 <td><p>2</p></td>
-<td><p>The number of inputs in a set. [1][2][3]</p></td>
+<td><p>The number of inputs in a set. <strong>[1][2][3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Selected</strong></p></td>
 <td><p>Int</p></td>
 <td><p>0</p></td>
-<td><p>The index of the selected set to output. [4]</p></td>
+<td><p>The index of the selected set to output. <strong>[4]</strong></p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : As the size of the set changes, the corresponding number of inputs are generated for each set with labels in increasing order (e.g. Lambda 1, Lambda 2, … ).
-[2] : When changing the set size, the existing connections of the input &amp; output sockets to the outer nodes are being preserved, unless decreasing the set size renders some of the connected input &amp; output sockets non-existent.
-[3] : Currently the node limits the max set size to 9 since it is assumed it’s unlikely the user may need sets larger than this. Not putting a limit on the size sets could end up creating very tall nodes.
-[4] : The index 0 corresponds to the first set</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : As the size of the set changes, the corresponding number of inputs are generated for each set with labels in increasing order (e.g. Lambda 1, Lambda 2, … ).</p></li>
+<li><p><strong>[2]</strong> : When changing the set size, the existing connections of the input &amp; output sockets to the outer nodes are being preserved, unless decreasing the set size renders some of the connected input &amp; output sockets non-existent.</p></li>
+<li><p><strong>[3]</strong> : Currently the node limits the max set size to 9 since it is assumed it’s unlikely the user may need sets larger than this. Not putting a limit on the size sets could end up creating very tall nodes.</p></li>
+<li><p><strong>[4]</strong> : The index 0 corresponds to the first set</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
@@ -216,7 +219,7 @@ The number of Data output sockets is the same as the number of inputs in a set (
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="switch_MK2.html" class="btn btn-neutral float-left" title="Switch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="custom_switcher.html" class="btn btn-neutral float-right" title="Custom switcher" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="neuro_elman.html" class="btn btn-neutral float-right" title="Neuro Elman 1 Layer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

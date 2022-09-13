@@ -45,7 +45,7 @@ First vector of the node is initial direction of monkey head, second one is dire
     :target: https://user-images.githubusercontent.com/28003269/72435614-ecd2c400-37b7-11ea-80f2-176a0d1df5ee.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 * Matrix-> :doc:`Matrix Out </nodes/matrix/matrix_out_mk2>`
 * Quaternion-> :doc:`Quaternion Out </nodes/quaternion/quaternion_out_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
@@ -60,7 +60,7 @@ Also it is possible to make movements of monkey head more natural by applying Z 
     :target: https://user-images.githubusercontent.com/28003269/72444577-b7cf6d00-37c9-11ea-8052-0be2fa3de938.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 * Component-Wise: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * Quaternion-> :doc:`Quaternion Out </nodes/quaternion/quaternion_out_mk2>`
 * Quaternion Multiply: Quaternion-> :doc:`Quaternion Math </nodes/quaternion/quaternion_math>`

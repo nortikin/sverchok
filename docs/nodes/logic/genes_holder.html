@@ -20,7 +20,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Switch" href="switch_MK2.html" />
+    <link rel="next" title="List Main" href="../list_main/list_main_index.html" />
     <link rel="prev" title="Evolver" href="evolver.html" /> 
 </head>
 
@@ -69,7 +69,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="logic_index.html">Logic</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="logic_node.html">Logic Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="switch_MK2.html">Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="input_switch_mod.html">Input Switch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="neuro_elman.html">Neuro Elman 1 Layer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_switcher.html">Custom switcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="range_switch.html">Range Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="loop_in.html">Loop In</a></li>
+<li class="toctree-l3"><a class="reference internal" href="loop_out.html">Loop Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="evolver.html">Evolver</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Genes Holder</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -79,12 +85,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="switch_MK2.html">Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="input_switch_mod.html">Input Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="custom_switcher.html">Custom switcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="range_switch.html">Range Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="loop_in.html">Loop In</a></li>
-<li class="toctree-l3"><a class="reference internal" href="loop_out.html">Loop Out</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
@@ -136,36 +136,55 @@
              
   <section id="genes-holder">
 <h1>Genes Holder<a class="headerlink" href="#genes-holder" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189763727-88587af2-16a5-4cc8-9368-be6a089d9b64.png"><img alt="https://user-images.githubusercontent.com/14288520/189763727-88587af2-16a5-4cc8-9368-be6a089d9b64.png" src="https://user-images.githubusercontent.com/14288520/189763727-88587af2-16a5-4cc8-9368-be6a089d9b64.png" /></a>
 <p>This node stores a list of values (Integers, Floats or Vectors) that can be modified by the Evolver Node into the Genetics algorithm system.</p>
 <p>The node will keep the data and wont be affected by the regular updates.</p>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p><strong>Data type</strong>: Integers (Int), Floats or Vectors</p>
-<p><strong>Variation Mode</strong>: Order and Range. In Order mode the variation will be made by changing the order of the elements. In Range Mode the variation will be made by variating each element among the defined range(s)</p>
-<p><strong>Min</strong>: Minimum value a gene can have. Only in “Range” mode</p>
-<p><strong>Maximum</strong>: Maximum value a gene can have. Note that with the Integers this number will never be reached so to get a “Boolean” genes the maximum should be 2 to get values from 0 to 1. Only in “Range” mode</p>
-<p><strong>Population amount</strong>: Number of members of the population.</p>
-<p><strong>Iterations</strong>: Iterations of the system</p>
-<p><strong>Random Seed</strong>: Random Seed used in the system, this affects the initial population and the crossover and mutation process.</p>
+<ul class="simple">
+<li><p><strong>Data type</strong>: Integers (Int), Floats or Vectors</p></li>
+<li><p><strong>Variation Mode</strong>: Order and Range. In Order mode the variation will be made by changing the order of the elements. In Range Mode the variation will be made by variating each element among the defined range(s)</p></li>
+<li><p><strong>Min</strong>: Minimum value a gene can have. Only in “Range” mode</p></li>
+<li><p><strong>Maximum</strong>: Maximum value a gene can have. Note that with the Integers this number will never be reached so to get a “Boolean” genes the maximum should be 2 to get values from 0 to 1. Only in “Range” mode</p></li>
+<li><p><strong>Population amount</strong>: Number of members of the population.</p></li>
+<li><p><strong>Iterations</strong>: Iterations of the system</p></li>
+<li><p><strong>Random Seed</strong>: Random Seed used in the system, this affects the initial population and the crossover and mutation process.</p></li>
+</ul>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
-<p><strong>Reset</strong>: This will reset the memory of the node filling it with random values or values coming  from the input socket</p>
+<ul class="simple">
+<li><p><strong>Reset</strong>: This will reset the memory of the node filling it with random values or values coming  from the input socket</p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Numbers</strong>: Input to fill the memory of the node with numbers.</p>
-<p><strong>Vectors</strong>: Input to fill the memory of the node with vectors.</p>
-<p><strong>Bounding Box</strong>: Input to stablish the boundaries of the vectors (when generating the Evolver population). Only in “Range” mode</p>
+<ul class="simple">
+<li><p><strong>Numbers</strong>: Input to fill the memory of the node with numbers.</p></li>
+<li><p><strong>Vectors</strong>: Input to fill the memory of the node with vectors.</p></li>
+<li><p><strong>Bounding Box</strong>: Input to stablish the boundaries of the vectors (when generating the Evolver population). Only in “Range” mode</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Numbers / Vectors</strong>: Outputs memory of the node</p>
+<ul class="simple">
+<li><p><strong>Numbers / Vectors</strong>: Outputs memory of the node</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Solved problem: Which is the shortest path that cycles through all the points?. Note that this problem with 20 points has over 2 trillions of solutions, the Genetics Algorithm offers the best solution in a defined time</p>
-<img alt="https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png" src="https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png"><img alt="https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png" src="https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png" /></a>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/path_length_2.html"><span class="doc">Path Length</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="evolver.html"><span class="doc">Evolver</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -174,7 +193,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="evolver.html" class="btn btn-neutral float-left" title="Evolver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="switch_MK2.html" class="btn btn-neutral float-right" title="Switch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../list_main/list_main_index.html" class="btn btn-neutral float-right" title="List Main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

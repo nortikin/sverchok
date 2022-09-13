@@ -64,7 +64,7 @@ Making surface with stripes separated in two groups of nodes for UVconnect node 
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* Scene-> :doc:`Objects In </nodes/scene/objects_in_lite>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
 .. image:: https://user-images.githubusercontent.com/14288520/189498715-ce12c260-ea62-46de-8a03-c304b6ccedd0.png
   :target: https://user-images.githubusercontent.com/14288520/189498715-ce12c260-ea62-46de-8a03-c304b6ccedd0.png
