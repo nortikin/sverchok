@@ -112,3 +112,10 @@ Example of usage
   :target: https://user-images.githubusercontent.com/14288520/189450678-2f4e6fbd-0d48-4abf-be47-b7d7c8091267.gif
 
 The development thread also has examples: https://github.com/nortikin/sverchok/issues/1098
+
+See also
+--------
+
+* Number-> :doc:`Mix Inputs </nodes/number/mix_inputs>`
+* Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Matrix-> :doc:`Matrix Interpolation </nodes/matrix/interpolation>`

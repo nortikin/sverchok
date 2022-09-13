@@ -11,3 +11,4 @@ See also
 
 * Number-> :doc:`Mix Inputs </nodes/number/mix_inputs>` (Can do non linear matrix interpolation) 
 * Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Vector-> :doc:`Vector Lerp </nodes/vector/lerp>`
