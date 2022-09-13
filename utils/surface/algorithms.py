@@ -1376,3 +1376,13 @@ def remove_excessive_knots(surface, direction, tolerance=1e-6):
 
     return surface
 
+def build_nurbs_sphere(center, radius):
+    vectorx = np.array([0.0, 0.0, radius])
+    axis = np.array([0.0, 0.0, 1.0])
+    normal = np.array([1.0, 0.0, 0.0])
+    matrix = SvCircle.calc_matrix(normal, vectorx)
+    matrix = Matrix.Translation(center) @ Matrix(matrix).to_4x4()
+    arc = SvCircle(matrix=matrix, radius=radius, normal=normal, vectorx=vectorx)
+    arc.u_bounds = (0.0, pi)
+    return nurbs_revolution_surface(arc.to_nurbs(), center, axis, 0, 2*pi, global_origin=True)
+

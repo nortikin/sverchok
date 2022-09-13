@@ -7,7 +7,8 @@ from bpy.props import FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.surface import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
+from sverchok.utils.surface.sphere import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
+from sverchok.utils.surface.algorithms import build_nurbs_sphere
 
 class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -22,7 +23,8 @@ class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
         ('DEFAULT', "Default", "Based on spherical coordinates", 0),
         ('EQUIRECT', "Equirectangular", "Equirectangular (geographic) projection", 1),
         ('LAMBERT', "Lambert", "Lambert cylindrical equal-area projection", 2),
-        ('GALL', "Gall Stereographic", "Gall stereographic projection", 3)
+        ('GALL', "Gall Stereographic", "Gall stereographic projection", 3),
+        ('NURBS', "NURBS Sphere", "NURBS Sphere", 4)
     ]
 
     def update_sockets(self, context):
@@ -79,8 +81,12 @@ class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
                     surface = SvEquirectSphere(np.array(center), radius, theta1)
                 elif self.projection == 'LAMBERT':
                     surface = SvLambertSphere(np.array(center), radius)
-                else:
+                elif self.projection == 'GALL':
                     surface = SvGallSphere(np.array(center), radius)
+                elif self.projection == 'NURBS':
+                    surface = build_nurbs_sphere(np.array(center), radius)
+                else:
+                    raise Exception("Unsupported projection type")
                 surfaces_out.append(surface)
         self.outputs['Surface'].sv_set(surfaces_out)
 
