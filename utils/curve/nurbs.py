@@ -332,14 +332,8 @@ class SvNurbsCurve(SvCurve):
         raise Exception("Not implemented!")
 
     def calc_greville_ts(self):
-        cpts = self.get_control_points()
-        n = len(cpts)
-        p = self.get_degree()
-        gps = np.zeros((n,))
-        kv = self.get_knotvector()
-        for i in range(n):
-            gps[i] = kv[i+1:i+p+1].mean()
-        return gps
+        n = len(self.get_control_points())
+        return sv_knotvector.calc_nodes(self.get_degree(), n, self.get_knotvector())
 
     def calc_greville_points(self):
         return self.evaluate_array(self.calc_greville_ts())

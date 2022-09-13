@@ -96,6 +96,12 @@ def average(knotvectors):
     kvs = np.array(knotvectors)
     return kvs.mean(axis=0)
 
+def calc_nodes(degree, n_cpts, knotvector):
+    nodes = np.zeros((n_cpts,))
+    for i in range(n_cpts):
+        nodes[i] = knotvector[i+1:i+degree+1].mean()
+    return nodes
+
 def to_multiplicity(knot_vector, tolerance=1e-6):
     count = 0
     prev_u = None

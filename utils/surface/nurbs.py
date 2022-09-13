@@ -120,6 +120,18 @@ class SvNurbsSurface(SvSurface):
     def iso_curve(self, fixed_direction, param):
         raise Exception("Not implemented")
 
+    def calc_greville_us(self):
+        n = self.get_control_points().shape[0]
+        p = self.get_degree_u()
+        kv = self.get_knotvector_u()
+        return sv_knotvector.calc_nodes(p, n, kv)
+
+    def calc_greville_vs(self):
+        n = self.get_control_points().shape[1]
+        p = self.get_degree_v()
+        kv = self.get_knotvector_v()
+        return sv_knotvector.calc_nodes(p, n, kv)
+
     def get_homogenous_control_points(self):
         """
         returns: np.array of shape (m, n, 4)
