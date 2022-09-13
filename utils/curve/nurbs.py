@@ -973,7 +973,7 @@ class SvGeomdlCurve(SvNurbsCurve):
         r.u_bounds = self.u_bounds
         return r
 
-    def remove_knot(self, u, count=1, target=None, if_possible=False):
+    def remove_knot(self, u, count=1, target=None, if_possible=False, tolerance=None):
         if (count is None) == (target is None):
             raise Exception("Either count or target must be specified")
 
