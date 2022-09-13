@@ -1377,6 +1377,11 @@ def remove_excessive_knots(surface, direction, tolerance=1e-6):
     return surface
 
 def build_nurbs_sphere(center, radius):
+    """
+    Generate NURBS Surphase representing a sphere.
+    Sphere is defined here as a surface of revolution of
+    half a circle.
+    """
     vectorx = np.array([0.0, 0.0, radius])
     axis = np.array([0.0, 0.0, 1.0])
     normal = np.array([1.0, 0.0, 0.0])
