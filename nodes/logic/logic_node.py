@@ -26,25 +26,25 @@ from sverchok.data_structure import (updateNode, list_match_func, numpy_list_mat
 from sverchok.utils.sv_itertools import recurse_f_level_control
 
 
-Item = namedtuple('Item', ['name', 'arg_number', 'func'])
+Item = namedtuple('Item', ['name', 'arg_number', 'func', 'description'])
 
 functions = {
-    "AND":     Item("And",   2, lambda x: np.logical_and(x[0], x[1]),                ),
-    "OR":      Item("Or",    2, lambda x: np.logical_or(x[0], x[1]),                 ),
-    "IF":      Item("If",    1, lambda x: x[0].astype(bool),                         ),
-    "NOT":     Item("Not",   1, lambda x: np.logical_not(x[0]),                      ),
-    "NAND":    Item("Nand",  2, lambda x: np.logical_not(np.logical_and(x[0], x[1])),),
-    "NOR":     Item("Nor",   2, lambda x: np.logical_not(np.logical_or(x[0], x[1])), ),
-    "XOR":     Item("Xor",   2, lambda x: np.logical_xor(x[0], x[1]),                ),
-    "XNOR":    Item("Xnor",  2, lambda x: np.logical_not(np.logical_xor(x[0], x[1])),),
-    "LESS":    Item("<",     2, lambda x: x[0] < x[1],                               ),
-    "BIG":     Item(">",     2, lambda x: x[0] > x[1],                               ),
-    "EQUAL":   Item("==",    2, lambda x: x[0] == x[1],                              ),
-    "NOT_EQ":  Item("!=",    2, lambda x: x[0] != x[1],                              ),
-    "LESS_EQ": Item("<=",    2, lambda x: x[0] <= x[1],                              ),
-    "BIG_EQ":  Item(">=",    2, lambda x: x[0] >= x[1],                              ),
-    "TRUE":    Item("True",  0, lambda x: np.array([True]),                          ),
-    "FALSE":   Item("False", 0, lambda x: np.array([False]),                         ),
+    "AND":     Item("And",   2, lambda x: np.logical_and(x[0], x[1]),                 "True if X and Y are True"),
+    "OR":      Item("Or",    2, lambda x: np.logical_or(x[0], x[1]),                  "True if X or Y are True"),
+    "IF":      Item("If",    1, lambda x: x[0].astype(bool),                          "True if X is True"),
+    "NOT":     Item("Not",   1, lambda x: np.logical_not(x[0]),                       "True if X is False"),
+    "NAND":    Item("Nand",  2, lambda x: np.logical_not(np.logical_and(x[0], x[1])), "True if X or Y are False"),
+    "NOR":     Item("Nor",   2, lambda x: np.logical_not(np.logical_or(x[0], x[1])),  "True if X and Y are False"),
+    "XOR":     Item("Xor",   2, lambda x: np.logical_xor(x[0], x[1]),                 "True if X and Y are opposite"),
+    "XNOR":    Item("Xnor",  2, lambda x: np.logical_not(np.logical_xor(x[0], x[1])), "True if X and Y are equals"),
+    "LESS":    Item("<",     2, lambda x: x[0] < x[1],                                "True if X < Y"),
+    "BIG":     Item(">",     2, lambda x: x[0] > x[1],                                "True if X > Y"),
+    "EQUAL":   Item("==",    2, lambda x: x[0] == x[1],                               "True if X = Y"),
+    "NOT_EQ":  Item("!=",    2, lambda x: x[0] != x[1],                               "True if X not = Y"),
+    "LESS_EQ": Item("<=",    2, lambda x: x[0] <= x[1],                               "True if X <= Y"),
+    "BIG_EQ":  Item(">=",    2, lambda x: x[0] >= x[1],                               "True if X >= Y"),
+    "TRUE":    Item("True",  0, lambda x: np.array([True]),                           "Result is Always True"),
+    "FALSE":   Item("False", 0, lambda x: np.array([False]),                          "Result is Always False"),
 }
 
 
@@ -69,13 +69,17 @@ def logic_numpy(params, constant, matching_f):
 
 
 class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
-    '''And, Or, If, <, >..'''
+    '''And, Or, If, <, >..
+    Logic functions: And/Or/If/Not/Nand/Nor/Xor/</>/==/!=/<=/>=/True/False
+    In: A, B
+    Out: Result (boolean)
+    '''
     bl_idname = 'SvLogicNodeMK2'
     bl_label = 'Logic Functions'
     bl_icon = 'NONE' #'LOGIC'
     sv_icon = 'SV_LOGIC'
 
-    func_names = [(n, i.name, '')for n, i in functions.items()]
+    func_names = [(n, i.name, i.name+": "+i.description)for n, i in functions.items()]
 
     def change_function(self, context):
         arg_number = functions[self.function_name].arg_number
@@ -123,11 +127,11 @@ class SvLogicNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['B'].default_property_type = 'float' if old_node.prop_types[1] else 'int'
 
     def sv_init(self, context):
-        a = self.inputs.new('SvStringsSocket', "A")
+        a = self.inputs.new('SvStringsSocket', 'A')
         a.use_prop = True
         a.show_property_type = True
         a.default_property_type = 'int'
-        b = self.inputs.new('SvStringsSocket', "B")
+        b = self.inputs.new('SvStringsSocket', 'B')
         b.use_prop = True
         b.show_property_type = True
         b.default_property_type = 'int'

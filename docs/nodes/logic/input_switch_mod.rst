@@ -1,6 +1,9 @@
 Input Switch
 ------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/189748974-515ced31-f55e-4125-8593-dd2c97b93d1e.png
+  :target: https://user-images.githubusercontent.com/14288520/189748974-515ced31-f55e-4125-8593-dd2c97b93d1e.png
+
 This node allows switching among an arbitrary number of sets of any type of inputs connected to the node.
 
 Inputs
@@ -28,19 +31,20 @@ Parameters
 
 The **Selected** parameter accepts single input values directly from the node or from an outside node. The value is sanitized to be bounded by the number N of the connected inputs (0, N-1). In fact, the value is converted via a modulo-N function to wrap around within (0, N-1) range for values larger than N. In other words, as the **Selected** value increases, the node essentially cycles through the connected sets as it picks one to be sent to the output.
 
-+--------------+-------+---------+----------------------------------------------+
-| Param        | Type  | Default | Description                                  |
-+==============+=======+=========+==============================================+
-| **Set Size** | Int   | 2       | The number of inputs in a set. [1][2][3]     |
-+--------------+-------+---------+----------------------------------------------+
-| **Selected** | Int   | 0       | The index of the selected set to output. [4] |
-+--------------+-------+---------+----------------------------------------------+
++--------------+-------+---------+--------------------------------------------------+
+| Param        | Type  | Default | Description                                      |
++==============+=======+=========+==================================================+
+| **Set Size** | Int   | 2       | The number of inputs in a set. **[1][2][3]**     |
++--------------+-------+---------+--------------------------------------------------+
+| **Selected** | Int   | 0       | The index of the selected set to output. **[4]** |
++--------------+-------+---------+--------------------------------------------------+
 
 Notes:
-[1] : As the size of the set changes, the corresponding number of inputs are generated for each set with labels in increasing order (e.g. Lambda 1, Lambda 2, ... ).
-[2] : When changing the set size, the existing connections of the input & output sockets to the outer nodes are being preserved, unless decreasing the set size renders some of the connected input & output sockets non-existent.
-[3] : Currently the node limits the max set size to 9 since it is assumed it's unlikely the user may need sets larger than this. Not putting a limit on the size sets could end up creating very tall nodes.
-[4] : The index 0 corresponds to the first set
+
+* **[1]** : As the size of the set changes, the corresponding number of inputs are generated for each set with labels in increasing order (e.g. Lambda 1, Lambda 2, ... ).
+* **[2]** : When changing the set size, the existing connections of the input & output sockets to the outer nodes are being preserved, unless decreasing the set size renders some of the connected input & output sockets non-existent.
+* **[3]** : Currently the node limits the max set size to 9 since it is assumed it's unlikely the user may need sets larger than this. Not putting a limit on the size sets could end up creating very tall nodes.
+* **[4]** : The index 0 corresponds to the first set
 
 
 Extra Parameters

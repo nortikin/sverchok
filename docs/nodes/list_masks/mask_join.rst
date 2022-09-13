@@ -1,5 +1,5 @@
-List Mask Join In
-=================
+List Mask Join (In)
+===================
 
 .. image:: https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png
   :target: https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png

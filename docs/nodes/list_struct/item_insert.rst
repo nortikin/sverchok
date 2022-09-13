@@ -1,6 +1,9 @@
 List Item Insert
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/189765700-332fba58-4671-4508-8c86-0756934ef8fc.png
+  :target: https://user-images.githubusercontent.com/14288520/189765700-332fba58-4671-4508-8c86-0756934ef8fc.png
+
 Functionality
 -------------
 
@@ -56,5 +59,11 @@ Examples
 
 Trying various inputs, adjusting the parameters, and piping the output to a *Debug Print* (or stethoscope) node will be the fastest way to acquaint yourself with the inner workings of the *List Item Insert* Node.
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/list_struct/list_item_insert/list_item_insert.png
-  :alt: insert_item_in_list_sverchok_blender_example.png
+.. image:: https://user-images.githubusercontent.com/14288520/189765911-020958bb-b660-46fd-a635-8616858cecb6.png
+  :target: https://user-images.githubusercontent.com/14288520/189765911-020958bb-b660-46fd-a635-8616858cecb6.png
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

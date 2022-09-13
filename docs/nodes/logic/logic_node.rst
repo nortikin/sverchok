@@ -1,6 +1,9 @@
 Logic Functions
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189692704-621b9c7d-f4a7-4950-9ad0-b44a69ed7162.png
+  :target: https://user-images.githubusercontent.com/14288520/189692704-621b9c7d-f4a7-4950-9ad0-b44a69ed7162.png
+
 Functionality
 -------------
 
@@ -51,14 +54,14 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available for GCD or Round-N]
-
-**List Match**: Define how list with different lengths should be matched.  [Not available for GCD or Round-N]
+* **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). [Not available for GCD or Round-N]
+* **List Match**: Define how list with different lengths should be matched.  [Not available for GCD or Round-N]
 
 
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4333087/6b040a3e-3fdc-11e4-9693-7a00b0ce03bc.jpg
+.. image:: https://user-images.githubusercontent.com/14288520/189728289-aa5a39d2-0e99-462f-8eb7-b2a771ee1b10.png
+  :target: https://user-images.githubusercontent.com/14288520/189728289-aa5a39d2-0e99-462f-8eb7-b2a771ee1b10.png
 
 In this example we use Logic with Switch Node to choose between two vectors depending on the logic output.

@@ -83,9 +83,7 @@ def switch_data_np(states, a, b):
 class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Switch MK2
-    Tooltip: This version is more clever of previous one
-
-    You can deal with empty data connected to input sockets (True or False)
+    Tooltip: You can deal with empty data connected to input sockets (True or False).\n\tIn: state True/[False], A(_N), B(_N)\n\tExtra Params: in/out input number [1]\n\tOut(_N): A(_N)/B(_N)
     """
     bl_idname = 'SvSwitchNodeMK2'
     bl_label = 'Switch'
