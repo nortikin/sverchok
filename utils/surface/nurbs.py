@@ -119,6 +119,11 @@ class SvNurbsSurface(SvSurface):
 
     def iso_curve(self, fixed_direction, param):
         raise Exception("Not implemented")
+    
+    def is_rational(self, tolerance=1e-4):
+        weights = self.get_weights()
+        w, W = weights.min(), weights.max()
+        return (W - w) > tolerance
 
     def calc_greville_us(self):
         n = self.get_control_points().shape[0]

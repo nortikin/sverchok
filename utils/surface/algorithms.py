@@ -30,6 +30,7 @@ from sverchok.utils.curve.algorithms import (
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
 from sverchok.utils.logging import info, debug
 
 class SvInterpolatingSurface(SvSurface):
@@ -1378,7 +1379,7 @@ def remove_excessive_knots(surface, direction, tolerance=1e-6):
 
 def build_nurbs_sphere(center, radius):
     """
-    Generate NURBS Surphase representing a sphere.
+    Generate NURBS Surface representing a sphere.
     Sphere is defined here as a surface of revolution of
     half a circle.
     """
@@ -1390,4 +1391,67 @@ def build_nurbs_sphere(center, radius):
     arc = SvCircle(matrix=matrix, radius=radius, normal=normal, vectorx=vectorx)
     arc.u_bounds = (0.0, pi)
     return nurbs_revolution_surface(arc.to_nurbs(), center, axis, 0, 2*pi, global_origin=True)
+
+def deform_nurbs_surface(src_surface, uknots, vknots, points):
+    """
+    Move some control points of a NURBS surface so that at
+    given parameter values it passes through the given points.
+    NB: rational surfaces are not supported yet.
+    Parameters:
+    * src_surface - SvNurbsSurface instance
+    * uknots, vknots - np.array of shape (n,): U and V coordinates
+        of points to be moved
+    * points: np.array of shape (n,3): desired locations of surface points.
+    Output:
+    * SvNurbsSurface instance.
+    """
+    n = len(points)
+    if len(uknots) != n or len(vknots) != n:
+        raise Exception("Number of points, uknots and vknots must be equal")
+    if src_surface.is_rational():
+        raise UnsupportedSurfaceTypeException("Rational surfaces are not supported yet")
+
+    ndim = 3
+    knotvector_u = src_surface.get_knotvector_u()
+    knotvector_v = src_surface.get_knotvector_v()
+    basis_u = SvNurbsBasisFunctions(knotvector_u)
+    basis_v = SvNurbsBasisFunctions(knotvector_v)
+    degree_u = src_surface.get_degree_u()
+    degree_v = src_surface.get_degree_v()
+    ncpts_u, ncpts_v,_ = src_surface.get_control_points().shape
+    nsu = np.array([basis_u.derivative(i, degree_u, 0)(uknots) for i in range(ncpts_u)])
+    nsv = np.array([basis_v.derivative(i, degree_v, 0)(vknots) for i in range(ncpts_v)])
+    
+    nsu_t = np.transpose(nsu[np.newaxis], axes=(1,0,2)) # (ncpts_u, 1, n)
+    nsv_t = nsv[np.newaxis] # (1, ncpts_v, n)
+    ns_t = nsu_t * nsv_t # (ncpts_u, ncpts_v, n)
+    denominator = ns_t.sum(axis=0).sum(axis=0)
+    
+    n_equations = n*ndim
+    n_unknowns = ncpts_u * ncpts_v * ndim
+    
+    A = np.zeros((n_equations, n_unknowns))
+    for u_idx in range(ncpts_u):
+        for v_idx in range(ncpts_v):
+            cpt_idx = ncpts_v * u_idx + v_idx
+            for pt_idx in range(n):
+                alpha = nsu[u_idx][pt_idx] * nsv[v_idx][pt_idx] / denominator[pt_idx]
+                for dim_idx in range(ndim):
+                    A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = alpha
+                    
+    src_points = src_surface.evaluate_array(uknots, vknots)
+    
+    B = np.zeros((n_equations,1))
+    for pt_idx, point in enumerate(points):
+        B[pt_idx*3:pt_idx*3+3,0] = point[np.newaxis] - src_points[pt_idx][np.newaxis]
+    
+    A1 = np.linalg.pinv(A)
+    X = (A1 @ B).T
+    d_cpts = X.reshape((ncpts_u, ncpts_v, ndim))
+    cpts = src_surface.get_control_points()
+    
+    surface = SvNurbsSurface.build(src_surface.get_nurbs_implementation(),
+                degree_u, degree_v, knotvector_u, knotvector_v,
+                cpts + d_cpts)
+    return surface
 
