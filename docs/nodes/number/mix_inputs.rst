@@ -94,4 +94,5 @@ See also
 --------
 
 * Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Vector-> :doc:`Vector Lerp </nodes/vector/lerp>`
 * Matrix-> :doc:`Matrix Interpolation </nodes/matrix/interpolation>`
