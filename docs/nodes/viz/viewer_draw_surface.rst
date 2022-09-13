@@ -52,6 +52,10 @@ The parameters of the node are (in this order):
 * **Display Control Net**, **Control Net Color**, **Control Net Line Width**.
   Control display of surface's control net (edges between control points), for
   NURBS and NURBS-like surfaces. Control net is not displayed by default.
+* **Display Node Lines**, **Node Lines Color**, **Node Lines Width**. Conrtol
+  display of node lines, i.e. isolines at U and V parameters according to node
+  values of knotvectors along U and V parameter directions. Node lines are not
+  displayed by default.
 
 Operators
 ---------
