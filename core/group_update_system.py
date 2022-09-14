@@ -50,6 +50,14 @@ def control_center(event):
     elif type(event) is ev.TreesGraphEvent:
         trees_graph.is_updated = False
 
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won't be able to detect changes, and will update all
+    # Unlike main trees, groups can't do this via GroupTreeEvent because it
+    # should be called only when a group is edited by user
+    elif type(event) is ev.UndoEvent:
+        for gt in BlTrees().sv_group_trees:
+            GroupUpdateTree.get(gt).is_updated = False
+
     else:
         was_executed = False
 

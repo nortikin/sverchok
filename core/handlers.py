@@ -65,6 +65,8 @@ def sv_handler_undo_post(scene):
 
     undo_handler_node_count['sv_groups'] = 0
 
+    handle_event(ev.UndoEvent())
+
 
 @persistent
 def sv_update_handler(scene):
