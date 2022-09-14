@@ -162,9 +162,9 @@ def sv_post_load(scene):
     with catch_log_error():
         if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
             old_nodes.register_all()
-            old_nodes.mark_all()
             dummy_nodes.register_all()
-            dummy_nodes.mark_all()
+        old_nodes.mark_all()
+        dummy_nodes.mark_all()
 
     with catch_log_error():
         settings.apply_theme_if_necessary()
