@@ -168,7 +168,7 @@ def from_homogenous(control_points):
     elif control_points.ndim == 3: # surface
         weights = control_points[:,:,3]
         weighted = control_points[:,:,0:3]
-        points = weighted / weights[np.newaxis].T
+        points = weighted / np.transpose(weights[np.newaxis], axes=(1,2,0))
         return points, weights
     else:
         raise Exception(f"control_points have ndim={control_points.ndim}, supported are only 2 and 3")
