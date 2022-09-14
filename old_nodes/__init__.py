@@ -46,16 +46,16 @@ def is_old(node_info: Union[str, bpy.types.Node]):
     raise TypeError(f"String or Node is expected, {node_info} is given")
 
 
-def mark_old(node):
+def mark_old(node, text="Deprecated node!"):
     """Create a frame node around given one with deprecated label"""
-    if node.parent and node.parent.label == "Deprecated node!":
+    if node.parent and node.parent.label == text:
         return
     ng = node.id_data
     frame = ng.nodes.new("NodeFrame")
     if node.parent:
         frame.parent = node.parent
     node.parent = frame
-    frame.label = "Deprecated node!"
+    frame.label = text
     frame.use_custom_color = True
     frame.color = (.8, 0, 0)
     frame.shrink = True
@@ -66,6 +66,22 @@ def mark_all():
     for node in (n for t in BlTrees().sv_trees for n in t.nodes):
         if node.bl_idname in old_bl_idnames:
             mark_old(node)
+
+    def has_old_nodes(tree) -> bool:
+        """Recursive search of deprecated nodes"""
+        for n in tree.nodes:
+            if n.bl_idname in old_bl_idnames:
+                return True
+            elif hasattr(n, 'node_tree') and has_old_nodes(n.node_tree):
+                return True
+        return False
+
+    # mark group nodes if they have deprecated nodes inside
+    for node in (n for t in BlTrees().sv_main_trees for n in t.nodes):
+        if not hasattr(node, 'node_tree'):
+            continue
+        if has_old_nodes(node.node_tree):
+            mark_old(node, text="Has deprecated nodes!")
 
 
 def register_old(bl_id):
