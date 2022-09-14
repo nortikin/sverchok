@@ -1429,6 +1429,7 @@ def deform_nurbs_surface(src_surface, uknots, vknots, points):
     
     n_equations = n*ndim
     n_unknowns = ncpts_u * ncpts_v * ndim
+    #print(f"Eqs: {n_equations}, Unk: {n_unknowns}")
     
     A = np.zeros((n_equations, n_unknowns))
     for u_idx in range(ncpts_u):
@@ -1444,9 +1445,18 @@ def deform_nurbs_surface(src_surface, uknots, vknots, points):
     B = np.zeros((n_equations,1))
     for pt_idx, point in enumerate(points):
         B[pt_idx*3:pt_idx*3+3,0] = point[np.newaxis] - src_points[pt_idx][np.newaxis]
-    
-    A1 = np.linalg.pinv(A)
-    X = (A1 @ B).T
+
+    if n_equations == n_unknowns:
+        print("Well-determined", n_equations)
+        A1 = np.linalg.inv(A)
+        X = (A1 @ B).T
+    elif n_equations < n_unknowns:
+        print("Underdetermined", n_equations, n_unknowns)
+        A1 = np.linalg.pinv(A)
+        X = (A1 @ B).T
+    else: # n_equations > n_unknowns
+        print("Overdetermined", n_equations, n_unknowns)
+        X, residues, rank, singval = np.linalg.lstsq(A, B)
     d_cpts = X.reshape((ncpts_u, ncpts_v, ndim))
     cpts = src_surface.get_control_points()
     
