@@ -82,21 +82,12 @@ class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         if len(mask) == 0:
             raise ValueError('Mask is empty')
-        if len(data_t) == 0 and len(data_f) == 0:
-            raise ValueError('Data is empty')
-        elif len(data_t) == 0:
-            if any(mask):
-                raise ValueError('Data True is empty')
-            else:
-                param = list_match_func[self.list_match_global]([mask, [0]*len(mask), data_f])
+        if len(data_t) == 0:
+            data_t = [None] * len(data_f)
         elif len(data_f) == 0:
-            if all(mask):
-                param = list_match_func[self.list_match_global]([mask, data_t, [0]*len(mask)])
-            else:
-                raise ValueError('Data False is empty')
-        else:
-            param = list_match_func[self.list_match_global]([mask, data_t, data_f])
+            data_f = [None] * len(data_t)
             
+        param = list_match_func[self.list_match_global]([mask, data_t, data_f])      
         for m, t, f in zip(*param):
             if m:
                 out.append(t)
