@@ -69,7 +69,7 @@ def _split_bezier(curves_s):
 class SvBezierCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: Output Bezier Curve
-    Tooltip: Create Blender's Bezier Curve object
+    Tooltip: Create Blender's Bezier Curve object.\n\tIn: ControlPoints/Curve, Matrix, Radius, Tilt, Bevel Object, Taper Object\n\tParams: Base Name, Material, Bevel depth, material\n\tExtra: Resolution Preview/Bevel, Wire, Smooth\n\tOut: Objects
     """
 
     bl_idname = 'SvBezierCurveOutNode'

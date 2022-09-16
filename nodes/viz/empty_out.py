@@ -18,7 +18,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     """
     Triggers: empty
-    Tooltip: generate a single empty from a matrix
+    Tooltip: Generate a single empty object from a matrix.\n\tIn: Matrix\n\tParams: Base name\n\tOut: Empty Object (Only one. First Matrix)
     
     """
 

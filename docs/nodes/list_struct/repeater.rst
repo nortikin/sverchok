@@ -54,7 +54,7 @@ Trying various inputs, adjusting the parameters, and piping the output to a *Deb
   :target: https://user-images.githubusercontent.com/14288520/187932385-97321a1c-8a75-41bc-982a-59c420226aec.png
 
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
-* Curve->Bezier-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
+* Curves->Bezier-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 A practical reason to use the node is when you need a series of copies of edge or polygon lists. Usually in conjunction with `Matrix Apply`, which outputs a series of `vertex lists` as a result of transform parameters.

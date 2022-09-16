@@ -1,6 +1,9 @@
 Viewer Draw Surface
 ===================
 
+.. image:: https://user-images.githubusercontent.com/14288520/190188888-d951e538-184f-4c66-9327-43573fd03914.png
+  :target: https://user-images.githubusercontent.com/14288520/190188888-d951e538-184f-4c66-9327-43573fd03914.png
+
 Functionality
 -------------
 
@@ -31,6 +34,9 @@ This node has one main parameter:
 
 * **Show**. The node displays something only when this parameter is enabled.
 
+.. image:: https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png
+  :target: https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png
+
 Most of arameters of this node are groupped in rows; for each type of
 information this node can display, there are three parameters: whether to
 display it, the color to be used, and point size / line width to be used.
@@ -41,17 +47,44 @@ The parameters of the node are (in this order):
   of points on the surface (number of points along U and V parameters are
   controlled by **Resolution U**, **Resolution V** inputs). Display of points
   is disabled by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png
+  :target: https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png
+
+-------------
+
 * **Display Edges**, **Edges Color**, **Edges Line Width**. Control display of
   edges on the curve (edges between points). Display of edges is disabled by
   default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png
+  :target: https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png
+
+-------------
+
 * **Display Surface**, **Surface Color**. Control display of the surface
   itself. The surface is shown by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png
+  :target: https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png
+
+-------------
+
 * **Display Control Points**, **Control Points Color**, **Control Points
   Size**. Control display of surface's control points, for NURBS and NURBS-like
   surfaces. Control points are not shown by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png
+  :target: https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png
+
+-------------
+
 * **Display Control Net**, **Control Net Color**, **Control Net Line Width**.
   Control display of surface's control net (edges between control points), for
   NURBS and NURBS-like surfaces. Control net is not displayed by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png
+  :target: https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png
 
 Operators
 ---------
@@ -70,4 +103,8 @@ Example of Usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png
+  :target: https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png
 
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Surfaces->NURBS-> :doc:`Interpolate Nurbs Surface </nodes/surface/interpolate_nurbs_surface>`

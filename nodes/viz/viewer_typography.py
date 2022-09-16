@@ -122,7 +122,11 @@ class SvFontFileImporterOpV28(bpy.types.Operator):
 
 
 class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
-
+    '''Create renderable Text.
+    In: Text, Matrix
+    Params: base name, Collection, font size, alignment, char/word/line spacing, offset, extrude, bevel
+    Out: Objects
+    '''
     bl_idname = 'SvTypeViewerNodeV28'
     bl_label = 'Typography Viewer'
     bl_icon = 'OUTLINER_OB_FONT'

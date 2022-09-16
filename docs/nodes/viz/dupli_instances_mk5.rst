@@ -1,5 +1,11 @@
-Dupli Instances
+Dupli Instancer
 ===============
+
+.. image:: https://user-images.githubusercontent.com/14288520/190466323-fce556fd-e18a-4f95-83c0-ddeea53359e2.png
+  :target: https://user-images.githubusercontent.com/14288520/190466323-fce556fd-e18a-4f95-83c0-ddeea53359e2.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190466189-5ec9a354-069c-428a-9685-c9dacf071928.png
+  :target: https://user-images.githubusercontent.com/14288520/190466189-5ec9a354-069c-428a-9685-c9dacf071928.png
 
 Functionality
 -------------
@@ -35,8 +41,11 @@ Parameters & Features
 +-------------------+---------------------------------------------------------------------------------------+
 | Collection        | Pick collection where to put objects                                                  |
 +-------------------+---------------------------------------------------------------------------------------+
-| Fast mesh update  | It tries to update mesh in fast way. It can not update mesh at all in some corner     |
-|                   | cases. In case you notify some glitches in the mesh disable it (N-Panel)              |
+| Fast mesh update  | It tries to update mesh in fast way. It can not update mesh at                        |
+|                   |                                                                                       |
+|                   | all in some corner cases. In case you notify some glitches in                         |
+|                   |                                                                                       |
+|                   | the mesh disable it (N-Panel)                                                         |
 +-------------------+---------------------------------------------------------------------------------------+
 | Show instancer    | Show instancer geometry in viewport                                                   |
 | in viewport       |                                                                                       |
@@ -77,4 +86,5 @@ Examples
 
 Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)
 
-.. image:: https://user-images.githubusercontent.com/10011941/117689137-c0fffc80-b1b9-11eb-9a00-2a57f7e49976.png
+.. image:: https://user-images.githubusercontent.com/14288520/190468675-6724eb8d-3080-40d0-a886-575aceede5f7.png
+  :target: https://user-images.githubusercontent.com/14288520/190468675-6724eb8d-3080-40d0-a886-575aceede5f7.png

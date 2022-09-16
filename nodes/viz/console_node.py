@@ -444,7 +444,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     
     """
     Triggers: Console 
-    Tooltip:  Console for Sverchok node
+    Tooltip:  Console for Sverchok node. This is a developer’s node
 
     This node prints the input to the nodeview using a fixedwidth character map.
 

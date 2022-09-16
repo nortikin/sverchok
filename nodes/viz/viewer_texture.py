@@ -97,7 +97,7 @@ def transfer_to_image(pixels, name, width, height, mode):
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Texture Viewer node
-    Tooltip: Generate textures and images from inside Sverchok
+    Tooltip: Generate textures and images from inside Sverchok.\n\tIn: Float Input or Color In\n\tParams: texture size, color option\n\tExtra: format, compression
     """
 
     bl_idname = 'SvTextureViewerNode'

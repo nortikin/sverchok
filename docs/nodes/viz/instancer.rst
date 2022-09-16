@@ -1,7 +1,8 @@
 Obj instancer
 =============
 
-.. image:: https://user-images.githubusercontent.com/28003269/91664575-3848a100-eb01-11ea-8f35-e9e2f659b092.png
+.. image:: https://user-images.githubusercontent.com/14288520/190443161-564c19ea-fc8e-401b-9828-8c756f3061fb.png
+  :target: https://user-images.githubusercontent.com/14288520/190443161-564c19ea-fc8e-401b-9828-8c756f3061fb.png
 
 Functionality
 -------------
@@ -78,4 +79,10 @@ and the tenth being an instance of the first object again.
 Examples
 --------
 
-.. image:: https://user-images.githubusercontent.com/28003269/90870285-6e23b200-e3aa-11ea-9b73-abbf0c0f25de.png
+.. image:: https://user-images.githubusercontent.com/14288520/190443212-7b379629-c1dc-41ba-bf70-052aec19d4b0.png
+  :target: https://user-images.githubusercontent.com/14288520/190443212-7b379629-c1dc-41ba-bf70-052aec19d4b0.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Matrix-> :doc:`Matrix Math </nodes/matrix/matrix_math>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -29,7 +29,10 @@ def calc_median(vlist):
 
 class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
-    ''' IDX ViewerNode '''
+    '''Display the index information of geometry and topology.
+    In: Vertices, Edges, Faces, Matrixes (for offset), text (for vertices)
+    Params: Color for vertices, edges, faces, backface On/Off, background poly On/Off
+    '''
     bl_idname = 'SvIDXViewer28'
     bl_label = 'Viewer Index+'
     bl_icon = 'INFO'

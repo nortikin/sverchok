@@ -23,8 +23,7 @@ from sverchok.utils.logging import fix_error_msg
 class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: viewer mesh object instance
-
-    Generate mesh objects in viewport
+    Tooltip: Generate/Update mesh objects in viewport. Blender’s Modifier stack can be used but Skin modifier.\n\tIn: Vertices, Edges, Faces, Materials/idx, Matrixes\n\tParams: Mesh Name, Origin, Merge\n\tExtra:Fast Update, Smooth Shade (N-panel)
     """
 
     bl_idname = 'SvMeshViewer'

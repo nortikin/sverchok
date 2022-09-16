@@ -29,7 +29,9 @@ out_modes = [
 ]
 
 class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
-    '''Texture Viewer node Lite'''
+    '''This node allows viewing a list of scalar values and Vectors as a texture.
+    On: Pixel value (float as bw, RGB, RGBA)
+    Params: UV\image editor, bgl, Width, Height, color (bw/rgb/rgba)'''
     bl_idname = 'SvTextureViewerNodeLite'
     bl_label = 'Texture viewer lite'
     bl_icon = 'IMAGE'
