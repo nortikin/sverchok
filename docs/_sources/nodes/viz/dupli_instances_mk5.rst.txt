@@ -88,3 +88,8 @@ Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)
 
 .. image:: https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png
   :target: https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

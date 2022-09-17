@@ -56,7 +56,7 @@ Draw object index
 Examples
 --------
 
-Hide text behind geometry
+**Hide text behind geometry**
 
 .. image:: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
   :target: https://user-images.githubusercontent.com/14288520/189987936-5d24ba0b-9141-4f1e-bbd1-97f1dbad1bde.png
@@ -64,7 +64,9 @@ Hide text behind geometry
 * Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
-Show custom text with offset
+---------
+
+**Show custom text with offset**
 
 .. image:: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
   :target: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
