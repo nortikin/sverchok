@@ -4,8 +4,10 @@ Mesh Viewer
 .. image:: https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png
   :target: https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/190248470-3fad0184-f6e8-472f-a604-a257dba7b64f.png
-  :target: https://user-images.githubusercontent.com/14288520/190248470-3fad0184-f6e8-472f-a604-a257dba7b64f.png
+.. image:: https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png
+  :target: https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png
+
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 
 Functionality
 -------------
@@ -79,11 +81,14 @@ Parameters & Features
 | Smooth shade                      | Automatically sets *shade* type to smooth when ticked.                                                                  |
 |                                   |                                                                                                                         |
 |                                   | .. image:: https://user-images.githubusercontent.com/14288520/190247399-6bf5b088-7245-4cec-ba57-827fcef12044.png        |
+|                                   |                                                                                                                         |
+|                                   | * Generator-> :doc:`Sphere </nodes/generator/sphere>`                                                                   |
 +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------+
 | To 3D panel                       | Show the properties in 3D panel                                                                                         |
 |                                   |                                                                                                                         |
 |                                   | .. image:: https://user-images.githubusercontent.com/14288520/190246622-79240593-dd93-49ba-9a4e-a408c096602f.png        |
 |                                   |                                                                                                                         |
+|                                   | * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`                                                             |
 +-----------------------------------+-------------------------------------------------------------------------------------------------------------------------+
 
 
