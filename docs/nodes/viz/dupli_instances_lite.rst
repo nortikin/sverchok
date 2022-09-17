@@ -67,5 +67,7 @@ Basic usage:
 
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
+
 .. image:: https://user-images.githubusercontent.com/14288520/190476701-8ef2ed84-74be-4412-9de9-59fff144a88c.png
   :target: https://user-images.githubusercontent.com/14288520/190476701-8ef2ed84-74be-4412-9de9-59fff144a88c.png
