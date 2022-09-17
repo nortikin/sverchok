@@ -23,6 +23,8 @@ This is useful for quickly generating renderable lightweight geometry for scaffo
 * Generator-> :doc:`Segment </nodes/generator/segment>`
 * Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 
+---------
+
 The node has a 2d and 3d mode, in 2D mode you can make interesting 2d booleans on the XY axis. The features are limited to what Blender offers.
 
 .. image:: https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png
