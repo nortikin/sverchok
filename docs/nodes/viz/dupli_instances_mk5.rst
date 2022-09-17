@@ -86,5 +86,5 @@ Examples
 
 Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)
 
-.. image:: https://user-images.githubusercontent.com/14288520/190468675-6724eb8d-3080-40d0-a886-575aceede5f7.png
-  :target: https://user-images.githubusercontent.com/14288520/190468675-6724eb8d-3080-40d0-a886-575aceede5f7.png
+.. image:: https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png
+  :target: https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png

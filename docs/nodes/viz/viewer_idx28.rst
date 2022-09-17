@@ -64,12 +64,13 @@ Hide text behind geometry
 * Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
-Show custom text
+Show custom text with offset
 
-.. image:: https://user-images.githubusercontent.com/14288520/189988701-2170117c-636d-41e4-aa52-27e03d0d6d83.png
-  :target: https://user-images.githubusercontent.com/14288520/189988701-2170117c-636d-41e4-aa52-27e03d0d6d83.png
+.. image:: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
+  :target: https://user-images.githubusercontent.com/14288520/190860803-b2bfaf38-1775-4057-8b25-06daac70a769.png
 
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * ROUND X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

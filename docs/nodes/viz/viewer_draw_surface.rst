@@ -1,8 +1,8 @@
 Viewer Draw Surface
 ===================
 
-.. image:: https://user-images.githubusercontent.com/14288520/190188888-d951e538-184f-4c66-9327-43573fd03914.png
-  :target: https://user-images.githubusercontent.com/14288520/190188888-d951e538-184f-4c66-9327-43573fd03914.png
+.. image:: https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png
+  :target: https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png
 
 Functionality
 -------------
