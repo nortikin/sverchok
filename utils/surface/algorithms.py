@@ -12,12 +12,14 @@ from collections import defaultdict
 from mathutils import Matrix, Vector
 
 from sverchok.utils.math import (
-        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+        np_dot
     )
 from sverchok.utils.geom import (
         LineEquation, CircleEquation3D,
         rotate_vector_around_vector, rotate_vector_around_vector_np,
-        autorotate_householder, autorotate_track, autorotate_diff
+        autorotate_householder, autorotate_track, autorotate_diff,
+        linear_approximation
     )
 from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
@@ -27,6 +29,7 @@ from sverchok.utils.curve.algorithms import (
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve
         )
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
@@ -1464,4 +1467,111 @@ def deform_nurbs_surface(src_surface, uknots, vknots, points):
                 degree_u, degree_v, knotvector_u, knotvector_v,
                 cpts + d_cpts)
     return surface
+
+def make_planar_surface(origin, u_axis, v_axis, degree_u, degree_v, ncpts_u, ncpts_v, size_u, size_v, implementation = SvNurbsSurface.NATIVE):
+    """
+    Generate squa planar NURBS surface.
+    Parameters:
+    * origin - point at the plane, which will have UV coordinates (0.5, 0.5). np.array of shape (3,).
+    * u_axis, v_axis - vectors which will define directions of U and V parameter axes. np.array of shape (3,).
+    * degree_u, degree_v - degrees of the surface along U and V parameters.
+    * ncpts_u, ncpts_v - number of control points of the surface along U and V.
+    * size_u, size_v - size of the surface along U and V, measured in lengths of u_axis and v_axis.
+    Return value: an instance of SvNurbsSurface.
+    """
+    us = np.linspace(-size_u/2.0, size_u/2.0, num=ncpts_u)
+    vs = np.linspace(-size_v/2.0, size_v/2.0, num=ncpts_v)
+    cpts = [[origin + u*u_axis + v*v_axis for u in list(vs)] for v in list(us)]
+    cpts = np.array(cpts)
+    knotvector_u = sv_knotvector.generate(degree_u, ncpts_u)
+    knotvector_v = sv_knotvector.generate(degree_v, ncpts_v)
+    return SvNurbsSurface.build(implementation, 
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                cpts)
+
+def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = SvNurbsSurface.NATIVE):
+    """
+    Generate a NURBS surface which passes either through or near the specified points.
+    Parameters:
+    * points - points to draw a surface through. np.array of shape (n,3).
+    * degree_u, degree_v - degrees of the surface along U and V directions.
+    * num_cpts_u, num_cpts_v - number of surface's control points along U and V.
+
+    If total number of control points (num_cpts_u * num_cpts_v) is equal to the
+    number of points specified, then the system will be well-determined, so
+    this will do interpolation (although depending on location of points, it
+    may fail).
+    If total number of control points is less than the number of points
+    specified, then the system will be overdetermined, so this will do
+    approximation.
+    If total number of control points is more than the number of points
+    specified, then the system will be underdetermined, i.e. there are many
+    surfaces passing through these points. In this case, the method will select
+    the surface which has all it's control points as close to origin (0.0, 0.0,
+    0.0) as possible.
+
+    Return values:
+    * SvNurbsSurface instance
+    * uv_points - coordinates of points provided in UV space of the surface.
+        np.array of shape (n, 3).
+    """
+
+    def calc_y_axis(plane, x_axis):
+        normal = np.array(plane.normal)
+        y_axis = np.cross(x_axis, normal)
+        y_axis /= np.linalg.norm(y_axis)
+        return y_axis
+
+    linear = linear_approximation(points)
+    center = linear.center
+    plane = linear.most_similar_plane()
+    start = points[0]
+    start_projection = np.asarray(plane.projection_of_point(start))
+    x_axis = start_projection - center
+    x_axis /= np.linalg.norm(x_axis)
+    y_axis = calc_y_axis(plane, x_axis)
+    distances = np.linalg.norm(points - center, axis=1)
+    max_distance = distances.max()
+    
+    planar_surface = make_planar_surface(center,
+                    x_axis, y_axis,
+                    degree_u, degree_v,
+                    num_cpts_u, num_cpts_v,
+                    max_distance*2, max_distance*2,
+                    implementation = implementation)
+    
+    us = np_dot(points, x_axis)
+    vs = np_dot(points, y_axis)
+    us_min, us_max = us.min(), us.max()
+    vs_min, vs_max = vs.min(), vs.max()
+    us = (us - us_min) / (us_max - us_min)
+    vs = (vs - vs_min) / (vs_max - vs_min)
+    surface = deform_nurbs_surface(planar_surface, us, vs, points)
+    uv_points = np.array([[u,v, 0.0] for u,v in zip(us,vs)])
+    return surface, uv_points
+
+def nurbs_surface_from_curve(curve, samples, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = None):
+    """
+    Generate a NURBS surface which passes through the points of specified curve.
+    See also documentation of nurbs_surface_from_points method.
+    Parameters:
+    * curve - SvNurbsCurve instance.
+    * samples - the number of points on the curve, through which the surface should be build.
+    * degree_u, degree_v - degrees of the surface along U and V directions.
+    * num_cpts_u, num_cpts_v - number of surface's control points along U and V.
+    Return value:
+    * SvNurbsSurface instance
+    * SvNurbsCurve instance: a curve in surface's UV space, which passes
+        through projections of specified points to the surface.
+    """
+
+    if implementation is None:
+        implementation = curve.get_nurbs_implementation()
+
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples)
+    points = curve.evaluate_array(ts)
+    trim_curve = interpolate_nurbs_curve(implementation, curve.get_degree(), uv_points)
+    return surface, trim_curve
 
