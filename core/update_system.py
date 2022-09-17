@@ -476,6 +476,10 @@ class UpdateTree(SearchTree):
         """Remove tree data or data of all trees from the cache"""
         if tree is not None and tree.tree_id in cls._tree_catch:
             del cls._tree_catch[tree.tree_id]
+
+            # reset nested trees too
+            for group in (n for n in tree.nodes if hasattr(n, 'node_tree')):
+                UpdateTree.reset_tree(group.node_tree)
         else:
             cls._tree_catch.clear()
 

@@ -12,6 +12,8 @@ import bpy
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
 from sverchok.utils.math import np_dot
+from sverchok.utils.curve.algorithms import SvIsoUvCurve
+from sverchok.utils.curve.bakery import CurveData
 
 def make_quad_edges(n_u, n_v):
     edges = []
@@ -87,6 +89,14 @@ def calc_surface_data(light_vector, surface_color, n_u, n_v, points):
     return tris, colors
 
 class SurfaceData(object):
+    class IsoCurveConfig(object):
+        def __init__(self):
+            self.draw_line = True
+            self.draw_verts = False
+            self.draw_control_polygon = False
+            self.draw_control_points = False
+            self.draw_nodes = False
+
     def __init__(self, node, surface, resolution_u, resolution_v):
         self.node = node
         self.surface = surface
@@ -110,6 +120,17 @@ class SurfaceData(object):
             self.control_net = make_quad_edges(n_u, n_v)
         else:
             self.cpts_list = None
+
+        if hasattr(surface, 'calc_greville_us'):
+            nodes_u = surface.calc_greville_us()
+            nodes_v = surface.calc_greville_vs()
+            node_u_isolines = [SvIsoUvCurve(surface, 'U', u) for u in nodes_u]
+            node_v_isolines = [SvIsoUvCurve(surface, 'V', v) for v in nodes_v]
+            cfg = SurfaceData.IsoCurveConfig()
+            self.node_u_isoline_data = [CurveData(cfg, isoline, resolution_v) for isoline in node_u_isolines]
+            self.node_v_isoline_data = [CurveData(cfg, isoline, resolution_u) for isoline in node_v_isolines]
+        else:
+            self.node_u_isoline_data = node_v_isoline_data = None
 
         self.edges = make_quad_edges(resolution_u, resolution_v)
         self.tris, self.tri_colors = calc_surface_data(node.light_vector, node.surface_color, resolution_u, resolution_v, self.points)

@@ -56,6 +56,12 @@ def draw_surfaces(context, args):
         if node.draw_edges:
             draw_edges(e_shader, item.points_list, item.edges, node.edges_line_width, node.edges_color)
 
+        if node.draw_node_lines and item.node_u_isoline_data is not None:
+            for line in item.node_u_isoline_data:
+                draw_edges(e_shader, line.points, line.edges, node.node_lines_width, node.node_lines_color)
+            for line in item.node_v_isoline_data:
+                draw_edges(e_shader, line.points, line.edges, node.node_lines_width, node.node_lines_color)
+
         if node.draw_control_net and item.cpts_list is not None:
             draw_edges(e_shader, item.cpts_list, item.control_net, node.control_net_line_width, node.control_net_color)
 
@@ -182,6 +188,23 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1, default = 3,
             update = updateNode)
 
+    draw_node_lines : BoolProperty(
+            name = "Display node lines",
+            default = False,
+            update = updateNode)
+
+    node_lines_color: FloatVectorProperty(
+            name = "Node Lines Color",
+            default = (0.2, 0.0, 0.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    node_lines_width : IntProperty(
+            name = "Node Lines Width",
+            min = 1, default = 2,
+            update = updateNode)
+
     light_vector: FloatVectorProperty(
         name='Light Direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
@@ -219,6 +242,11 @@ class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'draw_control_net', icon='GRID', text='')
         row.prop(self, 'control_net_color', text="")
         row.prop(self, 'control_net_line_width', text="px")
+
+        row = grid.row(align=True)
+        row.prop(self, 'draw_node_lines', icon='EVENT_N', text='')
+        row.prop(self, 'node_lines_color', text="")
+        row.prop(self, 'node_lines_width', text="px")
 
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1

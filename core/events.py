@@ -90,6 +90,10 @@ class FileEvent:
     pass
 
 
+class UndoEvent:
+    """Undo handler was executed"""
+
+
 class TreesGraphEvent:
     """It indicates that something was changed in trees relations defined via
     group nodes"""

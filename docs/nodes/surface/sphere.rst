@@ -10,6 +10,7 @@ This node generates a spherical Surface object. Several parametrizations are ava
 * Equirectangular
 * Lambert
 * Gall Stereographic
+* NURBS Sphere
 
 For formulas, please refer to Wikipedia: https://en.wikipedia.org/wiki/List_of_map_projections
 
