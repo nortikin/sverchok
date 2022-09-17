@@ -1,6 +1,12 @@
 Viewer Draw
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
+  :target: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190670099-dbd6244e-efd2-4024-8e2a-c50d46bdf8fd.png
+  :target: https://user-images.githubusercontent.com/14288520/190670099-dbd6244e-efd2-4024-8e2a-c50d46bdf8fd.png
+
 Functionality
 -------------
 
@@ -11,19 +17,22 @@ This node takes your geometry and displays it in the 3d view, using opengl and s
 Shader modes
 ------------
 
-** flat **
+.. image:: https://user-images.githubusercontent.com/14288520/189981449-d635a6ff-1cff-44cf-b006-6ce2eee4b8bf.png
+  :target: https://user-images.githubusercontent.com/14288520/189981449-d635a6ff-1cff-44cf-b006-6ce2eee4b8bf.png
+
+**flat**
 
 You can view your geometry as a single flat colour, this requires little to no processing before being passed onto the shader and is lightning fast. This is useful when you are working with large quantities of polygons.
 
-** facetted **
+**facetted**
 
 This mode calculates the face normal and angle to a light source, and uses the result to colour the face some shade of the color you set from the UI. This is not a hugely calculation intensive mode, all this data is produced once per update, and reused if you rotate around the viewport. It is only recalculated if the geometry input is changed / or the node is told to reprocess.
 
-** smooth **
+**smooth**
 
 The same calculations are performed as in facetted mode, but instead of each face (triangle) being colored uniformly, each face's vertices get a color associated with the vertex normal. This is as close as we will get to smooth shading, at low processing cost.
 
-** custom shader **
+**custom shader**
 
 If this interests you, you should read the node's source code, and check out the development thread for examples. This is the more experimental part of the node and subject to changing eventually. At present this lets you load a VertexShader and FragmentShader from the bpy.data.texts block.
 
@@ -42,6 +51,8 @@ Features
   - multiple simultaneous viewers mixing opaque geometry may show render artifacts. 
 - (experimental..) the "Attribute socket" can be used to configure the viewer node from another node, in this case a dedicated Attributes node.
 
+.. image:: https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png
+  :target: https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png
 
 Inputs
 ------
@@ -58,11 +69,37 @@ Inputs
 Examples
 --------
 
-.. image:: https://user-images.githubusercontent.com/10011941/95666436-eb250980-0b59-11eb-9785-3d6f3d40fbdc.png
+.. image:: https://user-images.githubusercontent.com/14288520/189978522-5ed5ab57-3746-4816-ad37-b7b452d3c044.png
+  :target: https://user-images.githubusercontent.com/14288520/189978522-5ed5ab57-3746-4816-ad37-b7b452d3c044.png
 
-.. image:: https://user-images.githubusercontent.com/10011941/95681591-fd965600-0be0-11eb-9fbf-6c124ba71c03.png
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 
-.. image:: (https://user-images.githubusercontent.com/10011941/95681673-81e8d900-0be1-11eb-8ff0-b5a57675617c.png
+.. image:: https://user-images.githubusercontent.com/14288520/189978588-76ec34b1-885b-44de-bf37-5adb77d2627d.png
+  :target: https://user-images.githubusercontent.com/14288520/189978588-76ec34b1-885b-44de-bf37-5adb77d2627d.png
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/189979120-63ecdaa7-2883-44a4-88b7-8fbe2a2f84fb.png
+  :target: https://user-images.githubusercontent.com/14288520/189979120-63ecdaa7-2883-44a4-88b7-8fbe2a2f84fb.png
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+
+Extra params:
+
+.. image:: https://user-images.githubusercontent.com/14288520/189985713-e3f503fb-3d54-482f-bb16-648660eed55f.gif
+  :target: https://user-images.githubusercontent.com/14288520/189985713-e3f503fb-3d54-482f-bb16-648660eed55f.gif
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
 
 Support
 -------

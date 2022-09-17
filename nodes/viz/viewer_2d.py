@@ -497,7 +497,10 @@ def generate_mesh_geom(config, vecs_in):
 
 
 class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
-    '''Curved interpolation'''
+    '''Display data in the 2d view.
+    In: Verts/Curve, Color Vertices/Edges
+    Params: Mode (Number/Path,Curve/Mesh), Background Color, Viewer Image Size (X/Y), Vert Size, Edge Width
+    '''
     bl_idname = 'SvViewer2D'
     bl_label = 'Viewer 2D'
     bl_icon = 'HIDE_OFF'

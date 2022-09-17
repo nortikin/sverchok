@@ -18,7 +18,7 @@ from sverchok.utils.sv_obj_helper import SvObjHelper
 class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: Output NURBS Curve
-    Tooltip: Create Blender's NURBS Curve object
+    Tooltip: Create Blender's NURBS Curve object.\n\tIn: ControlPoints, Weights, Degree\n\tParams: base name, Material, Cyclic (On/Off), Endpoint\n\tOut: Objects
     """
 
     bl_idname = 'SvNurbsCurveOutNode'

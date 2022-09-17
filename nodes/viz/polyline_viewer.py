@@ -18,8 +18,7 @@ import sverchok.utils.meshes as me
 class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: viewer polyline object nurbs NURBS curves splines
-
-    Generate curve objects in viewport
+    Tooltip: Generate splines of two types: polylines and NURBS.\n\tIn: vertices, matrix, radius, tilt, bevel object, cyclic\n\tParams: base name, origin, merge, bevel, resolution\n\tOut: Objects
     """
     bl_idname = 'SvPolylineViewerNode'
     bl_label = 'Polyline Viewer'

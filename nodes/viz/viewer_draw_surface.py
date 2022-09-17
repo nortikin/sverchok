@@ -88,7 +88,7 @@ class SvBakeSurfaceOp(bpy.types.Operator, SvGenericNodeLocator):
 class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: preview surface
-    Tooltip: drawing surfaces on 3d view
+    Tooltip: Drawing surfaces on 3D view.\n\tIn: Surface, Resolution U/V\n\tParams: Display/Color/Size for Vertices, Edges, Surface, Control Points, Control Net
     """
 
     bl_idname = 'SvSurfaceViewerDrawNode'

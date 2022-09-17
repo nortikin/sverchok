@@ -76,7 +76,9 @@ def screen_v3d_batch_matrix_overlay(context, args):
         indices=indices_shifted)
 
     # smooth_2d_shader.bind()
+    bgl.glEnable( bgl.GL_BLEND )
     batch.draw(smooth_2d_shader)
+    bgl.glDisable( bgl.GL_BLEND )
 
 
 def match_color_to_matrix(node):
@@ -99,7 +101,10 @@ def match_color_to_matrix(node):
 
 
 class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
-    ''' mv - View Matrices '''
+    '''A quick way to represent matrices.
+    In: Matrixes
+    Params: Color start/end, simple On/Off, grid On/Off, plane On/Off, Alpha 0.0-1.0
+    '''
     bl_idname = 'SvMatrixViewer28'
     bl_label = 'Matrix View'
     bl_icon = 'EMPTY_AXIS'
@@ -135,7 +140,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         self.n_id = node_id(self)
-        self.free()
+        self.sv_free()
 
         if self.inputs['Matrix'].is_linked:
             cdat = match_color_to_matrix(self)
@@ -167,7 +172,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
         if not ("Matrix" in self.inputs):
             return
         if not self.inputs[0].other:
-            self.free()
+            self.sv_free()
 
 
 def register():

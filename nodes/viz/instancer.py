@@ -18,8 +18,7 @@ from sverchok.utils.nodes_mixins.generating_objects import SvViewerNode
 class SvInstancerNodeMK3(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: copy instancing duplicate
-
-    Copy by mesh data from object input
+    Tooltip: Copy by mesh data from object input.\n\tIn: objects, matrix\n\tParams: base name, target Collection, full copy
     """
     bl_idname = 'SvInstancerNodeMK3'
     bl_label = 'Obj instancer'

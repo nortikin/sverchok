@@ -26,7 +26,7 @@ def auto_release(parent, childs_name):
 class SvDupliInstancesLite(bpy.types.Node, SverchCustomTreeNode, SvViewerNode):
     """
     Triggers: Fast duplication
-    Tooltip: Create Instances from parent object + child
+    Tooltip: Create Instances from parent object + child. Blender functionality of Instancing on object Vertices or Faces.\n\tIn: child object, vertices\n\tParams: Verts/Polys, Child Visibility/Clear/Release\n\tOut: Parent, Child
     """
     bl_idname = 'SvDupliInstancesLite'
     bl_label = 'Dupli Instancer Lite'

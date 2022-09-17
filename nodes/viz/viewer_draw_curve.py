@@ -77,7 +77,7 @@ class SvBakeCurveOp(bpy.types.Operator, SvGenericNodeLocator):
 class SvCurveViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: preview curve
-    Tooltip: drawing curves on 3d view
+    Tooltip: Drawing curves on 3D view\n\tIn: Curve, Resolution\n\tParams: Display/Color/Size for Vertices, Edges, Curve Line, Control Points, Control Polygons, Curve Nodes
     """
 
     bl_idname = 'SvCurveViewerDrawNode'

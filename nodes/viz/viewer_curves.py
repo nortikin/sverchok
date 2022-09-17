@@ -170,7 +170,7 @@ def make_curve_geometry(node, context, obj_index, verts, *topology):
 class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: CV object curves
-    Tooltip: Advanced 2d/3d curve outputting into scene
+    Tooltip: Advanced 2D/3D curve outputting into scene.\n\tIn: Vertices, Edges, Matrix\n\tParams: Fill, radius, resolution, base name
     """
 
     bl_idname = 'SvCurveViewerNodeV28'

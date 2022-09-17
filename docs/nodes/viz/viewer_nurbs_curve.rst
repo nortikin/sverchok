@@ -1,5 +1,8 @@
-NURBS Curve Out Node
-====================
+NURBS Curve Out
+===============
+
+.. image:: https://user-images.githubusercontent.com/14288520/190425958-c36c2369-8eef-48da-9d98-096d2f9b8af9.png
+  :target: https://user-images.githubusercontent.com/14288520/190425958-c36c2369-8eef-48da-9d98-096d2f9b8af9.png
 
 Functionality
 -------------
@@ -55,5 +58,7 @@ This node has the following output:
 Examples of usage
 -----------------
 
-.. image:: https://user-images.githubusercontent.com/284644/75611529-16179b80-5b3d-11ea-99b8-5cfaafaa7c5b.png
+.. image:: https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png
+  :target: https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png
 
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`

@@ -59,7 +59,10 @@ def generate_mesh_data(transforms, child, mode, ignore_location):
     return verts, faces
 
 class SvDupliInstancesMK5(bpy.types.Node, SverchCustomTreeNode, SvViewerNode):
-    '''Copy by Dupli Faces'''
+    '''Blender functionality of Instancing on object Vertices or Faces.
+    In: child object, vertices
+    Params: base name, Collection, Child Visibility/Clear/Release
+    Out: Objects'''
     bl_idname = 'SvDupliInstancesMK5'
     bl_label = 'Dupli Instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'
