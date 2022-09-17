@@ -154,7 +154,10 @@
   <section id="mesh-viewer">
 <h1>Mesh Viewer<a class="headerlink" href="#mesh-viewer" title="Permalink to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png"><img alt="https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png" src="https://user-images.githubusercontent.com/14288520/190240580-873e87cf-17e4-4e19-9e49-2ca4e02b8a6d.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190248470-3fad0184-f6e8-472f-a604-a257dba7b64f.png"><img alt="https://user-images.githubusercontent.com/14288520/190248470-3fad0184-f6e8-472f-a604-a257dba7b64f.png" src="https://user-images.githubusercontent.com/14288520/190248470-3fad0184-f6e8-472f-a604-a257dba7b64f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png"><img alt="https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png" src="https://user-images.githubusercontent.com/14288520/190859387-573095d4-9731-4e81-82b2-94f1d9c63a3b.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Similar to (Viz-&gt; <a class="reference internal" href="viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a>) but instead of using OpenGL calls to display geometry this Node <em>writes</em> or <em>updates</em> Blender Meshes on every geometry update. The bonus is that this geometry is renderable without an extra bake step. We can use Blender’s Modifier stack to affect the mesh. The only exception to the modifiers is the Skin Modifier but we aren’t entirely sure why, maybe because BMview invalidates the BMesh between updates.</p>
@@ -245,11 +248,17 @@ in case if topology of the mesh remains unchanged.</p>
 <tr class="row-odd"><td><p>Smooth shade</p></td>
 <td><p>Automatically sets <em>shade</em> type to smooth when ticked.</p>
 <img alt="https://user-images.githubusercontent.com/14288520/190247399-6bf5b088-7245-4cec-ba57-827fcef12044.png" src="https://user-images.githubusercontent.com/14288520/190247399-6bf5b088-7245-4cec-ba57-827fcef12044.png" />
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-even"><td><p>To 3D panel</p></td>
 <td><p>Show the properties in 3D panel</p>
 <img alt="https://user-images.githubusercontent.com/14288520/190246622-79240593-dd93-49ba-9a4e-a408c096602f.png" src="https://user-images.githubusercontent.com/14288520/190246622-79240593-dd93-49ba-9a4e-a408c096602f.png" />
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+</ul>
 </td>
 </tr>
 </tbody>

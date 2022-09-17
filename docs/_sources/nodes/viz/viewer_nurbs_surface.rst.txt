@@ -56,7 +56,7 @@ Parameters
 
 This node has the following parameters:
 
-* **UPD**. The node will process data only if this button is enabled.
+* **Live**. The node will process data only if this button is enabled.
 * **Hide View** (eye icon). Toggle visibility of generated object in viewport.
 * **Hide Select** (pointer icon). Toggle ability to select for generated object.
 * **Hide Render** (render icon). Toggle renderability for generated object.
@@ -115,5 +115,5 @@ Examples of usage
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Voronoi Noise: Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
-* Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Add: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
