@@ -40,7 +40,7 @@ def calc_new_verts(bm):
 
     return new_verts_from_verts, new_verts_from_edges, new_verts_from_faces
 
-def subdivide_once(bm):
+def subdivide_once(bm, normal_update = False):
     points_from_verts, points_from_edges, points_from_faces = calc_new_verts(bm)
 
     new_bm = bmesh.new()
@@ -69,12 +69,14 @@ def subdivide_once(bm):
     new_bm.edges.ensure_lookup_table()
     new_bm.faces.index_update()
     new_bm.faces.ensure_lookup_table()
-    new_bm.normal_update()
+    if normal_update:
+        new_bm.normal_update()
 
     return new_bm
 
 def subdivide(bm, iterations=1):
     for i in range(iterations):
         bm = subdivide_once(bm)
+    bm.normal_update()
     return bm
 
