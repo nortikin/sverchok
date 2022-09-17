@@ -1,6 +1,9 @@
 Viewer Waveform
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/190503642-4282e3fb-78d1-4b3b-a826-59051506dc6a.png
+  :target: https://user-images.githubusercontent.com/14288520/190503642-4282e3fb-78d1-4b3b-a826-59051506dc6a.png
+
 Functionality
 -------------
 

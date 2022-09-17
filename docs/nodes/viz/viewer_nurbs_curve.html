@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NURBS Curve Out Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>NURBS Curve Out &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="NURBS Surface Out Node" href="viewer_nurbs_surface.html" />
-    <link rel="prev" title="Bezier Curve Viewer" href="viewer_bezier_curve.html" /> 
+    <link rel="next" title="NURBS Surface Out" href="viewer_nurbs_surface.html" />
+    <link rel="prev" title="Bezier Curve Out" href="viewer_bezier_curve.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,17 +74,20 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">NURBS Curve Out Node</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">NURBS Curve Out</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -92,20 +95,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
@@ -139,7 +139,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="viz_index.html">Viz</a> &raquo;</li>
-      <li>NURBS Curve Out Node</li>
+      <li>NURBS Curve Out</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/viz/viewer_nurbs_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -149,8 +149,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="nurbs-curve-out-node">
-<h1>NURBS Curve Out Node<a class="headerlink" href="#nurbs-curve-out-node" title="Permalink to this heading">¶</a></h1>
+  <section id="nurbs-curve-out">
+<h1>NURBS Curve Out<a class="headerlink" href="#nurbs-curve-out" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190425958-c36c2369-8eef-48da-9d98-096d2f9b8af9.png"><img alt="https://user-images.githubusercontent.com/14288520/190425958-c36c2369-8eef-48da-9d98-096d2f9b8af9.png" src="https://user-images.githubusercontent.com/14288520/190425958-c36c2369-8eef-48da-9d98-096d2f9b8af9.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates Blender’s NURBS Curve objects from input data. It creates a new Curve object or updates existing on each update of input data or parameters.</p>
@@ -199,7 +200,10 @@ in the N panel only.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/75611529-16179b80-5b3d-11ea-99b8-5cfaafaa7c5b.png" src="https://user-images.githubusercontent.com/284644/75611529-16179b80-5b3d-11ea-99b8-5cfaafaa7c5b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png"><img alt="https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png" src="https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -207,8 +211,8 @@ in the N panel only.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="viewer_bezier_curve.html" class="btn btn-neutral float-left" title="Bezier Curve Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="viewer_nurbs_surface.html" class="btn btn-neutral float-right" title="NURBS Surface Out Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viewer_bezier_curve.html" class="btn btn-neutral float-left" title="Bezier Curve Out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_nurbs_surface.html" class="btn btn-neutral float-right" title="NURBS Surface Out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

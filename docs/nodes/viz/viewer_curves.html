@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Bezier Curve Viewer" href="viewer_bezier_curve.html" />
-    <link rel="prev" title="Polyline Viewer" href="polyline_viewer.html" /> 
+    <link rel="next" title="Polyline Viewer" href="polyline_viewer.html" />
+    <link rel="prev" title="Mesh Viewer" href="mesh_viewer.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,36 +74,36 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Curve Viewer</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#output">output</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
@@ -149,13 +149,26 @@
              
   <section id="curve-viewer">
 <h1>Curve Viewer<a class="headerlink" href="#curve-viewer" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190258815-66ddd5bc-b8b9-49fc-9863-9ea76efe8fb6.png"><img alt="https://user-images.githubusercontent.com/14288520/190258815-66ddd5bc-b8b9-49fc-9863-9ea76efe8fb6.png" src="https://user-images.githubusercontent.com/14288520/190258815-66ddd5bc-b8b9-49fc-9863-9ea76efe8fb6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190258592-e193710e-01bd-4bdd-b3b0-40fec9fd3781.png"><img alt="https://user-images.githubusercontent.com/14288520/190258592-e193710e-01bd-4bdd-b3b0-40fec9fd3781.png" src="https://user-images.githubusercontent.com/14288520/190258592-e193710e-01bd-4bdd-b3b0-40fec9fd3781.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node takes <code class="docutils literal notranslate"><span class="pre">verts</span></code> and <code class="docutils literal notranslate"><span class="pre">edges</span></code> and makes straight sections of Curve to represent them. Like a pipe, but without smooth transitions between pipes. Each edge is truly disjoint and the renderable geometry can overlap.</p>
 <p>This is useful for quickly generating renderable lightweight geometry for scaffolding, beams, pillars, plynths, tubes, fences, neon signage.</p>
-<img alt="https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png" src="https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png"><img alt="https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png" src="https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>MUL X, YSINX X, ADD X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+</ul>
 <p>The node has a 2d and 3d mode, in 2D mode you can make interesting 2d booleans on the XY axis. The features are limited to what Blender offers.</p>
-<img alt="https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png" src="https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png"><img alt="https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png" src="https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -171,8 +184,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="polyline_viewer.html" class="btn btn-neutral float-left" title="Polyline Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="viewer_bezier_curve.html" class="btn btn-neutral float-right" title="Bezier Curve Viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mesh_viewer.html" class="btn btn-neutral float-left" title="Mesh Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="polyline_viewer.html" class="btn btn-neutral float-right" title="Polyline Viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

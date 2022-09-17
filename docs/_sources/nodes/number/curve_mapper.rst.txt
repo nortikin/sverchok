@@ -63,7 +63,7 @@ Example of the Curve output usage:
 .. image:: https://user-images.githubusercontent.com/284644/80520701-4051d200-89a3-11ea-92fd-2f2f2004e4e7.png
   :target: https://user-images.githubusercontent.com/284644/80520701-4051d200-89a3-11ea-92fd-2f2f2004e4e7.png
 
-* Curve-> :doc:`Naturally Parametrized Curve </nodes/curve/length_rebuild>`
+* Curves-> :doc:`Naturally Parametrized Curve </nodes/curve/length_rebuild>`
 * Surface-> :doc:`Revolution Surface </nodes/surface/revolution_surface>`
 * Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

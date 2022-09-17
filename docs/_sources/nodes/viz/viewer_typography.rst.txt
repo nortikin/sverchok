@@ -2,8 +2,13 @@ Typography Viewer
 =================
 
 
-.. image:: https://user-images.githubusercontent.com/619340/127733727-0d8299e7-ab20-4a33-b3ff-923276f09f5c.png
+.. image:: https://user-images.githubusercontent.com/14288520/190365693-a37cff3d-edef-465d-be32-62669b9403e7.png
+  :target: https://user-images.githubusercontent.com/14288520/190365693-a37cff3d-edef-465d-be32-62669b9403e7.png
 
+.. image:: https://user-images.githubusercontent.com/14288520/190381347-4ed2a78b-acf3-4a44-8d53-ea9c7ac08bd7.png
+  :target: https://user-images.githubusercontent.com/14288520/190381347-4ed2a78b-acf3-4a44-8d53-ea9c7ac08bd7.png
+
+* Number-> :doc:`A Number </nodes/number/numbers>`
 
 Functionality
 -------------
@@ -18,7 +23,6 @@ Basic properties
 Some configuration features are in the options dropdown (the precise arrangement of these UI elements will likely change):
 
 .. image:: https://user-images.githubusercontent.com/619340/127733963-9ba1da4e-e3ac-4b6d-838e-3ef5315d3c8e.png
-
 
 Inputs
 ------
@@ -35,6 +39,17 @@ Caution
 
 You do not want to manually edit the product of this node, that would break the procedural nature of the node. Manual editing after creation can result in undefined behaviour and is likely overwritten as soon as you update the Sverchok node tree again by moving upstream sliders etc.
 
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190374351-00c3b1c8-4435-4942-8a4f-f1cce318120b.png
+  :target: https://user-images.githubusercontent.com/14288520/190374351-00c3b1c8-4435-4942-8a4f-f1cce318120b.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List->List Struct-> :doc:`List Levels </nodes/list_struct/levels>`
+* Text-> :doc:`String Tools </nodes/text/string_tools>`
 
 Further reading
 ---------------

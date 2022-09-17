@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Viewer Index+" href="viewer_idx28.html" />
-    <link rel="prev" title="Viewer Draw Surface" href="viewer_draw_surface.html" /> 
+    <link rel="prev" title="Viewer Draw" href="viewer_draw_mk4.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,31 +74,35 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix View</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#settings">Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix View</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
@@ -144,20 +148,70 @@
              
   <section id="matrix-view">
 <h1>Matrix View<a class="headerlink" href="#matrix-view" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189986754-05e41530-73bf-45dc-bac3-5b4823817fee.png"><img alt="https://user-images.githubusercontent.com/14288520/189986754-05e41530-73bf-45dc-bac3-5b4823817fee.png" src="https://user-images.githubusercontent.com/14288520/189986754-05e41530-73bf-45dc-bac3-5b4823817fee.png" /></a>
 <p>A quick way to represent matrices, the colour start/end allows you to show the sequence of matrices easily by transitioning from one colour to the next over the full sequence of matrices.</p>
-<p>see</p>
-<img alt="https://cloud.githubusercontent.com/assets/619340/25407726/b6877178-2a0b-11e7-9e23-1c92af285a5e.png" src="https://cloud.githubusercontent.com/assets/619340/25407726/b6877178-2a0b-11e7-9e23-1c92af285a5e.png" />
-<img alt="https://cloud.githubusercontent.com/assets/619340/25425924/d7d62ee8-2a6d-11e7-9ee9-f05d067ffa57.png" src="https://cloud.githubusercontent.com/assets/619340/25425924/d7d62ee8-2a6d-11e7-9ee9-f05d067ffa57.png" />
-<p>the development thread may provide more information:
+<p>see the development thread may provide more information:
 <a class="reference external" href="https://github.com/nortikin/sverchok/pull/1572">https://github.com/nortikin/sverchok/pull/1572</a></p>
-<p>the alpha mode is not working at the moment.</p>
+<p>the alpha mode is not working at the moment. Update: working.</p>
+<section id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Simple</strong> On/Off</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190597368-c3b8adbd-4324-4498-913e-8d21f388d040.png"><img alt="https://user-images.githubusercontent.com/14288520/190597368-c3b8adbd-4324-4498-913e-8d21f388d040.png" src="https://user-images.githubusercontent.com/14288520/190597368-c3b8adbd-4324-4498-913e-8d21f388d040.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><strong>Grid</strong> On/Off</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190595427-ef992d0f-dd0f-4425-8d59-95a389bbc262.png"><img alt="https://user-images.githubusercontent.com/14288520/190595427-ef992d0f-dd0f-4425-8d59-95a389bbc262.png" src="https://user-images.githubusercontent.com/14288520/190595427-ef992d0f-dd0f-4425-8d59-95a389bbc262.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><strong>Alpha</strong> 0/ non 0</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190595856-1422ae2c-eb0a-40e7-8709-37134a0205e9.png"><img alt="https://user-images.githubusercontent.com/14288520/190595856-1422ae2c-eb0a-40e7-8709-37134a0205e9.png" src="https://user-images.githubusercontent.com/14288520/190595856-1422ae2c-eb0a-40e7-8709-37134a0205e9.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><strong>Color start/end</strong> with Alpha is non zero</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190596355-b2233861-df1b-4936-8691-2e449eb917c3.png"><img alt="https://user-images.githubusercontent.com/14288520/190596355-b2233861-df1b-4936-8691-2e449eb917c3.png" src="https://user-images.githubusercontent.com/14288520/190596355-b2233861-df1b-4936-8691-2e449eb917c3.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190110769-6655af3c-c54b-43f9-a164-a68b5e69e645.png"><img alt="https://user-images.githubusercontent.com/14288520/190110769-6655af3c-c54b-43f9-a164-a68b5e69e645.png" src="https://user-images.githubusercontent.com/14288520/190110769-6655af3c-c54b-43f9-a164-a68b5e69e645.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>MULT X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190115965-7e9500d5-5924-4ee1-b71a-a79feb3a739b.png"><img alt="https://user-images.githubusercontent.com/14288520/190115965-7e9500d5-5924-4ee1-b71a-a79feb3a739b.png" src="https://user-images.githubusercontent.com/14288520/190115965-7e9500d5-5924-4ee1-b71a-a79feb3a739b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="viewer_draw_surface.html" class="btn btn-neutral float-left" title="Viewer Draw Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_draw_mk4.html" class="btn btn-neutral float-left" title="Viewer Draw" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="viewer_idx28.html" class="btn btn-neutral float-right" title="Viewer Index+" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

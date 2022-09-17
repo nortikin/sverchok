@@ -1,5 +1,8 @@
-NURBS Surface Out Node
-======================
+NURBS Surface Out
+=================
+
+.. image:: https://user-images.githubusercontent.com/14288520/190432711-bb7fcec1-d2a1-4de8-bb0c-40743ea7ba79.png
+  :target: https://user-images.githubusercontent.com/14288520/190432711-bb7fcec1-d2a1-4de8-bb0c-40743ea7ba79.png
 
 Functionality
 -------------
@@ -96,5 +99,21 @@ This node has the following output:
 Examples of usage
 -----------------
 
-.. image:: https://user-images.githubusercontent.com/284644/75611527-144dd800-5b3d-11ea-81e0-5b2b1c8a50c0.png
+.. image:: https://user-images.githubusercontent.com/14288520/190432776-2427c1ab-7bec-435f-964e-28a8512a8db9.png
+  :target: https://user-images.githubusercontent.com/14288520/190432776-2427c1ab-7bec-435f-964e-28a8512a8db9.png
 
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190435253-652951bf-5e8c-44d5-9d29-c73c9092c970.gif
+  :target: https://user-images.githubusercontent.com/14288520/190435253-652951bf-5e8c-44d5-9d29-c73c9092c970.gif
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Voronoi Noise: Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
+* Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

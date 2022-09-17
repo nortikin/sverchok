@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Viewer Draw Surface" href="viewer_draw_surface.html" />
-    <link rel="prev" title="Viewer Draw" href="viewer_draw_mk4.html" /> 
+    <link rel="prev" title="Viewer 2D" href="viewer_2d.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,9 +74,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Viewer Draw Curve</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -87,26 +88,25 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
@@ -152,6 +152,7 @@
              
   <section id="viewer-draw-curve">
 <h1>Viewer Draw Curve<a class="headerlink" href="#viewer-draw-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png"><img alt="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" src="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node displays Curve objects in the 3D View, using opengl. The node is
@@ -177,7 +178,7 @@ right-click menu for nodes which have Curve output. Also this node pops up as a
 <ul class="simple">
 <li><p><strong>Show</strong>. The node displays something only when this parameter is enabled.</p></li>
 </ul>
-<p>Most of arameters of this node are groupped in rows; for each type of
+<p>Most of parameters of this node are groupped in rows; for each type of
 information this node can display, there are three parameters: whether to
 display it, the color to be used, and point size / line width to be used.</p>
 <p>The parameters of the node are (in this order):</p>
@@ -185,20 +186,37 @@ display it, the color to be used, and point size / line width to be used.</p>
 <li><p><strong>Display Vertices</strong>, <strong>Vertices Color</strong>, <strong>Vertices Size</strong>. Control display
 of points on the curve (number of points is conrtolled by <strong>Resolution</strong>
 parameter). Display of points is disabled by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png"><img alt="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" src="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" /></a>
+<hr class="docutils" />
+<ul class="simple">
 <li><p><strong>Display Curve Line</strong>, <strong>Curve Line Color</strong>, <strong>Curve Line Width</strong>. Control
 display of the curve itself (more precisely, the edges between curve points).
 Curve line is shown by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png"><img alt="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" src="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" /></a>
+<hr class="docutils" />
+<ul class="simple">
 <li><p><strong>Display Control Points</strong>, <strong>Control Points Color</strong>, <strong>Control Points
 Size</strong>. Control display of curve’s control points, for NURBS and NURBS-like
 curves. Control points are not shown by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png"><img alt="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" src="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" /></a>
+<hr class="docutils" />
+<ul class="simple">
 <li><p><strong>Display Control Polygon</strong>, <strong>Control Polygon Color</strong>, <strong>Control Polygon
 Line Width</strong>. Control display of curve’s control polygon (edges between
 control points), for NURBS and NURBS-like curves. Control polygon is not
 shown by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png"><img alt="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" src="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" /></a>
+<hr class="docutils" />
+<ul class="simple">
 <li><p><strong>Display Node Points</strong>, <strong>Node Points Color</strong>, <strong>Node Points Size</strong>. Control
 display of curve’s node points, for NURBS and NURBS-like curves. Nodes are
 not shown by default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png"><img alt="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" src="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" /></a>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
@@ -214,7 +232,12 @@ not shown by default.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/189537925-b8d72553-5650-4d18-9fcc-507f70801dff.png" src="https://user-images.githubusercontent.com/284644/189537925-b8d72553-5650-4d18-9fcc-507f70801dff.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png"><img alt="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" src="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Curves-&gt;NURBS-&gt; <a class="reference internal" href="../curve/approximate_nurbs_curve.html"><span class="doc">Approximate NURBS Curve</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -222,7 +245,7 @@ not shown by default.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="viewer_draw_mk4.html" class="btn btn-neutral float-left" title="Viewer Draw" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="viewer_2d.html" class="btn btn-neutral float-left" title="Viewer 2D" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="viewer_draw_surface.html" class="btn btn-neutral float-right" title="Viewer Draw Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

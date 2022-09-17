@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Viewer Draw Curve" href="viewer_draw_curve.html" />
-    <link rel="prev" title="Viewer 2D" href="viewer_2d.html" /> 
+    <link rel="next" title="Matrix View" href="vd_matrix.html" />
+    <link rel="prev" title="Viz" href="viz_index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -74,8 +74,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Viewer Draw</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#shader-modes">Shader modes</a></li>
@@ -85,28 +83,30 @@
 <li class="toctree-l4"><a class="reference internal" href="#support">Support</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Viewer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instances</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">DupliVerts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="console_node.html">console node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
@@ -152,6 +152,8 @@
              
   <section id="viewer-draw">
 <h1>Viewer Draw<a class="headerlink" href="#viewer-draw" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png"><img alt="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png" src="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190670099-dbd6244e-efd2-4024-8e2a-c50d46bdf8fd.png"><img alt="https://user-images.githubusercontent.com/14288520/190670099-dbd6244e-efd2-4024-8e2a-c50d46bdf8fd.png" src="https://user-images.githubusercontent.com/14288520/190670099-dbd6244e-efd2-4024-8e2a-c50d46bdf8fd.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p><em>aliases: vdmk4, viewer draw 4</em></p>
@@ -159,13 +161,14 @@
 </section>
 <section id="shader-modes">
 <h2>Shader modes<a class="headerlink" href="#shader-modes" title="Permalink to this heading">¶</a></h2>
-<p>** flat **</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189981449-d635a6ff-1cff-44cf-b006-6ce2eee4b8bf.png"><img alt="https://user-images.githubusercontent.com/14288520/189981449-d635a6ff-1cff-44cf-b006-6ce2eee4b8bf.png" src="https://user-images.githubusercontent.com/14288520/189981449-d635a6ff-1cff-44cf-b006-6ce2eee4b8bf.png" /></a>
+<p><strong>flat</strong></p>
 <p>You can view your geometry as a single flat colour, this requires little to no processing before being passed onto the shader and is lightning fast. This is useful when you are working with large quantities of polygons.</p>
-<p>** facetted **</p>
+<p><strong>facetted</strong></p>
 <p>This mode calculates the face normal and angle to a light source, and uses the result to colour the face some shade of the color you set from the UI. This is not a hugely calculation intensive mode, all this data is produced once per update, and reused if you rotate around the viewport. It is only recalculated if the geometry input is changed / or the node is told to reprocess.</p>
-<p>** smooth **</p>
+<p><strong>smooth</strong></p>
 <p>The same calculations are performed as in facetted mode, but instead of each face (triangle) being colored uniformly, each face’s vertices get a color associated with the vertex normal. This is as close as we will get to smooth shading, at low processing cost.</p>
-<p>** custom shader **</p>
+<p><strong>custom shader</strong></p>
 <p>If this interests you, you should read the node’s source code, and check out the development thread for examples. This is the more experimental part of the node and subject to changing eventually. At present this lets you load a VertexShader and FragmentShader from the bpy.data.texts block.</p>
 </section>
 <section id="features">
@@ -183,6 +186,7 @@
 - multiple simultaneous viewers mixing opaque geometry may show render artifacts.</p></li>
 <li><p>(experimental..) the “Attribute socket” can be used to configure the viewer node from another node, in this case a dedicated Attributes node.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png"><img alt="https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png" src="https://user-images.githubusercontent.com/14288520/189983532-9bdaf0ed-0534-4221-af20-d334c1e34ae5.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -199,9 +203,33 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/10011941/95666436-eb250980-0b59-11eb-9785-3d6f3d40fbdc.png" src="https://user-images.githubusercontent.com/10011941/95666436-eb250980-0b59-11eb-9785-3d6f3d40fbdc.png" />
-<img alt="https://user-images.githubusercontent.com/10011941/95681591-fd965600-0be0-11eb-9fbf-6c124ba71c03.png" src="https://user-images.githubusercontent.com/10011941/95681591-fd965600-0be0-11eb-9fbf-6c124ba71c03.png" />
-<img alt="(https://user-images.githubusercontent.com/10011941/95681673-81e8d900-0be1-11eb-8ff0-b5a57675617c.png" src="(https://user-images.githubusercontent.com/10011941/95681673-81e8d900-0be1-11eb-8ff0-b5a57675617c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189978522-5ed5ab57-3746-4816-ad37-b7b452d3c044.png"><img alt="https://user-images.githubusercontent.com/14288520/189978522-5ed5ab57-3746-4816-ad37-b7b452d3c044.png" src="https://user-images.githubusercontent.com/14288520/189978522-5ed5ab57-3746-4816-ad37-b7b452d3c044.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189978588-76ec34b1-885b-44de-bf37-5adb77d2627d.png"><img alt="https://user-images.githubusercontent.com/14288520/189978588-76ec34b1-885b-44de-bf37-5adb77d2627d.png" src="https://user-images.githubusercontent.com/14288520/189978588-76ec34b1-885b-44de-bf37-5adb77d2627d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189979120-63ecdaa7-2883-44a4-88b7-8fbe2a2f84fb.png"><img alt="https://user-images.githubusercontent.com/14288520/189979120-63ecdaa7-2883-44a4-88b7-8fbe2a2f84fb.png" src="https://user-images.githubusercontent.com/14288520/189979120-63ecdaa7-2883-44a4-88b7-8fbe2a2f84fb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+</ul>
+<p>Extra params:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189985713-e3f503fb-3d54-482f-bb16-648660eed55f.gif"><img alt="https://user-images.githubusercontent.com/14288520/189985713-e3f503fb-3d54-482f-bb16-648660eed55f.gif" src="https://user-images.githubusercontent.com/14288520/189985713-e3f503fb-3d54-482f-bb16-648660eed55f.gif" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html"><span class="doc">Component Analyzer</span></a></p></li>
+</ul>
 </section>
 <section id="support">
 <h2>Support<a class="headerlink" href="#support" title="Permalink to this heading">¶</a></h2>
@@ -213,8 +241,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="viewer_2d.html" class="btn btn-neutral float-left" title="Viewer 2D" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="viewer_draw_curve.html" class="btn btn-neutral float-right" title="Viewer Draw Curve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="viz_index.html" class="btn btn-neutral float-left" title="Viz" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vd_matrix.html" class="btn btn-neutral float-right" title="Matrix View" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

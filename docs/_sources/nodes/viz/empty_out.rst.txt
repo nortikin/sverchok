@@ -1,6 +1,9 @@
 Empty out
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/190487281-8477d806-c5af-4a69-b7f3-f8998ab53f22.png
+  :target: https://user-images.githubusercontent.com/14288520/190487281-8477d806-c5af-4a69-b7f3-f8998ab53f22.png
+
 Functionality
 -------------
 
@@ -34,3 +37,16 @@ Outputs
 -------
 
 Object - Emptys
+
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190487670-608066e3-4fb0-4b19-a85e-c5c4aa6a5f08.png
+  :target: https://user-images.githubusercontent.com/14288520/190487670-608066e3-4fb0-4b19-a85e-c5c4aa6a5f08.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+See limitations.

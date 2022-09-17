@@ -83,7 +83,7 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/187514973-08b68caf-2024-4316-b2d5-834d49f96712.png
     :target: https://user-images.githubusercontent.com/14288520/187514973-08b68caf-2024-4316-b2d5-834d49f96712.png
 
-* Curve->Bezier-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
+* Curves->Bezier-> :doc:`Bezier Spline (Curve) </nodes/curve/bezier_spline>`
 * Surfaces-> :doc:`Surface from Curves </nodes/surface/interpolating_surface>`
 * Surfaces-> :doc:`Evaluate Surfaces </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
