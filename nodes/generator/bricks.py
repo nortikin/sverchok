@@ -26,6 +26,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode)
 from sverchok.utils.handle_blender_data import keep_enum_reference
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 """
 The grid is represented by following structure:
@@ -427,15 +428,6 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             # Assign indicies to vertices
             vertex_idx, vertices = self.build_vertices(ulines)
 
-            edges = []
-            for line in ulines:
-                for v1,v2 in zip(line, line[1:]):
-                    edges.append((v1.index, v2.index))
-
-            for lst in vedges:
-                for edge in lst:
-                    edges.append((edge.v1.index, edge.v2.index))
-
             faces = []
             centers = []
             for i, lst in enumerate(vedges):
@@ -502,6 +494,8 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                     if len(new_face) > 2:
                         filtered_faces.append(new_face)
                 faces = filtered_faces
+
+            edges = polygons_to_edges([faces])[0]
 
             result_vertices.append(vertices)
             result_edges.append(edges)
