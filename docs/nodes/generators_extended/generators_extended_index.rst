@@ -6,11 +6,13 @@ Generators Extended
    :maxdepth: 1
 
    box_rounded
+   
+   polygon_grid
    hilbert
    hilbert3d
    hilbert_image
+
    pentagon_tiler
-   polygon_grid
    regular_solid
    ring_mk2
    smooth_lines

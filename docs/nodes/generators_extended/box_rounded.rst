@@ -1,6 +1,12 @@
 Rounded box
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/190874840-96e656e5-765a-4d7a-83fc-2654a728bca6.png
+  :target: https://user-images.githubusercontent.com/14288520/190874840-96e656e5-765a-4d7a-83fc-2654a728bca6.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190875021-db05b31b-e960-442f-83d9-bb9b8eba8ef7.png
+  :target: https://user-images.githubusercontent.com/14288520/190875021-db05b31b-e960-442f-83d9-bb9b8eba8ef7.png
+
 Functionality
 -------------
 See the BlenderArtists thread by original author Phymec. This node merely encapsulates 
@@ -38,8 +44,34 @@ Examples
 --------
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/4471754/4987c79a-493e-11e4-89fe-bb9210af45c9.png
+    :target: https://cloud.githubusercontent.com/assets/619340/4471754/4987c79a-493e-11e4-89fe-bb9210af45c9.png
+
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* MUL X, ADD X, /2: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/4470969/f7dca97c-4930-11e4-9cae-63f8b17826be.png
+    :target: https://cloud.githubusercontent.com/assets/619340/4470969/f7dca97c-4930-11e4-9cae-63f8b17826be.png
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190872241-80590f4b-0468-4648-ac84-592472317a5a.png
+  :target: https://user-images.githubusercontent.com/14288520/190872241-80590f4b-0468-4648-ac84-592472317a5a.png
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`Float to Integer </nodes/number/float_to_int>`
+* MUL X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* List->List Struct-> :doc:`List Slice </nodes/list_struct/slice>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Notes
 -----
