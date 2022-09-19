@@ -24,7 +24,11 @@ from sverchok.data_structure import updateNode
 
 
 class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Hilbert Image '''
+    '''Hilbert image recreator by interpolating image on pixels.
+    In: level, size, sensivity
+    Params: RGB map, image selector
+    Out: Vertices, Edges
+    '''
     bl_idname = 'HilbertImageNode'
     bl_label = 'Hilbert Image'
     bl_icon = 'OUTLINER_OB_EMPTY'

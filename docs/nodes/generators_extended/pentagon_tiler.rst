@@ -1,6 +1,9 @@
 Pentagon Tiler
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/191069282-dde70a46-4dc8-4f08-a863-22a0b39d3dd6.png
+  :target: https://user-images.githubusercontent.com/14288520/191069282-dde70a46-4dc8-4f08-a863-22a0b39d3dd6.png
+
 Functionality
 -------------
 
@@ -62,6 +65,59 @@ Example of usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/10011941/71754304-df4b3f00-2e85-11ea-8feb-99e375ffca8d.png
+    :target: https://user-images.githubusercontent.com/10011941/71754304-df4b3f00-2e85-11ea-8feb-99e375ffca8d.png
+
+* old example_001:
+
 .. image:: https://user-images.githubusercontent.com/10011941/71755025-15d68900-2e89-11ea-83e0-3328446fa47d.png
+    :target: https://user-images.githubusercontent.com/10011941/71755025-15d68900-2e89-11ea-83e0-3328446fa47d.png
+
+* restore example_001 with new nodes:
+
+.. image:: https://user-images.githubusercontent.com/14288520/191076744-8fb7de74-4726-4d85-85e1-3779f6f6f004.png 
+  :target: https://user-images.githubusercontent.com/14288520/191076744-8fb7de74-4726-4d85-85e1-3779f6f6f004.png
+
+* Transform-> :doc:`Bend Object Along Surface </nodes/transforms/bend_along_surface>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
+
+---------
+
+* old example_002
+ 
 .. image:: https://user-images.githubusercontent.com/10011941/71755215-e1af9800-2e89-11ea-9ba9-d23de15b2dbb.png
+    :target: https://user-images.githubusercontent.com/10011941/71755215-e1af9800-2e89-11ea-9ba9-d23de15b2dbb.png
+
+* restore example_002 with new nodes
+
+.. image:: https://user-images.githubusercontent.com/14288520/191077924-72f3e9f1-aa0b-4c76-be35-5e2edd487218.png
+  :target: https://user-images.githubusercontent.com/14288520/191077924-72f3e9f1-aa0b-4c76-be35-5e2edd487218.png
+
+* Surfaces-> :doc:`Surface from Curves </nodes/surface/interpolating_surface>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Transform-> :doc:`Bend Object Along Surface </nodes/transforms/bend_along_surface>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
+
+---------
+
+* old example_003
+
 .. image:: https://user-images.githubusercontent.com/10011941/71755942-7f589680-2e8d-11ea-86de-938d1090fb66.png
+    :target: https://user-images.githubusercontent.com/10011941/71755942-7f589680-2e8d-11ea-86de-938d1090fb66.png
+
+* restore example_003 with new nodes:
+
+.. image:: https://user-images.githubusercontent.com/14288520/191079484-53a803e1-2f53-49f0-a138-d0374ba1bd4f.png
+  :target: https://user-images.githubusercontent.com/14288520/191079484-53a803e1-2f53-49f0-a138-d0374ba1bd4f.png
+
+* Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Transform-> :doc:`Simple Deformation </nodes/transforms/deform>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

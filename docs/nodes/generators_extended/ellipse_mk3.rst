@@ -1,6 +1,12 @@
 Ellipse
 =======
 
+.. image:: https://user-images.githubusercontent.com/14288520/190974205-bf333be6-f17b-41eb-b277-32c57a059e8f.png
+  :target: https://user-images.githubusercontent.com/14288520/190974205-bf333be6-f17b-41eb-b277-32c57a059e8f.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190987328-1580d339-8a75-436a-8f91-3bcfa5764af2.png
+  :target: https://user-images.githubusercontent.com/14288520/190987328-1580d339-8a75-436a-8f91-3bcfa5764af2.png
+
 Functionality
 -------------
 The ellipse node creates ellipses given a set of main parameters: major/minor radii, eccentricity, focal length. Additional parameters allow you to tweak the ellipse curve: phase, rotation, scale and x/y exponents.

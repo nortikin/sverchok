@@ -341,7 +341,10 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.), div_type=0, o
 
 
 class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Box rounded'''
+    '''Rounded Box
+    In: radius, arc div, lin div, Vector Size, div type, ood axis align
+    Out: Vertices, Poligons
+    '''
     bl_idname = 'SvBoxRoundedNode'
     bl_label = 'Rounded Box'
     bl_icon = 'MESH_CAPSULE'

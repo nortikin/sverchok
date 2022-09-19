@@ -1,6 +1,12 @@
 Spiral
 ========
 
+.. image:: https://user-images.githubusercontent.com/14288520/191084536-e7475066-51ff-4ff9-aebe-2110f12541fe.png
+  :target: https://user-images.githubusercontent.com/14288520/191084536-e7475066-51ff-4ff9-aebe-2110f12541fe.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/191089772-4456ac0b-8fca-4780-a56d-881d4c24001c.png
+  :target: https://user-images.githubusercontent.com/14288520/191089772-4456ac0b-8fca-4780-a56d-881d4c24001c.png
+
 Functionality
 -------------
 
@@ -15,22 +21,23 @@ Inputs
 
 All inputs are vectorized and they will accept single or multiple values.
 
-- **Exterior Radius** [1]
-- **Interior Radius** [1]
-- **Exponent**        [2]
+- **Exterior Radius** **[1]**
+- **Interior Radius** **[1]**
+- **Exponent**        **[2]**
 - **Turns**
 - **Turn Resolution**
-- **Scale**           [3]
-- **Height**          [4]
-- **Phase**           [5]
+- **Scale**           **[3]**
+- **Height**          **[4]**
+- **Phase**           **[5]**
 - **Arms**
 
 Notes:
-[1] : For some spirals the Exterior/Interior radii are repurposed to represent other spiral parameters like spherical (3D) radius, spiral length (Cornu) etc.
-[2] : For some spirals the exponent setting is repurposed to alter spiral shape in some way.
-[3] : For some spirals the scale settings affect xy radii, while for others it scales xyz radii.
-[4] : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)
-[5] : The phase angle is in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+
+* **[1]** : For some spirals the Exterior/Interior radii are repurposed to represent other spiral parameters like spherical (3D) radius, spiral length (Cornu) etc.
+* **[2]** : For some spirals the exponent setting is repurposed to alter spiral shape in some way.
+* **[3]** : For some spirals the scale settings affect xy radii, while for others it scales xyz radii.
+* **[4]** : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)
+* **[5]** : The phase angle is in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
 
 
 Parameters
@@ -42,18 +49,22 @@ All settings except **Spiral Type**, **Flip**, **Separate** and **Preset** can b
 | Param                | Type         | Default [1] | Description                                   |
 +======================+==============+=============+===============================================+
 | **Spiral Type**      | Enum:        | Archimedean | Type of the spiral. Each type is defined by   |
-|                      |  Archimedean |             | a unique formula (See "Spiral Type" section   |
-|                      |  Logarithmic |             | for details).                                 |
-|                      |  Spherical   |             |                                               |
-|                      |  Ovoidal     |             |                                               |
-|                      |  Cornu       |             |                                               |
-|                      |  Exo         |             |                                               |
-|                      |  Spirangle   |             |                                               |
+|                      |              |             |                                               |
+|                      | * Archimedean|             | a unique formula (See "Spiral Type" section   |
+|                      |              |             |                                               |
+|                      | * Logarithmic|             | for details).                                 |
+|                      | * Spherical  |             |                                               |
+|                      | * Ovoidal    |             |                                               |
+|                      | * Cornu      |             |                                               |
+|                      | * Exo        |             |                                               |
+|                      | * Spirangle  |             |                                               |
 +----------------------+--------------+-------------+-----------------------------------------------+
 | **Flip**             |  Bool        |   False     | Flip the direction of the spiral from counter |
+|                      |              |             |                                               |
 |                      |              |             | clockwise to clockwise.                       |
 +----------------------+--------------+-------------+-----------------------------------------------+
 | **Separate**         |  Bool        |   False     | Separate the arms of the spiral into distinct |
+|                      |              |             |                                               |
 |                      |              |             | lists of vertices and edges.                  |
 +----------------------+--------------+-------------+-----------------------------------------------+
 | **Exterior Radius**  |  Float       |   0.1       | Exterior radius of the spiral.                |
@@ -70,14 +81,15 @@ All settings except **Spiral Type**, **Flip**, **Separate** and **Preset** can b
 +----------------------+--------------+-------------+-----------------------------------------------+
 | **Height**           |  Float       |   0.0       | Height of the 3D spiral (2D if height = 0).   |
 +----------------------+--------------+-------------+-----------------------------------------------+
-| **Phase**            |  float       |   0.0       | Phase around the spiral center. [2]           |
+| **Phase**            |  float       |   0.0       | Phase around the spiral center. **[2]**       |
 +----------------------+--------------+-------------+-----------------------------------------------+
 | **Arms**             |  Int         |   1         | Number of arms in the spiral.                 |
 +----------------------+--------------+-------------+-----------------------------------------------+
 
 Notes:
- [1] : The default values for the spiral settings listed above correspond to the **Archimedean** preset, which is the default preset when creating a new spiral node (see Presets section).
- [2] : Phase angle is given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+
+* **[1]** : The default values for the spiral settings listed above correspond to the **Archimedean** preset, which is the default preset when creating a new spiral node (see Presets section).
+* **[2]** : Phase angle is given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
 
 
 Spiral Types
@@ -168,7 +180,7 @@ Note: once a setting is altered (after selecting a preset) the preset selection 
 +---------------+--------------+-------+-------+-------+-------+-------+-------+-------+
 | Preset        | type         |   R   |   r   |   e   |   t   |   N   |   s   |   h   |
 +===============+==============+=======+=======+=======+=======+=======+=======+=======+
-| Fibonacci     | Logarithmic  |  0.1  |  0.0  |  [1]  |   4   |  100  |  0.1  |  0.0  |
+| Fibonacci     | Logarithmic  |  0.1  |  0.0  |**[1]**|   4   |  100  |  0.1  |  0.0  |
 +---------------+--------------+-------+-------+-------+-------+-------+-------+-------+
 | Helix         | Logarithmic  |  1.0  |  1.0  |  0.0  |   7   |  100  |  1.0  |  7.0  |
 +---------------+--------------+-------+-------+-------+-------+-------+-------+-------+
@@ -196,8 +208,9 @@ Note: once a setting is altered (after selecting a preset) the preset selection 
 +---------------+--------------+-------+-------+-------+-------+-------+-------+-------+
 
 Notes:
- [1] : Fibonacci spiral exponent is: ln(PHI)/(PI/2), where PHI is the golden ratio.
- [2] : The Spirangle SC and HX stand for Square/Constant and Hexa/Exponential, given the selected values.
+
+* **[1]** : Fibonacci spiral exponent is: ln(PHI)/(PI/2), where PHI is the golden ratio.
+* **[2]** : The Spirangle SC and HX stand for Square/Constant and Hexa/Exponential, given the selected values.
 
 The preset settings were selected for each type such that when switching from one preset to another the generated spirals are relatively the same size.
 
@@ -210,10 +223,12 @@ A set of extra parameters are available on the property panel. These parameters 
 | Extra Param             |  Type      |  Default   |  Description                                  |
 +=========================+============+============+===============================================+
 | **Angle Units**         | Enum       | DEGREES    | Interprets the angle values based on          |
-|                         |  RADIANS   |            | the selected angle units:                     |
-|                         |  DEGREES   |            | Radians = 0 - 2pi                             |
-|                         |  UNITIES   |            | Degrees = 0 - 360                             |
-|                         |            |            | Unities = 0 - 1                               |
+|                         |            |            |                                               |
+|                         |            |            | the selected angle units:                     |
+|                         | * RADIANS  |            |                                               |
+|                         | * DEGREES  |            | * Radians = 0.0 - 2pi                         |
+|                         | * UNITIES  |            | * Degrees = 0.0 - 360.0                       |
+|                         |            |            | * Unities = 0.0 - 1.0                         |
 +-------------------------+------------+------------+-----------------------------------------------+
 
 

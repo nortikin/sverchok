@@ -20,7 +20,7 @@ from sverchok.ui.sv_icons import custom_icon
 class SvTriangleNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: from vertices, sides or angles
-    Tooltip:  create triangle from various combinations of vertices, sides length and angles
+    Tooltip:  Create triangle from various combinations of vertices, sides length and angles.\n\tIn: A,B,C, a,b,c, Alpha, Beta\n\tParams: Mode\n\tExtra: Remove Doubles, Merge Distance\n\tOut: Vertices, Edges, Faces
 
     """
 

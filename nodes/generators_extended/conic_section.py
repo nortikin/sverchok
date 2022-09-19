@@ -32,7 +32,7 @@ SectionData = namedtuple('SectionData', ['verts', 'branch_mask', 'side_mask', 'g
 class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Ellipse, Parabola, Hyperbola
-    Tooltip: Generate 3D Conic Sections
+    Tooltip: Generate 3D Conic Sections.\n\tIn: ConeApex, ConeDirection, Cone Angle, Count, Max Distance, Plane Point/Direction\n\tParams: Define Cone (Angle/Generating Vector), Even Distribution On/Off\n\tOut: Vertices, Edges, BranchMask, SideMask
     """
 
     bl_idname = 'SvConicSectionNode'

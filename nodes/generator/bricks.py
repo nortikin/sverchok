@@ -225,7 +225,7 @@ def get_center(vertices):
 class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bricks
-    Tooltip: Create a brick wall or honeycomb-like structure.
+    Tooltip: Create a brick wall or honeycomb-like structure.\n\tIn: Unit width/height, Width, Height, Toothing/Random, Random U/V, Shift, Seed\n\tOut: Vertices, Edges, Polygons, Centers
     """
     bl_idname = 'SvBricksNode'
     bl_label = 'Bricks Grid'

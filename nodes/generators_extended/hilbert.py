@@ -24,7 +24,10 @@ from sverchok.data_structure import updateNode
 
 
 class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Hilbert line '''
+    '''Hilbert line.
+    In: Level, Size
+    Out: Vertices, Edges
+    '''
     bl_idname = 'HilbertNode'
     bl_label = 'Hilbert'
     bl_icon = 'OUTLINER_OB_EMPTY'
