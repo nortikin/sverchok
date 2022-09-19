@@ -80,8 +80,6 @@ class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []
-        if len(mask) == 0:
-            raise ValueError('Mask is empty')
         if len(data_t) == 0:
             data_t = [None] * len(data_f)
         elif len(data_f) == 0:
@@ -98,8 +96,6 @@ class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def apply_mask(self, mask, data_t, data_f):
         ind_t, ind_f = 0, 0
         out = []
-        if len(mask) == 0:
-            raise ValueError('Mask is empty')
         for m in cycle(mask):
             if m:
                 if ind_t == len(data_t):
