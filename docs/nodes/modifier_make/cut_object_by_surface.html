@@ -67,6 +67,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
@@ -158,13 +159,20 @@ that are the result of cutting. This is similar to “Cross Section” and “Bi
 nodes, but it operates with any surface, not just with plane. In a sense, this
 operation can be considered as a very simple analog of Boolean operations, but
 it finds intersections of <strong>edges</strong>, not intersections of volumes.</p>
-<p><strong>Implementation restriction</strong>: the node requires that of each face of “object”
-mesh, only two edges intersect the “surface” mesh. So, each face can be cut
-only in two pieces, not in three or more.</p>
+<p><strong>Implementation restriction</strong>: when generating cut surface or making cut pieces,
+the node requires that of each face of “object” mesh, only two edges intersect
+the “surface” mesh. So, each face can be cut only in two pieces, not in three or more.
+The node will not crash, just ignore these options and simply output intersection points.</p>
+<p><strong>Developer notes</strong> : for those interested in removing this limitation, a general idea
+on how to proceed, with its limitations, is included in the code as comments.
+If multiple points are detected for a single real intersection point,
+see comments in the code for a solution on how to solve it.</p>
 <p>Faces made by this node at places of cut will be usually NGons, so they may be
 non-planar. It may be good idea to pass the output of this node through the
 <strong>Split faces</strong> node (in <strong>split non-planar faces</strong> mode), or maybe through
-<strong>Make faces planar</strong> node.</p>
+<strong>Make faces planar</strong> node. Furthermore, the cut surface do not follow the surface
+mesh, it just connects the intersection points (the aforementioned limitation-solving
+idea would solve this too).</p>
 <p>Note that this node outputs “cut pieces” mesh always as one merged object (not
 split into pieces). If you need these pieces in separate, you can pass the
 output of this node through the <strong>Separate Loose Parts</strong> node.</p>
@@ -197,6 +205,15 @@ will not be filled. Unchecked by default.</p></li>
 are formed by cutting the “object” mesh. If not checked, the node will
 calculate only cut surfaces - the surfaces of intersection of the “object”
 and the “surface”. Unchecked by default.</p></li>
+</ul>
+</section>
+<section id="advanced-parameters">
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<p>In the N-Panel (and on the right-click menu) you can find:</p>
+<ul class="simple">
+<li><p><strong>All triangles</strong>. Boolean to work with triangularized surface mesh (makes the node faster).</p></li>
+<li><p><strong>Block</strong>. Boolean to define whether or not the node should raise an error when more than
+two intersections by face are found</p></li>
 </ul>
 </section>
 <section id="outputs">

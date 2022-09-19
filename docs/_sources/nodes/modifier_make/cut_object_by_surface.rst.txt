@@ -12,14 +12,22 @@ nodes, but it operates with any surface, not just with plane. In a sense, this
 operation can be considered as a very simple analog of Boolean operations, but
 it finds intersections of **edges**, not intersections of volumes.
 
-**Implementation restriction**: the node requires that of each face of "object"
-mesh, only two edges intersect the "surface" mesh. So, each face can be cut
-only in two pieces, not in three or more.
+**Implementation restriction**: when generating cut surface or making cut pieces,
+the node requires that of each face of "object" mesh, only two edges intersect 
+the "surface" mesh. So, each face can be cut only in two pieces, not in three or more.
+The node will not crash, just ignore these options and simply output intersection points.
+
+**Developer notes** : for those interested in removing this limitation, a general idea
+on how to proceed, with its limitations, is included in the code as comments.
+If multiple points are detected for a single real intersection point,
+see comments in the code for a solution on how to solve it. 
 
 Faces made by this node at places of cut will be usually NGons, so they may be
 non-planar. It may be good idea to pass the output of this node through the
 **Split faces** node (in **split non-planar faces** mode), or maybe through
-**Make faces planar** node.
+**Make faces planar** node. Furthermore, the cut surface do not follow the surface
+mesh, it just connects the intersection points (the aforementioned limitation-solving
+idea would solve this too).
 
 
 Note that this node outputs "cut pieces" mesh always as one merged object (not
@@ -55,6 +63,15 @@ This node has the following parameters:
   are formed by cutting the "object" mesh. If not checked, the node will
   calculate only cut surfaces - the surfaces of intersection of the "object"
   and the "surface". Unchecked by default.
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+* **All triangles**. Boolean to work with triangularized surface mesh (makes the node faster).
+* **Block**. Boolean to define whether or not the node should raise an error when more than
+  two intersections by face are found
 
 Outputs
 -------
