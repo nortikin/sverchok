@@ -147,6 +147,7 @@ utils_modules = [
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
     "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
     "quad_grid",
+    "catmull_clark",
     "curve.nurbs_algorithms",
     # extra addons
     "sv_extra_addons"

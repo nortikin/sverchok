@@ -17,9 +17,8 @@ def calc_new_verts(bm):
     face_centers = np.array([tuple(f.calc_center_median()) for f in bm.faces])
     edge_verts = np.array([verts[e] for e in edges])
 
-    face_centers_by_edge = np.array([[face_centers[f.index] for f in e.link_faces] for e in bm.edges])
-    points_by_edge = [np.vstack(([face_centers[f.index] for f in e.link_faces], edge_verts[e.index])) for e in bm.edges]
-    edge_points = np.mean(points_by_edge, axis=1)
+    points_by_edge = np.array([np.vstack(([face_centers[f.index] for f in e.link_faces], edge_verts[e.index])) for e in bm.edges])
+    edge_points = np.array([np.mean(pts, axis=0) if len(pts) == 4 else np.mean(pts[1:], axis=0) for pts in points_by_edge])
     edge_centers = np.mean(edge_verts, axis=1)
 
     new_verts_from_faces = face_centers
@@ -36,7 +35,12 @@ def calc_new_verts(bm):
         F = np.mean(face_centers[linked_face_idxs], axis=0)
         R = np.mean(edge_centers[linked_edge_idxs], axis=0)
 
-        new_verts_from_verts[vert.index] = (F + 2*R + (n-3)*P) / n
+        if n >= 3:
+            new_verts_from_verts[vert.index] = (F + 2*R + (n-3)*P) / n
+        elif n == 2:
+            new_verts_from_verts[vert.index] = P
+        else:
+            new_verts_from_verts[vert.index] = (R + P) / 2
 
     return new_verts_from_verts, new_verts_from_edges, new_verts_from_faces
 
