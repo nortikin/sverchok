@@ -144,6 +144,8 @@
              
   <section id="bricks-grid">
 <h1>Bricks Grid<a class="headerlink" href="#bricks-grid" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190888043-47886557-91b2-498f-a939-eb4ea881af87.png"><img alt="https://user-images.githubusercontent.com/14288520/190888043-47886557-91b2-498f-a939-eb4ea881af87.png" src="https://user-images.githubusercontent.com/14288520/190888043-47886557-91b2-498f-a939-eb4ea881af87.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png"><img alt="https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png" src="https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates bricks-like grid, i.e. a grid each row of which is shifted
@@ -176,20 +178,23 @@ All inputs are vectorized and they will accept single or multiple values.</p>
 <tr class="row-even"><td><p><strong>Cycle U</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Make the grid cyclic in U direction, i.e. the direction of
-brick rows. This makes sense only if you are going to map
-the grid on to some sort of cyclic surface (e.g. cylinder).
-<strong>Note</strong>: after such mapping, you may want to use “Remove
-doubles” node.</p></td>
+<td><p>Make the grid cyclic in U direction, i.e. the direction of</p>
+<p>brick rows. This makes sense only if you are going to map</p>
+<p>the grid on to some sort of cyclic surface (e.g. cylinder).</p>
+<p><strong>Note</strong>: after such mapping, you may want to use “Remove</p>
+<p>doubles” node.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Cycle V</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Make the grid cyclic in V direction, i.e. the direction of
-brick columns. This makes sense only if you are going to map
-the grid on to some sort of cyclic surface (e.g. cylinder).
-<strong>Note</strong>: after such mapping, you may want to use “Remove
-doubles” node.</p></td>
+<td><p>Make the grid cyclic in V direction, i.e. the direction of</p>
+<p>brick columns. This makes sense only if you are going</p>
+<p>to map the grid on to some sort of cyclic surface (e.g..</p>
+<p>cylinder)</p>
+<p><strong>Note</strong>: after such mapping, you may want to use “Remove</p>
+<p>doubles” node.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Faces mode</strong></p></td>
 <td><p>Flat or</p>
@@ -198,16 +203,14 @@ doubles” node.</p></td>
 </td>
 <td><p>Flat</p></td>
 <td><p>What kind of polygons to generate:</p>
-<ul class="simple">
-<li><p>Flat - generate one polygon (n-gon, in general) for each
-brick.</p></li>
-<li><p>Stitch - split each brick into several triangles, with
-edges going across brick.</p></li>
-<li><p>Center - split each brick into triangles by adding new
-vertex in the center of the brick. This mode is not
-available if <em>any</em> of <strong>Cycle U</strong>, <strong>Cycle V</strong>
-parameters is checked.</p></li>
-</ul>
+<p><strong>Flat</strong> - generate one polygon (n-gon, in general)</p>
+<p>for each brick.</p>
+<p><strong>Stitch</strong> - split each brick into several triangles,</p>
+<p>with edges going across brick.</p>
+<p><strong>Center</strong> - split each brick into triangles by</p>
+<p>adding new vertex in the center of the brick.</p>
+<p>This mode is not available if <em>any</em> of</p>
+<p><strong>Cycle U</strong>, <strong>Cycle V</strong> parameters is checked.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Unit width</strong></p></td>
@@ -233,37 +236,42 @@ parameters is checked.</p></li>
 <tr class="row-odd"><td><p><strong>Toothing</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Bricks toothing amount. Default value of zero means no
-toothing.</p></td>
+<td><p>Bricks toothing amount. Default value of zero means no</p>
+<p>toothing.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Toothing
 random</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Toothing randomization factor. Default value of zero means
-that all toothings will be equal. Maximal value of 1.0
-means toothing will be random in range from zero to value
-of <code class="docutils literal notranslate"><span class="pre">Toothing</span></code> parameter.</p></td>
+<td><p>Toothing randomization factor. Default value of zero</p>
+<p>means that all toothings will be equal. Maximal value</p>
+<p>of 1.0 means toothing will be random in range from zero</p>
+<p>to value of <code class="docutils literal notranslate"><span class="pre">Toothing</span></code> parameter.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Random U</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Randomization amplitude along bricks rows. Default value of
-zero means all bricks will be of same width.</p></td>
+<td><p>Randomization amplitude along bricks rows. Default</p>
+<p>value of zero means all bricks will be of same width.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Random V</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Randomization amplitude across bricks rows. Default value
-of zero means all grid rows will be of same height.</p></td>
+<td><p>Randomization amplitude across bricks rows. Default</p>
+<p>value of zero means all grid rows will be of same height.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Shift</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.5</p></td>
-<td><p>Brick rows shift factor. Default value of 0.5 means each
-row of bricks will be shifted by half of brick width in
-relation to previous row. Minimum value of zero means no
-shift.</p></td>
+<td><p>Brick rows shift factor. Default value of 0.5 means each</p>
+<p>row of bricks will be shifted by half of brick width in</p>
+<p>relation to previous row. Minimum value of zero means</p>
+<p>no shift.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Seed</strong></p></td>
 <td><p>Int</p></td>
@@ -286,17 +294,44 @@ shift.</p></td>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Default settings:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981695/2fd5badc-a8de-11e4-858e-10ce590b19ec.png" src="https://cloud.githubusercontent.com/assets/284644/5981695/2fd5badc-a8de-11e4-858e-10ce590b19ec.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190888700-530a8d23-b263-44a8-aaa1-4f79dd0a3c8f.png"><img alt="https://user-images.githubusercontent.com/14288520/190888700-530a8d23-b263-44a8-aaa1-4f79dd0a3c8f.png" src="https://user-images.githubusercontent.com/14288520/190888700-530a8d23-b263-44a8-aaa1-4f79dd0a3c8f.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The same with Stitch faces mode:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981673/06e0c5fe-a8de-11e4-822f-b1b44681982c.png" src="https://cloud.githubusercontent.com/assets/284644/5981673/06e0c5fe-a8de-11e4-822f-b1b44681982c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190897076-5e66d880-a1d8-4f92-8812-a47c99296904.png"><img alt="https://user-images.githubusercontent.com/14288520/190897076-5e66d880-a1d8-4f92-8812-a47c99296904.png" src="https://user-images.githubusercontent.com/14288520/190897076-5e66d880-a1d8-4f92-8812-a47c99296904.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The same with Centers faces mode:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981672/0693c66e-a8de-11e4-8326-a75a15e37e74.png" src="https://cloud.githubusercontent.com/assets/284644/5981672/0693c66e-a8de-11e4-8326-a75a15e37e74.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190897098-7f951422-4e61-4c25-affc-95d598b3645e.png"><img alt="https://user-images.githubusercontent.com/14288520/190897098-7f951422-4e61-4c25-affc-95d598b3645e.png" src="https://user-images.githubusercontent.com/14288520/190897098-7f951422-4e61-4c25-affc-95d598b3645e.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Using <code class="docutils literal notranslate"><span class="pre">toothing</span></code> parameter together with randomization, it is possible to generate something like stone wall:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981643/bb85d572-a8dd-11e4-88c0-ebd018bfcdd1.png" src="https://cloud.githubusercontent.com/assets/284644/5981643/bb85d572-a8dd-11e4-88c0-ebd018bfcdd1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190888712-6be35135-3f51-4ce0-bfed-dbac6fc33caf.png"><img alt="https://user-images.githubusercontent.com/14288520/190888712-6be35135-3f51-4ce0-bfed-dbac6fc33caf.png" src="https://user-images.githubusercontent.com/14288520/190888712-6be35135-3f51-4ce0-bfed-dbac6fc33caf.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>A honeycomb structure:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981635/a75e5a74-a8dd-11e4-9d1f-64e19da8f01a.png" src="https://cloud.githubusercontent.com/assets/284644/5981635/a75e5a74-a8dd-11e4-9d1f-64e19da8f01a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190888980-59d2e3f3-e079-4f6e-aed1-4ab110e7b48b.png"><img alt="https://user-images.githubusercontent.com/14288520/190888980-59d2e3f3-e079-4f6e-aed1-4ab110e7b48b.png" src="https://user-images.githubusercontent.com/14288520/190888980-59d2e3f3-e079-4f6e-aed1-4ab110e7b48b.png" /></a>
+<ul class="simple">
+<li><p>Modifier Change-&gt; <a class="reference internal" href="../modifier_change/offset.html"><span class="doc">Offset</span></a></p></li>
+<li><p>Modifier Make-&gt; <a class="reference internal" href="../modifier_make/solidify_mk2.html"><span class="doc">Solidify</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Wooden floor:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5981642/bb7ceda4-a8dd-11e4-9319-c9728199d44e.png" src="https://cloud.githubusercontent.com/assets/284644/5981642/bb7ceda4-a8dd-11e4-9319-c9728199d44e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190889070-2dcd345c-9c60-4568-a0a0-ec5e36a49b26.png"><img alt="https://user-images.githubusercontent.com/14288520/190889070-2dcd345c-9c60-4568-a0a0-ec5e36a49b26.png" src="https://user-images.githubusercontent.com/14288520/190889070-2dcd345c-9c60-4568-a0a0-ec5e36a49b26.png" /></a>
+<ul class="simple">
+<li><p>Modifier Change-&gt; <a class="reference internal" href="../modifier_change/offset.html"><span class="doc">Offset</span></a></p></li>
+<li><p>Modifier Make-&gt; <a class="reference internal" href="../modifier_make/solidify_mk2.html"><span class="doc">Solidify</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>You can also find some more examples <a class="reference external" href="https://github.com/portnov/sverchok/issues/19">in the development thread</a>.</p>
 </section>
 </section>

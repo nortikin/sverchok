@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Triangle" href="triangle.html" />
-    <link rel="prev" title="Super Ellipsoid" href="super_ellipsoid.html" /> 
+    <link rel="next" title="Smooth Lines" href="smooth_lines.html" />
+    <link rel="prev" title="Pentagon Tiler" href="pentagon_tiler.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,18 +53,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygon Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygonal Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Spiral</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -77,8 +78,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -146,6 +146,8 @@
              
   <section id="spiral">
 <h1>Spiral<a class="headerlink" href="#spiral" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191084536-e7475066-51ff-4ff9-aebe-2110f12541fe.png"><img alt="https://user-images.githubusercontent.com/14288520/191084536-e7475066-51ff-4ff9-aebe-2110f12541fe.png" src="https://user-images.githubusercontent.com/14288520/191084536-e7475066-51ff-4ff9-aebe-2110f12541fe.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191089772-4456ac0b-8fca-4780-a56d-881d4c24001c.png"><img alt="https://user-images.githubusercontent.com/14288520/191089772-4456ac0b-8fca-4780-a56d-881d4c24001c.png" src="https://user-images.githubusercontent.com/14288520/191089772-4456ac0b-8fca-4780-a56d-881d4c24001c.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates various types of spirals: Archimedean, Logarithmic, Spherical, Cornu (Euler), Ovoidal, Exo (to coin the term) and Spirangle.</p>
@@ -156,22 +158,24 @@
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>All inputs are vectorized and they will accept single or multiple values.</p>
 <ul class="simple">
-<li><p><strong>Exterior Radius</strong> [1]</p></li>
-<li><p><strong>Interior Radius</strong> [1]</p></li>
-<li><p><strong>Exponent</strong>        [2]</p></li>
+<li><p><strong>Exterior Radius</strong> <strong>[1]</strong></p></li>
+<li><p><strong>Interior Radius</strong> <strong>[1]</strong></p></li>
+<li><p><strong>Exponent</strong>        <strong>[2]</strong></p></li>
 <li><p><strong>Turns</strong></p></li>
 <li><p><strong>Turn Resolution</strong></p></li>
-<li><p><strong>Scale</strong>           [3]</p></li>
-<li><p><strong>Height</strong>          [4]</p></li>
-<li><p><strong>Phase</strong>           [5]</p></li>
+<li><p><strong>Scale</strong>           <strong>[3]</strong></p></li>
+<li><p><strong>Height</strong>          <strong>[4]</strong></p></li>
+<li><p><strong>Phase</strong>           <strong>[5]</strong></p></li>
 <li><p><strong>Arms</strong></p></li>
 </ul>
-<p>Notes:
-[1] : For some spirals the Exterior/Interior radii are repurposed to represent other spiral parameters like spherical (3D) radius, spiral length (Cornu) etc.
-[2] : For some spirals the exponent setting is repurposed to alter spiral shape in some way.
-[3] : For some spirals the scale settings affect xy radii, while for others it scales xyz radii.
-[4] : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)
-[5] : The phase angle is in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : For some spirals the Exterior/Interior radii are repurposed to represent other spiral parameters like spherical (3D) radius, spiral length (Cornu) etc.</p></li>
+<li><p><strong>[2]</strong> : For some spirals the exponent setting is repurposed to alter spiral shape in some way.</p></li>
+<li><p><strong>[3]</strong> : For some spirals the scale settings affect xy radii, while for others it scales xyz radii.</p></li>
+<li><p><strong>[4]</strong> : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)</p></li>
+<li><p><strong>[5]</strong> : The phase angle is in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -192,33 +196,36 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Spiral Type</strong></p></td>
-<td><dl class="simple">
-<dt>Enum:</dt><dd><p>Archimedean
-Logarithmic
-Spherical
-Ovoidal
-Cornu
-Exo
-Spirangle</p>
-</dd>
-</dl>
+<td><p>Enum:</p>
+<ul class="simple">
+<li><p>Archimedean</p></li>
+<li><p>Logarithmic</p></li>
+<li><p>Spherical</p></li>
+<li><p>Ovoidal</p></li>
+<li><p>Cornu</p></li>
+<li><p>Exo</p></li>
+<li><p>Spirangle</p></li>
+</ul>
 </td>
 <td><p>Archimedean</p></td>
-<td><p>Type of the spiral. Each type is defined by
-a unique formula (See “Spiral Type” section
-for details).</p></td>
+<td><p>Type of the spiral. Each type is defined by</p>
+<p>a unique formula (See “Spiral Type” section</p>
+<p>for details).</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Flip</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>Flip the direction of the spiral from counter
-clockwise to clockwise.</p></td>
+<td><p>Flip the direction of the spiral from counter</p>
+<p>clockwise to clockwise.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Separate</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>Separate the arms of the spiral into distinct
-lists of vertices and edges.</p></td>
+<td><p>Separate the arms of the spiral into distinct</p>
+<p>lists of vertices and edges.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Exterior Radius</strong></p></td>
 <td><p>Float</p></td>
@@ -258,7 +265,7 @@ lists of vertices and edges.</p></td>
 <tr class="row-even"><td><p><strong>Phase</strong></p></td>
 <td><p>float</p></td>
 <td><p>0.0</p></td>
-<td><p>Phase around the spiral center. [2]</p></td>
+<td><p>Phase around the spiral center. <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Arms</strong></p></td>
 <td><p>Int</p></td>
@@ -267,11 +274,11 @@ lists of vertices and edges.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="simple">
-<dt>Notes:</dt><dd><p>[1] : The default values for the spiral settings listed above correspond to the <strong>Archimedean</strong> preset, which is the default preset when creating a new spiral node (see Presets section).
-[2] : Phase angle is given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
-</dd>
-</dl>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : The default values for the spiral settings listed above correspond to the <strong>Archimedean</strong> preset, which is the default preset when creating a new spiral node (see Presets section).</p></li>
+<li><p><strong>[2]</strong> : Phase angle is given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 </section>
 <section id="spiral-types">
 <h2>Spiral Types<a class="headerlink" href="#spiral-types" title="Permalink to this heading">¶</a></h2>
@@ -372,7 +379,7 @@ All outputs will be generated when connected.</p>
 <td><p>Logarithmic</p></td>
 <td><p>0.1</p></td>
 <td><p>0.0</p></td>
-<td><p>[1]</p></td>
+<td><p><strong>[1]</strong></p></td>
 <td><p>4</p></td>
 <td><p>100</p></td>
 <td><p>0.1</p></td>
@@ -500,11 +507,11 @@ All outputs will be generated when connected.</p>
 </tr>
 </tbody>
 </table>
-<dl class="simple">
-<dt>Notes:</dt><dd><p>[1] : Fibonacci spiral exponent is: ln(PHI)/(PI/2), where PHI is the golden ratio.
-[2] : The Spirangle SC and HX stand for Square/Constant and Hexa/Exponential, given the selected values.</p>
-</dd>
-</dl>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : Fibonacci spiral exponent is: ln(PHI)/(PI/2), where PHI is the golden ratio.</p></li>
+<li><p><strong>[2]</strong> : The Spirangle SC and HX stand for Square/Constant and Hexa/Exponential, given the selected values.</p></li>
+</ul>
 <p>The preset settings were selected for each type such that when switching from one preset to another the generated spirals are relatively the same size.</p>
 </section>
 <section id="extra-parameters">
@@ -526,19 +533,22 @@ All outputs will be generated when connected.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RADIANS
-DEGREES
-UNITIES</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RADIANS</p></li>
+<li><p>DEGREES</p></li>
+<li><p>UNITIES</p></li>
+</ul>
 </td>
 <td><p>DEGREES</p></td>
-<td><p>Interprets the angle values based on
-the selected angle units:
-Radians = 0 - 2pi
-Degrees = 0 - 360
-Unities = 0 - 1</p></td>
+<td><p>Interprets the angle values based on</p>
+<p>the selected angle units:</p>
+<ul class="simple">
+<li><p>Radians = 0.0 - 2pi</p></li>
+<li><p>Degrees = 0.0 - 360.0</p></li>
+<li><p>Unities = 0.0 - 1.0</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -558,8 +568,8 @@ When <strong>Separate</strong> is off the output generates a continuous list of 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="super_ellipsoid.html" class="btn btn-neutral float-left" title="Super Ellipsoid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="triangle.html" class="btn btn-neutral float-right" title="Triangle" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pentagon_tiler.html" class="btn btn-neutral float-left" title="Pentagon Tiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="smooth_lines.html" class="btn btn-neutral float-right" title="Smooth Lines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

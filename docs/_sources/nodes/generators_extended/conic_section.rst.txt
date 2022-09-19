@@ -1,6 +1,12 @@
 Conic Sections
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/191024304-42fbb161-7e21-4937-b632-fd8b1ff8d60a.png
+  :target: https://user-images.githubusercontent.com/14288520/191024304-42fbb161-7e21-4937-b632-fd8b1ff8d60a.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/191024313-4ef6ba13-f6ca-47e7-9917-f6c0ffbfaa5d.png
+  :target: https://user-images.githubusercontent.com/14288520/191024313-4ef6ba13-f6ca-47e7-9917-f6c0ffbfaa5d.png
+
 Functionality
 -------------
 
@@ -79,27 +85,55 @@ Examples of Usage
 
 Classic parabola is defined by a cone and a plane which is parallel to cone's generatrix:
 
-.. image:: https://user-images.githubusercontent.com/284644/67162280-e3ce8400-f37b-11e9-9825-c81698e256a2.png
+.. image:: https://user-images.githubusercontent.com/14288520/191026502-3dcb987b-e96a-464c-8136-87d45c748c6c.png
+  :target: https://user-images.githubusercontent.com/14288520/191026502-3dcb987b-e96a-464c-8136-87d45c748c6c.png
+
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 The same parabola but with "even distribution" turned on:
 
-.. image:: https://user-images.githubusercontent.com/284644/67162281-e3ce8400-f37b-11e9-8a46-fd3face4738d.png
+.. image:: https://user-images.githubusercontent.com/14288520/191027131-efbe2d50-5b75-4ce5-8204-c380ed9f6cbd.png
+  :target: https://user-images.githubusercontent.com/14288520/191027131-efbe2d50-5b75-4ce5-8204-c380ed9f6cbd.png
+
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Classic ellipse is defined by a cone and a plane which intersects the cone at some random angle:
 
-.. image:: https://user-images.githubusercontent.com/284644/67162287-e4671a80-f37b-11e9-967d-f45fa43c40af.png
+.. image:: https://user-images.githubusercontent.com/14288520/191028981-25da9d63-21dc-4529-84b7-e40fa6f45254.png
+  :target: https://user-images.githubusercontent.com/14288520/191028981-25da9d63-21dc-4529-84b7-e40fa6f45254.png
+
+* Curves-> :doc:`Curve Segment </nodes/curve/curve_segment>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 One can generate a series of curves by intersecting one cone with a series of planes at different angles:
 
-.. image:: https://user-images.githubusercontent.com/284644/67210489-9eb95900-f432-11e9-8b9e-6590361c2001.png
+.. image:: https://user-images.githubusercontent.com/14288520/191033693-9ddaca46-614c-45b4-b038-e153e4230006.png
+  :target: https://user-images.githubusercontent.com/14288520/191033693-9ddaca46-614c-45b4-b038-e153e4230006.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
+* Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 One can generate a hyperbola (2-branched curve) and then use it to generate 1-sheet hyperboloid
 
-.. image:: https://user-images.githubusercontent.com/284644/67162347-8dae1080-f37c-11e9-8ac1-06b849c13fd4.png
+.. image:: https://user-images.githubusercontent.com/14288520/191035609-4353b6d8-f1f8-4c60-8cb6-f9b5ba25103f.png
+  :target: https://user-images.githubusercontent.com/14288520/191035609-4353b6d8-f1f8-4c60-8cb6-f9b5ba25103f.png
+
+* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* CAD-> :doc:`Lathe </nodes/modifier_make/lathe>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 or 2-sheet hyperboloid
 
-.. image:: https://user-images.githubusercontent.com/284644/67162282-e3ce8400-f37b-11e9-87c3-5cdcc27f007e.png
+.. image:: https://user-images.githubusercontent.com/14288520/191035963-1cb09de2-dc4f-426a-b70a-faa3ad1dc263.png
+  :target: https://user-images.githubusercontent.com/14288520/191035963-1cb09de2-dc4f-426a-b70a-faa3ad1dc263.png
+
+* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* CAD-> :doc:`Lathe </nodes/modifier_make/lathe>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 There are more examples `in the original thread <https://github.com/nortikin/sverchok/pull/2636>`_.
-

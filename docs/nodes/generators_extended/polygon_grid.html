@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Polygonal Grid &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Polygon Grid &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Regular Solid" href="regular_solid.html" />
-    <link rel="prev" title="Pentagon Tiler" href="pentagon_tiler.html" /> 
+    <link rel="next" title="Hilbert 2D" href="hilbert.html" />
+    <link rel="prev" title="Rounded box" href="box_rounded.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,11 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Polygonal Grid</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Polygon Grid</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -65,16 +61,20 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
-<li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -130,7 +130,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="generators_extended_index.html">Generators Extended</a> &raquo;</li>
-      <li>Polygonal Grid</li>
+      <li>Polygon Grid</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/generators_extended/polygon_grid.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -140,11 +140,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="polygonal-grid">
-<h1>Polygonal Grid<a class="headerlink" href="#polygonal-grid" title="Permalink to this heading">¶</a></h1>
+  <section id="polygon-grid">
+<h1>Polygon Grid<a class="headerlink" href="#polygon-grid" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190913406-1af854d3-1898-4f56-984f-82d340d26d68.png"><img alt="https://user-images.githubusercontent.com/14288520/190913406-1af854d3-1898-4f56-984f-82d340d26d68.png" src="https://user-images.githubusercontent.com/14288520/190913406-1af854d3-1898-4f56-984f-82d340d26d68.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190913412-56ff33af-d9b9-4050-9bc9-c365ead5523c.png"><img alt="https://user-images.githubusercontent.com/14288520/190913412-56ff33af-d9b9-4050-9bc9-c365ead5523c.png" src="https://user-images.githubusercontent.com/14288520/190913412-56ff33af-d9b9-4050-9bc9-c365ead5523c.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>The Polygonal Grid node creates a polygon array assambled to fill the plane. It can work with triangles, squares and hexagons</p>
+<p>The Polygon Grid node creates a polygon array assambled to fill the plane. It can work with triangles, squares and hexagons</p>
 <p>The generated lattice points and tiles are confined to one of the selected layouts: rectangle, triangle, diamond and hexagon.</p>
 </section>
 <section id="inputs">
@@ -238,8 +240,43 @@ These are the vertices, edges and polygons of the hexagonal tiles centered on th
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/10011941/42779991-581204a4-8942-11e8-8339-19ef08408246.png" src="https://user-images.githubusercontent.com/10011941/42779991-581204a4-8942-11e8-8339-19ef08408246.png" />
-<img alt="https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png" src="https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190918987-8de0be58-047b-445e-9744-5bdbfd62b9c8.png"><img alt="https://user-images.githubusercontent.com/14288520/190918987-8de0be58-047b-445e-9744-5bdbfd62b9c8.png" src="https://user-images.githubusercontent.com/14288520/190918987-8de0be58-047b-445e-9744-5bdbfd62b9c8.png" /></a>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png"><img alt="https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png" src="https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/attractor.html"><span class="doc">Vector Attraction</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/delete_loose.html"><span class="doc">Delete Loose</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/wireframe.html"><span class="doc">Wireframe</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_2d.html"><span class="doc">Viewer 2D</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png"><img alt="https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png" src="https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png" /></a>
+<ul class="simple">
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/delete_loose.html"><span class="doc">Delete Loose</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/bevel.html"><span class="doc">Bevel</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/polygons_to_edges_mk2.html"><span class="doc">Polygon to Edges</span></a></p></li>
+<li><p>Beta Nodes-&gt; <a class="reference internal" href="../modifier_change/extrude_separate_lite.html"><span class="doc">Extrude Separate Faces Light</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>MUL X, Y: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_2d.html"><span class="doc">Viewer 2D</span></a></p></li>
+</ul>
+<p>Result:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190918333-c74ad35f-2002-4885-8bac-8c49900832ce.png"><img alt="https://user-images.githubusercontent.com/14288520/190918333-c74ad35f-2002-4885-8bac-8c49900832ce.png" src="https://user-images.githubusercontent.com/14288520/190918333-c74ad35f-2002-4885-8bac-8c49900832ce.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png"><img alt="https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png" src="https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png" /></a>
 </section>
 </section>
 
@@ -247,8 +284,8 @@ These are the vertices, edges and polygons of the hexagonal tiles centered on th
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pentagon_tiler.html" class="btn btn-neutral float-left" title="Pentagon Tiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="regular_solid.html" class="btn btn-neutral float-right" title="Regular Solid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="box_rounded.html" class="btn btn-neutral float-left" title="Rounded box" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hilbert.html" class="btn btn-neutral float-right" title="Hilbert 2D" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

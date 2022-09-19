@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Smooth Lines" href="smooth_lines.html" />
-    <link rel="prev" title="Regular Solid" href="regular_solid.html" /> 
+    <link rel="next" title="Ellipse" href="ellipse_mk3.html" />
+    <link rel="prev" title="Torus Knot" href="torus_knot_mk2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,12 +53,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygon Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygonal Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Ring</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -68,14 +68,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -143,6 +143,8 @@
              
   <section id="ring">
 <h1>Ring<a class="headerlink" href="#ring" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190926664-a5dd57a6-e24f-4aae-8848-7bf08d705c5d.png"><img alt="https://user-images.githubusercontent.com/14288520/190926664-a5dd57a6-e24f-4aae-8848-7bf08d705c5d.png" src="https://user-images.githubusercontent.com/14288520/190926664-a5dd57a6-e24f-4aae-8848-7bf08d705c5d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190926651-a7830638-da42-42d9-b25e-a4b71ff3336a.png"><img alt="https://user-images.githubusercontent.com/14288520/190926651-a7830638-da42-42d9-b25e-a4b71ff3336a.png" src="https://user-images.githubusercontent.com/14288520/190926651-a7830638-da42-42d9-b25e-a4b71ff3336a.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Ring generator will create a 2D ring based on its radii sets, number of sections and phase.</p>
@@ -161,10 +163,12 @@
 <li><p><strong>End Angle</strong>       [3]</p></li>
 <li><p><strong>Phase</strong>           [3]</p></li>
 </ul>
-<p>Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>[1] : Major/Minor radii are available when Major/Minor mode is elected.</p></li>
+<li><p>[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.</p></li>
+<li><p>[3] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -190,22 +194,22 @@ based on the current mode.</p>
 <tr class="row-even"><td><p><strong>Major Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>1.00</p></td>
-<td><p>Major radius of the ring [1]</p></td>
+<td><p>Major radius of the ring <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Minor Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.25</p></td>
-<td><p>Minor radius of the ring [1]</p></td>
+<td><p>Minor radius of the ring <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Exterior Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>1.25</p></td>
-<td><p>Exterior radius of the ring [2]</p></td>
+<td><p>Exterior radius of the ring <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Interior Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.75</p></td>
-<td><p>Interior radius of the ring [2]</p></td>
+<td><p>Interior radius of the ring <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Radial Sections</strong></p></td>
 <td><p>Int</p></td>
@@ -220,17 +224,17 @@ based on the current mode.</p>
 <tr class="row-even"><td><p><strong>Start Angle</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0</p></td>
-<td><p>Start angle of the ring [3][4]</p></td>
+<td><p>Start angle of the ring <strong>[3][4]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>End Angle</strong></p></td>
 <td><p>Float</p></td>
 <td><p>360</p></td>
-<td><p>End angle of the ring [3][4]</p></td>
+<td><p>End angle of the ring <strong>[3][4]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Phase</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.00</p></td>
-<td><p>Phase of the radial sections [3]</p></td>
+<td><p>Phase of the radial sections <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Separate</strong></p></td>
 <td><p>Boolean</p></td>
@@ -239,11 +243,13 @@ based on the current mode.</p>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
-[4] : When start and end angle (modulo 2pi) are equal, the ring is closed (no duplicate verts are created)</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : Major/Minor radii are available when Major/Minor mode is elected.</p></li>
+<li><p><strong>[2]</strong> : Exterior/Interior radii are available when Exterior/Interior mode is elected.</p></li>
+<li><p><strong>[3]</strong> : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+<li><p><strong>[4]</strong> : When start and end angle (modulo 2pi) are equal, the ring is closed (no duplicate verts are created)</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
@@ -265,8 +271,8 @@ All outputs will be generated when connected.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="regular_solid.html" class="btn btn-neutral float-left" title="Regular Solid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="smooth_lines.html" class="btn btn-neutral float-right" title="Smooth Lines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="torus_knot_mk2.html" class="btn btn-neutral float-left" title="Torus Knot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ellipse_mk3.html" class="btn btn-neutral float-right" title="Ellipse" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

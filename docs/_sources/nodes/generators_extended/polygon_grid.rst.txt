@@ -1,10 +1,16 @@
-Polygonal Grid
-==============
+Polygon Grid
+============
+
+.. image:: https://user-images.githubusercontent.com/14288520/190913406-1af854d3-1898-4f56-984f-82d340d26d68.png
+  :target: https://user-images.githubusercontent.com/14288520/190913406-1af854d3-1898-4f56-984f-82d340d26d68.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190913412-56ff33af-d9b9-4050-9bc9-c365ead5523c.png
+  :target: https://user-images.githubusercontent.com/14288520/190913412-56ff33af-d9b9-4050-9bc9-c365ead5523c.png
 
 Functionality
 -------------
 
-The Polygonal Grid node creates a polygon array assambled to fill the plane. It can work with triangles, squares and hexagons 
+The Polygon Grid node creates a polygon array assambled to fill the plane. It can work with triangles, squares and hexagons 
 
 The generated lattice points and tiles are confined to one of the selected layouts: rectangle, triangle, diamond and hexagon.
 
@@ -81,7 +87,49 @@ Notes:
 Example of usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/10011941/42779991-581204a4-8942-11e8-8339-19ef08408246.png
+.. image:: https://user-images.githubusercontent.com/14288520/190918987-8de0be58-047b-445e-9744-5bdbfd62b9c8.png
+  :target: https://user-images.githubusercontent.com/14288520/190918987-8de0be58-047b-445e-9744-5bdbfd62b9c8.png
+
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png
+  :target: https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png
+
+* Vector-> :doc:`Vector Attraction </nodes/vector/attractor>`
+* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Make-> :doc:`Wireframe </nodes/modifier_make/wireframe>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
+* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png
+  :target: https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png
+
+* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifier->Modifier Change-> :doc:`Bevel </nodes/modifier_change/bevel>`
+* Modifier->Modifier Change-> :doc:`Polygon to Edges </nodes/modifier_change/polygons_to_edges_mk2>`
+* Beta Nodes-> :doc:`Extrude Separate Faces Light </nodes/modifier_change/extrude_separate_lite>`
+* Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* MUL X, Y: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
+
+Result:
+
+.. image:: https://user-images.githubusercontent.com/14288520/190918333-c74ad35f-2002-4885-8bac-8c49900832ce.png
+  :target: https://user-images.githubusercontent.com/14288520/190918333-c74ad35f-2002-4885-8bac-8c49900832ce.png
 
 .. image:: https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png
+    :target: https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png
 

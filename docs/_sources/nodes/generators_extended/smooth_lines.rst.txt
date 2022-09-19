@@ -1,6 +1,9 @@
 Smooth Lines
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/191092102-eb710ef3-c4fd-4d27-8264-04712c0c4119.png
+  :target: https://user-images.githubusercontent.com/14288520/191092102-eb710ef3-c4fd-4d27-8264-04712c0c4119.png
+
 Functionality
 -------------
 

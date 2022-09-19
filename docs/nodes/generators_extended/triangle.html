@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="WFC Texture" href="wfc_texture.html" />
-    <link rel="prev" title="Spiral" href="spiral_mk2.html" /> 
+    <link rel="next" title="Pentagon Tiler" href="pentagon_tiler.html" />
+    <link rel="prev" title="Conic Sections" href="conic_section.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,19 +53,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygon Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygonal Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
 <li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Triangle</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs / Parameters</a></li>
@@ -74,7 +72,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -142,6 +142,7 @@
              
   <section id="triangle">
 <h1>Triangle<a class="headerlink" href="#triangle" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191045694-9fcb8f28-be7d-4473-a068-f79bcb5bef81.png"><img alt="https://user-images.githubusercontent.com/14288520/191045694-9fcb8f28-be7d-4473-a068-f79bcb5bef81.png" src="https://user-images.githubusercontent.com/14288520/191045694-9fcb8f28-be7d-4473-a068-f79bcb5bef81.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed to generate triangles from various combinations of vertices, sides length and angles.</p>
@@ -152,7 +153,7 @@
 <colgroup>
 <col style="width: 13%" />
 <col style="width: 10%" />
-<col style="width: 77%" />
+<col style="width: 78%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -162,16 +163,17 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Mode</strong></p></td>
-<td colspan="2"><dl class="simple">
-<dt>Enum    | Choose how you want to define the triangle:</dt><dd><p>! A_c_Alpha_Beta: One Vertex, the contiguous side length and two angles
-| A_B_Alpha_Beta: Two Vertex and two angles
-| A_b_c_Alpha: One Vertex, two contiguous sides’ length and one angle
-| A_B_b_Alpha: Two Vertex, one side length and one angle
-| A_a_b_c: One Vertex, and length of the three sides
-| A_B_a_b Two Vertex, and length of the two sides
-| A_B_C : Three Vertex</p>
-</dd>
-</dl>
+<td><p>Enum</p></td>
+<td><p>Choose how you want to define the triangle:</p>
+<ul class="simple">
+<li><p>A_c_Alpha_Beta: One Vertex, the contiguous side length and two angles</p></li>
+<li><p>A_B_Alpha_Beta: Two Vertex and two angles</p></li>
+<li><p>A_b_c_Alpha: One Vertex, two contiguous sides’ length and one angle</p></li>
+<li><p>A_B_b_Alpha: Two Vertex, one side length and one angle</p></li>
+<li><p>A_a_b_c: One Vertex, and length of the three sides</p></li>
+<li><p>A_B_a_b Two Vertex, and length of the two sides</p></li>
+<li><p>A_B_C : Three Vertex</p></li>
+</ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>A</strong></p></td>
@@ -228,11 +230,39 @@
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Three ways of getting the same triangle from different inputs</p>
-<img alt="sverchok_triangle_node_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191047575-8345d4c7-2891-4dfa-b7c1-3a6b22147344.png"><img alt="https://user-images.githubusercontent.com/14288520/191047575-8345d4c7-2891-4dfa-b7c1-3a6b22147344.png" src="https://user-images.githubusercontent.com/14288520/191047575-8345d4c7-2891-4dfa-b7c1-3a6b22147344.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The node can be used to generate more complex shapes, note that “join last level” is activated the N-Panel</p>
-<img alt="sverchok_triangle_node_example1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example_01.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191052089-3490928b-0bc1-44ad-a4c7-998c081da04b.png"><img alt="https://user-images.githubusercontent.com/14288520/191052089-3490928b-0bc1-44ad-a4c7-998c081da04b.png" src="https://user-images.githubusercontent.com/14288520/191052089-3490928b-0bc1-44ad-a4c7-998c081da04b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../CAD/inset_special_mk2.html"><span class="doc">Inset Special</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/shift_mk2.html"><span class="doc">List Shift</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Advanced example using the node to generate structural ribbons</p>
+<ul class="simple">
+<li><p>old example</p></li>
+</ul>
 <img alt="sverchok_triangle_node_example2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example_02.png" />
+<ul class="simple">
+<li><p>restore the old example with a new version of nodes</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191064494-53646309-446e-46bc-94f3-178cd4419ed6.png"><img alt="https://user-images.githubusercontent.com/14288520/191064494-53646309-446e-46bc-94f3-178cd4419ed6.png" src="https://user-images.githubusercontent.com/14288520/191064494-53646309-446e-46bc-94f3-178cd4419ed6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>SIN, MUL, ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -240,8 +270,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="spiral_mk2.html" class="btn btn-neutral float-left" title="Spiral" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="wfc_texture.html" class="btn btn-neutral float-right" title="WFC Texture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="conic_section.html" class="btn btn-neutral float-left" title="Conic Sections" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pentagon_tiler.html" class="btn btn-neutral float-right" title="Pentagon Tiler" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -5,6 +5,13 @@ This node creates various super ellipsoid (3D) shapes based on the super-ellipso
 
 Reference: https://en.wikipedia.org/wiki/Superellipsoid
 
+.. image:: https://user-images.githubusercontent.com/14288520/190999745-afc7758f-3920-44e0-a697-857d649a2b5f.png
+  :target: https://user-images.githubusercontent.com/14288520/190999745-afc7758f-3920-44e0-a697-857d649a2b5f.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/191000018-befe5fed-c6ee-42f5-9f41-aa753710682d.png
+  :target: https://user-images.githubusercontent.com/14288520/191000018-befe5fed-c6ee-42f5-9f41-aa753710682d.png
+
+
 Inputs
 ======
 
@@ -31,17 +38,18 @@ All parameters, except the **Presets**, accepts single input values directly fro
 +-----------------+-------+---------+---------------------------------+
 | **Scale Z**     | Float |   1.0   | Scale the ellipsoid along Z     |
 +-----------------+-------+---------+---------------------------------+
-| **Exponent P**  | Float |   [1]   | Parallel section exponent       |
+| **Exponent P**  | Float | **[1]** | Parallel section exponent       |
 +-----------------+-------+---------+---------------------------------+
-| **Exponent M**  | Float |   [1]   | Meridian section exponent       |
+| **Exponent M**  | Float | **[1]** | Meridian section exponent       |
 +-----------------+-------+---------+---------------------------------+
-| **Parallels**   | Int   |   [1]   | Number of parallel sections     |
+| **Parallels**   | Int   | **[1]** | Number of parallel sections     |
 +-----------------+-------+---------+---------------------------------+
-| **Meridians**   | Int   |   [1]   | Number of meridian sections     |
+| **Meridians**   | Int   | **[1]** | Number of meridian sections     |
 +-----------------+-------+---------+---------------------------------+
 
 Notes:
-[1] : The default values are based on the selected preset.
+
+* **[1]** : The default values are based on the selected preset.
 
 
 Presets

@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Ring" href="ring_mk2.html" />
-    <link rel="prev" title="Polygonal Grid" href="polygon_grid.html" /> 
+    <link rel="next" title="Conic Sections" href="conic_section.html" />
+    <link rel="prev" title="Super Ellipsoid" href="super_ellipsoid.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,11 +53,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygon Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygonal Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Regular Solid</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
@@ -65,15 +69,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_knot_mk2.html">Torus Knot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
-<li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -141,6 +141,7 @@
              
   <section id="regular-solid">
 <h1>Regular Solid<a class="headerlink" href="#regular-solid" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191001959-df7d4dbf-ca59-4a95-8a3f-a6d8c9fc208d.png"><img alt="https://user-images.githubusercontent.com/14288520/191001959-df7d4dbf-ca59-4a95-8a3f-a6d8c9fc208d.png" src="https://user-images.githubusercontent.com/14288520/191001959-df7d4dbf-ca59-4a95-8a3f-a6d8c9fc208d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node is a port to the Regular Solid functions (by dreampainter) now part of the Extra Objects Add-on bundled with Blender
@@ -195,9 +196,25 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Some of the shapes that can be generated:</p>
-<img alt="Regular_Solid_.png" src="https://user-images.githubusercontent.com/10011941/57547653-3896b900-735f-11e9-8186-8e9491655bf4.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191015511-d24fbed2-628a-461c-9d94-e1677fee3205.png"><img alt="https://user-images.githubusercontent.com/14288520/191015511-d24fbed2-628a-461c-9d94-e1677fee3205.png" src="https://user-images.githubusercontent.com/14288520/191015511-d24fbed2-628a-461c-9d94-e1677fee3205.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Add: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Variations of the cube:</p>
-<img alt="Regular_Solid.png" src="https://user-images.githubusercontent.com/10011941/57547665-3df40380-735f-11e9-9112-ea8f2f4bc202.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191018476-2a9b6d67-e94d-4d68-909d-8cbca6ae3032.png"><img alt="https://user-images.githubusercontent.com/14288520/191018476-2a9b6d67-e94d-4d68-909d-8cbca6ae3032.png" src="https://user-images.githubusercontent.com/14288520/191018476-2a9b6d67-e94d-4d68-909d-8cbca6ae3032.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Add: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -205,8 +222,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="polygon_grid.html" class="btn btn-neutral float-left" title="Polygonal Grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ring_mk2.html" class="btn btn-neutral float-right" title="Ring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="super_ellipsoid.html" class="btn btn-neutral float-left" title="Super Ellipsoid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="conic_section.html" class="btn btn-neutral float-right" title="Conic Sections" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

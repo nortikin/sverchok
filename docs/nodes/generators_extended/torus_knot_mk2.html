@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Conic Sections" href="conic_section.html" />
-    <link rel="prev" title="Ellipse" href="ellipse_mk3.html" /> 
+    <link rel="next" title="Ring" href="ring_mk2.html" />
+    <link rel="prev" title="WFC Texture" href="wfc_texture.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,15 +53,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="box_rounded.html">Rounded box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygon Grid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert.html">Hilbert 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert3d.html">Hilbert 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_grid.html">Polygonal Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Torus Knot</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -71,11 +67,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ring_mk2.html">Ring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_mk3.html">Ellipse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regular_solid.html">Regular Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conic_section.html">Conic Sections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangle.html">Triangle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wfc_texture.html">WFC Texture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pentagon_tiler.html">Pentagon Tiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spiral_mk2.html">Spiral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth_lines.html">Smooth Lines</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
@@ -143,6 +143,8 @@
              
   <section id="torus-knot">
 <h1>Torus Knot<a class="headerlink" href="#torus-knot" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190924022-eea6dcda-df14-40e2-abeb-b92f8348b9c0.png"><img alt="https://user-images.githubusercontent.com/14288520/190924022-eea6dcda-df14-40e2-abeb-b92f8348b9c0.png" src="https://user-images.githubusercontent.com/14288520/190924022-eea6dcda-df14-40e2-abeb-b92f8348b9c0.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190987782-f007ee5e-d60c-47be-852a-e97b73df2091.png"><img alt="https://user-images.githubusercontent.com/14288520/190987782-f007ee5e-d60c-47be-852a-e97b73df2091.png" src="https://user-images.githubusercontent.com/14288520/190987782-f007ee5e-d60c-47be-852a-e97b73df2091.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Torus Knot generator will create a torus knot based on its radii sets, curve resolution and phases.</p>
@@ -160,10 +162,12 @@
 <li><p><strong>Spin Phase</strong>        [3]</p></li>
 <li><p><strong>Shift</strong></p></li>
 </ul>
-<p>Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : The phase angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>[1] : Major/Minor radii are available when Major/Minor mode is elected.</p></li>
+<li><p>[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.</p></li>
+<li><p>[3] : The phase angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -171,10 +175,10 @@
 <p>All parameters except <strong>mode</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 12%" />
-<col style="width: 12%" />
-<col style="width: 51%" />
+<col style="width: 24%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 53%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -187,22 +191,22 @@
 <tr class="row-even"><td><p><strong>Major Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>1.00</p></td>
-<td><p>Major radius of the torus [1]</p></td>
+<td><p>Major radius of the torus <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Minor Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.25</p></td>
-<td><p>Minor radius of the torus [1]</p></td>
+<td><p>Minor radius of the torus <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Exterior Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>1.25</p></td>
-<td><p>Exterior radius of the torus [2]</p></td>
+<td><p>Exterior radius of the torus <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Interior Radius</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.75</p></td>
-<td><p>Interior radius of the torus [2]</p></td>
+<td><p>Interior radius of the torus <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Curve Resolution</strong></p></td>
 <td><p>Int</p></td>
@@ -212,25 +216,27 @@
 <tr class="row-odd"><td><p><strong>Revolution Phase</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.00</p></td>
-<td><p>Phase revolution vertices by a radian amount [3]</p></td>
+<td><p>Phase revolution vertices by a radian amount <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Spin Phase</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.00</p></td>
-<td><p>Phase spin vertices by a radian amount [3]</p></td>
+<td><p>Phase spin vertices by a radian amount <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Shift</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.00</p></td>
-<td><p>Shift the points along the curve (0-1) [4]</p></td>
+<td><p>Shift the points along the curve (0-1) <strong>[4]</strong></p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : Phase angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
-[4] : shift = 0 for no shift, shift = 1 for a complete shift along the curve</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : Major/Minor radii are available when Major/Minor mode is elected.</p></li>
+<li><p><strong>[2]</strong> : Exterior/Interior radii are available when Exterior/Interior mode is elected.</p></li>
+<li><p><strong>[3]</strong> : Phase angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.</p></li>
+<li><p><strong>[4]</strong> : shift = 0 for no shift, shift = 1 for a complete shift along the curve</p></li>
+</ul>
 </section>
 <section id="extra-parameters">
 <h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
@@ -251,19 +257,22 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Angle Units</strong></p></td>
-<td><dl class="simple">
-<dt>Enum</dt><dd><p>RADIANS
-DEGREES
-UNITIES</p>
-</dd>
-</dl>
+<td><p>Enum</p>
+<ul class="simple">
+<li><p>RADIANS</p></li>
+<li><p>DEGREES</p></li>
+<li><p>UNITIES</p></li>
+</ul>
 </td>
 <td><p>DEGREES</p></td>
-<td><p>Interprets the angle values based on
-the selected angle units:
-Radians = 0 - 2pi
-Degrees = 0 - 360
-Unities = 0 - 1</p></td>
+<td><p>Interprets the angle values based on</p>
+<p>the selected angle units:</p>
+<ul class="simple">
+<li><p>Radians = 0.0 - 2pi</p></li>
+<li><p>Degrees = 0.0 - 360</p></li>
+<li><p>Unities = 0.0 - 1.0</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Adaptive Resolution</strong></p></td>
 <td><p>Bool</p></td>
@@ -273,12 +282,14 @@ Unities = 0 - 1</p></td>
 <tr class="row-even"><td><p><strong>Point Density</strong></p></td>
 <td><p>Int</p></td>
 <td><p>10</p></td>
-<td><p>Number of points per unit length [1]</p></td>
+<td><p>Number of points per unit length <strong>[1]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Multiple Links</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>Generate multiple links in a degenerate knot</p></td>
+<td><p>Generate multiple links in a degenerate</p>
+<p>knot</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Flip p</strong></p></td>
 <td><p>Bool</p></td>
@@ -293,12 +304,12 @@ Unities = 0 - 1</p></td>
 <tr class="row-even"><td><p><strong>P multiplier</strong></p></td>
 <td><p>Int</p></td>
 <td><p>1</p></td>
-<td><p>Multiplies the p count [2]</p></td>
+<td><p>Multiplies the p count <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Q multiplier</strong></p></td>
 <td><p>Int</p></td>
 <td><p>1</p></td>
-<td><p>Multiplies the q count [2]</p></td>
+<td><p>Multiplies the q count <strong>[2]</strong></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Height</strong></p></td>
 <td><p>Float</p></td>
@@ -313,19 +324,21 @@ Unities = 0 - 1</p></td>
 <tr class="row-even"><td><p><strong>Normalize Tangents</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>Normalize the TANGENT vectors [3]</p></td>
+<td><p>Normalize the TANGENT vectors <strong>[3]</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Normalize Normals</strong></p></td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>Normalize the NORMAL vectors [3]</p></td>
+<td><p>Normalize the NORMAL vectors <strong>[3]</strong></p></td>
 </tr>
 </tbody>
 </table>
-<p>Notes:
-[1] : Used only when the Adaptive Resolution is on
-[2] : Used without adaptive resolution these allow to create aliased torus knots resulting in all sorts of interesting shaped knots.
-[3] : Turn off normalization to save computation whenever the output vectors do not need to be normalized.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><strong>[1]</strong> : Used only when the Adaptive Resolution is on</p></li>
+<li><p><strong>[2]</strong> : Used without adaptive resolution these allow to create aliased torus knots resulting in all sorts of interesting shaped knots.</p></li>
+<li><p><strong>[3]</strong> : Turn off normalization to save computation whenever the output vectors do not need to be normalized.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -341,8 +354,8 @@ All outputs will be generated when connected.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ellipse_mk3.html" class="btn btn-neutral float-left" title="Ellipse" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="conic_section.html" class="btn btn-neutral float-right" title="Conic Sections" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="wfc_texture.html" class="btn btn-neutral float-left" title="WFC Texture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ring_mk2.html" class="btn btn-neutral float-right" title="Ring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

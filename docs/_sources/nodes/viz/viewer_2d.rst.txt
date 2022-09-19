@@ -129,7 +129,7 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/189998351-4ffb42be-a51b-4ecd-a4ec-e781d30055df.png
   :target: https://user-images.githubusercontent.com/14288520/189998351-4ffb42be-a51b-4ecd-a4ec-e781d30055df.png
 
-* Generator->Generator Extended-> :doc:`Polygonal Grid </nodes/generators_extended/polygon_grid>`
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 

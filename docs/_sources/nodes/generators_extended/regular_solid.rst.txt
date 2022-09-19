@@ -1,6 +1,9 @@
 Regular Solid
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/191001959-df7d4dbf-ca59-4a95-8a3f-a6d8c9fc208d.png
+  :target: https://user-images.githubusercontent.com/14288520/191001959-df7d4dbf-ca59-4a95-8a3f-a6d8c9fc208d.png
+
 Functionality
 -------------
 
@@ -45,12 +48,24 @@ Examples
 --------
 Some of the shapes that can be generated:
 
-.. image:: https://user-images.githubusercontent.com/10011941/57547653-3896b900-735f-11e9-8186-8e9491655bf4.png
-  :alt: Regular_Solid_.png
+.. image:: https://user-images.githubusercontent.com/14288520/191015511-d24fbed2-628a-461c-9d94-e1677fee3205.png
+  :target: https://user-images.githubusercontent.com/14288520/191015511-d24fbed2-628a-461c-9d94-e1677fee3205.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Add: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Variations of the cube:
 
-.. image:: https://user-images.githubusercontent.com/10011941/57547665-3df40380-735f-11e9-9112-ea8f2f4bc202.png
-  :alt: Regular_Solid.png
+.. image:: https://user-images.githubusercontent.com/14288520/191018476-2a9b6d67-e94d-4d68-909d-8cbca6ae3032.png
+  :target: https://user-images.githubusercontent.com/14288520/191018476-2a9b6d67-e94d-4d68-909d-8cbca6ae3032.png
 
-
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Add: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
