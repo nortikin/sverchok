@@ -65,7 +65,7 @@ The AB mode will output a divided segment for each vector pair, the step can be 
   :target: https://user-images.githubusercontent.com/14288520/188512296-6287d7eb-ae38-4087-9a31-1fe433deea93.gif
 
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
-* Modifiers->Modifier Make :doc:`WireFrame </nodes/modifier_make/wireframe>`
+* Modifiers->Modifier Make-> :doc:`WireFrame </nodes/modifier_make/wireframe>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

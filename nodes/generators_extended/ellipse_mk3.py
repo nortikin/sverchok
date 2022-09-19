@@ -57,7 +57,7 @@ super_presets = {
 class SvEllipseNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Ellipse Super-Ellipse
-    Tooltip: Generate various types of (super) ellipse shapes
+    Tooltip: Generate various types of (super) ellipse shapes.\n\tIn: Major/Minor radiuses, Num Verts, Phase, Rotation, Scale, Exponent X/Y\n\tOut: Verts, Edges, Polys, F1, F2
     """
     bl_idname = 'SvEllipseNodeMK3'
     bl_label = 'Ellipse'

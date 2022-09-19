@@ -1,6 +1,12 @@
 Ring
 ====
 
+.. image:: https://user-images.githubusercontent.com/14288520/190926664-a5dd57a6-e24f-4aae-8848-7bf08d705c5d.png
+  :target: https://user-images.githubusercontent.com/14288520/190926664-a5dd57a6-e24f-4aae-8848-7bf08d705c5d.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190926651-a7830638-da42-42d9-b25e-a4b71ff3336a.png
+  :target: https://user-images.githubusercontent.com/14288520/190926651-a7830638-da42-42d9-b25e-a4b71ff3336a.png
+
 Functionality
 -------------
 
@@ -22,9 +28,10 @@ All inputs are vectorized and they will accept single or multiple values.
 - **Phase**           [3]
 
 Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+
+* [1] : Major/Minor radii are available when Major/Minor mode is elected.
+* [2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
+* [3] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
 
 Parameters
 ----------
@@ -38,32 +45,33 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 +------------------------+-----------+-----------+---------------------------------------------+
 | Param                  |  Type     |  Default  |  Description                                |
 +========================+===========+===========+=============================================+
-| **Major Radius**       |  Float    |  1.00     |  Major radius of the ring [1]               |
+| **Major Radius**       |  Float    |  1.00     |  Major radius of the ring **[1]**           |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Minor Radius**       |  Float    |  0.25     |  Minor radius of the ring [1]               |
+| **Minor Radius**       |  Float    |  0.25     |  Minor radius of the ring **[1]**           |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Exterior Radius**    |  Float    |  1.25     |  Exterior radius of the ring [2]            |
+| **Exterior Radius**    |  Float    |  1.25     |  Exterior radius of the ring **[2]**        |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Interior Radius**    |  Float    |  0.75     |  Interior radius of the ring [2]            |
+| **Interior Radius**    |  Float    |  0.75     |  Interior radius of the ring **[2]**        |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Radial Sections**    |  Int      |  32       |  Number of sections around the ring center  |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Circular Sections**  |  Int      |  3        |  Number of sections across the ring band    |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Start Angle**        |  Float    |  0        |  Start angle of the ring [3][4]             |
+| **Start Angle**        |  Float    |  0        |  Start angle of the ring **[3][4]**         |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **End Angle**          |  Float    |  360      |  End angle of the ring [3][4]               |
+| **End Angle**          |  Float    |  360      |  End angle of the ring **[3][4]**           |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Phase**              |  Float    |  0.00     |  Phase of the radial sections [3]           |
+| **Phase**              |  Float    |  0.00     |  Phase of the radial sections **[3]**       |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Separate**           |  Boolean  |  False    |  Grouping vertices by V direction           |
 +------------------------+-----------+-----------+---------------------------------------------+
 
 Notes:
-[1] : Major/Minor radii are available when Major/Minor mode is elected.
-[2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
-[3] : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
-[4] : When start and end angle (modulo 2pi) are equal, the ring is closed (no duplicate verts are created)
+
+* **[1]** : Major/Minor radii are available when Major/Minor mode is elected.
+* **[2]** : Exterior/Interior radii are available when Exterior/Interior mode is elected.
+* **[3]** : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+* **[4]** : When start and end angle (modulo 2pi) are equal, the ring is closed (no duplicate verts are created)
 
 Extra Parameters
 ----------------

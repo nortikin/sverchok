@@ -30,7 +30,7 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Platonic, Archimedean or Catalan solids.
-    Tooltip: Add one of the Platonic, Archimedean or Catalan solids.
+    Tooltip: Add one of the Platonic, Archimedean or Catalan solids.\n\tIn: Size, Vertex Truncation, Edge Truncation\n\tParams: Presets, Source, Snub\n\tOut: Vertices, Edges, Polygons
     """
     bl_idname = 'SvRegularSolid'
     bl_label = 'Regular Solid'

@@ -90,7 +90,7 @@ and the sorted list of Vertices.
 Example of usage
 ----------------
 
-Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist:
+Example with an Hilbert 3D node and polyline viewer with Vector sort set to Dist:
 
 .. image:: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
   :target: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png

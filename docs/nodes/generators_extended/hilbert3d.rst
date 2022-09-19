@@ -1,5 +1,11 @@
 Hilbert 3D
-=======================
+==========
+
+.. image:: https://user-images.githubusercontent.com/14288520/190921909-a3fd72db-4f72-4d73-9989-335a5fe4c32b.png
+  :target: https://user-images.githubusercontent.com/14288520/190921909-a3fd72db-4f72-4d73-9989-335a5fe4c32b.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/190922073-abf79829-35e3-4ece-a351-60e8e964ed11.png
+  :target: https://user-images.githubusercontent.com/14288520/190922073-abf79829-35e3-4ece-a351-60e8e964ed11.png
 
 Functionality
 -------------
@@ -38,7 +44,15 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4380965/a5a3019a-436f-11e4-9ec9-982ab3f25671.png
-  :alt: hilbert3d.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/190921917-251ad090-c53a-4452-ac2a-9f9d7f40b816.png
+  :target: https://user-images.githubusercontent.com/14288520/190921917-251ad090-c53a-4452-ac2a-9f9d7f40b816.png
+
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/190922164-a87b2927-23c8-4ee8-957a-c3512669f91f.gif
+  :target: https://user-images.githubusercontent.com/14288520/190922164-a87b2927-23c8-4ee8-957a-c3512669f91f.gif
 
 Smooth labyrinth

@@ -2,6 +2,7 @@ WFC Texture
 ===========
 
 .. image:: https://user-images.githubusercontent.com/28003269/84559527-5f86a200-ad4c-11ea-94e1-e8b7091a6085.png
+    :target: https://user-images.githubusercontent.com/28003269/84559527-5f86a200-ad4c-11ea-94e1-e8b7091a6085.png
 
 Functionality
 -------------

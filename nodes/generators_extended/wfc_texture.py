@@ -25,9 +25,7 @@ def load_image(image_name) -> np.ndarray:
 class SvWFCTextureNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: image
-
-    the node uses wave function collapse algorithm
-    some patterns can take long time to calculate
+    Tooltip: The node uses wave function collapse algorithm some patterns can take long time to calculate. This node get sample image and generate new texture.\n\tIn: h,w,pattern_size\n\tParams: Image selector, rotate, periodic, tiling\n\tOut:image
     """
     bl_idname = 'SvWFCTextureNode'
     bl_label = 'WFC Texture'

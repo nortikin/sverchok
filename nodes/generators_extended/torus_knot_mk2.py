@@ -166,7 +166,7 @@ def make_torus_knot(flags, settings, link_index=0):
 class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Torus, Knots, Links
-    Tooltip: Generate torus knots curves
+    Tooltip: Generate torus knots curves.\n\tIn: radiuses, p, q, Curve Res, Revol Phase, Spin Phase, Shift\n\tParams: Major/Minor|Exter/Inter radius\n\tExt: Adaptive res, Flip p/q, mult p/q, Normalize Norm/Tang\n\tOut: Verts, Edges, Normals, Tngnts
     """
     bl_idname = 'SvTorusKnotNodeMK2'
     bl_label = 'Torus Knot'

@@ -184,8 +184,11 @@ class ImageComponentsOps(bpy.types.Operator):
 
 
 class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
-
-    ''' Image Components'''
+    '''Image Decompose.
+    In: xy_spread, z_spread
+    Params: image selector, Filter, Skip n pixels
+    Out: xya, rgb, polygons
+    '''
     bl_idname = 'SvImageComponentsNode'
     bl_label = 'Image Decompose'
     bl_icon = 'GROUP_VCOL'
