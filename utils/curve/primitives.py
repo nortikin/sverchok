@@ -115,6 +115,13 @@ class SvLine(SvCurve):
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
         return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
+    def reparametrize(self, new_t_min, new_t_max):
+        t_min, t_max = self.get_u_bounds()
+        scale = (t_max - t_min) / (new_t_max - new_t_min)
+        new_direction = self.direction * scale
+        new_point = self.point + self.direction * (t_min - scale * new_t_min)
+        return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
+
 def rotate_radius(radius, normal, thetas):
     ct = np.cos(thetas)[np.newaxis].T
     st = np.sin(thetas)[np.newaxis].T
