@@ -4,6 +4,9 @@ Box
 .. image:: https://user-images.githubusercontent.com/14288520/188669831-ad397459-d35c-4657-8bb4-b1dcfa4af392.png
   :target: https://user-images.githubusercontent.com/14288520/188669831-ad397459-d35c-4657-8bb4-b1dcfa4af392.png
 
+.. image:: https://user-images.githubusercontent.com/14288520/191239876-74a9a2de-0e48-47f5-9c21-bd12977874a6.png
+  :target: https://user-images.githubusercontent.com/14288520/191239876-74a9a2de-0e48-47f5-9c21-bd12977874a6.png
+
 Functionality
 -------------
 
