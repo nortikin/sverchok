@@ -4,6 +4,9 @@ NGon
 .. image:: https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png
   :target: https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png
 
+.. image:: https://user-images.githubusercontent.com/14288520/191228034-f2f0d435-f3ad-42d4-bc3b-b9f2871bb416.png
+  :target: https://user-images.githubusercontent.com/14288520/191228034-f2f0d435-f3ad-42d4-bc3b-b9f2871bb416.png
+
 Functionality
 -------------
 

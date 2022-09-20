@@ -27,8 +27,9 @@ All inputs are vectorized and they will accept single or multiple values.
 - **Level**  [2]
 
 Notes:
-[1] : NumX, NumY are available for the **rectangular** layout type
-[2] : Level input is available for the **triangle**, **diamond** and **hexagon** layout types
+
+* [1] : NumX, NumY are available for the **rectangular** layout type
+* [2] : Level input is available for the **triangle**, **diamond** and **hexagon** layout types
 
 Parameters
 ----------
@@ -50,25 +51,26 @@ Most inputs are "sanitized" to restrict their values:
 - Scale is a float with value >= 0.0
 - Level, NumX and NumY are integer with values >= 1
 
-+-------------+--------+---------+------------------------------------------------+
-| Param       | Type   | Default | Description                                    |
-+=============+========+=========+================================================+
-| **Radius**  | Float  | 1.0     | Radius of the grid tile                        |
-+-------------+--------+---------+------------------------------------------------+
-| **Scale**   | Float  | 1.0     | Scale of each tile around its center           |
-+-------------+--------+---------+------------------------------------------------+
-| **Angle**   | Float  | 0.0     | Rotate the grid around origin by this amount   |
-+-------------+--------+---------+------------------------------------------------+
-| **NumX**    | Int    | 7       | Number of points along X [1]                   |
-+-------------+--------+---------+------------------------------------------------+
-| **NumY**    | Int    | 6       | Number of points along Y [1]                   |
-+-------------+--------+---------+------------------------------------------------+
-| **Level**   | Int    | 3       | Number of levels around the center point [2]   |
-+-------------+--------+---------+------------------------------------------------+
++-------------+--------+---------+-------------------------------------------------+
+| Param       | Type   | Default | Description                                     |
++=============+========+=========+=================================================+
+| **Radius**  | Float  | 1.0     | Radius of the grid tile                         |
++-------------+--------+---------+-------------------------------------------------+
+| **Scale**   | Float  | 1.0     | Scale of each tile around its center            |
++-------------+--------+---------+-------------------------------------------------+
+| **Angle**   | Float  | 0.0     | Rotate the grid around origin by this amount    |
++-------------+--------+---------+-------------------------------------------------+
+| **NumX**    | Int    | 7       | Number of points along X **[1]**                |
++-------------+--------+---------+-------------------------------------------------+
+| **NumY**    | Int    | 6       | Number of points along Y **[1]**                |
++-------------+--------+---------+-------------------------------------------------+
+| **Level**   | Int    | 3       | Number of levels around the center point **[2]**|
++-------------+--------+---------+-------------------------------------------------+
 
 Notes:
-[1] : NumX/NumY inputs are available for the RECTANGULAR layout type.
-[2] : Level input is available for the TRIANGLE, DIAMOND AND HEXAGON layout type.
+
+* **[1]** : NumX/NumY inputs are available for the RECTANGULAR layout type.
+* **[2]** : Level input is available for the TRIANGLE, DIAMOND AND HEXAGON layout type.
 
 Outputs
 -------
