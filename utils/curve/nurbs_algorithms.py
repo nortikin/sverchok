@@ -933,7 +933,12 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
     wrap_ts = greville_ts[wrap_idxs]
     normalized_ts = (wrap_ts - wrap_ts[0]) / (wrap_ts[-1] - wrap_ts[0])
     wrap_cpts = cpts[wrap_idxs]
-    wrap_dirs = curve.main_normal_array(wrap_ts)
+    if direction is None:
+        wrap_dirs = curve.main_normal_array(wrap_ts)
+    else:
+        direction = np.asarray(direction)
+        direction /= np.linalg.norm(direction)
+        wrap_dirs = direction[:np.newaxis].T
     wrap_values = scale * function(normalized_ts)
     #print("Wv", wrap_values)
     wrap_vectors = wrap_dirs * wrap_values[np.newaxis].T
