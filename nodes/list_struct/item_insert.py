@@ -105,6 +105,8 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             data_out = data.copy() if isinstance(data, list) else list(data)
             params = list_match_func[self.list_match_local]([indexes, new_items])
             if self.replace:
+                if not data_out:  # ignore empty input
+                    return data_out
                 min_ind = -len(data_out)
                 max_ind = len(data_out) - 1
                 for ind, i in zip(*params):
