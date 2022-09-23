@@ -953,3 +953,48 @@ def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
     else:
         raise Exception("Unsupported method")
 
+def curve_extremes(curve, field, samples=10, direction = 'MAX', on_fail = 'FAIL', logger=None):
+    if logger is None:
+        logger = getLogger()
+
+    def goal(t):
+        p = curve.evaluate(t)
+        v = field.evaluate(p[0], p[1], p[2])
+        if direction == 'MAX':
+            return -v
+        else:
+            return v
+
+    t_min, t_max = curve.get_u_bounds()
+    tknots = np.linspace(t_min, t_max, num=samples+1)
+
+    res_ts = []
+    res_vs = []
+
+    for t1, t2 in zip(tknots, tknots[1:]):
+        guess = (t1+t2)/2.0
+        result = minimize_scalar(goal,
+                    bounds = (t1, t2),
+                    bracket = (t1, t2),
+                    method = 'Bounded')
+        if result.success:
+            if t_min <= result.x <= t_max:
+                t = result.x
+                v = result.fun
+                res_vs.append(v)
+                res_ts.append(t)
+            else:
+                logger.info("Found T: %s, but it is outside of %s - %s", result.x, t_min, t_max)
+        else:
+            if on_fail == 'FAIL':
+                raise Exception(f"Can't find the extreme point for {curve} on {t1} - {t2}: {result.message}")
+
+    if len(res_ts) == 0:
+        if on_fail == 'FAIL':
+            raise Exception(f"Can't find the extreme point for {curve}: no candidate points")
+        else:
+            return []
+    else:
+        target_v = min(res_vs)
+        res_ts = [t for t,v in zip(res_ts, res_vs) if v == target_v]
+        return res_ts

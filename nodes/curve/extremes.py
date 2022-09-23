@@ -11,6 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.field.scalar import SvScalarField
+from sverchok.utils.manifolds import curve_extremes
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
@@ -77,50 +78,6 @@ else:
             self.outputs.new('SvVerticesSocket', "Point")
             self.outputs.new('SvStringsSocket', "T")
 
-        def solve(self, curve, field, samples):
-
-            def goal(t):
-                p = curve.evaluate(t)
-                v = field.evaluate(p[0], p[1], p[2])
-                if self.direction == 'MAX':
-                    return -v
-                else:
-                    return v
-
-            t_min, t_max = curve.get_u_bounds()
-            tknots = np.linspace(t_min, t_max, num=samples+1)
-
-            res_ts = []
-            res_vs = []
-
-            for t1, t2 in zip(tknots, tknots[1:]):
-                guess = (t1+t2)/2.0
-                result = minimize_scalar(goal,
-                            bounds = (t1, t2),
-                            bracket = (t1, t2),
-                            method = 'Bounded')
-                if result.success:
-                    if t_min <= result.x <= t_max:
-                        t = result.x
-                        v = result.fun
-                        res_vs.append(v)
-                        res_ts.append(t)
-                    else:
-                        self.info("Found T: %s, but it is outside of %s - %s", result.x, t_min, t_max)
-                else:
-                    if self.on_fail == 'FAIL':
-                        raise Exception(f"Can't find the extreme point for {curve} on {t1} - {t2}: {result.message}")
-
-            if len(res_ts) == 0:
-                if self.on_fail == 'FAIL':
-                    raise Exception(f"Can't find the extreme point for {curve}: no candidate points")
-                else:
-                    return []
-            else:
-                target_v = min(res_vs)
-                res_ts = [t for t,v in zip(res_ts, res_vs) if v == target_v]
-                return res_ts
-
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
                 return
@@ -138,7 +95,7 @@ else:
                 new_t = []
                 new_points = []
                 for curve, field, samples in zip_long_repeat(curves, fields, samples_i):
-                    ts = self.solve(curve, field, samples)
+                    ts = curve_extremes(curve, field, samples, self.direction, self.on_fail, self.get_logger())
                     ps = curve.evaluate_array(np.array(ts)).tolist()
                     new_t.extend(ts)
                     new_points.extend(ps)
