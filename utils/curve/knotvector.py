@@ -62,15 +62,25 @@ def find_span(knot_vector, num_ctrlpts, knot):
 
     return span - 1
 
-def from_tknots(degree, tknots):
+def from_tknots(degree, tknots, n_cpts=None):
     n = len(tknots)
-    #m = degree + n + 1
-    result = [0] * (degree+1)
-    for j in range(1, n - degree):
-        u = tknots[j:j+degree].sum() / degree
-        result.append(u)
-    result.extend([1.0] * (degree+1))
-    return np.array(result)
+    if n_cpts is None:
+        result = [0] * (degree+1)
+        for j in range(1, n - degree):
+            u = tknots[j:j+degree].sum() / degree
+            result.append(u)
+        result.extend([1.0] * (degree+1))
+        return np.array(result)
+    else:
+        d = float(n + 1) / (n_cpts - degree)
+        result = [0] * (degree+1)
+        for j in range(1, n_cpts - degree ):
+            i = int(j*d)
+            alpha = j*d - i
+            u = (1 - alpha)*tknots[i-1] + alpha*tknots[i]
+            result.append(u)
+        result.extend([1.0] * (degree+1))
+        return np.array(result)
 
 def normalize(knot_vector):
     """ Normalizes the input knot vector to [0, 1] domain.

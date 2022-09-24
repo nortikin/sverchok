@@ -8,7 +8,7 @@
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.geom import Spline
+from sverchok.utils.logging import getLogger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
@@ -432,7 +432,7 @@ class SvNurbsCurveSolver(SvCurve):
     def __init__(self, degree=None, src_curve=None):
         if degree is None and src_curve is None:
             raise Exception("Either degree or src_curve must be provided")
-        elif degree is not None and src_curve is not None:
+        elif degree is not None and src_curve is not None and src_curve.get_degree() != degree:
             raise Exception("If src_curve is provided, then degree must not be provided")
         self.src_curve = src_curve
         if src_curve is not None and degree is None:
@@ -541,7 +541,7 @@ class SvNurbsCurveSolver(SvCurve):
         self.A = np.concatenate(As)
         self.B = np.concatenate(Bs)
 
-    def solve(self, implementation = SvNurbsMaths.NATIVE):
+    def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
         self._init()
 
         ndim = 3
@@ -549,12 +549,19 @@ class SvNurbsCurveSolver(SvCurve):
         n_equations, n_unknowns = self.A.shape
         #print(f"A: {self.A.shape}")
         if n_equations == n_unknowns:
-            A1 = np.linalg.inv(self.A)
-            X = (A1 @ self.B).T
+            print(f"Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+            try:
+                A1 = np.linalg.inv(self.A)
+                X = (A1 @ self.B).T
+            except np.linalg.LinAlgError as e:
+                print(self.A)
+                raise Exception(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
         elif n_equations < n_unknowns:
+            print(f"Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             A1 = np.linalg.pinv(self.A)
             X = (A1 @ self.B).T
         else: # n_equations > n_unknowns
+            print(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
             print(residues)
             
@@ -569,13 +576,4 @@ class SvNurbsCurveSolver(SvCurve):
         solver = self.copy()
         solver.guess_curve_params()
         return solver.solve(implementation = implementation)
-
-def adjust_curve_points(curve, us_bar, vectors):
-    n_target_points = len(us_bar)
-    if len(vectors) != n_target_points:
-        raise Exception("Number of U parameters must be equal to number of vectors")
-
-    solver = SvNurbsCurveSolver(curve=curve)
-    solver.add_goal(SvNurbsCurvePoints(us_bar, vectors))
-    return solver.to_nurbs()
 
