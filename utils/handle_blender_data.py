@@ -14,6 +14,7 @@ from itertools import chain
 from typing import Any, List, Union, TYPE_CHECKING
 
 import bpy
+from sverchok.data_structure import fixed_iter
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree
@@ -108,6 +109,50 @@ def get_sv_trees():
 # In general it's still arbitrary set of functionality (like module which fully consists with functions)
 # But here the functions are combine with data which they handle
 
+
+class BlObject:
+    def __init__(self, obj):
+        self._obj: bpy.types.Object = obj
+
+    def set_attribute(self, values, attr_name, domain='POINT', value_type='FLOAT'):
+        obj = self._obj
+        attr = obj.data.attributes.get(attr_name)
+        if attr is None:
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+        elif attr.data_type != value_type or attr.domain != domain:
+            obj.data.attributes.remove(attr)
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+
+        if domain == 'POINT':
+            amount = len(obj.data.vertices)
+        elif domain == 'EDGE':
+            amount = len(obj.data.edges)
+        elif domain == 'CORNER':
+            amount = len(obj.data.loops)
+        elif domain == 'FACE':
+            amount = len(obj.data.polygons)
+        else:
+            raise TypeError(f'Unsupported domain {domain}')
+
+        if value_type in ['FLOAT', 'INT', 'BOOLEAN']:
+            data = list(fixed_iter(values, amount))
+        elif value_type in ['FLOAT_VECTOR', 'FLOAT_COLOR']:
+            data = [co for v in fixed_iter(values, amount) for co in v]
+        elif value_type == 'FLOAT2':
+            data = [co for v in fixed_iter(values, amount) for co in v[:2]]
+        else:
+            raise TypeError(f'Unsupported type {value_type}')
+
+        if value_type in ["FLOAT", "INT", "BOOLEAN"]:
+            attr.data.foreach_set("value", data)
+        elif value_type in ["FLOAT_VECTOR", "FLOAT2"]:
+            attr.data.foreach_set("vector", data)
+        else:
+            attr.data.foreach_set("color", data)
+
+        # attr.data.update()
+
+
 class BlModifier:
     def __init__(self, modifier):
         self._mod: bpy.types.Modifier = modifier
@@ -122,7 +167,37 @@ class BlModifier:
         return self._mod[name]
 
     def set_tree_prop(self, name, value):
+        """Good for coping properties from one modifier to another"""
         self._mod[name] = value
+
+    def set_tree_data(self, name, data):
+        """Transfer py data to node modifier tree"""
+
+        # transfer single value
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+        if len(data) == 1:
+            value = data[0]
+            self._mod[f"{name}_use_attribute"] = 0
+            if isinstance(value, (list, tuple)):  # list of single vertex
+                # for some reason node modifier can't apply python sequences directly
+                for i, v in enumerate(value):
+                    self._mod[name][i] = v
+            else:
+                self._mod[name] = value
+
+        # transfer field
+        else:
+            self._mod[f"{name}_use_attribute"] = 1
+            self._mod[f"{name}_attribute_name"] = name
+            obj = BlObject(self._mod.id_data)
+            sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+            obj.set_attribute(data, name, value_type=sock.attribute_type)
+
+    def remove(self):
+        obj = self._mod.id_data
+        obj.modifiers.remove(self._mod)
+        self._mod = None
 
     @property
     def type(self) -> str:
@@ -192,15 +267,6 @@ class BlTrees:
         return (t for t in trees if t.bl_idname == self.GROUP_ID)
 
 
-class BlTree:
-    def __init__(self, tree):
-        self._tree = tree
-
-    @property
-    def is_group_tree(self) -> bool:
-        return self._tree.bl_idname == BlTrees.GROUP_ID
-
-
 class BlNode:
     """Wrapping around ordinary node for extracting some its information"""
     DEBUG_NODES_IDS = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # can be added as Mix-in class
@@ -229,6 +295,61 @@ class BlNode:
         except ValueError:
             return self.data.bl_idname
         return id_name
+
+
+class BlSocket:
+    _attr_types = {
+        'VECTOR': 'FLOAT_VECTOR',
+        'VALUE': 'FLOAT',
+        'RGBA': 'FLOAT_COLOR',
+        'INT': 'INT',
+        'BOOLEAN': 'BOOLEAN',
+    }
+
+    _sv_types = {
+        'VECTOR': 'SvVerticesSocket',
+        'VALUE': 'SvStringsSocket',
+        'RGBA': 'SvColorSocket',
+        'INT': 'SvStringsSocket',
+        'STRING': 'SvTextSocket',
+        'BOOLEAN': 'SvStringsSocket',
+        'OBJECT': 'SvObjectSocket',
+        'COLLECTION': 'SvObjectSocket',
+    }
+
+    def __init__(self, socket):
+        self._sock: bpy.types.NodeSocket = socket
+
+    def copy_properties(self, sv_sock):
+        sv_sock.name = self._sock.name
+
+        if self._sock.type == 'VALUE':
+            sv_sock.default_property_type = 'float'
+        elif self._sock.type in {'INT', 'BOOLEAN'}:
+            sv_sock.default_property_type = 'int'
+
+        try:
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+        except AttributeError:
+            pass
+
+    @classmethod
+    def from_identifier(cls, sockets, identifier):
+        for s in sockets:
+            if s.identifier == identifier:
+                return cls(s)
+        raise LookupError(f"Socket with {identifier=} was not found")
+
+    @property
+    def attribute_type(self):
+        return self._attr_types[self._sock.type]
+
+    @property
+    def sverchok_type(self):
+        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+            raise LookupError(f"Sverchok does not support {self._sock.type} scoket type")
+        return sv_type
 
 
 class BPYProperty:

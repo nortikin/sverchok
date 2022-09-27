@@ -662,6 +662,7 @@
     SvSetLoopNormalsNode
     SvSetCollection
     SvCopyModifiersNode
+    SvGeometryNodeModifierNode
 
 ## Scene
     SvGetObjectsData
