@@ -85,7 +85,7 @@ def nearest_in_range(verts, faces, points, distance, safe_check=True, flat_outpu
     return output
 
 
-class SvNearestPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvNearestPointOnMeshNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: BVH Closest Point
     Tooltip: Find nearest point on mesh surfaces

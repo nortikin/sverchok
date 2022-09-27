@@ -17,7 +17,7 @@ from sverchok.dependencies import scipy
 if scipy is None:
     add_dummy('SvConcaveHullNode', "Concave Hull", 'scipy')
 
-class SvConcaveHullNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConcaveHullNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Concave Hull / Alpha Shape
     Tooltip: Calculate concave hull of a set of points by use of Alpha Shape algorithm

@@ -254,7 +254,7 @@ def perform_mextrude(self, bm, sel):
 
 
 class SvMultiExtrudeAlt(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
     bl_label = 'MultiExtrude Alt from Addons'

@@ -14,7 +14,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import remove_excessive_knots
 
-class SvCurveRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveRemoveExcessiveKnotsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Remove Excessive Knots
     Tooltip: Remove all excessive knots from a NURBS curve

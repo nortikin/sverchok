@@ -39,7 +39,7 @@ def fibonacci(x1, x2, count, maxValue):
     return result
 
 
-class SvGenFibonacci(bpy.types.Node, SverchCustomTreeNode):
+class SvGenFibonacci(SverchCustomTreeNode, bpy.types.Node):
     ''' Generator of specified number of items from Fibonacci sequence. (list of floats). [default]
     x1: [1.0]
     x2: [1.0]

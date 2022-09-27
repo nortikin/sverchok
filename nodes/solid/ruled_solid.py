@@ -53,7 +53,7 @@ def reverse_edges(edges, reverse=True, flip=True):
         result.append(edge)
     return result
 
-class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRuledSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ruled Solid Surface
     Tooltip: Make a Solid from two Faces ("floor" and "ceil") by adding ruled surfaces between them ("walls")

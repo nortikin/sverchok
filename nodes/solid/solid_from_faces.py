@@ -24,7 +24,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid from Faces
     Tooltip: Make a Solid from it's faces (they must constitute a closed shell)

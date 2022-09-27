@@ -30,7 +30,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvMeshCleanNode(
-        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+        ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Duplicated + unreferenced
     Tooltip: Cleans input mesh by removing doubled, unreferenced or bad formed elements

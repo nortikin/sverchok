@@ -20,7 +20,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvFreeCadHelixNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFreeCadHelixNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Helix
     Tooltip: Generate a helix curve (as a NURBS)

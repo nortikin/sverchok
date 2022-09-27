@@ -22,7 +22,7 @@ else:
     from geomdl import _exchange
     from geomdl import BSpline
 
-    class SvExJsonToNurbsNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExJsonToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: JSON to NURBS
         Tooltip: Import NURBS from JSON file

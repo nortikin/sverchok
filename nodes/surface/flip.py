@@ -8,7 +8,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface, SvFlipSurface
 
-class SvFlipSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFlipSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Flip Surface
     Tooltip: Reverse parametrization of the curve along U and/or V direction

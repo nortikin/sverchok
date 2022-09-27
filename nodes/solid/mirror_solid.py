@@ -12,7 +12,7 @@ else:
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
     from FreeCAD import Base
 
-    class SvMirrorSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvMirrorSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Mirror Solid
         Tooltip: Mirror Solid with Matrix as Plane

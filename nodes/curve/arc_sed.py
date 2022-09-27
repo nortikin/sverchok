@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.geom import circle_by_start_end_tangent
 from sverchok.utils.curve import SvCircle
 
-class SvArcSedCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvArcSedCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Arc Start, End, Tangent
     Tooltip: Generate an arc from Start point, End point and Tangent vector

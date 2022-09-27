@@ -11,7 +11,7 @@ from sverchok.utils.field.vector import SvVectorField
 from sverchok.utils.curve import SvDeformedByFieldCurve, SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvApplyFieldToCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Apply field to curve
         Tooltip: Apply vector field to curve

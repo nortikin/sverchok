@@ -23,7 +23,7 @@ if scipy is None or FreeCAD is None:
 if FreeCAD is not None:
     import Part
 
-class SvLloydSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Solid Face
     Tooltip: Redistribute 3D points on the Solid Face object uniformly by use of Lloyd's algorithm

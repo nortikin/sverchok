@@ -32,7 +32,7 @@ out the bug in the original node.
 """
 
 
-class SvHeavyTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvHeavyTriangulateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Triangulate Mesh (Heavy)'''
     bl_idname = 'SvHeavyTriangulateNode'
     bl_label = 'Triangulate Mesh (Heavy)'

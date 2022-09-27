@@ -53,7 +53,7 @@ easingItems = [
     ("EASE_IN_OUT", "Ease In-Out", "", "IPO_EASE_IN_OUT", 2)]
 
 
-class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMixNumbersNode(SverchCustomTreeNode, bpy.types.Node):
     '''Mix Numbers. [def]
     Integer / [Float]
     Interpolation: [Linear], Sinus, Quadratic, Cubic, Quartic, Quintic, Exponential, Circular, Back, Bounce, Elastic

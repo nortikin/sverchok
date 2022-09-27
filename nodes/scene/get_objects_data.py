@@ -82,7 +82,7 @@ def get_vertgroups(mesh):
 numpy_socket_names = ['Vertices', 'Edges', 'Vertex Normals', 'Material Idx', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
 
 
-class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree

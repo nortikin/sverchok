@@ -27,7 +27,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvPlanarFacesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvPlanarFacesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: planar faces
     Tooltip: Make Quad/NGon faces planar (flat).

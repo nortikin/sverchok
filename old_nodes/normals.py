@@ -39,7 +39,7 @@ def calc_mesh_normals(vertices, edges, faces):
     bm.free()
     return face_normals, vertex_normals
 
-class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class GetNormalsNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Face & Vertex Normals
     Tooltip: Calculate normals of faces and vertices

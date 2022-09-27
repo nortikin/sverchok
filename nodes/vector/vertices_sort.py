@@ -146,7 +146,7 @@ def sort_vertices_by_connexions(verts_in, edges_in, limit_mode):
 def pols_edges(obj, unique_edges=False):
     return polygons_to_edges(obj, unique_edges)
 
-class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVertSortNode(SverchCustomTreeNode, bpy.types.Node):
     '''Vector sort.
     In:
         Vertices, PolyEdge

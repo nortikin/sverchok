@@ -25,7 +25,7 @@ if FreeCAD is None and scipy is None:
 if FreeCAD is not None:
     from FreeCAD import Base
 
-class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIntersectNurbsCurvesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Intersect Curves
     Tooltip: Find intersection points of two NURBS curves

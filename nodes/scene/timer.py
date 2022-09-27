@@ -322,7 +322,7 @@ class SvTimerOperatorCallback(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class SvTimerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTimerNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Timer, Elapse
     Tooltip: Manage elapsed time via Start, Stop, Pause, Reset, Expire operations.

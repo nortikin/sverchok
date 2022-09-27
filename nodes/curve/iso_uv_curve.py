@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve
 from sverchok.utils.surface import SvSurface
 
-class SvIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIsoUvCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Iso UV Curve
     Tooltip: Generate a curve which is characterized by constant value of U or V parameter in surface's UV space

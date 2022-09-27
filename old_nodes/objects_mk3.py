@@ -68,7 +68,7 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvObjectsNodeMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: obj Input Scene Objects pydata
     Tooltip: Get Scene Objects into Sverchok Tree

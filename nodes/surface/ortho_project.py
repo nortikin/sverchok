@@ -17,7 +17,7 @@ if scipy is None:
     add_dummy('SvExOrthoProjectSurfaceNode', "Ortho Project on Surface", 'scipy')
 else:
 
-    class SvExOrthoProjectSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExOrthoProjectSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Ortho Project Surface
         Tooltip: Find the orthogonal projection of the point onto the surface

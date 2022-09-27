@@ -14,7 +14,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.adaptive_surface import adaptive_subdivide, MAXIMUM, GAUSS, MEAN
 
-class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptiveTessellateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Adaptive Tessellate Surface
     Tooltip: Adaptively tessellate surface

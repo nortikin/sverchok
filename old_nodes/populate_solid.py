@@ -26,7 +26,7 @@ else:
     from FreeCAD import Base
     import Part
 
-class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPopulateSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Populate Solid
     Tooltip: Generate random points within solid body

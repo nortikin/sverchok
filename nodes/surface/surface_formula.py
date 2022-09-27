@@ -17,7 +17,7 @@ from sverchok.utils.math import (
         )
 from sverchok.utils.surface import SvLambdaSurface
 
-class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Formula
     Tooltip: Generate surface by formula

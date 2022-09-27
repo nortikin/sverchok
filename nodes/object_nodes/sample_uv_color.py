@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSampleUVColorNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Sample pixel color on UV texture from surface'''
     bl_idname = 'SvSampleUVColorNode'
     bl_label = 'Sample UV Texture Color on Mesh'

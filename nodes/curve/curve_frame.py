@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.curve import SvCurve, ZeroCurvatureException
 
-class SvCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Frenet Frame
         Tooltip: Calculate (Frenet) frame matrix at any point of the curve

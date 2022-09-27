@@ -27,7 +27,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 maskTypeItems = [("VERTICES", "Verts", "Mask refers to Vertices", 0), ("POLY_EDGE", "PolyEdge", "Mask refers to PolyEdge", 1), ]
 
 
-class SvTransformSelectNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvTransformSelectNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Apply matrix w. mask.
     Tooltip: Transform part of geometry.

@@ -32,7 +32,7 @@ def name_seq():
     for i in range(1000):
         yield "a.".join(str(i))
 
-class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
+class WifiInNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Wifi Input '''
     bl_idname = 'WifiInNode'
     bl_label = 'Wifi In'

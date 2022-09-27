@@ -28,7 +28,7 @@ out_modes = [
     ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
 
-class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureViewerNodeLite(SverchCustomTreeNode, bpy.types.Node):
     '''This node allows viewing a list of scalar values and Vectors as a texture.
     On: Pixel value (float as bw, RGB, RGBA)
     Params: UV\image editor, bgl, Width, Height, color (bw/rgb/rgba)'''

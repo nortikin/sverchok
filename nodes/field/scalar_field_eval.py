@@ -13,7 +13,7 @@ from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical
 from sverchok.utils.math import coordinate_modes
 from sverchok.utils.field.scalar import SvScalarField
 
-class SvScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldEvaluateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Evaluate
     Tooltip: Evaluate Scalar Field at specific point(s)

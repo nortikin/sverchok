@@ -13,7 +13,7 @@ else:
     from sverchok.utils.solid import transform_solid
     from FreeCAD import Base
 
-    class SvTransformSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvTransformSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Apply Matrix to Solid
         Tooltip: Transform Solid with Matrix

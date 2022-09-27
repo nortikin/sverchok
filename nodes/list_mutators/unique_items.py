@@ -95,7 +95,7 @@ def numpy_unique(np_data, linked_outputs, output_numpy):
     return unique, unique_indices, unique_inverse, unique_count
 
 
-class SvUniqueItemsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvUniqueItemsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Unique items
     Tooltip: Find the unique elements, where they are and how many repetitions each have\n\t[[10,13,11,10,13,13]]:\n\t\titems: [[10,11,13]]\n\t\tIndices: [[0,2,1]]\n\t\tInverse Indices: [[0,2,1,0,2,2]]\n\t\tCounts: [[2,1,3]]

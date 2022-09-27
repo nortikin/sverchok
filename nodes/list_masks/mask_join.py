@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, updateNode, list_match_modes, list_match_func
 
 
-class SvMaskJoinNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvMaskJoinNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''Mix two data list together by mask:
     mask: [1,0,0,1,1], data True: [10,11,12], data False: [20,21] => [10,20,21,11,12]
     '''

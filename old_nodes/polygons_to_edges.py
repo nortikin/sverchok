@@ -30,7 +30,7 @@ from sverchok.utils.decorators import deprecated
 def pols_edges(obj, unique_edges=False):
     return polygons_to_edges(obj, unique_edges)
 
-class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
+class Pols2EdgsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Edges from Faces
     Tooltip: Get edges lists from polygons lists.

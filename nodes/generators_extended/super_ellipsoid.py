@@ -129,7 +129,7 @@ def make_polys(P, M, cap_bottom, cap_top):
     return poly_list
 
 
-class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSuperEllipsoidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sphere Cube Cylinder Octahedron Star
     Tooltip: Generate various Super-Ellipsoid shapes.\n\tIn: Scale X/Y/Z, Exponent P/M, Parallels, Meridians\n\tExtra: Cap Bottom/Top\n\tOut: Vertices, Edges, Polygons

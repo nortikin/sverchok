@@ -26,7 +26,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvUnsubdivideNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvUnsubdivideNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Unsubdivide vertices if possible '''
     bl_idname = 'SvUnsubdivideNode'
     bl_label = 'Unsubdivide'

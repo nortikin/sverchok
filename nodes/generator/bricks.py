@@ -223,7 +223,7 @@ def get_center(vertices):
     cv = sum([v.v for v in vertices]) / n
     return Vertex(cu, cv)
 
-class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBricksNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bricks
     Tooltip: Create a brick wall or honeycomb-like structure.\n\tIn: Unit width/height, Width, Height, Toothing/Random, Random U/V, Shift, Seed\n\tOut: Vertices, Edges, Polygons, Centers

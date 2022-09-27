@@ -30,7 +30,7 @@ from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.modules.polygon_utils import np_faces_normals
 from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh, calc_mesh_normals_np
 
-class SvGetNormalsNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvGetNormalsNodeMk2(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Face & Vertex Normals
     Tooltip: Calculate normals of faces and vertices

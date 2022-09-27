@@ -27,7 +27,7 @@ def calc_median(vlist):
     return a / len(vlist)
 
 
-class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
+class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
 
     '''Display the index information of geometry and topology.
     In: Vertices, Edges, Faces, Matrixes (for offset), text (for vertices)

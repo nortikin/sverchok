@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist
 
 
-class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
+class VertsDelDoublesNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Delete doubles vertices.
     In:
         verts: [[(x,y,z), ...]]

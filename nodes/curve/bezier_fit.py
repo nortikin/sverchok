@@ -32,7 +32,7 @@ else:
         pts = curve.evaluate_array(ts)
         return np.ravel(pts)
 
-    class SvExBezierCurveFitNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExBezierCurveFitNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Bezier Curve Fit / Approximate
         Tooltip: Approximate points with Bezier curve

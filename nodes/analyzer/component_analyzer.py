@@ -58,7 +58,7 @@ op_dict = { #signature : (prop_name, e for enum and b for boolean)
 }
 
 
-class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvComponentAnalyzerNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: Center/Matrix/Length
     Tooltip: Data from vertices/edges/faces as Orientation, Location, Length, Normal, Center...

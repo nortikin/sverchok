@@ -25,7 +25,7 @@ from sverchok.data_structure import dataCorrect_np, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
-class SvPols2EdgsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvPols2EdgsNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Edges from Faces
     Tooltip: Get edges lists from polygons lists.

@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reverse_curve
 
-class SvFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFlipCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Flip Curve
         Tooltip: Reverse parameterization of the curve - swap the beginning and the end of the curve

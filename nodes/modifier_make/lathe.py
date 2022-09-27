@@ -45,7 +45,7 @@ def get_lathed_geometry(node, verts, edges, cent, axis, dvec, angle, steps):
     return v, p
 
 
-class SvLatheNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvLatheNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''Spin, Screw, Revol.'''
     bl_idname = 'SvLatheNode'
     bl_label = 'Lathe'

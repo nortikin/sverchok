@@ -35,7 +35,7 @@ else:
 
             return {'FINISHED'}
 
-    class SvReadFCStdNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvReadFCStdNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Read FreeCAD file
         Tooltip: import parts from a .FCStd file 

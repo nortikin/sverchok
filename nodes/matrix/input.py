@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixValueIn(SverchCustomTreeNode, bpy.types.Node):
     ''' MatrixValueIn '''
     bl_idname = 'SvMatrixValueIn'
     bl_label = 'Matrix Input'

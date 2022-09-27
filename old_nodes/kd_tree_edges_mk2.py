@@ -28,7 +28,7 @@ from sverchok.dependencies import scipy
 def fast_mode():
     return scipy is not None
 
-class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvKDTreeEdgesNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Create Edges by distance
     Tooltip: Join verts pairs by defining distance range and number of connections

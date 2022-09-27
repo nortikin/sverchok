@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.algorithms import SvSurfaceLerpSurface
 
-class SvSurfaceLerpNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceLerpNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Lerp Linear
     Tooltip: Linear interpolation of two surfaces

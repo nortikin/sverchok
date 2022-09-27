@@ -9,7 +9,7 @@ from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting
                                      repeat_last_for_length)
 from sverchok.utils.curve import SvCurve, SvCubicBezierCurve, SvBezierCurve, SvLine, SvConcatCurve
 
-class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBlendCurvesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Blend curves
     Tooltip: Blend two or more curves by use of Bezier curve segment

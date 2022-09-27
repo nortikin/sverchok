@@ -220,7 +220,7 @@ class SvPropNodeMixin():
     prop_name: StringProperty(name='', update=verify_prop)
 
 
-class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvGetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
     ''' Get property '''
     bl_idname = 'SvGetPropNodeMK2'
     bl_label = 'Get Property MK2'
@@ -258,7 +258,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
-class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvSetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
     ''' Set property '''
     bl_idname = 'SvSetPropNodeMK2'
     bl_label = 'Set Property MK2'

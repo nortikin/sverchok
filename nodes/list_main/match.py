@@ -34,7 +34,7 @@ func_dict = {
     'XREF': match_cross2
 }
 
-class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
+class ListMatchNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Stream Matching node '''
     bl_idname = 'ListMatchNode'
     bl_label = 'List Match'

@@ -210,7 +210,7 @@ def split_lines_to_objects(verts, edges):
     return np.split(verts, split_slice)[:-1], edges_out
 
 
-class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
+class SvLineNodeMK4(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Line, segment.
     Tooltip: Generate line. [default]\n\tOrientation: [X], Y, Z, Origin+Point, Origin+Direction\n\tSize: [Size], Num, Step, St+Si (Step+Size)\n\tNum verts: [2]\n\tSize: [10.0]

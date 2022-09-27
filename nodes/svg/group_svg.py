@@ -28,7 +28,7 @@ from sverchok.utils.svg import SvgGroup
 
 
 
-class SvSvgGroupNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgGroupNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Group SVG
     Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups

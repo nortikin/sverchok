@@ -96,7 +96,7 @@ def make_all_arcs(v, nv, make_edges):
     return verts_out, edges_out
 
 
-class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
+class svBasicArcNode(SverchCustomTreeNode, bpy.types.Node):
 
     ''' Arc from 3 points. [default]
     Num Verts: [20]

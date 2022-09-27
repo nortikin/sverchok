@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 from math import cos, sin, pi, tan
 
 
-class SvFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Formula '''
     bl_idname = 'SvFormulaNode'
     bl_label = 'Formula'

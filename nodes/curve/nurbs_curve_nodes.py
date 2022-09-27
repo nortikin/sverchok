@@ -16,7 +16,7 @@ from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvNurbsCurveNodesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNurbsCurveNodesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS curve nodes (Greville points)
     Tooltip: Display nodes (a.k.a edit points or Greville points) of a NURBS curve

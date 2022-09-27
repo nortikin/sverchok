@@ -14,7 +14,7 @@ else:
 
     import Part
 
-    class SvSolidEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidEdgesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Edges
         Tooltip: Get Edges from Solid

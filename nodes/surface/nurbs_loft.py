@@ -11,7 +11,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import simple_loft
 from sverchok.dependencies import geomdl
 
-class SvNurbsLoftNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNurbsLoftNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Loft / Skin
     Tooltip: Generate a NURBS surface by lofting (skinning) through several NURBS-like curves

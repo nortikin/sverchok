@@ -47,7 +47,7 @@ def random_vector(params, constant, matching_f):
 
     return result
 
-class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class RandomVectorNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: rv Random unit Vec
     Tooltip: Generate Random Vectors of defined magnitude. [default]\n\tCount, min=1: [1]\n\tSeed: [1]\n\tScale: [1.0]

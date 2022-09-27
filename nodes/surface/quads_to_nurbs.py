@@ -17,7 +17,7 @@ from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl, FreeCAD
 
-class SvExQuadsToNurbsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExQuadsToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quad to NURBS
     Tooltip: Make a smooth NURBS surface patch from each quad face

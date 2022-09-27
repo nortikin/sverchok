@@ -266,7 +266,7 @@ def get_shader_data(named_shader=None):
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
-class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
+class SvVDExperimental(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: exp vd mk3
     Tooltip: drawing, with experimental features

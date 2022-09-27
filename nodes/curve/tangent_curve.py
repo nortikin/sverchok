@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.curve import SvCurve, SvBezierCurve, SvConcatCurve, SvCubicBezierCurve
 
-class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Tangents Curve
     Tooltip: Generate Bezier curve from points and tangent vectors

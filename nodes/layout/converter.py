@@ -20,7 +20,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 
-class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
+class ConverterNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Converter node temporery solution '''
     bl_idname = 'ConverterNode'
     bl_label = 'Socket Converter'

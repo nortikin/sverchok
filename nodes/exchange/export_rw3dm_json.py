@@ -57,7 +57,7 @@ else:
             bpy.data.texts[text_name].clear()
             bpy.data.texts[text_name].write(data)
 
-    class SvExNurbsToJsonNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExNurbsToJsonNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: NURBS to JSON
         Tooltip: Export NURBS to JSON file

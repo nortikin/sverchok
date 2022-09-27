@@ -54,7 +54,7 @@ super_presets = {
     "RECTELLIPSE":      [1.0, 0.6, 4.0, 4.0, 100],
 }
 
-class SvEllipseNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvEllipseNodeMK3(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
     Triggers: Ellipse Super-Ellipse
     Tooltip: Generate various types of (super) ellipse shapes.\n\tIn: Major/Minor radiuses, Num Verts, Phase, Rotation, Scale, Exponent X/Y\n\tOut: Verts, Edges, Polys, F1, F2

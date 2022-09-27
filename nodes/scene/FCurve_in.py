@@ -17,7 +17,7 @@ class SvFCurveMK1CB(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_label = "Callback for fcurve sampler node mk1"
     bl_options = {'INTERNAL'}
 
-class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
+class SvFCurveInNodeMK1(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: FCurve In
     Tooltip: Get result of curve evaluated at frame x

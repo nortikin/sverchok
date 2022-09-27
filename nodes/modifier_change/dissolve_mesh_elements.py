@@ -18,7 +18,7 @@ modes = [(n, n, '', ic, i) for i, (n, ic) in
          enumerate(zip(('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
 
 
-class SvDissolveMeshElements(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvDissolveMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: dissolve delete remove
 

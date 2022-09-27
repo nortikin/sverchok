@@ -35,7 +35,7 @@ def is_scene_event():
         return True
     return False
 
-class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvNurbsSurfaceOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     """
     Triggers: Output NURBS Surface
     Tooltip: Create Blender's NURBS Surface object.\n\tIn: ControlPoints, Weights, Degree U/V, U Size\n\tParams: base name, Mat, mode (single/separate list), Cyclic U,V, end point U,V\n\tOut: Objects\n\tExtra: Res U/V, Smooth (N-panel)

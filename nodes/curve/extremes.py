@@ -26,7 +26,7 @@ else:
             return np.linalg.norm(dv)
         return distance
 
-    class SvExCurveExtremesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExCurveExtremesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Extremes
         Tooltip: Find a point on curve which provides the maximum or minimum for specified scalar field

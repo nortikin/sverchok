@@ -36,7 +36,7 @@ def get_bm_geom(geom):
     return edges, faces
 
 
-class SvSplitFacesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSplitFacesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: split nonplanar concave faces
     Tooltip: Split non-planar / concave faces

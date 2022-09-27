@@ -13,7 +13,7 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvBoxSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvBoxSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Box
         Tooltip: Generate Solid Box

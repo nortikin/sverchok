@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvPinForce
 
-class SvPulgaPinForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaPinForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Constrain Vertices
     Tooltip: Pin Particles (Vertices) movement along defined axis 

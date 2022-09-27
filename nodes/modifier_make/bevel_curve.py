@@ -22,7 +22,7 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvBevelCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvBevelCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bevel Curve
     Tooltip: Bevel a Curve (a.k.a. Extrude along Path) - mesh

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvBMoutputNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBMoutputNode(SverchCustomTreeNode, bpy.types.Node):
     ''' BMesh Out '''
     bl_idname = 'SvBMoutputNode'
     bl_label = 'BMesh Out'

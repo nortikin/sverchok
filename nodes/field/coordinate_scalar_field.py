@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvCoordinateScalarField
 
-class SvCoordScalarFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCoordScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Coordinate Scalar Field
     Tooltip: Generate scalar field which equals one of point coordinates

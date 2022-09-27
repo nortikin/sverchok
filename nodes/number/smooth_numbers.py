@@ -48,7 +48,7 @@ def smooth_numbers(params, constants, matching_f):
 
     return result
 
-class SvSmoothNumbersNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSmoothNumbersNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ease values
     Tooltip: Smooth the values of a numerical list by reducing the difference between consecutive numbers. [default]\n\tValues: <= List[numbers]\n\tIterations: [1]\n\tFactor: [1.]

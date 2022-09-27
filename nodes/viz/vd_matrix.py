@@ -100,7 +100,7 @@ def match_color_to_matrix(node):
     return [element_iterated(*values) for values in data_out]
 
 
-class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     '''A quick way to represent matrices.
     In: Matrixes
     Params: Color start/end, simple On/Off, grid On/Off, plane On/Off, Alpha 0.0-1.0

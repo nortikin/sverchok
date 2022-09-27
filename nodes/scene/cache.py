@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id, changable_sockets
 
 
-class SvCacheNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCacheNode(SverchCustomTreeNode, bpy.types.Node):
     '''Cache data Node'''
     bl_idname = 'SvCacheNode'
     bl_label = 'Cache'

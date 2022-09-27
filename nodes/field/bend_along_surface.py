@@ -13,7 +13,7 @@ from sverchok.utils.geom import diameter
 
 from sverchok.utils.field.vector import SvBendAlongSurfaceField
 
-class SvBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bend surface
     Tooltip: Generate a vector field which bends the space along the given surface.

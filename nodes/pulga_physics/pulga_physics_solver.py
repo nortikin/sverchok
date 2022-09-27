@@ -25,7 +25,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.pulga_physics_modular_core import pulga_system_init
 
 
-class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaPhysicsSolverNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Simulate Particles
     Tooltip: Modular Physics Engine

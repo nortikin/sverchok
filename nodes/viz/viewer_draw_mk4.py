@@ -508,7 +508,7 @@ def add_dashed_shader(config):
     config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
 
-class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
+class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: vd geometry preview
     Tooltip: Drawing preview on 3d scene, with experimental features.\n\tIn: Vertices, Edges, Polygons, Matrix, Colors for vertices, edges, polygons\n\tParams: Vertices size, Edges width, Draw mode, Align 3DView\n\tExtra: OpenGL features (N-panel)

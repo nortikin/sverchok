@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.surface.sphere import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
 from sverchok.utils.surface.algorithms import build_nurbs_sphere
 
-class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSphereNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sphere
     Tooltip: Generate spherical surface (different projections are available)

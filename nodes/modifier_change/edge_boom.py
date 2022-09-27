@@ -24,7 +24,7 @@ from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
-class SvEdgeBoomNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvEdgeBoomNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Edge Boom
     Tooltip: decompose a mesh into list of edge objects

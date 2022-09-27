@@ -24,7 +24,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFaceExtrudeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude Solid Face
     Tooltip: Make a Solid by extruding one face along a vector

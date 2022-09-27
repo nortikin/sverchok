@@ -169,7 +169,7 @@ def Torus_Knot(flags, settings, linkIndex=0):
     return listVerts, listEdges, listNorms, listTangs
 
 
-class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTorusKnotNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Torus Knot '''
     bl_idname = 'SvTorusKnotNode'
     bl_label = 'Torus Knot'

@@ -35,7 +35,7 @@ if scipy is None or FreeCAD is None:
 if FreeCAD is not None:
     import Part
 
-class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVoronoiOnSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Solid
     Tooltip: Generate Voronoi diagram on the Solid object

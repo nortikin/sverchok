@@ -10,7 +10,7 @@ from sverchok.utils.curve.algorithms import SvCurveLengthSolver
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import SvNurbsCurveLengthSolver
 
-class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLengthNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Length
     Tooltip: Calculate length of the curve or it's segment

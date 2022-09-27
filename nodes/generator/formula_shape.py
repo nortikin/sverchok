@@ -42,7 +42,7 @@ def fix(s):
     return s.replace(' ', '')
 
 
-class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaShapeNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Formula Shape '''
     bl_idname = 'SvFormulaShapeNode'
     bl_label = 'Formula Shape'

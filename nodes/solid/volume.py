@@ -18,7 +18,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvSolidVolumeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidVolumeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Volume Solid
     Tooltip: Calculate total volume of a Solid object

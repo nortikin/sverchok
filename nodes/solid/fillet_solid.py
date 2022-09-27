@@ -13,7 +13,7 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvFilletSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvFilletSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Bevel Solid
         Tooltip: Transform Solid with Matrix

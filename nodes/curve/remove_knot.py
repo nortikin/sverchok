@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvCurveRemoveKnotNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveRemoveKnotNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Remove Knot
     Tooltip: Remove a knot from a NURBS curve

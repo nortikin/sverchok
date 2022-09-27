@@ -23,7 +23,7 @@ split_modes = [
     ]
 
 
-class SvSplitEdgesMk3Node(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSplitEdgesMk3Node(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Split Edges
     Tooltip: Split each edge of a mesh in two

@@ -12,7 +12,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.vector import SvScalarFieldCurveMap
 
-class SvScalarFieldCurveMapNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldCurveMapNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Curve Map
     Tooltip: Map scalar field by curve

@@ -20,7 +20,7 @@ from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.surface.bevel_curve import nurbs_bevel_curve, generic_bevel_curve, BEVEL_SIMPLE, BEVEL_REFINE, BEVEL_GORDON
 from sverchok.utils.field.vector import SvBendAlongCurveField
 
-class SvBendCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bevel Curve Surface
     Tooltip: Bevel a Curve - Surface

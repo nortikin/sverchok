@@ -10,7 +10,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_mesh_utils import mesh_join
 
-class SvVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldGraphNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Graph
     Tooltip: Generate a graphical representation of vector field

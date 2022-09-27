@@ -16,7 +16,7 @@ from sverchok.utils.geom_2d.make_monotone import monotone_sv_face_with_holes
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvMakeMonotone(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMakeMonotone(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Split face into monotone pieces
     Can spilt face with holes

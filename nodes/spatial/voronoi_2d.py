@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.voronoi import voronoi_bounded
 
 
-class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
+class Voronoi2DNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi vr
     Tooltip: Generate 2D Voronoi diagram for a set of vertices.

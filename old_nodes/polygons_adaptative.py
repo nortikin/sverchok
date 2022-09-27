@@ -28,7 +28,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 
-class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
+class AdaptivePolsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Make spread one object on another adaptively polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
     bl_idname = 'AdaptivePolsNode'
     bl_label = 'Adaptive Polygons'

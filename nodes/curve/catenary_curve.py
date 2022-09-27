@@ -15,7 +15,7 @@ if scipy is None:
 else:
     from sverchok.utils.catenary import CatenarySolver
 
-    class SvExCatenaryCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExCatenaryCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Catenary Curve
         Tooltip: Generate Catenary Curve

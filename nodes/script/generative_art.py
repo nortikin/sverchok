@@ -286,7 +286,7 @@ def _radians(d):
 """
 
 
-class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGenerativeArtNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Generative Art or LSystem node'''
     bl_idname = 'SvGenerativeArtNode'
     bl_label = 'Generative Art'

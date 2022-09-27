@@ -133,7 +133,7 @@ def bounding_box(verts,
             *size_vals)
 
 
-class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvBBoxNodeMk3(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: Bbox 2D or 3D
     Tooltip: Get vertices bounding box (vertices, sizes, center)

@@ -44,7 +44,7 @@ def hilbert(step, n):
     return verts
 
 
-class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
+class Hilbert3dNode(SverchCustomTreeNode, bpy.types.Node):
     '''Hilbert3D line.
     In: Level, Size
     Out: Vertices, Edges

@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.field.scalar import SvScalarFieldPointDistance
 from sverchok.utils.math import falloff_types, falloff_array
 
-class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldPointNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Point
     Tooltip: Generate scalar field by distance from a point

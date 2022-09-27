@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvRecalcNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvRecalcNormalsNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Recalc face normals '''
     bl_idname = 'SvRecalcNormalsNode'
     bl_label = 'Recalculate Normals'

@@ -13,7 +13,7 @@ if geomdl is None:
 else:
     from geomdl import fitting
     
-    class SvExApproxNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExApproxNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: NURBS Curve
         Tooltip: Approximate NURBS Curve

@@ -120,7 +120,7 @@ class SvMoveMaterial(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAssignMaterialListNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: material list
     Tooltip: Assign the list of materials to the object

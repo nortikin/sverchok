@@ -20,7 +20,7 @@ else:
 
     import Part
 
-    class SvSolidFacesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidFacesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Faces
         Tooltip: Get Faces from Solid

@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
+class SvSelectMeshVerts(SverchCustomTreeNode, bpy.types.Node):
     ''' Select vertices of mesh objects '''
     bl_idname = 'SvSelectMeshVerts'
     bl_label = 'Select Object Vertices'

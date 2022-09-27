@@ -90,7 +90,7 @@ def recurse_fxy(l1, l2, f, level):
 
 
 
-class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorMathNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''Vector: Add, Dot P..'''
     bl_idname = 'SvVectorMathNodeMK2'
     bl_label = 'Vector Math'

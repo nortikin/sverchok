@@ -155,7 +155,7 @@ modes_dict = {
     'EULER': (euler_rotate_meshes, ['X', 'Y', 'Z']),
     'QUAT':  (quat_rotate_meshes,  ['X', 'Y', 'Z', 'W'])
 }
-class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvRotationNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Rotate vertices
     Tooltip: Rotate input vertices using Axis/Angle, Euler or Quaternion

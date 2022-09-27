@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import second_as_first_cycle as safc
 
 
-class SvSculptMaskNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSculptMaskNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Sculpt Mask '''
     bl_idname = 'SvSculptMaskNode'
     bl_label = 'Vertex Sculpt Masking'

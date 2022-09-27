@@ -80,7 +80,7 @@ def edges_length(meshes, need_total=False, need_cumsum=False, need_cumsum1=False
 
     return lengths_out, cumsum_out, cumsum_1_out, total_lengths_out
 
-class SvPathLengthMk2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvPathLengthMk2Node(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Path / Edges length
     Tooltip: Measures the length of a path or the length of its segments

@@ -53,7 +53,7 @@ IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
 
-class SvExtrudeRegionNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Extrude region of faces '''
     bl_idname = 'SvExtrudeRegionNode'
     bl_label = 'Extrude Region'

@@ -19,7 +19,7 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    class SvExMinimalVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExMinimalVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: RBF Minimal Vector Field
         Tooltip: RBF Vector Field

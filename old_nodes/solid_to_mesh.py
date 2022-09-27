@@ -16,7 +16,7 @@ else:
     import MeshPart
 
 
-    class SvSolidToMeshNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidToMeshNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid to Mesh
         Tooltip: Generate mesh from solid

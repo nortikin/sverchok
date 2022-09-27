@@ -45,7 +45,7 @@ def fill_past_file(p, location):
     text.clear()
     text.write(''.join(str(p)))
 
-class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaPhysicsNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Springs, Cloth
     Tooltip: Physics Engine

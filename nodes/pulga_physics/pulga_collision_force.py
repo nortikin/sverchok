@@ -24,7 +24,7 @@ from sverchok.data_structure import (enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvCollisionForce
 from sverchok.dependencies import scipy, Cython
 
-class SvPulgaCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaCollisionForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Collide verts
     Tooltip: Collision forces between vertices

@@ -24,7 +24,7 @@ from sverchok.utils.math import rbf_functions
 if scipy is not None:
     from scipy.interpolate import Rbf
 
-class SvExMeshNormalFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExMeshNormalFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Mesh Normal Field
     Tooltip: Generate vector field by mesh normal at the nearest point

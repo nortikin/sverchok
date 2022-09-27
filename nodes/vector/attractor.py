@@ -32,7 +32,7 @@ def get_avg_vector(vectors):
         result += vector
     return result / len(vectors)
 
-class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAttractorNode(SverchCustomTreeNode, bpy.types.Node):
     '''Attraction vectors calculator.[def]
 In: Verts,Center,Dir,Amplde[.5],Coeffs[.5]
 Attractor: [Point]/Line/Plane

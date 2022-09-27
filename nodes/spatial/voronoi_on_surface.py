@@ -30,7 +30,7 @@ from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.voronoi3d import voronoi_on_surface
 from sverchok.dependencies import scipy
 
-class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVoronoiOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Surface
     Tooltip: Generate Voronoi diagram on a Surface

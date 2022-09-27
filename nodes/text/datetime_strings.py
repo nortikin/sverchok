@@ -57,7 +57,7 @@ Python Docs: https://docs.python.org/3.6/library/datetime.html#strftime-and-strp
 """
 
 
-class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
+class SvDatetimeStrings(SverchCustomTreeNode, bpy.types.Node):
     ''' a SvDatetimeStrings f '''
     bl_idname = 'SvDatetimeStrings'
     bl_label = 'Datetime Strings'

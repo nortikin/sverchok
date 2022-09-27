@@ -54,7 +54,7 @@ def compute_intersect_plane_plane(params, result, gates):
             r.append(local_result[i])
 
 
-class SvIntersectPlanePlaneNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIntersectPlanePlaneNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Line from Intersection
     Tooltip: Intersect two planes and get the resulting line.

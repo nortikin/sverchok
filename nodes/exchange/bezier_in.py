@@ -29,7 +29,7 @@ class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         node.get_objects_from_scene(self)
 
 
-class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene

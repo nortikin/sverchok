@@ -223,7 +223,7 @@ signed_digital_voltage_max = {
     32: 256**4
 }
 
-class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
+class SvWaveformViewer(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: SvWaveformViewer

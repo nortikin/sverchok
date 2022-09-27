@@ -58,7 +58,7 @@ class SvgAttributes():
 
         return svg
 
-class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgFillStrokeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: color, line width
     Tooltip: Define Fill /Stroke Style for svg objects

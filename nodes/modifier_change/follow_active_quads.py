@@ -249,7 +249,7 @@ def calc_average_length(bm, faces):
     return edge_lengths
 
 
-class SvFollowActiveQuads(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFollowActiveQuads(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: UV unwrapping
 

@@ -6,7 +6,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvAdaptivePlotNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptivePlotNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Adaptive Plot NURBS Curve
     Tooltip: Adaptive Plot NURBS Curve

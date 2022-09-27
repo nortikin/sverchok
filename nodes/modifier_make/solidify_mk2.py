@@ -146,7 +146,7 @@ def solidify_blender(vertices, edges, faces, t, offset=None, even=True, output_e
     return (verts, edges, faces, newpols, rim_pols, pol_group, new_verts_mask)
 
 
-class SvSolidifyNodeMk2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSolidifyNodeMk2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude/Thicken Mesh
     Tooltip: Extrude along normal the mesh surface.

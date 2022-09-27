@@ -60,7 +60,7 @@ def numpy_pack_vecs(X_, Y_, Z_, output_numpy):
         series_vec.append(vecs if output_numpy else vecs.tolist())
     return series_vec
 
-class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
+class GenVectorsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Generator vectors. Inputs vector from ranges or number values either integer of floats.
     In (float/int or Lists):
         X: [[0]]

@@ -24,7 +24,7 @@ from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLampOutNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lamp
     Tooltip: Generate Lamp objects

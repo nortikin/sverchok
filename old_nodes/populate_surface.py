@@ -15,7 +15,7 @@ from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.populate import populate_surface
 from sverchok.utils.field.scalar import SvScalarField
 
-class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPopulateSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Populate Surface
     Tooltip: Generate random points on the surface

@@ -21,7 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
+class Sv3DviewPropsNode(SverchCustomTreeNode, bpy.types.Node):
 
     ''' Sv 3Dview Props Node. Configure 3dview without leaving NodeView'''
     bl_idname = 'Sv3DviewPropsNode'

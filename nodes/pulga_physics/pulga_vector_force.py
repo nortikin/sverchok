@@ -26,7 +26,7 @@ from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvWorldForce, SvFieldForce
 from sverchok.utils.field.vector import SvVectorField
 
-class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaVectorForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Directional Force
     Tooltip: Applies Force defined as a Vector or a Vector Field

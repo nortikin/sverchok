@@ -31,7 +31,7 @@ from sverchok.dependencies import scipy
 if scipy is None:
     add_dummy('SvVoronoiOnMeshNode', "Voronoi on Mesh", 'scipy')
 
-class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object

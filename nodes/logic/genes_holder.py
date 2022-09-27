@@ -35,7 +35,7 @@ class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
             node.fill_empty_dict()
         updateNode(node, context)
 
-class SvGenesHolderNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGenesHolderNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Store Number List
     Tooltip: Stores a Vector List that can be modified by the Evolver Node

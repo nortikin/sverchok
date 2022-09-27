@@ -96,7 +96,7 @@ class SV_UL_VDMK3ItemList(bpy.types.UIList):
         layout.label(text=attr_name)
         layout.prop(node.vd_items_props[0], attr_name, text='')
 
-class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVDAttrsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: vd attr
     Tooltip: Attribute Node for Viewer Draw Experimental

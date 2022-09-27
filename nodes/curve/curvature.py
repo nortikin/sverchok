@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.curve.core import DEFAULT_TANGENT_DELTA
 
-class SvCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveCurvatureNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Curvature
         Tooltip: Calculate curvature of the curve

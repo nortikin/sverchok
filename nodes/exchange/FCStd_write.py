@@ -31,7 +31,7 @@ else:
             return {'FINISHED'}
 
 
-    class SvWriteFCStdNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvWriteFCStdNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: write FreeCAD file
         Tooltip: write parts in a .FCStd file 

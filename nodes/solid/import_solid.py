@@ -9,7 +9,7 @@ else:
     from sverchok.node_tree import SverchCustomTreeNode
     import Part
 
-    class SvImportSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvImportSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Import Solid
         Tooltip: Import Solid from BREP file

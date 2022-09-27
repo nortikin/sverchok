@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
-class SvDeconstructSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeconstructSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Deconstruct Surface
     Tooltip: Output degrees, control points, weights, knot vectors of the surface (when they are defined)

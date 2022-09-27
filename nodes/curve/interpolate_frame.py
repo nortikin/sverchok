@@ -89,7 +89,7 @@ else:
         points = curve.evaluate_array(ts)
         return interpolate(tknots, ts, points, quats)
 
-    class SvExSlerpCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExSlerpCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Interpolate Curve Frame
         Tooltip: Interpolate curve frames

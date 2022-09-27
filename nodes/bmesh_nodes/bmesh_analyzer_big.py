@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
-class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBManalyzinNode(SverchCustomTreeNode, bpy.types.Node):
     ''' BMesh In and props two in one '''
     bl_idname = 'SvBManalyzinNode'
     bl_label = 'BMesh Analyze In'

@@ -14,7 +14,7 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvCylinderSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvCylinderSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Cylinder
         Tooltip: Create Solid cylinder

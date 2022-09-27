@@ -14,7 +14,7 @@ from sverchok.utils.rigid_origami_utils import ObjectParams, \
 from sverchok.utils.nodes_mixins.sockets_config import TransformNode
 
 
-class SvRigidOrigamiNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
+class SvRigidOrigamiNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Rigid Origami
     Tooltip: Fold a paper like a rigid origami

@@ -93,7 +93,7 @@ def sphere_faces(U, V):
     return listPln
 
 
-class SphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SphereNode(SverchCustomTreeNode, bpy.types.Node):
     '''UV Sphere. [default]
     Radius: [1.0]
     U, min 3: [24]

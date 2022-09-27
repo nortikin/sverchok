@@ -138,7 +138,7 @@ def ring_polygons(N1, N2, a1, a2, u):
     return list_polys
 
 
-class SvRingNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvRingNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
     Triggers: Ring
     Tooltip: Generate ring meshes (create a 2D ring).\n\tIn: radiuses, Radial/Circular Sections, Start/End Angle, Phase\n\tParams: Selector R:r/eR:iR, Separate On/Off\n\tExtra: Subdivide Circular\n\tOut: Vertces, Edges, Unities

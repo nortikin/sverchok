@@ -154,7 +154,7 @@ def edge_sequence_from_verts(num_indices, params):
     return new_edges
 
 
-class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
+class SvSmoothLines(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: smooth lines fil 
     Tooltip: accepts seq of verts and weights, returns smoothed lines

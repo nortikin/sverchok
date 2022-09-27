@@ -102,7 +102,7 @@ def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     return sv_object
 
 
-class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvPolylineViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
 
     bl_idname = 'SvPolylineViewerNodeV28'
     bl_label = 'Polyline Viewer'

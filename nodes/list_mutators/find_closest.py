@@ -14,7 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import repeat_last, fixed_iter
 
 
-class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
+class SvFindClosestValue(SverchCustomTreeNode, bpy.types.Node):
     """Triggers: find search closest
     [[4,0,3,3]] val 5 =>
         values: [[4]]

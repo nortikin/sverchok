@@ -25,7 +25,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvProjectCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Project Curve Surface NURBS
     Tooltip: Project a NURBS Curve onto a Face or Surface

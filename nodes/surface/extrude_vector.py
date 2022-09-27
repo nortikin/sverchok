@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvExtrudeCurveVectorSurface
 
-class SvExtrudeCurveVectorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeCurveVectorNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude Curve
     Tooltip: Generate a surface by extruding a curve along a vector

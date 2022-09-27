@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
-class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBoxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Box
     Tooltip: Generate a Box primitive.

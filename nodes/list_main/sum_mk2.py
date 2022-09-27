@@ -23,7 +23,7 @@ from sverchok.data_structure import levelsOflist, updateNode
 from bpy.props import IntProperty
 
 
-class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class ListSumNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' List summa MK2. Minimal level is 1.
     level 1: [ [[0,1,2]], [[1.5, 2, 2.5]] ] => [[3,6]]
     level 2: [ [[0,1,2]], [[1.5, 2, 2.5]] ] => [[3],[6]]

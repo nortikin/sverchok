@@ -47,7 +47,7 @@ def mark_faces(bm):
                     stack.append((twin_face, 'sub' if type_face == 'add' else 'add'))
 
 
-class SvChessSelection(bpy.types.Node, SverchCustomTreeNode):
+class SvChessSelection(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: returns selection like chess board
     Tooltip: can be used with 3d objects like torus and other primitives

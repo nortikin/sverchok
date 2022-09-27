@@ -14,7 +14,7 @@ from sverchok.data_structure import enum_item_4, updateNode
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvMeshBeautify(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMeshBeautify(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: beauty existing fill

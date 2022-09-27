@@ -46,7 +46,7 @@ def get_socket_type(data, sub_cls=None, size=None):
         raise TypeError(f"Which type of socket this type ({type(data)}) of data should be?")
 
 
-class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
+class SvDictionaryOut(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Unwrap given dictionary
 

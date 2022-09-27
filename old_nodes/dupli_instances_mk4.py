@@ -27,7 +27,7 @@ def wipe_object(ob):
     bm.free()
 
 
-class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
+class SvDupliInstancesMK4(SverchCustomTreeNode, bpy.types.Node):
     '''Copy by Dupli Faces'''
     bl_idname = 'SvDupliInstancesMK4'
     bl_label = 'Dupli instancer mk4'

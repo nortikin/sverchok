@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvSmoothNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSmoothNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Smooth vertices
     Tooltip: Smooth the mesh by flattering the angles between the faces/edges.

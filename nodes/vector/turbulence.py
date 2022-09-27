@@ -30,7 +30,7 @@ avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_optio
 
 turbulence_f = {'SCALAR': noise.turbulence, 'VECTOR': noise.turbulence_vector}
 
-class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTurbulenceNode(SverchCustomTreeNode, bpy.types.Node):
     '''Vector Turbulence node.[default]
     In: Vertices, Octaves [3], Hard [On]/Off, Amplitude, Frequency, Seed
     Params: Scalar/[Vector], Type [Perlin_Original]/Vornoi/Cellnoise and other

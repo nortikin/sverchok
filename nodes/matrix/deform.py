@@ -21,7 +21,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, matrixdef, updateNode)
 
 
-class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
+class MatrixDeformNode(SverchCustomTreeNode, bpy.types.Node):
     ''' MatrixDeform '''
     bl_idname = 'MatrixDeformNode'
     bl_label = 'Matrix Deform'

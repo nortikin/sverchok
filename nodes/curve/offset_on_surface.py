@@ -7,7 +7,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvCurveOffsetOnSurface
 from sverchok.utils.surface import SvSurface
 
-class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveOffsetOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Offset Curve on Surface
     Tooltip: Offset a Curve along it's normal, while remaining in the surface

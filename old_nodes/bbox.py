@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect
 
 
-class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBBoxNode(SverchCustomTreeNode, bpy.types.Node):
     '''Bounding box'''
     bl_idname = 'SvBBoxNode'
     bl_label = 'Bounding box'

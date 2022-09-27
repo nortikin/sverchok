@@ -24,7 +24,7 @@ if scipy is None:
 else:
     from scipy.spatial import Voronoi
 
-    class SvExVoronoi3DNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Voronoi 3D
         Tooltip: Generate 3D Voronoi diagram

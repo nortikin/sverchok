@@ -20,7 +20,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvSolidFaceAreaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFaceAreaNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Face Area Solid
     Tooltip: Calculate area of a Face of a Solid

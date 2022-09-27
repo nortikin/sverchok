@@ -23,7 +23,7 @@ else:
     def is_triangles_only(faces):
         if has_element(faces): return all((len(f) == 3 for f in faces))
 
-    class SvSolidToMeshNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid to Mesh
         Tooltip: Generate mesh from solid

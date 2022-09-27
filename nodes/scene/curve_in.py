@@ -131,7 +131,7 @@ def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
     return radii
 
 
-class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveInputNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Curve data in '''
     bl_idname = 'SvCurveInputNode'
     bl_label = 'Curve Input'

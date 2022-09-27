@@ -156,7 +156,7 @@ class SverchokViewerMK1(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
+class ViewerNodeTextMK3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Viewer Node text MK3
     Tooltip: Inspecting data from sockets in terms

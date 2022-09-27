@@ -11,7 +11,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve, SvNativeNurbsCurve, SvGeomd
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
 
-class SvExInterpolateNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Curve interpolation
     Tooltip: Interpolate NURBS Curve

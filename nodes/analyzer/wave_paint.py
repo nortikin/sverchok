@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import (bmesh_from_pydata,
         fill_faces_layer, fill_verts_layer
     )
 
-class SvWavePainterNode(bpy.types.Node, SverchCustomTreeNode):
+class SvWavePainterNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: wave pattern
     Tooltip: Mark up mesh faces or vertices with a wave pattern

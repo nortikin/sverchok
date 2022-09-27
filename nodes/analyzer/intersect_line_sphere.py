@@ -136,7 +136,7 @@ def compute_intersect_edges_sphere_np(
             else:
                 res.append(local_result[i])
 
-class SvIntersectLineSphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIntersectLineSphereNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Sphere Line Intersect
     Tooltip: Find find point in line at desired distance

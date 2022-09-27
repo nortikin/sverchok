@@ -14,7 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, Matrix_generate
 
 
-class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEmptyOutNode(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: empty

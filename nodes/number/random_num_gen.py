@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 
-class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
+class SvRndNumGen(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Random thru a range
     Tooltip: Generate a random number (int of float) thru a given range (inclusive)\n\tInt with Unique and Weighted\n\tFloat with Functions of Distribution (Uniform, Beta, Binomial and other)

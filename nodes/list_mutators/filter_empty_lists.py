@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvFixEmptyObjectsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFixEmptyObjectsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' filter out None bpy objects or empty sverchok object level lists '''
     bl_idname = 'SvFixEmptyObjectsNode'
     bl_label = 'Filter Empty Objects'

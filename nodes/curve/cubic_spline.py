@@ -8,7 +8,7 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.math import supported_metrics, xyz_metrics
 from sverchok.utils.curve import SvSplineCurve
 
-class SvCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCubicSplineNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Cubic Spline
     Tooltip: Generate cubic interpolation curve

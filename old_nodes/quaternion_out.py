@@ -58,7 +58,7 @@ output_sockets = {
 }
 
 
-class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuaternionOutNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quaternions, Out
     Tooltip: Convert quaternions into various quaternion components

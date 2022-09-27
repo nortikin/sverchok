@@ -24,7 +24,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFaceSolidifyNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Soldify Solid Face Offset Thickness
     Tooltip: Make a Solid by offsetting (adding thickness, solidifying) a Face of a Solid

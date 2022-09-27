@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 
-class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLerpNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Lerp Linear Ruled Surface
     Tooltip: Generate a ruled (linear) surface between two curves - a.k.a. curves linear interpolation

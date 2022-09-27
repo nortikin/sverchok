@@ -75,7 +75,7 @@ else:
 
             return {'FINISHED'}
 
-    class SvExportSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExportSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Export Solid
         Tooltip: Export Solid to BREP, IGES or STEP

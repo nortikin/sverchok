@@ -138,7 +138,7 @@ def simple28_grid_xy(x, y, args):
     batch2.draw(shader2)
 
 
-class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEasingNode(SverchCustomTreeNode, bpy.types.Node):
     """Curved interpolation In/Out/InOut. [default]
     Easing function: Linear, Cubic, Circular and other
     Float Input (range 0.0-1.0): [.0]

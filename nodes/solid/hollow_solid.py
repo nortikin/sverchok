@@ -24,7 +24,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvHollowSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Hollow Solid
     Tooltip: Make a hollow solid shell out a solid body

@@ -12,7 +12,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.algorithms import SvTaperSweepSurface
 from sverchok.utils.surface.bevel_curve import nurbs_taper_sweep
 
-class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTaperSweepSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Taper Sweep Curve
     Tooltip: Generate a taper surface along a line

@@ -26,7 +26,7 @@ from sverchok.data_structure import (
 )
 
 
-class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
+class VectorDropNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Drop vertices depending on matrix, as on default rotation, drops to zero matrix.
     In: Vectors (List), Matrixes (List)
     Out: Vectors (List)

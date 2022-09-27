@@ -18,7 +18,7 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    class SvExRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExRbfCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Minimal RBF Curve
         Tooltip: Generate interpolating or approximating curve by RBF method

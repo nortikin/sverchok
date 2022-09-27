@@ -46,7 +46,7 @@ def scale_meshes(params, constant, matching_f):
     return result
 
 
-class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvScaleNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scale vertices
     Tooltip: Scales vectors from a center point
