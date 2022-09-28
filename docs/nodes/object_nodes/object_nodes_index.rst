@@ -11,7 +11,6 @@ Objects
    sample_uv_color
    select_mesh_verts
    weightsmk2
-   getsetprop
    getsetprop_mk2
    assign_materials
    material_index
