@@ -50,7 +50,7 @@ class SvSNPropsFunctor:
         self.inputs.clear()
         self.outputs.clear()
 
-class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
+class SvSNFunctorB(SverchCustomTreeNode, bpy.types.Node, SvSNPropsFunctor):
     """
     Triggers:  functorB
     Tooltip:  use a simpler nodescript style

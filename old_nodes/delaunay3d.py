@@ -20,7 +20,7 @@ if scipy is None:
 else:
     from scipy.spatial import Delaunay
 
-    class SvExDelaunay3DNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExDelaunay3DNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Delaunay 3D
         Tooltip: Generate 3D Delaunay Triangulation

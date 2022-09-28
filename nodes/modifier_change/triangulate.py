@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvTriangulateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvTriangulateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Triangulate Mesh '''
     bl_idname = 'SvTriangulateNode'
     bl_label = 'Triangulate Mesh'

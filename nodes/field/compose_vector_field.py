@@ -8,7 +8,7 @@ from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.math import coordinate_modes
 from sverchok.utils.field.vector import SvComposedVectorField
 
-class SvComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvComposeVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Compose Vector Field
     Tooltip: Generate vector field from three scalar fields

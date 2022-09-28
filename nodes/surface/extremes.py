@@ -19,7 +19,7 @@ if scipy is None:
 else:
     from scipy.optimize import minimize
 
-    class SvExSurfaceExtremesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExSurfaceExtremesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Surface Extremes
         Tooltip: Find the point on the surface which provides the maximum or minimum for specified scalar field

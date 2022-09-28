@@ -163,7 +163,7 @@ def perspective_projection(verts, plane, offset):
 
     return vs
 
-class SvSvgMeshNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgMeshNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Polygons/Edges SVG
     Tooltip: Generate SVG Mesh Data

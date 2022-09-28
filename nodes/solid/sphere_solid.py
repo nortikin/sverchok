@@ -13,7 +13,7 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvSphereSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSphereSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Sphere
         Tooltip: Create Solid Sphere

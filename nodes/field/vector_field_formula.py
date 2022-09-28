@@ -17,7 +17,7 @@ from sverchok.utils.math import (
     )
 from sverchok.utils.field.vector import SvVectorFieldLambda
 
-class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Formula
     Tooltip: Generate vector field by formula

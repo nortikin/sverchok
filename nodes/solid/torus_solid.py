@@ -14,7 +14,7 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvToursSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvToursSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Torus Cylinder
         Tooltip: Create Solid Torus

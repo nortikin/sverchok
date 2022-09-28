@@ -50,7 +50,7 @@ class SvNestingLevelEntry(bpy.types.PropertyGroup):
                 default=False,
                 update=update_entry)
 
-class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListLevelsNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Levels
     Tooltip: List nesting levels manipulation

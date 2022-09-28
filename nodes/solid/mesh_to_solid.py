@@ -54,7 +54,7 @@ else:
                     concat([idxset[i] for i in pol])
         return new_indices
 
-    class SvMeshToSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvMeshToSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Mesh to Solid
         Tooltip: Generate solid from closed mesh

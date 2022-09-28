@@ -300,7 +300,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
     return bm_out
 
 
-class SvInsetFaces(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvInsetFaces(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Also can used as extrude
     Tooltip: Analog of Blender inset function

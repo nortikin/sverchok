@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, updateNode
 
 
-class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMaskJoinNode(SverchCustomTreeNode, bpy.types.Node):
     replacement_nodes = [
         ('SvMaskJoinNodeMK2', {'Mask' : 'Mask', 'Data True' : 'Data True', 'Data False' : 'Data False'}, {'Data' : 'Data'})
     ]

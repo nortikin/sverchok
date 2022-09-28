@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvMergedScalarField, SvScalarField
 
-class SvMergeScalarFieldsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeScalarFieldsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Merge / Join Scalar Fields
     Tooltip: Merge a list of scalar fields into one

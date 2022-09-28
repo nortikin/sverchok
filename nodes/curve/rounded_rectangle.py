@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCircle, SvLine
 from sverchok.utils.curve.algorithms import concatenate_curves
 
-class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRoundedRectangleNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Rounded Rectangle
     Tooltip: Generate rounded rectangle curve

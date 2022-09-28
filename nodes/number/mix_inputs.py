@@ -134,7 +134,7 @@ def make_prop(mode, label):
     return getattr(bpy.props, propType)(**params)
 
 
-class SvMixInputsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMixInputsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Interpolate, Slerp
     Tooltip: Interpolate between values of various types. [def]\n\tTypes: int, [Float], Vector, Color, Quaternion, Matrix\n\tMethod: Linear, Back, Bounce, Elastic and other\n\tMirror: On/[Off]\n\tSwap: On/[Off]\n\tFactor: [.5]\n\tVal_1, Val_2

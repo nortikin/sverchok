@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvTimedForce
 
-class SvPulgaTimedForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaTimedForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Temporize Force
     Tooltip: Constrain the application of forces in a time range

@@ -9,7 +9,7 @@ else:
     import bpy
     from sverchok.node_tree import SverchCustomTreeNode
 
-    class SvSolidVerticesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidVerticesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Solid Vertices
         Tooltip: Get Vertices from Solid

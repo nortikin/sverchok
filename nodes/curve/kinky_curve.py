@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvSplineCurve
 from sverchok.utils.curve.algorithms import concatenate_curves
 
-class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvKinkyCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Kinked Curve
     Tooltip: Construct an interpolated curve through a set of points with a kink angle threshold

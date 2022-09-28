@@ -39,7 +39,7 @@ def Matrix_degenerate(ms):
     return [[ j[:] for j in M ] for M in ms]
 
 
-class SvDuplicateAlongEdgeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvDuplicateAlongEdgeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Duplicate meshes along edge '''
     bl_idname = 'SvDuplicateAlongEdgeNode'
     bl_label = 'Duplicate Objects Along Edge'

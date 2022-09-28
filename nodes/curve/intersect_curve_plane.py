@@ -19,7 +19,7 @@ if scipy is None:
     add_dummy('SvExCrossCurvePlaneNode', "Intersect Curve with Plane", 'scipy')
 else:
 
-    class SvExCrossCurvePlaneNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExCrossCurvePlaneNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Intersect Curve with Plane
         Tooltip: Intersect Curve with Plane

@@ -8,7 +8,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface, SvSwapSurface
 
-class SvSwapSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSwapSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Swap Surface
     Tooltip: Swap U and V directions in the parametrization of the surface

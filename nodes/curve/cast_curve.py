@@ -12,7 +12,7 @@ from sverchok.utils.curve import SvCurve, SvCastCurveToPlane, SvCastCurveToSpher
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import cast_nurbs_curve
 
-class SvCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCastCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Cast Curve to Shape
         Tooltip: Cast (project) a curve to the plane, sphere or cylindrical surface

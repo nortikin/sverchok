@@ -32,7 +32,7 @@ def iter_last(l):
     return chain(l, cycle([l[-1]]))
 
 
-class SvRotationDifference(bpy.types.Node, SverchCustomTreeNode):
+class SvRotationDifference(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quaternion
 Creates quaternion which represent rotation from vertices A to vertices B

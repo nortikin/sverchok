@@ -12,7 +12,7 @@ from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.image import load_image, SvImageScalarField, SvImageVectorField
 
-class SvImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvImageFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Image Field
     Tooltip: Generate vector or scalar field from an Image data block

@@ -29,7 +29,7 @@ import numpy as np
 # Based on ListItem2 by Linus Yng
 
 
-class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListItemNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Item Out
     Tooltip: Get elements from list at desired indexes\n\tL=[[5,6,7,8]], i=[0,0,2,1],\n\t\tlvl:2 => item: [[5,5,7,6]], other: [[8]]\n\t\tlvl:1 => item: [[5,6,7,8], [5,6,7,8]], other: []

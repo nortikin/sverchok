@@ -9,7 +9,7 @@ from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting
                                      repeat_last_for_length)
 from sverchok.utils.surface import SvSurface
 
-class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceCurvaturesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Curvature
     Tooltip: Calculate surface curvature values and directions

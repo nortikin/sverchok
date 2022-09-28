@@ -52,7 +52,7 @@ def quat_rotation(vertex, x, y, z, w):
         rotated.append((quat@v)[:])
     return rotated
 
-class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvRotationNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Axis Rotation MK2 '''
     bl_idname = 'SvRotationNodeMK2'
     bl_label = 'Rotation'

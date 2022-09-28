@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
-class SvSurfaceElevateDegreeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceElevateDegreeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Elevate Surface Degree
     Tooltip: Elevate degree of a NURBS surface

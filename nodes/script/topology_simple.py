@@ -13,7 +13,7 @@ from bpy.props import StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
+class SvTopologySimple(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: topo
     Tooltip: manually supply topolgy for simple meshes

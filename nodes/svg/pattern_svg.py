@@ -60,7 +60,7 @@ class SvgPattern():
 
         return svg
 
-class SvSvgPatternNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgPatternNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Pattern SVG
     Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups

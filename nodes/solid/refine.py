@@ -18,7 +18,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvRefineSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Refine Solid
     Tooltip: Refine Solid by removing unnecessary edges

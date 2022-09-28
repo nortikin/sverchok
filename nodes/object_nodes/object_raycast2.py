@@ -47,7 +47,7 @@ class FakeObj(object):
             return [True, tv[0], tv[1], tv[2]]
 
 
-class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvOBJRayCastNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' RayCast Object '''
     bl_idname = 'SvOBJRayCastNodeMK2'
     bl_label = 'Object ID Raycast MK2'  # new is nonsense name

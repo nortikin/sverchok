@@ -23,7 +23,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidPolygonFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Polygon
     Tooltip: Make a Face of a Solid from each polygon of the mesh

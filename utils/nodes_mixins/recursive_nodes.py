@@ -70,7 +70,7 @@ class SvRecursiveNode():
 
     from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
     ...
-    class SvAwesomeNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+    class SvAwesomeNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     ...
     def sv_init(self, context):
         p1 = self.inputs.new('SvVerticesSocket', "Param1")

@@ -41,7 +41,7 @@ def fill_holes(vertices, edges, s):
     return (verts, edges, faces)
 
 
-class SvFillHolesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFillHolesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     '''Fills holes'''
     bl_idname = 'SvFillsHoleNode'
     bl_label = 'Fill Holes'

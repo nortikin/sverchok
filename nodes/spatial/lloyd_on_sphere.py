@@ -21,7 +21,7 @@ from sverchok.dependencies import scipy
 if scipy is None:
     add_dummy('SvLloydOnSphereNode', "Lloyd on Sphere", 'scipy')
 
-class SvLloydOnSphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloydOnSphereNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Sphere
     Tooltip: Redistribute 3D points on a sphere uniformly by use of Lloyd's algorithm

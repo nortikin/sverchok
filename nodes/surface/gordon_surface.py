@@ -16,7 +16,7 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.gordon import gordon_surface
 
-class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Gordon Surface Curves Net
     Tooltip: Generate a NURBS surface from a net of curves (a.k.a. Gordon Surface)

@@ -29,7 +29,7 @@ from sverchok.utils.logging import info, debug
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh as calc_mesh_normals
 
-class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshSelectNode(SverchCustomTreeNode, bpy.types.Node):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
     bl_label = 'Select Mesh Elements by Location'

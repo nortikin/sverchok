@@ -25,7 +25,7 @@ from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.math import falloff
 
-class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
+class SvProportionalEditNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Curved mask coeffs.'''
     bl_idname = 'SvProportionalEditNode'
     bl_label = 'Proportional Edit Falloff'

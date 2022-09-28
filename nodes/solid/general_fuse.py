@@ -21,7 +21,7 @@ else:
 
     import Part
 
-class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: General Union, Diff, Intersect
     Tooltip: Generalized Boolean Operations on Solids

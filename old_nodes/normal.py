@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
+class VectorNormalNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Find Vector's normals '''
     bl_idname = 'VectorNormalNode'
     bl_label = 'Vertex Normal'

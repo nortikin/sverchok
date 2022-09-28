@@ -117,7 +117,7 @@ CAST_FORMULAS = {
 
 
 
-class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCastNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: To Sphere, Prism, Cylinder
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier

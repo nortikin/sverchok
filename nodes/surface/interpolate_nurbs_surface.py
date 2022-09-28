@@ -17,7 +17,7 @@ if geomdl is None:
 else:
     from geomdl import fitting
     
-class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Surface Interpolate
     Tooltip: Interpolate NURBS Surface

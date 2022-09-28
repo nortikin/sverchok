@@ -15,7 +15,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
+class ListLengthNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List Length. Minimal level is 0.
     level 0: [ [[0,1,2]], [[10, 11, 12]] ] => [[2]]
     level 1: [ [[0,1,2]], [[10, 11, 12]] ] => [[1,1]]

@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-class RandomNode(bpy.types.Node, SverchCustomTreeNode):
+class RandomNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Random numbers 0.0-1.0.
     Count
     Seed

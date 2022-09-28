@@ -20,7 +20,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLatticePropsNode(SverchCustomTreeNode, bpy.types.Node):
     '''Lattice object props'''
     bl_idname = 'SvLatticePropsNode'
     bl_label = 'Lattice Props'

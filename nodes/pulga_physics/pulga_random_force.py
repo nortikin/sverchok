@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.pulga_physics_modular_core import SvRandomForce
 
-class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaRandomForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Fortuitous Force
     Tooltip: Applies a random force that can variate with time

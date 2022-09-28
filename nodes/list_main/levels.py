@@ -26,7 +26,7 @@ from sverchok.data_structure import changable_sockets, updateNode
 from sverchok.utils.listutils import preobrazovatel
 
 
-class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
+class ListLevelsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Lists Levels node '''
     bl_idname = 'ListLevelsNode'
     bl_label = 'List Delete Levels'

@@ -22,7 +22,7 @@ if scipy is None:
 else:
     from scipy.spatial import SphericalVoronoi
 
-    class SvExVoronoiSphereNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExVoronoiSphereNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Voronoi Sphere
         Tooltip: Generate Voronoi diagram on the surface of the sphere

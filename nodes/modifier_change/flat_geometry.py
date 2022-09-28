@@ -74,7 +74,7 @@ def perspective_projection(verts_in, plane_in, distance):
     return verts_out, z_coord_out
 
 
-class SvFlatGeometryNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFlatGeometryNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: 3D to 2D
     Tooltip: Projection of 3d vertices into defined plane

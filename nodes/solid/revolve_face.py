@@ -24,7 +24,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidFaceRevolveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFaceRevolveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Revolution
     Tooltip: Make a Solid of revolution from a Face

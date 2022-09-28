@@ -157,7 +157,7 @@ def secondary_type_assesment(item):
             return "SvColorSocket"
     return None
 
-class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGetPropNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Get Property '''
     bl_idname = 'SvGetPropNode'
     bl_label = 'Get Property'
@@ -208,7 +208,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
-class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSetPropNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Set Property '''
     bl_idname = 'SvSetPropNode'
     bl_label = 'Set Property'

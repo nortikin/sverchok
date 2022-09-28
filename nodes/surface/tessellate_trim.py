@@ -18,7 +18,7 @@ from sverchok.utils.surface import SvSurface
 # since Blender 2.81 only. So the node will not be available in
 # Blender 2.80.
 
-class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExTessellateTrimSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Tessellate Trim Surface
     Tooltip: Tessellate a surface with trimming curve

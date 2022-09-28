@@ -192,7 +192,7 @@ def color_mix(params, constant, matching_f):
 
     return result
 
-class SvColorMixNode(bpy.types.Node, SverchCustomTreeNode):
+class SvColorMixNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Colors Math
     Tooltip: Mix colors with various methods.\n\tIn: Factor [0.0-1.0], Color A, Color B\n\tParams: Choise ([Mix]/Darken/Multiply/Burn,Add and other)\n\tOut: Color

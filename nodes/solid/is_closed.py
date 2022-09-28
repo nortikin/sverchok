@@ -18,7 +18,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvIsSolidClosedNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIsSolidClosedNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Closed Solid
     Tooltip: Check if the Solid object is closed

@@ -18,7 +18,7 @@ GENERIC = 'GEN'
 CONTROL1_SOCKET = 1
 CONTROL2_SOCKET = 2
 
-class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBezierSplineNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bezier Hermite Spline
     Tooltip: Generate Bezier curve spline segment

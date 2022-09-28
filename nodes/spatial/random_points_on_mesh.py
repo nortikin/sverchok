@@ -311,7 +311,7 @@ class TriangulatedMesh:
         return [values[i] if i <= len(values) - 1 else values[len(values) - 1] for i in self._old_face_indexes_per_tri]
 
 
-class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
+class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Random points on mesh
     Tooltip: distribute points on given mesh

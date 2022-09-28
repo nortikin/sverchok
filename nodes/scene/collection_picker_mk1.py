@@ -16,7 +16,7 @@ from bpy.props import BoolProperty;
 # pylint: disable=c0103
 
 
-class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
+class SvCollectionPicker(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: SvCollectionPicker

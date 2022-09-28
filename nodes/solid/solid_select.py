@@ -26,7 +26,7 @@ else:
     from FreeCAD import Base
     from sverchok.utils.solid import SvSolidTopology
 
-class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Select Solid Elements
     Tooltip: Select Vertexes, Edges or Faces of Solid object by location

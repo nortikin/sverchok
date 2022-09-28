@@ -121,7 +121,7 @@ class SvFontFileImporterOpV28(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvTypeViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     '''Create renderable Text.
     In: Text, Matrix
     Params: base name, Collection, font size, alignment, char/word/line spacing, offset, extrude, bevel

@@ -24,7 +24,7 @@ from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
 from sverchok.utils.math import all_falloff_types, falloff_array
 from sverchok.utils.kdtree import SvKdTree
 
-class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvAttractorFieldNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Attractor Field
     Tooltip: Generate scalar and vector attraction fields

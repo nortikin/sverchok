@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, fixed_iter
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIndexToMaskNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Create mask list from index:
     [0,3,4,7] (len=10) => [ 0-T, F,F, 3-T, 4-T, F,F, 7-T, F,F ]
     '''

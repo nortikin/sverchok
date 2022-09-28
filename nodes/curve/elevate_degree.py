@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvCurveElevateDegreeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveElevateDegreeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Elevate Degree
     Tooltip: Elevate degree of a NURBS curve

@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 
 
-class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshJoinNode(SverchCustomTreeNode, bpy.types.Node):
     '''MeshJoin, join many mesh into on mesh object'''
     bl_idname = 'SvMeshJoinNode'
     bl_label = 'Mesh Join'

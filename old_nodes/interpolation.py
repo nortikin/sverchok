@@ -96,7 +96,7 @@ def eval_spline(splines, tknots, t_in):
     return out
 
 
-class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInterpolationNode(SverchCustomTreeNode, bpy.types.Node):
     '''Basic Vect. Interpolation'''
     bl_idname = 'SvInterpolationNode'
     bl_label = 'Vector Interpolation'

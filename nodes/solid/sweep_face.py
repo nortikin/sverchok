@@ -27,7 +27,7 @@ else:
     from FreeCAD import Base
     from Part import BRepOffsetAPI 
 
-class SvSweepSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Revolution
     Tooltip: Make a Solid by sweeping a Face along Curve

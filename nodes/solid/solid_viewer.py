@@ -245,7 +245,7 @@ else:
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 
-    class SvSolidViewerNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: solid viewer
         Tooltip: drawing solids on 3d view

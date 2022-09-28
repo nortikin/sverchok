@@ -21,7 +21,7 @@ else:
 
     import Part
 
-class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Union, Diff, Intersect
     Tooltip: Perform Boolean Operations on Solids

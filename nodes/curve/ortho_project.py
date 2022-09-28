@@ -17,7 +17,7 @@ if scipy is None:
     add_dummy('SvExOrthoProjectCurveNode', "Ortho Project on Curve", 'scipy')
 else:
 
-    class SvExOrthoProjectCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExOrthoProjectCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Ortho Project Curve
         Tooltip: Find the orthogonal projection of the point onto the curve

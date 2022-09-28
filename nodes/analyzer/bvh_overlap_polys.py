@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
+class SvBvhOverlapNodeNew(SverchCustomTreeNode, bpy.types.Node):
     ''' BVH Tree Overlap New '''
     bl_idname = 'SvBvhOverlapNodeNew'
     bl_label = 'Overlap Polygons'

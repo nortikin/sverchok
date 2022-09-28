@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.geom import Triangle
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
-class SvInscribedCircleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Inscribed Circle
     Tooltip: Generate inscribed circles for triangular faces

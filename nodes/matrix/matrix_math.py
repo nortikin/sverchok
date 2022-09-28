@@ -94,7 +94,7 @@ def general_op(mat_list, operation):
 
     return out_matrix_list
 
-class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixMathNode(SverchCustomTreeNode, bpy.types.Node):
     '''Math operation on matrices.
     In: Matrixes A, B
     Params: Operation [Multiply (Pre/Post)]/Invert/Filter (T,R,S)/Basis

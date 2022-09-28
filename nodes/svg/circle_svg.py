@@ -74,7 +74,7 @@ class SvgCircle():
         svg += '/>'
         return svg
 
-class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgCircleNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ellipse SVG
     Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups

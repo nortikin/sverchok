@@ -6,7 +6,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.adaptive_curve import populate_curve, MinMaxPerSegment, TotalCount
 
-class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Adaptive Plot Curve
     Tooltip: Adaptive Plot Curve

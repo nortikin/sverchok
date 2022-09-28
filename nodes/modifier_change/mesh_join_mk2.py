@@ -34,7 +34,7 @@ def mesh_join(vertices, edges, polygons):
 
 
 class SvMeshJoinNodeMk2(
-        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+        ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Join Meshes
     Tooltip: Join many mesh into on mesh object

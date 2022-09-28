@@ -60,7 +60,7 @@ mat_t = Matrix().Identity(4)  # pre-allocate once for performance (translation)
 mat_s = Matrix().Identity(4)  # pre-allocate once for performance (scale)
 
 
-class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixInNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Loc, Rot, Scale, Angle
     Tooltip: Generate matrix from various components

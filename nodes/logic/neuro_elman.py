@@ -163,7 +163,7 @@ class SvNeuroElman:
         prop['wB'] = weights_b
 
 
-class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNeuroElman1LNode(SverchCustomTreeNode, bpy.types.Node):
     ''' 
         Triggers: Neuro Elman 1 Layer 
         Tooltip: Join ETALON data - after animation learning - disconnect ETALON

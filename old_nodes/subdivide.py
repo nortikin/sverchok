@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
-class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSubdivideNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: subdivide
     Tooltip: Subdivide edges and faces

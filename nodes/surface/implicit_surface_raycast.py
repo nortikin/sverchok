@@ -53,7 +53,7 @@ else:
         p = init + t*direction
         return t, p
 
-    class SvExImplSurfaceRaycastNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Implicit Surface Raycast
         Tooltip: Raycast onto implicit surface (defined by scalar field)

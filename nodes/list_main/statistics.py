@@ -139,7 +139,7 @@ class SvStatisticsCallback(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListStatisticsNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Sum, Avg, Min, Max
     Tooltip: Statistical quantities: sum, sum of squares/inversions, product, average (def), geometric/harmonic mean, variance, standard deviation/error, root mean square, skewness, kurtosis, min, max, range, median, percentile, histogram, count

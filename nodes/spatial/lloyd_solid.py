@@ -21,7 +21,7 @@ if scipy is None or FreeCAD is None:
 if FreeCAD is not None:
     import Part
 
-class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloydSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Solid
     Tooltip: Redistribute 3D points in the volume of a Solid body uniformly by use of Lloyd's algorithm

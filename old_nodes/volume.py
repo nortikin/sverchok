@@ -23,7 +23,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.data_structure import dataCorrect, Vector_generate
 
 
-class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVolumeNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Volume '''
     bl_idname = 'SvVolumeNode'
     bl_label = 'Volume'

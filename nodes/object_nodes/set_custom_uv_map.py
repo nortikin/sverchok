@@ -67,7 +67,7 @@ def set_uv_edit_mode(verts: list, faces: list, mesh: bpy.types.Mesh, uv_name: st
                 bml[uv_layer].uv = uv
 
 
-class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode):
+class SvSetCustomUVMap(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Set Custom UV Map to Blender mesh
 

@@ -15,7 +15,7 @@ from sverchok.utils.math import (
     )
 from sverchok.utils.field.scalar import SvScalarFieldLambda
 
-class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Formula
     Tooltip: Generate scalar field by formula

@@ -64,7 +64,7 @@ def make_plane(stepsx, stepsy, center, direction, separate):
     return verts, edges, polys
 
 
-class SvPlaneNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
+class SvPlaneNodeMK2(DraftMode, SverchCustomTreeNode, bpy.types.Node):
     ''' Plane MK2 '''
     bl_idname = 'SvPlaneNodeMK2'
     bl_label = 'Plane MK2'

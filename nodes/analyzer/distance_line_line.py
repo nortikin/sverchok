@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, list_match_func, list_match_mode
 from sverchok.utils.geom import distance_line_line
 
 
-class SvDistancetLineLineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDistancetLineLineNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Intersect, Trim
     Tooltip: Distance Line to line and closest points in the lines

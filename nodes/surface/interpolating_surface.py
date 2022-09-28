@@ -14,7 +14,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurb
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.math import rbf_functions
 
-class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInterpolatingSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Loft / Interpolating surface from curves
     Tooltip: Generate interpolating surface across several curves

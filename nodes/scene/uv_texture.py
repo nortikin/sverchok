@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.handle_blender_data import keep_enum_reference
 
 
-class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvUVtextureNode(SverchCustomTreeNode, bpy.types.Node):
     ''' UV texture node '''
     bl_idname = 'SvUVtextureNode'
     bl_label = 'UVtextures'

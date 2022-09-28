@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 from sverchok.utils.geom import circle_approximation
 
-class SvCircleApproxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCircleApproxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Circle Fit
     Tooltip: Fit a circle through vertices

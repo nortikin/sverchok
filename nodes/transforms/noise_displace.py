@@ -178,7 +178,7 @@ for idx, new_type in enumerate(noise_numpy_types.keys()):
 noise_func = {'NORMAL': v_normal, 'VECTOR': v_noise}
 noise_func_numpy = {'NORMAL': v_normal_numpy, 'VECTOR': v_noise_numpy}
 
-class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseDisplaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Add Noise to verts
     Tooltip: Move input verts/mesh with a noise values.

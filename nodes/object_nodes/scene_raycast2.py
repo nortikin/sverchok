@@ -21,7 +21,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
-class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvSCNRayCastNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' RayCast Scene '''
     bl_idname = 'SvSCNRayCastNodeMK2'
     bl_label = 'Scene Raycast MK2' #new is nonsense name

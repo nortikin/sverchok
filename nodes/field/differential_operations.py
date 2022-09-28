@@ -38,7 +38,7 @@ def get_sockets(op_id):
             return inputs, outputs
     raise Exception("unsupported operation")
 
-class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFieldDiffOpsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Field Differential Operations
     Tooltip: Field differential operations

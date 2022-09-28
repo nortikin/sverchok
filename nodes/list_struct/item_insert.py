@@ -30,7 +30,7 @@ import numpy as np
 # by Linus Yng
 
 
-class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListItemInsertNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: List Item In
     Tooltip: Insert elements in list at desired indexes

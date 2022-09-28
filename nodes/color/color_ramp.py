@@ -43,7 +43,7 @@ def color_ramp_mapper(params, constant, matching_f):
             result.append([evaluate(v)[:-1] for v in flist])
     return result
 
-class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode):
+class SvColorRampNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Color Gradient
     Tooltip:  Map input list to a defined color.\n\tIn: Value\n\tParams: Color Stops, Use Alpha [On]/Off, Update Node (Btn)\n\tOut: Color

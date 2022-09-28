@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets)
 from numpy import ndarray
 
-class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
+class ListReverseNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Invert list order
     Tooltip: Reverse the elements order of a list\n\t[[1,2,3,4]] => [[4,3,2,1]]

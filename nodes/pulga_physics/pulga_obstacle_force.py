@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvObstaclesBVHForce
 
-class SvPulgaObstacleForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaObstacleForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Colliding Obstacles
     Tooltip: Objects that collide with particles

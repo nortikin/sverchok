@@ -28,7 +28,7 @@ def align(vectors, position, axis):
         return (x_min + x_max) / 2
 
 
-class SvAlignMeshByMesh(TransformNode, bpy.types.Node, SverchCustomTreeNode):
+class SvAlignMeshByMesh(TransformNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Align mesh
     relatively to bounding box of base mesh

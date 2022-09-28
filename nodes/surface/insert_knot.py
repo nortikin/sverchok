@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
-class SvSurfaceInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceInsertKnotNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Insert Knot
     Tooltip: Insert a knot in a NURBS surface

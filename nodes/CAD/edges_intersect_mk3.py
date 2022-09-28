@@ -36,7 +36,7 @@ modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
 
 
 class SvIntersectEdgesNodeMK3(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     bl_idname = 'SvIntersectEdgesNodeMK3'
     bl_label = 'Intersect Edges'

@@ -40,7 +40,7 @@ def make_solids(solid, face_surfaces):
         cut_faces.append(item)
     return solids, cut_faces
 
-class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSplitSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Split Solid Face
     Tooltip: Split one Solid into several Solids by cutting it with a Face

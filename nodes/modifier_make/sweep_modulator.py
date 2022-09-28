@@ -19,7 +19,7 @@ def interp_v3l_v3v3(a, b, t):
     else: return ((1.0 - t) * a) + (t * b)
 
 
-class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
+class SvSweepModulator(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: SvSweepModulator

@@ -31,7 +31,7 @@ def get_bl_crop_mesh_edges(verts, edges, verts_crop, faces_crop, mode, epsilon):
     return [v.to_3d() for v in verts_new], edges_new
 
 
-class SvCropMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvCropMesh2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Crop mesh by another mesh
     Tooltip: Can create holes or crop mesh by boundary contours

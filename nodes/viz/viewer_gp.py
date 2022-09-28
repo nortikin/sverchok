@@ -113,7 +113,7 @@ def ensure_frame_availability(layer, frame_number):
     return frame
 
 
-class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
+class SvGreasePencilStrokes(SverchCustomTreeNode, bpy.types.Node):
     '''Make GreasePencil Strokes.
     In: frame, coordinates, cyclic, pressure, Color Stroke, Color Fill
     Params: Collection

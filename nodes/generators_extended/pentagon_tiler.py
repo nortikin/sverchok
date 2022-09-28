@@ -50,7 +50,7 @@ ANGLE_UNITS_ITEMS = [
     ("DEG", "Degrees", "Define angles in degrees", 1),
 ]
 
-class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPentagonTilerNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Hexagonal, Triangular, Orthogonal,
     Tooltip: Create polygon array assambled to fill the plane. Triangles, Hexagons and Squares\n\tIn: Ang, NumX/Y, A,B,a,b\n\tPars: Type (Type: 1 2, 1 4, 1 2 X, 1 2 2, 2 1, 3 3, 4 4, 5 6,14,15), Rotation (X/Y/Pentagon)\n\tOut: Verts, Edges, Polygons

@@ -18,7 +18,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, REFINE_TRIVIAL, REFINE_DISTRIBUTE, REFINE_BISECT
 from sverchok.utils.curve.algorithms import SvCurveLengthSolver
 
-class SvRefineNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRefineNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Refine NURBS curve
     Tooltip: Add more control points to a NURBS curve

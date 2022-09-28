@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvExtrudeCurvePointSurface
 
-class SvExtrudeCurvePointNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeCurvePointNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude Curve to Point
     Tooltip: Generate a (conic) surface by extruding a curve towards a point

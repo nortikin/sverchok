@@ -41,7 +41,7 @@ else:
             return {'FINISHED'}
 
 
-    class SvApproxSubdtoNurbsNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Approximate Subd to Nurbs
         Tooltip: Approximate Subd to Nurbs

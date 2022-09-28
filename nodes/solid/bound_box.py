@@ -19,7 +19,7 @@ else:
     from FreeCAD import Base
     import Part
 
-class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidBoundBoxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Bound Box
     Tooltip: Calculate bounding box of a Solid object

@@ -27,7 +27,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, Vector_genera
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.geom import LinearSpline, CubicSpline
 
-class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongPathNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Bend Path
     Tooltip: Bend mesh along path (1-D spline)

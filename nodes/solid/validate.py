@@ -18,7 +18,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvSolidValidateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidValidateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Validate Fix Solid
     Tooltip: Validate or fix Solid objects

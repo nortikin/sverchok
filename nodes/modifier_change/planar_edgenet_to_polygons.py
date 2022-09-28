@@ -328,7 +328,7 @@ def get_filled_graph(data_in):
     return verts_out, polys_out
 
 
-class SvPlanarEdgenetToPolygons(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvPlanarEdgenetToPolygons(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Planar edgenet to polygons
     Tooltip: Something like fill holes node

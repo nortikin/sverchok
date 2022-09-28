@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, map_at_level, unzip_dict_recursi
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import sort_curves_for_concat, SvCurvesSortResult
 
-class SvSortCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSortCurvesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sort Curves
     Tooltip: Sort a list of Curve objects so that they can be concatenated

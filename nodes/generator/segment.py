@@ -124,7 +124,7 @@ def iter_last(l):
     return chain(l, cycle([l[-1]]))
 
 
-class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
+class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
     """ Triggers: 2pt Line. [default]
     Cuts/Steps [Cuts]:
         Cuts - Number of steps

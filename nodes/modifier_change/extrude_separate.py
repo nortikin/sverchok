@@ -36,7 +36,7 @@ IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
 
-class SvExtrudeSeparateNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeSeparateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Inset like behaviour '''
     bl_idname = 'SvExtrudeSeparateNode'
     bl_label = 'Extrude Separate Faces'

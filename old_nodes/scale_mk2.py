@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
-class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvScaleNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Scale MK2 '''
     bl_idname = 'SvScaleNodeMK2'
     bl_label = 'Scale'

@@ -50,7 +50,7 @@ def get_bevel_verts(bm, mask):
     return b_verts
 
 
-class SvBevelNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvBevelNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bevel, Round, Smooth
     Tooltip: Bevel vertices, edges and faces. Create rounded corners.

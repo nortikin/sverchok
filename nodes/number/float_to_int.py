@@ -21,7 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from numpy import ndarray
 
-class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
+class Float2IntNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Converts incoming Float values to the nearest whole number (Integer).
     float: input List() of float values
     [[2.07]] -> [[2]]

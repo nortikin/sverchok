@@ -8,7 +8,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.math import coordinate_modes
 from sverchok.utils.field.scalar import SvVectorFieldDecomposed
 
-class SvDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDecomposeVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Decompose Vector Field
     Tooltip: Decompose vector field into three scalar fields

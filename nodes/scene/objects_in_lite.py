@@ -31,7 +31,7 @@ class SvObjLiteCallback(bpy.types.Operator, SvGenericNodeLocator):
         node.process_node(context)
 
 
-class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
+class SvObjInLite(SverchCustomTreeNode, bpy.types.Node):
     ''' Objects Input Lite'''
     bl_idname = 'SvObjInLite'
     bl_label = 'Objects in Lite'

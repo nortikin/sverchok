@@ -17,7 +17,7 @@ if scipy is None:
     add_dummy('SvExNearestPointOnSurfaceNode', "Nearest Point on Surface", 'scipy')
 else:
 
-    class SvExNearestPointOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExNearestPointOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Nearest Point on Surface
         Tooltip: Find the point on the surface which is the nearest to the given point

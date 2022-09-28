@@ -16,7 +16,7 @@ if skimage is None:
 else:
     from skimage import measure
 
-    class SvExScalarFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExScalarFieldGraphNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Scalar Field Graph
         Tooltip: Generate a graphical representation of the scalar field

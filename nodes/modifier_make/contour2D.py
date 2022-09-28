@@ -422,7 +422,7 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
     return list_vert_x, list_vert_y, list_vert_z, edg_list
 
 
-class SvContourNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''C2 Offset vert_line'''
     bl_idname = 'SvContourNode'
     bl_label = 'Contour 2D'

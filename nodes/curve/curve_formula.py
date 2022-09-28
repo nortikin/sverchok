@@ -17,7 +17,7 @@ from sverchok.utils.math import (
     )
 from sverchok.utils.curve import SvLambdaCurve
 
-class SvCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Formula
     Tooltip: Generate curve by formula

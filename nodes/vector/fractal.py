@@ -74,7 +74,7 @@ avail_noise = enum_from(noise_options)
 avail_fractal = enum_from(fractal_options)
 
 
-class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFractal(SverchCustomTreeNode, bpy.types.Node):
     '''Vector Fractal node. [default]
     In: Vertices, Seed, HFactor, Lacunarity, Octaves
     Params: Type1 ([Fractal]/Terrain, Rygded, Hybrid), Type2 ([Perlin]/Blender/Voronoi/CellNoise)

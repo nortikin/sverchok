@@ -22,7 +22,7 @@ from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, describe_data_shape
 
-class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDataShapeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Shape
     Tooltip: Inspect shape of input data

@@ -25,7 +25,7 @@ else:
     import Part
     from FreeCAD import Base
 
-class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidWireFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Wire Curve
     Tooltip: Make a Face of a Solid from it's boundary edges (wire) defined by one or several Curves

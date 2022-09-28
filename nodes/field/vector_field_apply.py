@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.vector import SvVectorField
 
-class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Apply
     Tooltip: Apply Vector Field to vertices

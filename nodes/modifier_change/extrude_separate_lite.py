@@ -28,7 +28,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
 class SvExtrudeSeparateLiteNode(
-        ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+        ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Inset like behaviour but way different '''
     bl_idname = 'SvExtrudeSeparateLiteNode'
     bl_label = 'Extrude Separate Faces Lite'

@@ -12,7 +12,7 @@ else:
     from sverchok.data_structure import match_long_repeat as mlr, fullList
 
 
-    class SvChamferSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvChamferSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Straight Bevel
         Tooltip: Sraight cut in solid edge

@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.coons import coons_surface, GENERIC, NURBS_ONLY, NURBS_IF_POSSIBLE
 
-class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Coons Patch / Surface form four curves
     Tooltip: Generate a surface (Coons Patch) from four boundary curves

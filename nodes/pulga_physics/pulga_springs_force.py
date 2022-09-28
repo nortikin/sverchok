@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvSpringsForce
 
-class SvPulgaSpringsForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaSpringsForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Flexible coils
     Tooltip: Creates Springs (Flexible coils) from edges index

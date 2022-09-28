@@ -32,7 +32,7 @@ from sverchok.utils.listutils import (
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvListInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvListInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     ''' Create a flat list of Integers, Floats, or Vectors.
     int: [[1,5,42]],
     float: [[1.0, -5.42, 12.0]]

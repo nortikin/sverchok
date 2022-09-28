@@ -53,7 +53,7 @@ def coplanar_pols(val, orig_val, threshold):
     else:
         return False
 
-class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSelectSimilarNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Similar Sel
     Tooltip: Select vertices, edges, faces similar to selected ones

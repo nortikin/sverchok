@@ -109,7 +109,7 @@ class SvSwitchPropertyGroup(bpy.types.PropertyGroup):
             raise Exception("Unknown mode: {}".format(mode))
 
 
-class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRangeSwitchNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Switch, Range
     Tooltip: Switches state based on a value relative to a value range.

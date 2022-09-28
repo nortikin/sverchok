@@ -28,7 +28,7 @@ class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
         updateNode(node, context)
 
 
-class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMultiCacheNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Store List
     Tooltip: Stores a Numerical List in multiple memory buckets

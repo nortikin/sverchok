@@ -11,7 +11,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvRevolutionSurface
 
-class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Revolution Surface
     Tooltip: Generate a surface of revolution (similar to Spin / Lathe modifier)

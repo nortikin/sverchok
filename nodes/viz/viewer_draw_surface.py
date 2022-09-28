@@ -85,7 +85,7 @@ class SvBakeSurfaceOp(bpy.types.Operator, SvGenericNodeLocator):
             item.bake(f"Sv_Surface_{i}")
         return {'FINISHED'}
 
-class SvSurfaceViewerDrawNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: preview surface
     Tooltip: Drawing surfaces on 3D view.\n\tIn: Surface, Resolution U/V\n\tParams: Display/Color/Size for Vertices, Edges, Surface, Control Points, Control Net

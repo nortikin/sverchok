@@ -15,7 +15,7 @@ if scipy is None:
     add_dummy('SvExRaycastSurfaceNode', "Raycast on Surface", 'scipy')
 else:
 
-    class SvExRaycastSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExRaycastSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Raycast on Surface
         Tooltip: Raycast on Surface

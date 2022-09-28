@@ -440,7 +440,7 @@ def generate_batch_shader(node, data):
     
     return batch, shader
 
-class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
+class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     
     """
     Triggers: Console 

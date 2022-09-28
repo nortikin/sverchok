@@ -20,7 +20,7 @@ if scipy is None:
     add_dummy('SvExCrossCurveSurfaceNode', "Intersect Curve with Surface", 'scipy')
 else:
 
-    class SvExCrossCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Intersect Curve Surface
         Tooltip: Intersect Curve Surface

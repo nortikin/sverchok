@@ -6,7 +6,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.modules.geom_sorcar import make_sorcar_logo
 
-class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
+class SvReceiveFromSorcarNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: sorcar sc receive
     Tooltip: Receive Mesh Data From Sorcar

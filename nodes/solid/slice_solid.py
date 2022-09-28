@@ -16,7 +16,7 @@ else:
     from sverchok.utils.curve.freecad import SvSolidEdgeCurve
     from sverchok.utils.surface.freecad import SvSolidFaceSurface
 
-    class SvSliceSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSliceSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Apply Matrix to Solid
         Tooltip: Transform Solid with Matrix

@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 import numpy as np
 
-class SvMaskToIndexNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMaskToIndexNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Index list from mask list
     Tooltip: Splits the true and false indices from a mask list\n\t[0,0,1,0,1,1] =>\n\t\tTrue Index: [2,4,5]\n\t\tFalse Index: [0,1,3]

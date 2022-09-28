@@ -54,7 +54,7 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     return sv_object
 
 
-class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvInstancerNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Copy by mesh data from object input '''
     bl_idname = 'SvInstancerNodeMK2'
     bl_label = 'Obj instancer MK2'

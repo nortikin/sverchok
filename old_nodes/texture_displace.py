@@ -38,7 +38,7 @@ mapper_funcs = {
     'Texture Matrix': lambda v, m: m @ v
 }
 
-class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDisplaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Add texture to verts
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier

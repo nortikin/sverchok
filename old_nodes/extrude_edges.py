@@ -29,7 +29,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 def is_matrix(lst):
     return len(lst) == 4 and len(lst[0]) == 4
 
-class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeEdgesNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Extrude edges '''
     bl_idname = 'SvExtrudeEdgesNode'
     bl_label = 'Extrude Edges'

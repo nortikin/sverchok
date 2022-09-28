@@ -27,7 +27,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvSymmetrizeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSymmetrizeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Symmetrize mesh '''
     bl_idname = 'SvSymmetrizeNode'
     bl_label = 'Symmetrize Mesh'

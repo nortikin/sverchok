@@ -10,7 +10,7 @@ from sverchok.utils.field.vector import SvBendAlongCurveField
 T_MIN_SOCKET = 1
 T_MAX_SOCKET = 2
 
-class SvBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bend Along Curve
     Tooltip: Generate a vector field which bends the space along the given curve.

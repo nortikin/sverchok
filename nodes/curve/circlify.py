@@ -14,7 +14,7 @@ if circlify is None:
     add_dummy('SvExCirclifyNode', "Circlify", 'circlify')
 else:
 
-    class SvExCirclifyNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Circlify
         Tooltip: Generate circles packed into a larger circle

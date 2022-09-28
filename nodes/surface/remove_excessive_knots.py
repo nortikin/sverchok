@@ -14,7 +14,7 @@ from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.algorithms import remove_excessive_knots
 
-class SvSurfaceRemoveExcessiveKnotsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceRemoveExcessiveKnotsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Remove Excessive Knots
     Tooltip: Remove a knot from a NURBS surface

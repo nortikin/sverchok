@@ -54,7 +54,7 @@ class FakeObj(object):
             return [True, tv[0], tv[1], tv[2]]
 
 
-class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
+class SvOBJInsolationNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Insolation by RayCast Object '''
     bl_idname = 'SvOBJInsolationNode'
     bl_label = 'Object ID Insolation'

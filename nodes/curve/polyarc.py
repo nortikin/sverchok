@@ -9,7 +9,7 @@ from sverchok.utils.geom import circle_by_start_end_tangent
 from sverchok.utils.curve import SvCircle, SvLine, SvConcatCurve
 from sverchok.utils.curve.algorithms import concatenate_curves
 
-class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPolyArcNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Poly Arc
     Tooltip: Generate a curve made of series of circular arcs

@@ -5,7 +5,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
 
-class SvCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveRangeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Domain / Range
     Tooltip: Output minimum and maximum values of T parameter allowed by the curve

@@ -17,7 +17,7 @@ if skimage is None:
 else:
     from skimage import measure
 
-    class SvExMarchingSquaresNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Marching Squares
         Tooltip: Marching Squares

@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvLine
 
-class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLineCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Line Segment
     Tooltip: Generate straight line curve object

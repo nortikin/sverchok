@@ -13,7 +13,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, rotate_list, repeat_last_for_length,  fixed_iter
 
 
-class SvSplitEdgesMk2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvSplitEdgesMk2Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Split Edges
     Tooltip: Split each edge of a mesh in two

@@ -15,7 +15,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat, fullList
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
-class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvNurbsCurveOutNode(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     """
     Triggers: Output NURBS Curve
     Tooltip: Create Blender's NURBS Curve object.\n\tIn: ControlPoints, Weights, Degree\n\tParams: base name, Material, Cyclic (On/Off), Endpoint\n\tOut: Objects

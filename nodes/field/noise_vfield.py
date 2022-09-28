@@ -14,7 +14,7 @@ from sverchok.utils.field.vector import SvNoiseVectorField
 
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
-class SvNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Noise Vector Field
     Tooltip: Noise Vector Field

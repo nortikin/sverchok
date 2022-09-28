@@ -47,7 +47,7 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         return {'RUNNING_MODAL'}
 
 
-class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFilePathNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: OS file path
     Tooltip:  get path file from OS

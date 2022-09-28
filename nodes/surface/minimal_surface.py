@@ -17,7 +17,7 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    class SvExMinimalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Minimal Surface
         Tooltip: Minimal Surface

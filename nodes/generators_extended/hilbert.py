@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
+class HilbertNode(SverchCustomTreeNode, bpy.types.Node):
     '''Hilbert line.
     In: Level, Size
     Out: Vertices, Edges

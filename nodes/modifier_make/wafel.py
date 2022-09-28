@@ -35,7 +35,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 
-class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
+class SvWafelNode(SverchCustomTreeNode, bpy.types.Node):
     '''Making vertical wafel - much raw node'''
     bl_idname = 'SvWafelNode'
     bl_label = 'Wafel'

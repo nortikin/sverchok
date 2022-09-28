@@ -10,7 +10,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 
 from sverchok.utils.curve import SvEllipse
 
-class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEllipseCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ellipse Curve
     Tooltip: Generate ellipse curve

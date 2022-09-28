@@ -25,7 +25,7 @@ from sverchok.utils.pulga_physics_modular_core import SvAttractionForce
 from sverchok.dependencies import scipy, Cython
 
 
-class SvPulgaAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaAttractionForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Attraction among vertices
     Tooltip: Attraction between vertices

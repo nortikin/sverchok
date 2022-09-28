@@ -25,7 +25,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvSeparateMeshNodeMK2(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSeparateMeshNodeMK2(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''Separate Loose mesh parts'''
     bl_idname = 'SvSeparateMeshNodeMK2'
     bl_label = 'Separate Loose Parts MK2'

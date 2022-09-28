@@ -21,7 +21,7 @@ from sverchok.utils.math import rbf_functions
 if scipy is None:
     add_dummy('SvMeshSurfaceFieldNode', "Mesh Smoothed Surface Field", 'scipy')
 
-class SvMeshSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Mesh Surface Field
     Tooltip: Generate scalar field, defining a smoothed surface of the mesh

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e, second_as_first_cycle as safc)
 
 
-class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' BMesh Ops '''
     bl_idname = 'SvBMOpsNodeMK2'
     bl_label = 'BMesh Ops 2'

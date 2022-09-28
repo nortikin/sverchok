@@ -68,7 +68,7 @@ numpy_func_dict = {
     "OR": lambda x: np.any(x, axis=0),
     "AND": lambda x: np.all(x, axis=0)
 }
-class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
+class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Average, Sum, Min...
     Tooltip: Operations with list: minimum, maximum, average, sum, cumulative cum, logical or, logical and

@@ -42,7 +42,7 @@ def make_hull(vertices):
     return (verts, faces)
 
 
-class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConvexHullNode(SverchCustomTreeNode, bpy.types.Node):
     '''Create convex hull'''
     bl_idname = 'SvConvexHullNode'
     bl_label = 'Convex Hull'

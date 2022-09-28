@@ -60,7 +60,7 @@ def flip_to_match_1st(geom, reverse):
     return verts, edges, b_faces
 
 
-class SvFlipNormalsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFlipNormalsNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Flip face normals '''
     bl_idname = 'SvFlipNormalsNode'
     bl_label = 'Flip Normals'

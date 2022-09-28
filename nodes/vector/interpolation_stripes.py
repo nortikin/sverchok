@@ -114,7 +114,7 @@ vector_out = {
 
 
 
-class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInterpolationStripesNode(SverchCustomTreeNode, bpy.types.Node):
     '''Performs cubic spline STRIPES interpolation based on input points.
     In: Vertices, Interval X/Y, Attractor (vert)
     Params: Factor,Scale,Function(simple/mult/sin/cos/pow/sqrt)

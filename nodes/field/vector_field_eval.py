@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-class SvVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldEvaluateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Evaluate
     Tooltip: Evaluate Vector Field at specific point(s)

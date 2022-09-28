@@ -35,7 +35,7 @@ def get_bl_merge_mesh(verts, faces, epsilon):
            [min(fi) for fi in face_indexes if fi], [len(fi) - 1 for fi in face_indexes if fi]
 
 
-class SvMergeMesh2DLite(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMergeMesh2DLite(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Merge 2D mesh into one
     Tooltip: Takes in account intersections and holes

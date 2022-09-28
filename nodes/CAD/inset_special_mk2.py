@@ -30,7 +30,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 class SvInsetSpecialMk2(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: or Extrude (Fast)
     Tooltip: Fast Inset or extrude geometry

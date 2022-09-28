@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class RandomVectorNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' rv Random unit Vec'''
     bl_idname = 'RandomVectorNodeMK2'
     bl_label = 'Random Vector MK2'

@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvOffsetCurve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
 
-class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvOffsetCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Offset Curve
     Tooltip: Offset a Curve along it's normal, binormal or custom vector

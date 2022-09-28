@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat, fullList, get_data_nesting_level,
                                      describe_data_shape)
 
-class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMaterialIndexNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: material index
     Tooltip: Set material index per object face

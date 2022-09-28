@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBMtoElementNode(SverchCustomTreeNode, bpy.types.Node):
     ''' BMesh Decompose '''
     bl_idname = 'SvBMtoElementNode'
     bl_label = 'BMesh Elements'

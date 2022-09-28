@@ -10,7 +10,7 @@ from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import split_curve
 
-class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSplitCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Split Curve
     Tooltip: Split one curve into several subdomains

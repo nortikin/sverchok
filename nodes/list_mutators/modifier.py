@@ -82,7 +82,7 @@ func_dict = {no_space(k): v for _, _, k, v in node_item_list}
 num_inputs = {no_space(k): v for v, _, k, _ in node_item_list}
 
 
-class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListModifierNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List Modifier:
 Set
 Ordered Set by input

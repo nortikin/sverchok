@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvSurface
 
-class SvSurfaceGaussCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceGaussCurvatureNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Gauss Curvature
     Tooltip: Calculate Gauss curvature for the surface at the specified point

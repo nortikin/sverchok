@@ -26,7 +26,7 @@ else:
         return shape
 
 
-    class SvSolidDistanceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidDistanceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Closest point on Solids
         Tooltip: Distance between solids. Closest point on a solid surface, accepts also solid faces and solid edges

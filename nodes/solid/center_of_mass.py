@@ -18,7 +18,7 @@ if FreeCAD is None:
 else:
     import Part
 
-class SvSolidCenterOfMassNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Center of Mass
     Tooltip: Calculate center of mass (barycenter) of a Solid object

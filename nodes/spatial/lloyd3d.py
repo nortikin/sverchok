@@ -18,7 +18,7 @@ from sverchok.dependencies import scipy
 if scipy is None:
     add_dummy('SvLloyd3dNode', "Lloyd 3D", 'scipy')
 
-class SvLloyd3dNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Mesh
     Tooltip: Redistribute 3D points within bounding box or sphere uniformly by use of Lloyd's algorithm

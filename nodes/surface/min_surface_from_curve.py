@@ -21,7 +21,7 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    class SvExMinSurfaceFromCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExMinSurfaceFromCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Minimal Surface from Curve
         Tooltip: Generate Minimal Surface from circle-like curve

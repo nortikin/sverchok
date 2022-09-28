@@ -20,7 +20,7 @@ if skimage is None:
 else:
     from skimage import measure
 
-    class SvExMSquaresOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Marching Squares on Surface
         Tooltip: Marching Squares on Surface

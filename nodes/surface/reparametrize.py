@@ -8,7 +8,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface, SvReparametrizedSurface
 
-class SvReparametrizeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvReparametrizeSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Reparametrize Surface
     Tooltip: Change parametrization of the surface by linear mapping of U, V parameters to the new bounds

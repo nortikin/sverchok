@@ -30,7 +30,7 @@ else:
 
     line2d = Part.Geom2d.Line2dSegment
 
-class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Trim Surface
     Tooltip: Make a Face of a Solid by trimming a Surface with projected Curve(s)

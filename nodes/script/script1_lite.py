@@ -105,7 +105,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
+class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: snl

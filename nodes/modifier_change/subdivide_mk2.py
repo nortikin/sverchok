@@ -42,7 +42,7 @@ def get_selected_edges(use_mask, masks, bm_edges):
 
 
 class SvSubdivideNodeMK2(
-        ModifierNode, DraftMode, bpy.types.Node, SverchCustomTreeNode):
+        ModifierNode, DraftMode, SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: subdivide
     Tooltip: Subdivide edges and faces

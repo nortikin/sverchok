@@ -83,7 +83,7 @@ socket_dict = {
     }
 
 
-class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaNodeMk5(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Formula
     Tooltip: Calculate by custom formula.

@@ -104,7 +104,7 @@ def high_contrast_color(c):
 
 
 
-class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, LexMixin, SvNodeViewDrawMixin):
+class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNodeViewDrawMixin):
     """
         Triggers: scope 
         Tooltip: Display data output of a node in nodeview

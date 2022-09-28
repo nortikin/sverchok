@@ -18,7 +18,7 @@ if scipy is None:
     add_dummy('SvExNearestPointOnCurveNode', "Nearest Point on Curve", 'scipy')
 else:
 
-    class SvExNearestPointOnCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Nearest Point on Curve
         Tooltip: Find the point on the curve which is the nearest to the given point

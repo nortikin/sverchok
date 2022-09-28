@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFilterObjsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Filter Objects '''
     bl_idname = 'SvFilterObjsNode'
     bl_label = 'Object ID Filter'

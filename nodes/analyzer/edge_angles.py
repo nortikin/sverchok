@@ -34,7 +34,7 @@ def untangle_edges(orig_edges, bmesh_edges, angles):
         result.append(angles[i])
     return result
 
-class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEdgeAnglesNode(SverchCustomTreeNode, bpy.types.Node):
     '''Calculate angles between faces at edges'''
     bl_idname = 'SvEdgeAnglesNode'
     bl_label = 'Angles at the Edges'

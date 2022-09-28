@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvFormulaDeformMK2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaDeformMK2Node(SverchCustomTreeNode, bpy.types.Node):
     ''' Deform Verts by Math'''
     bl_idname = 'SvFormulaDeformMK2Node'
     bl_label = 'Deform by Formula'

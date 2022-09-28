@@ -30,7 +30,7 @@ else:
             return {'FINISHED'}
 
 
-    class SvFCStdSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Read FreeCAD file
         Tooltip: Read/write FCStd Spreadsheets from a .FCStd file 

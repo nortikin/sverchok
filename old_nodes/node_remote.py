@@ -48,7 +48,7 @@ class SvNodePickup(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNodeRemoteNode(SverchCustomTreeNode, bpy.types.Node):
 
     bl_idname = 'SvNodeRemoteNode'
     bl_label = 'Node Remote (Control)'

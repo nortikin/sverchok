@@ -80,7 +80,7 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
     return (verts, edges, faces, face_data_out, doubles, mask_out)
 
 
-class SvMergeByDistanceNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMergeByDistanceNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Remove Doubles
     Tooltip: Merge Vertices that are closer than a distance.

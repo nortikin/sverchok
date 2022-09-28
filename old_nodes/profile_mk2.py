@@ -714,7 +714,7 @@ class SvPrifilizer(bpy.types.Operator):
                 
 
 
-class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvProfileNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: svg-like 2d profiles
     Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax

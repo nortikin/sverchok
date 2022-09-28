@@ -59,7 +59,7 @@ def solidify(vertices, faces, t):
     return (verts, edges, faces, newpols)
 
 
-class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidifyNode(SverchCustomTreeNode, bpy.types.Node):
     '''Extrude along normal'''
     bl_idname = 'SvSolidifyNode'
     bl_label = 'Solidify'

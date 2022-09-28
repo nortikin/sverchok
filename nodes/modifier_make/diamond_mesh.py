@@ -24,7 +24,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, 
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvDiamondMeshNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvDiamondMeshNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Diamond Rhomboid Mesh
     Tooltip: Create diamond-like (rhomboid) mesh for the given mesh

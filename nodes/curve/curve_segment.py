@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvCurveSegment
 from sverchok.utils.curve.algorithms import curve_segment
 
-class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Segment
     Tooltip: Generate a curve as a segment of another curve

@@ -21,7 +21,7 @@ else:
 
     from sverchok.utils.solid import to_solid
 
-    class SvCompoundSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvCompoundSolidNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Compound Solid
         Tooltip: Make Compound Solid object out of Solids, Curves and Surfaces

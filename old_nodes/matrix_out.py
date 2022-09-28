@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Matrix_generate, Matrix_location, Matrix_scale, Matrix_rotation)
 
 
-class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
+class MatrixOutNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Matrix Destructor '''
     bl_idname = 'MatrixOutNode'
     bl_label = 'Matrix out'
