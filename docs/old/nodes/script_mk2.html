@@ -17,6 +17,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -287,7 +288,7 @@ to have all code inside the class, we can also do</p>
 illustration for a type of script that uses the <code class="docutils literal notranslate"><span class="pre">`SvScriptSimpleFunction`</span></code> template that
 has one main function that decomposes into separate sockets. The methods don’t have be static
 but in general it is good practice to keep them free from side effects.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 
 <span class="k">class</span> <span class="nc">DeleteLooseVerts</span><span class="p">(</span><span class="n">SvScriptSimpleFunction</span><span class="p">):</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
