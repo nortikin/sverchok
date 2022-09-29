@@ -34,7 +34,7 @@ var context = {
     {name:"About", link: ""},
     {name:"Gallery", link: ""},
     {name:"Download", link: ""},
-    {name:"Manual", link: ""},
+    {name:"Documentation", link: ""},
     {name:"Video",link: ""},
     {name:"Lessons", link: ""},
     {name:"Donate", link: ""}
