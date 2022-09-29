@@ -31,7 +31,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./installation
-        key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/apidocs_builder.yml') }}
+        #key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/apidocs_builder.yml') }}
+        key: blender-${{ env.blender_version }}-
     - name: Install Blender
       run: |
         # echo "starting run"
