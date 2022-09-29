@@ -1,4 +1,4 @@
-name: Build user documentation pages
+name: Build API documentation
 on:
   push:
     branches: 'master'
