@@ -646,8 +646,6 @@
     SvSimpleTextNode
 
 ## BPY Data
-    SvGetPropNode
-    SvSetPropNode
     SvObjRemoteNodeMK2
     SvNodeRemoteNodeMK2
     SvGetAssetPropertiesMK2
