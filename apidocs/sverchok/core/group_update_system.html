@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.core.group_update_system API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.core.group_update_system</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from collections import defaultdict
+from typing import TYPE_CHECKING, overload, Iterator, Callable
+
+from bpy.types import NodeTree, Node, NodeSocket
+import sverchok.core.update_system as us
+import sverchok.core.events as ev
+import sverchok.core.tasks as ts
+from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.tree_walk import recursion_dfs_walk
+
+if TYPE_CHECKING:
+    from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
+                                    SverchCustomTree as SvTree)
+    from sverchok.core.node_group import SvGroupTree as GrTree, \
+        SvGroupTreeNode as GrNode
+
+
+def control_center(event):
+    &#34;&#34;&#34;
+    1. Update tree model lazily
+    2. Check whether the event should be processed
+    3. Process event or create task to process via timer&#34;&#34;&#34;
+    was_executed = True
+
+    # property of some node of a group tree was changed
+    if type(event) is ev.GroupPropertyEvent:
+        gr_tree = GroupUpdateTree.get(event.tree)
+        gr_tree.add_outdated(event.updated_nodes)
+        gr_tree.update_path = event.update_path
+        for main_tree in trees_graph[event.tree]:
+            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
+            if main_tree.sv_process:
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
+
+    # topology of a group tree was changed
+    elif type(event) is ev.GroupTreeEvent:
+        gr_tree = GroupUpdateTree.get(event.tree)
+        gr_tree.is_updated = False
+        gr_tree.update_path = event.update_path
+        for main_tree in trees_graph[event.tree]:
+            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
+            if main_tree.sv_process:
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
+
+    # Connections between trees were changed
+    elif type(event) is ev.TreesGraphEvent:
+        trees_graph.is_updated = False
+
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won&#39;t be able to detect changes, and will update all
+    # Unlike main trees, groups can&#39;t do this via GroupTreeEvent because it
+    # should be called only when a group is edited by user
+    elif type(event) is ev.UndoEvent:
+        for gt in BlTrees().sv_group_trees:
+            GroupUpdateTree.get(gt).is_updated = False
+
+    else:
+        was_executed = False
+
+    return was_executed
+
+
+class GroupUpdateTree(us.UpdateTree):
+    &#34;&#34;&#34;Group trees has their own update method separate from main tree to have
+    more nice profiling statistics. Also, it keeps some specific to group trees
+    statuses.&#34;&#34;&#34;
+    get: Callable[[&#39;GrTree&#39;], &#39;GroupUpdateTree&#39;]  # type hinting does not work grate :/
+
+    def update(self, node: &#39;GrNode&#39;):
+        &#34;&#34;&#34;Updates outdated nodes of group tree. Also, it keeps proper state of
+        the exec_path. If exec_path is equal to update path it also updates UI
+        of the tree
+        :node: group node which tree is executed&#34;&#34;&#34;
+        self._exec_path.append(node)
+        try:
+            is_opened_tree = self.update_path == self._exec_path
+            if not is_opened_tree:
+                self._viewer_nodes = {node.active_output()}
+
+            walker = self._walk()
+            # walker = self._debug_color(walker)
+            for node, prev_socks in walker:
+                with us.AddStatistic(node):
+                    us.prepare_input_data(prev_socks, node.inputs)
+                    node.process()
+
+            if is_opened_tree:
+                if self._tree.show_time_mode == &#34;Cumulative&#34;:
+                    times = self._calc_cam_update_time()
+                else:
+                    times = None
+                us.update_ui(self._tree, times)
+
+        except Exception:
+            raise
+        finally:
+            self._exec_path.pop()
+
+    def __init__(self, tree):
+        &#34;&#34;&#34;Should node be used directly but wia the get class method
+        :update_path: list of group nodes via which update trigger was executed
+        :_exec_path: list of group nodes via which the tree is executed
+        :_viewer_nodes: output nodes which should be updated. If not presented
+        all output nodes will be updated. The main reason of having them is to
+        update viewer nodes only in opened group tree, as a side effect it
+        optimises nodes execution&#34;&#34;&#34;
+        super().__init__(tree)
+        # update UI for the tree opened under the given path
+        self.update_path: list[&#39;GrNode&#39;] = []
+
+        self._exec_path: list[&#39;GrNode&#39;] = []
+
+        # if not presented all output nodes will be updated
+        self._viewer_nodes: set[Node] = set()  # not presented in main trees yet
+
+        self._copy_attrs.extend([&#39;_exec_path&#39;, &#39;update_path&#39;, &#39;_viewer_nodes&#39;])
+
+    def _walk(self) -&gt; tuple[Node, list[NodeSocket]]:
+        &#34;&#34;&#34;Yields nodes in order of their proper execution. It starts yielding
+        from outdated nodes. It keeps the outdated_nodes storage in proper
+        state. It checks after yielding the error status of the node. If the
+        node has error it goes into outdated_nodes. If tree has viewer nodes
+        it yields only nodes which should be called to update viewers.&#34;&#34;&#34;
+        # walk all nodes in the tree
+        if self._outdated_nodes is None:
+            outdated = None
+            viewers = None
+            self._outdated_nodes = set()
+            self._viewer_nodes = set()
+        # walk triggered nodes and error nodes from previous updates
+        else:
+            outdated = frozenset(self._outdated_nodes)
+            viewers = frozenset(self._viewer_nodes)
+            self._outdated_nodes.clear()
+            self._viewer_nodes.clear()
+
+        for node, other_socks in self._sort_nodes(outdated, viewers):
+            # execute node only if all previous nodes are updated
+            if all(n.get(us.UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
+                yield node, other_socks
+                if node.get(us.ERROR_KEY, False):
+                    self._outdated_nodes.add(node)
+            else:
+                node[us.UPDATE_KEY] = False
+
+
+class TreesGraph:
+    &#34;&#34;&#34;It keeps relationships between main trees and group trees.&#34;&#34;&#34;
+    _group_main: dict[&#39;GrTree&#39;, set[&#39;SvTree&#39;]]
+    _entry_nodes: dict[&#39;SvTree&#39;, dict[&#39;GrTree&#39;, set[&#39;SvNode&#39;]]]
+
+    def __init__(self):
+        &#34;&#34;&#34;:is_updated: the graph can be marked as outdated in this case it will
+        be updated automatically whenever data will be fetched from it
+        :_group_main: it stores information about in which main trees a group
+        tree is used. The group tree can be located in some nested groups too
+        :_entry_nodes: it stores information about which group nodes in main
+        tree should be called to update a group tree&#34;&#34;&#34;
+        self.is_updated = False
+
+        self._group_main = defaultdict(set)
+        self._entry_nodes = defaultdict(lambda: defaultdict(set))
+
+    @overload
+    def __getitem__(self, item: &#39;GrTree&#39;) -&gt; set[&#39;SvTree&#39;]: ...
+    @overload
+    def __getitem__(self, item: tuple[&#39;SvTree&#39;, &#39;GrTree&#39;]) -&gt; set[&#39;SvNode&#39;]: ...
+
+    def __getitem__(self, item):
+        &#34;&#34;&#34;It either returns related to given group tree Main tree or collection
+        of group nodes to update given group tree&#34;&#34;&#34;
+        if not self.is_updated:
+            self._update()
+        if isinstance(item, tuple):
+            sv_tree, gr_tree = item
+            return self._entry_nodes[sv_tree][gr_tree]
+        else:
+            return self._group_main[item]
+
+    def _update(self):
+        &#34;&#34;&#34;Calculate relationships between group trees and main trees&#34;&#34;&#34;
+        self._group_main.clear()
+        self._entry_nodes.clear()
+        for tree in BlTrees().sv_main_trees:
+            for gr_tree, gr_node in self._walk(tree):
+                self._group_main[gr_tree].add(tree)
+                self._entry_nodes[tree][gr_tree].add(gr_node)
+        self.is_updated = True
+
+    @staticmethod
+    def _walk(from_: NodeTree) -&gt; Iterator[tuple[NodeTree, &#39;SvNode&#39;]]:
+        &#34;&#34;&#34;Iterate over all nested node trees&#34;&#34;&#34;
+        current_entry_node = None
+
+        def next_(_tree):
+            nonlocal current_entry_node
+            for node in _tree.nodes:
+                if node.bl_idname == &#39;SvGroupTreeNode&#39; and node.node_tree:
+                    if _tree.bl_idname == &#39;SverchCustomTreeType&#39;:
+                        current_entry_node = node
+                    yield node.node_tree
+
+        walker = recursion_dfs_walk([from_], next_)
+        next(walker)  # ignore first itself tree
+        for tree in walker:
+            yield tree, current_entry_node
+
+    def __repr__(self):
+        def group_main_str():
+            for gr_tree, trees in self._group_main.items():
+                yield f&#34;   {gr_tree.name}:&#34;
+                for tree in trees:
+                    yield f&#34;      {tree.name}&#34;
+
+        def entry_nodes_str():
+            for tree, groups in self._entry_nodes.items():
+                yield f&#34;   {tree.name}:&#34;
+                for group, nodes in groups.items():
+                    yield f&#34;      {group.name}:&#34;
+                    for node in nodes:
+                        yield f&#34;         {node.name}&#34;
+
+        gm = &#34;\n&#34;.join(group_main_str())
+        en = &#34;\n&#34;.join(entry_nodes_str())
+        str_ = f&#34;&lt;TreesGraph trees:\n&#34; \
+               f&#34;{gm}\n&#34; \
+               f&#34;entry nodes:\n&#34; \
+               f&#34;{en}&gt;&#34;
+        return str_
+
+
+trees_graph = TreesGraph()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.core.group_update_system.control_center"><code class="name flex">
+<span>def <span class="ident">control_center</span></span>(<span>event)</span>
+</code></dt>
+<dd>
+<div class="desc"><ol>
+<li>Update tree model lazily</li>
+<li>Check whether the event should be processed</li>
+<li>Process event or create task to process via timer</li>
+</ol></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def control_center(event):
+    &#34;&#34;&#34;
+    1. Update tree model lazily
+    2. Check whether the event should be processed
+    3. Process event or create task to process via timer&#34;&#34;&#34;
+    was_executed = True
+
+    # property of some node of a group tree was changed
+    if type(event) is ev.GroupPropertyEvent:
+        gr_tree = GroupUpdateTree.get(event.tree)
+        gr_tree.add_outdated(event.updated_nodes)
+        gr_tree.update_path = event.update_path
+        for main_tree in trees_graph[event.tree]:
+            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
+            if main_tree.sv_process:
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
+
+    # topology of a group tree was changed
+    elif type(event) is ev.GroupTreeEvent:
+        gr_tree = GroupUpdateTree.get(event.tree)
+        gr_tree.is_updated = False
+        gr_tree.update_path = event.update_path
+        for main_tree in trees_graph[event.tree]:
+            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
+            if main_tree.sv_process:
+                ts.tasks.add(ts.Task(main_tree,
+                                     us.UpdateTree.main_update(main_tree),
+                                     is_scene_update=False))
+
+    # Connections between trees were changed
+    elif type(event) is ev.TreesGraphEvent:
+        trees_graph.is_updated = False
+
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won&#39;t be able to detect changes, and will update all
+    # Unlike main trees, groups can&#39;t do this via GroupTreeEvent because it
+    # should be called only when a group is edited by user
+    elif type(event) is ev.UndoEvent:
+        for gt in BlTrees().sv_group_trees:
+            GroupUpdateTree.get(gt).is_updated = False
+
+    else:
+        was_executed = False
+
+    return was_executed</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.core.group_update_system.GroupUpdateTree"><code class="flex name class">
+<span>class <span class="ident">GroupUpdateTree</span></span>
+<span>(</span><span>tree)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Group trees has their own update method separate from main tree to have
+more nice profiling statistics. Also, it keeps some specific to group trees
+statuses.</p>
+<p>Should node be used directly but wia the get class method
+:update_path: list of group nodes via which update trigger was executed
+:_exec_path: list of group nodes via which the tree is executed
+:_viewer_nodes: output nodes which should be updated. If not presented
+all output nodes will be updated. The main reason of having them is to
+update viewer nodes only in opened group tree, as a side effect it
+optimises nodes execution</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GroupUpdateTree(us.UpdateTree):
+    &#34;&#34;&#34;Group trees has their own update method separate from main tree to have
+    more nice profiling statistics. Also, it keeps some specific to group trees
+    statuses.&#34;&#34;&#34;
+    get: Callable[[&#39;GrTree&#39;], &#39;GroupUpdateTree&#39;]  # type hinting does not work grate :/
+
+    def update(self, node: &#39;GrNode&#39;):
+        &#34;&#34;&#34;Updates outdated nodes of group tree. Also, it keeps proper state of
+        the exec_path. If exec_path is equal to update path it also updates UI
+        of the tree
+        :node: group node which tree is executed&#34;&#34;&#34;
+        self._exec_path.append(node)
+        try:
+            is_opened_tree = self.update_path == self._exec_path
+            if not is_opened_tree:
+                self._viewer_nodes = {node.active_output()}
+
+            walker = self._walk()
+            # walker = self._debug_color(walker)
+            for node, prev_socks in walker:
+                with us.AddStatistic(node):
+                    us.prepare_input_data(prev_socks, node.inputs)
+                    node.process()
+
+            if is_opened_tree:
+                if self._tree.show_time_mode == &#34;Cumulative&#34;:
+                    times = self._calc_cam_update_time()
+                else:
+                    times = None
+                us.update_ui(self._tree, times)
+
+        except Exception:
+            raise
+        finally:
+            self._exec_path.pop()
+
+    def __init__(self, tree):
+        &#34;&#34;&#34;Should node be used directly but wia the get class method
+        :update_path: list of group nodes via which update trigger was executed
+        :_exec_path: list of group nodes via which the tree is executed
+        :_viewer_nodes: output nodes which should be updated. If not presented
+        all output nodes will be updated. The main reason of having them is to
+        update viewer nodes only in opened group tree, as a side effect it
+        optimises nodes execution&#34;&#34;&#34;
+        super().__init__(tree)
+        # update UI for the tree opened under the given path
+        self.update_path: list[&#39;GrNode&#39;] = []
+
+        self._exec_path: list[&#39;GrNode&#39;] = []
+
+        # if not presented all output nodes will be updated
+        self._viewer_nodes: set[Node] = set()  # not presented in main trees yet
+
+        self._copy_attrs.extend([&#39;_exec_path&#39;, &#39;update_path&#39;, &#39;_viewer_nodes&#39;])
+
+    def _walk(self) -&gt; tuple[Node, list[NodeSocket]]:
+        &#34;&#34;&#34;Yields nodes in order of their proper execution. It starts yielding
+        from outdated nodes. It keeps the outdated_nodes storage in proper
+        state. It checks after yielding the error status of the node. If the
+        node has error it goes into outdated_nodes. If tree has viewer nodes
+        it yields only nodes which should be called to update viewers.&#34;&#34;&#34;
+        # walk all nodes in the tree
+        if self._outdated_nodes is None:
+            outdated = None
+            viewers = None
+            self._outdated_nodes = set()
+            self._viewer_nodes = set()
+        # walk triggered nodes and error nodes from previous updates
+        else:
+            outdated = frozenset(self._outdated_nodes)
+            viewers = frozenset(self._viewer_nodes)
+            self._outdated_nodes.clear()
+            self._viewer_nodes.clear()
+
+        for node, other_socks in self._sort_nodes(outdated, viewers):
+            # execute node only if all previous nodes are updated
+            if all(n.get(us.UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
+                yield node, other_socks
+                if node.get(us.ERROR_KEY, False):
+                    self._outdated_nodes.add(node)
+            else:
+                node[us.UPDATE_KEY] = False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.update_system.UpdateTree" href="update_system.html#sverchok.core.update_system.UpdateTree">UpdateTree</a></li>
+<li><a title="sverchok.core.update_system.SearchTree" href="update_system.html#sverchok.core.update_system.SearchTree">SearchTree</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.core.group_update_system.GroupUpdateTree.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, node: GrNode)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Updates outdated nodes of group tree. Also, it keeps proper state of
+the exec_path. If exec_path is equal to update path it also updates UI
+of the tree
+:node: group node which tree is executed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self, node: &#39;GrNode&#39;):
+    &#34;&#34;&#34;Updates outdated nodes of group tree. Also, it keeps proper state of
+    the exec_path. If exec_path is equal to update path it also updates UI
+    of the tree
+    :node: group node which tree is executed&#34;&#34;&#34;
+    self._exec_path.append(node)
+    try:
+        is_opened_tree = self.update_path == self._exec_path
+        if not is_opened_tree:
+            self._viewer_nodes = {node.active_output()}
+
+        walker = self._walk()
+        # walker = self._debug_color(walker)
+        for node, prev_socks in walker:
+            with us.AddStatistic(node):
+                us.prepare_input_data(prev_socks, node.inputs)
+                node.process()
+
+        if is_opened_tree:
+            if self._tree.show_time_mode == &#34;Cumulative&#34;:
+                times = self._calc_cam_update_time()
+            else:
+                times = None
+            us.update_ui(self._tree, times)
+
+    except Exception:
+        raise
+    finally:
+        self._exec_path.pop()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.core.update_system.UpdateTree" href="update_system.html#sverchok.core.update_system.UpdateTree">UpdateTree</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.core.update_system.UpdateTree.add_outdated" href="update_system.html#sverchok.core.update_system.UpdateTree.add_outdated">add_outdated</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.copy" href="update_system.html#sverchok.core.update_system.UpdateTree.copy">copy</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.get" href="update_system.html#sverchok.core.update_system.UpdateTree.get">get</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.main_update" href="update_system.html#sverchok.core.update_system.UpdateTree.main_update">main_update</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.node_from_input" href="update_system.html#sverchok.core.update_system.SearchTree.node_from_input">node_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.nodes_from" href="update_system.html#sverchok.core.update_system.SearchTree.nodes_from">nodes_from</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.nodes_from_socket" href="update_system.html#sverchok.core.update_system.SearchTree.nodes_from_socket">nodes_from_socket</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.nodes_to" href="update_system.html#sverchok.core.update_system.SearchTree.nodes_to">nodes_to</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.previous_sockets" href="update_system.html#sverchok.core.update_system.SearchTree.previous_sockets">previous_sockets</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.reset_tree" href="update_system.html#sverchok.core.update_system.UpdateTree.reset_tree">reset_tree</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.socket_from_input" href="update_system.html#sverchok.core.update_system.SearchTree.socket_from_input">socket_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.sort_nodes" href="update_system.html#sverchok.core.update_system.SearchTree.sort_nodes">sort_nodes</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.update_animation" href="update_system.html#sverchok.core.update_system.UpdateTree.update_animation">update_animation</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.update_node" href="update_system.html#sverchok.core.update_system.SearchTree.update_node">update_node</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.core.group_update_system.TreesGraph"><code class="flex name class">
+<span>class <span class="ident">TreesGraph</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>It keeps relationships between main trees and group trees.</p>
+<p>:is_updated: the graph can be marked as outdated in this case it will
+be updated automatically whenever data will be fetched from it
+:_group_main: it stores information about in which main trees a group
+tree is used. The group tree can be located in some nested groups too
+:_entry_nodes: it stores information about which group nodes in main
+tree should be called to update a group tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreesGraph:
+    &#34;&#34;&#34;It keeps relationships between main trees and group trees.&#34;&#34;&#34;
+    _group_main: dict[&#39;GrTree&#39;, set[&#39;SvTree&#39;]]
+    _entry_nodes: dict[&#39;SvTree&#39;, dict[&#39;GrTree&#39;, set[&#39;SvNode&#39;]]]
+
+    def __init__(self):
+        &#34;&#34;&#34;:is_updated: the graph can be marked as outdated in this case it will
+        be updated automatically whenever data will be fetched from it
+        :_group_main: it stores information about in which main trees a group
+        tree is used. The group tree can be located in some nested groups too
+        :_entry_nodes: it stores information about which group nodes in main
+        tree should be called to update a group tree&#34;&#34;&#34;
+        self.is_updated = False
+
+        self._group_main = defaultdict(set)
+        self._entry_nodes = defaultdict(lambda: defaultdict(set))
+
+    @overload
+    def __getitem__(self, item: &#39;GrTree&#39;) -&gt; set[&#39;SvTree&#39;]: ...
+    @overload
+    def __getitem__(self, item: tuple[&#39;SvTree&#39;, &#39;GrTree&#39;]) -&gt; set[&#39;SvNode&#39;]: ...
+
+    def __getitem__(self, item):
+        &#34;&#34;&#34;It either returns related to given group tree Main tree or collection
+        of group nodes to update given group tree&#34;&#34;&#34;
+        if not self.is_updated:
+            self._update()
+        if isinstance(item, tuple):
+            sv_tree, gr_tree = item
+            return self._entry_nodes[sv_tree][gr_tree]
+        else:
+            return self._group_main[item]
+
+    def _update(self):
+        &#34;&#34;&#34;Calculate relationships between group trees and main trees&#34;&#34;&#34;
+        self._group_main.clear()
+        self._entry_nodes.clear()
+        for tree in BlTrees().sv_main_trees:
+            for gr_tree, gr_node in self._walk(tree):
+                self._group_main[gr_tree].add(tree)
+                self._entry_nodes[tree][gr_tree].add(gr_node)
+        self.is_updated = True
+
+    @staticmethod
+    def _walk(from_: NodeTree) -&gt; Iterator[tuple[NodeTree, &#39;SvNode&#39;]]:
+        &#34;&#34;&#34;Iterate over all nested node trees&#34;&#34;&#34;
+        current_entry_node = None
+
+        def next_(_tree):
+            nonlocal current_entry_node
+            for node in _tree.nodes:
+                if node.bl_idname == &#39;SvGroupTreeNode&#39; and node.node_tree:
+                    if _tree.bl_idname == &#39;SverchCustomTreeType&#39;:
+                        current_entry_node = node
+                    yield node.node_tree
+
+        walker = recursion_dfs_walk([from_], next_)
+        next(walker)  # ignore first itself tree
+        for tree in walker:
+            yield tree, current_entry_node
+
+    def __repr__(self):
+        def group_main_str():
+            for gr_tree, trees in self._group_main.items():
+                yield f&#34;   {gr_tree.name}:&#34;
+                for tree in trees:
+                    yield f&#34;      {tree.name}&#34;
+
+        def entry_nodes_str():
+            for tree, groups in self._entry_nodes.items():
+                yield f&#34;   {tree.name}:&#34;
+                for group, nodes in groups.items():
+                    yield f&#34;      {group.name}:&#34;
+                    for node in nodes:
+                        yield f&#34;         {node.name}&#34;
+
+        gm = &#34;\n&#34;.join(group_main_str())
+        en = &#34;\n&#34;.join(entry_nodes_str())
+        str_ = f&#34;&lt;TreesGraph trees:\n&#34; \
+               f&#34;{gm}\n&#34; \
+               f&#34;entry nodes:\n&#34; \
+               f&#34;{en}&gt;&#34;
+        return str_</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.core" href="index.html">sverchok.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.core.group_update_system.control_center" href="#sverchok.core.group_update_system.control_center">control_center</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.core.group_update_system.GroupUpdateTree" href="#sverchok.core.group_update_system.GroupUpdateTree">GroupUpdateTree</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.core.group_update_system.GroupUpdateTree.update" href="#sverchok.core.group_update_system.GroupUpdateTree.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.core.group_update_system.TreesGraph" href="#sverchok.core.group_update_system.TreesGraph">TreesGraph</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

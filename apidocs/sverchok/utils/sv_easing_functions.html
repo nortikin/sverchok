@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_easing_functions API documentation</title>
+<meta name="description" content="original c code:
+https://raw.githubusercontent.com/warrenm/AHEasing/master/AHEasing/easing.c
+Copyright (c) 2011, Auerhaus Development, LLC
+…" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_easing_functions</code></h1>
+</header>
+<section id="section-intro">
+<p>original c code:
+<a href="https://raw.githubusercontent.com/warrenm/AHEasing/master/AHEasing/easing.c">https://raw.githubusercontent.com/warrenm/AHEasing/master/AHEasing/easing.c</a>
+Copyright (c) 2011, Auerhaus Development, LLC
+<a href="http://sam.zoy.org/wtfpl/COPYING">http://sam.zoy.org/wtfpl/COPYING</a> for more details.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+&#39;&#39;&#39;
+original c code:
+https://raw.githubusercontent.com/warrenm/AHEasing/master/AHEasing/easing.c
+Copyright (c) 2011, Auerhaus Development, LLC
+http://sam.zoy.org/wtfpl/COPYING for more details.
+&#39;&#39;&#39;
+
+from math import sqrt, pow, sin, cos, floor, log
+from math import pi as M_PI
+
+# cached for performance
+M_2_PI = M_PI * 2
+M_PI_2 = M_PI / 2
+
+
+#  Modeled after the line y = x
+def LinearInterpolation(p):
+    return p
+
+# ======================= QUADRIC EASING FUNCTIONS =============================
+
+# Modeled after the parabola y = x^2
+def QuadraticEaseIn(p):
+    return p * p
+
+
+# Modeled after the parabola y = -x^2 + 2x
+def QuadraticEaseOut(p):
+    return p * (2 - p)
+
+
+# Modeled after the piecewise quadratic
+# y = (1/2)((2x)^2)             ; [0, 0.5)
+# y = -(1/2)((2x-1)*(2x-3) - 1) ; [0.5, 1]
+def QuadraticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 2 * p * p
+    else:
+        f = 1 - p
+        return 1 - 2 * f * f
+
+# ======================== CUBIC EASING FUNCTIONS ==============================
+
+# Modeled after the cubic y = x^3
+def CubicEaseIn(p):
+    return p * p * p
+
+
+# Modeled after the cubic y = (x - 1)^3 + 1
+def CubicEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f
+
+
+# Modeled after the piecewise cubic
+# y = (1/2)((2x)^3)       ; [0, 0.5)
+# y = (1/2)((2x-2)^3 + 2) ; [0.5, 1]
+def CubicEaseInOut(p):
+    if (p &lt; 0.5):
+        return 4 * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 4 * f * f * f
+
+# ======================= QUARTIC EASING FUNCTIONS =============================
+
+# Modeled after the quartic x^4
+def QuarticEaseIn(p):
+    return p * p * p * p
+
+
+# Modeled after the quartic y = 1 - (x - 1)^4
+def QuarticEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f * f
+
+
+# Modeled after the piecewise quartic
+# y = (1/2)((2x)^4)        ; [0, 0.5)
+# y = -(1/2)((2x-2)^4 - 2) ; [0.5, 1]
+def QuarticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 8 * p * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 8 * f * f * f * f
+
+# ======================= QUINTIC EASING FUNCTIONS =============================
+
+# Modeled after the quintic y = x^5
+def QuinticEaseIn(p):
+    return p * p * p * p * p
+
+
+# Modeled after the quintic y = (x - 1)^5 + 1
+def QuinticEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f * f * f
+
+
+# Modeled after the piecewise quintic
+# y = (1/2)((2x)^5)       ; [0, 0.5)
+# y = (1/2)((2x-2)^5 + 2) ; [0.5, 1]
+def QuinticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 16 * p * p * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 16 * f * f * f * f * f
+
+# ===================== SINUSOIDAL EASING FUNCTIONS ============================
+
+# Modeled after quarter-cycle of sine wave
+def SineEaseIn(p):
+    return 1 - cos(p * M_PI_2)
+
+
+# Modeled after quarter-cycle of sine wave (different phase)
+def SineEaseOut(p):
+    return sin(p * M_PI_2)
+
+
+# Modeled after half sine wave
+def SineEaseInOut(p):
+    return (1 - cos(p * M_PI))/2
+
+# ====================== CIRCULAR EASING FUNCTIONS ============================
+
+# Modeled after shifted quadrant IV of unit circle
+def CircularEaseIn(p):
+    return 1 - sqrt(1 - p * p)
+
+
+# Modeled after shifted quadrant II of unit circle
+def CircularEaseOut(p):
+    return sqrt((2 - p) * p)
+
+
+# Modeled after the piecewise circular function
+# y = (1/2)(1 - sqrt(1 - 4x^2))           ; [0, 0.5)
+# y = (1/2)(sqrt(-(2x - 3)*(2x - 1)) + 1) ; [0.5, 1]
+def CircularEaseInOut(p):
+    if(p &lt; 0.5):
+        return 0.5 * (1 - sqrt(1 - 4 * (p * p)))
+    else:
+        return 0.5 * (sqrt(-((2 * p) - 3) * ((2 * p) - 1)) + 1)
+
+# ===================== EXPONENTIAL EASING FUNCTIONS ===========================
+
+# prepare derived settings to be used in the exponential function
+def prepareExponentialSettings(b=2, e=10):
+    b = max(b, 0.0001)
+    m = pow(b,-e)
+    m = m if m != 1.0 else 1.0001
+    s = 1/(1-m)
+    return b, e, m, s
+
+defaultExponentialSettings = prepareExponentialSettings()
+
+# Modeled after the exponential function y = 2^(10(x - 1))
+def ExponentialEaseIn(p, settings=defaultExponentialSettings):
+    b, e, m, s = settings
+    return (pow(b, e * (p - 1)) - m) * s
+
+
+# Modeled after the exponential function y = -2^(-10x) + 1
+def ExponentialEaseOut(p, settings=defaultExponentialSettings):
+    return 1 - ExponentialEaseIn(1-p, settings)
+
+
+# Modeled after the piecewise exponential
+# y = (1/2)2^(10(2x - 1))         ; [0,0.5)
+# y = -(1/2)*2^(-10(2x - 1))) + 1 ; [0.5,1]
+def ExponentialEaseInOut(p, settings=defaultExponentialSettings):
+    if(p &lt; 0.5):
+        return 0.5 * ExponentialEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * ExponentialEaseOut(2*p-1, settings)
+
+# ======================= ELASTIC EASING FUNCTIONS =============================
+
+# prepare derived settings to be used in the elastic function
+def prepareElasticSettings(n=13, b=2, e=10):
+    alpha = n * M_2_PI + M_PI_2
+    return b, e, alpha
+
+defaultElasticSettings = prepareElasticSettings()
+
+# Modeled after the damped sine wave y = sin(13pi/2*x)*pow(2, 10 * (x - 1))
+def ElasticEaseIn(p, settings=defaultElasticSettings):
+    b, e, alpha = settings
+    return sin(alpha * p) * pow(b, e * (p - 1))
+
+
+# Modeled after the damped sine wave y = sin(-13pi/2*(x + 1))*pow(2, -10x) + 1
+def ElasticEaseOut(p, settings=defaultElasticSettings):
+    return 1 - ElasticEaseIn(1-p, settings)
+
+
+# Modeled after the piecewise exponentially-damped sine wave:
+# y = (1/2)*sin(13pi/2*(2*x))*pow(2, 10 * ((2*x) - 1))      ; [0,0.5)
+# y = (1/2)*(sin(-13pi/2*((2x-1)+1))*pow(2,-10(2*x-1)) + 2) ; [0.5, 1]
+def ElasticEaseInOut(p, settings=defaultElasticSettings):
+    if (p &lt; 0.5):
+        return 0.5 * ElasticEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * ElasticEaseOut(2*p-1, settings)
+
+# ========================= BACK EASING FUNCTIONS ==============================
+
+# Modeled after the overshooting cubic y = x^3-x*sin(x*pi)
+def BackEaseIn(p, s=1):
+    return p * p * p - p * sin(p * M_PI) * s
+
+
+# Modeled after overshooting cubic y = 1-((1-x)^3-(1-x)*sin((1-x)*pi))
+def BackEaseOut(p, s=1):
+    return 1 - BackEaseIn(1-p, s)
+
+
+# Modeled after the piecewise overshooting cubic function:
+# y = (1/2)*((2x)^3-(2x)*sin(2*x*pi))           ; [0, 0.5)
+# y = (1/2)*(1-((1-x)^3-(1-x)*sin((1-x)*pi))+1) ; [0.5, 1]
+def BackEaseInOut(p, s=1):
+    if (p &lt; 0.5):
+        return 0.5 * BackEaseIn(2*p, s)
+    else:
+        return 0.5 + 0.5 * BackEaseOut(2*p-1, s)
+
+# ======================= BOUNCE EASING FUNCTIONS ==============================
+
+# geometric progression sum S(a,n)
+def ss(a, n):
+    return (1-pow(a,n))/(1-a)
+
+# prepare derived settings to be used in the bounce function
+def prepareBounceSettings(n=4, a=0.5):
+    powan = pow(a,n)
+    loga  = log(a)
+    ssan  = ss(a,n)
+    return n, a, powan, loga, ssan
+
+defaultBounceSettings = prepareBounceSettings()
+
+&#39;&#39;&#39;
+    BounceEaseIn
+
+    Formula based on geometric progression + parabola mix:
+
+    Sum of all n bounces with attenuation a:
+    S(a,n) = (1 - a^n)/(1-a) : a &lt; 1
+
+    Parabola function f(x):
+    f(x) = 1 - (1-2*x)^2 : for x = [0,1] =&gt; f = [0,1]
+
+    Current bounce number based on value of p, a and n:
+    nn = floor(log(1-p*(1-pow(a,n)))/log(a))
+
+    Current bounce interval based on value of p, a and n:
+    x0 = S(a,nn)    : begin of bounce interval
+    x1 = S(a,nn+1)  : end of bounce interval
+    xx = S(a,n) * p : current x value in the [0,S(a,n)] for p
+
+    Remap [x0,x1] interval to [0,1] to generate the f(x) parabola
+    x = (xx-x0)/(x1-x0)
+
+    Calculate the parabola for the current interval scaled to interval
+    f = (1 - (1-2*x)^2) * a^n  : where x1-x0 = a^n
+
+    Note: Code derived by Marius Giurgi for sverchok @ 2017 :)
+&#39;&#39;&#39;
+def BounceEaseIn(p, settings=defaultBounceSettings):
+    n, a, powan, loga, ssan = settings
+
+    # for ease in the progression should go from small to big bounces
+    p = 1 - p # invert the progression
+
+    # sn = ss(a, n)
+    sn = ssan
+
+    # remap p to start from the half of the first bounce
+    p = (1/2 + (sn - 1/2)*p)/sn
+
+    # the bounce number at the current p value
+    nn = floor(log(1 - p*(1 - powan)) / loga)
+
+    # find current bounce interval and current x location in interval
+    x0 = ss(a, nn)
+    x1 = ss(a, nn+1)
+    xx = sn * p
+
+    # Remap bounce interval to [0,1] to generate the f(x) parabola
+    x = (xx - x0) / (x1 - x0) # x = [0,1]
+
+    xt = 1 - 2*x
+    f = (1 - xt * xt) * pow(a, nn)
+    # print(&#34;p = %.2f  nn = %d  x0 = %.2f  x1 = %.2f  xx = %.2f  x = %.2f  f = %.2f&#34; % (p, nn, x0, x1, xx, x, f))
+    return f
+
+
+def BounceEaseOut(p, settings=defaultBounceSettings):
+    return 1 - BounceEaseIn(1-p, settings)
+
+
+def BounceEaseInOut(p, settings=defaultBounceSettings):
+    if p &lt; 0.5:
+        return 0.5 * BounceEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * BounceEaseOut(2*p-1, settings)
+
+
+easing_dict = {
+    0: LinearInterpolation,
+    1: QuadraticEaseIn,
+    2: QuadraticEaseOut,
+    3: QuadraticEaseInOut,
+    4: CubicEaseIn,
+    5: CubicEaseOut,
+    6: CubicEaseInOut,
+    7: QuarticEaseIn,
+    8: QuarticEaseOut,
+    9: QuarticEaseInOut,
+    10: QuinticEaseIn,
+    11: QuinticEaseOut,
+    12: QuinticEaseInOut,
+    13: SineEaseIn,
+    14: SineEaseOut,
+    15: SineEaseInOut,
+    16: CircularEaseIn,
+    17: CircularEaseOut,
+    18: CircularEaseInOut,
+    19: ExponentialEaseIn,
+    20: ExponentialEaseOut,
+    21: ExponentialEaseInOut,
+    22: ElasticEaseIn,
+    23: ElasticEaseOut,
+    24: ElasticEaseInOut,
+    25: BackEaseIn,
+    26: BackEaseOut,
+    27: BackEaseInOut,
+    28: BounceEaseIn,
+    29: BounceEaseOut,
+    30: BounceEaseInOut
+}</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="sverchok.utils.sv_easing_functions.defaultBounceSettings"><code class="name">var <span class="ident">defaultBounceSettings</span></code></dt>
+<dd>
+<div class="desc"><p>BounceEaseIn</p>
+<p>Formula based on geometric progression + parabola mix:</p>
+<p>Sum of all n bounces with attenuation a:
+S(a,n) = (1 - a^n)/(1-a) : a &lt; 1</p>
+<p>Parabola function f(x):
+f(x) = 1 - (1-2*x)^2 : for x = [0,1] =&gt; f = [0,1]</p>
+<p>Current bounce number based on value of p, a and n:
+nn = floor(log(1-p*(1-pow(a,n)))/log(a))</p>
+<p>Current bounce interval based on value of p, a and n:
+x0 = S(a,nn)
+: begin of bounce interval
+x1 = S(a,nn+1)
+: end of bounce interval
+xx = S(a,n) * p : current x value in the [0,S(a,n)] for p</p>
+<p>Remap [x0,x1] interval to [0,1] to generate the f(x) parabola
+x = (xx-x0)/(x1-x0)</p>
+<p>Calculate the parabola for the current interval scaled to interval
+f = (1 - (1-2*x)^2) * a^n
+: where x1-x0 = a^n</p>
+<p>Note: Code derived by Marius Giurgi for sverchok @ 2017 :)</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_easing_functions.BackEaseIn"><code class="name flex">
+<span>def <span class="ident">BackEaseIn</span></span>(<span>p, s=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BackEaseIn(p, s=1):
+    return p * p * p - p * sin(p * M_PI) * s</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.BackEaseInOut"><code class="name flex">
+<span>def <span class="ident">BackEaseInOut</span></span>(<span>p, s=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BackEaseInOut(p, s=1):
+    if (p &lt; 0.5):
+        return 0.5 * BackEaseIn(2*p, s)
+    else:
+        return 0.5 + 0.5 * BackEaseOut(2*p-1, s)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.BackEaseOut"><code class="name flex">
+<span>def <span class="ident">BackEaseOut</span></span>(<span>p, s=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BackEaseOut(p, s=1):
+    return 1 - BackEaseIn(1-p, s)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.BounceEaseIn"><code class="name flex">
+<span>def <span class="ident">BounceEaseIn</span></span>(<span>p, settings=(4, 0.5, 0.0625, -0.6931471805599453, 1.875))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BounceEaseIn(p, settings=defaultBounceSettings):
+    n, a, powan, loga, ssan = settings
+
+    # for ease in the progression should go from small to big bounces
+    p = 1 - p # invert the progression
+
+    # sn = ss(a, n)
+    sn = ssan
+
+    # remap p to start from the half of the first bounce
+    p = (1/2 + (sn - 1/2)*p)/sn
+
+    # the bounce number at the current p value
+    nn = floor(log(1 - p*(1 - powan)) / loga)
+
+    # find current bounce interval and current x location in interval
+    x0 = ss(a, nn)
+    x1 = ss(a, nn+1)
+    xx = sn * p
+
+    # Remap bounce interval to [0,1] to generate the f(x) parabola
+    x = (xx - x0) / (x1 - x0) # x = [0,1]
+
+    xt = 1 - 2*x
+    f = (1 - xt * xt) * pow(a, nn)
+    # print(&#34;p = %.2f  nn = %d  x0 = %.2f  x1 = %.2f  xx = %.2f  x = %.2f  f = %.2f&#34; % (p, nn, x0, x1, xx, x, f))
+    return f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.BounceEaseInOut"><code class="name flex">
+<span>def <span class="ident">BounceEaseInOut</span></span>(<span>p, settings=(4, 0.5, 0.0625, -0.6931471805599453, 1.875))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BounceEaseInOut(p, settings=defaultBounceSettings):
+    if p &lt; 0.5:
+        return 0.5 * BounceEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * BounceEaseOut(2*p-1, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.BounceEaseOut"><code class="name flex">
+<span>def <span class="ident">BounceEaseOut</span></span>(<span>p, settings=(4, 0.5, 0.0625, -0.6931471805599453, 1.875))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def BounceEaseOut(p, settings=defaultBounceSettings):
+    return 1 - BounceEaseIn(1-p, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CircularEaseIn"><code class="name flex">
+<span>def <span class="ident">CircularEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CircularEaseIn(p):
+    return 1 - sqrt(1 - p * p)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CircularEaseInOut"><code class="name flex">
+<span>def <span class="ident">CircularEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CircularEaseInOut(p):
+    if(p &lt; 0.5):
+        return 0.5 * (1 - sqrt(1 - 4 * (p * p)))
+    else:
+        return 0.5 * (sqrt(-((2 * p) - 3) * ((2 * p) - 1)) + 1)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CircularEaseOut"><code class="name flex">
+<span>def <span class="ident">CircularEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CircularEaseOut(p):
+    return sqrt((2 - p) * p)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CubicEaseIn"><code class="name flex">
+<span>def <span class="ident">CubicEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CubicEaseIn(p):
+    return p * p * p</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CubicEaseInOut"><code class="name flex">
+<span>def <span class="ident">CubicEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CubicEaseInOut(p):
+    if (p &lt; 0.5):
+        return 4 * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 4 * f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.CubicEaseOut"><code class="name flex">
+<span>def <span class="ident">CubicEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def CubicEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ElasticEaseIn"><code class="name flex">
+<span>def <span class="ident">ElasticEaseIn</span></span>(<span>p, settings=(2, 10, 83.25220532012952))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ElasticEaseIn(p, settings=defaultElasticSettings):
+    b, e, alpha = settings
+    return sin(alpha * p) * pow(b, e * (p - 1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ElasticEaseInOut"><code class="name flex">
+<span>def <span class="ident">ElasticEaseInOut</span></span>(<span>p, settings=(2, 10, 83.25220532012952))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ElasticEaseInOut(p, settings=defaultElasticSettings):
+    if (p &lt; 0.5):
+        return 0.5 * ElasticEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * ElasticEaseOut(2*p-1, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ElasticEaseOut"><code class="name flex">
+<span>def <span class="ident">ElasticEaseOut</span></span>(<span>p, settings=(2, 10, 83.25220532012952))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ElasticEaseOut(p, settings=defaultElasticSettings):
+    return 1 - ElasticEaseIn(1-p, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ExponentialEaseIn"><code class="name flex">
+<span>def <span class="ident">ExponentialEaseIn</span></span>(<span>p, settings=(2, 10, 0.0009765625, 1.0009775171065494))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ExponentialEaseIn(p, settings=defaultExponentialSettings):
+    b, e, m, s = settings
+    return (pow(b, e * (p - 1)) - m) * s</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ExponentialEaseInOut"><code class="name flex">
+<span>def <span class="ident">ExponentialEaseInOut</span></span>(<span>p, settings=(2, 10, 0.0009765625, 1.0009775171065494))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ExponentialEaseInOut(p, settings=defaultExponentialSettings):
+    if(p &lt; 0.5):
+        return 0.5 * ExponentialEaseIn(2*p, settings)
+    else:
+        return 0.5 + 0.5 * ExponentialEaseOut(2*p-1, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ExponentialEaseOut"><code class="name flex">
+<span>def <span class="ident">ExponentialEaseOut</span></span>(<span>p, settings=(2, 10, 0.0009765625, 1.0009775171065494))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ExponentialEaseOut(p, settings=defaultExponentialSettings):
+    return 1 - ExponentialEaseIn(1-p, settings)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.LinearInterpolation"><code class="name flex">
+<span>def <span class="ident">LinearInterpolation</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def LinearInterpolation(p):
+    return p</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuadraticEaseIn"><code class="name flex">
+<span>def <span class="ident">QuadraticEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuadraticEaseIn(p):
+    return p * p</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuadraticEaseInOut"><code class="name flex">
+<span>def <span class="ident">QuadraticEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuadraticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 2 * p * p
+    else:
+        f = 1 - p
+        return 1 - 2 * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuadraticEaseOut"><code class="name flex">
+<span>def <span class="ident">QuadraticEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuadraticEaseOut(p):
+    return p * (2 - p)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuarticEaseIn"><code class="name flex">
+<span>def <span class="ident">QuarticEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuarticEaseIn(p):
+    return p * p * p * p</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuarticEaseInOut"><code class="name flex">
+<span>def <span class="ident">QuarticEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuarticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 8 * p * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 8 * f * f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuarticEaseOut"><code class="name flex">
+<span>def <span class="ident">QuarticEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuarticEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuinticEaseIn"><code class="name flex">
+<span>def <span class="ident">QuinticEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuinticEaseIn(p):
+    return p * p * p * p * p</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuinticEaseInOut"><code class="name flex">
+<span>def <span class="ident">QuinticEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuinticEaseInOut(p):
+    if (p &lt; 0.5):
+        return 16 * p * p * p * p * p
+    else:
+        f = 1 - p
+        return 1 - 16 * f * f * f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.QuinticEaseOut"><code class="name flex">
+<span>def <span class="ident">QuinticEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def QuinticEaseOut(p):
+    f = 1 - p
+    return 1 - f * f * f * f * f</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.SineEaseIn"><code class="name flex">
+<span>def <span class="ident">SineEaseIn</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SineEaseIn(p):
+    return 1 - cos(p * M_PI_2)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.SineEaseInOut"><code class="name flex">
+<span>def <span class="ident">SineEaseInOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SineEaseInOut(p):
+    return (1 - cos(p * M_PI))/2</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.SineEaseOut"><code class="name flex">
+<span>def <span class="ident">SineEaseOut</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def SineEaseOut(p):
+    return sin(p * M_PI_2)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.prepareBounceSettings"><code class="name flex">
+<span>def <span class="ident">prepareBounceSettings</span></span>(<span>n=4, a=0.5)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepareBounceSettings(n=4, a=0.5):
+    powan = pow(a,n)
+    loga  = log(a)
+    ssan  = ss(a,n)
+    return n, a, powan, loga, ssan</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.prepareElasticSettings"><code class="name flex">
+<span>def <span class="ident">prepareElasticSettings</span></span>(<span>n=13, b=2, e=10)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepareElasticSettings(n=13, b=2, e=10):
+    alpha = n * M_2_PI + M_PI_2
+    return b, e, alpha</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.prepareExponentialSettings"><code class="name flex">
+<span>def <span class="ident">prepareExponentialSettings</span></span>(<span>b=2, e=10)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepareExponentialSettings(b=2, e=10):
+    b = max(b, 0.0001)
+    m = pow(b,-e)
+    m = m if m != 1.0 else 1.0001
+    s = 1/(1-m)
+    return b, e, m, s</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_easing_functions.ss"><code class="name flex">
+<span>def <span class="ident">ss</span></span>(<span>a, n)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ss(a, n):
+    return (1-pow(a,n))/(1-a)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_easing_functions.defaultBounceSettings" href="#sverchok.utils.sv_easing_functions.defaultBounceSettings">defaultBounceSettings</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_easing_functions.BackEaseIn" href="#sverchok.utils.sv_easing_functions.BackEaseIn">BackEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.BackEaseInOut" href="#sverchok.utils.sv_easing_functions.BackEaseInOut">BackEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.BackEaseOut" href="#sverchok.utils.sv_easing_functions.BackEaseOut">BackEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.BounceEaseIn" href="#sverchok.utils.sv_easing_functions.BounceEaseIn">BounceEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.BounceEaseInOut" href="#sverchok.utils.sv_easing_functions.BounceEaseInOut">BounceEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.BounceEaseOut" href="#sverchok.utils.sv_easing_functions.BounceEaseOut">BounceEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CircularEaseIn" href="#sverchok.utils.sv_easing_functions.CircularEaseIn">CircularEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CircularEaseInOut" href="#sverchok.utils.sv_easing_functions.CircularEaseInOut">CircularEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CircularEaseOut" href="#sverchok.utils.sv_easing_functions.CircularEaseOut">CircularEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CubicEaseIn" href="#sverchok.utils.sv_easing_functions.CubicEaseIn">CubicEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CubicEaseInOut" href="#sverchok.utils.sv_easing_functions.CubicEaseInOut">CubicEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.CubicEaseOut" href="#sverchok.utils.sv_easing_functions.CubicEaseOut">CubicEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ElasticEaseIn" href="#sverchok.utils.sv_easing_functions.ElasticEaseIn">ElasticEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ElasticEaseInOut" href="#sverchok.utils.sv_easing_functions.ElasticEaseInOut">ElasticEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ElasticEaseOut" href="#sverchok.utils.sv_easing_functions.ElasticEaseOut">ElasticEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ExponentialEaseIn" href="#sverchok.utils.sv_easing_functions.ExponentialEaseIn">ExponentialEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ExponentialEaseInOut" href="#sverchok.utils.sv_easing_functions.ExponentialEaseInOut">ExponentialEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ExponentialEaseOut" href="#sverchok.utils.sv_easing_functions.ExponentialEaseOut">ExponentialEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.LinearInterpolation" href="#sverchok.utils.sv_easing_functions.LinearInterpolation">LinearInterpolation</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuadraticEaseIn" href="#sverchok.utils.sv_easing_functions.QuadraticEaseIn">QuadraticEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuadraticEaseInOut" href="#sverchok.utils.sv_easing_functions.QuadraticEaseInOut">QuadraticEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuadraticEaseOut" href="#sverchok.utils.sv_easing_functions.QuadraticEaseOut">QuadraticEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuarticEaseIn" href="#sverchok.utils.sv_easing_functions.QuarticEaseIn">QuarticEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuarticEaseInOut" href="#sverchok.utils.sv_easing_functions.QuarticEaseInOut">QuarticEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuarticEaseOut" href="#sverchok.utils.sv_easing_functions.QuarticEaseOut">QuarticEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuinticEaseIn" href="#sverchok.utils.sv_easing_functions.QuinticEaseIn">QuinticEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuinticEaseInOut" href="#sverchok.utils.sv_easing_functions.QuinticEaseInOut">QuinticEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.QuinticEaseOut" href="#sverchok.utils.sv_easing_functions.QuinticEaseOut">QuinticEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.SineEaseIn" href="#sverchok.utils.sv_easing_functions.SineEaseIn">SineEaseIn</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.SineEaseInOut" href="#sverchok.utils.sv_easing_functions.SineEaseInOut">SineEaseInOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.SineEaseOut" href="#sverchok.utils.sv_easing_functions.SineEaseOut">SineEaseOut</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.prepareBounceSettings" href="#sverchok.utils.sv_easing_functions.prepareBounceSettings">prepareBounceSettings</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.prepareElasticSettings" href="#sverchok.utils.sv_easing_functions.prepareElasticSettings">prepareElasticSettings</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.prepareExponentialSettings" href="#sverchok.utils.sv_easing_functions.prepareExponentialSettings">prepareExponentialSettings</a></code></li>
+<li><code><a title="sverchok.utils.sv_easing_functions.ss" href="#sverchok.utils.sv_easing_functions.ss">ss</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

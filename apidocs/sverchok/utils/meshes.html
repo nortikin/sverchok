@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.meshes API documentation</title>
+<meta name="description" content="The module provide basic operations with meshes
+Also support several mesh types
+All mesh types share the same API so user should not know which type …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.meshes</code></h1>
+</header>
+<section id="section-intro">
+<p>The module provide basic operations with meshes
+Also support several mesh types
+All mesh types share the same API so user should not know which type of mesh is used</p>
+<p>It is important to import this module like that: import meshes
+And don't do this: from meshes import PyMesh
+It can bring unexpected errors</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+&#34;&#34;&#34;
+The module provide basic operations with meshes
+Also support several mesh types
+All mesh types share the same API so user should not know which type of mesh is used
+
+It is important to import this module like that: import meshes
+And don&#39;t do this: from meshes import PyMesh
+It can bring unexpected errors
+&#34;&#34;&#34;
+
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from collections.abc import Collection
+from functools import wraps
+from itertools import chain
+from typing import Tuple, List, Callable, Union, Type, Iterable, Dict
+
+import numpy as np
+
+from mathutils import Matrix, Vector
+
+from sverchok.data_structure import fixed_iter
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
+
+
+PyVertex = Tuple[float, float, float]
+PyEdge = Tuple[int, int]
+PyPolygon = List[int]
+
+
+def to_mesh(vertices, edges=None, polygons=None) -&gt; Union[PyMesh, NpMesh]:
+    &#34;&#34;&#34;Convert mesh elements into a mesh with type dependent on type of given elements&#34;&#34;&#34;
+    if isinstance(vertices, (list, tuple)):
+        return PyMesh(vertices, edges, polygons)
+    elif isinstance(vertices, np.ndarray):
+        return NpMesh(vertices, edges, polygons)
+    else:
+        raise TypeError(f&#39;Vertices type &#34;{type(vertices).__name__}&#34; is not in: list, tuple, np.ndarray&#39;)
+
+
+def join(meshes: List[Mesh], return_type: Type[Mesh] = None) -&gt; Mesh:
+    &#34;&#34;&#34;efficiently join data of given meshes into one&#34;&#34;&#34;  # todo it&#39;s better to split it into class method of Meshes
+    if return_type is None:
+        return_type = type(meshes[0])
+
+    out_mesh = return_type([], [], [])
+    added_vertices = 0
+    for mesh in meshes:
+        elements = [(out_mesh.vertices, mesh.vertices), (out_mesh.edges, mesh.edges),
+                    (out_mesh.polygons, mesh.polygons)]
+        for out_elem, elem in elements:
+            for attr in out_elem.attributes | elem.attributes:
+                out_data = out_elem.get_attribute(attr)
+                data = elem.get_attribute(attr)
+                if out_data is None:
+                    out_data = [data[0]] * len(out_elem)
+                else:
+                    out_data = fix_len(out_data, len(out_elem))
+                out_data.extend(data or [])
+                out_elem[attr] = out_data
+
+        if return_type == NpMesh:
+            pass
+        else:
+            out_mesh.vertices.data.extend(mesh.vertices.data)
+
+        out_mesh.edges.data.extend([i + added_vertices for i in e] for e in mesh.edges)
+        out_mesh.polygons.data.extend([i + added_vertices for i in p] for p in mesh.polygons)
+        added_vertices += len(mesh.vertices)
+
+    if return_type == NpMesh:
+        out_mesh.vertices.data = np.concatenate([m.vertices.data for m in meshes])
+
+    return out_mesh
+
+
+class Mesh(ABC):
+
+    @property
+    def vertices(self) -&gt; MeshElements:
+        return self._vertices
+
+    @property
+    def edges(self) -&gt; MeshElements:
+        return self._edges
+
+    @property
+    def polygons(self) -&gt; MeshElements:
+        return self._polygons
+
+    @abstractmethod
+    def add_mesh(self, mesh) -&gt; Mesh: ...
+
+    @abstractmethod
+    def cast(self, mesh_type) -&gt; Mesh: ...
+
+    @abstractmethod
+    def apply_matrix(self, matrix) -&gt; Mesh: ...
+
+    def __repr__(self):
+        return f&#39;&lt;MESH vertices={len(self.vertices)} [{&#34;, &#34;.join(self.vertices.attributes)}], &#39; \
+               f&#39;edges={len(self.edges)} [{&#34;, &#34;.join(self.edges.attributes)}], &#39; \
+               f&#39;polygons={len(self.polygons)} [{&#34;, &#34;.join(self.polygons.attributes)}]&gt;&#39;
+
+
+def convert_mesh_type(method: Callable) -&gt; Callable:
+    &#34;&#34;&#34;
+    Decorator for methods with mesh as first argument
+    it will convert this attribute into the same type as type of the class of the method
+    mesh class should have `cast` method which will be called to convert mesh
+    &#34;&#34;&#34;
+    @wraps(method)
+    def wrap_method(base_mesh, mesh, *args, **kwargs):
+        mesh = mesh.cast(type(base_mesh))
+        return method(base_mesh, mesh, *args, **kwargs)
+    return wrap_method
+
+
+class PyMesh(Mesh):
+    &#34;&#34;&#34;
+    Data structure of Python mesh and its basic operations
+    Its methods always generates new lists so there is no need in list.copy()
+    &#34;&#34;&#34;
+    def __init__(self, vertices: List[PyVertex], edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
+        # Example usage: PyMesh(vertices, edges, faces).polygons[&#39;materials&#39;] = [0, 1, 1, ...]
+        self._vertices = MeshElements(vertices)
+        self._edges = MeshElements(edges or [])
+        self._polygons = MeshElements(polygons or [])
+
+    @convert_mesh_type
+    def add_mesh(self, mesh: PyMesh) -&gt; PyMesh:
+        &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+        self_vertices_number = len(self.vertices)
+        self.vertices.join_data(mesh.vertices)
+        mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+        self.edges.join_data(mesh.edges)
+        mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+        self.polygons.join_data(mesh.polygons)
+
+        return self
+
+    def apply_matrix(self, matrix: Matrix) -&gt; PyMesh:
+        &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+        self.vertices.data = [(matrix @ Vector(v)).to_tuple() for v in self.vertices]
+        return self
+
+    def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+        &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+        if mesh_type == PyMesh:
+            return self
+        elif mesh_type == NpMesh:
+            cast_mesh = NpMesh(self.vertices.data, self.edges.data, self.polygons.data)
+            cast_mesh.vertices.copy_attributes(self.vertices)
+            cast_mesh.edges.copy_attributes(self.edges)
+            cast_mesh.polygons.copy_attributes(self.polygons)
+            return cast_mesh
+        else:
+            raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)
+
+
+class NpMesh(Mesh):
+    &#34;&#34;&#34;
+    Numpy mesh data structure
+    For keeping balance between simplicity and efficiency only vertices has numpy format
+    &#34;&#34;&#34;
+    def __init__(self, vertices: Iterable, edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
+        # array is copied only if dtype does not match
+        self._vertices = MeshElements(np.asarray(vertices, dtype=np.float32))
+        self._edges = MeshElements(edges or [])
+        self._polygons = MeshElements(polygons or [])
+
+    @convert_mesh_type
+    def add_mesh(self, mesh: NpMesh) -&gt; NpMesh:
+        &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+        self_vertices_number = len(self.vertices)
+        self.vertices.join_data(mesh.vertices)
+        mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+        self.edges.join_data(mesh.edges)
+        mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+        self.polygons.join_data(mesh.polygons)
+        return self
+
+    def apply_matrix(self, matrix) -&gt; NpMesh:
+        &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+        self.vertices.data = matrix_apply_np(self.vertices.data, matrix)
+        return self
+
+    def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+        &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+        if mesh_type == PyMesh:
+            cast_mesh = PyMesh(self.vertices.data.tolist(), self.edges.data, self.polygons.data)
+            cast_mesh.vertices.copy_attributes(self.vertices)
+            cast_mesh.edges.copy_attributes(self.edges)
+            cast_mesh.polygons.copy_attributes(self.polygons)
+            return cast_mesh
+        elif mesh_type == NpMesh:
+            return self
+        else:
+            raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)
+
+
+class MeshElements(Collection):
+    &#34;&#34;&#34;
+    Class for data of mesh elements such as vertices, edges, polygons
+    Main reason of this class is to keep elements attributes
+
+    It supports:
+    iteration over elements - [vertex for vertex in mesh.vertices]
+    check if list of elements is not empty - if mesh.vertices: &#34;There are some vertices in mesh&#34;
+    gen number of elements - polygon_number = len(mesh.polygons)
+    set attributes to elements - mesh.polygons[&#39;material&#39;] = material_indexes
+    get attributes of elements - vertex_colors = mesh.vertices[&#39;vertex color&#39;]
+    &#34;&#34;&#34;
+    def __init__(self, data: Union[list, np.ndarray]):
+        &#34;&#34;&#34;Data should be vertices, edges or faces&#34;&#34;&#34;
+        self.data = data
+
+        # given data can has its attributes
+        # data can has different length then actual number of elements (vertices, edges, polygons)
+        self._attrs: Dict[str, list] = dict()
+
+    def join_data(self, other: MeshElements):
+        &#34;&#34;&#34;
+        Merging two elements data into first
+        Also attributes are merged
+        &#34;&#34;&#34;
+        if self._attrs or other._attrs:
+            for key in self._attrs.keys() | other._attrs.keys():
+                self._attrs[key] = list(chain(fixed_iter(self._attrs.get(key), len(self.data)),
+                                              fixed_iter(other._attrs.get(key), len(other.data))))
+        if isinstance(self.data, list):
+            self.data = self.data + other.data
+        elif isinstance(self.data, np.ndarray):
+            self.data = np.concatenate([self.data, other.data])
+        else:
+            raise TypeError(f&#39;Type &#34;{type(self.data).__name__}&#34; of &#34;data&#34; attribute does not supported&#39;)
+
+    def copy_attributes(self, other: MeshElements):
+        &#34;&#34;&#34;Copy attributes from given other mesh elements&#34;&#34;&#34;
+        self._attrs.update(other._attrs)
+
+    def get_attribute(self, attr: str, default=None) -&gt; list:
+        &#34;&#34;&#34;Get elements attribute, using instead of polygons[&#39;attr&#39;]&#34;&#34;&#34;
+        return self._attrs.get(attr, default)
+
+    @property
+    def attributes(self):
+        return self._attrs.keys()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __contains__(self, item):
+        return item in self.data
+
+    def __bool__(self):
+        return bool(self.data)
+
+    def __getitem__(self, item):
+        return self._attrs[item]
+
+    def __setitem__(self, key, value):
+        self._attrs[key] = value
+
+    def __delitem__(self, key):
+        del self._attrs[key]
+
+
+def fix_len(lst: list, length: int) -&gt; list:
+    &#34;&#34;&#34;
+    timeit(&#39;fix_len(l, 99999)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    0.0011104999998678977
+    timeit(&#39;fix_len(l, 100000)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    4.699999863078119e-06
+    timeit(&#39;fix_len(l, 100001)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    5.7999995988211595e-06
+    &#34;&#34;&#34;
+    if len(lst) == length:
+        return lst
+    elif len(lst) &gt; length:
+        return lst[:length]
+    else:
+        lst.extend([lst[-1]] * (length - len(lst)))
+        return lst</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.meshes.convert_mesh_type"><code class="name flex">
+<span>def <span class="ident">convert_mesh_type</span></span>(<span>method: Callable) ‑> Callable</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decorator for methods with mesh as first argument
+it will convert this attribute into the same type as type of the class of the method
+mesh class should have <code>cast</code> method which will be called to convert mesh</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_mesh_type(method: Callable) -&gt; Callable:
+    &#34;&#34;&#34;
+    Decorator for methods with mesh as first argument
+    it will convert this attribute into the same type as type of the class of the method
+    mesh class should have `cast` method which will be called to convert mesh
+    &#34;&#34;&#34;
+    @wraps(method)
+    def wrap_method(base_mesh, mesh, *args, **kwargs):
+        mesh = mesh.cast(type(base_mesh))
+        return method(base_mesh, mesh, *args, **kwargs)
+    return wrap_method</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.fix_len"><code class="name flex">
+<span>def <span class="ident">fix_len</span></span>(<span>lst: list, length: int) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>timeit('fix_len(l, 99999)', 'from <strong>main</strong> import fix_len; l = list(range(100000))', number=1)
+0.0011104999998678977
+timeit('fix_len(l, 100000)', 'from <strong>main</strong> import fix_len; l = list(range(100000))', number=1)
+4.699999863078119e-06
+timeit('fix_len(l, 100001)', 'from <strong>main</strong> import fix_len; l = list(range(100000))', number=1)
+5.7999995988211595e-06</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fix_len(lst: list, length: int) -&gt; list:
+    &#34;&#34;&#34;
+    timeit(&#39;fix_len(l, 99999)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    0.0011104999998678977
+    timeit(&#39;fix_len(l, 100000)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    4.699999863078119e-06
+    timeit(&#39;fix_len(l, 100001)&#39;, &#39;from __main__ import fix_len; l = list(range(100000))&#39;, number=1)
+    5.7999995988211595e-06
+    &#34;&#34;&#34;
+    if len(lst) == length:
+        return lst
+    elif len(lst) &gt; length:
+        return lst[:length]
+    else:
+        lst.extend([lst[-1]] * (length - len(lst)))
+        return lst</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.join"><code class="name flex">
+<span>def <span class="ident">join</span></span>(<span>meshes: List[<a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a>], return_type: Type[<a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a>] = None) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>efficiently join data of given meshes into one</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def join(meshes: List[Mesh], return_type: Type[Mesh] = None) -&gt; Mesh:
+    &#34;&#34;&#34;efficiently join data of given meshes into one&#34;&#34;&#34;  # todo it&#39;s better to split it into class method of Meshes
+    if return_type is None:
+        return_type = type(meshes[0])
+
+    out_mesh = return_type([], [], [])
+    added_vertices = 0
+    for mesh in meshes:
+        elements = [(out_mesh.vertices, mesh.vertices), (out_mesh.edges, mesh.edges),
+                    (out_mesh.polygons, mesh.polygons)]
+        for out_elem, elem in elements:
+            for attr in out_elem.attributes | elem.attributes:
+                out_data = out_elem.get_attribute(attr)
+                data = elem.get_attribute(attr)
+                if out_data is None:
+                    out_data = [data[0]] * len(out_elem)
+                else:
+                    out_data = fix_len(out_data, len(out_elem))
+                out_data.extend(data or [])
+                out_elem[attr] = out_data
+
+        if return_type == NpMesh:
+            pass
+        else:
+            out_mesh.vertices.data.extend(mesh.vertices.data)
+
+        out_mesh.edges.data.extend([i + added_vertices for i in e] for e in mesh.edges)
+        out_mesh.polygons.data.extend([i + added_vertices for i in p] for p in mesh.polygons)
+        added_vertices += len(mesh.vertices)
+
+    if return_type == NpMesh:
+        out_mesh.vertices.data = np.concatenate([m.vertices.data for m in meshes])
+
+    return out_mesh</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.to_mesh"><code class="name flex">
+<span>def <span class="ident">to_mesh</span></span>(<span>vertices, edges=None, polygons=None) ‑> Union[<a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a>, <a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert mesh elements into a mesh with type dependent on type of given elements</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_mesh(vertices, edges=None, polygons=None) -&gt; Union[PyMesh, NpMesh]:
+    &#34;&#34;&#34;Convert mesh elements into a mesh with type dependent on type of given elements&#34;&#34;&#34;
+    if isinstance(vertices, (list, tuple)):
+        return PyMesh(vertices, edges, polygons)
+    elif isinstance(vertices, np.ndarray):
+        return NpMesh(vertices, edges, polygons)
+    else:
+        raise TypeError(f&#39;Vertices type &#34;{type(vertices).__name__}&#34; is not in: list, tuple, np.ndarray&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.meshes.Mesh"><code class="flex name class">
+<span>class <span class="ident">Mesh</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Mesh(ABC):
+
+    @property
+    def vertices(self) -&gt; MeshElements:
+        return self._vertices
+
+    @property
+    def edges(self) -&gt; MeshElements:
+        return self._edges
+
+    @property
+    def polygons(self) -&gt; MeshElements:
+        return self._polygons
+
+    @abstractmethod
+    def add_mesh(self, mesh) -&gt; Mesh: ...
+
+    @abstractmethod
+    def cast(self, mesh_type) -&gt; Mesh: ...
+
+    @abstractmethod
+    def apply_matrix(self, matrix) -&gt; Mesh: ...
+
+    def __repr__(self):
+        return f&#39;&lt;MESH vertices={len(self.vertices)} [{&#34;, &#34;.join(self.vertices.attributes)}], &#39; \
+               f&#39;edges={len(self.edges)} [{&#34;, &#34;.join(self.edges.attributes)}], &#39; \
+               f&#39;polygons={len(self.polygons)} [{&#34;, &#34;.join(self.polygons.attributes)}]&gt;&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a></li>
+<li><a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.meshes.Mesh.edges"><code class="name">var <span class="ident">edges</span> : <a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def edges(self) -&gt; MeshElements:
+    return self._edges</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.Mesh.polygons"><code class="name">var <span class="ident">polygons</span> : <a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def polygons(self) -&gt; MeshElements:
+    return self._polygons</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.Mesh.vertices"><code class="name">var <span class="ident">vertices</span> : <a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def vertices(self) -&gt; MeshElements:
+    return self._vertices</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.meshes.Mesh.add_mesh"><code class="name flex">
+<span>def <span class="ident">add_mesh</span></span>(<span>self, mesh) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def add_mesh(self, mesh) -&gt; Mesh: ...</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.Mesh.apply_matrix"><code class="name flex">
+<span>def <span class="ident">apply_matrix</span></span>(<span>self, matrix) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def apply_matrix(self, matrix) -&gt; Mesh: ...</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.Mesh.cast"><code class="name flex">
+<span>def <span class="ident">cast</span></span>(<span>self, mesh_type) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def cast(self, mesh_type) -&gt; Mesh: ...</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.meshes.MeshElements"><code class="flex name class">
+<span>class <span class="ident">MeshElements</span></span>
+<span>(</span><span>data: Union[list, np.ndarray])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for data of mesh elements such as vertices, edges, polygons
+Main reason of this class is to keep elements attributes</p>
+<p>It supports:
+iteration over elements - [vertex for vertex in mesh.vertices]
+check if list of elements is not empty - if mesh.vertices: "There are some vertices in mesh"
+gen number of elements - polygon_number = len(mesh.polygons)
+set attributes to elements - mesh.polygons['material'] = material_indexes
+get attributes of elements - vertex_colors = mesh.vertices['vertex color']</p>
+<p>Data should be vertices, edges or faces</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MeshElements(Collection):
+    &#34;&#34;&#34;
+    Class for data of mesh elements such as vertices, edges, polygons
+    Main reason of this class is to keep elements attributes
+
+    It supports:
+    iteration over elements - [vertex for vertex in mesh.vertices]
+    check if list of elements is not empty - if mesh.vertices: &#34;There are some vertices in mesh&#34;
+    gen number of elements - polygon_number = len(mesh.polygons)
+    set attributes to elements - mesh.polygons[&#39;material&#39;] = material_indexes
+    get attributes of elements - vertex_colors = mesh.vertices[&#39;vertex color&#39;]
+    &#34;&#34;&#34;
+    def __init__(self, data: Union[list, np.ndarray]):
+        &#34;&#34;&#34;Data should be vertices, edges or faces&#34;&#34;&#34;
+        self.data = data
+
+        # given data can has its attributes
+        # data can has different length then actual number of elements (vertices, edges, polygons)
+        self._attrs: Dict[str, list] = dict()
+
+    def join_data(self, other: MeshElements):
+        &#34;&#34;&#34;
+        Merging two elements data into first
+        Also attributes are merged
+        &#34;&#34;&#34;
+        if self._attrs or other._attrs:
+            for key in self._attrs.keys() | other._attrs.keys():
+                self._attrs[key] = list(chain(fixed_iter(self._attrs.get(key), len(self.data)),
+                                              fixed_iter(other._attrs.get(key), len(other.data))))
+        if isinstance(self.data, list):
+            self.data = self.data + other.data
+        elif isinstance(self.data, np.ndarray):
+            self.data = np.concatenate([self.data, other.data])
+        else:
+            raise TypeError(f&#39;Type &#34;{type(self.data).__name__}&#34; of &#34;data&#34; attribute does not supported&#39;)
+
+    def copy_attributes(self, other: MeshElements):
+        &#34;&#34;&#34;Copy attributes from given other mesh elements&#34;&#34;&#34;
+        self._attrs.update(other._attrs)
+
+    def get_attribute(self, attr: str, default=None) -&gt; list:
+        &#34;&#34;&#34;Get elements attribute, using instead of polygons[&#39;attr&#39;]&#34;&#34;&#34;
+        return self._attrs.get(attr, default)
+
+    @property
+    def attributes(self):
+        return self._attrs.keys()
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __contains__(self, item):
+        return item in self.data
+
+    def __bool__(self):
+        return bool(self.data)
+
+    def __getitem__(self, item):
+        return self._attrs[item]
+
+    def __setitem__(self, key, value):
+        self._attrs[key] = value
+
+    def __delitem__(self, key):
+        del self._attrs[key]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>collections.abc.Collection</li>
+<li>collections.abc.Sized</li>
+<li>collections.abc.Iterable</li>
+<li>collections.abc.Container</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.meshes.MeshElements.attributes"><code class="name">var <span class="ident">attributes</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def attributes(self):
+    return self._attrs.keys()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.meshes.MeshElements.copy_attributes"><code class="name flex">
+<span>def <span class="ident">copy_attributes</span></span>(<span>self, other: <a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Copy attributes from given other mesh elements</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_attributes(self, other: MeshElements):
+    &#34;&#34;&#34;Copy attributes from given other mesh elements&#34;&#34;&#34;
+    self._attrs.update(other._attrs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.MeshElements.get_attribute"><code class="name flex">
+<span>def <span class="ident">get_attribute</span></span>(<span>self, attr: str, default=None) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get elements attribute, using instead of polygons['attr']</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_attribute(self, attr: str, default=None) -&gt; list:
+    &#34;&#34;&#34;Get elements attribute, using instead of polygons[&#39;attr&#39;]&#34;&#34;&#34;
+    return self._attrs.get(attr, default)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.MeshElements.join_data"><code class="name flex">
+<span>def <span class="ident">join_data</span></span>(<span>self, other: <a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merging two elements data into first
+Also attributes are merged</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def join_data(self, other: MeshElements):
+    &#34;&#34;&#34;
+    Merging two elements data into first
+    Also attributes are merged
+    &#34;&#34;&#34;
+    if self._attrs or other._attrs:
+        for key in self._attrs.keys() | other._attrs.keys():
+            self._attrs[key] = list(chain(fixed_iter(self._attrs.get(key), len(self.data)),
+                                          fixed_iter(other._attrs.get(key), len(other.data))))
+    if isinstance(self.data, list):
+        self.data = self.data + other.data
+    elif isinstance(self.data, np.ndarray):
+        self.data = np.concatenate([self.data, other.data])
+    else:
+        raise TypeError(f&#39;Type &#34;{type(self.data).__name__}&#34; of &#34;data&#34; attribute does not supported&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.meshes.NpMesh"><code class="flex name class">
+<span>class <span class="ident">NpMesh</span></span>
+<span>(</span><span>vertices: Iterable, edges: List[PyEdge] = None, polygons: List[PyPolygon] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Numpy mesh data structure
+For keeping balance between simplicity and efficiency only vertices has numpy format</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NpMesh(Mesh):
+    &#34;&#34;&#34;
+    Numpy mesh data structure
+    For keeping balance between simplicity and efficiency only vertices has numpy format
+    &#34;&#34;&#34;
+    def __init__(self, vertices: Iterable, edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
+        # array is copied only if dtype does not match
+        self._vertices = MeshElements(np.asarray(vertices, dtype=np.float32))
+        self._edges = MeshElements(edges or [])
+        self._polygons = MeshElements(polygons or [])
+
+    @convert_mesh_type
+    def add_mesh(self, mesh: NpMesh) -&gt; NpMesh:
+        &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+        self_vertices_number = len(self.vertices)
+        self.vertices.join_data(mesh.vertices)
+        mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+        self.edges.join_data(mesh.edges)
+        mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+        self.polygons.join_data(mesh.polygons)
+        return self
+
+    def apply_matrix(self, matrix) -&gt; NpMesh:
+        &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+        self.vertices.data = matrix_apply_np(self.vertices.data, matrix)
+        return self
+
+    def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+        &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+        if mesh_type == PyMesh:
+            cast_mesh = PyMesh(self.vertices.data.tolist(), self.edges.data, self.polygons.data)
+            cast_mesh.vertices.copy_attributes(self.vertices)
+            cast_mesh.edges.copy_attributes(self.edges)
+            cast_mesh.polygons.copy_attributes(self.polygons)
+            return cast_mesh
+        elif mesh_type == NpMesh:
+            return self
+        else:
+            raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.meshes.NpMesh.add_mesh"><code class="name flex">
+<span>def <span class="ident">add_mesh</span></span>(<span>self, mesh: <a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a>) ‑> <a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@convert_mesh_type
+def add_mesh(self, mesh: NpMesh) -&gt; NpMesh:
+    &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+    self_vertices_number = len(self.vertices)
+    self.vertices.join_data(mesh.vertices)
+    mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+    self.edges.join_data(mesh.edges)
+    mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+    self.polygons.join_data(mesh.polygons)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.NpMesh.apply_matrix"><code class="name flex">
+<span>def <span class="ident">apply_matrix</span></span>(<span>self, matrix) ‑> <a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>It will generate new vertices with given matrix applied</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_matrix(self, matrix) -&gt; NpMesh:
+    &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+    self.vertices.data = matrix_apply_np(self.vertices.data, matrix)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.NpMesh.cast"><code class="name flex">
+<span>def <span class="ident">cast</span></span>(<span>self, mesh_type: Type[<a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a>]) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert itself into other mesh types</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+    &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+    if mesh_type == PyMesh:
+        cast_mesh = PyMesh(self.vertices.data.tolist(), self.edges.data, self.polygons.data)
+        cast_mesh.vertices.copy_attributes(self.vertices)
+        cast_mesh.edges.copy_attributes(self.edges)
+        cast_mesh.polygons.copy_attributes(self.polygons)
+        return cast_mesh
+    elif mesh_type == NpMesh:
+        return self
+    else:
+        raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.meshes.PyMesh"><code class="flex name class">
+<span>class <span class="ident">PyMesh</span></span>
+<span>(</span><span>vertices: List[PyVertex], edges: List[PyEdge] = None, polygons: List[PyPolygon] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data structure of Python mesh and its basic operations
+Its methods always generates new lists so there is no need in list.copy()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PyMesh(Mesh):
+    &#34;&#34;&#34;
+    Data structure of Python mesh and its basic operations
+    Its methods always generates new lists so there is no need in list.copy()
+    &#34;&#34;&#34;
+    def __init__(self, vertices: List[PyVertex], edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
+        # Example usage: PyMesh(vertices, edges, faces).polygons[&#39;materials&#39;] = [0, 1, 1, ...]
+        self._vertices = MeshElements(vertices)
+        self._edges = MeshElements(edges or [])
+        self._polygons = MeshElements(polygons or [])
+
+    @convert_mesh_type
+    def add_mesh(self, mesh: PyMesh) -&gt; PyMesh:
+        &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+        self_vertices_number = len(self.vertices)
+        self.vertices.join_data(mesh.vertices)
+        mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+        self.edges.join_data(mesh.edges)
+        mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+        self.polygons.join_data(mesh.polygons)
+
+        return self
+
+    def apply_matrix(self, matrix: Matrix) -&gt; PyMesh:
+        &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+        self.vertices.data = [(matrix @ Vector(v)).to_tuple() for v in self.vertices]
+        return self
+
+    def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+        &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+        if mesh_type == PyMesh:
+            return self
+        elif mesh_type == NpMesh:
+            cast_mesh = NpMesh(self.vertices.data, self.edges.data, self.polygons.data)
+            cast_mesh.vertices.copy_attributes(self.vertices)
+            cast_mesh.edges.copy_attributes(self.edges)
+            cast_mesh.polygons.copy_attributes(self.polygons)
+            return cast_mesh
+        else:
+            raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.meshes.PyMesh.add_mesh"><code class="name flex">
+<span>def <span class="ident">add_mesh</span></span>(<span>self, mesh: <a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a>) ‑> <a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@convert_mesh_type
+def add_mesh(self, mesh: PyMesh) -&gt; PyMesh:
+    &#34;&#34;&#34;To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])&#34;&#34;&#34;
+    self_vertices_number = len(self.vertices)
+    self.vertices.join_data(mesh.vertices)
+    mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
+    self.edges.join_data(mesh.edges)
+    mesh.polygons.data = [[i + self_vertices_number for i in face] for face in mesh.polygons]
+    self.polygons.join_data(mesh.polygons)
+
+    return self</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.PyMesh.apply_matrix"><code class="name flex">
+<span>def <span class="ident">apply_matrix</span></span>(<span>self, matrix: Matrix) ‑> <a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>It will generate new vertices with given matrix applied</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_matrix(self, matrix: Matrix) -&gt; PyMesh:
+    &#34;&#34;&#34;It will generate new vertices with given matrix applied&#34;&#34;&#34;
+    self.vertices.data = [(matrix @ Vector(v)).to_tuple() for v in self.vertices]
+    return self</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.meshes.PyMesh.cast"><code class="name flex">
+<span>def <span class="ident">cast</span></span>(<span>self, mesh_type: Type[<a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a>]) ‑> <a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert itself into other mesh types</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cast(self, mesh_type: Type[Mesh]) -&gt; Mesh:
+    &#34;&#34;&#34;Convert itself into other mesh types&#34;&#34;&#34;
+    if mesh_type == PyMesh:
+        return self
+    elif mesh_type == NpMesh:
+        cast_mesh = NpMesh(self.vertices.data, self.edges.data, self.polygons.data)
+        cast_mesh.vertices.copy_attributes(self.vertices)
+        cast_mesh.edges.copy_attributes(self.edges)
+        cast_mesh.polygons.copy_attributes(self.polygons)
+        return cast_mesh
+    else:
+        raise TypeError(f&#39;&#34;{type(self).__name__}&#34; type can not be converted to {mesh_type.__name__}&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.meshes.convert_mesh_type" href="#sverchok.utils.meshes.convert_mesh_type">convert_mesh_type</a></code></li>
+<li><code><a title="sverchok.utils.meshes.fix_len" href="#sverchok.utils.meshes.fix_len">fix_len</a></code></li>
+<li><code><a title="sverchok.utils.meshes.join" href="#sverchok.utils.meshes.join">join</a></code></li>
+<li><code><a title="sverchok.utils.meshes.to_mesh" href="#sverchok.utils.meshes.to_mesh">to_mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.meshes.Mesh" href="#sverchok.utils.meshes.Mesh">Mesh</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.meshes.Mesh.add_mesh" href="#sverchok.utils.meshes.Mesh.add_mesh">add_mesh</a></code></li>
+<li><code><a title="sverchok.utils.meshes.Mesh.apply_matrix" href="#sverchok.utils.meshes.Mesh.apply_matrix">apply_matrix</a></code></li>
+<li><code><a title="sverchok.utils.meshes.Mesh.cast" href="#sverchok.utils.meshes.Mesh.cast">cast</a></code></li>
+<li><code><a title="sverchok.utils.meshes.Mesh.edges" href="#sverchok.utils.meshes.Mesh.edges">edges</a></code></li>
+<li><code><a title="sverchok.utils.meshes.Mesh.polygons" href="#sverchok.utils.meshes.Mesh.polygons">polygons</a></code></li>
+<li><code><a title="sverchok.utils.meshes.Mesh.vertices" href="#sverchok.utils.meshes.Mesh.vertices">vertices</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.meshes.MeshElements" href="#sverchok.utils.meshes.MeshElements">MeshElements</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.meshes.MeshElements.attributes" href="#sverchok.utils.meshes.MeshElements.attributes">attributes</a></code></li>
+<li><code><a title="sverchok.utils.meshes.MeshElements.copy_attributes" href="#sverchok.utils.meshes.MeshElements.copy_attributes">copy_attributes</a></code></li>
+<li><code><a title="sverchok.utils.meshes.MeshElements.get_attribute" href="#sverchok.utils.meshes.MeshElements.get_attribute">get_attribute</a></code></li>
+<li><code><a title="sverchok.utils.meshes.MeshElements.join_data" href="#sverchok.utils.meshes.MeshElements.join_data">join_data</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.meshes.NpMesh" href="#sverchok.utils.meshes.NpMesh">NpMesh</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.meshes.NpMesh.add_mesh" href="#sverchok.utils.meshes.NpMesh.add_mesh">add_mesh</a></code></li>
+<li><code><a title="sverchok.utils.meshes.NpMesh.apply_matrix" href="#sverchok.utils.meshes.NpMesh.apply_matrix">apply_matrix</a></code></li>
+<li><code><a title="sverchok.utils.meshes.NpMesh.cast" href="#sverchok.utils.meshes.NpMesh.cast">cast</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.meshes.PyMesh" href="#sverchok.utils.meshes.PyMesh">PyMesh</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.meshes.PyMesh.add_mesh" href="#sverchok.utils.meshes.PyMesh.add_mesh">add_mesh</a></code></li>
+<li><code><a title="sverchok.utils.meshes.PyMesh.apply_matrix" href="#sverchok.utils.meshes.PyMesh.apply_matrix">apply_matrix</a></code></li>
+<li><code><a title="sverchok.utils.meshes.PyMesh.cast" href="#sverchok.utils.meshes.PyMesh.cast">cast</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

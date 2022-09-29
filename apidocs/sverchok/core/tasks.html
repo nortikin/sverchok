@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.core.tasks API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.core.tasks</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import gc
+from time import time
+from functools import partial, cached_property, cache
+from typing import TYPE_CHECKING, Optional, Generator
+
+import bpy
+from sverchok.data_structure import post_load_call
+from sverchok.core.sv_custom_exceptions import CancelError
+from sverchok.utils.logging import catch_log_error, debug
+from sverchok.utils.profile import profile
+from sverchok.utils.handle_blender_data import BlTrees
+
+if TYPE_CHECKING:
+    from sverchok.node_tree import SverchCustomTree as SvTree
+
+
+class Tasks:
+    &#34;&#34;&#34;
+    It keeps tasks which should be executed and executes the on demand.
+    1. Execute tasks
+    2. Time the whole execution
+    3. Display the progress in the UI
+    &#34;&#34;&#34;
+    _todo: set[&#39;Task&#39;]
+    _current: Optional[&#39;Task&#39;]
+
+    def __init__(self):
+        &#34;&#34;&#34;:_todo: list of tasks to run
+        :_current: task which was started to execute&#34;&#34;&#34;
+        self._todo = set()
+        self._current = None
+
+    def __bool__(self):
+        &#34;&#34;&#34;Has anything to do?&#34;&#34;&#34;
+        return bool(self._current or self._todo)
+
+    def add(self, task: &#39;Task&#39;):
+        &#34;&#34;&#34;Add new tasks to run them via timer&#34;&#34;&#34;
+
+        if task.is_scene_update:
+            # scene event can be excepted only as first event
+            # in all other cases it can be generated by tree evaluation
+            # and can lead to infinite loop of updates
+            if self._current is not None:
+                return
+
+        # print(f&#34;Add {task=}&#34;)
+        self._todo.add(task)
+
+    @profile(section=&#34;UPDATE&#34;)
+    def run(self):
+        &#34;&#34;&#34;Run given tasks to update trees and report execution process in the
+        header of a node tree editor&#34;&#34;&#34;
+        # 0.15 is max timer frequency
+        max_duration = 10 if self.current.is_scene_update else 0.15
+        duration = 0
+
+        while self.current:
+            if duration &gt; max_duration:
+                return
+            # print(f&#34;Run task: {self.current}&#34;)
+            duration += self.current.run(max_duration-duration)
+            if self.current.last_node:
+                msg = f&#39;Pres &#34;ESC&#34; to abort, updating node &#34;{self.current.last_node.name}&#34;&#39;
+                self._report_progress(msg)
+            if self.current.is_exhausted:
+                self._next()
+
+        self._finish()
+
+    def cancel(self):
+        &#34;&#34;&#34;Remove all tasks in the queue and abort current one&#34;&#34;&#34;
+        self._todo.clear()
+        if self._current:
+            try:
+                self._current.throw(CancelError)
+            except (StopIteration, RuntimeError):
+                pass
+            finally:  # protection from the task to be stack forever
+                self._finish()
+
+    @property
+    def current(self) -&gt; Optional[&#39;Task&#39;]:
+        &#34;&#34;&#34;Return current task if it is absent it tries to pop it from the tasks
+        queue if it&#39;s empty returns None&#34;&#34;&#34;
+        if self._current:
+            return self._current
+        elif self._todo:
+            self._start()
+            self._current = self._todo.pop()
+            return self._current
+        else:
+            return None
+
+    def _start(self):
+        &#34;&#34;&#34;Preprocessing before executing the whole queue of events&#34;&#34;&#34;
+        self._start_time
+        gc.disable()  # for performance
+
+    def _next(self):
+        &#34;&#34;&#34;Should be called to switch to next tasks when current is exhausted
+        It made some cleanups after the previous task&#34;&#34;&#34;
+        self._report_progress()
+        self._current = self._todo.pop() if self._todo else None
+        del self._main_area
+
+    def _finish(self):
+        &#34;&#34;&#34;Cleanups. Also triggers scene handler and mark trees to skip it&#34;&#34;&#34;
+        self._report_progress()
+        del self._main_area
+
+        # this only need to trigger scene changes handler again
+        # todo should be proved that this is right location to call from
+        bpy.context.scene.update_tag()
+
+        # this indicates that process of the tree is finished and next scene event can be skipped
+        # the scene trigger will try to update all trees, so they all should be marked
+        for t in BlTrees().sv_main_trees:
+            t[&#39;SKIP_UPDATE&#39;] = True
+
+        gc.enable()
+        debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
+        del self._start_time
+
+    @cached_property
+    def _start_time(self):
+        &#34;&#34;&#34;Start time of execution the whole queue of tasks&#34;&#34;&#34;
+        return time()
+
+    @cached_property
+    def _main_area(self) -&gt; Optional:
+        &#34;&#34;&#34;Searching appropriate area index for reporting update progress&#34;&#34;&#34;
+        if not self.current:
+            return
+        for area in bpy.context.screen.areas:
+            if area.ui_type == &#39;SverchCustomTreeType&#39;:
+                path = area.spaces[0].path
+
+                # it appeared the tree already can be invalid when undo event
+                # is called pretty fast
+                try:
+                    if path and path[-1].node_tree.name == self._current.tree.name:
+                        return area
+                except ReferenceError:
+                    # probably all reports should be cleaned through search
+                    debug(f&#34;Unable report a nodes updating progress&#34;)
+
+    def _report_progress(self, text: str = None):
+        &#34;&#34;&#34;Show text in the tree editor header. If text is none the header
+        returns in its initial condition&#34;&#34;&#34;
+        if self._main_area:
+            self._main_area.header_text_set(text)
+
+    def __repr__(self):
+        return f&#34;&lt;Tasks current={self._current} todo={self._todo}&gt;&#34;
+
+
+tasks = Tasks()
+
+
+def tree_event_loop(delay):
+    &#34;&#34;&#34;Sverchok tasks handler&#34;&#34;&#34;
+    with catch_log_error():
+        if tasks:
+            tasks.run()
+    return delay
+
+
+tree_event_loop = partial(tree_event_loop, 0.01)
+
+
+class Task:
+    &#34;&#34;&#34;Generator which should update some node tree. The task is hashable, and
+    it is equal to another task if booth of them update the same tree.
+    The generator is suspendable and can limit its execution by given time&#34;&#34;&#34;
+    def __init__(self, tree, updater, is_scene_update):
+        &#34;&#34;&#34;:tree: tree which should be updated
+        :_updater: generator which should update given tree
+        :is_exhausted: the status of the generator - read only
+        :last_node: last node which going to be processed by the generator
+        - read only&#34;&#34;&#34;
+        self.tree: SvTree = tree
+        self.is_scene_update: bool = is_scene_update
+        self.is_exhausted = False
+        self.last_node = None
+
+        self._updater: Generator = updater
+        self.__hash__ = cache(self.__hash__)
+
+    def run(self, max_duration):
+        &#34;&#34;&#34;Starts the tree updating
+        :max_duration: if updating of the tree takes more time than given
+        maximum duration it saves its state and returns execution flow&#34;&#34;&#34;
+        duration = 0
+        try:
+            start_time = time()
+            while duration &lt; max_duration:
+                self.last_node = next(self._updater)
+                duration = time() - start_time
+            return duration
+
+        except StopIteration:
+            self.is_exhausted = True
+            return duration
+
+    def throw(self, error: CancelError):
+        &#34;&#34;&#34;Should be used to cansel tree execution. Updater should add
+        the error to current node and abort the execution&#34;&#34;&#34;
+        self._updater.throw(error)
+        self.is_exhausted = True
+
+    def __eq__(self, other: &#39;Task&#39;):
+        return self.tree.tree_id == other.tree.tree_id
+
+    def __hash__(self):
+        return hash(self.tree.tree_id)
+
+    def __repr__(self):
+        return f&#34;&lt;Task: {self.tree.name}&gt;&#34;
+
+
+@post_load_call
+def post_load_register():
+    # when new file is loaded all timers are unregistered
+    # to make them persistent the post load handler should be used
+    # but it&#39;s also is possible that the timer was registered during registration of the add-on
+    if not bpy.app.timers.is_registered(tree_event_loop):
+        bpy.app.timers.register(tree_event_loop)
+
+
+def register():
+    &#34;&#34;&#34;Registration of Sverchok event handler&#34;&#34;&#34;
+    # it appeared that the timers can be registered during the add-on initialization
+    # The timer should be registered here because post_load_register won&#39;t be called when an add-on is enabled by user
+    bpy.app.timers.register(tree_event_loop)
+
+
+def unregister():
+    bpy.app.timers.unregister(tree_event_loop)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.core.tasks.post_load_register"><code class="name flex">
+<span>def <span class="ident">post_load_register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@post_load_call
+def post_load_register():
+    # when new file is loaded all timers are unregistered
+    # to make them persistent the post load handler should be used
+    # but it&#39;s also is possible that the timer was registered during registration of the add-on
+    if not bpy.app.timers.is_registered(tree_event_loop):
+        bpy.app.timers.register(tree_event_loop)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.tasks.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Registration of Sverchok event handler</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    &#34;&#34;&#34;Registration of Sverchok event handler&#34;&#34;&#34;
+    # it appeared that the timers can be registered during the add-on initialization
+    # The timer should be registered here because post_load_register won&#39;t be called when an add-on is enabled by user
+    bpy.app.timers.register(tree_event_loop)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.tasks.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    bpy.app.timers.unregister(tree_event_loop)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.core.tasks.Task"><code class="flex name class">
+<span>class <span class="ident">Task</span></span>
+<span>(</span><span>tree, updater, is_scene_update)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generator which should update some node tree. The task is hashable, and
+it is equal to another task if booth of them update the same tree.
+The generator is suspendable and can limit its execution by given time</p>
+<p>:tree: tree which should be updated
+:_updater: generator which should update given tree
+:is_exhausted: the status of the generator - read only
+:last_node: last node which going to be processed by the generator
+- read only</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Task:
+    &#34;&#34;&#34;Generator which should update some node tree. The task is hashable, and
+    it is equal to another task if booth of them update the same tree.
+    The generator is suspendable and can limit its execution by given time&#34;&#34;&#34;
+    def __init__(self, tree, updater, is_scene_update):
+        &#34;&#34;&#34;:tree: tree which should be updated
+        :_updater: generator which should update given tree
+        :is_exhausted: the status of the generator - read only
+        :last_node: last node which going to be processed by the generator
+        - read only&#34;&#34;&#34;
+        self.tree: SvTree = tree
+        self.is_scene_update: bool = is_scene_update
+        self.is_exhausted = False
+        self.last_node = None
+
+        self._updater: Generator = updater
+        self.__hash__ = cache(self.__hash__)
+
+    def run(self, max_duration):
+        &#34;&#34;&#34;Starts the tree updating
+        :max_duration: if updating of the tree takes more time than given
+        maximum duration it saves its state and returns execution flow&#34;&#34;&#34;
+        duration = 0
+        try:
+            start_time = time()
+            while duration &lt; max_duration:
+                self.last_node = next(self._updater)
+                duration = time() - start_time
+            return duration
+
+        except StopIteration:
+            self.is_exhausted = True
+            return duration
+
+    def throw(self, error: CancelError):
+        &#34;&#34;&#34;Should be used to cansel tree execution. Updater should add
+        the error to current node and abort the execution&#34;&#34;&#34;
+        self._updater.throw(error)
+        self.is_exhausted = True
+
+    def __eq__(self, other: &#39;Task&#39;):
+        return self.tree.tree_id == other.tree.tree_id
+
+    def __hash__(self):
+        return hash(self.tree.tree_id)
+
+    def __repr__(self):
+        return f&#34;&lt;Task: {self.tree.name}&gt;&#34;</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.core.tasks.Task.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self, max_duration)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Starts the tree updating
+:max_duration: if updating of the tree takes more time than given
+maximum duration it saves its state and returns execution flow</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(self, max_duration):
+    &#34;&#34;&#34;Starts the tree updating
+    :max_duration: if updating of the tree takes more time than given
+    maximum duration it saves its state and returns execution flow&#34;&#34;&#34;
+    duration = 0
+    try:
+        start_time = time()
+        while duration &lt; max_duration:
+            self.last_node = next(self._updater)
+            duration = time() - start_time
+        return duration
+
+    except StopIteration:
+        self.is_exhausted = True
+        return duration</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.tasks.Task.throw"><code class="name flex">
+<span>def <span class="ident">throw</span></span>(<span>self, error: <a title="sverchok.core.sv_custom_exceptions.CancelError" href="sv_custom_exceptions.html#sverchok.core.sv_custom_exceptions.CancelError">CancelError</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Should be used to cansel tree execution. Updater should add
+the error to current node and abort the execution</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def throw(self, error: CancelError):
+    &#34;&#34;&#34;Should be used to cansel tree execution. Updater should add
+    the error to current node and abort the execution&#34;&#34;&#34;
+    self._updater.throw(error)
+    self.is_exhausted = True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.core.tasks.Tasks"><code class="flex name class">
+<span>class <span class="ident">Tasks</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>It keeps tasks which should be executed and executes the on demand.
+1. Execute tasks
+2. Time the whole execution
+3. Display the progress in the UI</p>
+<p>:_todo: list of tasks to run
+:_current: task which was started to execute</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Tasks:
+    &#34;&#34;&#34;
+    It keeps tasks which should be executed and executes the on demand.
+    1. Execute tasks
+    2. Time the whole execution
+    3. Display the progress in the UI
+    &#34;&#34;&#34;
+    _todo: set[&#39;Task&#39;]
+    _current: Optional[&#39;Task&#39;]
+
+    def __init__(self):
+        &#34;&#34;&#34;:_todo: list of tasks to run
+        :_current: task which was started to execute&#34;&#34;&#34;
+        self._todo = set()
+        self._current = None
+
+    def __bool__(self):
+        &#34;&#34;&#34;Has anything to do?&#34;&#34;&#34;
+        return bool(self._current or self._todo)
+
+    def add(self, task: &#39;Task&#39;):
+        &#34;&#34;&#34;Add new tasks to run them via timer&#34;&#34;&#34;
+
+        if task.is_scene_update:
+            # scene event can be excepted only as first event
+            # in all other cases it can be generated by tree evaluation
+            # and can lead to infinite loop of updates
+            if self._current is not None:
+                return
+
+        # print(f&#34;Add {task=}&#34;)
+        self._todo.add(task)
+
+    @profile(section=&#34;UPDATE&#34;)
+    def run(self):
+        &#34;&#34;&#34;Run given tasks to update trees and report execution process in the
+        header of a node tree editor&#34;&#34;&#34;
+        # 0.15 is max timer frequency
+        max_duration = 10 if self.current.is_scene_update else 0.15
+        duration = 0
+
+        while self.current:
+            if duration &gt; max_duration:
+                return
+            # print(f&#34;Run task: {self.current}&#34;)
+            duration += self.current.run(max_duration-duration)
+            if self.current.last_node:
+                msg = f&#39;Pres &#34;ESC&#34; to abort, updating node &#34;{self.current.last_node.name}&#34;&#39;
+                self._report_progress(msg)
+            if self.current.is_exhausted:
+                self._next()
+
+        self._finish()
+
+    def cancel(self):
+        &#34;&#34;&#34;Remove all tasks in the queue and abort current one&#34;&#34;&#34;
+        self._todo.clear()
+        if self._current:
+            try:
+                self._current.throw(CancelError)
+            except (StopIteration, RuntimeError):
+                pass
+            finally:  # protection from the task to be stack forever
+                self._finish()
+
+    @property
+    def current(self) -&gt; Optional[&#39;Task&#39;]:
+        &#34;&#34;&#34;Return current task if it is absent it tries to pop it from the tasks
+        queue if it&#39;s empty returns None&#34;&#34;&#34;
+        if self._current:
+            return self._current
+        elif self._todo:
+            self._start()
+            self._current = self._todo.pop()
+            return self._current
+        else:
+            return None
+
+    def _start(self):
+        &#34;&#34;&#34;Preprocessing before executing the whole queue of events&#34;&#34;&#34;
+        self._start_time
+        gc.disable()  # for performance
+
+    def _next(self):
+        &#34;&#34;&#34;Should be called to switch to next tasks when current is exhausted
+        It made some cleanups after the previous task&#34;&#34;&#34;
+        self._report_progress()
+        self._current = self._todo.pop() if self._todo else None
+        del self._main_area
+
+    def _finish(self):
+        &#34;&#34;&#34;Cleanups. Also triggers scene handler and mark trees to skip it&#34;&#34;&#34;
+        self._report_progress()
+        del self._main_area
+
+        # this only need to trigger scene changes handler again
+        # todo should be proved that this is right location to call from
+        bpy.context.scene.update_tag()
+
+        # this indicates that process of the tree is finished and next scene event can be skipped
+        # the scene trigger will try to update all trees, so they all should be marked
+        for t in BlTrees().sv_main_trees:
+            t[&#39;SKIP_UPDATE&#39;] = True
+
+        gc.enable()
+        debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
+        del self._start_time
+
+    @cached_property
+    def _start_time(self):
+        &#34;&#34;&#34;Start time of execution the whole queue of tasks&#34;&#34;&#34;
+        return time()
+
+    @cached_property
+    def _main_area(self) -&gt; Optional:
+        &#34;&#34;&#34;Searching appropriate area index for reporting update progress&#34;&#34;&#34;
+        if not self.current:
+            return
+        for area in bpy.context.screen.areas:
+            if area.ui_type == &#39;SverchCustomTreeType&#39;:
+                path = area.spaces[0].path
+
+                # it appeared the tree already can be invalid when undo event
+                # is called pretty fast
+                try:
+                    if path and path[-1].node_tree.name == self._current.tree.name:
+                        return area
+                except ReferenceError:
+                    # probably all reports should be cleaned through search
+                    debug(f&#34;Unable report a nodes updating progress&#34;)
+
+    def _report_progress(self, text: str = None):
+        &#34;&#34;&#34;Show text in the tree editor header. If text is none the header
+        returns in its initial condition&#34;&#34;&#34;
+        if self._main_area:
+            self._main_area.header_text_set(text)
+
+    def __repr__(self):
+        return f&#34;&lt;Tasks current={self._current} todo={self._todo}&gt;&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.core.tasks.Tasks.current"><code class="name">var <span class="ident">current</span> : Optional[<a title="sverchok.core.tasks.Task" href="#sverchok.core.tasks.Task">Task</a>]</code></dt>
+<dd>
+<div class="desc"><p>Return current task if it is absent it tries to pop it from the tasks
+queue if it's empty returns None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def current(self) -&gt; Optional[&#39;Task&#39;]:
+    &#34;&#34;&#34;Return current task if it is absent it tries to pop it from the tasks
+    queue if it&#39;s empty returns None&#34;&#34;&#34;
+    if self._current:
+        return self._current
+    elif self._todo:
+        self._start()
+        self._current = self._todo.pop()
+        return self._current
+    else:
+        return None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.core.tasks.Tasks.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, task: <a title="sverchok.core.tasks.Task" href="#sverchok.core.tasks.Task">Task</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add new tasks to run them via timer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, task: &#39;Task&#39;):
+    &#34;&#34;&#34;Add new tasks to run them via timer&#34;&#34;&#34;
+
+    if task.is_scene_update:
+        # scene event can be excepted only as first event
+        # in all other cases it can be generated by tree evaluation
+        # and can lead to infinite loop of updates
+        if self._current is not None:
+            return
+
+    # print(f&#34;Add {task=}&#34;)
+    self._todo.add(task)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.tasks.Tasks.cancel"><code class="name flex">
+<span>def <span class="ident">cancel</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove all tasks in the queue and abort current one</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cancel(self):
+    &#34;&#34;&#34;Remove all tasks in the queue and abort current one&#34;&#34;&#34;
+    self._todo.clear()
+    if self._current:
+        try:
+            self._current.throw(CancelError)
+        except (StopIteration, RuntimeError):
+            pass
+        finally:  # protection from the task to be stack forever
+            self._finish()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.tasks.Tasks.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run given tasks to update trees and report execution process in the
+header of a node tree editor</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrapper(*args, **kwargs):
+    if is_profiling_enabled(section):
+        global _profile_nesting
+
+        profile = get_global_profile()
+        _profile_nesting += 1
+        if _profile_nesting == 1:
+            profile.enable()
+        result = func(*args, **kwargs)
+        _profile_nesting -= 1
+        if _profile_nesting == 0:
+            profile.disable()
+        return result
+    else:
+        return func(*args, **kwargs)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.core" href="index.html">sverchok.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.core.tasks.post_load_register" href="#sverchok.core.tasks.post_load_register">post_load_register</a></code></li>
+<li><code><a title="sverchok.core.tasks.register" href="#sverchok.core.tasks.register">register</a></code></li>
+<li><code><a title="sverchok.core.tasks.unregister" href="#sverchok.core.tasks.unregister">unregister</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.core.tasks.Task" href="#sverchok.core.tasks.Task">Task</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.core.tasks.Task.run" href="#sverchok.core.tasks.Task.run">run</a></code></li>
+<li><code><a title="sverchok.core.tasks.Task.throw" href="#sverchok.core.tasks.Task.throw">throw</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.core.tasks.Tasks" href="#sverchok.core.tasks.Tasks">Tasks</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.core.tasks.Tasks.add" href="#sverchok.core.tasks.Tasks.add">add</a></code></li>
+<li><code><a title="sverchok.core.tasks.Tasks.cancel" href="#sverchok.core.tasks.Tasks.cancel">cancel</a></code></li>
+<li><code><a title="sverchok.core.tasks.Tasks.current" href="#sverchok.core.tasks.Tasks.current">current</a></code></li>
+<li><code><a title="sverchok.core.tasks.Tasks.run" href="#sverchok.core.tasks.Tasks.run">run</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

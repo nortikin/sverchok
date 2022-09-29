@@ -1,0 +1,1830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.handle_blender_data API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.handle_blender_data</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+from __future__ import annotations
+
+from collections.abc import Iterable
+from enum import Enum
+from functools import singledispatch, wraps
+from itertools import chain
+from typing import Any, List, Union, TYPE_CHECKING
+
+import bpy
+
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree
+    from sverchok.node_tree import SverchCustomTree
+
+
+# ~~~~ collection property functions ~~~~~
+
+
+def correct_collection_length(collection: bpy.types.bpy_prop_collection, length: int) -&gt; None:
+    &#34;&#34;&#34;
+    It takes collection property and add or remove its items so it will be equal to given length
+    If item has method `remove` it will be called before its deleting
+    &#34;&#34;&#34;
+    if len(collection) &lt; length:
+        for i in range(len(collection), length):
+            collection.add()
+    elif len(collection) &gt; length:
+        for i in range(len(collection) - 1, length - 1, -1):
+            try:
+                collection[i].remove_data()
+            except AttributeError:
+                pass
+            collection.remove(i)
+
+
+# ~~~~ Blender collections functions ~~~~~
+
+
+def pick_create_object(obj_name: str, data_block):
+    &#34;&#34;&#34;Find object with given name, if does not exist will create new object with given data bloc&#34;&#34;&#34;
+    block = bpy.data.objects.get(obj_name)
+    if not block:
+        block = bpy.data.objects.new(name=obj_name, object_data=data_block)
+    return block
+
+
+def pick_create_data_block(collection: bpy.types.bpy_prop_collection, block_name: str):
+    &#34;&#34;&#34;
+    Will find data block with given name in given collection (bpy.data.mesh, bpy.data.materials ,...)
+    Don&#39;t use with objects collection
+    If block does not exist new one will be created
+     &#34;&#34;&#34;
+    block = collection.get(block_name)
+    if not block:
+        block = collection.new(name=block_name)
+    return block
+
+
+def delete_data_block(data_block) -&gt; None:
+    &#34;&#34;&#34;
+    It will delete such data like objects, meshes, materials
+    It won&#39;t rise any error if give block does not exist in file anymore
+    &#34;&#34;&#34;
+    @singledispatch
+    def del_object(bl_obj) -&gt; None:
+        raise TypeError(f&#34;Such type={type(bl_obj)} is not supported&#34;)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Object):
+        bpy.data.objects.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Mesh):
+        bpy.data.meshes.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Material):
+        bpy.data.materials.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Light):
+        bpy.data.lights.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Curve):
+        bpy.data.curves.remove(bl_obj)
+
+    try:
+        del_object(data_block)
+    except ReferenceError:
+        # looks like already was deleted
+        pass
+
+
+def get_sv_trees():
+    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {&#39;SverchCustomTreeType&#39;,}]
+
+
+# ~~~~ encapsulation Blender objects ~~~~
+
+# In general it&#39;s still arbitrary set of functionality (like module which fully consists with functions)
+# But here the functions are combine with data which they handle
+
+class BlModifier:
+    def __init__(self, modifier):
+        self._mod: bpy.types.Modifier = modifier
+
+    def get_property(self, name):
+        return getattr(self._mod, name)
+
+    def set_property(self, name, value):
+        setattr(self._mod, name, value)
+
+    def get_tree_prop(self, name):
+        return self._mod[name]
+
+    def set_tree_prop(self, name, value):
+        self._mod[name] = value
+
+    @property
+    def type(self) -&gt; str:
+        return self._mod.type
+
+    def __eq__(self, other):
+        if isinstance(other, BlModifier):
+            # check type
+            if self.type != other.type:
+                return False
+
+            # check properties
+            for prop in (p for p in self._mod.bl_rna.properties if not p.is_readonly):
+                if other.get_property(prop.identifier) != self.get_property(prop.identifier):
+                    return False
+
+            # check tree properties
+            if self._mod.type == &#39;NODES&#39; and self._mod.node_group:
+                for tree_inp in self._mod.node_group.inputs[1:]:
+                    prop_name = tree_inp.identifier
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+                    use_name = f&#34;{prop_name}_use_attribute&#34;
+                    if self.get_tree_prop(use_name) != other.get_tree_prop(use_name):
+                        return False
+                    attr_name = f&#34;{prop_name}_attribute_name&#34;
+                    if self.get_tree_prop(attr_name) != other.get_tree_prop(attr_name):
+                        return False
+                for tree_out in self._mod.node_group.outputs[1:]:
+                    prop_name = f&#34;{tree_out.identifier}_attribute_name&#34;
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+
+            return True
+        else:
+            return NotImplemented
+
+
+class BlTrees:
+    &#34;&#34;&#34;Wrapping around Blender tree, use with care
+    it can crash if other containers are modified a lot
+    https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
+    All this is True and about Blender class itself&#34;&#34;&#34;
+
+    MAIN_TREE_ID = &#39;SverchCustomTreeType&#39;
+    GROUP_ID = &#39;SvGroupTree&#39;
+
+    def __init__(self, node_groups=None):
+        self._trees = node_groups
+
+    @property
+    def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
+        &#34;&#34;&#34;All Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])
+
+    @property
+    def sv_main_trees(self) -&gt; Iterable[SverchCustomTree]:
+        &#34;&#34;&#34;All main Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
+
+    @property
+    def sv_group_trees(self) -&gt; Iterable[SvGroupTree]:
+        &#34;&#34;&#34;All Sverchok group trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.GROUP_ID)
+
+
+class BlTree:
+    def __init__(self, tree):
+        self._tree = tree
+
+    @property
+    def is_group_tree(self) -&gt; bool:
+        return self._tree.bl_idname == BlTrees.GROUP_ID
+
+
+class BlNode:
+    &#34;&#34;&#34;Wrapping around ordinary node for extracting some its information&#34;&#34;&#34;
+    DEBUG_NODES_IDS = {&#39;SvDebugPrintNode&#39;, &#39;SvStethoscopeNode&#39;}  # can be added as Mix-in class
+
+    def __init__(self, node):
+        self.data = node
+
+    @property
+    def properties(self) -&gt; List[BPYProperty]:
+        &#34;&#34;&#34;Iterator over all node properties&#34;&#34;&#34;
+        node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, &#39;__annotations__&#39;) else []
+        return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+    @property
+    def is_debug_node(self) -&gt; bool:
+        &#34;&#34;&#34;Nodes which print sockets content&#34;&#34;&#34;
+        return self.base_idname in self.DEBUG_NODES_IDS
+
+    @property
+    def base_idname(self) -&gt; str:
+        &#34;&#34;&#34;SvStethoscopeNodeMK2 -&gt; SvStethoscopeNode
+        it won&#39;t parse more tricky variants like SvStethoscopeMK2Node which I saw exists&#34;&#34;&#34;
+        id_name, _, version = self.data.bl_idname.partition(&#39;MK&#39;)
+        try:
+            int(version)
+        except ValueError:
+            return self.data.bl_idname
+        return id_name
+
+
+class BPYProperty:
+    &#34;&#34;&#34;Wrapper over any property to get access to advance information&#34;&#34;&#34;
+    def __init__(self, data, prop_name: str):
+        &#34;&#34;&#34;
+        Data block can be any blender data like, node, trees, sockets
+        Use with caution as far it keeps straight reference to Blender object
+        &#34;&#34;&#34;
+        self.name = prop_name
+        self._data = data
+
+    @property
+    def is_valid(self) -&gt; bool:
+        &#34;&#34;&#34;
+        If data does not have property with given name property is invalid
+        It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+        Such properties cab consider as deprecated
+        &#34;&#34;&#34;
+        return self.name in self._data.bl_rna.properties
+
+    @property
+    def value(self) -&gt; Any:
+        &#34;&#34;&#34;Returns value of the property in Python format, list of dicts for collection, tuple for array&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        elif self.is_array_like:
+            return tuple(getattr(self._data, self.name))
+        elif self.type == &#39;COLLECTION&#39;:
+            return self._extract_collection_values()
+        elif self.type == &#39;POINTER&#39;:  # it simply returns name of data block or None
+            data_block = getattr(self._data, self.name)
+            return data_block.name if data_block is not None else None
+        else:
+            return getattr(self._data, self.name)
+
+    @value.setter
+    def value(self, value):
+        &#34;&#34;&#34;Apply values in python format to the property&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        if self.type == &#39;COLLECTION&#39;:
+            self._set_collection_values(value)
+        elif self.type == &#39;POINTER&#39; and isinstance(value, str):
+            setattr(self._data, self.name, self.data_collection.get(value))
+        elif self.type == &#39;ENUM&#39; and self.is_array_like:
+            setattr(self._data, self.name, set(value))
+        else:
+            setattr(self._data, self.name, value)
+
+    @property
+    def type(self) -&gt; str:
+        &#34;&#34;&#34;Type of property: STRING, FLOAT, INT, POINTER, COLLECTION&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;type&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        return self._data.bl_rna.properties[self.name].type
+
+    @property
+    def pointer_type(self) -&gt; BPYPointers:
+        if self.type != &#39;POINTER&#39;:
+            raise TypeError(f&#39;This property is only valid for &#34;POINTER&#34; types, {self.type} type is given&#39;)
+        return BPYPointers.get_type(self._data.bl_rna)
+
+    @property
+    def default_value(self) -&gt; Any:
+        &#34;&#34;&#34;Returns default value, None for pointers, list of dicts of default values for collections&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;default_value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        elif self.type == &#39;COLLECTION&#39;:
+            return self._extract_collection_values(default_value=True)
+        elif self.is_array_like:
+            if self.type == &#39;ENUM&#39;:
+                return tuple(self._data.bl_rna.properties[self.name].default_flag)
+            else:
+                return tuple(self._data.bl_rna.properties[self.name].default_array)
+        elif self.type == &#39;POINTER&#39;:
+            return None
+        else:
+            return self._data.bl_rna.properties[self.name].default
+
+    @property
+    def pointer_type(self) -&gt; BPYPointers:
+        &#34;&#34;&#34;It returns subtypes of POINTER type&#34;&#34;&#34;
+        if self.type != &#39;POINTER&#39;:
+            raise TypeError(f&#39;Only POINTER property type has `pointer_type` attribute, &#34;{self.type}&#34; given&#39;)
+        return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)
+
+    @property
+    def data_collection(self):
+        &#34;&#34;&#34;For pointer properties only, if pointer type is MESH it will return bpy.data.meshes&#34;&#34;&#34;
+        return self.pointer_type.collection
+
+    @property
+    def is_to_save(self) -&gt; bool:
+        &#34;&#34;&#34;False if property has option BoolProperty(options={&#39;SKIP_SAVE&#39;})&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;is_to_save&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        return not self._data.bl_rna.properties[self.name].is_skip_save
+
+    @property
+    def is_array_like(self) -&gt; bool:
+        &#34;&#34;&#34;True for VectorArray, FloatArray, IntArray, Enum with enum flag&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;is_array_like&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        if self.type in {&#39;BOOLEAN&#39;, &#39;FLOAT&#39;, &#39;INT&#39;}:
+            return self._data.bl_rna.properties[self.name].is_array
+        elif self.type == &#39;ENUM&#39;:
+            # Enum can return set of values, array like
+            return self._data.bl_rna.properties[self.name].is_enum_flag
+        else:
+            # other properties does not have is_array attribute
+            return False
+
+    def unset(self):
+        &#34;&#34;&#34;Assign default value to the property&#34;&#34;&#34;
+        self._data.property_unset(self.name)
+
+    def filter_collection_values(self, skip_default=True, skip_save=True):
+        &#34;&#34;&#34;Convert data of collection property into python format with skipping certain properties&#34;&#34;&#34;
+        if self.type != &#39;COLLECTION&#39;:
+            raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if not prop.is_valid:
+                    continue
+                if skip_save and not prop.is_to_save:
+                    continue
+                if prop.type != &#39;COLLECTION&#39;:
+                    if skip_default and prop.default_value == prop.value:
+                        continue
+                    item_props[prop.name] = prop.value
+                else:
+                    item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save)
+            items.append(item_props)
+        return items
+
+    def collection_to_list(self):
+        &#34;&#34;&#34;Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+        in this example the collection has two items, each item has 3 properties&#34;&#34;&#34;
+        if self.type != &#39;COLLECTION&#39;:
+            raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+
+        collection = []
+        for item in getattr(self._data, self.name):
+            prop_list = []
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                prop_list.append(prop)
+            collection.append(prop_list)
+        return collection
+
+    def _extract_collection_values(self, default_value: bool = False):
+        &#34;&#34;&#34;returns something like this: [{&#34;name&#34;: &#34;&#34;, &#34;my_prop&#34;: 1.0}, {&#34;name&#34;: &#34;&#34;, &#34;my_prop&#34;: 2.0}, ...]&#34;&#34;&#34;
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    item_props[prop.name] = prop.default_value if default_value else prop.value
+            items.append(item_props)
+        return items
+
+    def _set_collection_values(self, value: List[dict]):
+        &#34;&#34;&#34;Assign Python data to collection property&#34;&#34;&#34;
+        collection = getattr(self._data, self.name)
+        for item_index, item_values in enumerate(value):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
+            for prop_name, prop_value in item_values.items():
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value
+
+
+class BPYPointers(Enum):
+    &#34;&#34;&#34;
+    Pointer types which are used in Sverchok
+    New properties should be added with updating collection property
+    &#34;&#34;&#34;
+    # pointer name = type of data
+    OBJECT = bpy.types.Object
+    MESH = bpy.types.Mesh
+    NODE_TREE = bpy.types.NodeTree
+    NODE = bpy.types.Node  # there is pointers to nodes in Blender like node.parent property
+    MATERIAL = bpy.types.Material
+    COLLECTION = bpy.types.Collection
+    TEXT = bpy.types.Text
+    LIGHT = bpy.types.Light
+    IMAGE = bpy.types.Image
+    TEXTURE = bpy.types.Texture
+    VECTOR_FONT = bpy.types.VectorFont
+    GREASE_PENCIL = bpy.types.GreasePencil
+
+    @property
+    def collection(self):
+        &#34;&#34;&#34;Map of pointer type and its collection&#34;&#34;&#34;
+        collections = {
+            BPYPointers.OBJECT: bpy.data.objects,
+            BPYPointers.MESH: bpy.data.meshes,
+            BPYPointers.NODE_TREE: bpy.data.node_groups,
+            BPYPointers.NODE: None,
+            BPYPointers.MATERIAL:  bpy.data.materials,
+            BPYPointers.COLLECTION: bpy.data.collections,
+            BPYPointers.TEXT: bpy.data.texts,
+            BPYPointers.LIGHT: bpy.data.lights,
+            BPYPointers.IMAGE: bpy.data.images,
+            BPYPointers.TEXTURE: bpy.data.textures,
+            BPYPointers.VECTOR_FONT: bpy.data.curves,
+            BPYPointers.GREASE_PENCIL: bpy.data.grease_pencils
+        }
+        return collections[self]
+
+    @property
+    def type(self):
+        &#34;&#34;&#34;Return Blender type of the pointer&#34;&#34;&#34;
+        return self.value
+
+    @classmethod
+    def get_type(cls, bl_rna) -&gt; Union[BPYPointers, None]:
+        &#34;&#34;&#34;Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)&#34;&#34;&#34;
+        for pointer in BPYPointers:
+            if pointer.type.bl_rna == bl_rna or pointer.type.bl_rna == bl_rna.base:
+                return pointer
+        raise TypeError(f&#39;Type: &#34;{bl_rna}&#34; was not found in: {[t.type.bl_rna for t in BPYPointers]}&#39;)
+
+
+def get_func_and_args(prop):
+    &#34;&#34;&#34;
+    usage:   
+        - formerly
+        prop_func, prop_args = some_class.__annotations__[some_prop_name]
+        - new
+        prop_to_decompose = some_class.__annotations__[some_prop_name]
+        prop_func, prop_args = get_func_and_args(prop_to_decompose)
+        
+    &#34;&#34;&#34;
+    if hasattr(prop, &#34;keywords&#34;):
+        return prop.function, prop.keywords
+    else:
+        return prop
+
+
+def keep_enum_reference(enum_func):
+    &#34;&#34;&#34;remember you have to keep enum strings somewhere in py,
+    else they get freed and Blender references invalid memory!
+    This decorator should be used for these purposes&#34;&#34;&#34;
+    saved_items = dict()
+
+    @wraps(enum_func)
+    def wrapper(node, context):
+        nonlocal saved_items
+        items = enum_func(node, context)
+        saved_items[node.node_id] = items
+        return saved_items[node.node_id]
+    wrapper.keep_ref = True  # just for tests
+    return wrapper</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.correct_collection_length"><code class="name flex">
+<span>def <span class="ident">correct_collection_length</span></span>(<span>collection: bpy.types.bpy_prop_collection, length: int) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It takes collection property and add or remove its items so it will be equal to given length
+If item has method <code>remove</code> it will be called before its deleting</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def correct_collection_length(collection: bpy.types.bpy_prop_collection, length: int) -&gt; None:
+    &#34;&#34;&#34;
+    It takes collection property and add or remove its items so it will be equal to given length
+    If item has method `remove` it will be called before its deleting
+    &#34;&#34;&#34;
+    if len(collection) &lt; length:
+        for i in range(len(collection), length):
+            collection.add()
+    elif len(collection) &gt; length:
+        for i in range(len(collection) - 1, length - 1, -1):
+            try:
+                collection[i].remove_data()
+            except AttributeError:
+                pass
+            collection.remove(i)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.delete_data_block"><code class="name flex">
+<span>def <span class="ident">delete_data_block</span></span>(<span>data_block) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It will delete such data like objects, meshes, materials
+It won't rise any error if give block does not exist in file anymore</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete_data_block(data_block) -&gt; None:
+    &#34;&#34;&#34;
+    It will delete such data like objects, meshes, materials
+    It won&#39;t rise any error if give block does not exist in file anymore
+    &#34;&#34;&#34;
+    @singledispatch
+    def del_object(bl_obj) -&gt; None:
+        raise TypeError(f&#34;Such type={type(bl_obj)} is not supported&#34;)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Object):
+        bpy.data.objects.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Mesh):
+        bpy.data.meshes.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Material):
+        bpy.data.materials.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Light):
+        bpy.data.lights.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Curve):
+        bpy.data.curves.remove(bl_obj)
+
+    try:
+        del_object(data_block)
+    except ReferenceError:
+        # looks like already was deleted
+        pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.get_func_and_args"><code class="name flex">
+<span>def <span class="ident">get_func_and_args</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>usage: <br>
+- formerly
+prop_func, prop_args = some_class.<strong>annotations</strong>[some_prop_name]
+- new
+prop_to_decompose = some_class.<strong>annotations</strong>[some_prop_name]
+prop_func, prop_args = get_func_and_args(prop_to_decompose)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_func_and_args(prop):
+    &#34;&#34;&#34;
+    usage:   
+        - formerly
+        prop_func, prop_args = some_class.__annotations__[some_prop_name]
+        - new
+        prop_to_decompose = some_class.__annotations__[some_prop_name]
+        prop_func, prop_args = get_func_and_args(prop_to_decompose)
+        
+    &#34;&#34;&#34;
+    if hasattr(prop, &#34;keywords&#34;):
+        return prop.function, prop.keywords
+    else:
+        return prop</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.get_sv_trees"><code class="name flex">
+<span>def <span class="ident">get_sv_trees</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sv_trees():
+    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {&#39;SverchCustomTreeType&#39;,}]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.keep_enum_reference"><code class="name flex">
+<span>def <span class="ident">keep_enum_reference</span></span>(<span>enum_func)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>remember you have to keep enum strings somewhere in py,
+else they get freed and Blender references invalid memory!
+This decorator should be used for these purposes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keep_enum_reference(enum_func):
+    &#34;&#34;&#34;remember you have to keep enum strings somewhere in py,
+    else they get freed and Blender references invalid memory!
+    This decorator should be used for these purposes&#34;&#34;&#34;
+    saved_items = dict()
+
+    @wraps(enum_func)
+    def wrapper(node, context):
+        nonlocal saved_items
+        items = enum_func(node, context)
+        saved_items[node.node_id] = items
+        return saved_items[node.node_id]
+    wrapper.keep_ref = True  # just for tests
+    return wrapper</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.pick_create_data_block"><code class="name flex">
+<span>def <span class="ident">pick_create_data_block</span></span>(<span>collection: bpy.types.bpy_prop_collection, block_name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Will find data block with given name in given collection (bpy.data.mesh, bpy.data.materials ,&hellip;)
+Don't use with objects collection
+If block does not exist new one will be created</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pick_create_data_block(collection: bpy.types.bpy_prop_collection, block_name: str):
+    &#34;&#34;&#34;
+    Will find data block with given name in given collection (bpy.data.mesh, bpy.data.materials ,...)
+    Don&#39;t use with objects collection
+    If block does not exist new one will be created
+     &#34;&#34;&#34;
+    block = collection.get(block_name)
+    if not block:
+        block = collection.new(name=block_name)
+    return block</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.pick_create_object"><code class="name flex">
+<span>def <span class="ident">pick_create_object</span></span>(<span>obj_name: str, data_block)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find object with given name, if does not exist will create new object with given data bloc</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pick_create_object(obj_name: str, data_block):
+    &#34;&#34;&#34;Find object with given name, if does not exist will create new object with given data bloc&#34;&#34;&#34;
+    block = bpy.data.objects.get(obj_name)
+    if not block:
+        block = bpy.data.objects.new(name=obj_name, object_data=data_block)
+    return block</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers"><code class="flex name class">
+<span>class <span class="ident">BPYPointers</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pointer types which are used in Sverchok
+New properties should be added with updating collection property</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BPYPointers(Enum):
+    &#34;&#34;&#34;
+    Pointer types which are used in Sverchok
+    New properties should be added with updating collection property
+    &#34;&#34;&#34;
+    # pointer name = type of data
+    OBJECT = bpy.types.Object
+    MESH = bpy.types.Mesh
+    NODE_TREE = bpy.types.NodeTree
+    NODE = bpy.types.Node  # there is pointers to nodes in Blender like node.parent property
+    MATERIAL = bpy.types.Material
+    COLLECTION = bpy.types.Collection
+    TEXT = bpy.types.Text
+    LIGHT = bpy.types.Light
+    IMAGE = bpy.types.Image
+    TEXTURE = bpy.types.Texture
+    VECTOR_FONT = bpy.types.VectorFont
+    GREASE_PENCIL = bpy.types.GreasePencil
+
+    @property
+    def collection(self):
+        &#34;&#34;&#34;Map of pointer type and its collection&#34;&#34;&#34;
+        collections = {
+            BPYPointers.OBJECT: bpy.data.objects,
+            BPYPointers.MESH: bpy.data.meshes,
+            BPYPointers.NODE_TREE: bpy.data.node_groups,
+            BPYPointers.NODE: None,
+            BPYPointers.MATERIAL:  bpy.data.materials,
+            BPYPointers.COLLECTION: bpy.data.collections,
+            BPYPointers.TEXT: bpy.data.texts,
+            BPYPointers.LIGHT: bpy.data.lights,
+            BPYPointers.IMAGE: bpy.data.images,
+            BPYPointers.TEXTURE: bpy.data.textures,
+            BPYPointers.VECTOR_FONT: bpy.data.curves,
+            BPYPointers.GREASE_PENCIL: bpy.data.grease_pencils
+        }
+        return collections[self]
+
+    @property
+    def type(self):
+        &#34;&#34;&#34;Return Blender type of the pointer&#34;&#34;&#34;
+        return self.value
+
+    @classmethod
+    def get_type(cls, bl_rna) -&gt; Union[BPYPointers, None]:
+        &#34;&#34;&#34;Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)&#34;&#34;&#34;
+        for pointer in BPYPointers:
+            if pointer.type.bl_rna == bl_rna or pointer.type.bl_rna == bl_rna.base:
+                return pointer
+        raise TypeError(f&#39;Type: &#34;{bl_rna}&#34; was not found in: {[t.type.bl_rna for t in BPYPointers]}&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.COLLECTION"><code class="name">var <span class="ident">COLLECTION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.GREASE_PENCIL"><code class="name">var <span class="ident">GREASE_PENCIL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.IMAGE"><code class="name">var <span class="ident">IMAGE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.LIGHT"><code class="name">var <span class="ident">LIGHT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.MATERIAL"><code class="name">var <span class="ident">MATERIAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.MESH"><code class="name">var <span class="ident">MESH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.NODE"><code class="name">var <span class="ident">NODE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.NODE_TREE"><code class="name">var <span class="ident">NODE_TREE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.OBJECT"><code class="name">var <span class="ident">OBJECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.TEXT"><code class="name">var <span class="ident">TEXT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.TEXTURE"><code class="name">var <span class="ident">TEXTURE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.VECTOR_FONT"><code class="name">var <span class="ident">VECTOR_FONT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.get_type"><code class="name flex">
+<span>def <span class="ident">get_type</span></span>(<span>bl_rna) ‑> Optional[<a title="sverchok.utils.handle_blender_data.BPYPointers" href="#sverchok.utils.handle_blender_data.BPYPointers">BPYPointers</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_type(cls, bl_rna) -&gt; Union[BPYPointers, None]:
+    &#34;&#34;&#34;Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)&#34;&#34;&#34;
+    for pointer in BPYPointers:
+        if pointer.type.bl_rna == bl_rna or pointer.type.bl_rna == bl_rna.base:
+            return pointer
+    raise TypeError(f&#39;Type: &#34;{bl_rna}&#34; was not found in: {[t.type.bl_rna for t in BPYPointers]}&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.collection"><code class="name">var <span class="ident">collection</span></code></dt>
+<dd>
+<div class="desc"><p>Map of pointer type and its collection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def collection(self):
+    &#34;&#34;&#34;Map of pointer type and its collection&#34;&#34;&#34;
+    collections = {
+        BPYPointers.OBJECT: bpy.data.objects,
+        BPYPointers.MESH: bpy.data.meshes,
+        BPYPointers.NODE_TREE: bpy.data.node_groups,
+        BPYPointers.NODE: None,
+        BPYPointers.MATERIAL:  bpy.data.materials,
+        BPYPointers.COLLECTION: bpy.data.collections,
+        BPYPointers.TEXT: bpy.data.texts,
+        BPYPointers.LIGHT: bpy.data.lights,
+        BPYPointers.IMAGE: bpy.data.images,
+        BPYPointers.TEXTURE: bpy.data.textures,
+        BPYPointers.VECTOR_FONT: bpy.data.curves,
+        BPYPointers.GREASE_PENCIL: bpy.data.grease_pencils
+    }
+    return collections[self]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYPointers.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"><p>Return Blender type of the pointer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type(self):
+    &#34;&#34;&#34;Return Blender type of the pointer&#34;&#34;&#34;
+    return self.value</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty"><code class="flex name class">
+<span>class <span class="ident">BPYProperty</span></span>
+<span>(</span><span>data, prop_name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper over any property to get access to advance information</p>
+<p>Data block can be any blender data like, node, trees, sockets
+Use with caution as far it keeps straight reference to Blender object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BPYProperty:
+    &#34;&#34;&#34;Wrapper over any property to get access to advance information&#34;&#34;&#34;
+    def __init__(self, data, prop_name: str):
+        &#34;&#34;&#34;
+        Data block can be any blender data like, node, trees, sockets
+        Use with caution as far it keeps straight reference to Blender object
+        &#34;&#34;&#34;
+        self.name = prop_name
+        self._data = data
+
+    @property
+    def is_valid(self) -&gt; bool:
+        &#34;&#34;&#34;
+        If data does not have property with given name property is invalid
+        It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+        Such properties cab consider as deprecated
+        &#34;&#34;&#34;
+        return self.name in self._data.bl_rna.properties
+
+    @property
+    def value(self) -&gt; Any:
+        &#34;&#34;&#34;Returns value of the property in Python format, list of dicts for collection, tuple for array&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        elif self.is_array_like:
+            return tuple(getattr(self._data, self.name))
+        elif self.type == &#39;COLLECTION&#39;:
+            return self._extract_collection_values()
+        elif self.type == &#39;POINTER&#39;:  # it simply returns name of data block or None
+            data_block = getattr(self._data, self.name)
+            return data_block.name if data_block is not None else None
+        else:
+            return getattr(self._data, self.name)
+
+    @value.setter
+    def value(self, value):
+        &#34;&#34;&#34;Apply values in python format to the property&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        if self.type == &#39;COLLECTION&#39;:
+            self._set_collection_values(value)
+        elif self.type == &#39;POINTER&#39; and isinstance(value, str):
+            setattr(self._data, self.name, self.data_collection.get(value))
+        elif self.type == &#39;ENUM&#39; and self.is_array_like:
+            setattr(self._data, self.name, set(value))
+        else:
+            setattr(self._data, self.name, value)
+
+    @property
+    def type(self) -&gt; str:
+        &#34;&#34;&#34;Type of property: STRING, FLOAT, INT, POINTER, COLLECTION&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;type&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        return self._data.bl_rna.properties[self.name].type
+
+    @property
+    def pointer_type(self) -&gt; BPYPointers:
+        if self.type != &#39;POINTER&#39;:
+            raise TypeError(f&#39;This property is only valid for &#34;POINTER&#34; types, {self.type} type is given&#39;)
+        return BPYPointers.get_type(self._data.bl_rna)
+
+    @property
+    def default_value(self) -&gt; Any:
+        &#34;&#34;&#34;Returns default value, None for pointers, list of dicts of default values for collections&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;default_value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        elif self.type == &#39;COLLECTION&#39;:
+            return self._extract_collection_values(default_value=True)
+        elif self.is_array_like:
+            if self.type == &#39;ENUM&#39;:
+                return tuple(self._data.bl_rna.properties[self.name].default_flag)
+            else:
+                return tuple(self._data.bl_rna.properties[self.name].default_array)
+        elif self.type == &#39;POINTER&#39;:
+            return None
+        else:
+            return self._data.bl_rna.properties[self.name].default
+
+    @property
+    def pointer_type(self) -&gt; BPYPointers:
+        &#34;&#34;&#34;It returns subtypes of POINTER type&#34;&#34;&#34;
+        if self.type != &#39;POINTER&#39;:
+            raise TypeError(f&#39;Only POINTER property type has `pointer_type` attribute, &#34;{self.type}&#34; given&#39;)
+        return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)
+
+    @property
+    def data_collection(self):
+        &#34;&#34;&#34;For pointer properties only, if pointer type is MESH it will return bpy.data.meshes&#34;&#34;&#34;
+        return self.pointer_type.collection
+
+    @property
+    def is_to_save(self) -&gt; bool:
+        &#34;&#34;&#34;False if property has option BoolProperty(options={&#39;SKIP_SAVE&#39;})&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;is_to_save&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        return not self._data.bl_rna.properties[self.name].is_skip_save
+
+    @property
+    def is_array_like(self) -&gt; bool:
+        &#34;&#34;&#34;True for VectorArray, FloatArray, IntArray, Enum with enum flag&#34;&#34;&#34;
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;is_array_like&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        if self.type in {&#39;BOOLEAN&#39;, &#39;FLOAT&#39;, &#39;INT&#39;}:
+            return self._data.bl_rna.properties[self.name].is_array
+        elif self.type == &#39;ENUM&#39;:
+            # Enum can return set of values, array like
+            return self._data.bl_rna.properties[self.name].is_enum_flag
+        else:
+            # other properties does not have is_array attribute
+            return False
+
+    def unset(self):
+        &#34;&#34;&#34;Assign default value to the property&#34;&#34;&#34;
+        self._data.property_unset(self.name)
+
+    def filter_collection_values(self, skip_default=True, skip_save=True):
+        &#34;&#34;&#34;Convert data of collection property into python format with skipping certain properties&#34;&#34;&#34;
+        if self.type != &#39;COLLECTION&#39;:
+            raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if not prop.is_valid:
+                    continue
+                if skip_save and not prop.is_to_save:
+                    continue
+                if prop.type != &#39;COLLECTION&#39;:
+                    if skip_default and prop.default_value == prop.value:
+                        continue
+                    item_props[prop.name] = prop.value
+                else:
+                    item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save)
+            items.append(item_props)
+        return items
+
+    def collection_to_list(self):
+        &#34;&#34;&#34;Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+        in this example the collection has two items, each item has 3 properties&#34;&#34;&#34;
+        if self.type != &#39;COLLECTION&#39;:
+            raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+        if not self.is_valid:
+            raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+
+        collection = []
+        for item in getattr(self._data, self.name):
+            prop_list = []
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                prop_list.append(prop)
+            collection.append(prop_list)
+        return collection
+
+    def _extract_collection_values(self, default_value: bool = False):
+        &#34;&#34;&#34;returns something like this: [{&#34;name&#34;: &#34;&#34;, &#34;my_prop&#34;: 1.0}, {&#34;name&#34;: &#34;&#34;, &#34;my_prop&#34;: 2.0}, ...]&#34;&#34;&#34;
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+            for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    item_props[prop.name] = prop.default_value if default_value else prop.value
+            items.append(item_props)
+        return items
+
+    def _set_collection_values(self, value: List[dict]):
+        &#34;&#34;&#34;Assign Python data to collection property&#34;&#34;&#34;
+        collection = getattr(self._data, self.name)
+        for item_index, item_values in enumerate(value):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
+            for prop_name, prop_value in item_values.items():
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.data_collection"><code class="name">var <span class="ident">data_collection</span></code></dt>
+<dd>
+<div class="desc"><p>For pointer properties only, if pointer type is MESH it will return bpy.data.meshes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def data_collection(self):
+    &#34;&#34;&#34;For pointer properties only, if pointer type is MESH it will return bpy.data.meshes&#34;&#34;&#34;
+    return self.pointer_type.collection</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.default_value"><code class="name">var <span class="ident">default_value</span> : Any</code></dt>
+<dd>
+<div class="desc"><p>Returns default value, None for pointers, list of dicts of default values for collections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def default_value(self) -&gt; Any:
+    &#34;&#34;&#34;Returns default value, None for pointers, list of dicts of default values for collections&#34;&#34;&#34;
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;default_value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    elif self.type == &#39;COLLECTION&#39;:
+        return self._extract_collection_values(default_value=True)
+    elif self.is_array_like:
+        if self.type == &#39;ENUM&#39;:
+            return tuple(self._data.bl_rna.properties[self.name].default_flag)
+        else:
+            return tuple(self._data.bl_rna.properties[self.name].default_array)
+    elif self.type == &#39;POINTER&#39;:
+        return None
+    else:
+        return self._data.bl_rna.properties[self.name].default</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.is_array_like"><code class="name">var <span class="ident">is_array_like</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>True for VectorArray, FloatArray, IntArray, Enum with enum flag</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_array_like(self) -&gt; bool:
+    &#34;&#34;&#34;True for VectorArray, FloatArray, IntArray, Enum with enum flag&#34;&#34;&#34;
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;is_array_like&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    if self.type in {&#39;BOOLEAN&#39;, &#39;FLOAT&#39;, &#39;INT&#39;}:
+        return self._data.bl_rna.properties[self.name].is_array
+    elif self.type == &#39;ENUM&#39;:
+        # Enum can return set of values, array like
+        return self._data.bl_rna.properties[self.name].is_enum_flag
+    else:
+        # other properties does not have is_array attribute
+        return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.is_to_save"><code class="name">var <span class="ident">is_to_save</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>False if property has option BoolProperty(options={'SKIP_SAVE'})</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_to_save(self) -&gt; bool:
+    &#34;&#34;&#34;False if property has option BoolProperty(options={&#39;SKIP_SAVE&#39;})&#34;&#34;&#34;
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;is_to_save&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    return not self._data.bl_rna.properties[self.name].is_skip_save</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.is_valid"><code class="name">var <span class="ident">is_valid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>If data does not have property with given name property is invalid
+It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+Such properties cab consider as deprecated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_valid(self) -&gt; bool:
+    &#34;&#34;&#34;
+    If data does not have property with given name property is invalid
+    It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+    Such properties cab consider as deprecated
+    &#34;&#34;&#34;
+    return self.name in self._data.bl_rna.properties</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.pointer_type"><code class="name">var <span class="ident">pointer_type</span> : <a title="sverchok.utils.handle_blender_data.BPYPointers" href="#sverchok.utils.handle_blender_data.BPYPointers">BPYPointers</a></code></dt>
+<dd>
+<div class="desc"><p>It returns subtypes of POINTER type</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def pointer_type(self) -&gt; BPYPointers:
+    &#34;&#34;&#34;It returns subtypes of POINTER type&#34;&#34;&#34;
+    if self.type != &#39;POINTER&#39;:
+        raise TypeError(f&#39;Only POINTER property type has `pointer_type` attribute, &#34;{self.type}&#34; given&#39;)
+    return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.type"><code class="name">var <span class="ident">type</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Type of property: STRING, FLOAT, INT, POINTER, COLLECTION</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type(self) -&gt; str:
+    &#34;&#34;&#34;Type of property: STRING, FLOAT, INT, POINTER, COLLECTION&#34;&#34;&#34;
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;type&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    return self._data.bl_rna.properties[self.name].type</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.value"><code class="name">var <span class="ident">value</span> : Any</code></dt>
+<dd>
+<div class="desc"><p>Returns value of the property in Python format, list of dicts for collection, tuple for array</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def value(self) -&gt; Any:
+    &#34;&#34;&#34;Returns value of the property in Python format, list of dicts for collection, tuple for array&#34;&#34;&#34;
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;value&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    elif self.is_array_like:
+        return tuple(getattr(self._data, self.name))
+    elif self.type == &#39;COLLECTION&#39;:
+        return self._extract_collection_values()
+    elif self.type == &#39;POINTER&#39;:  # it simply returns name of data block or None
+        data_block = getattr(self._data, self.name)
+        return data_block.name if data_block is not None else None
+    else:
+        return getattr(self._data, self.name)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.collection_to_list"><code class="name flex">
+<span>def <span class="ident">collection_to_list</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+in this example the collection has two items, each item has 3 properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collection_to_list(self):
+    &#34;&#34;&#34;Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+    in this example the collection has two items, each item has 3 properties&#34;&#34;&#34;
+    if self.type != &#39;COLLECTION&#39;:
+        raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+
+    collection = []
+    for item in getattr(self._data, self.name):
+        prop_list = []
+        # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+        # PropertyGroup itself does not have any properties
+        item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+        for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+            prop = BPYProperty(item, prop_name)
+            prop_list.append(prop)
+        collection.append(prop_list)
+    return collection</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.filter_collection_values"><code class="name flex">
+<span>def <span class="ident">filter_collection_values</span></span>(<span>self, skip_default=True, skip_save=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert data of collection property into python format with skipping certain properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_collection_values(self, skip_default=True, skip_save=True):
+    &#34;&#34;&#34;Convert data of collection property into python format with skipping certain properties&#34;&#34;&#34;
+    if self.type != &#39;COLLECTION&#39;:
+        raise TypeError(f&#39;Method supported only &#34;collection&#34; types, &#34;{self.type}&#34; was given&#39;)
+    if not self.is_valid:
+        raise TypeError(f&#39;Can not read &#34;non default collection values&#34; of invalid property &#34;{self.name}&#34;&#39;)
+    items = []
+    for item in getattr(self._data, self.name):
+        item_props = {}
+
+        # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+        # PropertyGroup itself does not have any properties
+        item_properties = item.__annotations__ if hasattr(item, &#39;__annotations__&#39;) else []
+        for prop_name in chain([&#39;name&#39;], item_properties):  # item.items() will return only changed values
+            prop = BPYProperty(item, prop_name)
+            if not prop.is_valid:
+                continue
+            if skip_save and not prop.is_to_save:
+                continue
+            if prop.type != &#39;COLLECTION&#39;:
+                if skip_default and prop.default_value == prop.value:
+                    continue
+                item_props[prop.name] = prop.value
+            else:
+                item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save)
+        items.append(item_props)
+    return items</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BPYProperty.unset"><code class="name flex">
+<span>def <span class="ident">unset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Assign default value to the property</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unset(self):
+    &#34;&#34;&#34;Assign default value to the property&#34;&#34;&#34;
+    self._data.property_unset(self.name)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier"><code class="flex name class">
+<span>class <span class="ident">BlModifier</span></span>
+<span>(</span><span>modifier)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlModifier:
+    def __init__(self, modifier):
+        self._mod: bpy.types.Modifier = modifier
+
+    def get_property(self, name):
+        return getattr(self._mod, name)
+
+    def set_property(self, name, value):
+        setattr(self._mod, name, value)
+
+    def get_tree_prop(self, name):
+        return self._mod[name]
+
+    def set_tree_prop(self, name, value):
+        self._mod[name] = value
+
+    @property
+    def type(self) -&gt; str:
+        return self._mod.type
+
+    def __eq__(self, other):
+        if isinstance(other, BlModifier):
+            # check type
+            if self.type != other.type:
+                return False
+
+            # check properties
+            for prop in (p for p in self._mod.bl_rna.properties if not p.is_readonly):
+                if other.get_property(prop.identifier) != self.get_property(prop.identifier):
+                    return False
+
+            # check tree properties
+            if self._mod.type == &#39;NODES&#39; and self._mod.node_group:
+                for tree_inp in self._mod.node_group.inputs[1:]:
+                    prop_name = tree_inp.identifier
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+                    use_name = f&#34;{prop_name}_use_attribute&#34;
+                    if self.get_tree_prop(use_name) != other.get_tree_prop(use_name):
+                        return False
+                    attr_name = f&#34;{prop_name}_attribute_name&#34;
+                    if self.get_tree_prop(attr_name) != other.get_tree_prop(attr_name):
+                        return False
+                for tree_out in self._mod.node_group.outputs[1:]:
+                    prop_name = f&#34;{tree_out.identifier}_attribute_name&#34;
+                    if self.get_tree_prop(prop_name) != other.get_tree_prop(prop_name):
+                        return False
+
+            return True
+        else:
+            return NotImplemented</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.type"><code class="name">var <span class="ident">type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type(self) -&gt; str:
+    return self._mod.type</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.get_property"><code class="name flex">
+<span>def <span class="ident">get_property</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_property(self, name):
+    return getattr(self._mod, name)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.get_tree_prop"><code class="name flex">
+<span>def <span class="ident">get_tree_prop</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tree_prop(self, name):
+    return self._mod[name]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.set_property"><code class="name flex">
+<span>def <span class="ident">set_property</span></span>(<span>self, name, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_property(self, name, value):
+    setattr(self._mod, name, value)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.set_tree_prop"><code class="name flex">
+<span>def <span class="ident">set_tree_prop</span></span>(<span>self, name, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_tree_prop(self, name, value):
+    self._mod[name] = value</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlNode"><code class="flex name class">
+<span>class <span class="ident">BlNode</span></span>
+<span>(</span><span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapping around ordinary node for extracting some its information</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlNode:
+    &#34;&#34;&#34;Wrapping around ordinary node for extracting some its information&#34;&#34;&#34;
+    DEBUG_NODES_IDS = {&#39;SvDebugPrintNode&#39;, &#39;SvStethoscopeNode&#39;}  # can be added as Mix-in class
+
+    def __init__(self, node):
+        self.data = node
+
+    @property
+    def properties(self) -&gt; List[BPYProperty]:
+        &#34;&#34;&#34;Iterator over all node properties&#34;&#34;&#34;
+        node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, &#39;__annotations__&#39;) else []
+        return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+    @property
+    def is_debug_node(self) -&gt; bool:
+        &#34;&#34;&#34;Nodes which print sockets content&#34;&#34;&#34;
+        return self.base_idname in self.DEBUG_NODES_IDS
+
+    @property
+    def base_idname(self) -&gt; str:
+        &#34;&#34;&#34;SvStethoscopeNodeMK2 -&gt; SvStethoscopeNode
+        it won&#39;t parse more tricky variants like SvStethoscopeMK2Node which I saw exists&#34;&#34;&#34;
+        id_name, _, version = self.data.bl_idname.partition(&#39;MK&#39;)
+        try:
+            int(version)
+        except ValueError:
+            return self.data.bl_idname
+        return id_name</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlNode.DEBUG_NODES_IDS"><code class="name">var <span class="ident">DEBUG_NODES_IDS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlNode.base_idname"><code class="name">var <span class="ident">base_idname</span> : str</code></dt>
+<dd>
+<div class="desc"><p>SvStethoscopeNodeMK2 -&gt; SvStethoscopeNode
+it won't parse more tricky variants like SvStethoscopeMK2Node which I saw exists</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def base_idname(self) -&gt; str:
+    &#34;&#34;&#34;SvStethoscopeNodeMK2 -&gt; SvStethoscopeNode
+    it won&#39;t parse more tricky variants like SvStethoscopeMK2Node which I saw exists&#34;&#34;&#34;
+    id_name, _, version = self.data.bl_idname.partition(&#39;MK&#39;)
+    try:
+        int(version)
+    except ValueError:
+        return self.data.bl_idname
+    return id_name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlNode.is_debug_node"><code class="name">var <span class="ident">is_debug_node</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Nodes which print sockets content</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_debug_node(self) -&gt; bool:
+    &#34;&#34;&#34;Nodes which print sockets content&#34;&#34;&#34;
+    return self.base_idname in self.DEBUG_NODES_IDS</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlNode.properties"><code class="name">var <span class="ident">properties</span> : List[<a title="sverchok.utils.handle_blender_data.BPYProperty" href="#sverchok.utils.handle_blender_data.BPYProperty">BPYProperty</a>]</code></dt>
+<dd>
+<div class="desc"><p>Iterator over all node properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def properties(self) -&gt; List[BPYProperty]:
+    &#34;&#34;&#34;Iterator over all node properties&#34;&#34;&#34;
+    node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, &#39;__annotations__&#39;) else []
+    return [BPYProperty(self.data, prop_name) for prop_name in node_properties]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTree"><code class="flex name class">
+<span>class <span class="ident">BlTree</span></span>
+<span>(</span><span>tree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlTree:
+    def __init__(self, tree):
+        self._tree = tree
+
+    @property
+    def is_group_tree(self) -&gt; bool:
+        return self._tree.bl_idname == BlTrees.GROUP_ID</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlTree.is_group_tree"><code class="name">var <span class="ident">is_group_tree</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_group_tree(self) -&gt; bool:
+    return self._tree.bl_idname == BlTrees.GROUP_ID</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTrees"><code class="flex name class">
+<span>class <span class="ident">BlTrees</span></span>
+<span>(</span><span>node_groups=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapping around Blender tree, use with care
+it can crash if other containers are modified a lot
+<a href="https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender">https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender</a>
+All this is True and about Blender class itself</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlTrees:
+    &#34;&#34;&#34;Wrapping around Blender tree, use with care
+    it can crash if other containers are modified a lot
+    https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
+    All this is True and about Blender class itself&#34;&#34;&#34;
+
+    MAIN_TREE_ID = &#39;SverchCustomTreeType&#39;
+    GROUP_ID = &#39;SvGroupTree&#39;
+
+    def __init__(self, node_groups=None):
+        self._trees = node_groups
+
+    @property
+    def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
+        &#34;&#34;&#34;All Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])
+
+    @property
+    def sv_main_trees(self) -&gt; Iterable[SverchCustomTree]:
+        &#34;&#34;&#34;All main Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
+
+    @property
+    def sv_group_trees(self) -&gt; Iterable[SvGroupTree]:
+        &#34;&#34;&#34;All Sverchok group trees&#34;&#34;&#34;
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.GROUP_ID)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.GROUP_ID"><code class="name">var <span class="ident">GROUP_ID</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID"><code class="name">var <span class="ident">MAIN_TREE_ID</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.sv_group_trees"><code class="name">var <span class="ident">sv_group_trees</span> : Iterable[SvGroupTree]</code></dt>
+<dd>
+<div class="desc"><p>All Sverchok group trees</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_group_trees(self) -&gt; Iterable[SvGroupTree]:
+    &#34;&#34;&#34;All Sverchok group trees&#34;&#34;&#34;
+    trees = self._trees or bpy.data.node_groups
+    return (t for t in trees if t.bl_idname == self.GROUP_ID)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.sv_main_trees"><code class="name">var <span class="ident">sv_main_trees</span> : Iterable[SverchCustomTree]</code></dt>
+<dd>
+<div class="desc"><p>All main Sverchok trees in a file or in given set of trees</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_main_trees(self) -&gt; Iterable[SverchCustomTree]:
+    &#34;&#34;&#34;All main Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+    trees = self._trees or bpy.data.node_groups
+    return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.sv_trees"><code class="name">var <span class="ident">sv_trees</span> : Iterable[Union[SverchCustomTree, SvGroupTree]]</code></dt>
+<dd>
+<div class="desc"><p>All Sverchok trees in a file or in given set of trees</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
+    &#34;&#34;&#34;All Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
+    trees = self._trees or bpy.data.node_groups
+    return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.correct_collection_length" href="#sverchok.utils.handle_blender_data.correct_collection_length">correct_collection_length</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.delete_data_block" href="#sverchok.utils.handle_blender_data.delete_data_block">delete_data_block</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.get_func_and_args" href="#sverchok.utils.handle_blender_data.get_func_and_args">get_func_and_args</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.get_sv_trees" href="#sverchok.utils.handle_blender_data.get_sv_trees">get_sv_trees</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.keep_enum_reference" href="#sverchok.utils.handle_blender_data.keep_enum_reference">keep_enum_reference</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.pick_create_data_block" href="#sverchok.utils.handle_blender_data.pick_create_data_block">pick_create_data_block</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.pick_create_object" href="#sverchok.utils.handle_blender_data.pick_create_object">pick_create_object</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BPYPointers" href="#sverchok.utils.handle_blender_data.BPYPointers">BPYPointers</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.COLLECTION" href="#sverchok.utils.handle_blender_data.BPYPointers.COLLECTION">COLLECTION</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.GREASE_PENCIL" href="#sverchok.utils.handle_blender_data.BPYPointers.GREASE_PENCIL">GREASE_PENCIL</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.IMAGE" href="#sverchok.utils.handle_blender_data.BPYPointers.IMAGE">IMAGE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.LIGHT" href="#sverchok.utils.handle_blender_data.BPYPointers.LIGHT">LIGHT</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.MATERIAL" href="#sverchok.utils.handle_blender_data.BPYPointers.MATERIAL">MATERIAL</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.MESH" href="#sverchok.utils.handle_blender_data.BPYPointers.MESH">MESH</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.NODE" href="#sverchok.utils.handle_blender_data.BPYPointers.NODE">NODE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.NODE_TREE" href="#sverchok.utils.handle_blender_data.BPYPointers.NODE_TREE">NODE_TREE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.OBJECT" href="#sverchok.utils.handle_blender_data.BPYPointers.OBJECT">OBJECT</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.TEXT" href="#sverchok.utils.handle_blender_data.BPYPointers.TEXT">TEXT</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.TEXTURE" href="#sverchok.utils.handle_blender_data.BPYPointers.TEXTURE">TEXTURE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.VECTOR_FONT" href="#sverchok.utils.handle_blender_data.BPYPointers.VECTOR_FONT">VECTOR_FONT</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.collection" href="#sverchok.utils.handle_blender_data.BPYPointers.collection">collection</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.get_type" href="#sverchok.utils.handle_blender_data.BPYPointers.get_type">get_type</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYPointers.type" href="#sverchok.utils.handle_blender_data.BPYPointers.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BPYProperty" href="#sverchok.utils.handle_blender_data.BPYProperty">BPYProperty</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.collection_to_list" href="#sverchok.utils.handle_blender_data.BPYProperty.collection_to_list">collection_to_list</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.data_collection" href="#sverchok.utils.handle_blender_data.BPYProperty.data_collection">data_collection</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.default_value" href="#sverchok.utils.handle_blender_data.BPYProperty.default_value">default_value</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.filter_collection_values" href="#sverchok.utils.handle_blender_data.BPYProperty.filter_collection_values">filter_collection_values</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.is_array_like" href="#sverchok.utils.handle_blender_data.BPYProperty.is_array_like">is_array_like</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.is_to_save" href="#sverchok.utils.handle_blender_data.BPYProperty.is_to_save">is_to_save</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.is_valid" href="#sverchok.utils.handle_blender_data.BPYProperty.is_valid">is_valid</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.pointer_type" href="#sverchok.utils.handle_blender_data.BPYProperty.pointer_type">pointer_type</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.type" href="#sverchok.utils.handle_blender_data.BPYProperty.type">type</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.unset" href="#sverchok.utils.handle_blender_data.BPYProperty.unset">unset</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BPYProperty.value" href="#sverchok.utils.handle_blender_data.BPYProperty.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlModifier" href="#sverchok.utils.handle_blender_data.BlModifier">BlModifier</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.get_property" href="#sverchok.utils.handle_blender_data.BlModifier.get_property">get_property</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.get_tree_prop" href="#sverchok.utils.handle_blender_data.BlModifier.get_tree_prop">get_tree_prop</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.set_property" href="#sverchok.utils.handle_blender_data.BlModifier.set_property">set_property</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.set_tree_prop" href="#sverchok.utils.handle_blender_data.BlModifier.set_tree_prop">set_tree_prop</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.type" href="#sverchok.utils.handle_blender_data.BlModifier.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlNode" href="#sverchok.utils.handle_blender_data.BlNode">BlNode</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlNode.DEBUG_NODES_IDS" href="#sverchok.utils.handle_blender_data.BlNode.DEBUG_NODES_IDS">DEBUG_NODES_IDS</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlNode.base_idname" href="#sverchok.utils.handle_blender_data.BlNode.base_idname">base_idname</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlNode.is_debug_node" href="#sverchok.utils.handle_blender_data.BlNode.is_debug_node">is_debug_node</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlNode.properties" href="#sverchok.utils.handle_blender_data.BlNode.properties">properties</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlTree" href="#sverchok.utils.handle_blender_data.BlTree">BlTree</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlTree.is_group_tree" href="#sverchok.utils.handle_blender_data.BlTree.is_group_tree">is_group_tree</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlTrees" href="#sverchok.utils.handle_blender_data.BlTrees">BlTrees</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.GROUP_ID" href="#sverchok.utils.handle_blender_data.BlTrees.GROUP_ID">GROUP_ID</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID" href="#sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID">MAIN_TREE_ID</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_group_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_group_trees">sv_group_trees</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_main_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_main_trees">sv_main_trees</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_trees">sv_trees</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

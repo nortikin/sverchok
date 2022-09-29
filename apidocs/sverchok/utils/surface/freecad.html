@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.surface.freecad API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.freecad</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
+from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad, curve_to_freecad_nurbs, curves_to_wire, get_edge_endpoints
+
+from sverchok.dependencies import FreeCAD
+if FreeCAD is not None:
+    from FreeCAD import Base
+    import Part
+
+def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
+    &#34;&#34;&#34;
+    Make a Part.Face from a list of SvCurve.
+    Curves must have NURBS representation, must form a closed loop, and it must
+    be planar, otherwise an exception will be raised.
+    
+    input:
+        * list of SvCurve.
+        * planar: True to make a flat face; in this case, all curves
+            must lie exactly in one plane
+        * force_nurbs: True if you want NURBS surface as output even when
+            curves are not NURBS
+    output:
+    * SvSolidFaceSurface for face&#39;s surface;
+        SvFreeCadNurbsSurface if force_nurbs == True.
+    &#34;&#34;&#34;
+    # Check
+    sv_curves = sum([curve_to_freecad(curve) for curve in sv_curves], [])
+    all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
+    edges = [curve.curve.toShape() for curve in sv_curves]
+    fc_curves = [edge.Curve for edge in edges]
+    if tolerance is not None:
+        for edge in edges:
+            edge.fixTolerance(tolerance)
+    try:
+        wire = Part.Wire(edges[0])
+        for edge in edges[1:]:
+            wire.add(edge)
+        #wire = Part.Wire(edges)
+        #for edge in edges:
+        #    wire.add(edge)
+    except Exception as e:
+        for edge in edges:
+            print(f&#34;Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: {e}&#34;)
+
+    if len(edges) != len(wire.Edges):
+        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}&#34;)
+
+    #wire.fix(0, 0, 0)
+    #wire.fixTolerance(1e-5)
+    if not wire.isClosed():
+
+        last_point = None
+        distance = None
+        for i, edge in enumerate(wire.Edges):
+            print(f&#34;Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+            p1, p2 = get_edge_endpoints(edge)
+            if last_point is not None:
+                distance = last_point.distanceToPoint(p1)
+                print(f&#34;#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})&#34;)
+            last_point = p2
+        p1 = get_edge_endpoints(wire.Edges[-1])[1]
+        p2 = get_edge_endpoints(wire.Edges[0])[0]
+        distance = p1.distanceToPoint(p2)
+        print(f&#34;Last - first distance = {distance}&#34;)
+        raise Exception(f&#34;The wire is not closed: {sv_curves}&#34;)
+
+    if planar:
+        try:
+            fc_face = Part.Face(wire)
+        except Exception as e:
+            raise Exception(f&#34;Can&#39;t create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?&#34;)
+        surface = SvSolidFaceSurface(fc_face)
+    else:
+        fc_face = Part.makeFilledFace(edges)
+        surface = SvSolidFaceSurface(fc_face)
+
+    if all_nurbs or force_nurbs:
+        surface = surface.to_nurbs()
+
+    return surface
+
+def surface_to_freecad(sv_surface, make_face=False):
+    &#34;&#34;&#34;
+    Convert SvSurface into FreeCAD&#39;s Surface.
+    The surface must be presentable as NURBS.
+
+    input:
+      * sv_surface: SvSurface
+      * make_face: if True, create a Part.Face out of the surface and assign it
+        to the `face` property of the resulting surface
+    output: SvFreeCadNurbsSurface
+    &#34;&#34;&#34;
+    nurbs = SvNurbsSurface.get(sv_surface)
+    if nurbs is None:
+        raise TypeError(f&#34;{sv_surface} is not a NURBS surface&#34;)
+    sv_fc_nurbs = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
+                nurbs.get_degree_u(),
+                nurbs.get_degree_v(),
+                nurbs.get_knotvector_u(),
+                nurbs.get_knotvector_v(),
+                nurbs.get_control_points(),
+                nurbs.get_weights())
+    if make_face:
+        sv_fc_nurbs.face = Part.Face(sv_fc_nurbs.surface)
+    return sv_fc_nurbs
+
+class SvSolidFaceSurface(SvSurface):
+    __description__ = &#34;Solid Face&#34;
+    def __init__(self, solid_face):
+        self.face = solid_face
+        self.surface = solid_face.Surface
+        self.u_bounds = solid_face.ParameterRange[:2]
+        self.v_bounds = solid_face.ParameterRange[2:]
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+    @property
+    def u_size(self):
+        return self.u_bounds[1] - self.u_bounds[0]
+
+    @property
+    def v_size(self):
+        return self.v_bounds[1] - self.v_bounds[0]
+
+    def evaluate(self, u, v):
+        return np.array(self.surface.value(u, v))
+
+    def evaluate_array(self, us, vs):
+        v_out = []
+        for u, v in zip(us, vs):
+            v_out.append(self.surface.value(u, v))
+        return np.array(v_out)
+
+    def gauss_curvature_array(self, us, vs):
+        v_out = []
+        for u, v in zip(us, vs):
+            v_out.append(self.surface.curvature(u, v, &#34;Gauss&#34;))
+        return np.array(v_out)
+
+    def mean_curvature_array(self, us, vs):
+        v_out = []
+        for u,v in zip(us, vs):
+            v_out.append(self.surface.curvature(u, v, &#34;Mean&#34;))
+        return np.array(v_out)
+
+    def normal(self, u, v):
+        return np.array(self.surface.normal(u, v))
+
+    def normal_array(self, us, vs):
+        v_out = []
+        for u,v in zip(us, vs):
+            v_out.append(self.surface.normal(u, v))
+        return np.array(v_out)
+
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        faces = self.face.toNurbs().Faces
+        nurbs = faces[0].Surface
+        return SvFreeCadNurbsSurface(nurbs, face=faces[0])#.copy(implementation=implementation)
+
+    def get_min_continuity(self):
+        s = self.surface.Continuity[1]
+        if s == &#39;N&#39;:
+            return -1
+        else:
+            return int(s)
+
+class SvFreeCadNurbsSurface(SvNurbsSurface):
+    def __init__(self, surface, face=None):
+        self.surface = surface
+        self.face = face
+
+    @classmethod
+    def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        control_points = np.asarray(control_points)
+        m,n,_ = control_points.shape
+        if weights is None:
+            weights = np.ones((m,n))
+        weights = np.asarray(weights)
+        if normalize_knots:
+            knotvector_u = sv_knotvector.normalize(knotvector_u)
+            knotvector_v = sv_knotvector.normalize(knotvector_v)
+
+        pts = [[Base.Vector(*t) for t in row] for row in control_points]
+
+        ms_u = sv_knotvector.to_multiplicity(knotvector_u)
+        knots_u = [p[0] for p in ms_u]
+        mults_u = [p[1] for p in ms_u]
+        ms_v = sv_knotvector.to_multiplicity(knotvector_v)
+        knots_v = [p[0] for p in ms_v]
+        mults_v = [p[1] for p in ms_v]
+
+        surface = Part.BSplineSurface()
+        surface.buildFromPolesMultsKnots(pts,
+                    mults_u, mults_v,
+                    knots_u, knots_v,
+                    False, False,
+                    degree_u, degree_v,
+                    weights.tolist())
+        return SvFreeCadNurbsSurface(surface)
+
+    def __repr__(self):
+        degree_u = self.surface.UDegree
+        degree_v = self.surface.VDegree
+        points = self.surface.getPoles()
+        points_u = len(points)
+        points_v = len(points[0])
+        if self.face is None:
+            word = &#34;surface&#34;
+        else:
+            word = &#34;Face&#34;
+        return f&#34;&lt;FreeCAD NURBS (degree={degree_u}x{degree_v}, pts={points_u}x{points_v}) {word}&gt;&#34;
+    
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.FREECAD
+
+    def get_degree_u(self):
+        return self.surface.UDegree
+
+    def get_degree_v(self):
+        return self.surface.VDegree
+
+    def get_knotvector_u(self):
+        ks = self.surface.getUKnots()
+        ms = self.surface.getUMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
+
+    def get_knotvector_v(self):
+        ks = self.surface.getVKnots()
+        ms = self.surface.getVMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
+
+    def get_control_points(self):
+        poles = self.surface.getPoles()
+        points = [[[pt.x, pt.y, pt.z] for pt in row] for row in poles]
+        return np.array(points)
+
+    def get_weights(self):
+        weights = self.surface.getWeights()
+        return np.array(weights)
+
+    def get_u_min(self):
+        return self.get_knotvector_u()[0]
+
+    def get_u_max(self):
+        return self.get_knotvector_u()[-1]
+
+    def get_v_min(self):
+        return self.get_knotvector_v()[0]
+
+    def get_v_max(self):
+        return self.get_knotvector_v()[-1]
+
+    def _convert(self, p):
+        return [p.x, p.y, p.z]
+
+    def evaluate(self, u, v):
+        pt = self.surface.value(u, v)
+        return np.array(self._convert(pt))
+
+    def evaluate_array(self, us, vs):
+        return np.vectorize(self.evaluate, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+
+    def normal(self, u, v):
+        v = self.surface.normal(u, v)
+        return np.array(self._convert(v))
+
+    def normal_array(self, us, vs):
+        return np.vectorize(self.normal, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+
+    def iso_curve(self, fixed_direction, param, flip=False):
+        if fixed_direction == &#39;U&#39;:
+            fc_curve = self.surface.uIso(param)
+        elif fixed_direction == &#39;V&#39;:
+            fc_curve = self.surface.vIso(param)
+        else:
+            raise Exception(&#34;Unsupported direction&#34;)
+
+        return SvFreeCadNurbsCurve(fc_curve)
+
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        tolerance = 1e-6
+        if direction == &#39;U&#39;:
+            surface.surface.insertUKnot(parameter, count, tolerance)
+        else:
+            surface.surface.insertVKnot(parameter, count, tolerance)
+        return surface
+    
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        if direction == &#39;U&#39;:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())
+        else:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_v())
+        idx = None
+        M = None
+        for i, (u1, m) in enumerate(ms):
+            if u1 == parameter:
+                idx = i
+                M = m - count
+                break
+        if idx is not None:
+            if direction == &#39;U&#39;:
+                surface.surface.removeUKnot(idx+1, M, tolerance)
+            else:
+                surface.surface.removeVKnot(idx+1, M, tolerance)
+        return surface
+
+#     def to_nurbs(self, **kwargs):
+#         return self
+
+def is_solid_face_surface(surface):
+    if not isinstance(surface, (SvFreeCadNurbsSurface, SvSolidFaceSurface)):
+        return False
+    if not hasattr(surface, &#39;face&#39;) or surface.face is None:
+        return False
+    return True
+
+SvNurbsMaths.surface_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsSurface</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.surface.freecad.curves_to_face"><code class="name flex">
+<span>def <span class="ident">curves_to_face</span></span>(<span>sv_curves, planar=True, force_nurbs=True, tolerance=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Make a Part.Face from a list of SvCurve.
+Curves must have NURBS representation, must form a closed loop, and it must
+be planar, otherwise an exception will be raised.</p>
+<p>input:
+* list of SvCurve.
+* planar: True to make a flat face; in this case, all curves
+must lie exactly in one plane
+* force_nurbs: True if you want NURBS surface as output even when
+curves are not NURBS
+output:
+* SvSolidFaceSurface for face's surface;
+SvFreeCadNurbsSurface if force_nurbs == True.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
+    &#34;&#34;&#34;
+    Make a Part.Face from a list of SvCurve.
+    Curves must have NURBS representation, must form a closed loop, and it must
+    be planar, otherwise an exception will be raised.
+    
+    input:
+        * list of SvCurve.
+        * planar: True to make a flat face; in this case, all curves
+            must lie exactly in one plane
+        * force_nurbs: True if you want NURBS surface as output even when
+            curves are not NURBS
+    output:
+    * SvSolidFaceSurface for face&#39;s surface;
+        SvFreeCadNurbsSurface if force_nurbs == True.
+    &#34;&#34;&#34;
+    # Check
+    sv_curves = sum([curve_to_freecad(curve) for curve in sv_curves], [])
+    all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
+    edges = [curve.curve.toShape() for curve in sv_curves]
+    fc_curves = [edge.Curve for edge in edges]
+    if tolerance is not None:
+        for edge in edges:
+            edge.fixTolerance(tolerance)
+    try:
+        wire = Part.Wire(edges[0])
+        for edge in edges[1:]:
+            wire.add(edge)
+        #wire = Part.Wire(edges)
+        #for edge in edges:
+        #    wire.add(edge)
+    except Exception as e:
+        for edge in edges:
+            print(f&#34;Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: {e}&#34;)
+
+    if len(edges) != len(wire.Edges):
+        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}&#34;)
+
+    #wire.fix(0, 0, 0)
+    #wire.fixTolerance(1e-5)
+    if not wire.isClosed():
+
+        last_point = None
+        distance = None
+        for i, edge in enumerate(wire.Edges):
+            print(f&#34;Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+            p1, p2 = get_edge_endpoints(edge)
+            if last_point is not None:
+                distance = last_point.distanceToPoint(p1)
+                print(f&#34;#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})&#34;)
+            last_point = p2
+        p1 = get_edge_endpoints(wire.Edges[-1])[1]
+        p2 = get_edge_endpoints(wire.Edges[0])[0]
+        distance = p1.distanceToPoint(p2)
+        print(f&#34;Last - first distance = {distance}&#34;)
+        raise Exception(f&#34;The wire is not closed: {sv_curves}&#34;)
+
+    if planar:
+        try:
+            fc_face = Part.Face(wire)
+        except Exception as e:
+            raise Exception(f&#34;Can&#39;t create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?&#34;)
+        surface = SvSolidFaceSurface(fc_face)
+    else:
+        fc_face = Part.makeFilledFace(edges)
+        surface = SvSolidFaceSurface(fc_face)
+
+    if all_nurbs or force_nurbs:
+        surface = surface.to_nurbs()
+
+    return surface</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.is_solid_face_surface"><code class="name flex">
+<span>def <span class="ident">is_solid_face_surface</span></span>(<span>surface)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_solid_face_surface(surface):
+    if not isinstance(surface, (SvFreeCadNurbsSurface, SvSolidFaceSurface)):
+        return False
+    if not hasattr(surface, &#39;face&#39;) or surface.face is None:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.surface_to_freecad"><code class="name flex">
+<span>def <span class="ident">surface_to_freecad</span></span>(<span>sv_surface, make_face=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert SvSurface into FreeCAD's Surface.
+The surface must be presentable as NURBS.</p>
+<p>input:
+* sv_surface: SvSurface
+* make_face: if True, create a Part.Face out of the surface and assign it
+to the <code>face</code> property of the resulting surface
+output: SvFreeCadNurbsSurface</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def surface_to_freecad(sv_surface, make_face=False):
+    &#34;&#34;&#34;
+    Convert SvSurface into FreeCAD&#39;s Surface.
+    The surface must be presentable as NURBS.
+
+    input:
+      * sv_surface: SvSurface
+      * make_face: if True, create a Part.Face out of the surface and assign it
+        to the `face` property of the resulting surface
+    output: SvFreeCadNurbsSurface
+    &#34;&#34;&#34;
+    nurbs = SvNurbsSurface.get(sv_surface)
+    if nurbs is None:
+        raise TypeError(f&#34;{sv_surface} is not a NURBS surface&#34;)
+    sv_fc_nurbs = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
+                nurbs.get_degree_u(),
+                nurbs.get_degree_v(),
+                nurbs.get_knotvector_u(),
+                nurbs.get_knotvector_v(),
+                nurbs.get_control_points(),
+                nurbs.get_weights())
+    if make_face:
+        sv_fc_nurbs.face = Part.Face(sv_fc_nurbs.surface)
+    return sv_fc_nurbs</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface"><code class="flex name class">
+<span>class <span class="ident">SvFreeCadNurbsSurface</span></span>
+<span>(</span><span>surface, face=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base abstract class for all supported implementations of NURBS surfaces.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvFreeCadNurbsSurface(SvNurbsSurface):
+    def __init__(self, surface, face=None):
+        self.surface = surface
+        self.face = face
+
+    @classmethod
+    def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        control_points = np.asarray(control_points)
+        m,n,_ = control_points.shape
+        if weights is None:
+            weights = np.ones((m,n))
+        weights = np.asarray(weights)
+        if normalize_knots:
+            knotvector_u = sv_knotvector.normalize(knotvector_u)
+            knotvector_v = sv_knotvector.normalize(knotvector_v)
+
+        pts = [[Base.Vector(*t) for t in row] for row in control_points]
+
+        ms_u = sv_knotvector.to_multiplicity(knotvector_u)
+        knots_u = [p[0] for p in ms_u]
+        mults_u = [p[1] for p in ms_u]
+        ms_v = sv_knotvector.to_multiplicity(knotvector_v)
+        knots_v = [p[0] for p in ms_v]
+        mults_v = [p[1] for p in ms_v]
+
+        surface = Part.BSplineSurface()
+        surface.buildFromPolesMultsKnots(pts,
+                    mults_u, mults_v,
+                    knots_u, knots_v,
+                    False, False,
+                    degree_u, degree_v,
+                    weights.tolist())
+        return SvFreeCadNurbsSurface(surface)
+
+    def __repr__(self):
+        degree_u = self.surface.UDegree
+        degree_v = self.surface.VDegree
+        points = self.surface.getPoles()
+        points_u = len(points)
+        points_v = len(points[0])
+        if self.face is None:
+            word = &#34;surface&#34;
+        else:
+            word = &#34;Face&#34;
+        return f&#34;&lt;FreeCAD NURBS (degree={degree_u}x{degree_v}, pts={points_u}x{points_v}) {word}&gt;&#34;
+    
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.FREECAD
+
+    def get_degree_u(self):
+        return self.surface.UDegree
+
+    def get_degree_v(self):
+        return self.surface.VDegree
+
+    def get_knotvector_u(self):
+        ks = self.surface.getUKnots()
+        ms = self.surface.getUMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
+
+    def get_knotvector_v(self):
+        ks = self.surface.getVKnots()
+        ms = self.surface.getVMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
+
+    def get_control_points(self):
+        poles = self.surface.getPoles()
+        points = [[[pt.x, pt.y, pt.z] for pt in row] for row in poles]
+        return np.array(points)
+
+    def get_weights(self):
+        weights = self.surface.getWeights()
+        return np.array(weights)
+
+    def get_u_min(self):
+        return self.get_knotvector_u()[0]
+
+    def get_u_max(self):
+        return self.get_knotvector_u()[-1]
+
+    def get_v_min(self):
+        return self.get_knotvector_v()[0]
+
+    def get_v_max(self):
+        return self.get_knotvector_v()[-1]
+
+    def _convert(self, p):
+        return [p.x, p.y, p.z]
+
+    def evaluate(self, u, v):
+        pt = self.surface.value(u, v)
+        return np.array(self._convert(pt))
+
+    def evaluate_array(self, us, vs):
+        return np.vectorize(self.evaluate, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+
+    def normal(self, u, v):
+        v = self.surface.normal(u, v)
+        return np.array(self._convert(v))
+
+    def normal_array(self, us, vs):
+        return np.vectorize(self.normal, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+
+    def iso_curve(self, fixed_direction, param, flip=False):
+        if fixed_direction == &#39;U&#39;:
+            fc_curve = self.surface.uIso(param)
+        elif fixed_direction == &#39;V&#39;:
+            fc_curve = self.surface.vIso(param)
+        else:
+            raise Exception(&#34;Unsupported direction&#34;)
+
+        return SvFreeCadNurbsCurve(fc_curve)
+
+    def insert_knot(self, direction, parameter, count=1, if_possible=False):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        tolerance = 1e-6
+        if direction == &#39;U&#39;:
+            surface.surface.insertUKnot(parameter, count, tolerance)
+        else:
+            surface.surface.insertVKnot(parameter, count, tolerance)
+        return surface
+    
+    def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
+        surface = SvFreeCadNurbsSurface(self.surface.copy())
+        if direction == &#39;U&#39;:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())
+        else:
+            ms = sv_knotvector.to_multiplicity(self.get_knotvector_v())
+        idx = None
+        M = None
+        for i, (u1, m) in enumerate(ms):
+            if u1 == parameter:
+                idx = i
+                M = m - count
+                break
+        if idx is not None:
+            if direction == &#39;U&#39;:
+                surface.surface.removeUKnot(idx+1, M, tolerance)
+            else:
+                surface.surface.removeVKnot(idx+1, M, tolerance)
+        return surface</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.nurbs.SvNurbsSurface" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface">SvNurbsSurface</a></li>
+<li><a title="sverchok.utils.surface.core.SvSurface" href="core.html#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+    control_points = np.asarray(control_points)
+    m,n,_ = control_points.shape
+    if weights is None:
+        weights = np.ones((m,n))
+    weights = np.asarray(weights)
+    if normalize_knots:
+        knotvector_u = sv_knotvector.normalize(knotvector_u)
+        knotvector_v = sv_knotvector.normalize(knotvector_v)
+
+    pts = [[Base.Vector(*t) for t in row] for row in control_points]
+
+    ms_u = sv_knotvector.to_multiplicity(knotvector_u)
+    knots_u = [p[0] for p in ms_u]
+    mults_u = [p[1] for p in ms_u]
+    ms_v = sv_knotvector.to_multiplicity(knotvector_v)
+    knots_v = [p[0] for p in ms_v]
+    mults_v = [p[1] for p in ms_v]
+
+    surface = Part.BSplineSurface()
+    surface.buildFromPolesMultsKnots(pts,
+                mults_u, mults_v,
+                knots_u, knots_v,
+                False, False,
+                degree_u, degree_v,
+                weights.tolist())
+    return SvFreeCadNurbsSurface(surface)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_nurbs_implementation"><code class="name flex">
+<span>def <span class="ident">get_nurbs_implementation</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_nurbs_implementation(cls):
+    return SvNurbsMaths.FREECAD</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    pt = self.surface.value(u, v)
+    return np.array(self._convert(pt))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    return np.vectorize(self.evaluate, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_u"><code class="name flex">
+<span>def <span class="ident">get_degree_u</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_degree_u(self):
+    return self.surface.UDegree</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_v"><code class="name flex">
+<span>def <span class="ident">get_degree_v</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_degree_v(self):
+    return self.surface.VDegree</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.get_knotvector_u()[-1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.get_knotvector_u()[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.get_knotvector_v()[-1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.get_knotvector_v()[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.insert_knot"><code class="name flex">
+<span>def <span class="ident">insert_knot</span></span>(<span>self, direction, parameter, count=1, if_possible=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert_knot(self, direction, parameter, count=1, if_possible=False):
+    surface = SvFreeCadNurbsSurface(self.surface.copy())
+    tolerance = 1e-6
+    if direction == &#39;U&#39;:
+        surface.surface.insertUKnot(parameter, count, tolerance)
+    else:
+        surface.surface.insertVKnot(parameter, count, tolerance)
+    return surface</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.iso_curve"><code class="name flex">
+<span>def <span class="ident">iso_curve</span></span>(<span>self, fixed_direction, param, flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iso_curve(self, fixed_direction, param, flip=False):
+    if fixed_direction == &#39;U&#39;:
+        fc_curve = self.surface.uIso(param)
+    elif fixed_direction == &#39;V&#39;:
+        fc_curve = self.surface.vIso(param)
+    else:
+        raise Exception(&#34;Unsupported direction&#34;)
+
+    return SvFreeCadNurbsCurve(fc_curve)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    v = self.surface.normal(u, v)
+    return np.array(self._convert(v))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    return np.vectorize(self.normal, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.remove_knot"><code class="name flex">
+<span>def <span class="ident">remove_knot</span></span>(<span>self, direction, parameter, count=1, if_possible=False, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
+    surface = SvFreeCadNurbsSurface(self.surface.copy())
+    if direction == &#39;U&#39;:
+        ms = sv_knotvector.to_multiplicity(self.get_knotvector_u())
+    else:
+        ms = sv_knotvector.to_multiplicity(self.get_knotvector_v())
+    idx = None
+    M = None
+    for i, (u1, m) in enumerate(ms):
+        if u1 == parameter:
+            idx = i
+            M = m - count
+            break
+    if idx is not None:
+        if direction == &#39;U&#39;:
+            surface.surface.removeUKnot(idx+1, M, tolerance)
+        else:
+            surface.surface.removeVKnot(idx+1, M, tolerance)
+    return surface</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.surface.nurbs.SvNurbsSurface" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface">SvNurbsSurface</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_homogenous_control_points" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_u" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_u">get_knotvector_u</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_v" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_v">get_knotvector_v</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_continuity" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_continuity">get_min_continuity</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_u_continuity" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_u_continuity">get_min_u_continuity</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_v_continuity" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_min_v_continuity">get_min_v_continuity</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_weights" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface.get_weights">get_weights</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface"><code class="flex name class">
+<span>class <span class="ident">SvSolidFaceSurface</span></span>
+<span>(</span><span>solid_face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSolidFaceSurface(SvSurface):
+    __description__ = &#34;Solid Face&#34;
+    def __init__(self, solid_face):
+        self.face = solid_face
+        self.surface = solid_face.Surface
+        self.u_bounds = solid_face.ParameterRange[:2]
+        self.v_bounds = solid_face.ParameterRange[2:]
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+    @property
+    def u_size(self):
+        return self.u_bounds[1] - self.u_bounds[0]
+
+    @property
+    def v_size(self):
+        return self.v_bounds[1] - self.v_bounds[0]
+
+    def evaluate(self, u, v):
+        return np.array(self.surface.value(u, v))
+
+    def evaluate_array(self, us, vs):
+        v_out = []
+        for u, v in zip(us, vs):
+            v_out.append(self.surface.value(u, v))
+        return np.array(v_out)
+
+    def gauss_curvature_array(self, us, vs):
+        v_out = []
+        for u, v in zip(us, vs):
+            v_out.append(self.surface.curvature(u, v, &#34;Gauss&#34;))
+        return np.array(v_out)
+
+    def mean_curvature_array(self, us, vs):
+        v_out = []
+        for u,v in zip(us, vs):
+            v_out.append(self.surface.curvature(u, v, &#34;Mean&#34;))
+        return np.array(v_out)
+
+    def normal(self, u, v):
+        return np.array(self.surface.normal(u, v))
+
+    def normal_array(self, us, vs):
+        v_out = []
+        for u,v in zip(us, vs):
+            v_out.append(self.surface.normal(u, v))
+        return np.array(v_out)
+
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        faces = self.face.toNurbs().Faces
+        nurbs = faces[0].Surface
+        return SvFreeCadNurbsSurface(nurbs, face=faces[0])#.copy(implementation=implementation)
+
+    def get_min_continuity(self):
+        s = self.surface.Continuity[1]
+        if s == &#39;N&#39;:
+            return -1
+        else:
+            return int(s)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="core.html#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.u_size"><code class="name">var <span class="ident">u_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def u_size(self):
+    return self.u_bounds[1] - self.u_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.v_size"><code class="name">var <span class="ident">v_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def v_size(self):
+    return self.v_bounds[1] - self.v_bounds[0]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    return np.array(self.surface.value(u, v))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    v_out = []
+    for u, v in zip(us, vs):
+        v_out.append(self.surface.value(u, v))
+    return np.array(v_out)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.gauss_curvature_array"><code class="name flex">
+<span>def <span class="ident">gauss_curvature_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gauss_curvature_array(self, us, vs):
+    v_out = []
+    for u, v in zip(us, vs):
+        v_out.append(self.surface.curvature(u, v, &#34;Gauss&#34;))
+    return np.array(v_out)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_min_continuity"><code class="name flex">
+<span>def <span class="ident">get_min_continuity</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_min_continuity(self):
+    s = self.surface.Continuity[1]
+    if s == &#39;N&#39;:
+        return -1
+    else:
+        return int(s)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.u_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.u_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.v_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.v_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.mean_curvature_array"><code class="name flex">
+<span>def <span class="ident">mean_curvature_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean_curvature_array(self, us, vs):
+    v_out = []
+    for u,v in zip(us, vs):
+        v_out.append(self.surface.curvature(u, v, &#34;Mean&#34;))
+    return np.array(v_out)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    return np.array(self.surface.normal(u, v))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    v_out = []
+    for u,v in zip(us, vs):
+        v_out.append(self.surface.normal(u, v))
+    return np.array(v_out)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvSolidFaceSurface.to_nurbs"><code class="name flex">
+<span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='FREECAD')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+    faces = self.face.toNurbs().Faces
+    nurbs = faces[0].Surface
+    return SvFreeCadNurbsSurface(nurbs, face=faces[0])#.copy(implementation=implementation)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.freecad.curves_to_face" href="#sverchok.utils.surface.freecad.curves_to_face">curves_to_face</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.is_solid_face_surface" href="#sverchok.utils.surface.freecad.is_solid_face_surface">is_solid_face_surface</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.surface_to_freecad" href="#sverchok.utils.surface.freecad.surface_to_freecad">surface_to_freecad</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface">SvFreeCadNurbsSurface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.build" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.build">build</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate_array" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_u" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_u">get_degree_u</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_v" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_v">get_degree_v</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_nurbs_implementation" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_max" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_min" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_max" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_min" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.insert_knot" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.insert_knot">insert_knot</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.iso_curve" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.iso_curve">iso_curve</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal_array" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.remove_knot" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.remove_knot">remove_knot</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface">SvSolidFaceSurface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate_array" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.gauss_curvature_array" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.gauss_curvature_array">gauss_curvature_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_min_continuity" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.get_min_continuity">get_min_continuity</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_max" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_min" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_max" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_min" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.mean_curvature_array" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.mean_curvature_array">mean_curvature_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.normal" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.normal_array" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.to_nurbs" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.u_size" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.u_size">u_size</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface.v_size" href="#sverchok.utils.surface.freecad.SvSolidFaceSurface.v_size">v_size</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

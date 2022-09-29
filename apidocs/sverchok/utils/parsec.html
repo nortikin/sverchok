@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.parsec API documentation</title>
+<meta name="description" content="This module contains a very simplistic framework for parsing DSLs.
+Such DSL is used, for example, in the Profile (mk3) node …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.parsec</code></h1>
+</header>
+<section id="section-intro">
+<p>This module contains a very simplistic framework for parsing DSLs.
+Such DSL is used, for example, in the Profile (mk3) node.</p>
+<p>This framework implements the approach known as "combinatorial parsing",
+see <a href="https://en.wikipedia.org/wiki/Parser_combinator">https://en.wikipedia.org/wiki/Parser_combinator</a> for starters.</p>
+<p>A parser is a function, that takes a string to be parsed, and
+yields a pair: a parsed object and the rest of the string. It can
+yield several pairs if the string can be parsed in several ways.</p>
+<p>We say that parser <em>succeeds</em> or <em>applies</em>* if it yields at least one
+pair.</p>
+<p>We say that parser <em>fails</em> if it does not yield anything.</p>
+<p>If a call of parser("var = value") yields, for example, a pair
+(Variable("var"), "= value"), we say that the parser <em>returned</em> a
+Variable("var") object; it <em>consumed</em> the "var " string and <em>retained</em>
+"= value" string to be parsed by subsequential parsers.</p>
+<p>The common pattern</p>
+<pre><code>parser = ...
+for value, rest in parser(src):
+    if ...
+        yield ..., rest
+</code></pre>
+<p>means: apply parser, then analyze returned value, then yield something
+and the rest of the string.</p>
+<p>A parser combinator is a function that takes one or several parsers,
+and returns another parser. The returned parser is somehow combined
+from the parsers provided. Parser combinator may, for example, apply
+several parsers sequentionally, or try one parser and then try another,
+or something like that.</p>
+<p>This module provides minimalistic set of standard parsers and parser combinators.</p>
+<p>It still has poor error detection/recovery. Maybe some day&hellip;</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+&#34;&#34;&#34;
+This module contains a very simplistic framework for parsing DSLs.
+Such DSL is used, for example, in the Profile (mk3) node.
+
+This framework implements the approach known as &#34;combinatorial parsing&#34;,
+see https://en.wikipedia.org/wiki/Parser_combinator for starters.
+
+A parser is a function, that takes a string to be parsed, and
+yields a pair: a parsed object and the rest of the string. It can
+yield several pairs if the string can be parsed in several ways.
+
+We say that parser *succeeds* or *applies** if it yields at least one
+pair.
+
+We say that parser *fails* if it does not yield anything.
+
+If a call of parser(&#34;var = value&#34;) yields, for example, a pair
+(Variable(&#34;var&#34;), &#34;= value&#34;), we say that the parser *returned* a
+Variable(&#34;var&#34;) object; it *consumed* the &#34;var &#34; string and *retained*
+&#34;= value&#34; string to be parsed by subsequential parsers.
+
+The common pattern
+
+    parser = ...
+    for value, rest in parser(src):
+        if ...
+            yield ..., rest
+
+means: apply parser, then analyze returned value, then yield something
+and the rest of the string.
+
+A parser combinator is a function that takes one or several parsers,
+and returns another parser. The returned parser is somehow combined
+from the parsers provided. Parser combinator may, for example, apply
+several parsers sequentionally, or try one parser and then try another,
+or something like that.
+
+This module provides minimalistic set of standard parsers and parser combinators.
+
+It still has poor error detection/recovery. Maybe some day...
+
+&#34;&#34;&#34;
+
+import re
+from itertools import chain
+
+number_regex = re.compile(r&#34;(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(.*)&#34;, re.DOTALL)
+string_regex = re.compile(r&#34;(&#39;(?:[^\\&#39;]|\\[&#39;\\/bfnrt]|\\u[0-9a-fA-F]{4})*?&#39;)\s*(.*)&#34;, re.DOTALL)
+whitespace_regex = re.compile(r&#34;[ \n\r\t]*&#34;)
+
+def return_(src):
+    &#34;&#34;&#34;
+    Trivial parser, that parses an empty tuple and retains
+    the input string untouched.
+    &#34;&#34;&#34;
+    yield (), src
+
+def sequence(*funcs):
+    &#34;&#34;&#34;
+    Parser combinator, that applies several parsers in sequence.
+    For example, if parser_a parses &#34;A&#34; and parser_b parses &#34;B&#34;,
+    then sequence(parser_a, parser_b) parses &#34;AB&#34;.
+    This corresponds to
+        &lt;ParserA&gt; &lt;ParserB&gt;
+    in BNF notation.
+    &#34;&#34;&#34;
+    if len(funcs) == 0:
+        return return_
+
+    def parser(src):
+        for arg1, src in funcs[0](src):
+            for others, src in sequence(*funcs[1:])(src):
+                yield (arg1,) + others, src
+
+    return parser
+
+def one_of(*funcs):
+    &#34;&#34;&#34;
+    Parser combinator, that tries to apply one of several parsers.
+    For example, if parser_foo parses &#34;foo&#34; and parser_bar parses &#34;bar&#34;,
+    then one_of(parser_foo, parser_bar) will parse either &#34;foo&#34; or &#34;bar&#34;.
+    This corresponds to
+        &lt;ParserA&gt; | &lt;ParserB&gt;
+    in BNF notation.
+    &#34;&#34;&#34;
+    def parser(src):
+        generators = [func(src) for func in funcs]
+        for match in chain(*generators):
+            yield match
+            return
+    return parser
+
+def many(func, backtracking=False):
+    &#34;&#34;&#34;
+    Parser combinator, that applies one parser as many times as it
+    could be applied. For example, if parser_a parses &#34;A&#34;, then
+    many(parser_a) parses &#34;A&#34;, &#34;AA&#34;, &#34;AAA&#34; and so on.
+    This corresponds to
+        &lt;Parser&gt; *
+    in BNF notation.
+    If backtracking is set to False, then the parser will iterate
+    as far as it can, even if consequential parsers will fail then.
+    With backtracking set to True, the parser will be able to go back
+    if it sees that some of consequencing parsers will fail.
+    &#34;&#34;&#34;
+    def parser(src):
+        for (value, values), rest in sequence(func, parser)(src):
+            yield [value] + values, rest
+            # Stop on first possible parsing variant?
+            if not backtracking:
+                return
+        
+        for value, rest in func(src):
+            yield [value], rest
+    return parser
+
+def optional(func):
+    &#34;&#34;&#34;
+    Parser combinator, that tries to apply specified parser, and
+    returns None if it can not.
+    This corresponds to
+        &lt;Parser&gt; | &#34;&#34;
+    in BNF notation.
+    &#34;&#34;&#34;
+    def parser(src):
+        met = False
+        for value, rest in func(src):
+            yield value, rest
+            met = True
+        if not met:
+            yield None, src
+    return parser
+
+def parse_number(src):
+    &#34;&#34;&#34;
+    Parse an integer or floating-point number.
+    &#34;&#34;&#34;
+    match = number_regex.match(src)
+    if match is not None:
+        number, rest = match.groups()
+        yield eval(number), rest
+
+def parse_word(word, value=None):
+    &#34;&#34;&#34;
+    Parse the specified word and return specified value.
+    It skips any whitespace that follows the word.
+
+    For example, parse_word(&#34;word&#34;)(&#34;word 123&#34;) parses
+    &#34;word&#34; and retains &#34;123&#34; as the rest of string.
+    &#34;&#34;&#34;
+    l = len(word)
+    if value is None:
+        value = word
+
+    def result(src):
+        if src.startswith(word):
+            yield value, src[l:].lstrip()
+
+    result.__name__ = &#34;parse_%s&#34; % word
+    return result
+
+def parse_regexp(regexp):
+    if isinstance(regexp, str):
+        regexp = re.compile(regexp)
+
+    def parser(src):
+        match = regexp.match(src)
+        if match is not None:
+            try:
+                result = match.group(1)
+            except IndexError:
+                result = match.group(0)
+            n = match.end()
+            rest = src[n:]
+            yield result, rest
+
+    return parser
+
+parse_whitespace = parse_regexp(whitespace_regex)
+
+def parse_string(src):
+    &#34;&#34;&#34;
+    Parse string literal in single quotes.
+    &#34;&#34;&#34;
+    match = string_regex.match(src)
+    if match is not None:
+        string, rest = match.groups()
+        yield string, rest
+
+def parse(func, s):
+    &#34;&#34;&#34;
+    Interface function: apply the parser to the string
+    and return parser&#39;s return value.
+    If the parser can not parse the string, or can parse
+    it in more than one way - this function will raise an
+    exception.
+    Also it will raise an exception if something remained
+    in the input string after applying the parser.
+    &#34;&#34;&#34;
+    s = s.strip()
+    match = list(func(s))
+    if len(match) != 1:
+        raise ValueError(&#34;invalid syntax: &#34; + str(match))
+    result, rest = match[0]
+    if rest.strip():
+        raise ValueError(&#34;parsed: {}\nleftover: {}&#34;.format(result, rest))
+    return result</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.parsec.many"><code class="name flex">
+<span>def <span class="ident">many</span></span>(<span>func, backtracking=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parser combinator, that applies one parser as many times as it
+could be applied. For example, if parser_a parses "A", then
+many(parser_a) parses "A", "AA", "AAA" and so on.
+This corresponds to
+<Parser> *
+in BNF notation.
+If backtracking is set to False, then the parser will iterate
+as far as it can, even if consequential parsers will fail then.
+With backtracking set to True, the parser will be able to go back
+if it sees that some of consequencing parsers will fail.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def many(func, backtracking=False):
+    &#34;&#34;&#34;
+    Parser combinator, that applies one parser as many times as it
+    could be applied. For example, if parser_a parses &#34;A&#34;, then
+    many(parser_a) parses &#34;A&#34;, &#34;AA&#34;, &#34;AAA&#34; and so on.
+    This corresponds to
+        &lt;Parser&gt; *
+    in BNF notation.
+    If backtracking is set to False, then the parser will iterate
+    as far as it can, even if consequential parsers will fail then.
+    With backtracking set to True, the parser will be able to go back
+    if it sees that some of consequencing parsers will fail.
+    &#34;&#34;&#34;
+    def parser(src):
+        for (value, values), rest in sequence(func, parser)(src):
+            yield [value] + values, rest
+            # Stop on first possible parsing variant?
+            if not backtracking:
+                return
+        
+        for value, rest in func(src):
+            yield [value], rest
+    return parser</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.one_of"><code class="name flex">
+<span>def <span class="ident">one_of</span></span>(<span>*funcs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parser combinator, that tries to apply one of several parsers.
+For example, if parser_foo parses "foo" and parser_bar parses "bar",
+then one_of(parser_foo, parser_bar) will parse either "foo" or "bar".
+This corresponds to
+<ParserA> | <ParserB>
+in BNF notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def one_of(*funcs):
+    &#34;&#34;&#34;
+    Parser combinator, that tries to apply one of several parsers.
+    For example, if parser_foo parses &#34;foo&#34; and parser_bar parses &#34;bar&#34;,
+    then one_of(parser_foo, parser_bar) will parse either &#34;foo&#34; or &#34;bar&#34;.
+    This corresponds to
+        &lt;ParserA&gt; | &lt;ParserB&gt;
+    in BNF notation.
+    &#34;&#34;&#34;
+    def parser(src):
+        generators = [func(src) for func in funcs]
+        for match in chain(*generators):
+            yield match
+            return
+    return parser</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.optional"><code class="name flex">
+<span>def <span class="ident">optional</span></span>(<span>func)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parser combinator, that tries to apply specified parser, and
+returns None if it can not.
+This corresponds to
+<Parser> | ""
+in BNF notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def optional(func):
+    &#34;&#34;&#34;
+    Parser combinator, that tries to apply specified parser, and
+    returns None if it can not.
+    This corresponds to
+        &lt;Parser&gt; | &#34;&#34;
+    in BNF notation.
+    &#34;&#34;&#34;
+    def parser(src):
+        met = False
+        for value, rest in func(src):
+            yield value, rest
+            met = True
+        if not met:
+            yield None, src
+    return parser</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>func, s)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interface function: apply the parser to the string
+and return parser's return value.
+If the parser can not parse the string, or can parse
+it in more than one way - this function will raise an
+exception.
+Also it will raise an exception if something remained
+in the input string after applying the parser.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(func, s):
+    &#34;&#34;&#34;
+    Interface function: apply the parser to the string
+    and return parser&#39;s return value.
+    If the parser can not parse the string, or can parse
+    it in more than one way - this function will raise an
+    exception.
+    Also it will raise an exception if something remained
+    in the input string after applying the parser.
+    &#34;&#34;&#34;
+    s = s.strip()
+    match = list(func(s))
+    if len(match) != 1:
+        raise ValueError(&#34;invalid syntax: &#34; + str(match))
+    result, rest = match[0]
+    if rest.strip():
+        raise ValueError(&#34;parsed: {}\nleftover: {}&#34;.format(result, rest))
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse_number"><code class="name flex">
+<span>def <span class="ident">parse_number</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse an integer or floating-point number.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_number(src):
+    &#34;&#34;&#34;
+    Parse an integer or floating-point number.
+    &#34;&#34;&#34;
+    match = number_regex.match(src)
+    if match is not None:
+        number, rest = match.groups()
+        yield eval(number), rest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse_regexp"><code class="name flex">
+<span>def <span class="ident">parse_regexp</span></span>(<span>regexp)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_regexp(regexp):
+    if isinstance(regexp, str):
+        regexp = re.compile(regexp)
+
+    def parser(src):
+        match = regexp.match(src)
+        if match is not None:
+            try:
+                result = match.group(1)
+            except IndexError:
+                result = match.group(0)
+            n = match.end()
+            rest = src[n:]
+            yield result, rest
+
+    return parser</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse_string"><code class="name flex">
+<span>def <span class="ident">parse_string</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse string literal in single quotes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_string(src):
+    &#34;&#34;&#34;
+    Parse string literal in single quotes.
+    &#34;&#34;&#34;
+    match = string_regex.match(src)
+    if match is not None:
+        string, rest = match.groups()
+        yield string, rest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse_whitespace"><code class="name flex">
+<span>def <span class="ident">parse_whitespace</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parser(src):
+    match = regexp.match(src)
+    if match is not None:
+        try:
+            result = match.group(1)
+        except IndexError:
+            result = match.group(0)
+        n = match.end()
+        rest = src[n:]
+        yield result, rest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.parse_word"><code class="name flex">
+<span>def <span class="ident">parse_word</span></span>(<span>word, value=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse the specified word and return specified value.
+It skips any whitespace that follows the word.</p>
+<p>For example, parse_word("word")("word 123") parses
+"word" and retains "123" as the rest of string.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_word(word, value=None):
+    &#34;&#34;&#34;
+    Parse the specified word and return specified value.
+    It skips any whitespace that follows the word.
+
+    For example, parse_word(&#34;word&#34;)(&#34;word 123&#34;) parses
+    &#34;word&#34; and retains &#34;123&#34; as the rest of string.
+    &#34;&#34;&#34;
+    l = len(word)
+    if value is None:
+        value = word
+
+    def result(src):
+        if src.startswith(word):
+            yield value, src[l:].lstrip()
+
+    result.__name__ = &#34;parse_%s&#34; % word
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.return_"><code class="name flex">
+<span>def <span class="ident">return_</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Trivial parser, that parses an empty tuple and retains
+the input string untouched.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def return_(src):
+    &#34;&#34;&#34;
+    Trivial parser, that parses an empty tuple and retains
+    the input string untouched.
+    &#34;&#34;&#34;
+    yield (), src</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.parsec.sequence"><code class="name flex">
+<span>def <span class="ident">sequence</span></span>(<span>*funcs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parser combinator, that applies several parsers in sequence.
+For example, if parser_a parses "A" and parser_b parses "B",
+then sequence(parser_a, parser_b) parses "AB".
+This corresponds to
+<ParserA> <ParserB>
+in BNF notation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sequence(*funcs):
+    &#34;&#34;&#34;
+    Parser combinator, that applies several parsers in sequence.
+    For example, if parser_a parses &#34;A&#34; and parser_b parses &#34;B&#34;,
+    then sequence(parser_a, parser_b) parses &#34;AB&#34;.
+    This corresponds to
+        &lt;ParserA&gt; &lt;ParserB&gt;
+    in BNF notation.
+    &#34;&#34;&#34;
+    if len(funcs) == 0:
+        return return_
+
+    def parser(src):
+        for arg1, src in funcs[0](src):
+            for others, src in sequence(*funcs[1:])(src):
+                yield (arg1,) + others, src
+
+    return parser</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.parsec.many" href="#sverchok.utils.parsec.many">many</a></code></li>
+<li><code><a title="sverchok.utils.parsec.one_of" href="#sverchok.utils.parsec.one_of">one_of</a></code></li>
+<li><code><a title="sverchok.utils.parsec.optional" href="#sverchok.utils.parsec.optional">optional</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse" href="#sverchok.utils.parsec.parse">parse</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse_number" href="#sverchok.utils.parsec.parse_number">parse_number</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse_regexp" href="#sverchok.utils.parsec.parse_regexp">parse_regexp</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse_string" href="#sverchok.utils.parsec.parse_string">parse_string</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse_whitespace" href="#sverchok.utils.parsec.parse_whitespace">parse_whitespace</a></code></li>
+<li><code><a title="sverchok.utils.parsec.parse_word" href="#sverchok.utils.parsec.parse_word">parse_word</a></code></li>
+<li><code><a title="sverchok.utils.parsec.return_" href="#sverchok.utils.parsec.return_">return_</a></code></li>
+<li><code><a title="sverchok.utils.parsec.sequence" href="#sverchok.utils.parsec.sequence">sequence</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

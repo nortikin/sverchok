@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.core.handlers API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.core.handlers</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import bpy
+from bpy.app.handlers import persistent
+
+from sverchok import old_nodes
+from sverchok import data_structure
+import sverchok.core.events as ev
+import sverchok.core.tasks as ts
+import sverchok.utils.logging as log
+from sverchok.core.event_system import handle_event
+from sverchok.core.socket_data import clear_all_socket_cache
+from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
+from sverchok.utils import app_handler_ops
+from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils import dummy_nodes
+from sverchok.utils.logging import catch_log_error, debug
+
+_state = {&#39;frame&#39;: None}
+
+
+def sverchok_trees():
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == &#39;SverchCustomTreeType&#39;:
+            yield ng
+
+
+def has_frame_changed(scene):
+    last_frame = _state[&#39;frame&#39;]
+    _state[&#39;frame&#39;] = scene.frame_current
+    return not last_frame == scene.frame_current
+
+#
+#  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
+#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item &#34;attach viewer draw&#34;
+#  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
+#  there is never a point where the node can ask &#34;am i connected to anything, do i need
+#  to stop drawing?&#34;. When the Undo event causes a node to be removed, its node.free function
+#  is not called. (maybe it should be...)
+#
+#  If at any time the undo system is fixed and does call &#34;node.free()&#34; when a node is removed
+#  after ctrl+z. then these two functions and handlers are no longer needed.
+
+@persistent
+def sv_handler_undo_pre(scene):
+    from sverchok.core import undo_handler_node_count
+
+    for ng in sverchok_trees():
+        undo_handler_node_count[&#39;sv_groups&#39;] += len(ng.nodes)
+
+
+@persistent
+def sv_handler_undo_post(scene):
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
+    # this function appears to be hoisted into an environment that does not have the same locals()
+    # hence this dict must be imported. (jan 2019)
+
+    from sverchok.core import undo_handler_node_count
+
+    num_to_test_against = 0
+    for ng in sverchok_trees():
+        num_to_test_against += len(ng.nodes)
+
+    if undo_handler_node_count[&#39;sv_groups&#39;] != num_to_test_against:
+        debug(&#39;looks like a node was removed, cleaning&#39;)
+        sv_clean(scene)
+
+    undo_handler_node_count[&#39;sv_groups&#39;] = 0
+
+    handle_event(ev.UndoEvent())
+
+
+@persistent
+def sv_update_handler(scene):
+    &#34;&#34;&#34;
+    Update sverchok node groups on frame change events.
+    Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+    Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+    Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+    Playing animation: has_frame_changed=True, is_animation_playing=True
+    Playing animation(stop): has_frame_changed=False, is_animation_playing=False
+    &#34;&#34;&#34;
+    if bpy.context.screen is None:  # rendering
+        is_playing = False  # should be False to update UI
+        is_frame_changed = True
+    else:
+        is_playing = bpy.context.screen.is_animation_playing
+        is_frame_changed = has_frame_changed(scene)
+    # print(f&#34;Frame changed: {is_frame_changed}, Animation is playing: {is_playing}&#34;)
+
+    for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
+        with catch_log_error():
+            ng.process_ani(is_frame_changed, is_playing)
+
+
+@persistent
+def sv_scene_change_handler(scene):
+    &#34;&#34;&#34;
+    On depsgraph update (pre)
+    &#34;&#34;&#34;
+    # When the Play Animation is on this trigger is executed once. Such event
+    # should be suppressed because it repeats animation trigger. When Play
+    # animation is on and user changes something in the scene this trigger is
+    # only called if frame rate is equal to maximum.
+    if bpy.context.screen.is_animation_playing:
+        return
+
+    # scene handler can be triggered even when new node or its property
+    # is changed what causes redundant updates. Such events are created first,
+    # so it&#39;s possible to check them in the tasks object.
+    # also be aware that updates generate scene events by their selves and
+    # they have mechanism to avoid them
+    if ts.tasks:
+        return
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()
+
+
+@persistent
+def sv_clean(scene):
+    &#34;&#34;&#34;
+    Cleanup callbacks, clean dicts.
+    &#34;&#34;&#34;
+    bgl_callback_nodeview.callback_disable_all()
+    bgl_callback_3dview.callback_disable_all()
+
+    data_structure.sv_Vars = {}
+    data_structure.temp_handle = {}
+
+@persistent
+def sv_pre_load(scene):
+    &#34;&#34;&#34;
+    This method is called whenever new file is opening
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    &#34;&#34;&#34;
+    clear_all_socket_cache()
+    sv_clean(scene)
+
+    handle_event(ev.FileEvent())
+
+
+@persistent
+def sv_post_load(scene):
+    &#34;&#34;&#34;
+    Upgrade nodes, apply preferences and do an update.
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    post_load handler is also called when Blender is first ran
+    The method should initialize Sverchok parts which are required by loaded tree
+    &#34;&#34;&#34;
+    from sverchok import node_tree, settings
+
+    # ensure current nodeview view scale / location parameters reflect users&#39; system settings
+    node_tree.SverchCustomTree.update_gl_scale_info(None, &#34;sv_post_load&#34;)
+
+    # register and mark old and dependent nodes
+    with catch_log_error():
+        if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
+            old_nodes.register_all()
+            dummy_nodes.register_all()
+        old_nodes.mark_all()
+        dummy_nodes.mark_all()
+
+    with catch_log_error():
+        settings.apply_theme_if_necessary()
+
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()
+
+
+def set_frame_change(mode):
+    post = bpy.app.handlers.frame_change_post
+    pre = bpy.app.handlers.frame_change_pre
+
+    # remove all
+    if sv_update_handler in post:
+        post.remove(sv_update_handler)
+    if sv_update_handler in pre:
+        pre.remove(sv_update_handler)
+
+    # apply the right one
+    if mode == &#34;POST&#34;:
+        post.append(sv_update_handler)
+    elif mode == &#34;PRE&#34;:
+        pre.append(sv_update_handler)
+
+def update_frame_change_mode():
+    from sverchok import settings
+    mode = settings.get_param(&#34;frame_change_mode&#34;, &#34;POST&#34;)
+    set_frame_change(mode)
+
+
+@persistent
+def save_pre_handler(scene):
+    log.clear_internal_buffer()
+
+
+handler_dict = {
+    &#39;undo_pre&#39;: sv_handler_undo_pre,
+    &#39;undo_post&#39;: sv_handler_undo_post,
+    &#39;load_pre&#39;: sv_pre_load,
+    &#39;load_post&#39;: sv_post_load,
+    &#39;depsgraph_update_pre&#39;: sv_scene_change_handler,
+    &#39;save_pre&#39;: save_pre_handler,
+}
+
+
+@persistent
+def call_user_functions_on_post_load_event(scene):
+    for function in data_structure.post_load_call.registered_functions:
+        function()
+
+
+def register():
+    app_handler_ops(append=handler_dict)
+    data_structure.setup_init()
+
+    update_frame_change_mode()
+    bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)
+
+
+def unregister():
+    app_handler_ops(remove=handler_dict)
+    set_frame_change(None)
+    bpy.app.handlers.load_post.remove(call_user_functions_on_post_load_event)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.core.handlers.call_user_functions_on_post_load_event"><code class="name flex">
+<span>def <span class="ident">call_user_functions_on_post_load_event</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def call_user_functions_on_post_load_event(scene):
+    for function in data_structure.post_load_call.registered_functions:
+        function()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.has_frame_changed"><code class="name flex">
+<span>def <span class="ident">has_frame_changed</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_frame_changed(scene):
+    last_frame = _state[&#39;frame&#39;]
+    _state[&#39;frame&#39;] = scene.frame_current
+    return not last_frame == scene.frame_current</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    app_handler_ops(append=handler_dict)
+    data_structure.setup_init()
+
+    update_frame_change_mode()
+    bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.save_pre_handler"><code class="name flex">
+<span>def <span class="ident">save_pre_handler</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def save_pre_handler(scene):
+    log.clear_internal_buffer()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.set_frame_change"><code class="name flex">
+<span>def <span class="ident">set_frame_change</span></span>(<span>mode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_frame_change(mode):
+    post = bpy.app.handlers.frame_change_post
+    pre = bpy.app.handlers.frame_change_pre
+
+    # remove all
+    if sv_update_handler in post:
+        post.remove(sv_update_handler)
+    if sv_update_handler in pre:
+        pre.remove(sv_update_handler)
+
+    # apply the right one
+    if mode == &#34;POST&#34;:
+        post.append(sv_update_handler)
+    elif mode == &#34;PRE&#34;:
+        pre.append(sv_update_handler)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_clean"><code class="name flex">
+<span>def <span class="ident">sv_clean</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cleanup callbacks, clean dicts.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_clean(scene):
+    &#34;&#34;&#34;
+    Cleanup callbacks, clean dicts.
+    &#34;&#34;&#34;
+    bgl_callback_nodeview.callback_disable_all()
+    bgl_callback_3dview.callback_disable_all()
+
+    data_structure.sv_Vars = {}
+    data_structure.temp_handle = {}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_handler_undo_post"><code class="name flex">
+<span>def <span class="ident">sv_handler_undo_post</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_handler_undo_post(scene):
+    # It also can be called during work of Blender operators - https://developer.blender.org/T89546
+    # this function appears to be hoisted into an environment that does not have the same locals()
+    # hence this dict must be imported. (jan 2019)
+
+    from sverchok.core import undo_handler_node_count
+
+    num_to_test_against = 0
+    for ng in sverchok_trees():
+        num_to_test_against += len(ng.nodes)
+
+    if undo_handler_node_count[&#39;sv_groups&#39;] != num_to_test_against:
+        debug(&#39;looks like a node was removed, cleaning&#39;)
+        sv_clean(scene)
+
+    undo_handler_node_count[&#39;sv_groups&#39;] = 0
+
+    handle_event(ev.UndoEvent())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_handler_undo_pre"><code class="name flex">
+<span>def <span class="ident">sv_handler_undo_pre</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_handler_undo_pre(scene):
+    from sverchok.core import undo_handler_node_count
+
+    for ng in sverchok_trees():
+        undo_handler_node_count[&#39;sv_groups&#39;] += len(ng.nodes)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_post_load"><code class="name flex">
+<span>def <span class="ident">sv_post_load</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Upgrade nodes, apply preferences and do an update.
+THe update order is next:
+1. pre_load handler
+2. update methods of trees in a file
+3. post_load handler
+4. evaluate trees from main tree handler
+post_load handler is also called when Blender is first ran
+The method should initialize Sverchok parts which are required by loaded tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_post_load(scene):
+    &#34;&#34;&#34;
+    Upgrade nodes, apply preferences and do an update.
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    post_load handler is also called when Blender is first ran
+    The method should initialize Sverchok parts which are required by loaded tree
+    &#34;&#34;&#34;
+    from sverchok import node_tree, settings
+
+    # ensure current nodeview view scale / location parameters reflect users&#39; system settings
+    node_tree.SverchCustomTree.update_gl_scale_info(None, &#34;sv_post_load&#34;)
+
+    # register and mark old and dependent nodes
+    with catch_log_error():
+        if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
+            old_nodes.register_all()
+            dummy_nodes.register_all()
+        old_nodes.mark_all()
+        dummy_nodes.mark_all()
+
+    with catch_log_error():
+        settings.apply_theme_if_necessary()
+
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_pre_load"><code class="name flex">
+<span>def <span class="ident">sv_pre_load</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method is called whenever new file is opening
+THe update order is next:
+1. pre_load handler
+2. update methods of trees in a file
+3. post_load handler
+4. evaluate trees from main tree handler</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_pre_load(scene):
+    &#34;&#34;&#34;
+    This method is called whenever new file is opening
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    4. evaluate trees from main tree handler
+    &#34;&#34;&#34;
+    clear_all_socket_cache()
+    sv_clean(scene)
+
+    handle_event(ev.FileEvent())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_scene_change_handler"><code class="name flex">
+<span>def <span class="ident">sv_scene_change_handler</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>On depsgraph update (pre)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_scene_change_handler(scene):
+    &#34;&#34;&#34;
+    On depsgraph update (pre)
+    &#34;&#34;&#34;
+    # When the Play Animation is on this trigger is executed once. Such event
+    # should be suppressed because it repeats animation trigger. When Play
+    # animation is on and user changes something in the scene this trigger is
+    # only called if frame rate is equal to maximum.
+    if bpy.context.screen.is_animation_playing:
+        return
+
+    # scene handler can be triggered even when new node or its property
+    # is changed what causes redundant updates. Such events are created first,
+    # so it&#39;s possible to check them in the tasks object.
+    # also be aware that updates generate scene events by their selves and
+    # they have mechanism to avoid them
+    if ts.tasks:
+        return
+    for ng in BlTrees().sv_main_trees:
+        ng.scene_update()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sv_update_handler"><code class="name flex">
+<span>def <span class="ident">sv_update_handler</span></span>(<span>scene)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update sverchok node groups on frame change events.
+Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+Playing animation: has_frame_changed=True, is_animation_playing=True
+Playing animation(stop): has_frame_changed=False, is_animation_playing=False</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@persistent
+def sv_update_handler(scene):
+    &#34;&#34;&#34;
+    Update sverchok node groups on frame change events.
+    Jump from one frame to another: has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 1: has_frame_changed=True, is_animation_playing=True
+    Scrubbing variant 2(stop): has_frame_changed=True, is_animation_playing=False
+    Scrubbing variant 3: has_frame_changed=False, is_animation_playing=True
+    Scrubbing variant 4(stop): has_frame_changed=False, is_animation_playing=False
+    Playing animation: has_frame_changed=True, is_animation_playing=True
+    Playing animation(stop): has_frame_changed=False, is_animation_playing=False
+    &#34;&#34;&#34;
+    if bpy.context.screen is None:  # rendering
+        is_playing = False  # should be False to update UI
+        is_frame_changed = True
+    else:
+        is_playing = bpy.context.screen.is_animation_playing
+        is_frame_changed = has_frame_changed(scene)
+    # print(f&#34;Frame changed: {is_frame_changed}, Animation is playing: {is_playing}&#34;)
+
+    for ng in sverchok_trees():  # Comparatively small overhead with 200 trees in a file
+        with catch_log_error():
+            ng.process_ani(is_frame_changed, is_playing)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.sverchok_trees"><code class="name flex">
+<span>def <span class="ident">sverchok_trees</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sverchok_trees():
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == &#39;SverchCustomTreeType&#39;:
+            yield ng</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    app_handler_ops(remove=handler_dict)
+    set_frame_change(None)
+    bpy.app.handlers.load_post.remove(call_user_functions_on_post_load_event)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.handlers.update_frame_change_mode"><code class="name flex">
+<span>def <span class="ident">update_frame_change_mode</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_frame_change_mode():
+    from sverchok import settings
+    mode = settings.get_param(&#34;frame_change_mode&#34;, &#34;POST&#34;)
+    set_frame_change(mode)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.core" href="index.html">sverchok.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.core.handlers.call_user_functions_on_post_load_event" href="#sverchok.core.handlers.call_user_functions_on_post_load_event">call_user_functions_on_post_load_event</a></code></li>
+<li><code><a title="sverchok.core.handlers.has_frame_changed" href="#sverchok.core.handlers.has_frame_changed">has_frame_changed</a></code></li>
+<li><code><a title="sverchok.core.handlers.register" href="#sverchok.core.handlers.register">register</a></code></li>
+<li><code><a title="sverchok.core.handlers.save_pre_handler" href="#sverchok.core.handlers.save_pre_handler">save_pre_handler</a></code></li>
+<li><code><a title="sverchok.core.handlers.set_frame_change" href="#sverchok.core.handlers.set_frame_change">set_frame_change</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_clean" href="#sverchok.core.handlers.sv_clean">sv_clean</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_handler_undo_post" href="#sverchok.core.handlers.sv_handler_undo_post">sv_handler_undo_post</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_handler_undo_pre" href="#sverchok.core.handlers.sv_handler_undo_pre">sv_handler_undo_pre</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_post_load" href="#sverchok.core.handlers.sv_post_load">sv_post_load</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_pre_load" href="#sverchok.core.handlers.sv_pre_load">sv_pre_load</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_scene_change_handler" href="#sverchok.core.handlers.sv_scene_change_handler">sv_scene_change_handler</a></code></li>
+<li><code><a title="sverchok.core.handlers.sv_update_handler" href="#sverchok.core.handlers.sv_update_handler">sv_update_handler</a></code></li>
+<li><code><a title="sverchok.core.handlers.sverchok_trees" href="#sverchok.core.handlers.sverchok_trees">sverchok_trees</a></code></li>
+<li><code><a title="sverchok.core.handlers.unregister" href="#sverchok.core.handlers.unregister">unregister</a></code></li>
+<li><code><a title="sverchok.core.handlers.update_frame_change_mode" href="#sverchok.core.handlers.update_frame_change_mode">update_frame_change_mode</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

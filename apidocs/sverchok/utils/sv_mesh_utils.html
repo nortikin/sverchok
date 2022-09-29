@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_mesh_utils API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_mesh_utils</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+from itertools import chain
+import numpy as np
+from numpy.linalg import norm as np_margnitude
+
+from sverchok.data_structure import invert_index_list, has_element
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.math import np_normalize_vectors
+from sverchok.utils.modules.polygon_utils import np_faces_normals
+
+from mathutils import Vector
+
+
+def mesh_join(vertices_s, edges_s, faces_s):
+    &#39;&#39;&#39;Given list of meshes represented by lists of vertices, edges and faces,
+    produce one joined mesh.&#39;&#39;&#39;
+
+    offset = 0
+    result_vertices = []
+    result_edges = []
+    result_faces = []
+    if len(edges_s) == 0:
+        edges_s = [[]] * len(faces_s)
+    for vertices, edges, faces in zip(vertices_s, edges_s, faces_s):
+        result_vertices.extend(vertices)
+        new_edges = [tuple(i + offset for i in edge) for edge in edges]
+        new_faces = [[i + offset for i in face] for face in faces]
+        result_edges.extend(new_edges)
+        result_faces.extend(new_faces)
+        offset += len(vertices)
+    return result_vertices, result_edges, result_faces
+
+
+def polygons_to_edges(obj, unique_edges=False):
+    out = []
+    for faces in obj:
+        out_edges = []
+        seen = set()
+        for face in faces:
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
+        out.append(out_edges)
+    return out
+
+
+def pols_to_edges_irregular_mesh(pols, unique_edges):
+    np_pols = np.array(pols)
+    np_len = np.vectorize(len)
+    lens = np_len(np_pols)
+    pol_types = np.unique(lens)
+
+    edges = []
+    for sides_number in pol_types:
+        mask = lens == sides_number
+        np_pols_g = np.array(np_pols[mask].tolist())
+        edges_g = np.empty(list(np_pols_g.shape)+[2], &#39;i&#39;)
+        edges_g[:, :, 0] = np_pols_g
+        edges_g[:, 1:, 1] = np_pols_g[:, :-1]
+        edges_g[:, 0, 1] = np_pols_g[:, -1]
+
+        edges_g = edges_g.reshape(-1, 2)
+        edges.append(edges_g)
+    if unique_edges:
+        return np.unique(np.sort(np.concatenate([eds for eds in edges])), axis=0)
+
+    return np.concatenate([eds for eds in edges])
+
+def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
+    result = []
+
+    for pols in obj:
+        if len(pols) == 0:
+            result.append([])
+            continue
+        regular_mesh = True
+        try:
+            np_pols = np.array(pols, dtype=np.int32)
+        except ValueError:
+            regular_mesh = False
+
+        if not regular_mesh:
+            if output_numpy:
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges))
+            else:
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges).tolist())
+
+        else:
+
+            edges = np.empty(list(np_pols.shape)+[2], &#39;i&#39;)
+            edges[:, :, 0] = np_pols
+            edges[:, 1:, 1] = np_pols[:, :-1]
+            edges[:, 0, 1] = np_pols[:, -1]
+
+            edges = edges.reshape(-1, 2)
+            if output_numpy:
+                if unique_edges:
+                    result.append(np.unique(np.sort(edges), axis=0))
+                else:
+                    result.append(edges)
+            else:
+                if unique_edges:
+                    result.append(np.unique(np.sort(edges), axis=0).tolist())
+                else:
+                    result.append(edges.tolist())
+    return result
+
+def mask_vertices(verts, edges, faces, verts_mask):
+    if any(not m for m in verts_mask):
+        vert_indexes = [i for i, m in enumerate(verts_mask) if m]
+        index_set = set(vert_indexes)
+        vert_dict = {vert_idx: i for i, vert_idx in enumerate(vert_indexes)}
+
+        new_verts = [verts[i] for i in vert_indexes]
+        new_edges = [[vert_dict[n] for n in edge]
+                        for edge in edges if index_set.issuperset(edge)]
+        new_faces = [[vert_dict[n] for n in face]
+                        for face in faces if index_set.issuperset(face)]
+
+        return new_verts, new_edges, new_faces
+
+    return verts, edges, faces
+
+# mesh cleaning functions
+
+def get_unique_faces(faces):
+    return get_unique_topology(faces)[0]
+
+def get_unique_topology(edg_pol):
+    &#39;&#39;&#39;
+    Removes doubled items
+    edg_pol: list of edges or polygons List[List[Int]]
+    returns Tuple (List of unique items, Boolean List with preserved items marked as True)
+    &#39;&#39;&#39;
+    uniq_edg_pols = []
+    unique_sets = []
+    preseved_mask = []
+    for e_p in edg_pol:
+        e_p_set = set(e_p)
+        if not e_p_set in unique_sets:
+            uniq_edg_pols.append(e_p)
+            unique_sets.append(e_p_set)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+    return uniq_edg_pols, preseved_mask
+
+def remove_unreferenced_verts(verts, edges, faces):
+    &#39;&#39;&#39;
+    Removes unreferenced vertices
+    verts: list of vertices List[List[float]]
+    edges: list of edges List[List[Int]]
+    faces: list of polygons List[List[Int]]
+    returns Tuple (List used verts,
+                   List with updated edges,
+                   List with updated polyogn
+                   List with removed items marked as True)
+    &#39;&#39;&#39;
+    e_indx = set(chain.from_iterable(edges))
+    f_indx = set(chain.from_iterable(faces))
+    indx = set.union(e_indx, f_indx)
+    verts_out = [v for i, v in enumerate(verts) if i in indx]
+
+    v_index = {j: i for i, j in enumerate(sorted(indx))}
+    edges_out = [list(map(lambda n: v_index[n], e)) for e in edges]
+    faces_out = [list(map(lambda n: v_index[n], f)) for f in faces]
+    return verts_out, edges_out, faces_out, list(set(range(len(verts)))-indx)
+
+def remove_unreferenced_topology(edge_pol, verts_length):
+    &#39;&#39;&#39;
+    Removes elements that point to unexisitng vertices
+    edg_pol: list of edges or polygons - List[List[Int]]
+    returns Tuple (referenced items - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    &#39;&#39;&#39;
+    edge_pol_out = []
+    preseved_mask = []
+    for ep in edge_pol:
+        if all([c &lt; verts_length for c in ep]):
+            edge_pol_out.append(ep)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+    return edge_pol_out, preseved_mask
+
+def non_coincident_edges(edges):
+    &#39;&#39;&#39;
+    Removes edges with repeated indices
+    edges: list of edges - List[List[Int]] or Numpy array with shape (n,2)
+    returns Tuple (valid edges - List[List[Int]] or similar Numpy array,
+                   Boolean List with preserved items marked as True - List[bool] or similar numpy array)
+    &#39;&#39;&#39;
+
+    if isinstance(edges, np.ndarray):
+        preseved_mask = edges[:, 0] != edges[:, 1]
+        edges_out = edges[preseved_mask]
+    else:
+        edges_out = []
+        preseved_mask = []
+        for e in edges:
+            if e[0] == e[1]:
+                preseved_mask.append(False)
+            else:
+                edges_out.append(e)
+                preseved_mask.append(True)
+    return edges_out, preseved_mask
+
+def non_redundant_faces_indices(faces):
+    &#39;&#39;&#39;
+    Removes repeated indices from faces and removes faces with less than three indices
+    faces: list of faces - List[List[Int]]
+    returns Tuple (valid faces - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    &#39;&#39;&#39;
+    faces_out = []
+    preseved_mask = []
+    for f in faces:
+        new_face = []
+        for idx, c in enumerate(f):
+            if c != f[idx-1]:
+                new_face.append(c)
+        if len(new_face) &gt; 2:
+            faces_out.append(new_face)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+
+    return faces_out, preseved_mask
+
+def clean_meshes(vertices, edges, faces,
+                 remove_unreferenced_edges=False,
+                 remove_unreferenced_faces=False,
+                 remove_duplicated_edges=False,
+                 remove_duplicated_faces=False,
+                 remove_degenerated_edges=False,
+                 remove_degenerated_faces=False,
+                 remove_loose_verts=False,
+                 calc_verts_idx=False,
+                 calc_edges_idx=False,
+                 calc_faces_idx=False):
+    &#39;&#39;&#39;
+    Cleans a group of meshes using different routines.
+    Returns cleaned meshes and removed items indexes
+    &#39;&#39;&#39;
+    verts_out, edges_out, faces_out = [], [], []
+    verts_removed_out, edges_removed_out, faces_removed_out = [], [], []
+
+    for verts_original, edges_original, faces_original in zip(vertices, edges, faces):
+        verts_changed, edges_changed, faces_changed = False, False, False
+
+        preserved_edges_idx = []
+        preserved_faces_idx = []
+        if remove_unreferenced_edges:
+            edges, preserved_edges_mask = remove_unreferenced_topology(edges_original, len(verts_original))
+            preserved_edges_idx = np.arange(len(edges_original))[preserved_edges_mask]
+            edges_changed = True
+
+        if remove_unreferenced_faces:
+            faces, preserved_faces_mask = remove_unreferenced_topology(faces_original, len(verts_original))
+            preserved_faces_idx = np.arange(len(faces_original))[preserved_faces_mask]
+            faces_changed = True
+
+        if remove_duplicated_edges:
+            if edges_changed:
+                edges, unique_edges_mask = get_unique_topology(edges)
+                preserved_edges_idx = preserved_edges_idx[unique_edges_mask]
+            else:
+                edges, unique_edges_mask = get_unique_topology(edges_original)
+                preserved_edges_idx = np.arange(len(edges_original))[unique_edges_mask]
+            edges_changed = True
+
+        if remove_duplicated_faces:
+            if faces_changed:
+                faces, unique_faces_mask = get_unique_topology(faces)
+                preserved_faces_idx = preserved_faces_idx[unique_faces_mask]
+            else:
+                faces, unique_faces_mask = get_unique_topology(faces_original)
+                preserved_faces_idx = np.arange(len(faces_original))[unique_faces_mask]
+            faces_changed = True
+
+        if remove_degenerated_edges:
+            if edges_changed:
+                edges, non_coincident_mask = non_coincident_edges(edges)
+                preserved_edges_idx = preserved_edges_idx[non_coincident_mask]
+            else:
+                edges, non_coincident_mask = non_coincident_edges(edges_original)
+                preserved_edges_idx = np.arange(len(edges_original))[non_coincident_mask]
+            edges_changed = True
+        if remove_degenerated_faces:
+            if faces_changed:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces)
+                preserved_faces_idx = preserved_faces_idx[non_redundant_mask]
+            else:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces_original)
+                preserved_faces_idx = np.arange(len(faces_original))[non_redundant_mask]
+            faces_changed = True
+
+        if remove_loose_verts:
+            verts, edges, faces, removed_verts_idx = remove_unreferenced_verts(
+                verts_original,
+                edges if edges_changed else edges_original,
+                faces if faces_changed else faces_original)
+            verts_changed = True
+            edges_changed = True
+            faces_changed = True
+
+
+        if verts_changed:
+            verts_out.append(verts)
+            if calc_verts_idx:
+                verts_removed_out.append(removed_verts_idx)
+            else:
+                verts_removed_out.append([])
+
+        else:
+            verts_out.append(verts_original)
+            verts_removed_out.append([])
+
+        if edges_changed:
+            edges_out.append(edges)
+            if calc_edges_idx and len(preserved_edges_idx) &gt; 0:
+                edges_removed_out.append(invert_index_list(preserved_edges_idx, len(edges_original)).tolist())
+
+            else:
+                edges_removed_out.append([])
+
+        else:
+            edges_out.append(edges_original)
+            edges_removed_out.append([])
+
+        if faces_changed:
+            faces_out.append(faces)
+            if calc_faces_idx and len(preserved_faces_idx) &gt; 0:
+                faces_removed_out.append(invert_index_list(preserved_faces_idx, len(faces_original)).tolist())
+
+            else:
+                faces_removed_out.append([])
+
+        else:
+            faces_out.append(faces_original)
+            faces_removed_out.append([])
+
+    return verts_out, edges_out, faces_out, verts_removed_out, edges_removed_out, faces_removed_out
+
+
+def non_redundant_faces_indices_np(faces):
+    F = np.array(faces)
+    M = np.sort(F, axis=-1, order=None)
+
+    # from https://stackoverflow.com/a/16973510/1243487
+    K = np.ascontiguousarray(M).view(np.dtype((np.void, M.dtype.itemsize * M.shape[1])))
+    _, idx = np.unique(K, return_index=True)
+    return F[idx]    
+
+
+def point_inside_mesh(bvh, point):
+    point = Vector(point)
+    axis = Vector((1, 0, 0))
+    outside = False
+    count = 0
+    while True:
+        location, normal, index, distance = bvh.ray_cast(point, axis)
+        if index is None:
+            break
+        count += 1
+        point = location + axis * 0.00001
+    if count % 2 == 0:
+        outside = True
+    return not outside
+
+################
+# Mesh Normals #
+################
+def prepare_arrays(vertices, faces):
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    return np_verts, np_faces
+
+def mean_weighted_equally(np_faces, v_pols, v_normals, non_planar, algorithm):
+    pol_sides = v_pols.shape[1]
+    if non_planar:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 1):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, i],
+                                  v_pols[::, (i-1)%pol_sides] - v_pols[::, i])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0],
+                             v_pols[::, 2] - v_pols[::, 0])
+    if algorithm == &#39;MWE&#39;:
+        np_normalize_vectors(f_normals)
+
+    for i in range(np_faces.shape[1]):
+        np.add.at(v_normals, np_faces[:, i], f_normals)
+
+    if algorithm == &#39;MWAT&#39;:
+        np_normalize_vectors(f_normals)
+    return f_normals, v_normals
+
+
+def factor_mw_angle(cross, side1, side2):
+    return np.arcsin(np.clip(np_margnitude(cross, axis=1)/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)),-1,1))
+
+def factor_mw_angle_area(cross, side1, side2):
+    area = np_margnitude(cross, axis=1)
+    return area*np.arcsin(np.clip(area/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)),-1,1))
+
+def factor_mw_sine(cross, side1, side2):
+    return 1/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))
+
+def factor_mw_sine_area(cross, side1, side2):
+    return np_margnitude(cross, axis=1)/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))
+
+def factor_mw_sine_ed_length_r(cross, side1, side2):
+    return 1/((np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)**2))
+
+def factor_mw_ed_length_r(cross, side1, side2):
+    return 1/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))
+
+def factor_mw_ed_length(cross, side1, side2):
+    return (np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))
+
+def factor_mw_root_ed_length_r(cross, side1, side2):
+    return 1/((np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))**0.5)
+
+def factor_mw_area(cross, side1, side2):
+    return np_margnitude(cross, axis=1)
+
+VERTEX_NORMAL_FACTOR_METHODS ={
+    &#39;MWA&#39;: factor_mw_angle,
+    &#39;MWS&#39;: factor_mw_sine,
+    &#39;MWSELR&#39;: factor_mw_sine_ed_length_r,
+    &#39;MWAT&#39;: factor_mw_area,
+    &#39;MWAAT&#39;: factor_mw_angle_area,
+    &#39;MWSAT&#39;: factor_mw_sine_area,
+    &#39;MWEL&#39;:factor_mw_ed_length,
+    &#39;MWELR&#39;:factor_mw_ed_length_r,
+    &#39;MWRELR&#39;: factor_mw_root_ed_length_r,
+}
+AREA_DEPENDENT_FACTORS = (&#39;MWAT&#39;, &#39;MWS&#39;, &#39;MWSELR&#39;)
+
+def mean_weighted_unequally(np_faces, v_pols, v_normals, non_planar, factor_mode):
+    pol_sides = v_pols.shape[1]
+    factor_func = VERTEX_NORMAL_FACTOR_METHODS[factor_mode]
+    if non_planar:
+        face_factor = np.zeros((len(v_pols), pol_sides), dtype=np.float64)
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 1):
+            side1 = v_pols[::, (1+i)%pol_sides] - v_pols[::, i]
+            side2 = v_pols[::, (i-1)%pol_sides] - v_pols[::, i]
+            cross = np.cross(side1, side2)
+            face_factor[:, i] = factor_func(cross, side1, side2)
+            f_normals += cross
+    else:
+        side1 = v_pols[::, 1] - v_pols[::, 0]
+        side2 = v_pols[::, 2] - v_pols[::, 0]
+        f_normals = np.cross(side1, side2)
+        face_factor = factor_func(f_normals, side1, side2)
+
+    if factor_mode in AREA_DEPENDENT_FACTORS:
+        np_normalize_vectors(f_normals)
+
+    for i in range(np_faces.shape[1]):
+        np.add.at(v_normals, np_faces[:, i], f_normals*face_factor[:, i, np.newaxis])
+
+    if not factor_mode in AREA_DEPENDENT_FACTORS:
+        np_normalize_vectors(f_normals)
+    return f_normals, v_normals
+
+def calc_mesh_normals_np(vertices,
+                         faces,
+                         get_f_normals=True,
+                         get_v_normals=True,
+                         non_planar=True,
+                         v_normal_alg=&#39;MWE&#39;,
+                         output_numpy=True):
+    if not has_element(faces):
+        return [], vertices
+
+
+    np_verts, np_faces = prepare_arrays(vertices, faces)
+
+
+    if get_v_normals:
+        v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+        if v_normal_alg in (&#39;MWE&#39;, &#39;MWAT&#39;):
+            norm_func = mean_weighted_equally
+        else:
+            norm_func = mean_weighted_unequally
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        f_normals = np.zeros((len(np_faces), 3), dtype=np.float64)
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            if get_v_normals:
+                f_normal_g, v_normals = norm_func(np_faces_g, v_pols, v_normals, non_planar, v_normal_alg)
+            else:
+                f_normal_g = np_faces_normals(v_pols)
+
+            f_normals[mask, :] = f_normal_g
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        if get_v_normals:
+            f_normals, v_normals = norm_func(np_faces, v_pols, v_normals, non_planar, v_normal_alg)
+        else:
+            f_normals = np_faces_normals(v_pols)
+
+    if output_numpy:
+        return (f_normals if get_f_normals else [],
+                np_normalize_vectors(v_normals) if get_v_normals else [])
+    return (f_normals.tolist() if get_f_normals else [],
+            np_normalize_vectors(v_normals).tolist() if get_v_normals else [])
+
+
+def calc_mesh_normals_bmesh(vertices, faces, get_f_normals=True, get_v_normals=True):
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    vertex_normals = []
+    face_normals = []
+    if get_v_normals:
+        for vertex in bm.verts:
+            vertex_normals.append(tuple(vertex.normal))
+    if get_f_normals:
+        for face in bm.faces:
+            face_normals.append(tuple(face.normal.normalized()))
+    bm.free()
+    return face_normals, vertex_normals</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_mesh_utils.calc_mesh_normals_bmesh"><code class="name flex">
+<span>def <span class="ident">calc_mesh_normals_bmesh</span></span>(<span>vertices, faces, get_f_normals=True, get_v_normals=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_mesh_normals_bmesh(vertices, faces, get_f_normals=True, get_v_normals=True):
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    vertex_normals = []
+    face_normals = []
+    if get_v_normals:
+        for vertex in bm.verts:
+            vertex_normals.append(tuple(vertex.normal))
+    if get_f_normals:
+        for face in bm.faces:
+            face_normals.append(tuple(face.normal.normalized()))
+    bm.free()
+    return face_normals, vertex_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.calc_mesh_normals_np"><code class="name flex">
+<span>def <span class="ident">calc_mesh_normals_np</span></span>(<span>vertices, faces, get_f_normals=True, get_v_normals=True, non_planar=True, v_normal_alg='MWE', output_numpy=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_mesh_normals_np(vertices,
+                         faces,
+                         get_f_normals=True,
+                         get_v_normals=True,
+                         non_planar=True,
+                         v_normal_alg=&#39;MWE&#39;,
+                         output_numpy=True):
+    if not has_element(faces):
+        return [], vertices
+
+
+    np_verts, np_faces = prepare_arrays(vertices, faces)
+
+
+    if get_v_normals:
+        v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+        if v_normal_alg in (&#39;MWE&#39;, &#39;MWAT&#39;):
+            norm_func = mean_weighted_equally
+        else:
+            norm_func = mean_weighted_unequally
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        f_normals = np.zeros((len(np_faces), 3), dtype=np.float64)
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            if get_v_normals:
+                f_normal_g, v_normals = norm_func(np_faces_g, v_pols, v_normals, non_planar, v_normal_alg)
+            else:
+                f_normal_g = np_faces_normals(v_pols)
+
+            f_normals[mask, :] = f_normal_g
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        if get_v_normals:
+            f_normals, v_normals = norm_func(np_faces, v_pols, v_normals, non_planar, v_normal_alg)
+        else:
+            f_normals = np_faces_normals(v_pols)
+
+    if output_numpy:
+        return (f_normals if get_f_normals else [],
+                np_normalize_vectors(v_normals) if get_v_normals else [])
+    return (f_normals.tolist() if get_f_normals else [],
+            np_normalize_vectors(v_normals).tolist() if get_v_normals else [])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.clean_meshes"><code class="name flex">
+<span>def <span class="ident">clean_meshes</span></span>(<span>vertices, edges, faces, remove_unreferenced_edges=False, remove_unreferenced_faces=False, remove_duplicated_edges=False, remove_duplicated_faces=False, remove_degenerated_edges=False, remove_degenerated_faces=False, remove_loose_verts=False, calc_verts_idx=False, calc_edges_idx=False, calc_faces_idx=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cleans a group of meshes using different routines.
+Returns cleaned meshes and removed items indexes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clean_meshes(vertices, edges, faces,
+                 remove_unreferenced_edges=False,
+                 remove_unreferenced_faces=False,
+                 remove_duplicated_edges=False,
+                 remove_duplicated_faces=False,
+                 remove_degenerated_edges=False,
+                 remove_degenerated_faces=False,
+                 remove_loose_verts=False,
+                 calc_verts_idx=False,
+                 calc_edges_idx=False,
+                 calc_faces_idx=False):
+    &#39;&#39;&#39;
+    Cleans a group of meshes using different routines.
+    Returns cleaned meshes and removed items indexes
+    &#39;&#39;&#39;
+    verts_out, edges_out, faces_out = [], [], []
+    verts_removed_out, edges_removed_out, faces_removed_out = [], [], []
+
+    for verts_original, edges_original, faces_original in zip(vertices, edges, faces):
+        verts_changed, edges_changed, faces_changed = False, False, False
+
+        preserved_edges_idx = []
+        preserved_faces_idx = []
+        if remove_unreferenced_edges:
+            edges, preserved_edges_mask = remove_unreferenced_topology(edges_original, len(verts_original))
+            preserved_edges_idx = np.arange(len(edges_original))[preserved_edges_mask]
+            edges_changed = True
+
+        if remove_unreferenced_faces:
+            faces, preserved_faces_mask = remove_unreferenced_topology(faces_original, len(verts_original))
+            preserved_faces_idx = np.arange(len(faces_original))[preserved_faces_mask]
+            faces_changed = True
+
+        if remove_duplicated_edges:
+            if edges_changed:
+                edges, unique_edges_mask = get_unique_topology(edges)
+                preserved_edges_idx = preserved_edges_idx[unique_edges_mask]
+            else:
+                edges, unique_edges_mask = get_unique_topology(edges_original)
+                preserved_edges_idx = np.arange(len(edges_original))[unique_edges_mask]
+            edges_changed = True
+
+        if remove_duplicated_faces:
+            if faces_changed:
+                faces, unique_faces_mask = get_unique_topology(faces)
+                preserved_faces_idx = preserved_faces_idx[unique_faces_mask]
+            else:
+                faces, unique_faces_mask = get_unique_topology(faces_original)
+                preserved_faces_idx = np.arange(len(faces_original))[unique_faces_mask]
+            faces_changed = True
+
+        if remove_degenerated_edges:
+            if edges_changed:
+                edges, non_coincident_mask = non_coincident_edges(edges)
+                preserved_edges_idx = preserved_edges_idx[non_coincident_mask]
+            else:
+                edges, non_coincident_mask = non_coincident_edges(edges_original)
+                preserved_edges_idx = np.arange(len(edges_original))[non_coincident_mask]
+            edges_changed = True
+        if remove_degenerated_faces:
+            if faces_changed:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces)
+                preserved_faces_idx = preserved_faces_idx[non_redundant_mask]
+            else:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces_original)
+                preserved_faces_idx = np.arange(len(faces_original))[non_redundant_mask]
+            faces_changed = True
+
+        if remove_loose_verts:
+            verts, edges, faces, removed_verts_idx = remove_unreferenced_verts(
+                verts_original,
+                edges if edges_changed else edges_original,
+                faces if faces_changed else faces_original)
+            verts_changed = True
+            edges_changed = True
+            faces_changed = True
+
+
+        if verts_changed:
+            verts_out.append(verts)
+            if calc_verts_idx:
+                verts_removed_out.append(removed_verts_idx)
+            else:
+                verts_removed_out.append([])
+
+        else:
+            verts_out.append(verts_original)
+            verts_removed_out.append([])
+
+        if edges_changed:
+            edges_out.append(edges)
+            if calc_edges_idx and len(preserved_edges_idx) &gt; 0:
+                edges_removed_out.append(invert_index_list(preserved_edges_idx, len(edges_original)).tolist())
+
+            else:
+                edges_removed_out.append([])
+
+        else:
+            edges_out.append(edges_original)
+            edges_removed_out.append([])
+
+        if faces_changed:
+            faces_out.append(faces)
+            if calc_faces_idx and len(preserved_faces_idx) &gt; 0:
+                faces_removed_out.append(invert_index_list(preserved_faces_idx, len(faces_original)).tolist())
+
+            else:
+                faces_removed_out.append([])
+
+        else:
+            faces_out.append(faces_original)
+            faces_removed_out.append([])
+
+    return verts_out, edges_out, faces_out, verts_removed_out, edges_removed_out, faces_removed_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_angle"><code class="name flex">
+<span>def <span class="ident">factor_mw_angle</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_angle(cross, side1, side2):
+    return np.arcsin(np.clip(np_margnitude(cross, axis=1)/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)),-1,1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_angle_area"><code class="name flex">
+<span>def <span class="ident">factor_mw_angle_area</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_angle_area(cross, side1, side2):
+    area = np_margnitude(cross, axis=1)
+    return area*np.arcsin(np.clip(area/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)),-1,1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_area"><code class="name flex">
+<span>def <span class="ident">factor_mw_area</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_area(cross, side1, side2):
+    return np_margnitude(cross, axis=1)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_ed_length"><code class="name flex">
+<span>def <span class="ident">factor_mw_ed_length</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_ed_length(cross, side1, side2):
+    return (np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_ed_length_r"><code class="name flex">
+<span>def <span class="ident">factor_mw_ed_length_r</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_ed_length_r(cross, side1, side2):
+    return 1/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_root_ed_length_r"><code class="name flex">
+<span>def <span class="ident">factor_mw_root_ed_length_r</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_root_ed_length_r(cross, side1, side2):
+    return 1/((np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))**0.5)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_sine"><code class="name flex">
+<span>def <span class="ident">factor_mw_sine</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_sine(cross, side1, side2):
+    return 1/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_sine_area"><code class="name flex">
+<span>def <span class="ident">factor_mw_sine_area</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_sine_area(cross, side1, side2):
+    return np_margnitude(cross, axis=1)/(np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.factor_mw_sine_ed_length_r"><code class="name flex">
+<span>def <span class="ident">factor_mw_sine_ed_length_r</span></span>(<span>cross, side1, side2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor_mw_sine_ed_length_r(cross, side1, side2):
+    return 1/((np_margnitude(side1, axis=1)*np_margnitude(side2, axis=1)**2))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.get_unique_faces"><code class="name flex">
+<span>def <span class="ident">get_unique_faces</span></span>(<span>faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_unique_faces(faces):
+    return get_unique_topology(faces)[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.get_unique_topology"><code class="name flex">
+<span>def <span class="ident">get_unique_topology</span></span>(<span>edg_pol)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes doubled items
+edg_pol: list of edges or polygons List[List[Int]]
+returns Tuple (List of unique items, Boolean List with preserved items marked as True)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_unique_topology(edg_pol):
+    &#39;&#39;&#39;
+    Removes doubled items
+    edg_pol: list of edges or polygons List[List[Int]]
+    returns Tuple (List of unique items, Boolean List with preserved items marked as True)
+    &#39;&#39;&#39;
+    uniq_edg_pols = []
+    unique_sets = []
+    preseved_mask = []
+    for e_p in edg_pol:
+        e_p_set = set(e_p)
+        if not e_p_set in unique_sets:
+            uniq_edg_pols.append(e_p)
+            unique_sets.append(e_p_set)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+    return uniq_edg_pols, preseved_mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.mask_vertices"><code class="name flex">
+<span>def <span class="ident">mask_vertices</span></span>(<span>verts, edges, faces, verts_mask)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mask_vertices(verts, edges, faces, verts_mask):
+    if any(not m for m in verts_mask):
+        vert_indexes = [i for i, m in enumerate(verts_mask) if m]
+        index_set = set(vert_indexes)
+        vert_dict = {vert_idx: i for i, vert_idx in enumerate(vert_indexes)}
+
+        new_verts = [verts[i] for i in vert_indexes]
+        new_edges = [[vert_dict[n] for n in edge]
+                        for edge in edges if index_set.issuperset(edge)]
+        new_faces = [[vert_dict[n] for n in face]
+                        for face in faces if index_set.issuperset(face)]
+
+        return new_verts, new_edges, new_faces
+
+    return verts, edges, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.mean_weighted_equally"><code class="name flex">
+<span>def <span class="ident">mean_weighted_equally</span></span>(<span>np_faces, v_pols, v_normals, non_planar, algorithm)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean_weighted_equally(np_faces, v_pols, v_normals, non_planar, algorithm):
+    pol_sides = v_pols.shape[1]
+    if non_planar:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 1):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, i],
+                                  v_pols[::, (i-1)%pol_sides] - v_pols[::, i])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0],
+                             v_pols[::, 2] - v_pols[::, 0])
+    if algorithm == &#39;MWE&#39;:
+        np_normalize_vectors(f_normals)
+
+    for i in range(np_faces.shape[1]):
+        np.add.at(v_normals, np_faces[:, i], f_normals)
+
+    if algorithm == &#39;MWAT&#39;:
+        np_normalize_vectors(f_normals)
+    return f_normals, v_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.mean_weighted_unequally"><code class="name flex">
+<span>def <span class="ident">mean_weighted_unequally</span></span>(<span>np_faces, v_pols, v_normals, non_planar, factor_mode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean_weighted_unequally(np_faces, v_pols, v_normals, non_planar, factor_mode):
+    pol_sides = v_pols.shape[1]
+    factor_func = VERTEX_NORMAL_FACTOR_METHODS[factor_mode]
+    if non_planar:
+        face_factor = np.zeros((len(v_pols), pol_sides), dtype=np.float64)
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 1):
+            side1 = v_pols[::, (1+i)%pol_sides] - v_pols[::, i]
+            side2 = v_pols[::, (i-1)%pol_sides] - v_pols[::, i]
+            cross = np.cross(side1, side2)
+            face_factor[:, i] = factor_func(cross, side1, side2)
+            f_normals += cross
+    else:
+        side1 = v_pols[::, 1] - v_pols[::, 0]
+        side2 = v_pols[::, 2] - v_pols[::, 0]
+        f_normals = np.cross(side1, side2)
+        face_factor = factor_func(f_normals, side1, side2)
+
+    if factor_mode in AREA_DEPENDENT_FACTORS:
+        np_normalize_vectors(f_normals)
+
+    for i in range(np_faces.shape[1]):
+        np.add.at(v_normals, np_faces[:, i], f_normals*face_factor[:, i, np.newaxis])
+
+    if not factor_mode in AREA_DEPENDENT_FACTORS:
+        np_normalize_vectors(f_normals)
+    return f_normals, v_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.mesh_join"><code class="name flex">
+<span>def <span class="ident">mesh_join</span></span>(<span>vertices_s, edges_s, faces_s)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given list of meshes represented by lists of vertices, edges and faces,
+produce one joined mesh.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_join(vertices_s, edges_s, faces_s):
+    &#39;&#39;&#39;Given list of meshes represented by lists of vertices, edges and faces,
+    produce one joined mesh.&#39;&#39;&#39;
+
+    offset = 0
+    result_vertices = []
+    result_edges = []
+    result_faces = []
+    if len(edges_s) == 0:
+        edges_s = [[]] * len(faces_s)
+    for vertices, edges, faces in zip(vertices_s, edges_s, faces_s):
+        result_vertices.extend(vertices)
+        new_edges = [tuple(i + offset for i in edge) for edge in edges]
+        new_faces = [[i + offset for i in face] for face in faces]
+        result_edges.extend(new_edges)
+        result_faces.extend(new_faces)
+        offset += len(vertices)
+    return result_vertices, result_edges, result_faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.non_coincident_edges"><code class="name flex">
+<span>def <span class="ident">non_coincident_edges</span></span>(<span>edges)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes edges with repeated indices
+edges: list of edges - List[List[Int]] or Numpy array with shape (n,2)
+returns Tuple (valid edges - List[List[Int]] or similar Numpy array,
+Boolean List with preserved items marked as True - List[bool] or similar numpy array)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def non_coincident_edges(edges):
+    &#39;&#39;&#39;
+    Removes edges with repeated indices
+    edges: list of edges - List[List[Int]] or Numpy array with shape (n,2)
+    returns Tuple (valid edges - List[List[Int]] or similar Numpy array,
+                   Boolean List with preserved items marked as True - List[bool] or similar numpy array)
+    &#39;&#39;&#39;
+
+    if isinstance(edges, np.ndarray):
+        preseved_mask = edges[:, 0] != edges[:, 1]
+        edges_out = edges[preseved_mask]
+    else:
+        edges_out = []
+        preseved_mask = []
+        for e in edges:
+            if e[0] == e[1]:
+                preseved_mask.append(False)
+            else:
+                edges_out.append(e)
+                preseved_mask.append(True)
+    return edges_out, preseved_mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.non_redundant_faces_indices"><code class="name flex">
+<span>def <span class="ident">non_redundant_faces_indices</span></span>(<span>faces)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes repeated indices from faces and removes faces with less than three indices
+faces: list of faces - List[List[Int]]
+returns Tuple (valid faces - List[List[Int]],
+Boolean List with preserved items marked as True - List[bool])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def non_redundant_faces_indices(faces):
+    &#39;&#39;&#39;
+    Removes repeated indices from faces and removes faces with less than three indices
+    faces: list of faces - List[List[Int]]
+    returns Tuple (valid faces - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    &#39;&#39;&#39;
+    faces_out = []
+    preseved_mask = []
+    for f in faces:
+        new_face = []
+        for idx, c in enumerate(f):
+            if c != f[idx-1]:
+                new_face.append(c)
+        if len(new_face) &gt; 2:
+            faces_out.append(new_face)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+
+    return faces_out, preseved_mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.non_redundant_faces_indices_np"><code class="name flex">
+<span>def <span class="ident">non_redundant_faces_indices_np</span></span>(<span>faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def non_redundant_faces_indices_np(faces):
+    F = np.array(faces)
+    M = np.sort(F, axis=-1, order=None)
+
+    # from https://stackoverflow.com/a/16973510/1243487
+    K = np.ascontiguousarray(M).view(np.dtype((np.void, M.dtype.itemsize * M.shape[1])))
+    _, idx = np.unique(K, return_index=True)
+    return F[idx]    </code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.point_inside_mesh"><code class="name flex">
+<span>def <span class="ident">point_inside_mesh</span></span>(<span>bvh, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def point_inside_mesh(bvh, point):
+    point = Vector(point)
+    axis = Vector((1, 0, 0))
+    outside = False
+    count = 0
+    while True:
+        location, normal, index, distance = bvh.ray_cast(point, axis)
+        if index is None:
+            break
+        count += 1
+        point = location + axis * 0.00001
+    if count % 2 == 0:
+        outside = True
+    return not outside</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.pols_to_edges_irregular_mesh"><code class="name flex">
+<span>def <span class="ident">pols_to_edges_irregular_mesh</span></span>(<span>pols, unique_edges)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_to_edges_irregular_mesh(pols, unique_edges):
+    np_pols = np.array(pols)
+    np_len = np.vectorize(len)
+    lens = np_len(np_pols)
+    pol_types = np.unique(lens)
+
+    edges = []
+    for sides_number in pol_types:
+        mask = lens == sides_number
+        np_pols_g = np.array(np_pols[mask].tolist())
+        edges_g = np.empty(list(np_pols_g.shape)+[2], &#39;i&#39;)
+        edges_g[:, :, 0] = np_pols_g
+        edges_g[:, 1:, 1] = np_pols_g[:, :-1]
+        edges_g[:, 0, 1] = np_pols_g[:, -1]
+
+        edges_g = edges_g.reshape(-1, 2)
+        edges.append(edges_g)
+    if unique_edges:
+        return np.unique(np.sort(np.concatenate([eds for eds in edges])), axis=0)
+
+    return np.concatenate([eds for eds in edges])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.polygons_to_edges"><code class="name flex">
+<span>def <span class="ident">polygons_to_edges</span></span>(<span>obj, unique_edges=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygons_to_edges(obj, unique_edges=False):
+    out = []
+    for faces in obj:
+        out_edges = []
+        seen = set()
+        for face in faces:
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
+        out.append(out_edges)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.polygons_to_edges_np"><code class="name flex">
+<span>def <span class="ident">polygons_to_edges_np</span></span>(<span>obj, unique_edges=False, output_numpy=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
+    result = []
+
+    for pols in obj:
+        if len(pols) == 0:
+            result.append([])
+            continue
+        regular_mesh = True
+        try:
+            np_pols = np.array(pols, dtype=np.int32)
+        except ValueError:
+            regular_mesh = False
+
+        if not regular_mesh:
+            if output_numpy:
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges))
+            else:
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges).tolist())
+
+        else:
+
+            edges = np.empty(list(np_pols.shape)+[2], &#39;i&#39;)
+            edges[:, :, 0] = np_pols
+            edges[:, 1:, 1] = np_pols[:, :-1]
+            edges[:, 0, 1] = np_pols[:, -1]
+
+            edges = edges.reshape(-1, 2)
+            if output_numpy:
+                if unique_edges:
+                    result.append(np.unique(np.sort(edges), axis=0))
+                else:
+                    result.append(edges)
+            else:
+                if unique_edges:
+                    result.append(np.unique(np.sort(edges), axis=0).tolist())
+                else:
+                    result.append(edges.tolist())
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.prepare_arrays"><code class="name flex">
+<span>def <span class="ident">prepare_arrays</span></span>(<span>vertices, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_arrays(vertices, faces):
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    return np_verts, np_faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.remove_unreferenced_topology"><code class="name flex">
+<span>def <span class="ident">remove_unreferenced_topology</span></span>(<span>edge_pol, verts_length)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes elements that point to unexisitng vertices
+edg_pol: list of edges or polygons - List[List[Int]]
+returns Tuple (referenced items - List[List[Int]],
+Boolean List with preserved items marked as True - List[bool])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_unreferenced_topology(edge_pol, verts_length):
+    &#39;&#39;&#39;
+    Removes elements that point to unexisitng vertices
+    edg_pol: list of edges or polygons - List[List[Int]]
+    returns Tuple (referenced items - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    &#39;&#39;&#39;
+    edge_pol_out = []
+    preseved_mask = []
+    for ep in edge_pol:
+        if all([c &lt; verts_length for c in ep]):
+            edge_pol_out.append(ep)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+    return edge_pol_out, preseved_mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_mesh_utils.remove_unreferenced_verts"><code class="name flex">
+<span>def <span class="ident">remove_unreferenced_verts</span></span>(<span>verts, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Removes unreferenced vertices
+verts: list of vertices List[List[float]]
+edges: list of edges List[List[Int]]
+faces: list of polygons List[List[Int]]
+returns Tuple (List used verts,
+List with updated edges,
+List with updated polyogn
+List with removed items marked as True)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_unreferenced_verts(verts, edges, faces):
+    &#39;&#39;&#39;
+    Removes unreferenced vertices
+    verts: list of vertices List[List[float]]
+    edges: list of edges List[List[Int]]
+    faces: list of polygons List[List[Int]]
+    returns Tuple (List used verts,
+                   List with updated edges,
+                   List with updated polyogn
+                   List with removed items marked as True)
+    &#39;&#39;&#39;
+    e_indx = set(chain.from_iterable(edges))
+    f_indx = set(chain.from_iterable(faces))
+    indx = set.union(e_indx, f_indx)
+    verts_out = [v for i, v in enumerate(verts) if i in indx]
+
+    v_index = {j: i for i, j in enumerate(sorted(indx))}
+    edges_out = [list(map(lambda n: v_index[n], e)) for e in edges]
+    faces_out = [list(map(lambda n: v_index[n], f)) for f in faces]
+    return verts_out, edges_out, faces_out, list(set(range(len(verts)))-indx)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_mesh_utils.calc_mesh_normals_bmesh" href="#sverchok.utils.sv_mesh_utils.calc_mesh_normals_bmesh">calc_mesh_normals_bmesh</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.calc_mesh_normals_np" href="#sverchok.utils.sv_mesh_utils.calc_mesh_normals_np">calc_mesh_normals_np</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.clean_meshes" href="#sverchok.utils.sv_mesh_utils.clean_meshes">clean_meshes</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_angle" href="#sverchok.utils.sv_mesh_utils.factor_mw_angle">factor_mw_angle</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_angle_area" href="#sverchok.utils.sv_mesh_utils.factor_mw_angle_area">factor_mw_angle_area</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_area" href="#sverchok.utils.sv_mesh_utils.factor_mw_area">factor_mw_area</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_ed_length" href="#sverchok.utils.sv_mesh_utils.factor_mw_ed_length">factor_mw_ed_length</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_ed_length_r" href="#sverchok.utils.sv_mesh_utils.factor_mw_ed_length_r">factor_mw_ed_length_r</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_root_ed_length_r" href="#sverchok.utils.sv_mesh_utils.factor_mw_root_ed_length_r">factor_mw_root_ed_length_r</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_sine" href="#sverchok.utils.sv_mesh_utils.factor_mw_sine">factor_mw_sine</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_sine_area" href="#sverchok.utils.sv_mesh_utils.factor_mw_sine_area">factor_mw_sine_area</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.factor_mw_sine_ed_length_r" href="#sverchok.utils.sv_mesh_utils.factor_mw_sine_ed_length_r">factor_mw_sine_ed_length_r</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.get_unique_faces" href="#sverchok.utils.sv_mesh_utils.get_unique_faces">get_unique_faces</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.get_unique_topology" href="#sverchok.utils.sv_mesh_utils.get_unique_topology">get_unique_topology</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.mask_vertices" href="#sverchok.utils.sv_mesh_utils.mask_vertices">mask_vertices</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.mean_weighted_equally" href="#sverchok.utils.sv_mesh_utils.mean_weighted_equally">mean_weighted_equally</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.mean_weighted_unequally" href="#sverchok.utils.sv_mesh_utils.mean_weighted_unequally">mean_weighted_unequally</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.mesh_join" href="#sverchok.utils.sv_mesh_utils.mesh_join">mesh_join</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.non_coincident_edges" href="#sverchok.utils.sv_mesh_utils.non_coincident_edges">non_coincident_edges</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.non_redundant_faces_indices" href="#sverchok.utils.sv_mesh_utils.non_redundant_faces_indices">non_redundant_faces_indices</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.non_redundant_faces_indices_np" href="#sverchok.utils.sv_mesh_utils.non_redundant_faces_indices_np">non_redundant_faces_indices_np</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.point_inside_mesh" href="#sverchok.utils.sv_mesh_utils.point_inside_mesh">point_inside_mesh</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.pols_to_edges_irregular_mesh" href="#sverchok.utils.sv_mesh_utils.pols_to_edges_irregular_mesh">pols_to_edges_irregular_mesh</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.polygons_to_edges" href="#sverchok.utils.sv_mesh_utils.polygons_to_edges">polygons_to_edges</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.polygons_to_edges_np" href="#sverchok.utils.sv_mesh_utils.polygons_to_edges_np">polygons_to_edges_np</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.prepare_arrays" href="#sverchok.utils.sv_mesh_utils.prepare_arrays">prepare_arrays</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.remove_unreferenced_topology" href="#sverchok.utils.sv_mesh_utils.remove_unreferenced_topology">remove_unreferenced_topology</a></code></li>
+<li><code><a title="sverchok.utils.sv_mesh_utils.remove_unreferenced_verts" href="#sverchok.utils.sv_mesh_utils.remove_unreferenced_verts">remove_unreferenced_verts</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

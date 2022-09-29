@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_extended_curve_utils API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_extended_curve_utils</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import math
+
+import bpy
+import mathutils
+import bmesh
+from mathutils import Vector
+from mathutils.geometry import interpolate_bezier
+
+
+def generate_edges(n_verts, cyclic):
+    edges = [[i, i + 1] for i in range(n_verts - 1)]
+    if cyclic:
+        edges.append([n_verts-1, 0])
+    return edges
+
+
+def offset(edgekeys, amount):
+    return [[edge[0] + amount, edge[1] + amount] for edge in edgekeys]
+
+# --- lifted and modified from https://blender.stackexchange.com/a/689/47 (Brecht): 
+
+def get_points_bezier(spline, clean=True, calc_radii=False):
+
+    knots = spline.bezier_points
+    cyclic = spline.use_cyclic_u
+
+    if len(knots) &lt; 2:
+        return
+
+    radii = []
+
+    # verts per segment
+    r = spline.resolution_u + 1
+
+    # segments in spline
+    segments = len(knots)
+    if not cyclic:
+        segments -= 1
+
+    master_point_list = []
+    for i in range(segments):
+        inext = (i + 1) % len(knots)
+
+        knot1, knot2 = knots[i].co, knots[inext].co
+        handle1, handle2 = knots[i].handle_right, knots[inext].handle_left
+
+        bezier = knot1, handle1, handle2, knot2, r
+        points = interpolate_bezier(*bezier)
+
+        if segments == 1 and not cyclic:
+            pass
+        elif cyclic or (i &lt; segments-1):
+            points.pop()
+
+        master_point_list.extend([v[:] for v in points])
+
+    edges = generate_edges(n_verts=len(master_point_list), cyclic=cyclic)
+
+    return master_point_list, edges, radii
+
+
+#### --- lifted and modified from https://blender.stackexchange.com/a/34276/47 (pink vertex)
+
+
+def macro_knotsu(nu):
+    return nu.order_u + nu.point_count_u + (nu.order_u - 1 if nu.use_cyclic_u else 0)
+
+def macro_segmentsu(nu):
+    return nu.point_count_u if nu.use_cyclic_u else nu.point_count_u - 1
+
+def makeknots(nu):
+    knots = [0.0] * (4 + macro_knotsu(nu))
+    flag = nu.use_endpoint_u + (nu.use_bezier_u &lt;&lt; 1)
+    if nu.use_cyclic_u:
+        calcknots(knots, nu.point_count_u, nu.order_u, 0)
+        makecyclicknots(knots, nu.point_count_u, nu.order_u)
+    else:
+        calcknots(knots, nu.point_count_u, nu.order_u, flag)
+    return knots
+
+def calcknots(knots, pnts, order, flag):
+    pnts_order = pnts + order
+    if flag == 1:
+        k = 0.0
+        for a in range(1, pnts_order + 1):
+            knots[a - 1] = k
+            if a &gt;= order and a &lt;= pnts:
+                k += 1.0
+    elif flag == 2:
+        if order == 4:
+            k = 0.34
+            for a in range(pnts_order):
+                knots[a] = math.floor(k)
+                k += (1.0 / 3.0)
+        elif order == 3:
+            k = 0.6
+            for a in range(pnts_order):
+                if a &gt;= order and a &lt;= pnts:
+                    k += 0.5
+                    knots[a] = math.floor(k)
+    else:
+        for a in range(pnts_order):
+            knots[a] = a
+
+def makecyclicknots(knots, pnts, order):
+    order2 = order - 1
+
+    if order &gt; 2:
+        b = pnts + order2
+        for a in range(1, order2):
+            if knots[b] != knots[b - a]:
+                break
+
+            if a == order2:
+                knots[pnts + order - 2] += 1.0
+
+    b = order
+    c = pnts + order + order2
+    for a in range(pnts + order2, c):
+        knots[a] = knots[a - 1] + (knots[b] - knots[b - 1])
+        b -= 1
+
+def basisNurb(t, order, pnts, knots, basis, start, end):
+    i1 = i2 = 0
+    orderpluspnts = order + pnts
+    opp2 = orderpluspnts - 1
+
+    # this is for float inaccuracy
+    if t &lt; knots[0]:
+        t = knots[0]
+    elif t &gt; knots[opp2]:
+        t = knots[opp2]
+
+    # this part is order &#39;1&#39;
+    o2 = order + 1
+    for i in range(opp2):
+        if knots[i] != knots[i + 1] and t &gt;= knots[i] and t &lt;= knots[i + 1]:
+            basis[i] = 1.0
+            i1 = i - o2
+            if i1 &lt; 0:
+                i1 = 0
+            i2 = i
+            i += 1
+            while i &lt; opp2:
+                basis[i] = 0.0
+                i += 1
+            break
+
+        else:
+            basis[i] = 0.0
+
+    basis[i] = 0.0
+
+    # this is order 2, 3, ...
+    for j in range(2, order + 1):
+
+        if i2 + j &gt;= orderpluspnts:
+            i2 = opp2 - j
+
+        for i in range(i1, i2 + 1):
+            if basis[i] != 0.0:
+                d = ((t - knots[i]) * basis[i]) / (knots[i + j - 1] - knots[i])
+            else:
+                d = 0.0
+
+            if basis[i + 1] != 0.0:
+                e = ((knots[i + j] - t) * basis[i + 1]) / (knots[i + j] - knots[i + 1])
+            else:
+                e = 0.0
+
+            basis[i] = d + e
+
+    start = 1000
+    end = 0
+
+    for i in range(i1, i2 + 1):
+        if basis[i] &gt; 0.0:
+            end = i
+            if start == 1000:
+                start = i
+
+    return start, end
+
+def nurb_make_curve(nu, resolu, stride=3):
+    EPS = 1e-6
+    coord_index = istart = iend = 0
+
+    coord_array = [0.0] * (3 * nu.resolution_u * macro_segmentsu(nu))
+    sum_array = [0] * nu.point_count_u
+    basisu = [0.0] * macro_knotsu(nu)
+    knots = makeknots(nu)
+
+    resolu = resolu * macro_segmentsu(nu)
+    ustart = knots[nu.order_u - 1]
+    uend   = knots[nu.point_count_u + nu.order_u - 1] if nu.use_cyclic_u else \
+             knots[nu.point_count_u]
+    ustep  = (uend - ustart) / (resolu - (0 if nu.use_cyclic_u else 1))
+    cycl = nu.order_u - 1 if nu.use_cyclic_u else 0
+
+    u = ustart
+    while resolu:
+        resolu -= 1
+        istart, iend = basisNurb(u, nu.order_u, nu.point_count_u + cycl, knots, basisu, istart, iend)
+
+        #/* calc sum */
+        sumdiv = 0.0
+        sum_index = 0
+        pt_index = istart - 1
+        for i in range(istart, iend + 1):
+            pt_index = (i - nu.point_count_u) if i &gt;= nu.point_count_u else (pt_index + 1)
+            sum_array[sum_index] = basisu[i] * nu.points[pt_index].co[3]
+            sumdiv += sum_array[sum_index]
+            sum_index += 1
+
+        if (sumdiv != 0.0) and (sumdiv &lt; 1.0 - EPS or sumdiv &gt; 1.0 + EPS):
+            sum_index = 0
+            for i in range(istart, iend + 1):
+                sum_array[sum_index] /= sumdiv
+                sum_index += 1
+
+        coord_array[coord_index: coord_index + 3] = (0.0, 0.0, 0.0)
+
+        sum_index = 0
+        pt_index = istart - 1
+        for i in range(istart, iend + 1):
+            if i &gt;= nu.point_count_u:
+                pt_index = i - nu.point_count_u
+            else:
+                pt_index += 1
+
+            if sum_array[sum_index] != 0.0:
+                for j in range(3):
+                    coord_array[coord_index + j] += sum_array[sum_index] * nu.points[pt_index].co[j]
+            sum_index += 1
+
+        coord_index += stride
+        u += ustep
+
+    return coord_array
+
+
+def get_points_nurbs(spline, resolu, calc_radii=False):
+    verts, edges, radii = [], [], []
+
+    coord_array = nurb_make_curve(spline, resolu, stride=3)
+    verts = [coord_array[i: i + 3] for i in range(0, len(coord_array), 3)]
+    edges = generate_edges(n_verts=len(verts), cyclic=spline.use_cyclic_u)
+
+    return verts, edges, radii</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_extended_curve_utils.basisNurb"><code class="name flex">
+<span>def <span class="ident">basisNurb</span></span>(<span>t, order, pnts, knots, basis, start, end)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def basisNurb(t, order, pnts, knots, basis, start, end):
+    i1 = i2 = 0
+    orderpluspnts = order + pnts
+    opp2 = orderpluspnts - 1
+
+    # this is for float inaccuracy
+    if t &lt; knots[0]:
+        t = knots[0]
+    elif t &gt; knots[opp2]:
+        t = knots[opp2]
+
+    # this part is order &#39;1&#39;
+    o2 = order + 1
+    for i in range(opp2):
+        if knots[i] != knots[i + 1] and t &gt;= knots[i] and t &lt;= knots[i + 1]:
+            basis[i] = 1.0
+            i1 = i - o2
+            if i1 &lt; 0:
+                i1 = 0
+            i2 = i
+            i += 1
+            while i &lt; opp2:
+                basis[i] = 0.0
+                i += 1
+            break
+
+        else:
+            basis[i] = 0.0
+
+    basis[i] = 0.0
+
+    # this is order 2, 3, ...
+    for j in range(2, order + 1):
+
+        if i2 + j &gt;= orderpluspnts:
+            i2 = opp2 - j
+
+        for i in range(i1, i2 + 1):
+            if basis[i] != 0.0:
+                d = ((t - knots[i]) * basis[i]) / (knots[i + j - 1] - knots[i])
+            else:
+                d = 0.0
+
+            if basis[i + 1] != 0.0:
+                e = ((knots[i + j] - t) * basis[i + 1]) / (knots[i + j] - knots[i + 1])
+            else:
+                e = 0.0
+
+            basis[i] = d + e
+
+    start = 1000
+    end = 0
+
+    for i in range(i1, i2 + 1):
+        if basis[i] &gt; 0.0:
+            end = i
+            if start == 1000:
+                start = i
+
+    return start, end</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.calcknots"><code class="name flex">
+<span>def <span class="ident">calcknots</span></span>(<span>knots, pnts, order, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calcknots(knots, pnts, order, flag):
+    pnts_order = pnts + order
+    if flag == 1:
+        k = 0.0
+        for a in range(1, pnts_order + 1):
+            knots[a - 1] = k
+            if a &gt;= order and a &lt;= pnts:
+                k += 1.0
+    elif flag == 2:
+        if order == 4:
+            k = 0.34
+            for a in range(pnts_order):
+                knots[a] = math.floor(k)
+                k += (1.0 / 3.0)
+        elif order == 3:
+            k = 0.6
+            for a in range(pnts_order):
+                if a &gt;= order and a &lt;= pnts:
+                    k += 0.5
+                    knots[a] = math.floor(k)
+    else:
+        for a in range(pnts_order):
+            knots[a] = a</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.generate_edges"><code class="name flex">
+<span>def <span class="ident">generate_edges</span></span>(<span>n_verts, cyclic)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_edges(n_verts, cyclic):
+    edges = [[i, i + 1] for i in range(n_verts - 1)]
+    if cyclic:
+        edges.append([n_verts-1, 0])
+    return edges</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.get_points_bezier"><code class="name flex">
+<span>def <span class="ident">get_points_bezier</span></span>(<span>spline, clean=True, calc_radii=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_points_bezier(spline, clean=True, calc_radii=False):
+
+    knots = spline.bezier_points
+    cyclic = spline.use_cyclic_u
+
+    if len(knots) &lt; 2:
+        return
+
+    radii = []
+
+    # verts per segment
+    r = spline.resolution_u + 1
+
+    # segments in spline
+    segments = len(knots)
+    if not cyclic:
+        segments -= 1
+
+    master_point_list = []
+    for i in range(segments):
+        inext = (i + 1) % len(knots)
+
+        knot1, knot2 = knots[i].co, knots[inext].co
+        handle1, handle2 = knots[i].handle_right, knots[inext].handle_left
+
+        bezier = knot1, handle1, handle2, knot2, r
+        points = interpolate_bezier(*bezier)
+
+        if segments == 1 and not cyclic:
+            pass
+        elif cyclic or (i &lt; segments-1):
+            points.pop()
+
+        master_point_list.extend([v[:] for v in points])
+
+    edges = generate_edges(n_verts=len(master_point_list), cyclic=cyclic)
+
+    return master_point_list, edges, radii</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.get_points_nurbs"><code class="name flex">
+<span>def <span class="ident">get_points_nurbs</span></span>(<span>spline, resolu, calc_radii=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_points_nurbs(spline, resolu, calc_radii=False):
+    verts, edges, radii = [], [], []
+
+    coord_array = nurb_make_curve(spline, resolu, stride=3)
+    verts = [coord_array[i: i + 3] for i in range(0, len(coord_array), 3)]
+    edges = generate_edges(n_verts=len(verts), cyclic=spline.use_cyclic_u)
+
+    return verts, edges, radii</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.macro_knotsu"><code class="name flex">
+<span>def <span class="ident">macro_knotsu</span></span>(<span>nu)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def macro_knotsu(nu):
+    return nu.order_u + nu.point_count_u + (nu.order_u - 1 if nu.use_cyclic_u else 0)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.macro_segmentsu"><code class="name flex">
+<span>def <span class="ident">macro_segmentsu</span></span>(<span>nu)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def macro_segmentsu(nu):
+    return nu.point_count_u if nu.use_cyclic_u else nu.point_count_u - 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.makecyclicknots"><code class="name flex">
+<span>def <span class="ident">makecyclicknots</span></span>(<span>knots, pnts, order)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makecyclicknots(knots, pnts, order):
+    order2 = order - 1
+
+    if order &gt; 2:
+        b = pnts + order2
+        for a in range(1, order2):
+            if knots[b] != knots[b - a]:
+                break
+
+            if a == order2:
+                knots[pnts + order - 2] += 1.0
+
+    b = order
+    c = pnts + order + order2
+    for a in range(pnts + order2, c):
+        knots[a] = knots[a - 1] + (knots[b] - knots[b - 1])
+        b -= 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.makeknots"><code class="name flex">
+<span>def <span class="ident">makeknots</span></span>(<span>nu)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makeknots(nu):
+    knots = [0.0] * (4 + macro_knotsu(nu))
+    flag = nu.use_endpoint_u + (nu.use_bezier_u &lt;&lt; 1)
+    if nu.use_cyclic_u:
+        calcknots(knots, nu.point_count_u, nu.order_u, 0)
+        makecyclicknots(knots, nu.point_count_u, nu.order_u)
+    else:
+        calcknots(knots, nu.point_count_u, nu.order_u, flag)
+    return knots</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.nurb_make_curve"><code class="name flex">
+<span>def <span class="ident">nurb_make_curve</span></span>(<span>nu, resolu, stride=3)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurb_make_curve(nu, resolu, stride=3):
+    EPS = 1e-6
+    coord_index = istart = iend = 0
+
+    coord_array = [0.0] * (3 * nu.resolution_u * macro_segmentsu(nu))
+    sum_array = [0] * nu.point_count_u
+    basisu = [0.0] * macro_knotsu(nu)
+    knots = makeknots(nu)
+
+    resolu = resolu * macro_segmentsu(nu)
+    ustart = knots[nu.order_u - 1]
+    uend   = knots[nu.point_count_u + nu.order_u - 1] if nu.use_cyclic_u else \
+             knots[nu.point_count_u]
+    ustep  = (uend - ustart) / (resolu - (0 if nu.use_cyclic_u else 1))
+    cycl = nu.order_u - 1 if nu.use_cyclic_u else 0
+
+    u = ustart
+    while resolu:
+        resolu -= 1
+        istart, iend = basisNurb(u, nu.order_u, nu.point_count_u + cycl, knots, basisu, istart, iend)
+
+        #/* calc sum */
+        sumdiv = 0.0
+        sum_index = 0
+        pt_index = istart - 1
+        for i in range(istart, iend + 1):
+            pt_index = (i - nu.point_count_u) if i &gt;= nu.point_count_u else (pt_index + 1)
+            sum_array[sum_index] = basisu[i] * nu.points[pt_index].co[3]
+            sumdiv += sum_array[sum_index]
+            sum_index += 1
+
+        if (sumdiv != 0.0) and (sumdiv &lt; 1.0 - EPS or sumdiv &gt; 1.0 + EPS):
+            sum_index = 0
+            for i in range(istart, iend + 1):
+                sum_array[sum_index] /= sumdiv
+                sum_index += 1
+
+        coord_array[coord_index: coord_index + 3] = (0.0, 0.0, 0.0)
+
+        sum_index = 0
+        pt_index = istart - 1
+        for i in range(istart, iend + 1):
+            if i &gt;= nu.point_count_u:
+                pt_index = i - nu.point_count_u
+            else:
+                pt_index += 1
+
+            if sum_array[sum_index] != 0.0:
+                for j in range(3):
+                    coord_array[coord_index + j] += sum_array[sum_index] * nu.points[pt_index].co[j]
+            sum_index += 1
+
+        coord_index += stride
+        u += ustep
+
+    return coord_array</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_extended_curve_utils.offset"><code class="name flex">
+<span>def <span class="ident">offset</span></span>(<span>edgekeys, amount)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def offset(edgekeys, amount):
+    return [[edge[0] + amount, edge[1] + amount] for edge in edgekeys]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.basisNurb" href="#sverchok.utils.sv_extended_curve_utils.basisNurb">basisNurb</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.calcknots" href="#sverchok.utils.sv_extended_curve_utils.calcknots">calcknots</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.generate_edges" href="#sverchok.utils.sv_extended_curve_utils.generate_edges">generate_edges</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.get_points_bezier" href="#sverchok.utils.sv_extended_curve_utils.get_points_bezier">get_points_bezier</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.get_points_nurbs" href="#sverchok.utils.sv_extended_curve_utils.get_points_nurbs">get_points_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.macro_knotsu" href="#sverchok.utils.sv_extended_curve_utils.macro_knotsu">macro_knotsu</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.macro_segmentsu" href="#sverchok.utils.sv_extended_curve_utils.macro_segmentsu">macro_segmentsu</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.makecyclicknots" href="#sverchok.utils.sv_extended_curve_utils.makecyclicknots">makecyclicknots</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.makeknots" href="#sverchok.utils.sv_extended_curve_utils.makeknots">makeknots</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.nurb_make_curve" href="#sverchok.utils.sv_extended_curve_utils.nurb_make_curve">nurb_make_curve</a></code></li>
+<li><code><a title="sverchok.utils.sv_extended_curve_utils.offset" href="#sverchok.utils.sv_extended_curve_utils.offset">offset</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

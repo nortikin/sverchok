@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.dummy_nodes API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.dummy_nodes</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import bpy
+
+from sverchok.utils.logging import error
+from sverchok.utils.handle_blender_data import BlTrees
+
+
+imported_dummys = {}  # dummy node classes
+dummy_nodes_dict = {}  # bl_idnames of nodes which was not registered due some dependencies missing
+
+
+def add_dummy(bl_id, name, dependency):
+    &#34;&#34;&#34;
+    Usage example:
+
+    from sverchok.dependencies import FreeCAD
+    from sverchok.utils.dummy_nodes import add_dummy
+
+    if FreeCAD is None:
+                     bl_idname        bl_label     dependency
+        add_dummy(&#39;SvBoxSolidNode&#39;, &#39;Box (Solid)&#39;, &#39;FreeCAD&#39;)
+    else:
+        class SvBoxSolidNode(...):
+            ... ....
+
+    this will create a dummy node if needed
+    &#34;&#34;&#34;
+    dummy_nodes_dict[bl_id] = [name, dependency]
+
+
+class SvDummyNode:
+    &#34;&#34;&#34;This mixin is used to in nodes that have external dependencies that are not loaded.&#34;&#34;&#34;
+    bl_label = &#39;Dummy Node&#39;
+    bl_idname = &#39;SvDummyNode&#39;
+
+    def draw_buttons(self, context, layout):
+        box = layout.box()
+        box.label(text=self.missing_dependency + &#34; module&#34;)
+        box.label(text=&#34;not found. Check &#34;)
+        box.label(text=&#34;extra-nodes in preferences&#34;)
+
+
+def is_dependent(bl_id):
+    &#34;&#34;&#34;True if the class was not registered due some dependencies missing&#34;&#34;&#34;
+    return bl_id in dummy_nodes_dict
+
+
+def mark_dummy(node):
+    &#34;&#34;&#34;Create frame node around the node with Missing dependencies label&#34;&#34;&#34;
+    if node.parent and node.parent.label == &#34;Missing dependencies!&#34;:
+        return
+    ng = node.id_data
+    frame = ng.nodes.new(&#34;NodeFrame&#34;)
+    if node.parent:
+        frame.parent = node.parent
+    node.parent = frame
+    frame.label = &#34;Missing dependencies!&#34;
+    frame.use_custom_color = True
+    frame.color = (.8, 0, 0)
+    frame.shrink = True
+
+
+def create_dummy_class(bl_id):
+    &#34;&#34;&#34;Create a dummy node class with given bl_idname&#34;&#34;&#34;
+    from sverchok.node_tree import SverchCustomTreeNode
+    label, dependency_name = dummy_nodes_dict[bl_id]
+    return type(
+        bl_id,
+        (SvDummyNode, SverchCustomTreeNode, bpy.types.Node),
+        {
+            &#39;bl_idname&#39;: bl_id,
+            &#39;bl_label&#39;: label,
+            &#34;missing_dependency&#34;: dependency_name,
+        }
+    )
+
+
+def register_dummy(bl_id):
+    &#34;&#34;&#34;Register dummy class if was not registered yet&#34;&#34;&#34;
+    if bl_id in dummy_nodes_dict:
+        if bl_id not in imported_dummys:
+            cls = create_dummy_class(bl_id)
+            bpy.utils.register_class(cls)
+            imported_dummys[bl_id] = cls
+    else:
+        raise LookupError(&#34;Cannot find {} among dummy nodes&#34;.format(bl_id))
+
+
+def unregister_dummy(bl_id):
+    cls = imported_dummys.get(bl_id)
+    if cls:
+        bpy.utils.unregister_class(cls)
+        del imported_dummys[bl_id]
+
+
+def mark_all():
+    &#34;&#34;&#34;Add frames with deprecated label to all deprecated nodes if necessary&#34;&#34;&#34;
+    for node in (n for t in BlTrees().sv_trees for n in t.nodes):
+        if node.bl_idname in dummy_nodes_dict:
+            mark_dummy(node)
+
+
+def register_all():
+    &#34;&#34;&#34;Register all dummies&#34;&#34;&#34;
+    for bl_idname in dummy_nodes_dict:
+        try:
+            register_dummy(bl_idname)
+        except Exception as e:
+            error(e)
+
+
+def register():
+    import sverchok
+    # this part is called only when Sverchok is reloading
+    # we can&#39;t say to which class a node with unregistered class is belonging without registering it
+    if sverchok.reload_event:
+        register_all()
+
+
+def unregister():
+    for cls in imported_dummys.values():
+        bpy.utils.unregister_class(cls)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.dummy_nodes.add_dummy"><code class="name flex">
+<span>def <span class="ident">add_dummy</span></span>(<span>bl_id, name, dependency)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Usage example:</p>
+<p>from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy</p>
+<p>if FreeCAD is None:
+bl_idname
+bl_label
+dependency
+add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
+else:
+class SvBoxSolidNode(&hellip;):
+&hellip; ....</p>
+<p>this will create a dummy node if needed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_dummy(bl_id, name, dependency):
+    &#34;&#34;&#34;
+    Usage example:
+
+    from sverchok.dependencies import FreeCAD
+    from sverchok.utils.dummy_nodes import add_dummy
+
+    if FreeCAD is None:
+                     bl_idname        bl_label     dependency
+        add_dummy(&#39;SvBoxSolidNode&#39;, &#39;Box (Solid)&#39;, &#39;FreeCAD&#39;)
+    else:
+        class SvBoxSolidNode(...):
+            ... ....
+
+    this will create a dummy node if needed
+    &#34;&#34;&#34;
+    dummy_nodes_dict[bl_id] = [name, dependency]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.create_dummy_class"><code class="name flex">
+<span>def <span class="ident">create_dummy_class</span></span>(<span>bl_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a dummy node class with given bl_idname</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_dummy_class(bl_id):
+    &#34;&#34;&#34;Create a dummy node class with given bl_idname&#34;&#34;&#34;
+    from sverchok.node_tree import SverchCustomTreeNode
+    label, dependency_name = dummy_nodes_dict[bl_id]
+    return type(
+        bl_id,
+        (SvDummyNode, SverchCustomTreeNode, bpy.types.Node),
+        {
+            &#39;bl_idname&#39;: bl_id,
+            &#39;bl_label&#39;: label,
+            &#34;missing_dependency&#34;: dependency_name,
+        }
+    )</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.is_dependent"><code class="name flex">
+<span>def <span class="ident">is_dependent</span></span>(<span>bl_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>True if the class was not registered due some dependencies missing</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_dependent(bl_id):
+    &#34;&#34;&#34;True if the class was not registered due some dependencies missing&#34;&#34;&#34;
+    return bl_id in dummy_nodes_dict</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.mark_all"><code class="name flex">
+<span>def <span class="ident">mark_all</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add frames with deprecated label to all deprecated nodes if necessary</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mark_all():
+    &#34;&#34;&#34;Add frames with deprecated label to all deprecated nodes if necessary&#34;&#34;&#34;
+    for node in (n for t in BlTrees().sv_trees for n in t.nodes):
+        if node.bl_idname in dummy_nodes_dict:
+            mark_dummy(node)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.mark_dummy"><code class="name flex">
+<span>def <span class="ident">mark_dummy</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create frame node around the node with Missing dependencies label</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mark_dummy(node):
+    &#34;&#34;&#34;Create frame node around the node with Missing dependencies label&#34;&#34;&#34;
+    if node.parent and node.parent.label == &#34;Missing dependencies!&#34;:
+        return
+    ng = node.id_data
+    frame = ng.nodes.new(&#34;NodeFrame&#34;)
+    if node.parent:
+        frame.parent = node.parent
+    node.parent = frame
+    frame.label = &#34;Missing dependencies!&#34;
+    frame.use_custom_color = True
+    frame.color = (.8, 0, 0)
+    frame.shrink = True</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    import sverchok
+    # this part is called only when Sverchok is reloading
+    # we can&#39;t say to which class a node with unregistered class is belonging without registering it
+    if sverchok.reload_event:
+        register_all()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.register_all"><code class="name flex">
+<span>def <span class="ident">register_all</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register all dummies</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_all():
+    &#34;&#34;&#34;Register all dummies&#34;&#34;&#34;
+    for bl_idname in dummy_nodes_dict:
+        try:
+            register_dummy(bl_idname)
+        except Exception as e:
+            error(e)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.register_dummy"><code class="name flex">
+<span>def <span class="ident">register_dummy</span></span>(<span>bl_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register dummy class if was not registered yet</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_dummy(bl_id):
+    &#34;&#34;&#34;Register dummy class if was not registered yet&#34;&#34;&#34;
+    if bl_id in dummy_nodes_dict:
+        if bl_id not in imported_dummys:
+            cls = create_dummy_class(bl_id)
+            bpy.utils.register_class(cls)
+            imported_dummys[bl_id] = cls
+    else:
+        raise LookupError(&#34;Cannot find {} among dummy nodes&#34;.format(bl_id))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    for cls in imported_dummys.values():
+        bpy.utils.unregister_class(cls)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.unregister_dummy"><code class="name flex">
+<span>def <span class="ident">unregister_dummy</span></span>(<span>bl_id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister_dummy(bl_id):
+    cls = imported_dummys.get(bl_id)
+    if cls:
+        bpy.utils.unregister_class(cls)
+        del imported_dummys[bl_id]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.dummy_nodes.SvDummyNode"><code class="flex name class">
+<span>class <span class="ident">SvDummyNode</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>This mixin is used to in nodes that have external dependencies that are not loaded.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvDummyNode:
+    &#34;&#34;&#34;This mixin is used to in nodes that have external dependencies that are not loaded.&#34;&#34;&#34;
+    bl_label = &#39;Dummy Node&#39;
+    bl_idname = &#39;SvDummyNode&#39;
+
+    def draw_buttons(self, context, layout):
+        box = layout.box()
+        box.label(text=self.missing_dependency + &#34; module&#34;)
+        box.label(text=&#34;not found. Check &#34;)
+        box.label(text=&#34;extra-nodes in preferences&#34;)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.dummy_nodes.SvDummyNode.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dummy_nodes.SvDummyNode.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.dummy_nodes.SvDummyNode.draw_buttons"><code class="name flex">
+<span>def <span class="ident">draw_buttons</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_buttons(self, context, layout):
+    box = layout.box()
+    box.label(text=self.missing_dependency + &#34; module&#34;)
+    box.label(text=&#34;not found. Check &#34;)
+    box.label(text=&#34;extra-nodes in preferences&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.dummy_nodes.add_dummy" href="#sverchok.utils.dummy_nodes.add_dummy">add_dummy</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.create_dummy_class" href="#sverchok.utils.dummy_nodes.create_dummy_class">create_dummy_class</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.is_dependent" href="#sverchok.utils.dummy_nodes.is_dependent">is_dependent</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.mark_all" href="#sverchok.utils.dummy_nodes.mark_all">mark_all</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.mark_dummy" href="#sverchok.utils.dummy_nodes.mark_dummy">mark_dummy</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.register" href="#sverchok.utils.dummy_nodes.register">register</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.register_all" href="#sverchok.utils.dummy_nodes.register_all">register_all</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.register_dummy" href="#sverchok.utils.dummy_nodes.register_dummy">register_dummy</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.unregister" href="#sverchok.utils.dummy_nodes.unregister">unregister</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.unregister_dummy" href="#sverchok.utils.dummy_nodes.unregister_dummy">unregister_dummy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.dummy_nodes.SvDummyNode" href="#sverchok.utils.dummy_nodes.SvDummyNode">SvDummyNode</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.dummy_nodes.SvDummyNode.bl_idname" href="#sverchok.utils.dummy_nodes.SvDummyNode.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.SvDummyNode.bl_label" href="#sverchok.utils.dummy_nodes.SvDummyNode.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.dummy_nodes.SvDummyNode.draw_buttons" href="#sverchok.utils.dummy_nodes.SvDummyNode.draw_buttons">draw_buttons</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

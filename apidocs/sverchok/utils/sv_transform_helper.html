@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_transform_helper API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_transform_helper</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+from bpy.props import (EnumProperty, BoolProperty)
+
+from sverchok.data_structure import updateNode
+from sverchok.settings import get_param
+
+from math import pi
+
+euler_order_items = [
+    (&#39;XYZ&#39;, &#39;XYZ&#39;, &#34;&#34;, 0),
+    (&#39;XZY&#39;, &#39;XZY&#39;, &#34;&#34;, 1),
+    (&#39;YXZ&#39;, &#39;YXZ&#39;, &#34;&#34;, 2),
+    (&#39;YZX&#39;, &#39;YZX&#39;, &#34;&#34;, 3),
+    (&#39;ZXY&#39;, &#39;ZXY&#39;, &#34;&#34;, 4),
+    (&#39;ZYX&#39;, &#39;ZYX&#39;, &#34;&#34;, 5)
+]
+
+
+class AngleUnits:
+    RADIANS = &#34;RAD&#34;
+    DEGREES = &#34;DEG&#34;
+    UNITIES = &#34;UNI&#34;
+
+    @classmethod
+    def get_blender_enum(cls):
+        return [
+            (AngleUnits.RADIANS, &#34;Radians&#34;, &#34;Radians (0-2pi)&#34;, &#34;&#34;, 0),
+            (AngleUnits.DEGREES, &#34;Degrees&#34;, &#34;Degrees (0.0-360.0)&#34;, &#34;&#34;, 1),
+            (AngleUnits.UNITIES, &#34;Unities&#34;, &#34;Unities (0.0-1.0)&#34;, &#34;&#34;, 2)
+        ]
+
+
+angle_remap_options = {
+    # from               to
+    (AngleUnits.RADIANS, AngleUnits.DEGREES): 180/pi,
+    (AngleUnits.RADIANS, AngleUnits.UNITIES): 1/(2*pi),
+    (AngleUnits.DEGREES, AngleUnits.RADIANS): pi/180,
+    (AngleUnits.DEGREES, AngleUnits.UNITIES): 1/360,
+    (AngleUnits.UNITIES, AngleUnits.RADIANS): 2*pi,
+    (AngleUnits.UNITIES, AngleUnits.DEGREES): 360
+}
+
+
+class SvAngleHelper():
+
+    def get_preferences(self):
+        return get_param(&#39;auto_update_angle_values&#39;, False)
+
+
+    def angle_conversion_factor(self, from_angle_units, to_angle_units):
+        if from_angle_units == to_angle_units:
+            return 1
+
+        multiplier = angle_remap_options.get((from_angle_units, to_angle_units))
+
+        if not multiplier:
+            raise Error(f&#34;node {self.name} failure to map angle units, {from_angle_units}-&gt;{to_angle_units}&#34;)
+
+        return multiplier
+
+    def radians_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.RADIANS)
+
+    def degrees_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.DEGREES)
+
+    def unities_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.UNITIES)
+
+    def update_angle(self, context):
+        &#39;&#39;&#39; Wrapper to inhibit angle updates when units are changed &#39;&#39;&#39;
+        if self.inhibit_updates:
+            return
+
+        updateNode(self, context)
+
+    def update_angles(self, context, acf):
+        &#39;&#39;&#39; Override this in the derived class to update specific angle values&#39;&#39;&#39;
+        # print(&#34;SvAngleHelper update_angles called&#34;)
+
+    def update_angle_units(self, context):
+        &#39;&#39;&#39; Update all the angles to preserve their values in the new units &#39;&#39;&#39;
+        if self.angle_units == self.last_angle_units:
+            return
+
+        auto_update_angle_values = self.get_preferences()
+
+        if auto_update_angle_values:
+            acf = self.angle_conversion_factor(self.last_angle_units, self.angle_units)
+
+            self.inhibit_updates = True  # deactivate updates
+            self.update_angles(context, acf)
+            self.inhibit_updates = False  # reactivate updates
+
+        self.last_angle_units = self.angle_units  # keep track of the last units
+        updateNode(self, context)
+
+    def angle_unit_conversion_factor(self, new_angle_units):
+        return self.angle_conversion_factor(self.angle_units, new_angle_units)
+
+    euler_order: EnumProperty(
+        name=&#34;Euler Order&#34;, description=&#34;Order of the Euler rotations&#34;,
+        default=&#34;XYZ&#34;, items=euler_order_items, update=updateNode)
+
+    angle_units: EnumProperty(
+        name=&#34;Angle Units&#34;, description=&#34;Angle units (Radians/Degrees/Unities)&#34;,
+        default=AngleUnits.DEGREES, items=AngleUnits.get_blender_enum(),
+        update=update_angle_units)
+
+    last_angle_units: EnumProperty(
+        name=&#34;Last Angle Units&#34;, description=&#34;Angle units (Radians/Degrees/Unities)&#34;,
+        default=AngleUnits.DEGREES, items=AngleUnits.get_blender_enum())
+
+    inhibit_updates: BoolProperty(
+        name=&#39;Inhibit Update&#39;, description=&#39;Flag to inhibit update calls&#39;, default=False)
+
+    def draw_angle_euler_buttons(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, &#34;euler_order&#34;, text=&#34;&#34;)
+
+    def draw_angle_units_buttons(self, context, layout):
+        box = layout.box()
+        box.label(text=&#34;Angle Units&#34;)
+        row = box.row(align=True)
+        row.prop(self, &#34;angle_units&#34;, expand=True)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_transform_helper.AngleUnits"><code class="flex name class">
+<span>class <span class="ident">AngleUnits</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AngleUnits:
+    RADIANS = &#34;RAD&#34;
+    DEGREES = &#34;DEG&#34;
+    UNITIES = &#34;UNI&#34;
+
+    @classmethod
+    def get_blender_enum(cls):
+        return [
+            (AngleUnits.RADIANS, &#34;Radians&#34;, &#34;Radians (0-2pi)&#34;, &#34;&#34;, 0),
+            (AngleUnits.DEGREES, &#34;Degrees&#34;, &#34;Degrees (0.0-360.0)&#34;, &#34;&#34;, 1),
+            (AngleUnits.UNITIES, &#34;Unities&#34;, &#34;Unities (0.0-1.0)&#34;, &#34;&#34;, 2)
+        ]</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_transform_helper.AngleUnits.DEGREES"><code class="name">var <span class="ident">DEGREES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.AngleUnits.RADIANS"><code class="name">var <span class="ident">RADIANS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.AngleUnits.UNITIES"><code class="name">var <span class="ident">UNITIES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_transform_helper.AngleUnits.get_blender_enum"><code class="name flex">
+<span>def <span class="ident">get_blender_enum</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_blender_enum(cls):
+    return [
+        (AngleUnits.RADIANS, &#34;Radians&#34;, &#34;Radians (0-2pi)&#34;, &#34;&#34;, 0),
+        (AngleUnits.DEGREES, &#34;Degrees&#34;, &#34;Degrees (0.0-360.0)&#34;, &#34;&#34;, 1),
+        (AngleUnits.UNITIES, &#34;Unities&#34;, &#34;Unities (0.0-1.0)&#34;, &#34;&#34;, 2)
+    ]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper"><code class="flex name class">
+<span>class <span class="ident">SvAngleHelper</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvAngleHelper():
+
+    def get_preferences(self):
+        return get_param(&#39;auto_update_angle_values&#39;, False)
+
+
+    def angle_conversion_factor(self, from_angle_units, to_angle_units):
+        if from_angle_units == to_angle_units:
+            return 1
+
+        multiplier = angle_remap_options.get((from_angle_units, to_angle_units))
+
+        if not multiplier:
+            raise Error(f&#34;node {self.name} failure to map angle units, {from_angle_units}-&gt;{to_angle_units}&#34;)
+
+        return multiplier
+
+    def radians_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.RADIANS)
+
+    def degrees_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.DEGREES)
+
+    def unities_conversion_factor(self):
+        return self.angle_conversion_factor(self.angle_units, AngleUnits.UNITIES)
+
+    def update_angle(self, context):
+        &#39;&#39;&#39; Wrapper to inhibit angle updates when units are changed &#39;&#39;&#39;
+        if self.inhibit_updates:
+            return
+
+        updateNode(self, context)
+
+    def update_angles(self, context, acf):
+        &#39;&#39;&#39; Override this in the derived class to update specific angle values&#39;&#39;&#39;
+        # print(&#34;SvAngleHelper update_angles called&#34;)
+
+    def update_angle_units(self, context):
+        &#39;&#39;&#39; Update all the angles to preserve their values in the new units &#39;&#39;&#39;
+        if self.angle_units == self.last_angle_units:
+            return
+
+        auto_update_angle_values = self.get_preferences()
+
+        if auto_update_angle_values:
+            acf = self.angle_conversion_factor(self.last_angle_units, self.angle_units)
+
+            self.inhibit_updates = True  # deactivate updates
+            self.update_angles(context, acf)
+            self.inhibit_updates = False  # reactivate updates
+
+        self.last_angle_units = self.angle_units  # keep track of the last units
+        updateNode(self, context)
+
+    def angle_unit_conversion_factor(self, new_angle_units):
+        return self.angle_conversion_factor(self.angle_units, new_angle_units)
+
+    euler_order: EnumProperty(
+        name=&#34;Euler Order&#34;, description=&#34;Order of the Euler rotations&#34;,
+        default=&#34;XYZ&#34;, items=euler_order_items, update=updateNode)
+
+    angle_units: EnumProperty(
+        name=&#34;Angle Units&#34;, description=&#34;Angle units (Radians/Degrees/Unities)&#34;,
+        default=AngleUnits.DEGREES, items=AngleUnits.get_blender_enum(),
+        update=update_angle_units)
+
+    last_angle_units: EnumProperty(
+        name=&#34;Last Angle Units&#34;, description=&#34;Angle units (Radians/Degrees/Unities)&#34;,
+        default=AngleUnits.DEGREES, items=AngleUnits.get_blender_enum())
+
+    inhibit_updates: BoolProperty(
+        name=&#39;Inhibit Update&#39;, description=&#39;Flag to inhibit update calls&#39;, default=False)
+
+    def draw_angle_euler_buttons(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, &#34;euler_order&#34;, text=&#34;&#34;)
+
+    def draw_angle_units_buttons(self, context, layout):
+        box = layout.box()
+        box.label(text=&#34;Angle Units&#34;)
+        row = box.row(align=True)
+        row.prop(self, &#34;angle_units&#34;, expand=True)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>sverchok.nodes.curve.circle.SvCircleCurveMk2Node</li>
+<li>sverchok.nodes.generator.torus_mk2.SvTorusNodeMK2</li>
+<li>sverchok.nodes.generators_extended.ellipse_mk3.SvEllipseNodeMK3</li>
+<li>sverchok.nodes.generators_extended.ring_mk2.SvRingNodeMK2</li>
+<li>sverchok.nodes.generators_extended.spiral_mk2.SvSpiralNodeMK2</li>
+<li>sverchok.nodes.generators_extended.torus_knot_mk2.SvTorusKnotNodeMK2</li>
+<li>sverchok.nodes.matrix.matrix_in_mk4.SvMatrixInNodeMK4</li>
+<li>sverchok.nodes.matrix.matrix_out_mk2.SvMatrixOutNodeMK2</li>
+<li>sverchok.nodes.quaternion.quaternion_in_mk2.SvQuaternionInNodeMK2</li>
+<li>sverchok.nodes.quaternion.quaternion_out_mk2.SvQuaternionOutNodeMK2</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_units"><code class="name">var <span class="ident">angle_units</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Angle Units', 'description': 'Angle units (Radians/Degrees/Unities)', 'default': 'DEG', 'items': [('RAD', 'Radians', 'Radians (0-2pi)', '', 0), ('DEG', 'Degrees', 'Degrees (0.0-360.0)', '', 1), ('UNI', 'Unities', 'Unities (0.0-1.0)', '', 2)], 'update': <function <a title="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle_units" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle_units">SvAngleHelper.update_angle_units()</a> at 0x7f8c101b4670>, 'attr': 'angle_units'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.euler_order"><code class="name">var <span class="ident">euler_order</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Euler Order', 'description': 'Order of the Euler rotations', 'default': 'XYZ', 'items': [('XYZ', 'XYZ', '', 0), ('XZY', 'XZY', '', 1), ('YXZ', 'YXZ', '', 2), ('YZX', 'YZX', '', 3), ('ZXY', 'ZXY', '', 4), ('ZYX', 'ZYX', '', 5)], 'update': <function updateNode at 0x7f8c14319ca0>, 'attr': 'euler_order'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.inhibit_updates"><code class="name">var <span class="ident">inhibit_updates</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Inhibit Update', 'description': 'Flag to inhibit update calls', 'default': False, 'attr': 'inhibit_updates'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.last_angle_units"><code class="name">var <span class="ident">last_angle_units</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Last Angle Units', 'description': 'Angle units (Radians/Degrees/Unities)', 'default': 'DEG', 'items': [('RAD', 'Radians', 'Radians (0-2pi)', '', 0), ('DEG', 'Degrees', 'Degrees (0.0-360.0)', '', 1), ('UNI', 'Unities', 'Unities (0.0-1.0)', '', 2)], 'attr': 'last_angle_units'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_conversion_factor"><code class="name flex">
+<span>def <span class="ident">angle_conversion_factor</span></span>(<span>self, from_angle_units, to_angle_units)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def angle_conversion_factor(self, from_angle_units, to_angle_units):
+    if from_angle_units == to_angle_units:
+        return 1
+
+    multiplier = angle_remap_options.get((from_angle_units, to_angle_units))
+
+    if not multiplier:
+        raise Error(f&#34;node {self.name} failure to map angle units, {from_angle_units}-&gt;{to_angle_units}&#34;)
+
+    return multiplier</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_unit_conversion_factor"><code class="name flex">
+<span>def <span class="ident">angle_unit_conversion_factor</span></span>(<span>self, new_angle_units)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def angle_unit_conversion_factor(self, new_angle_units):
+    return self.angle_conversion_factor(self.angle_units, new_angle_units)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.degrees_conversion_factor"><code class="name flex">
+<span>def <span class="ident">degrees_conversion_factor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def degrees_conversion_factor(self):
+    return self.angle_conversion_factor(self.angle_units, AngleUnits.DEGREES)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_euler_buttons"><code class="name flex">
+<span>def <span class="ident">draw_angle_euler_buttons</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_angle_euler_buttons(self, context, layout):
+    col = layout.column(align=True)
+    col.prop(self, &#34;euler_order&#34;, text=&#34;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_units_buttons"><code class="name flex">
+<span>def <span class="ident">draw_angle_units_buttons</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_angle_units_buttons(self, context, layout):
+    box = layout.box()
+    box.label(text=&#34;Angle Units&#34;)
+    row = box.row(align=True)
+    row.prop(self, &#34;angle_units&#34;, expand=True)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.get_preferences"><code class="name flex">
+<span>def <span class="ident">get_preferences</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_preferences(self):
+    return get_param(&#39;auto_update_angle_values&#39;, False)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.radians_conversion_factor"><code class="name flex">
+<span>def <span class="ident">radians_conversion_factor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def radians_conversion_factor(self):
+    return self.angle_conversion_factor(self.angle_units, AngleUnits.RADIANS)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.unities_conversion_factor"><code class="name flex">
+<span>def <span class="ident">unities_conversion_factor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unities_conversion_factor(self):
+    return self.angle_conversion_factor(self.angle_units, AngleUnits.UNITIES)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle"><code class="name flex">
+<span>def <span class="ident">update_angle</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper to inhibit angle updates when units are changed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_angle(self, context):
+    &#39;&#39;&#39; Wrapper to inhibit angle updates when units are changed &#39;&#39;&#39;
+    if self.inhibit_updates:
+        return
+
+    updateNode(self, context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle_units"><code class="name flex">
+<span>def <span class="ident">update_angle_units</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update all the angles to preserve their values in the new units</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_angle_units(self, context):
+    &#39;&#39;&#39; Update all the angles to preserve their values in the new units &#39;&#39;&#39;
+    if self.angle_units == self.last_angle_units:
+        return
+
+    auto_update_angle_values = self.get_preferences()
+
+    if auto_update_angle_values:
+        acf = self.angle_conversion_factor(self.last_angle_units, self.angle_units)
+
+        self.inhibit_updates = True  # deactivate updates
+        self.update_angles(context, acf)
+        self.inhibit_updates = False  # reactivate updates
+
+    self.last_angle_units = self.angle_units  # keep track of the last units
+    updateNode(self, context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angles"><code class="name flex">
+<span>def <span class="ident">update_angles</span></span>(<span>self, context, acf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override this in the derived class to update specific angle values</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_angles(self, context, acf):
+    &#39;&#39;&#39; Override this in the derived class to update specific angle values&#39;&#39;&#39;
+    # print(&#34;SvAngleHelper update_angles called&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_transform_helper.AngleUnits" href="#sverchok.utils.sv_transform_helper.AngleUnits">AngleUnits</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_transform_helper.AngleUnits.DEGREES" href="#sverchok.utils.sv_transform_helper.AngleUnits.DEGREES">DEGREES</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.AngleUnits.RADIANS" href="#sverchok.utils.sv_transform_helper.AngleUnits.RADIANS">RADIANS</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.AngleUnits.UNITIES" href="#sverchok.utils.sv_transform_helper.AngleUnits.UNITIES">UNITIES</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.AngleUnits.get_blender_enum" href="#sverchok.utils.sv_transform_helper.AngleUnits.get_blender_enum">get_blender_enum</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper" href="#sverchok.utils.sv_transform_helper.SvAngleHelper">SvAngleHelper</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_conversion_factor" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.angle_conversion_factor">angle_conversion_factor</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_unit_conversion_factor" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.angle_unit_conversion_factor">angle_unit_conversion_factor</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.angle_units" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.angle_units">angle_units</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.degrees_conversion_factor" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.degrees_conversion_factor">degrees_conversion_factor</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_euler_buttons" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_euler_buttons">draw_angle_euler_buttons</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_units_buttons" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.draw_angle_units_buttons">draw_angle_units_buttons</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.euler_order" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.euler_order">euler_order</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.get_preferences" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.get_preferences">get_preferences</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.inhibit_updates" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.inhibit_updates">inhibit_updates</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.last_angle_units" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.last_angle_units">last_angle_units</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.radians_conversion_factor" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.radians_conversion_factor">radians_conversion_factor</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.unities_conversion_factor" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.unities_conversion_factor">unities_conversion_factor</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle">update_angle</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle_units" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.update_angle_units">update_angle_units</a></code></li>
+<li><code><a title="sverchok.utils.sv_transform_helper.SvAngleHelper.update_angles" href="#sverchok.utils.sv_transform_helper.SvAngleHelper.update_angles">update_angles</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

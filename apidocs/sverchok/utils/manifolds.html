@@ -1,0 +1,2363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.manifolds API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.manifolds</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import numpy as np
+
+from mathutils import kdtree
+from mathutils.bvhtree import BVHTree
+
+from sverchok.utils.curve import SvCurve, SvIsoUvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.logging import debug, info, getLogger
+from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
+from sverchok.dependencies import scipy
+
+if scipy is not None:
+    from scipy.optimize import root_scalar, root, minimize_scalar, minimize
+
+SKIP = &#39;skip&#39;
+FAIL = &#39;fail&#39;
+RETURN_NONE = &#39;none&#39;
+
+class CurveProjectionResult(object):
+    def __init__(self, us, points, source):
+        self.us = us
+        self.points = points
+        self.source = source
+
+        self.kdt = kdt = kdtree.KDTree(len(points))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        nearest, i, distance = kdt.find(source)
+        self.nearest = np.array(nearest)
+        self.nearest_idx = i
+        self.nearest_distance = distance
+        self.nearest_u = us[i]
+
+def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_fail=FAIL):
+    &#34;&#34;&#34;
+    Find the orthogonal projection of src_point to curve.
+    inputs:
+    * src_point: np.array of shape (3,)
+    * curve: SvCurve
+    * subdomain: either (u_min, u_max) or None (use whole curve)
+    * init_samples: first subdivide the curve in N segments; search for the
+      orthogonal projection on each segment.
+    * on_fail: what to do if no projection was found:
+        FAIL - raise exception
+        RETURN_NONE - return None
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    def goal(t):
+        point_on_curve = curve.evaluate(t)
+        dv = src_point - point_on_curve
+        tangent = curve.tangent(t)
+        return dv.dot(tangent)
+
+    if subdomain is None:
+        u_min, u_max = curve.get_u_bounds()
+    else:
+        u_min, u_max = subdomain
+    u_samples = np.linspace(u_min, u_max, num=init_samples)
+
+    u_ranges = []
+    prev_value = goal(u_min)
+    prev_u = u_min
+    for u in u_samples[1:]:
+        value = goal(u)
+        if value * prev_value &lt;= 0:
+            u_ranges.append((prev_u, u))
+        prev_u = u
+        prev_value = value
+
+    points = []
+    us = []
+    for u1, u2 in u_ranges:
+        u0 = (u1 + u2) / 2.0
+        result = root_scalar(goal, method=&#39;ridder&#39;,
+                        bracket = (u1, u2),
+                        x0 = u0)
+        u = result.root
+        us.append(u)
+        point = curve.evaluate(u)
+        points.append(point)
+
+    if not us:
+        if on_fail == FAIL:
+            raise Exception(&#34;Can&#39;t calculate the projection of {} onto {}&#34;.format(src_point, curve))
+        elif on_fail == RETURN_NONE:
+            return None
+        else:
+            raise Exception(&#34;Unsupported on_fail value&#34;)
+    result = CurveProjectionResult(us, points, src_point)
+    return result
+
+def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method=&#39;Brent&#39;, output_points=True, logger=None):
+    &#34;&#34;&#34;
+    Find nearest point on any curve.
+    &#34;&#34;&#34;
+    if logger is None:
+        logger = getLogger()
+
+    t_min, t_max = curve.get_u_bounds()
+
+    def init_guess(curve, points_from):
+        us = np.linspace(t_min, t_max, num=samples)
+
+        points = curve.evaluate_array(us).tolist()
+        #print(&#34;P:&#34;, points)
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, np.array(nearest_out)
+
+    def goal(t):
+        dv = curve.evaluate(t) - np.array(src_point)
+        return np.linalg.norm(dv)
+
+    init_ts, init_points = init_guess(curve, src_points)
+    result_ts = []
+    if precise:
+        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
+            delta_t = (t_max - t_min) / samples
+            logger.debug(&#34;T_min %s, T_max %s, init_t %s, delta_t %s&#34;, t_min, t_max, init_t, delta_t)
+            if init_t &lt;= t_min:
+                if init_t - delta_t &gt;= t_min:
+                    bracket = (init_t - delta_t, init_t, t_max)
+                else:
+                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
+            elif init_t &gt;= t_max:
+                if init_t + delta_t &lt;= t_max:
+                    bracket = (t_min, init_t, init_t + delta_t)
+                else:
+                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
+            else:
+                bracket = (t_min, init_t, t_max)
+            result = minimize_scalar(goal,
+                        bounds = (t_min, t_max),
+                        bracket = bracket,
+                        method = method
+                    )
+
+            if not result.success:
+                if hasattr(result, &#39;message&#39;):
+                    message = result.message
+                else:
+                    message = repr(result)
+                raise Exception(&#34;Can&#39;t find the nearest point for {}: {}&#34;.format(src_point, message))
+
+            t0 = result.x
+            if t0 &lt; t_min:
+                t0 = t_min
+            elif t0 &gt; t_max:
+                t0 = t_max
+            result_ts.append(t0)
+    else:
+        result_ts = init_ts
+
+    if output_points:
+        if precise:
+            result_points = curve.evaluate_array(np.array(result_ts))
+            return list(zip(result_ts, result_points))
+        else:
+            return list(zip(result_ts, init_points))
+    else:
+        return result_ts
+
+def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method=&#39;Brent&#39;, linearity_threshold=1e-4):
+    &#34;&#34;&#34;
+    Find nearest point on a NURBS curve.
+    At the moment, this method is not, in general, faster than generic
+    nearest_point_on_curve() method; although this method can be more precise.
+    &#34;&#34;&#34;
+
+    src_point = np.asarray(src_point)
+    default_splits = splits
+
+    def farthest(cpts):
+        distances = np.linalg.norm(src_point - cpts)
+        return distances.max()
+
+    def too_far(segment, distance):
+        return segment.is_strongly_outside_sphere(src_point, distance)
+        #bbox = segment.get_bounding_box()
+        #ctr = bbox.mean()
+        #distance_to_ctr = np.linalg.norm(ctr - src_point)
+        #return (distance_to_ctr &gt; bbox.radius() + distance)
+
+    def split(segment, n_splits=splits):
+        u_min, u_max = segment.get_u_bounds()
+        us = np.linspace(u_min, u_max, num=n_splits+1)
+        segments = [segment.cut_segment(u1, u2) for u1, u2 in zip(us, us[1:])]
+        return segments
+
+    def goal(t):
+        dv = curve.evaluate(t) - src_point
+        return (dv * dv).sum()
+        #return np.linalg.norm(dv)
+
+    def numeric_method(segment, approx=None):
+        u_min, u_max = segment.get_u_bounds()
+        if approx is not None:
+            bracket = (u_min, approx, u_max)
+        else:
+            bracket = (u_min, u_max)
+        result = minimize_scalar(goal,
+                bounds = (u_min, u_max),
+                bracket = bracket,
+                method = method)
+
+        if not result.success:
+            if hasattr(result, &#39;message&#39;):
+                message = result.message
+            else:
+                message = repr(result)
+            print(f&#34;No solution for {u_min} - {u_max}: {message}&#34;)
+            return None
+        else:
+            t0 = result.x
+            if u_min &lt;= t0 &lt;= u_max:
+                return t0, result.fun
+            else:
+                return None
+
+    def merge(segments):
+        if len(segments) &lt;= 1:
+            return segments
+        result_us = []
+        prev_start, prev_end = segments[0].get_u_bounds()
+        current_pair = [prev_start, prev_end]
+        to_end_last = False
+        for segment in segments[1:]:
+            to_end_last = False
+            u1, u2 = segment.get_u_bounds()
+            if u1 == current_pair[1]:
+                current_pair[1] = u2
+                to_end_last = True
+            else:
+                result_us.append(current_pair)
+                current_pair = list(segment.get_u_bounds())
+
+        result_us.append(current_pair)
+
+        result = [curve.cut_segment(u1,u2) for u1, u2 in result_us]
+        #print(f&#34;Merge: {[s.get_u_bounds() for s in segments]} =&gt; {[s.get_u_bounds() for s in result]}&#34;)
+        return result
+
+    def linear_search(segment):
+        cpts = segment.get_control_points()
+        start, end = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(start, end)
+        p = line.projection_of_point(src_point)
+        t = locate_linear(start, end, p)
+        if 0.0 &lt;= t &lt;= 1.0:
+            u1, u2 = segment.get_u_bounds()
+            u = (1-t)*u1 + t*u2
+            return u
+        else:
+            return None
+
+    def process(segments, min_distance=0.0, step=0, n_splits=splits):
+        if not segments:
+            return []
+
+        #print(&#34;Consider: &#34;, [s.get_u_bounds() for s in segments])
+
+        to_remove = set()
+        for segment1_idx, segment1 in enumerate(segments):
+            if segment1_idx in to_remove:
+                continue
+            farthest_distance = farthest(segment1.get_control_points())
+            #print(f&#34;S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}&#34;)
+            for segment2_idx, segment2 in enumerate(segments):
+                if segment1_idx == segment2_idx:
+                    continue
+                if segment2_idx in to_remove:
+                    continue
+                if too_far(segment2, min(farthest_distance, min_distance)):
+                    print(f&#34;S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove&#34;)
+                    to_remove.add(segment2_idx)
+
+        stop_subdivide = step &gt; 6
+        #if stop_subdivide:
+            #print(&#34;Will not subdivide anymore&#34;)
+        if len(to_remove) == 0:
+            n_splits += 2
+        #else:
+        #    n_splits = default_splits
+        segments_to_consider = [segment for i, segment in enumerate(segments) if i not in to_remove]
+        #segments_to_consider = merge(segments_to_consider)
+
+        results = []
+        new_segments = []
+        for_numeric = []
+        for segment in segments_to_consider:
+            if segment.is_line(linearity_threshold):
+                # find nearest on line
+                print(f&#34;Linear search for {segment.get_u_bounds()}&#34;)
+                approx = linear_search(segment)
+                if approx is not None:
+                    result = numeric_method(segment, approx)
+                    if result:
+                        results.append(result)
+            elif stop_subdivide:
+                print(f&#34;Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}&#34;)
+                for_numeric.append(segment)
+            elif segment.has_exactly_one_nearest_point(src_point):
+                print(f&#34;Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}&#34;)
+                for_numeric.append(segment)
+            else:
+                #print(f&#34;Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments&#34;)
+                sub_segments = split(segment, n_splits)
+                new_segments.extend(sub_segments)
+
+        for_numeric = merge(for_numeric)
+        for segment in for_numeric:
+            print(f&#34;Run numeric method on {segment.get_u_bounds()}&#34;)
+            result = numeric_method(segment)
+            if result:
+                results.append(result)
+
+        if results:
+            new_min_distance = min([r[1] for r in results])
+        else:
+            new_min_distance = min_distance
+        return results + process(new_segments, min_distance=new_min_distance, step=step+1, n_splits=n_splits)
+
+    def postprocess(rs):
+        m = min(r[1] for r in rs)
+        return [r[0] for r in rs if r[1] == m]
+
+    u_min, u_max = curve.get_u_bounds()
+    us = np.linspace(u_min, u_max, num=init_samples+1)
+    init_points = curve.evaluate_array(us)
+    init_distances = np.linalg.norm(init_points - src_point, axis=1)
+    min_distance = init_distances.min()
+
+    segments = split(curve)#, init_samples)
+    rs = process(segments, min_distance=min_distance)
+    rs = postprocess(rs)
+    return rs
+
+def ortho_project_surface(src_point, surface, init_samples=10, maxiter=30, tolerance=1e-4):
+    &#34;&#34;&#34;
+    Find the orthogonal projection of src_point to surface.
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = surface.get_u_min(), surface.get_u_max()
+    v_min, v_max = surface.get_v_min(), surface.get_v_max()
+
+    u0 = (u_min + u_max) / 2.0
+    v0 = (v_min + v_max) / 2.0
+
+    fixed_axis = &#39;U&#39;
+    fixed_axis_value = u0
+    prev_fixed_axis_value = v0
+    prev_point = surface.evaluate(u0, v0)
+
+    i = 0
+    while True:
+        if i &gt; maxiter:
+            raise Exception(&#34;No convergence&#34;)
+        curve = SvIsoUvCurve(surface, fixed_axis, fixed_axis_value)
+        projection = ortho_project_curve(src_point, curve, init_samples=init_samples)
+        point = projection.nearest
+        dv = point - prev_point
+        fixed_axis_value = projection.nearest_u
+        if np.linalg.norm(dv) &lt; tolerance:
+            break
+        if fixed_axis == &#39;U&#39;:
+            fixed_axis = &#39;V&#39;
+        else:
+            fixed_axis = &#39;U&#39;
+        prev_fixed_axis_value = fixed_axis_value
+        prev_point = point
+        i += 1
+
+    if fixed_axis == &#39;U&#39;:
+        u, v = prev_fixed_axis_value, fixed_axis_value
+    else:
+        u, v = fixed_axis_value, prev_fixed_axis_value
+
+    return u, v, point
+
+class RaycastResult(object):
+    def __init__(self):
+        self.init_us = None
+        self.init_vs = None
+        self.init_ts = None
+        self.init_points = None
+        self.points = []
+        self.uvs = []
+        self.us = []
+        self.vs = []
+
+class RaycastInitGuess(object):
+    def __init__(self):
+        self.us = []
+        self.vs = []
+        self.ts = []
+        self.nearest = []
+        self.all_good = True
+
+class SurfaceRaycaster(object):
+    &#34;&#34;&#34;
+    Usage:
+        
+        raycaster = SurfaceRaycaster(surface)
+        raycaster.init_bvh(samples)
+        result = raycaster.raycast(src_points, directions, ...)
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    def __init__(self, surface):
+        self.surface = surface
+        self.bvh = None
+        self.samples = None
+        self.center_us = None
+        self.center_vs = None
+
+    def init_bvh(self, samples):
+        self.samples = samples
+
+        self.u_min = u_min = self.surface.get_u_min()
+        self.u_max = u_max = self.surface.get_u_max()
+        self.v_min = v_min = self.surface.get_v_min()
+        self.v_max = v_max = self.surface.get_v_max()
+
+        us = np.linspace(u_min, u_max, num=samples)
+        vs = np.linspace(v_min, v_max, num=samples)
+        us, vs = np.meshgrid(us, vs)
+        self.us = us.flatten()
+        self.vs = vs.flatten()
+
+        points = self.surface.evaluate_array(self.us, self.vs).tolist()
+        self.center_us, self.center_vs, faces = self._make_faces()
+
+        self.bvh = BVHTree.FromPolygons(points, faces)
+
+    def _make_faces(self):
+        samples = self.samples
+        uh2 = (self.u_max - self.u_min) / (2 * samples)
+        vh2 = (self.v_max - self.v_min) / (2 * samples)
+        faces = []
+        center_us = []
+        center_vs = []
+        for row in range(samples - 1):
+            for col in range(samples - 1):
+                i = row * samples + col
+                face = (i, i+samples, i+samples+1, i+1)
+                u = self.us[i] + uh2
+                v = self.vs[i] + vh2
+                center_us.append(u)
+                center_vs.append(v)
+                faces.append(face)
+        return center_us, center_vs, faces
+
+    def _init_guess(self, src_points, directions):
+        if self.bvh is None:
+            raise Exception(&#34;You have to call init_bvh() method first!&#34;)
+
+        guess = RaycastInitGuess()
+        for src_point, direction in zip(src_points, directions):
+            nearest, normal, index, distance = self.bvh.ray_cast(src_point, direction)
+            if nearest is None:
+                guess.us.append(None)
+                guess.vs.append(None)
+                guess.ts.append(None)
+                guess.nearest.append(None)
+                guess.all_good = False
+            else:
+                guess.us.append(self.center_us[index])
+                guess.vs.append(self.center_vs[index])
+                guess.ts.append(distance)
+                guess.nearest.append(tuple(nearest))
+
+        return guess
+
+    def _goal(self, src_point, direction):
+        def function(p):
+            on_surface = self.surface.evaluate(p[0], p[1])
+            on_line = src_point + direction * p[2]
+            return (on_surface - on_line).flatten()
+        return function
+
+    def raycast(self, src_points, directions, precise=True, calc_points=True, method=&#39;hybr&#39;, on_init_fail = SKIP):
+        result = RaycastResult()
+        guess = self._init_guess(src_points, directions)
+        result.init_us, result.init_vs = guess.us, guess.vs
+        result.init_ts = guess.ts
+        result.init_points = guess.nearest
+        for point, direction, init_u, init_v, init_t, init_point in zip(src_points, directions, result.init_us, result.init_vs, result.init_ts, result.init_points):
+            if init_u is None:
+                if on_init_fail == SKIP:
+                    continue
+                elif on_init_fail == FAIL:
+                    raise Exception(&#34;Can&#39;t find initial guess of the projection for {}&#34;.format(point))
+                elif on_init_fail == RETURN_NONE:
+                    return None
+                else:
+                    raise Exception(&#34;Invalid on_init_fail value&#34;)
+
+            if precise:
+                direction = np.array(direction)
+                direction = direction / np.linalg.norm(direction)
+                projection = root(self._goal(np.array(point), direction),
+                            x0 = np.array([init_u, init_v, init_t]),
+                            method = method)
+                if not projection.success:
+                    raise Exception(&#34;Can&#39;t find the projection for {}: {}&#34;.format(point, projection.message))
+                u0, v0, t0 = projection.x
+            else:
+                u0, v0 = init_u, init_v
+                result.points.append(init_point)
+
+            result.uvs.append((u0, v0, 0))
+            result.us.append(u0)
+            result.vs.append(v0)
+
+        if precise and calc_points:
+            result.points = self.surface.evaluate_array(np.array(result.us), np.array(result.vs)).tolist()
+
+        return result
+
+def raycast_surface(surface, src_points, directions, samples=50, precise=True, calc_points=True, method=&#39;hybr&#39;, on_init_fail = SKIP):
+    &#34;&#34;&#34;Shortcut for SurfaceRaycaster&#34;&#34;&#34;
+    raycaster = SurfaceRaycaster(surface)
+    raycaster.init_bvh(samples)
+    return raycaster.raycast(src_points, directions, precise=precise, calc_points=calc_points, method=method, on_init_fail=on_init_fail)
+
+def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method=&#39;hybr&#39;, support_nurbs=False):
+    &#34;&#34;&#34;
+    Intersect a curve with a surface.
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    is_nurbs = False
+    c = SvNurbsCurve.to_nurbs(curve)
+    if c is not None:
+        curve = c
+        is_nurbs = True
+
+    raycaster = SurfaceRaycaster(surface)
+    raycaster.init_bvh(raycast_samples)
+
+    def do_raycast(point, tangent, sign=1):
+        good_sign = sign
+        raycast = raycaster.raycast([point], [sign*tangent],
+                    method = raycast_method,
+                    on_init_fail = RETURN_NONE)
+        if raycast is None:
+            good_sign = -sign
+            raycast = raycaster.raycast([point], [-sign*tangent],
+                        method = raycast_method,
+                        on_init_fail = RETURN_NONE)
+        return good_sign, raycast
+
+    good_ranges = []
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    points = curve.evaluate_array(u_range)
+    tangents = curve.tangent_array(u_range)
+    for u1, u2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
+        raycast = raycaster.raycast([p1, p2], [tangent1, -tangent2],
+                    precise = False, calc_points=False,
+                    on_init_fail = RETURN_NONE)
+        if raycast is None:
+            continue
+        good_ranges.append((u1, u2, raycast.points[0], raycast.points[1]))
+
+    def to_curve(point, curve, u1, u2, raycast=None):
+        if support_nurbs and is_nurbs and raycast is not None:
+            segment = curve.cut_segment(u1, u2)
+            surface_u, surface_v = raycast.us[0], raycast.vs[0]
+            point_on_surface = raycast.points[0]
+            surface_normal = surface.normal(surface_u, surface_v)
+            plane = PlaneEquation.from_normal_and_point(surface_normal, point_on_surface)
+            r = intersect_curve_plane_nurbs(segment, plane,
+                        init_samples=2,
+                        tolerance=tolerance,
+                        maxiter=maxiter)
+            if not r:
+                return None
+            else:
+                return r[0]
+        else:
+            ortho = ortho_project_curve(point, curve,
+                        subdomain = (u1, u2),
+                        init_samples = 2,
+                        on_fail = RETURN_NONE)
+            if ortho is None:
+                return None
+            else:
+                return ortho.nearest_u, ortho.nearest
+
+    result = []
+    for u1, u2, init_p1, init_p2 in good_ranges:
+
+        tangent = curve.tangent(u1)
+        point = curve.evaluate(u1)
+
+        i = 0
+        sign = 1
+        prev_prev_point = None
+        prev_point = init_p1
+        u_root = None
+        point_found = False
+        raycast = None
+        while True:
+            i += 1
+            if i &gt; maxiter:
+                raise Exception(&#34;Maximum number of iterations is exceeded; last step {} - {} = {}&#34;.format(prev_prev_point, point, step))
+
+            on_curve = to_curve(prev_point, curve, u1, u2, raycast=raycast)
+            if on_curve is None:
+                break
+            u_root, point = on_curve
+            if u_root &lt; u1 or u_root &gt; u2:
+                break
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance and i &gt; 1:
+                debug(&#34;After ortho: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                point_found = True
+                break
+
+            prev_point = point
+            tangent = curve.tangent(u_root)
+            sign, raycast = do_raycast(point, tangent, sign)
+            if raycast is None:
+                raise Exception(&#34;Iteration #{}: Can&#39;t do a raycast with point {}, direction {} onto surface {}&#34;.format(i, point, tangent, surface))
+            point = raycast.points[0]
+            step = np.linalg.norm(point - prev_point)
+            prev_prev_point = prev_point
+            prev_point = point
+
+        if point_found:
+            result.append((u_root, point))
+
+    return result
+
+def nearest_point_on_surface(points_from, surface, init_samples=50, precise=True, method=&#39;L-BFGS-B&#39;, sequential=False, output_points=True):
+
+    u_min = surface.get_u_min()
+    u_max = surface.get_u_max()
+    v_min = surface.get_v_min()
+    v_max = surface.get_v_max()
+
+    def init_guess():
+        us = np.linspace(u_min, u_max, num=init_samples)
+        vs = np.linspace(v_min, v_max, num=init_samples)
+        us, vs = np.meshgrid(us, vs)
+        us = us.flatten()
+        vs = vs.flatten()
+
+        points = surface.evaluate_array(us, vs).tolist()
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        vs_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            vs_out.append(vs[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, vs_out, nearest_out
+
+    def goal(point_from):
+        def distance(p):
+            dv = surface.evaluate(p[0], p[1]) - np.array(point_from)
+            return (dv * dv).sum(axis=0)
+        return distance
+
+    init_us, init_vs, init_points = init_guess()
+    result_us = []
+    result_vs = []
+    result_points = []
+
+    prev_uv = None
+    for src_point, init_u, init_v, init_point in zip(points_from, init_us, init_vs, init_points):
+        if precise:
+            if sequential and prev_uv is not None:
+                x0 = np.array(prev_uv)
+            else:
+                x0 = np.array([init_u, init_v])
+
+            result = minimize(goal(src_point),
+                        x0 = x0,
+                        bounds = [(u_min, u_max), (v_min, v_max)],
+                        method = method
+                    )
+            if not result.success:
+                raise Exception(&#34;Can&#39;t find the nearest point for {}: {}&#34;.format(src_point, result.message))
+            u0, v0 = result.x
+            prev_uv = result.x
+        else:
+            u0, v0 = init_u, init_v
+            result_points.append(init_point)
+
+        result_us.append(u0)
+        result_vs.append(v0)
+
+    if precise and output_points:
+        result_points = surface.evaluate_array(np.array(result_us), np.array(result_vs)).tolist()
+
+    if output_points:
+        return result_us, result_vs, result_points
+    else:
+        return result_us, result_vs
+
+ORTHO = &#39;ortho&#39;
+EQUATION = &#39;equation&#39;
+NURBS = &#39;nurbs&#39;
+
+def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10, tolerance=1e-3, maxiter=50):
+    &#34;&#34;&#34;
+    Find intersections of curve and a plane, by combination of orthogonal projections with tangent projections.
+    inputs:
+        * curve : SvCurve
+        * plane : sverchok.utils.geom.PlaneEquation
+        * init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+            of solutions the method will return (the solution is searched at each segment).
+        * ortho_samples: number of samples for ortho_project_curve method
+        * tolerance: target tolerance
+        * maxiter: maximum number of iterations
+    outputs:
+        list of intersection points
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    solutions = []
+    for u1, u2 in good_ranges:
+        u0 = u1
+        tangent = curve.tangent(u0)
+        tangent /= np.linalg.norm(tangent)
+        point = curve.evaluate(u0)
+        line = LineEquation.from_direction_and_point(tangent, point)
+
+        p = plane.intersect_with_line(line)
+        if p is None:
+            u0 = u2
+            tangent = curve.tangent(u0)
+            tangent /= np.linalg.norm(tangent)
+            point = curve.evaluate(u0)
+            line = LineEquation.from_direction_and_point(tangent, point)
+            p = plane.intersect_with_line(line)
+            if p is None:
+                raise Exception(&#34;Can&#39;t find initial point for intersection&#34;)
+
+        i = 0
+        prev_prev_point = None
+        prev_point = np.array(p)
+        while True:
+            i += 1
+            if i &gt; maxiter:
+                raise Exception(&#34;Maximum number of iterations is exceeded; last step {} - {} = {}&#34;.format(prev_prev_point, point, step))
+
+            ortho = ortho_project_curve(prev_point, curve, init_samples = ortho_samples)
+            point = ortho.nearest
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance:
+                debug(&#34;After ortho: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                break
+
+            prev_point = point
+            tangent = curve.tangent(ortho.nearest_u)
+            tangent /= np.linalg.norm(tangent)
+            point = curve.evaluate(ortho.nearest_u)
+            line = LineEquation.from_direction_and_point(tangent, point)
+            point = plane.intersect_with_line(line)
+            if point is None:
+                raise Exception(&#34;Can&#39;t intersect a line {} with a plane {}&#34;.format(line, point))
+            point = np.array(point)
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance:
+                debug(&#34;After raycast: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                break
+
+            prev_prev_point = prev_point
+            prev_point = point
+
+        solutions.append(point)
+
+    return solutions
+
+def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+    &#34;&#34;&#34;
+    Find intersections of curve and a plane, by directly solving an equation.
+    inputs:
+        * curve : SvCurve
+        * plane : sverchok.utils.geom.PlaneEquation
+        * init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+            of solutions the method will return (the solution is searched at each segment).
+        * tolerance: target tolerance
+        * maxiter: maximum number of iterations
+    outputs:
+        list of 2-tuples:
+            * curve T value
+            * point at the curve
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    plane_normal = np.array(plane.normal)
+    plane_d = plane.d
+
+    def goal(t):
+        point = curve.evaluate(t)
+        value = (plane_normal * point).sum() + plane_d
+        return value
+
+    solutions = []
+    for u1, u2 in good_ranges:
+        sol = root_scalar(goal, method=&#39;ridder&#39;,
+                bracket = (u1, u2),
+                xtol = tolerance,
+                maxiter = maxiter)
+        u = sol.root
+        point = curve.evaluate(u)
+        solutions.append((u, point))
+
+    return solutions
+
+def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    def check_signs(segment):
+        cpts = segment.get_control_points()
+        signs = plane.side_of_points(cpts)
+        all_one_side = (signs &gt; 0).all() or (signs &lt; 0).all()
+        return not all_one_side
+
+    def middle(segment):
+        u1, u2 = segment.get_u_bounds()
+        u = (u1+u2)*0.5
+        return u
+
+    def split(segment):
+        u = middle(segment)
+        return segment.split_at(u)
+
+    def is_small(segment):
+        bbox = segment.get_bounding_box()
+        return bbox.size() &lt; tolerance
+
+    def locate_p(p1, p2, p):
+        if abs(p1[0] - p2[0]) &gt; tolerance:
+            return (p[0] - p1[0]) / (p2[0] - p1[0])
+        elif abs(p1[1] - p2[1]) &gt; tolerance:
+            return (p[1] - p1[1]) / (p2[1] - p1[1])
+        else:
+            return (p[2] - p1[2]) / (p2[2] - p1[2])
+
+    def intersect_line(segment):
+        cpts = segment.get_control_points()
+        p1, p2 = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(p1, p2)
+        p = plane.intersect_with_line(line)
+        p = np.array(p)
+        u = locate_p(p1, p2, p)
+        u1, u2 = segment.get_u_bounds()
+        if u &gt;= 0 and u &lt;= 1.0:
+            v = (1-u)*u1 + u*u2
+            return v, p
+        else:
+            return None
+
+    def solve(segment, i=0):
+        if check_signs(segment):
+            if is_small(segment):
+                cpts = segment.get_control_points()
+                p1, p2 = cpts[0], cpts[-1]
+                p = 0.5*(p1 + p2)
+                u = middle(segment)
+                #print(f&#34;I: small segment: {u} - {p}&#34;)
+                return [(u, p)]
+            elif segment.is_line(tolerance):
+                r = intersect_line(segment)
+                if r is None:
+                    return []
+                else:
+                    #print(f&#34;I: linear: {r}&#34;)
+                    return [r]
+            else:
+                if i &gt; maxiter:
+                    raise Exception(&#34;Maximum number of subdivision iterations reached&#34;)
+                s1, s2 = split(segment)
+                return solve(s1, i+1) + solve(s2, i+1)
+        else:
+            return []
+
+    segments = [curve.cut_segment(u1, u2) for u1, u2 in good_ranges]
+    solutions = [solve(segment) for segment in segments]
+    return sum(solutions, [])
+
+def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
+    &#34;&#34;&#34;
+    Call for intersect_curve_plane_equation, intersect_curve_plane_ortho,
+    or intersect_curve_plane_nurbs, depending on `method` parameter.
+    Inputs and outputs: see corresponding method docs.
+    &#34;&#34;&#34;
+    if method == EQUATION:
+        return intersect_curve_plane_equation(curve, plane, **kwargs)
+    elif method == ORTHO:
+        return intersect_curve_plane_ortho(curve, plane, **kwargs)
+    elif method == NURBS:
+        return intersect_curve_plane_nurbs(curve, plane, **kwargs)
+    else:
+        raise Exception(&#34;Unsupported method&#34;)
+
+def curve_extremes(curve, field, samples=10, direction = &#39;MAX&#39;, on_fail = &#39;FAIL&#39;, logger=None):
+    if logger is None:
+        logger = getLogger()
+
+    def goal(t):
+        p = curve.evaluate(t)
+        v = field.evaluate(p[0], p[1], p[2])
+        if direction == &#39;MAX&#39;:
+            return -v
+        else:
+            return v
+
+    t_min, t_max = curve.get_u_bounds()
+    tknots = np.linspace(t_min, t_max, num=samples+1)
+
+    res_ts = []
+    res_vs = []
+
+    for t1, t2 in zip(tknots, tknots[1:]):
+        guess = (t1+t2)/2.0
+        result = minimize_scalar(goal,
+                    bounds = (t1, t2),
+                    bracket = (t1, t2),
+                    method = &#39;Bounded&#39;)
+        if result.success:
+            if t_min &lt;= result.x &lt;= t_max:
+                t = result.x
+                v = result.fun
+                res_vs.append(v)
+                res_ts.append(t)
+            else:
+                logger.info(&#34;Found T: %s, but it is outside of %s - %s&#34;, result.x, t_min, t_max)
+        else:
+            if on_fail == &#39;FAIL&#39;:
+                raise Exception(f&#34;Can&#39;t find the extreme point for {curve} on {t1} - {t2}: {result.message}&#34;)
+
+    if len(res_ts) == 0:
+        if on_fail == &#39;FAIL&#39;:
+            raise Exception(f&#34;Can&#39;t find the extreme point for {curve}: no candidate points&#34;)
+        else:
+            return []
+    else:
+        target_v = min(res_vs)
+        res_ts = [t for t,v in zip(res_ts, res_vs) if v == target_v]
+        return res_ts</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.manifolds.curve_extremes"><code class="name flex">
+<span>def <span class="ident">curve_extremes</span></span>(<span>curve, field, samples=10, direction='MAX', on_fail='FAIL', logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curve_extremes(curve, field, samples=10, direction = &#39;MAX&#39;, on_fail = &#39;FAIL&#39;, logger=None):
+    if logger is None:
+        logger = getLogger()
+
+    def goal(t):
+        p = curve.evaluate(t)
+        v = field.evaluate(p[0], p[1], p[2])
+        if direction == &#39;MAX&#39;:
+            return -v
+        else:
+            return v
+
+    t_min, t_max = curve.get_u_bounds()
+    tknots = np.linspace(t_min, t_max, num=samples+1)
+
+    res_ts = []
+    res_vs = []
+
+    for t1, t2 in zip(tknots, tknots[1:]):
+        guess = (t1+t2)/2.0
+        result = minimize_scalar(goal,
+                    bounds = (t1, t2),
+                    bracket = (t1, t2),
+                    method = &#39;Bounded&#39;)
+        if result.success:
+            if t_min &lt;= result.x &lt;= t_max:
+                t = result.x
+                v = result.fun
+                res_vs.append(v)
+                res_ts.append(t)
+            else:
+                logger.info(&#34;Found T: %s, but it is outside of %s - %s&#34;, result.x, t_min, t_max)
+        else:
+            if on_fail == &#39;FAIL&#39;:
+                raise Exception(f&#34;Can&#39;t find the extreme point for {curve} on {t1} - {t2}: {result.message}&#34;)
+
+    if len(res_ts) == 0:
+        if on_fail == &#39;FAIL&#39;:
+            raise Exception(f&#34;Can&#39;t find the extreme point for {curve}: no candidate points&#34;)
+        else:
+            return []
+    else:
+        target_v = min(res_vs)
+        res_ts = [t for t,v in zip(res_ts, res_vs) if v == target_v]
+        return res_ts</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.intersect_curve_plane"><code class="name flex">
+<span>def <span class="ident">intersect_curve_plane</span></span>(<span>curve, plane, method='equation', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call for intersect_curve_plane_equation, intersect_curve_plane_ortho,
+or intersect_curve_plane_nurbs, depending on <code>method</code> parameter.
+Inputs and outputs: see corresponding method docs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
+    &#34;&#34;&#34;
+    Call for intersect_curve_plane_equation, intersect_curve_plane_ortho,
+    or intersect_curve_plane_nurbs, depending on `method` parameter.
+    Inputs and outputs: see corresponding method docs.
+    &#34;&#34;&#34;
+    if method == EQUATION:
+        return intersect_curve_plane_equation(curve, plane, **kwargs)
+    elif method == ORTHO:
+        return intersect_curve_plane_ortho(curve, plane, **kwargs)
+    elif method == NURBS:
+        return intersect_curve_plane_nurbs(curve, plane, **kwargs)
+    else:
+        raise Exception(&#34;Unsupported method&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.intersect_curve_plane_equation"><code class="name flex">
+<span>def <span class="ident">intersect_curve_plane_equation</span></span>(<span>curve, plane, init_samples=10, tolerance=0.001, maxiter=50)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find intersections of curve and a plane, by directly solving an equation.
+inputs:
+* curve : SvCurve
+* plane : sverchok.utils.geom.PlaneEquation
+* init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+of solutions the method will return (the solution is searched at each segment).
+* tolerance: target tolerance
+* maxiter: maximum number of iterations
+outputs:
+list of 2-tuples:
+* curve T value
+* point at the curve</p>
+<p>dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+    &#34;&#34;&#34;
+    Find intersections of curve and a plane, by directly solving an equation.
+    inputs:
+        * curve : SvCurve
+        * plane : sverchok.utils.geom.PlaneEquation
+        * init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+            of solutions the method will return (the solution is searched at each segment).
+        * tolerance: target tolerance
+        * maxiter: maximum number of iterations
+    outputs:
+        list of 2-tuples:
+            * curve T value
+            * point at the curve
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    plane_normal = np.array(plane.normal)
+    plane_d = plane.d
+
+    def goal(t):
+        point = curve.evaluate(t)
+        value = (plane_normal * point).sum() + plane_d
+        return value
+
+    solutions = []
+    for u1, u2 in good_ranges:
+        sol = root_scalar(goal, method=&#39;ridder&#39;,
+                bracket = (u1, u2),
+                xtol = tolerance,
+                maxiter = maxiter)
+        u = sol.root
+        point = curve.evaluate(u)
+        solutions.append((u, point))
+
+    return solutions</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.intersect_curve_plane_nurbs"><code class="name flex">
+<span>def <span class="ident">intersect_curve_plane_nurbs</span></span>(<span>curve, plane, init_samples=10, tolerance=0.001, maxiter=50)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    def check_signs(segment):
+        cpts = segment.get_control_points()
+        signs = plane.side_of_points(cpts)
+        all_one_side = (signs &gt; 0).all() or (signs &lt; 0).all()
+        return not all_one_side
+
+    def middle(segment):
+        u1, u2 = segment.get_u_bounds()
+        u = (u1+u2)*0.5
+        return u
+
+    def split(segment):
+        u = middle(segment)
+        return segment.split_at(u)
+
+    def is_small(segment):
+        bbox = segment.get_bounding_box()
+        return bbox.size() &lt; tolerance
+
+    def locate_p(p1, p2, p):
+        if abs(p1[0] - p2[0]) &gt; tolerance:
+            return (p[0] - p1[0]) / (p2[0] - p1[0])
+        elif abs(p1[1] - p2[1]) &gt; tolerance:
+            return (p[1] - p1[1]) / (p2[1] - p1[1])
+        else:
+            return (p[2] - p1[2]) / (p2[2] - p1[2])
+
+    def intersect_line(segment):
+        cpts = segment.get_control_points()
+        p1, p2 = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(p1, p2)
+        p = plane.intersect_with_line(line)
+        p = np.array(p)
+        u = locate_p(p1, p2, p)
+        u1, u2 = segment.get_u_bounds()
+        if u &gt;= 0 and u &lt;= 1.0:
+            v = (1-u)*u1 + u*u2
+            return v, p
+        else:
+            return None
+
+    def solve(segment, i=0):
+        if check_signs(segment):
+            if is_small(segment):
+                cpts = segment.get_control_points()
+                p1, p2 = cpts[0], cpts[-1]
+                p = 0.5*(p1 + p2)
+                u = middle(segment)
+                #print(f&#34;I: small segment: {u} - {p}&#34;)
+                return [(u, p)]
+            elif segment.is_line(tolerance):
+                r = intersect_line(segment)
+                if r is None:
+                    return []
+                else:
+                    #print(f&#34;I: linear: {r}&#34;)
+                    return [r]
+            else:
+                if i &gt; maxiter:
+                    raise Exception(&#34;Maximum number of subdivision iterations reached&#34;)
+                s1, s2 = split(segment)
+                return solve(s1, i+1) + solve(s2, i+1)
+        else:
+            return []
+
+    segments = [curve.cut_segment(u1, u2) for u1, u2 in good_ranges]
+    solutions = [solve(segment) for segment in segments]
+    return sum(solutions, [])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.intersect_curve_plane_ortho"><code class="name flex">
+<span>def <span class="ident">intersect_curve_plane_ortho</span></span>(<span>curve, plane, init_samples=10, ortho_samples=10, tolerance=0.001, maxiter=50)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find intersections of curve and a plane, by combination of orthogonal projections with tangent projections.
+inputs:
+* curve : SvCurve
+* plane : sverchok.utils.geom.PlaneEquation
+* init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+of solutions the method will return (the solution is searched at each segment).
+* ortho_samples: number of samples for ortho_project_curve method
+* tolerance: target tolerance
+* maxiter: maximum number of iterations
+outputs:
+list of intersection points</p>
+<p>dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10, tolerance=1e-3, maxiter=50):
+    &#34;&#34;&#34;
+    Find intersections of curve and a plane, by combination of orthogonal projections with tangent projections.
+    inputs:
+        * curve : SvCurve
+        * plane : sverchok.utils.geom.PlaneEquation
+        * init_samples: number of samples to subdivide the curve to; this defines the maximum possible number
+            of solutions the method will return (the solution is searched at each segment).
+        * ortho_samples: number of samples for ortho_project_curve method
+        * tolerance: target tolerance
+        * maxiter: maximum number of iterations
+    outputs:
+        list of intersection points
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    init_points = curve.evaluate_array(u_range)
+    init_signs = plane.side_of_points(init_points)
+    good_ranges = []
+    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
+        if sign1 * sign2 &lt; 0:
+            good_ranges.append((u1, u2))
+    if not good_ranges:
+        return []
+
+    solutions = []
+    for u1, u2 in good_ranges:
+        u0 = u1
+        tangent = curve.tangent(u0)
+        tangent /= np.linalg.norm(tangent)
+        point = curve.evaluate(u0)
+        line = LineEquation.from_direction_and_point(tangent, point)
+
+        p = plane.intersect_with_line(line)
+        if p is None:
+            u0 = u2
+            tangent = curve.tangent(u0)
+            tangent /= np.linalg.norm(tangent)
+            point = curve.evaluate(u0)
+            line = LineEquation.from_direction_and_point(tangent, point)
+            p = plane.intersect_with_line(line)
+            if p is None:
+                raise Exception(&#34;Can&#39;t find initial point for intersection&#34;)
+
+        i = 0
+        prev_prev_point = None
+        prev_point = np.array(p)
+        while True:
+            i += 1
+            if i &gt; maxiter:
+                raise Exception(&#34;Maximum number of iterations is exceeded; last step {} - {} = {}&#34;.format(prev_prev_point, point, step))
+
+            ortho = ortho_project_curve(prev_point, curve, init_samples = ortho_samples)
+            point = ortho.nearest
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance:
+                debug(&#34;After ortho: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                break
+
+            prev_point = point
+            tangent = curve.tangent(ortho.nearest_u)
+            tangent /= np.linalg.norm(tangent)
+            point = curve.evaluate(ortho.nearest_u)
+            line = LineEquation.from_direction_and_point(tangent, point)
+            point = plane.intersect_with_line(line)
+            if point is None:
+                raise Exception(&#34;Can&#39;t intersect a line {} with a plane {}&#34;.format(line, point))
+            point = np.array(point)
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance:
+                debug(&#34;After raycast: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                break
+
+            prev_prev_point = prev_point
+            prev_point = point
+
+        solutions.append(point)
+
+    return solutions</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.intersect_curve_surface"><code class="name flex">
+<span>def <span class="ident">intersect_curve_surface</span></span>(<span>curve, surface, init_samples=10, raycast_samples=10, tolerance=0.001, maxiter=50, raycast_method='hybr', support_nurbs=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Intersect a curve with a surface.
+dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method=&#39;hybr&#39;, support_nurbs=False):
+    &#34;&#34;&#34;
+    Intersect a curve with a surface.
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = curve.get_u_bounds()
+    is_nurbs = False
+    c = SvNurbsCurve.to_nurbs(curve)
+    if c is not None:
+        curve = c
+        is_nurbs = True
+
+    raycaster = SurfaceRaycaster(surface)
+    raycaster.init_bvh(raycast_samples)
+
+    def do_raycast(point, tangent, sign=1):
+        good_sign = sign
+        raycast = raycaster.raycast([point], [sign*tangent],
+                    method = raycast_method,
+                    on_init_fail = RETURN_NONE)
+        if raycast is None:
+            good_sign = -sign
+            raycast = raycaster.raycast([point], [-sign*tangent],
+                        method = raycast_method,
+                        on_init_fail = RETURN_NONE)
+        return good_sign, raycast
+
+    good_ranges = []
+    u_range = np.linspace(u_min, u_max, num=init_samples)
+    points = curve.evaluate_array(u_range)
+    tangents = curve.tangent_array(u_range)
+    for u1, u2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
+        raycast = raycaster.raycast([p1, p2], [tangent1, -tangent2],
+                    precise = False, calc_points=False,
+                    on_init_fail = RETURN_NONE)
+        if raycast is None:
+            continue
+        good_ranges.append((u1, u2, raycast.points[0], raycast.points[1]))
+
+    def to_curve(point, curve, u1, u2, raycast=None):
+        if support_nurbs and is_nurbs and raycast is not None:
+            segment = curve.cut_segment(u1, u2)
+            surface_u, surface_v = raycast.us[0], raycast.vs[0]
+            point_on_surface = raycast.points[0]
+            surface_normal = surface.normal(surface_u, surface_v)
+            plane = PlaneEquation.from_normal_and_point(surface_normal, point_on_surface)
+            r = intersect_curve_plane_nurbs(segment, plane,
+                        init_samples=2,
+                        tolerance=tolerance,
+                        maxiter=maxiter)
+            if not r:
+                return None
+            else:
+                return r[0]
+        else:
+            ortho = ortho_project_curve(point, curve,
+                        subdomain = (u1, u2),
+                        init_samples = 2,
+                        on_fail = RETURN_NONE)
+            if ortho is None:
+                return None
+            else:
+                return ortho.nearest_u, ortho.nearest
+
+    result = []
+    for u1, u2, init_p1, init_p2 in good_ranges:
+
+        tangent = curve.tangent(u1)
+        point = curve.evaluate(u1)
+
+        i = 0
+        sign = 1
+        prev_prev_point = None
+        prev_point = init_p1
+        u_root = None
+        point_found = False
+        raycast = None
+        while True:
+            i += 1
+            if i &gt; maxiter:
+                raise Exception(&#34;Maximum number of iterations is exceeded; last step {} - {} = {}&#34;.format(prev_prev_point, point, step))
+
+            on_curve = to_curve(prev_point, curve, u1, u2, raycast=raycast)
+            if on_curve is None:
+                break
+            u_root, point = on_curve
+            if u_root &lt; u1 or u_root &gt; u2:
+                break
+            step = np.linalg.norm(point - prev_point)
+            if step &lt; tolerance and i &gt; 1:
+                debug(&#34;After ortho: Point {}, prev {}, iter {}&#34;.format(point, prev_point, i))
+                point_found = True
+                break
+
+            prev_point = point
+            tangent = curve.tangent(u_root)
+            sign, raycast = do_raycast(point, tangent, sign)
+            if raycast is None:
+                raise Exception(&#34;Iteration #{}: Can&#39;t do a raycast with point {}, direction {} onto surface {}&#34;.format(i, point, tangent, surface))
+            point = raycast.points[0]
+            step = np.linalg.norm(point - prev_point)
+            prev_prev_point = prev_point
+            prev_point = point
+
+        if point_found:
+            result.append((u_root, point))
+
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.nearest_point_on_curve"><code class="name flex">
+<span>def <span class="ident">nearest_point_on_curve</span></span>(<span>src_points, curve, samples=10, precise=True, method='Brent', output_points=True, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find nearest point on any curve.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method=&#39;Brent&#39;, output_points=True, logger=None):
+    &#34;&#34;&#34;
+    Find nearest point on any curve.
+    &#34;&#34;&#34;
+    if logger is None:
+        logger = getLogger()
+
+    t_min, t_max = curve.get_u_bounds()
+
+    def init_guess(curve, points_from):
+        us = np.linspace(t_min, t_max, num=samples)
+
+        points = curve.evaluate_array(us).tolist()
+        #print(&#34;P:&#34;, points)
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, np.array(nearest_out)
+
+    def goal(t):
+        dv = curve.evaluate(t) - np.array(src_point)
+        return np.linalg.norm(dv)
+
+    init_ts, init_points = init_guess(curve, src_points)
+    result_ts = []
+    if precise:
+        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
+            delta_t = (t_max - t_min) / samples
+            logger.debug(&#34;T_min %s, T_max %s, init_t %s, delta_t %s&#34;, t_min, t_max, init_t, delta_t)
+            if init_t &lt;= t_min:
+                if init_t - delta_t &gt;= t_min:
+                    bracket = (init_t - delta_t, init_t, t_max)
+                else:
+                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
+            elif init_t &gt;= t_max:
+                if init_t + delta_t &lt;= t_max:
+                    bracket = (t_min, init_t, init_t + delta_t)
+                else:
+                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
+            else:
+                bracket = (t_min, init_t, t_max)
+            result = minimize_scalar(goal,
+                        bounds = (t_min, t_max),
+                        bracket = bracket,
+                        method = method
+                    )
+
+            if not result.success:
+                if hasattr(result, &#39;message&#39;):
+                    message = result.message
+                else:
+                    message = repr(result)
+                raise Exception(&#34;Can&#39;t find the nearest point for {}: {}&#34;.format(src_point, message))
+
+            t0 = result.x
+            if t0 &lt; t_min:
+                t0 = t_min
+            elif t0 &gt; t_max:
+                t0 = t_max
+            result_ts.append(t0)
+    else:
+        result_ts = init_ts
+
+    if output_points:
+        if precise:
+            result_points = curve.evaluate_array(np.array(result_ts))
+            return list(zip(result_ts, result_points))
+        else:
+            return list(zip(result_ts, init_points))
+    else:
+        return result_ts</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.nearest_point_on_nurbs_curve"><code class="name flex">
+<span>def <span class="ident">nearest_point_on_nurbs_curve</span></span>(<span>src_point, curve, init_samples=50, splits=3, method='Brent', linearity_threshold=0.0001)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find nearest point on a NURBS curve.
+At the moment, this method is not, in general, faster than generic
+nearest_point_on_curve() method; although this method can be more precise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nearest_point_on_nurbs_curve(src_point, curve, init_samples=50, splits=3, method=&#39;Brent&#39;, linearity_threshold=1e-4):
+    &#34;&#34;&#34;
+    Find nearest point on a NURBS curve.
+    At the moment, this method is not, in general, faster than generic
+    nearest_point_on_curve() method; although this method can be more precise.
+    &#34;&#34;&#34;
+
+    src_point = np.asarray(src_point)
+    default_splits = splits
+
+    def farthest(cpts):
+        distances = np.linalg.norm(src_point - cpts)
+        return distances.max()
+
+    def too_far(segment, distance):
+        return segment.is_strongly_outside_sphere(src_point, distance)
+        #bbox = segment.get_bounding_box()
+        #ctr = bbox.mean()
+        #distance_to_ctr = np.linalg.norm(ctr - src_point)
+        #return (distance_to_ctr &gt; bbox.radius() + distance)
+
+    def split(segment, n_splits=splits):
+        u_min, u_max = segment.get_u_bounds()
+        us = np.linspace(u_min, u_max, num=n_splits+1)
+        segments = [segment.cut_segment(u1, u2) for u1, u2 in zip(us, us[1:])]
+        return segments
+
+    def goal(t):
+        dv = curve.evaluate(t) - src_point
+        return (dv * dv).sum()
+        #return np.linalg.norm(dv)
+
+    def numeric_method(segment, approx=None):
+        u_min, u_max = segment.get_u_bounds()
+        if approx is not None:
+            bracket = (u_min, approx, u_max)
+        else:
+            bracket = (u_min, u_max)
+        result = minimize_scalar(goal,
+                bounds = (u_min, u_max),
+                bracket = bracket,
+                method = method)
+
+        if not result.success:
+            if hasattr(result, &#39;message&#39;):
+                message = result.message
+            else:
+                message = repr(result)
+            print(f&#34;No solution for {u_min} - {u_max}: {message}&#34;)
+            return None
+        else:
+            t0 = result.x
+            if u_min &lt;= t0 &lt;= u_max:
+                return t0, result.fun
+            else:
+                return None
+
+    def merge(segments):
+        if len(segments) &lt;= 1:
+            return segments
+        result_us = []
+        prev_start, prev_end = segments[0].get_u_bounds()
+        current_pair = [prev_start, prev_end]
+        to_end_last = False
+        for segment in segments[1:]:
+            to_end_last = False
+            u1, u2 = segment.get_u_bounds()
+            if u1 == current_pair[1]:
+                current_pair[1] = u2
+                to_end_last = True
+            else:
+                result_us.append(current_pair)
+                current_pair = list(segment.get_u_bounds())
+
+        result_us.append(current_pair)
+
+        result = [curve.cut_segment(u1,u2) for u1, u2 in result_us]
+        #print(f&#34;Merge: {[s.get_u_bounds() for s in segments]} =&gt; {[s.get_u_bounds() for s in result]}&#34;)
+        return result
+
+    def linear_search(segment):
+        cpts = segment.get_control_points()
+        start, end = cpts[0], cpts[-1]
+        line = LineEquation.from_two_points(start, end)
+        p = line.projection_of_point(src_point)
+        t = locate_linear(start, end, p)
+        if 0.0 &lt;= t &lt;= 1.0:
+            u1, u2 = segment.get_u_bounds()
+            u = (1-t)*u1 + t*u2
+            return u
+        else:
+            return None
+
+    def process(segments, min_distance=0.0, step=0, n_splits=splits):
+        if not segments:
+            return []
+
+        #print(&#34;Consider: &#34;, [s.get_u_bounds() for s in segments])
+
+        to_remove = set()
+        for segment1_idx, segment1 in enumerate(segments):
+            if segment1_idx in to_remove:
+                continue
+            farthest_distance = farthest(segment1.get_control_points())
+            #print(f&#34;S1: {segment1_idx}, {segment1.get_u_bounds()}: farthest = {farthest_distance}, min_distance={min_distance}&#34;)
+            for segment2_idx, segment2 in enumerate(segments):
+                if segment1_idx == segment2_idx:
+                    continue
+                if segment2_idx in to_remove:
+                    continue
+                if too_far(segment2, min(farthest_distance, min_distance)):
+                    print(f&#34;S2: {segment2_idx} {segment2.get_u_bounds()} - too far, remove&#34;)
+                    to_remove.add(segment2_idx)
+
+        stop_subdivide = step &gt; 6
+        #if stop_subdivide:
+            #print(&#34;Will not subdivide anymore&#34;)
+        if len(to_remove) == 0:
+            n_splits += 2
+        #else:
+        #    n_splits = default_splits
+        segments_to_consider = [segment for i, segment in enumerate(segments) if i not in to_remove]
+        #segments_to_consider = merge(segments_to_consider)
+
+        results = []
+        new_segments = []
+        for_numeric = []
+        for segment in segments_to_consider:
+            if segment.is_line(linearity_threshold):
+                # find nearest on line
+                print(f&#34;Linear search for {segment.get_u_bounds()}&#34;)
+                approx = linear_search(segment)
+                if approx is not None:
+                    result = numeric_method(segment, approx)
+                    if result:
+                        results.append(result)
+            elif stop_subdivide:
+                print(f&#34;Schedule for numeric, subdivision is stopped: {segment.get_u_bounds()}&#34;)
+                for_numeric.append(segment)
+            elif segment.has_exactly_one_nearest_point(src_point):
+                print(f&#34;Schedule for numeric, it has one nearest point: {segment.get_u_bounds()}&#34;)
+                for_numeric.append(segment)
+            else:
+                #print(f&#34;Subdivide {segment.get_u_bounds()} at step {step}, into {n_splits} segments&#34;)
+                sub_segments = split(segment, n_splits)
+                new_segments.extend(sub_segments)
+
+        for_numeric = merge(for_numeric)
+        for segment in for_numeric:
+            print(f&#34;Run numeric method on {segment.get_u_bounds()}&#34;)
+            result = numeric_method(segment)
+            if result:
+                results.append(result)
+
+        if results:
+            new_min_distance = min([r[1] for r in results])
+        else:
+            new_min_distance = min_distance
+        return results + process(new_segments, min_distance=new_min_distance, step=step+1, n_splits=n_splits)
+
+    def postprocess(rs):
+        m = min(r[1] for r in rs)
+        return [r[0] for r in rs if r[1] == m]
+
+    u_min, u_max = curve.get_u_bounds()
+    us = np.linspace(u_min, u_max, num=init_samples+1)
+    init_points = curve.evaluate_array(us)
+    init_distances = np.linalg.norm(init_points - src_point, axis=1)
+    min_distance = init_distances.min()
+
+    segments = split(curve)#, init_samples)
+    rs = process(segments, min_distance=min_distance)
+    rs = postprocess(rs)
+    return rs</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.nearest_point_on_surface"><code class="name flex">
+<span>def <span class="ident">nearest_point_on_surface</span></span>(<span>points_from, surface, init_samples=50, precise=True, method='L-BFGS-B', sequential=False, output_points=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nearest_point_on_surface(points_from, surface, init_samples=50, precise=True, method=&#39;L-BFGS-B&#39;, sequential=False, output_points=True):
+
+    u_min = surface.get_u_min()
+    u_max = surface.get_u_max()
+    v_min = surface.get_v_min()
+    v_max = surface.get_v_max()
+
+    def init_guess():
+        us = np.linspace(u_min, u_max, num=init_samples)
+        vs = np.linspace(v_min, v_max, num=init_samples)
+        us, vs = np.meshgrid(us, vs)
+        us = us.flatten()
+        vs = vs.flatten()
+
+        points = surface.evaluate_array(us, vs).tolist()
+
+        kdt = kdtree.KDTree(len(us))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        us_out = []
+        vs_out = []
+        nearest_out = []
+        for point_from in points_from:
+            nearest, i, distance = kdt.find(point_from)
+            us_out.append(us[i])
+            vs_out.append(vs[i])
+            nearest_out.append(tuple(nearest))
+
+        return us_out, vs_out, nearest_out
+
+    def goal(point_from):
+        def distance(p):
+            dv = surface.evaluate(p[0], p[1]) - np.array(point_from)
+            return (dv * dv).sum(axis=0)
+        return distance
+
+    init_us, init_vs, init_points = init_guess()
+    result_us = []
+    result_vs = []
+    result_points = []
+
+    prev_uv = None
+    for src_point, init_u, init_v, init_point in zip(points_from, init_us, init_vs, init_points):
+        if precise:
+            if sequential and prev_uv is not None:
+                x0 = np.array(prev_uv)
+            else:
+                x0 = np.array([init_u, init_v])
+
+            result = minimize(goal(src_point),
+                        x0 = x0,
+                        bounds = [(u_min, u_max), (v_min, v_max)],
+                        method = method
+                    )
+            if not result.success:
+                raise Exception(&#34;Can&#39;t find the nearest point for {}: {}&#34;.format(src_point, result.message))
+            u0, v0 = result.x
+            prev_uv = result.x
+        else:
+            u0, v0 = init_u, init_v
+            result_points.append(init_point)
+
+        result_us.append(u0)
+        result_vs.append(v0)
+
+    if precise and output_points:
+        result_points = surface.evaluate_array(np.array(result_us), np.array(result_vs)).tolist()
+
+    if output_points:
+        return result_us, result_vs, result_points
+    else:
+        return result_us, result_vs</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.ortho_project_curve"><code class="name flex">
+<span>def <span class="ident">ortho_project_curve</span></span>(<span>src_point, curve, subdomain=None, init_samples=10, on_fail='fail')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find the orthogonal projection of src_point to curve.
+inputs:
+* src_point: np.array of shape (3,)
+* curve: SvCurve
+* subdomain: either (u_min, u_max) or None (use whole curve)
+* init_samples: first subdivide the curve in N segments; search for the
+orthogonal projection on each segment.
+* on_fail: what to do if no projection was found:
+FAIL - raise exception
+RETURN_NONE - return None</p>
+<p>dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_fail=FAIL):
+    &#34;&#34;&#34;
+    Find the orthogonal projection of src_point to curve.
+    inputs:
+    * src_point: np.array of shape (3,)
+    * curve: SvCurve
+    * subdomain: either (u_min, u_max) or None (use whole curve)
+    * init_samples: first subdivide the curve in N segments; search for the
+      orthogonal projection on each segment.
+    * on_fail: what to do if no projection was found:
+        FAIL - raise exception
+        RETURN_NONE - return None
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    def goal(t):
+        point_on_curve = curve.evaluate(t)
+        dv = src_point - point_on_curve
+        tangent = curve.tangent(t)
+        return dv.dot(tangent)
+
+    if subdomain is None:
+        u_min, u_max = curve.get_u_bounds()
+    else:
+        u_min, u_max = subdomain
+    u_samples = np.linspace(u_min, u_max, num=init_samples)
+
+    u_ranges = []
+    prev_value = goal(u_min)
+    prev_u = u_min
+    for u in u_samples[1:]:
+        value = goal(u)
+        if value * prev_value &lt;= 0:
+            u_ranges.append((prev_u, u))
+        prev_u = u
+        prev_value = value
+
+    points = []
+    us = []
+    for u1, u2 in u_ranges:
+        u0 = (u1 + u2) / 2.0
+        result = root_scalar(goal, method=&#39;ridder&#39;,
+                        bracket = (u1, u2),
+                        x0 = u0)
+        u = result.root
+        us.append(u)
+        point = curve.evaluate(u)
+        points.append(point)
+
+    if not us:
+        if on_fail == FAIL:
+            raise Exception(&#34;Can&#39;t calculate the projection of {} onto {}&#34;.format(src_point, curve))
+        elif on_fail == RETURN_NONE:
+            return None
+        else:
+            raise Exception(&#34;Unsupported on_fail value&#34;)
+    result = CurveProjectionResult(us, points, src_point)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.ortho_project_surface"><code class="name flex">
+<span>def <span class="ident">ortho_project_surface</span></span>(<span>src_point, surface, init_samples=10, maxiter=30, tolerance=0.0001)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find the orthogonal projection of src_point to surface.
+dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ortho_project_surface(src_point, surface, init_samples=10, maxiter=30, tolerance=1e-4):
+    &#34;&#34;&#34;
+    Find the orthogonal projection of src_point to surface.
+    dependencies: scipy
+    &#34;&#34;&#34;
+    u_min, u_max = surface.get_u_min(), surface.get_u_max()
+    v_min, v_max = surface.get_v_min(), surface.get_v_max()
+
+    u0 = (u_min + u_max) / 2.0
+    v0 = (v_min + v_max) / 2.0
+
+    fixed_axis = &#39;U&#39;
+    fixed_axis_value = u0
+    prev_fixed_axis_value = v0
+    prev_point = surface.evaluate(u0, v0)
+
+    i = 0
+    while True:
+        if i &gt; maxiter:
+            raise Exception(&#34;No convergence&#34;)
+        curve = SvIsoUvCurve(surface, fixed_axis, fixed_axis_value)
+        projection = ortho_project_curve(src_point, curve, init_samples=init_samples)
+        point = projection.nearest
+        dv = point - prev_point
+        fixed_axis_value = projection.nearest_u
+        if np.linalg.norm(dv) &lt; tolerance:
+            break
+        if fixed_axis == &#39;U&#39;:
+            fixed_axis = &#39;V&#39;
+        else:
+            fixed_axis = &#39;U&#39;
+        prev_fixed_axis_value = fixed_axis_value
+        prev_point = point
+        i += 1
+
+    if fixed_axis == &#39;U&#39;:
+        u, v = prev_fixed_axis_value, fixed_axis_value
+    else:
+        u, v = fixed_axis_value, prev_fixed_axis_value
+
+    return u, v, point</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.raycast_surface"><code class="name flex">
+<span>def <span class="ident">raycast_surface</span></span>(<span>surface, src_points, directions, samples=50, precise=True, calc_points=True, method='hybr', on_init_fail='skip')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Shortcut for SurfaceRaycaster</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def raycast_surface(surface, src_points, directions, samples=50, precise=True, calc_points=True, method=&#39;hybr&#39;, on_init_fail = SKIP):
+    &#34;&#34;&#34;Shortcut for SurfaceRaycaster&#34;&#34;&#34;
+    raycaster = SurfaceRaycaster(surface)
+    raycaster.init_bvh(samples)
+    return raycaster.raycast(src_points, directions, precise=precise, calc_points=calc_points, method=method, on_init_fail=on_init_fail)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.manifolds.CurveProjectionResult"><code class="flex name class">
+<span>class <span class="ident">CurveProjectionResult</span></span>
+<span>(</span><span>us, points, source)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CurveProjectionResult(object):
+    def __init__(self, us, points, source):
+        self.us = us
+        self.points = points
+        self.source = source
+
+        self.kdt = kdt = kdtree.KDTree(len(points))
+        for i, v in enumerate(points):
+            kdt.insert(v, i)
+        kdt.balance()
+
+        nearest, i, distance = kdt.find(source)
+        self.nearest = np.array(nearest)
+        self.nearest_idx = i
+        self.nearest_distance = distance
+        self.nearest_u = us[i]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.RaycastInitGuess"><code class="flex name class">
+<span>class <span class="ident">RaycastInitGuess</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RaycastInitGuess(object):
+    def __init__(self):
+        self.us = []
+        self.vs = []
+        self.ts = []
+        self.nearest = []
+        self.all_good = True</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.RaycastResult"><code class="flex name class">
+<span>class <span class="ident">RaycastResult</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RaycastResult(object):
+    def __init__(self):
+        self.init_us = None
+        self.init_vs = None
+        self.init_ts = None
+        self.init_points = None
+        self.points = []
+        self.uvs = []
+        self.us = []
+        self.vs = []</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.SurfaceRaycaster"><code class="flex name class">
+<span>class <span class="ident">SurfaceRaycaster</span></span>
+<span>(</span><span>surface)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="usage">Usage</h2>
+<p>raycaster = SurfaceRaycaster(surface)
+raycaster.init_bvh(samples)
+result = raycaster.raycast(src_points, directions, &hellip;)</p>
+<p>dependencies: scipy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceRaycaster(object):
+    &#34;&#34;&#34;
+    Usage:
+        
+        raycaster = SurfaceRaycaster(surface)
+        raycaster.init_bvh(samples)
+        result = raycaster.raycast(src_points, directions, ...)
+
+    dependencies: scipy
+    &#34;&#34;&#34;
+    def __init__(self, surface):
+        self.surface = surface
+        self.bvh = None
+        self.samples = None
+        self.center_us = None
+        self.center_vs = None
+
+    def init_bvh(self, samples):
+        self.samples = samples
+
+        self.u_min = u_min = self.surface.get_u_min()
+        self.u_max = u_max = self.surface.get_u_max()
+        self.v_min = v_min = self.surface.get_v_min()
+        self.v_max = v_max = self.surface.get_v_max()
+
+        us = np.linspace(u_min, u_max, num=samples)
+        vs = np.linspace(v_min, v_max, num=samples)
+        us, vs = np.meshgrid(us, vs)
+        self.us = us.flatten()
+        self.vs = vs.flatten()
+
+        points = self.surface.evaluate_array(self.us, self.vs).tolist()
+        self.center_us, self.center_vs, faces = self._make_faces()
+
+        self.bvh = BVHTree.FromPolygons(points, faces)
+
+    def _make_faces(self):
+        samples = self.samples
+        uh2 = (self.u_max - self.u_min) / (2 * samples)
+        vh2 = (self.v_max - self.v_min) / (2 * samples)
+        faces = []
+        center_us = []
+        center_vs = []
+        for row in range(samples - 1):
+            for col in range(samples - 1):
+                i = row * samples + col
+                face = (i, i+samples, i+samples+1, i+1)
+                u = self.us[i] + uh2
+                v = self.vs[i] + vh2
+                center_us.append(u)
+                center_vs.append(v)
+                faces.append(face)
+        return center_us, center_vs, faces
+
+    def _init_guess(self, src_points, directions):
+        if self.bvh is None:
+            raise Exception(&#34;You have to call init_bvh() method first!&#34;)
+
+        guess = RaycastInitGuess()
+        for src_point, direction in zip(src_points, directions):
+            nearest, normal, index, distance = self.bvh.ray_cast(src_point, direction)
+            if nearest is None:
+                guess.us.append(None)
+                guess.vs.append(None)
+                guess.ts.append(None)
+                guess.nearest.append(None)
+                guess.all_good = False
+            else:
+                guess.us.append(self.center_us[index])
+                guess.vs.append(self.center_vs[index])
+                guess.ts.append(distance)
+                guess.nearest.append(tuple(nearest))
+
+        return guess
+
+    def _goal(self, src_point, direction):
+        def function(p):
+            on_surface = self.surface.evaluate(p[0], p[1])
+            on_line = src_point + direction * p[2]
+            return (on_surface - on_line).flatten()
+        return function
+
+    def raycast(self, src_points, directions, precise=True, calc_points=True, method=&#39;hybr&#39;, on_init_fail = SKIP):
+        result = RaycastResult()
+        guess = self._init_guess(src_points, directions)
+        result.init_us, result.init_vs = guess.us, guess.vs
+        result.init_ts = guess.ts
+        result.init_points = guess.nearest
+        for point, direction, init_u, init_v, init_t, init_point in zip(src_points, directions, result.init_us, result.init_vs, result.init_ts, result.init_points):
+            if init_u is None:
+                if on_init_fail == SKIP:
+                    continue
+                elif on_init_fail == FAIL:
+                    raise Exception(&#34;Can&#39;t find initial guess of the projection for {}&#34;.format(point))
+                elif on_init_fail == RETURN_NONE:
+                    return None
+                else:
+                    raise Exception(&#34;Invalid on_init_fail value&#34;)
+
+            if precise:
+                direction = np.array(direction)
+                direction = direction / np.linalg.norm(direction)
+                projection = root(self._goal(np.array(point), direction),
+                            x0 = np.array([init_u, init_v, init_t]),
+                            method = method)
+                if not projection.success:
+                    raise Exception(&#34;Can&#39;t find the projection for {}: {}&#34;.format(point, projection.message))
+                u0, v0, t0 = projection.x
+            else:
+                u0, v0 = init_u, init_v
+                result.points.append(init_point)
+
+            result.uvs.append((u0, v0, 0))
+            result.us.append(u0)
+            result.vs.append(v0)
+
+        if precise and calc_points:
+            result.points = self.surface.evaluate_array(np.array(result.us), np.array(result.vs)).tolist()
+
+        return result</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.manifolds.SurfaceRaycaster.init_bvh"><code class="name flex">
+<span>def <span class="ident">init_bvh</span></span>(<span>self, samples)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_bvh(self, samples):
+    self.samples = samples
+
+    self.u_min = u_min = self.surface.get_u_min()
+    self.u_max = u_max = self.surface.get_u_max()
+    self.v_min = v_min = self.surface.get_v_min()
+    self.v_max = v_max = self.surface.get_v_max()
+
+    us = np.linspace(u_min, u_max, num=samples)
+    vs = np.linspace(v_min, v_max, num=samples)
+    us, vs = np.meshgrid(us, vs)
+    self.us = us.flatten()
+    self.vs = vs.flatten()
+
+    points = self.surface.evaluate_array(self.us, self.vs).tolist()
+    self.center_us, self.center_vs, faces = self._make_faces()
+
+    self.bvh = BVHTree.FromPolygons(points, faces)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.manifolds.SurfaceRaycaster.raycast"><code class="name flex">
+<span>def <span class="ident">raycast</span></span>(<span>self, src_points, directions, precise=True, calc_points=True, method='hybr', on_init_fail='skip')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def raycast(self, src_points, directions, precise=True, calc_points=True, method=&#39;hybr&#39;, on_init_fail = SKIP):
+    result = RaycastResult()
+    guess = self._init_guess(src_points, directions)
+    result.init_us, result.init_vs = guess.us, guess.vs
+    result.init_ts = guess.ts
+    result.init_points = guess.nearest
+    for point, direction, init_u, init_v, init_t, init_point in zip(src_points, directions, result.init_us, result.init_vs, result.init_ts, result.init_points):
+        if init_u is None:
+            if on_init_fail == SKIP:
+                continue
+            elif on_init_fail == FAIL:
+                raise Exception(&#34;Can&#39;t find initial guess of the projection for {}&#34;.format(point))
+            elif on_init_fail == RETURN_NONE:
+                return None
+            else:
+                raise Exception(&#34;Invalid on_init_fail value&#34;)
+
+        if precise:
+            direction = np.array(direction)
+            direction = direction / np.linalg.norm(direction)
+            projection = root(self._goal(np.array(point), direction),
+                        x0 = np.array([init_u, init_v, init_t]),
+                        method = method)
+            if not projection.success:
+                raise Exception(&#34;Can&#39;t find the projection for {}: {}&#34;.format(point, projection.message))
+            u0, v0, t0 = projection.x
+        else:
+            u0, v0 = init_u, init_v
+            result.points.append(init_point)
+
+        result.uvs.append((u0, v0, 0))
+        result.us.append(u0)
+        result.vs.append(v0)
+
+    if precise and calc_points:
+        result.points = self.surface.evaluate_array(np.array(result.us), np.array(result.vs)).tolist()
+
+    return result</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.manifolds.curve_extremes" href="#sverchok.utils.manifolds.curve_extremes">curve_extremes</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.intersect_curve_plane" href="#sverchok.utils.manifolds.intersect_curve_plane">intersect_curve_plane</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.intersect_curve_plane_equation" href="#sverchok.utils.manifolds.intersect_curve_plane_equation">intersect_curve_plane_equation</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.intersect_curve_plane_nurbs" href="#sverchok.utils.manifolds.intersect_curve_plane_nurbs">intersect_curve_plane_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.intersect_curve_plane_ortho" href="#sverchok.utils.manifolds.intersect_curve_plane_ortho">intersect_curve_plane_ortho</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.intersect_curve_surface" href="#sverchok.utils.manifolds.intersect_curve_surface">intersect_curve_surface</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.nearest_point_on_curve" href="#sverchok.utils.manifolds.nearest_point_on_curve">nearest_point_on_curve</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.nearest_point_on_nurbs_curve" href="#sverchok.utils.manifolds.nearest_point_on_nurbs_curve">nearest_point_on_nurbs_curve</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.nearest_point_on_surface" href="#sverchok.utils.manifolds.nearest_point_on_surface">nearest_point_on_surface</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.ortho_project_curve" href="#sverchok.utils.manifolds.ortho_project_curve">ortho_project_curve</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.ortho_project_surface" href="#sverchok.utils.manifolds.ortho_project_surface">ortho_project_surface</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.raycast_surface" href="#sverchok.utils.manifolds.raycast_surface">raycast_surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.manifolds.CurveProjectionResult" href="#sverchok.utils.manifolds.CurveProjectionResult">CurveProjectionResult</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.manifolds.RaycastInitGuess" href="#sverchok.utils.manifolds.RaycastInitGuess">RaycastInitGuess</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.manifolds.RaycastResult" href="#sverchok.utils.manifolds.RaycastResult">RaycastResult</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.manifolds.SurfaceRaycaster" href="#sverchok.utils.manifolds.SurfaceRaycaster">SurfaceRaycaster</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.manifolds.SurfaceRaycaster.init_bvh" href="#sverchok.utils.manifolds.SurfaceRaycaster.init_bvh">init_bvh</a></code></li>
+<li><code><a title="sverchok.utils.manifolds.SurfaceRaycaster.raycast" href="#sverchok.utils.manifolds.SurfaceRaycaster.raycast">raycast</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

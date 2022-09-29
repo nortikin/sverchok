@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.nodeview_time_graph_drawing API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.nodeview_time_graph_drawing</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
+import bgl
+import blf
+import bpy
+from mathutils import Vector
+import gpu
+from gpu_extras.batch import batch_for_shader
+
+import sverchok
+from sverchok.ui import bgl_callback_nodeview as nvBGL2
+from sverchok.utils.modules.shader_utils import ShaderLib2D
+
+
+# https://github.com/nortikin/sverchok/commit/c0ef777acef561a5e9cd308ec05c1382b9006de8
+
+
+display_dict = {} # &#39;sverchok&#39;: None}
+
+def get_drawing_state(ng):
+    if not ng.tree_id_memory:
+        # because this function is called inside sv_panels, it happens early on in the life
+        # of a new tree, it does not yet have a tree_id. We are not allowed to write to ng.tree_id
+        # from inside a draw function of sv_panels. (a sane bpy limitation!)
+        return
+    return display_dict.get(ng.tree_id)
+
+def set_drawing_state(ng, state=False):
+    display_dict[ng.tree_id] = state
+
+def set_other_trees_to_false(ng):
+    for key in list(display_dict.keys()):
+        if ng.tree_id == key: continue
+        display_dict[key] = False
+
+timer_config = lambda: None
+timer_config.get_drawing_state = get_drawing_state
+timer_config.set_drawing_state = set_drawing_state
+timer_config.set_other_trees_to_false = set_other_trees_to_false
+
+def tick_display(i, whole_milliseconds):
+    if whole_milliseconds &lt; 10:
+        return True
+
+    filter = 2
+    for j in range(10, whole_milliseconds + 10, 5):
+        if j &lt;= whole_milliseconds &lt; j+5:
+            return i % filter == 0
+        filter += 1
+
+def string_from_duration(duration):
+    return f&#34;{(1000*duration):.3f} ms&#34;
+
+def get_preferences():
+    from sverchok.settings import get_dpi_factor
+    return get_dpi_factor()
+
+def get_time_graph(): # tree_name):
+    # m = sverchok.core.update_system.graph_dicts.get(tree_name)
+    # return {idx: event for idx, event in enumerate(m)} if m else {}
+    m = sverchok.core.update_system.graphs
+    if len(m) == 1:
+        return {idx: event for idx, event in enumerate(m[0])}
+    else:
+        cumulative_dict = {}
+        counter = 0
+        for graph in m:
+            for event in graph:
+                cumulative_dict[counter] = event
+                counter += 1
+        return cumulative_dict
+
+def draw_text(font_id, location, text, color):
+
+    x, y = location
+    r, g, b = color
+    blf.position(font_id, x, y, 0)
+    level = 5 # 3, 5 or 0
+
+    blf.color(font_id, r, g, b, 1.0)
+    blf.enable(font_id, blf.SHADOW)
+    blf.shadow(font_id, level, 0, 0, 0, 1)
+    blf.shadow_offset(font_id, 1, -1)
+    blf.draw(font_id, text)
+    blf.disable(font_id, blf.SHADOW)
+
+def draw_node_time_infos(*data):
+
+    location_theta = data[1]
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
+
+    if not node_tree.sv_show_time_nodes:
+        return
+
+    r, g, b = (0.9, 0.9, 0.9)
+    index_color = (0.98, 0.6, 0.6)
+    font_id = 0
+    text_height = 20
+
+    def get_xy_for_bgl_drawing(node):
+        _x, _y = node.absolute_location
+        _x, _y = _x, _y + (text_height - 9)
+        return _x * location_theta, _y * location_theta
+
+    blf.size(font_id, int(text_height), 72)
+    blf.color(font_id, r, g, b, 1.0)
+    for idx, node_data in data_tree.items():
+        node = node_tree.nodes.get(node_data[&#39;name&#39;])
+        if not node: continue
+        if not tree_name == node_data[&#39;tree_name&#39;]: continue
+
+        x, y = get_xy_for_bgl_drawing(node)
+        x, y = int(x), int(y)
+
+        if node.hide and isinstance(node.dimensions, Vector):
+            # just in case we are still overriding node.dimensions anywhere.
+            # this is not exact, but it&#39;s better than the alternative
+            y += (node.dimensions[1] / 2) - 10
+
+        show_str = string_from_duration(node_data[&#39;duration&#39;])
+        draw_text(font_id, (x, y), show_str, (r, g, b))
+
+        process_index = str(idx)
+        index_width, _ = blf.dimensions(font_id, process_index)
+        padding = 9
+        draw_text(font_id, (x - padding - index_width, y), process_index, index_color)
+
+def draw_overlay(*data):
+
+    # bpy.context.area.height  &amp; area.width  = total
+    region = bpy.context.region
+
+    # visible width ( T panel is not included, only N panel)
+    region_width = region.width
+
+    shader = data[1]
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
+
+    r, g, b = (0.9, 0.9, 0.95)
+    font_id = 0
+    text_height = 10
+    line_height = 10 + 3
+
+    blf.size(font_id, int(text_height), 72)
+    blf.color(font_id, r, g, b, 1.0)
+
+    if not node_tree.sv_show_time_graph:
+        # in this case only draw the total time and return early
+        cumsum = 0.0
+        for idx, node_data in data_tree.items():
+            node = node_tree.nodes.get(node_data[&#39;name&#39;])
+            if not node: continue
+            if not tree_name == node_data[&#39;tree_name&#39;]: continue
+            cumsum += node_data[&#39;duration&#39;]
+
+        y = 26
+        cum_duration = string_from_duration(cumsum)
+        draw_text(font_id, (20, y), f&#34;total: {cum_duration}&#34;, (r, g, b))
+        return
+
+    white = (1.0, 1.0, 1.0, 1.0)
+    left_offset = 140
+    right_padding = 50
+    time_domain_px = region_width - left_offset - right_padding
+
+    x, y = 20, 50
+    cumsum = 0.0
+    used_idx = 0
+    display_info = {}
+
+    for idx in sorted(data_tree, key=lambda value: data_tree.get(value).get(&#34;start&#34;)):
+        node_data = data_tree.get(idx)
+        node = node_tree.nodes.get(node_data[&#39;name&#39;])
+
+        if not node: continue
+        if not tree_name == node_data[&#39;tree_name&#39;]: continue
+
+        cumsum += node_data[&#39;duration&#39;]
+        txt_width, txt_height = blf.dimensions(font_id, node_data[&#39;name&#39;])
+        display_info[used_idx] = (x, y, node_data, txt_width)
+        y += line_height
+        used_idx += 1
+
+    if cumsum == 0.0:
+        return
+
+    y = 26
+    cum_duration = string_from_duration(cumsum)
+    draw_text(font_id, (20, y), f&#34;total: {cum_duration}&#34;, (r, g, b))
+
+    px_per_ms = time_domain_px / cumsum
+
+    canvas = ShaderLib2D()
+    bar_start_offset = 0
+    orange = (0.8, 0.3, 0.2, 1.0)
+    darker = (0.4, 0.4, 0.4, 1.0)
+    offwhite = (0.1, 0.5, 0.6, 1.0)
+    starts = {}
+    for key, value in display_info.items():
+        (x, y, node_data, txt_width) = value
+        bar_width = px_per_ms * node_data[&#39;duration&#39;]
+        canvas.add_rect(left_offset + bar_start_offset, y+10, bar_width, 13, offwhite)
+        starts[key] = left_offset + bar_start_offset
+        bar_start_offset += bar_width
+
+    # draw time axis
+    canvas.add_rect(left_offset, 40, time_domain_px, 1, white)
+
+    # draw time ticks
+    milliseconds = cumsum * 1000
+    whole_milliseconds = int(milliseconds)
+    graph_height = line_height * len(display_info)
+    for i in range(whole_milliseconds + 1):
+        tick_location = px_per_ms * i/1000
+        final_tick_x = left_offset + tick_location
+
+        # this is where we skip ticks if they get too dense.
+        if tick_display(i, whole_milliseconds):
+            canvas.add_rect(final_tick_x, 42, 1, 5, white)
+            canvas.add_rect(final_tick_x, 42, 1, -graph_height, darker)
+
+            time_width, _ = blf.dimensions(font_id, str(i))
+            time_str_offset = final_tick_x - (time_width/2)
+            draw_text(font_id, (time_str_offset, 26), str(i), (r, g, b))
+
+    geom = canvas.compile()
+
+    batch = batch_for_shader(shader, &#39;TRIS&#39;,
+        {&#34;pos&#34;: geom.vectors,
+        &#34;color&#34;: geom.vertex_colors},
+        indices=geom.indices
+    )
+    batch.draw(shader)
+
+    for key, value in display_info.items():
+        (x, y, node_data, text_width) = value
+        x_right_aligned = left_offset - 10 - text_width
+        draw_text(font_id, (x_right_aligned, y), node_data[&#39;name&#39;], (r, g, b))
+        xpos = starts[key]
+        duration_as_str = string_from_duration(node_data[&#39;duration&#39;])
+        draw_text(font_id, (xpos + 3, y), duration_as_str, (r, g, b))
+
+def start_node_times(ng):
+    named_tree = ng.name
+    data_time_infos = (None, get_preferences(), named_tree)
+
+    config_node_info = {
+        &#39;tree_name&#39;: named_tree,
+        &#39;mode&#39;: &#39;LEAN_AND_MEAN&#39;,
+        &#39;custom_function&#39;: draw_node_time_infos,
+        &#39;args&#39;: data_time_infos
+    }
+    nvBGL2.callback_enable(f&#34;{ng.tree_id}_node_time_info&#34;, config_node_info)
+
+def start_time_graph(ng):
+    if not ng:
+        return
+    ng.update_gl_scale_info(origin=f&#34;configure_time_graph, tree: {ng.name}&#34;)
+
+    named_tree = ng.name
+    shader = gpu.shader.from_builtin(&#39;2D_SMOOTH_COLOR&#39;)
+    data_overlay = (None, shader, named_tree)
+
+    config_graph_overlay = {
+        &#39;tree_name&#39;: named_tree,
+        &#39;mode&#39;: &#39;LEAN_AND_MEAN&#39;,
+        &#39;custom_function&#39;: draw_overlay,
+        &#39;args&#39;: data_overlay
+    }
+    nvBGL2.callback_enable(f&#34;{ng.tree_id}_time_graph_overlay&#34;, config_graph_overlay, overlay=&#34;POST_PIXEL&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.draw_node_time_infos"><code class="name flex">
+<span>def <span class="ident">draw_node_time_infos</span></span>(<span>*data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_node_time_infos(*data):
+
+    location_theta = data[1]
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
+
+    if not node_tree.sv_show_time_nodes:
+        return
+
+    r, g, b = (0.9, 0.9, 0.9)
+    index_color = (0.98, 0.6, 0.6)
+    font_id = 0
+    text_height = 20
+
+    def get_xy_for_bgl_drawing(node):
+        _x, _y = node.absolute_location
+        _x, _y = _x, _y + (text_height - 9)
+        return _x * location_theta, _y * location_theta
+
+    blf.size(font_id, int(text_height), 72)
+    blf.color(font_id, r, g, b, 1.0)
+    for idx, node_data in data_tree.items():
+        node = node_tree.nodes.get(node_data[&#39;name&#39;])
+        if not node: continue
+        if not tree_name == node_data[&#39;tree_name&#39;]: continue
+
+        x, y = get_xy_for_bgl_drawing(node)
+        x, y = int(x), int(y)
+
+        if node.hide and isinstance(node.dimensions, Vector):
+            # just in case we are still overriding node.dimensions anywhere.
+            # this is not exact, but it&#39;s better than the alternative
+            y += (node.dimensions[1] / 2) - 10
+
+        show_str = string_from_duration(node_data[&#39;duration&#39;])
+        draw_text(font_id, (x, y), show_str, (r, g, b))
+
+        process_index = str(idx)
+        index_width, _ = blf.dimensions(font_id, process_index)
+        padding = 9
+        draw_text(font_id, (x - padding - index_width, y), process_index, index_color)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.draw_overlay"><code class="name flex">
+<span>def <span class="ident">draw_overlay</span></span>(<span>*data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_overlay(*data):
+
+    # bpy.context.area.height  &amp; area.width  = total
+    region = bpy.context.region
+
+    # visible width ( T panel is not included, only N panel)
+    region_width = region.width
+
+    shader = data[1]
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
+
+    r, g, b = (0.9, 0.9, 0.95)
+    font_id = 0
+    text_height = 10
+    line_height = 10 + 3
+
+    blf.size(font_id, int(text_height), 72)
+    blf.color(font_id, r, g, b, 1.0)
+
+    if not node_tree.sv_show_time_graph:
+        # in this case only draw the total time and return early
+        cumsum = 0.0
+        for idx, node_data in data_tree.items():
+            node = node_tree.nodes.get(node_data[&#39;name&#39;])
+            if not node: continue
+            if not tree_name == node_data[&#39;tree_name&#39;]: continue
+            cumsum += node_data[&#39;duration&#39;]
+
+        y = 26
+        cum_duration = string_from_duration(cumsum)
+        draw_text(font_id, (20, y), f&#34;total: {cum_duration}&#34;, (r, g, b))
+        return
+
+    white = (1.0, 1.0, 1.0, 1.0)
+    left_offset = 140
+    right_padding = 50
+    time_domain_px = region_width - left_offset - right_padding
+
+    x, y = 20, 50
+    cumsum = 0.0
+    used_idx = 0
+    display_info = {}
+
+    for idx in sorted(data_tree, key=lambda value: data_tree.get(value).get(&#34;start&#34;)):
+        node_data = data_tree.get(idx)
+        node = node_tree.nodes.get(node_data[&#39;name&#39;])
+
+        if not node: continue
+        if not tree_name == node_data[&#39;tree_name&#39;]: continue
+
+        cumsum += node_data[&#39;duration&#39;]
+        txt_width, txt_height = blf.dimensions(font_id, node_data[&#39;name&#39;])
+        display_info[used_idx] = (x, y, node_data, txt_width)
+        y += line_height
+        used_idx += 1
+
+    if cumsum == 0.0:
+        return
+
+    y = 26
+    cum_duration = string_from_duration(cumsum)
+    draw_text(font_id, (20, y), f&#34;total: {cum_duration}&#34;, (r, g, b))
+
+    px_per_ms = time_domain_px / cumsum
+
+    canvas = ShaderLib2D()
+    bar_start_offset = 0
+    orange = (0.8, 0.3, 0.2, 1.0)
+    darker = (0.4, 0.4, 0.4, 1.0)
+    offwhite = (0.1, 0.5, 0.6, 1.0)
+    starts = {}
+    for key, value in display_info.items():
+        (x, y, node_data, txt_width) = value
+        bar_width = px_per_ms * node_data[&#39;duration&#39;]
+        canvas.add_rect(left_offset + bar_start_offset, y+10, bar_width, 13, offwhite)
+        starts[key] = left_offset + bar_start_offset
+        bar_start_offset += bar_width
+
+    # draw time axis
+    canvas.add_rect(left_offset, 40, time_domain_px, 1, white)
+
+    # draw time ticks
+    milliseconds = cumsum * 1000
+    whole_milliseconds = int(milliseconds)
+    graph_height = line_height * len(display_info)
+    for i in range(whole_milliseconds + 1):
+        tick_location = px_per_ms * i/1000
+        final_tick_x = left_offset + tick_location
+
+        # this is where we skip ticks if they get too dense.
+        if tick_display(i, whole_milliseconds):
+            canvas.add_rect(final_tick_x, 42, 1, 5, white)
+            canvas.add_rect(final_tick_x, 42, 1, -graph_height, darker)
+
+            time_width, _ = blf.dimensions(font_id, str(i))
+            time_str_offset = final_tick_x - (time_width/2)
+            draw_text(font_id, (time_str_offset, 26), str(i), (r, g, b))
+
+    geom = canvas.compile()
+
+    batch = batch_for_shader(shader, &#39;TRIS&#39;,
+        {&#34;pos&#34;: geom.vectors,
+        &#34;color&#34;: geom.vertex_colors},
+        indices=geom.indices
+    )
+    batch.draw(shader)
+
+    for key, value in display_info.items():
+        (x, y, node_data, text_width) = value
+        x_right_aligned = left_offset - 10 - text_width
+        draw_text(font_id, (x_right_aligned, y), node_data[&#39;name&#39;], (r, g, b))
+        xpos = starts[key]
+        duration_as_str = string_from_duration(node_data[&#39;duration&#39;])
+        draw_text(font_id, (xpos + 3, y), duration_as_str, (r, g, b))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.draw_text"><code class="name flex">
+<span>def <span class="ident">draw_text</span></span>(<span>font_id, location, text, color)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_text(font_id, location, text, color):
+
+    x, y = location
+    r, g, b = color
+    blf.position(font_id, x, y, 0)
+    level = 5 # 3, 5 or 0
+
+    blf.color(font_id, r, g, b, 1.0)
+    blf.enable(font_id, blf.SHADOW)
+    blf.shadow(font_id, level, 0, 0, 0, 1)
+    blf.shadow_offset(font_id, 1, -1)
+    blf.draw(font_id, text)
+    blf.disable(font_id, blf.SHADOW)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.get_drawing_state"><code class="name flex">
+<span>def <span class="ident">get_drawing_state</span></span>(<span>ng)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_drawing_state(ng):
+    if not ng.tree_id_memory:
+        # because this function is called inside sv_panels, it happens early on in the life
+        # of a new tree, it does not yet have a tree_id. We are not allowed to write to ng.tree_id
+        # from inside a draw function of sv_panels. (a sane bpy limitation!)
+        return
+    return display_dict.get(ng.tree_id)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.get_preferences"><code class="name flex">
+<span>def <span class="ident">get_preferences</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_preferences():
+    from sverchok.settings import get_dpi_factor
+    return get_dpi_factor()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.get_time_graph"><code class="name flex">
+<span>def <span class="ident">get_time_graph</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_time_graph(): # tree_name):
+    # m = sverchok.core.update_system.graph_dicts.get(tree_name)
+    # return {idx: event for idx, event in enumerate(m)} if m else {}
+    m = sverchok.core.update_system.graphs
+    if len(m) == 1:
+        return {idx: event for idx, event in enumerate(m[0])}
+    else:
+        cumulative_dict = {}
+        counter = 0
+        for graph in m:
+            for event in graph:
+                cumulative_dict[counter] = event
+                counter += 1
+        return cumulative_dict</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.set_drawing_state"><code class="name flex">
+<span>def <span class="ident">set_drawing_state</span></span>(<span>ng, state=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_drawing_state(ng, state=False):
+    display_dict[ng.tree_id] = state</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.set_other_trees_to_false"><code class="name flex">
+<span>def <span class="ident">set_other_trees_to_false</span></span>(<span>ng)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_other_trees_to_false(ng):
+    for key in list(display_dict.keys()):
+        if ng.tree_id == key: continue
+        display_dict[key] = False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.start_node_times"><code class="name flex">
+<span>def <span class="ident">start_node_times</span></span>(<span>ng)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_node_times(ng):
+    named_tree = ng.name
+    data_time_infos = (None, get_preferences(), named_tree)
+
+    config_node_info = {
+        &#39;tree_name&#39;: named_tree,
+        &#39;mode&#39;: &#39;LEAN_AND_MEAN&#39;,
+        &#39;custom_function&#39;: draw_node_time_infos,
+        &#39;args&#39;: data_time_infos
+    }
+    nvBGL2.callback_enable(f&#34;{ng.tree_id}_node_time_info&#34;, config_node_info)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.start_time_graph"><code class="name flex">
+<span>def <span class="ident">start_time_graph</span></span>(<span>ng)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_time_graph(ng):
+    if not ng:
+        return
+    ng.update_gl_scale_info(origin=f&#34;configure_time_graph, tree: {ng.name}&#34;)
+
+    named_tree = ng.name
+    shader = gpu.shader.from_builtin(&#39;2D_SMOOTH_COLOR&#39;)
+    data_overlay = (None, shader, named_tree)
+
+    config_graph_overlay = {
+        &#39;tree_name&#39;: named_tree,
+        &#39;mode&#39;: &#39;LEAN_AND_MEAN&#39;,
+        &#39;custom_function&#39;: draw_overlay,
+        &#39;args&#39;: data_overlay
+    }
+    nvBGL2.callback_enable(f&#34;{ng.tree_id}_time_graph_overlay&#34;, config_graph_overlay, overlay=&#34;POST_PIXEL&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.string_from_duration"><code class="name flex">
+<span>def <span class="ident">string_from_duration</span></span>(<span>duration)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def string_from_duration(duration):
+    return f&#34;{(1000*duration):.3f} ms&#34;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.tick_display"><code class="name flex">
+<span>def <span class="ident">tick_display</span></span>(<span>i, whole_milliseconds)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tick_display(i, whole_milliseconds):
+    if whole_milliseconds &lt; 10:
+        return True
+
+    filter = 2
+    for j in range(10, whole_milliseconds + 10, 5):
+        if j &lt;= whole_milliseconds &lt; j+5:
+            return i % filter == 0
+        filter += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nodeview_time_graph_drawing.timer_config"><code class="name flex">
+<span>def <span class="ident">timer_config</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">timer_config = lambda: None</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.draw_node_time_infos" href="#sverchok.utils.nodeview_time_graph_drawing.draw_node_time_infos">draw_node_time_infos</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.draw_overlay" href="#sverchok.utils.nodeview_time_graph_drawing.draw_overlay">draw_overlay</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.draw_text" href="#sverchok.utils.nodeview_time_graph_drawing.draw_text">draw_text</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.get_drawing_state" href="#sverchok.utils.nodeview_time_graph_drawing.get_drawing_state">get_drawing_state</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.get_preferences" href="#sverchok.utils.nodeview_time_graph_drawing.get_preferences">get_preferences</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.get_time_graph" href="#sverchok.utils.nodeview_time_graph_drawing.get_time_graph">get_time_graph</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.set_drawing_state" href="#sverchok.utils.nodeview_time_graph_drawing.set_drawing_state">set_drawing_state</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.set_other_trees_to_false" href="#sverchok.utils.nodeview_time_graph_drawing.set_other_trees_to_false">set_other_trees_to_false</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.start_node_times" href="#sverchok.utils.nodeview_time_graph_drawing.start_node_times">start_node_times</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.start_time_graph" href="#sverchok.utils.nodeview_time_graph_drawing.start_time_graph">start_time_graph</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.string_from_duration" href="#sverchok.utils.nodeview_time_graph_drawing.string_from_duration">string_from_duration</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.tick_display" href="#sverchok.utils.nodeview_time_graph_drawing.tick_display">tick_display</a></code></li>
+<li><code><a title="sverchok.utils.nodeview_time_graph_drawing.timer_config" href="#sverchok.utils.nodeview_time_graph_drawing.timer_config">timer_config</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

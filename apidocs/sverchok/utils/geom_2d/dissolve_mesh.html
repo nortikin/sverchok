@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.geom_2d.dissolve_mesh API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.geom_2d.dissolve_mesh</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
+from .dcel import HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template
+from .lin_alg import is_ccw_polygon
+
+from .dcel_debugger import Debugger
+
+
+def dissolve_faces(sv_verts, sv_faces, face_mask, is_mask=False, is_index=False):
+    &#34;&#34;&#34;
+    Combine adjacent faces with mask True.
+    It resist to combine faces in several corner cases like creating hanging face inside mesh.
+    :param sv_verts: list of SV vertices
+    :param sv_faces: list of SV faces
+    :param face_mask: List of True of False per input face
+    :param is_mask: add to output new face_mask
+    :param is_index: add to output index of old face per nes faces
+    :return: list of SV vertices, list of SV face, face_mask (optionally), index_mask (optionally)
+    &#34;&#34;&#34;
+    mesh = DCELMesh()
+    mesh.from_sv_faces(sv_verts, sv_faces, face_flag=[&#39;dissolve&#39; if mark else None for mark in face_mask],
+                       face_data={&#39;index&#39;: list(range(len(sv_faces)))})
+    dissolve_faces_add(mesh, &#39;dissolve&#39;)
+    if is_mask and is_index:
+        return list(mesh.to_sv_mesh(edges=False)) + [[int(&#39;dissolve&#39; in face.flags) for face in mesh.faces]] + \
+               [[face.sv_data[&#39;index&#39;] for face in mesh.faces]]
+    elif is_mask:
+        return list(mesh.to_sv_mesh(edges=False)) + [[int(&#39;dissolve&#39; in face.flags) for face in mesh.faces]]
+    elif is_index:
+        return list(mesh.to_sv_mesh(edges=False)) + [[face.sv_data[&#39;index&#39;] for face in mesh.faces]]
+    else:
+        return mesh.to_sv_mesh(edges=False)
+
+
+# #############################################################################
+# ###################________dissolve mesh functions______#####################
+# #############################################################################
+# Implementation of  this algorithm is not even finished. I will leave it in this condition for a while.
+# It intend to be faster but solving of corner cases when the algorithm produce holes is not obvious.
+
+
+class HalfEdge(HalfEdge_template):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.new_next = None
+        self.new_last = None
+
+    @property
+    def new_loop_hedges(self):
+        # returns hedges bounding face
+        if not self.mesh:
+            raise AttributeError(&#34;This method doesn&#39;t work with hedges({}) without link to a mesh.&#34;
+                                 &#34;Besides, mesh object should have proper number of half edges &#34;
+                                 &#34;in hedges list&#34;.format(self))
+        yield self
+        next_edge = self.next
+        counter = 0
+        while id(next_edge) != id(self):
+            yield next_edge
+            try:
+                next_edge = next_edge.next
+            except AttributeError:
+                raise AttributeError(&#39; Some of half edges has incomplete data (does not have link to next half edge)&#39;)
+            counter += 1
+            if counter &gt; len(self.mesh.hedges):
+                raise RecursionError(&#39;Hedge - {} does not have a loop&#39;.format(self))
+
+
+class DCELMesh(DCELMesh_template):
+    HalfEdge=HalfEdge
+
+
+def dissolve_faces_with_flag(mesh, flag):
+    # mark unused hedges and faces
+    x, y = 0, 1
+    boundary_hedges = []
+    un_used_hedges = set()
+    for face in mesh.faces:
+        if flag in face.flags:
+            for hedge in face.outer.loop_hedges:
+                if flag in hedge.twin.face.flags:
+                    un_used_hedges.add(hedge)
+                else:
+                    boundary_hedges.append(hedge)
+    # create new faces
+    used = set()
+    inner_faces = []
+    for hedge in boundary_hedges:
+        if hedge in used:
+            continue
+        last_hedge = hedge
+        for loop_hedge in walk_boundary_loop(hedge, flag):
+            used.add(loop_hedge)
+            last_hedge.new_last = loop_hedge
+            loop_hedge.new_next = last_hedge
+            last_hedge = loop_hedge
+        min_hedge = min([hedge for hedge in hedge.new_loop_hedges],
+                        key=lambda he: (he.origin.co[x], he.origin.co[y]))
+        _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
+                                             min_hedge.next.origin.co], accuracy=mesh.accuracy)
+        if _is_ccw:
+            face = mesh.Face(mesh)
+            face.outer = min_hedge
+            face.sv_data = dict(min_hedge.face.sv_data)
+            for loop_hedge in hedge.new_loop_hedges:
+                loop_hedge.face = face
+        else:
+            face = mesh.Face(mesh)
+            face.inners.append(min_hedge)
+            for loop_hedge in hedge.new_loop_hedges:
+                loop_hedge.face = face
+            inner_faces.append(face)
+
+    # assign inner component to found faces
+    for inner_face in inner_faces:
+        for hedge in walk_left(inner_face.inners[0]):
+            if flag in hedge.face.flags:
+                continue
+
+
+
+        used.add(hedge)
+        face = mesh.Face(mesh)
+        new_faces.append(face)
+        face.outer = hedge
+        face.sv_data = dict(hedge.face.sv_data)  # new face get all sv data related with first edge in loop
+        face.flags = set(hedge.face.flags)
+        hedge.face = face
+        for ccw_hedge in hedge.ccw_hedges:
+            if id(ccw_hedge) != id(hedge) and flag not in ccw_hedge.face.flags:
+                break
+        last_hedge = ccw_hedge.twin
+        hedge.last = last_hedge
+        last_hedge.next = hedge
+        used.add(last_hedge)
+        last_hedge.face = face
+        count = 0
+        current_hedge = last_hedge
+        while id(current_hedge) != id(hedge):
+            for ccw_hedge in current_hedge.ccw_hedges:
+                if id(ccw_hedge) != id(hedge) and flag not in ccw_hedge.face.flags:
+                    break
+            last_hedge = ccw_hedge.twin
+            used.add(last_hedge)
+            last_hedge.face = face
+            current_hedge.last = last_hedge
+            last_hedge.next = current_hedge
+            current_hedge = last_hedge
+            count += 1
+            if count &gt; len(mesh.hedges):
+                raise RecursionError(&#34;Dissolve face algorithm can&#39;t built a loop from hedge - {}&#34;.format(hedge))
+    # update faces
+    mesh.faces = [face for face in mesh.faces if flag not in face.flags]
+    mesh.faces.extend(new_faces)
+    # update hedges
+    mesh.hedges = [hedge for hedge in mesh.hedges if hedge not in un_used_hedges]
+    # todo how to rebuilt points list
+
+
+def is_closer_left(slop1, slop2):
+    slop1 = slop1 if slop1 &lt;= 2 else 2 - slop1 % 2 if slop1 != 4.0 else 0
+    slop2 = slop2 if slop2 &lt;= 2 else 2 - slop2 % 2 if slop2 != 4.0 else 0
+    return True if slop1 &lt; slop2 else False
+
+
+def walk_left(hedge):
+    # return next hedge closest to -X direction
+    count = 0
+    start_hedge = hedge
+    while count &lt;= len(hedge.mesh.hesges):
+        next_candidate = None
+        for ccw_hedge in start_hedge.twin.ccw_hedges:
+            if id(ccw_hedge) == id(start_hedge.twin):
+                # avoid going in back direction
+                continue
+            if not next_candidate:
+                # any candidate is okay
+                next_candidate = ccw_hedge
+                continue
+            if is_closer_left(ccw_hedge.slop, next_candidate.slop):
+                # next candidate should be closer to -X direction
+                next_candidate = ccw_hedge
+            else:
+                # according that half edges are sorted in ccw order, best candidate already has been found
+                break
+        if not next_candidate:
+            raise ValueError(&#39;Looks like the end of tail is reached, what to do next?&#39;)
+        yield next_candidate
+        start_hedge = next_candidate
+        count += 1
+    raise RecursionError(&#39;It looks like you forget to exit from left walk&#39;)
+
+
+def walk_boundary_loop(hedge, bound_flag):
+    # in back direction
+    # yield hedge
+    for ccw_hedge in hedge.ccw_hedges:
+        if id(ccw_hedge) != id(hedge) and bound_flag not in ccw_hedge.face.flags:
+            break
+    current_hedge = ccw_hedge.twin
+    yield current_hedge
+    count = 0
+    while id(current_hedge) != id(hedge):
+        for ccw_hedge in current_hedge.ccw_hedges:
+            if id(ccw_hedge) != id(hedge) and bound_flag not in ccw_hedge.face.flags:
+                break
+        current_hedge = ccw_hedge.twin
+        yield current_hedge
+        count += 1
+        if count &gt; len(hedge.mesh.hedges):
+            raise RecursionError(&#34;Dissolve face algorithm can&#39;t built a loop from hedge - {}&#34;.format(hedge))
+
+
+def get_leftmost_hedge_in_point(hedge, flag):
+    # can return None if such hedge does not exist
+    # given hedge should be boundary half edge of dissolving faces
+    dissolved_hedge = None
+    for ccw_hedge in hedge.ccw_hedges:
+        if id(ccw_hedge) == id(hedge):
+            # avoid going in back direction
+            continue
+        if flag not in ccw_hedge.face.flags:
+            # that means that all dissolved half edges was looked up
+            break
+        if not dissolved_hedge:
+            # any candidate is okay
+            dissolved_hedge = ccw_hedge
+            continue
+        if is_closer_left(ccw_hedge.slop, dissolved_hedge.slop):
+            # next candidate should be closer to -X direction
+            dissolved_hedge = ccw_hedge
+        else:
+            # according that half edges are sorted in ccw order, best candidate already has been found
+            break
+    return dissolved_hedge
+
+
+def get_leftmost_dissolved_hedge(left_loop_hedge, flag):
+    # left_loop_hedge - half edge with origin which is leftmost point of a loop
+    dis_hedge = get_leftmost_hedge_in_point(left_loop_hedge, flag)
+    if dis_hedge:
+        return dis_hedge
+
+    used = set()
+    next_two_candidates = [left_loop_hedge.new_next, left_loop_hedge.new_last]
+    while next_two_candidates:
+        low_hedge = next_two_candidates.pop()
+        used.add(low_hedge)
+        low_candidate = get_leftmost_hedge_in_point(low_hedge, flag)
+        up_hedge = next_two_candidates.pop()
+        used.add(up_hedge)
+        up_candidate = get_leftmost_hedge_in_point(up_hedge, flag)
+
+        if low_candidate and up_candidate:
+            return low_candidate if is_closer_left(low_candidate, up_candidate) else up_candidate
+        elif low_candidate:
+            return low_candidate
+        elif up_candidate:
+            return up_candidate
+        else:
+            next_up_hedge = up_hedge.new_next
+            next_low_hedge = low_hedge.new_last
+            if next_up_hedge not in used and  next_low_hedge not in used:
+                next_two_candidates.extend([next_up_hedge, next_low_hedge])
+            elif next_low_hedge not in used:
+                low_candidate = get_leftmost_hedge_in_point(next_low_hedge, flag)
+                if low_candidate:
+                    return low_candidate
+                else:
+                    raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)
+            elif next_up_hedge not in used:
+                up_candidate = get_leftmost_hedge_in_point(next_up_hedge, flag)
+                if up_candidate:
+                    return up_candidate
+                else:
+                    raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)
+            else:
+                raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)
+
+
+# #############################################################################
+# ###################________dissolve mesh functions______#####################
+# ###################____________second approach__________#####################
+# #############################################################################
+# This algorithm much more easier but should be slower.
+
+
+def dissolve_faces_add(mesh, flag):
+    faces = []
+    used = set()
+    for face in mesh.faces:
+        if flag not in face.flags:
+            faces.append(face)
+            continue
+        if face in used:
+            continue
+        used.add(face)
+        faces.append(face)
+        checked_faces = set()  # detect faces which already was added to the stack
+        candidate_faces = get_next_candidates(face, checked_faces, used, flag)
+        face_points = set([hedge.origin for hedge in face.outer.loop_hedges])
+        while candidate_faces:
+            face_candidate = candidate_faces.pop()
+            checked_faces.remove(face_candidate)  # some face should be added several times
+            if is_addable(face, face_candidate, face_points):
+                used.add(face_candidate)
+                candidate_faces.extend(get_next_candidates(face_candidate, checked_faces, used, flag))
+                add_faces(face, face_candidate, face_points)
+    mesh.faces = faces
+    mesh.hedges = [hedge for face in mesh.faces for hedge in face.outer.loop_hedges]
+
+
+def get_next_candidates(face, checked_faces, used, flag):
+    out = []
+    for hedge in face.outer.loop_hedges:
+        candidate = hedge.twin.face
+        if flag in candidate.flags and candidate not in checked_faces and candidate not in used:
+            checked_faces.add(candidate)
+            out.append(candidate)
+    return out
+
+
+def is_addable(face, candidate, face_points):
+    # does not take in account possible common points yet
+    for loop_hedge in candidate.outer.loop_hedges:
+        if loop_hedge.origin in face_points:
+            if loop_hedge.twin.face != face and loop_hedge.last.twin.face != face:
+                return False
+    in_common_edge = False
+    number_common_lines = 0
+    start_from_common_hedge = False
+    for i, loop_hedge in enumerate(candidate.outer.loop_hedges):
+        if loop_hedge.twin.face == face:
+            if in_common_edge:
+                continue
+            else:
+                in_common_edge = True
+                number_common_lines += 1
+                if i == 0:
+                    start_from_common_hedge = True
+        else:
+            in_common_edge = False
+    if in_common_edge and start_from_common_hedge:
+        # here case is detected when one common line take in account two times
+        number_common_lines -= 1
+    return True if number_common_lines == 1 else False
+
+
+def add_faces(face, dis_face, face_points):
+    last_hedge_1, next_hedge_1 = None, None
+    last_hedge_2, next_hedge_2 = None, None
+    dis_hedges = []
+    for loop_hedge in dis_face.outer.loop_hedges:
+        if loop_hedge.twin.face == face and loop_hedge.last.twin.face != face:
+            last_hedge_1, next_hedge_1 = loop_hedge.last, loop_hedge.twin.next
+        elif loop_hedge.twin.face != face and loop_hedge.last.twin.face == face:
+            last_hedge_2, next_hedge_2 = loop_hedge.last.twin.last, loop_hedge
+        if loop_hedge.twin.face == face:
+            dis_hedges.append(loop_hedge)
+        else:
+            loop_hedge.face = face
+            face_points.add(loop_hedge.origin)
+    [setattr(hedge, &#39;mesh&#39;, None) for hedge in dis_hedges]
+    [setattr(hedge.twin, &#39;mesh&#39;, None) for hedge in dis_hedges]
+    dis_face.mesh = None
+    face.outer = last_hedge_1
+    last_hedge_1.next = next_hedge_1
+    next_hedge_1.last = last_hedge_1
+    last_hedge_2.next = next_hedge_2
+    next_hedge_2.last = last_hedge_2</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.add_faces"><code class="name flex">
+<span>def <span class="ident">add_faces</span></span>(<span>face, dis_face, face_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_faces(face, dis_face, face_points):
+    last_hedge_1, next_hedge_1 = None, None
+    last_hedge_2, next_hedge_2 = None, None
+    dis_hedges = []
+    for loop_hedge in dis_face.outer.loop_hedges:
+        if loop_hedge.twin.face == face and loop_hedge.last.twin.face != face:
+            last_hedge_1, next_hedge_1 = loop_hedge.last, loop_hedge.twin.next
+        elif loop_hedge.twin.face != face and loop_hedge.last.twin.face == face:
+            last_hedge_2, next_hedge_2 = loop_hedge.last.twin.last, loop_hedge
+        if loop_hedge.twin.face == face:
+            dis_hedges.append(loop_hedge)
+        else:
+            loop_hedge.face = face
+            face_points.add(loop_hedge.origin)
+    [setattr(hedge, &#39;mesh&#39;, None) for hedge in dis_hedges]
+    [setattr(hedge.twin, &#39;mesh&#39;, None) for hedge in dis_hedges]
+    dis_face.mesh = None
+    face.outer = last_hedge_1
+    last_hedge_1.next = next_hedge_1
+    next_hedge_1.last = last_hedge_1
+    last_hedge_2.next = next_hedge_2
+    next_hedge_2.last = last_hedge_2</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces"><code class="name flex">
+<span>def <span class="ident">dissolve_faces</span></span>(<span>sv_verts, sv_faces, face_mask, is_mask=False, is_index=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Combine adjacent faces with mask True.
+It resist to combine faces in several corner cases like creating hanging face inside mesh.
+:param sv_verts: list of SV vertices
+:param sv_faces: list of SV faces
+:param face_mask: List of True of False per input face
+:param is_mask: add to output new face_mask
+:param is_index: add to output index of old face per nes faces
+:return: list of SV vertices, list of SV face, face_mask (optionally), index_mask (optionally)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dissolve_faces(sv_verts, sv_faces, face_mask, is_mask=False, is_index=False):
+    &#34;&#34;&#34;
+    Combine adjacent faces with mask True.
+    It resist to combine faces in several corner cases like creating hanging face inside mesh.
+    :param sv_verts: list of SV vertices
+    :param sv_faces: list of SV faces
+    :param face_mask: List of True of False per input face
+    :param is_mask: add to output new face_mask
+    :param is_index: add to output index of old face per nes faces
+    :return: list of SV vertices, list of SV face, face_mask (optionally), index_mask (optionally)
+    &#34;&#34;&#34;
+    mesh = DCELMesh()
+    mesh.from_sv_faces(sv_verts, sv_faces, face_flag=[&#39;dissolve&#39; if mark else None for mark in face_mask],
+                       face_data={&#39;index&#39;: list(range(len(sv_faces)))})
+    dissolve_faces_add(mesh, &#39;dissolve&#39;)
+    if is_mask and is_index:
+        return list(mesh.to_sv_mesh(edges=False)) + [[int(&#39;dissolve&#39; in face.flags) for face in mesh.faces]] + \
+               [[face.sv_data[&#39;index&#39;] for face in mesh.faces]]
+    elif is_mask:
+        return list(mesh.to_sv_mesh(edges=False)) + [[int(&#39;dissolve&#39; in face.flags) for face in mesh.faces]]
+    elif is_index:
+        return list(mesh.to_sv_mesh(edges=False)) + [[face.sv_data[&#39;index&#39;] for face in mesh.faces]]
+    else:
+        return mesh.to_sv_mesh(edges=False)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_add"><code class="name flex">
+<span>def <span class="ident">dissolve_faces_add</span></span>(<span>mesh, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dissolve_faces_add(mesh, flag):
+    faces = []
+    used = set()
+    for face in mesh.faces:
+        if flag not in face.flags:
+            faces.append(face)
+            continue
+        if face in used:
+            continue
+        used.add(face)
+        faces.append(face)
+        checked_faces = set()  # detect faces which already was added to the stack
+        candidate_faces = get_next_candidates(face, checked_faces, used, flag)
+        face_points = set([hedge.origin for hedge in face.outer.loop_hedges])
+        while candidate_faces:
+            face_candidate = candidate_faces.pop()
+            checked_faces.remove(face_candidate)  # some face should be added several times
+            if is_addable(face, face_candidate, face_points):
+                used.add(face_candidate)
+                candidate_faces.extend(get_next_candidates(face_candidate, checked_faces, used, flag))
+                add_faces(face, face_candidate, face_points)
+    mesh.faces = faces
+    mesh.hedges = [hedge for face in mesh.faces for hedge in face.outer.loop_hedges]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_with_flag"><code class="name flex">
+<span>def <span class="ident">dissolve_faces_with_flag</span></span>(<span>mesh, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dissolve_faces_with_flag(mesh, flag):
+    # mark unused hedges and faces
+    x, y = 0, 1
+    boundary_hedges = []
+    un_used_hedges = set()
+    for face in mesh.faces:
+        if flag in face.flags:
+            for hedge in face.outer.loop_hedges:
+                if flag in hedge.twin.face.flags:
+                    un_used_hedges.add(hedge)
+                else:
+                    boundary_hedges.append(hedge)
+    # create new faces
+    used = set()
+    inner_faces = []
+    for hedge in boundary_hedges:
+        if hedge in used:
+            continue
+        last_hedge = hedge
+        for loop_hedge in walk_boundary_loop(hedge, flag):
+            used.add(loop_hedge)
+            last_hedge.new_last = loop_hedge
+            loop_hedge.new_next = last_hedge
+            last_hedge = loop_hedge
+        min_hedge = min([hedge for hedge in hedge.new_loop_hedges],
+                        key=lambda he: (he.origin.co[x], he.origin.co[y]))
+        _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
+                                             min_hedge.next.origin.co], accuracy=mesh.accuracy)
+        if _is_ccw:
+            face = mesh.Face(mesh)
+            face.outer = min_hedge
+            face.sv_data = dict(min_hedge.face.sv_data)
+            for loop_hedge in hedge.new_loop_hedges:
+                loop_hedge.face = face
+        else:
+            face = mesh.Face(mesh)
+            face.inners.append(min_hedge)
+            for loop_hedge in hedge.new_loop_hedges:
+                loop_hedge.face = face
+            inner_faces.append(face)
+
+    # assign inner component to found faces
+    for inner_face in inner_faces:
+        for hedge in walk_left(inner_face.inners[0]):
+            if flag in hedge.face.flags:
+                continue
+
+
+
+        used.add(hedge)
+        face = mesh.Face(mesh)
+        new_faces.append(face)
+        face.outer = hedge
+        face.sv_data = dict(hedge.face.sv_data)  # new face get all sv data related with first edge in loop
+        face.flags = set(hedge.face.flags)
+        hedge.face = face
+        for ccw_hedge in hedge.ccw_hedges:
+            if id(ccw_hedge) != id(hedge) and flag not in ccw_hedge.face.flags:
+                break
+        last_hedge = ccw_hedge.twin
+        hedge.last = last_hedge
+        last_hedge.next = hedge
+        used.add(last_hedge)
+        last_hedge.face = face
+        count = 0
+        current_hedge = last_hedge
+        while id(current_hedge) != id(hedge):
+            for ccw_hedge in current_hedge.ccw_hedges:
+                if id(ccw_hedge) != id(hedge) and flag not in ccw_hedge.face.flags:
+                    break
+            last_hedge = ccw_hedge.twin
+            used.add(last_hedge)
+            last_hedge.face = face
+            current_hedge.last = last_hedge
+            last_hedge.next = current_hedge
+            current_hedge = last_hedge
+            count += 1
+            if count &gt; len(mesh.hedges):
+                raise RecursionError(&#34;Dissolve face algorithm can&#39;t built a loop from hedge - {}&#34;.format(hedge))
+    # update faces
+    mesh.faces = [face for face in mesh.faces if flag not in face.flags]
+    mesh.faces.extend(new_faces)
+    # update hedges
+    mesh.hedges = [hedge for hedge in mesh.hedges if hedge not in un_used_hedges]
+    # todo how to rebuilt points list</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_dissolved_hedge"><code class="name flex">
+<span>def <span class="ident">get_leftmost_dissolved_hedge</span></span>(<span>left_loop_hedge, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_leftmost_dissolved_hedge(left_loop_hedge, flag):
+    # left_loop_hedge - half edge with origin which is leftmost point of a loop
+    dis_hedge = get_leftmost_hedge_in_point(left_loop_hedge, flag)
+    if dis_hedge:
+        return dis_hedge
+
+    used = set()
+    next_two_candidates = [left_loop_hedge.new_next, left_loop_hedge.new_last]
+    while next_two_candidates:
+        low_hedge = next_two_candidates.pop()
+        used.add(low_hedge)
+        low_candidate = get_leftmost_hedge_in_point(low_hedge, flag)
+        up_hedge = next_two_candidates.pop()
+        used.add(up_hedge)
+        up_candidate = get_leftmost_hedge_in_point(up_hedge, flag)
+
+        if low_candidate and up_candidate:
+            return low_candidate if is_closer_left(low_candidate, up_candidate) else up_candidate
+        elif low_candidate:
+            return low_candidate
+        elif up_candidate:
+            return up_candidate
+        else:
+            next_up_hedge = up_hedge.new_next
+            next_low_hedge = low_hedge.new_last
+            if next_up_hedge not in used and  next_low_hedge not in used:
+                next_two_candidates.extend([next_up_hedge, next_low_hedge])
+            elif next_low_hedge not in used:
+                low_candidate = get_leftmost_hedge_in_point(next_low_hedge, flag)
+                if low_candidate:
+                    return low_candidate
+                else:
+                    raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)
+            elif next_up_hedge not in used:
+                up_candidate = get_leftmost_hedge_in_point(next_up_hedge, flag)
+                if up_candidate:
+                    return up_candidate
+                else:
+                    raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)
+            else:
+                raise LookupError(&#39;Did not manage to find any dissolved half edges connected to given loop&#39;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_hedge_in_point"><code class="name flex">
+<span>def <span class="ident">get_leftmost_hedge_in_point</span></span>(<span>hedge, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_leftmost_hedge_in_point(hedge, flag):
+    # can return None if such hedge does not exist
+    # given hedge should be boundary half edge of dissolving faces
+    dissolved_hedge = None
+    for ccw_hedge in hedge.ccw_hedges:
+        if id(ccw_hedge) == id(hedge):
+            # avoid going in back direction
+            continue
+        if flag not in ccw_hedge.face.flags:
+            # that means that all dissolved half edges was looked up
+            break
+        if not dissolved_hedge:
+            # any candidate is okay
+            dissolved_hedge = ccw_hedge
+            continue
+        if is_closer_left(ccw_hedge.slop, dissolved_hedge.slop):
+            # next candidate should be closer to -X direction
+            dissolved_hedge = ccw_hedge
+        else:
+            # according that half edges are sorted in ccw order, best candidate already has been found
+            break
+    return dissolved_hedge</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.get_next_candidates"><code class="name flex">
+<span>def <span class="ident">get_next_candidates</span></span>(<span>face, checked_faces, used, flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_next_candidates(face, checked_faces, used, flag):
+    out = []
+    for hedge in face.outer.loop_hedges:
+        candidate = hedge.twin.face
+        if flag in candidate.flags and candidate not in checked_faces and candidate not in used:
+            checked_faces.add(candidate)
+            out.append(candidate)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.is_addable"><code class="name flex">
+<span>def <span class="ident">is_addable</span></span>(<span>face, candidate, face_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_addable(face, candidate, face_points):
+    # does not take in account possible common points yet
+    for loop_hedge in candidate.outer.loop_hedges:
+        if loop_hedge.origin in face_points:
+            if loop_hedge.twin.face != face and loop_hedge.last.twin.face != face:
+                return False
+    in_common_edge = False
+    number_common_lines = 0
+    start_from_common_hedge = False
+    for i, loop_hedge in enumerate(candidate.outer.loop_hedges):
+        if loop_hedge.twin.face == face:
+            if in_common_edge:
+                continue
+            else:
+                in_common_edge = True
+                number_common_lines += 1
+                if i == 0:
+                    start_from_common_hedge = True
+        else:
+            in_common_edge = False
+    if in_common_edge and start_from_common_hedge:
+        # here case is detected when one common line take in account two times
+        number_common_lines -= 1
+    return True if number_common_lines == 1 else False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.is_closer_left"><code class="name flex">
+<span>def <span class="ident">is_closer_left</span></span>(<span>slop1, slop2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_closer_left(slop1, slop2):
+    slop1 = slop1 if slop1 &lt;= 2 else 2 - slop1 % 2 if slop1 != 4.0 else 0
+    slop2 = slop2 if slop2 &lt;= 2 else 2 - slop2 % 2 if slop2 != 4.0 else 0
+    return True if slop1 &lt; slop2 else False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.walk_boundary_loop"><code class="name flex">
+<span>def <span class="ident">walk_boundary_loop</span></span>(<span>hedge, bound_flag)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def walk_boundary_loop(hedge, bound_flag):
+    # in back direction
+    # yield hedge
+    for ccw_hedge in hedge.ccw_hedges:
+        if id(ccw_hedge) != id(hedge) and bound_flag not in ccw_hedge.face.flags:
+            break
+    current_hedge = ccw_hedge.twin
+    yield current_hedge
+    count = 0
+    while id(current_hedge) != id(hedge):
+        for ccw_hedge in current_hedge.ccw_hedges:
+            if id(ccw_hedge) != id(hedge) and bound_flag not in ccw_hedge.face.flags:
+                break
+        current_hedge = ccw_hedge.twin
+        yield current_hedge
+        count += 1
+        if count &gt; len(hedge.mesh.hedges):
+            raise RecursionError(&#34;Dissolve face algorithm can&#39;t built a loop from hedge - {}&#34;.format(hedge))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.walk_left"><code class="name flex">
+<span>def <span class="ident">walk_left</span></span>(<span>hedge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def walk_left(hedge):
+    # return next hedge closest to -X direction
+    count = 0
+    start_hedge = hedge
+    while count &lt;= len(hedge.mesh.hesges):
+        next_candidate = None
+        for ccw_hedge in start_hedge.twin.ccw_hedges:
+            if id(ccw_hedge) == id(start_hedge.twin):
+                # avoid going in back direction
+                continue
+            if not next_candidate:
+                # any candidate is okay
+                next_candidate = ccw_hedge
+                continue
+            if is_closer_left(ccw_hedge.slop, next_candidate.slop):
+                # next candidate should be closer to -X direction
+                next_candidate = ccw_hedge
+            else:
+                # according that half edges are sorted in ccw order, best candidate already has been found
+                break
+        if not next_candidate:
+            raise ValueError(&#39;Looks like the end of tail is reached, what to do next?&#39;)
+        yield next_candidate
+        start_hedge = next_candidate
+        count += 1
+    raise RecursionError(&#39;It looks like you forget to exit from left walk&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.DCELMesh"><code class="flex name class">
+<span>class <span class="ident">DCELMesh</span></span>
+<span>(</span><span>accuracy=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DCELMesh(DCELMesh_template):
+    HalfEdge=HalfEdge</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.dcel.DCELMesh" href="dcel.html#sverchok.utils.geom_2d.dcel.DCELMesh">DCELMesh</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.DCELMesh.HalfEdge"><code class="name">var <span class="ident">HalfEdge</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.HalfEdge"><code class="flex name class">
+<span>class <span class="ident">HalfEdge</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HalfEdge(HalfEdge_template):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.new_next = None
+        self.new_last = None
+
+    @property
+    def new_loop_hedges(self):
+        # returns hedges bounding face
+        if not self.mesh:
+            raise AttributeError(&#34;This method doesn&#39;t work with hedges({}) without link to a mesh.&#34;
+                                 &#34;Besides, mesh object should have proper number of half edges &#34;
+                                 &#34;in hedges list&#34;.format(self))
+        yield self
+        next_edge = self.next
+        counter = 0
+        while id(next_edge) != id(self):
+            yield next_edge
+            try:
+                next_edge = next_edge.next
+            except AttributeError:
+                raise AttributeError(&#39; Some of half edges has incomplete data (does not have link to next half edge)&#39;)
+            counter += 1
+            if counter &gt; len(self.mesh.hedges):
+                raise RecursionError(&#39;Hedge - {} does not have a loop&#39;.format(self))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.dcel.HalfEdge" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge">HalfEdge</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.geom_2d.dissolve_mesh.HalfEdge.new_loop_hedges"><code class="name">var <span class="ident">new_loop_hedges</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def new_loop_hedges(self):
+    # returns hedges bounding face
+    if not self.mesh:
+        raise AttributeError(&#34;This method doesn&#39;t work with hedges({}) without link to a mesh.&#34;
+                             &#34;Besides, mesh object should have proper number of half edges &#34;
+                             &#34;in hedges list&#34;.format(self))
+    yield self
+    next_edge = self.next
+    counter = 0
+    while id(next_edge) != id(self):
+        yield next_edge
+        try:
+            next_edge = next_edge.next
+        except AttributeError:
+            raise AttributeError(&#39; Some of half edges has incomplete data (does not have link to next half edge)&#39;)
+        counter += 1
+        if counter &gt; len(self.mesh.hedges):
+            raise RecursionError(&#39;Hedge - {} does not have a loop&#39;.format(self))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.geom_2d.dcel.HalfEdge" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge">HalfEdge</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.geom_2d.dcel.HalfEdge.slop" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge.slop">slop</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.geom_2d" href="index.html">sverchok.utils.geom_2d</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.add_faces" href="#sverchok.utils.geom_2d.dissolve_mesh.add_faces">add_faces</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces" href="#sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces">dissolve_faces</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_add" href="#sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_add">dissolve_faces_add</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_with_flag" href="#sverchok.utils.geom_2d.dissolve_mesh.dissolve_faces_with_flag">dissolve_faces_with_flag</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_dissolved_hedge" href="#sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_dissolved_hedge">get_leftmost_dissolved_hedge</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_hedge_in_point" href="#sverchok.utils.geom_2d.dissolve_mesh.get_leftmost_hedge_in_point">get_leftmost_hedge_in_point</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.get_next_candidates" href="#sverchok.utils.geom_2d.dissolve_mesh.get_next_candidates">get_next_candidates</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.is_addable" href="#sverchok.utils.geom_2d.dissolve_mesh.is_addable">is_addable</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.is_closer_left" href="#sverchok.utils.geom_2d.dissolve_mesh.is_closer_left">is_closer_left</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.walk_boundary_loop" href="#sverchok.utils.geom_2d.dissolve_mesh.walk_boundary_loop">walk_boundary_loop</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.walk_left" href="#sverchok.utils.geom_2d.dissolve_mesh.walk_left">walk_left</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.dissolve_mesh.DCELMesh" href="#sverchok.utils.geom_2d.dissolve_mesh.DCELMesh">DCELMesh</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.DCELMesh.HalfEdge" href="#sverchok.utils.geom_2d.dissolve_mesh.DCELMesh.HalfEdge">HalfEdge</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.dissolve_mesh.HalfEdge" href="#sverchok.utils.geom_2d.dissolve_mesh.HalfEdge">HalfEdge</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.dissolve_mesh.HalfEdge.new_loop_hedges" href="#sverchok.utils.geom_2d.dissolve_mesh.HalfEdge.new_loop_hedges">new_loop_hedges</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

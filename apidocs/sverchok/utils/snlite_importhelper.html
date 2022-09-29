@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.snlite_importhelper API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.snlite_importhelper</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import re
+import bpy
+import ast
+
+
+UNPARSABLE = None, None, None, None
+
+sock_dict = {
+    &#39;v&#39;: &#39;SvVerticesSocket&#39;,
+    &#39;s&#39;: &#39;SvStringsSocket&#39;,
+    &#39;m&#39;: &#39;SvMatrixSocket&#39;,
+    &#39;o&#39;: &#39;SvObjectSocket&#39;,
+    &#39;c&#39;: &#39;SvColorSocket&#39;,
+    &#39;C&#39;: &#39;SvCurveSocket&#39;,
+    &#39;D&#39;: &#39;SvDictionarySocket&#39;,
+    &#39;T&#39;: &#39;SvTextSocket&#39;,
+    &#39;S&#39;: &#39;SvSurfaceSocket&#39;,
+    &#39;So&#39;: &#39;SvSolidSocket&#39;,
+    &#39;SF&#39;: &#39;SvScalarFieldSocket&#39;,
+    &#39;VF&#39;: &#39;SvVectorFieldSocket&#39;,
+    &#39;FP&#39;: &#39;SvFilePathSocket&#39;,
+}
+
+
+def set_autocolor(node, use_me, color_me):
+    node.use_custom_color = use_me
+    node.color = color_me
+
+
+def processed(str_in):
+    _, b = str_in.split(&#39;=&#39;)
+    return ast.literal_eval(b)
+
+
+def parse_socket_line(node, line):
+    lsp = line.strip().split()
+    if not len(lsp) in {3, 5}:
+        node.error(
+            f&#39;directive: (socket line) &#34;{line}&#34; -&gt; is malformed &#39;
+            f&#39;(too little information, probably forgot to specify the socket-kind&#39;
+            f&#39;: {sock_dict.keys()}&#39;
+        )
+        return UNPARSABLE
+    else:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        elif len(lsp) == 3:
+            return socket_type, socket_name, None, None
+        else:
+            default = processed(lsp[3])
+            nested = processed(lsp[4])
+            return socket_type, socket_name, default, nested
+
+def trim_comment(line):
+    idx = line.find(&#34;#&#34;)
+    if idx &lt; 0:
+        return line
+    return line[:idx]
+
+def parse_required_socket_line(node, line):
+    # required input sockets do not accept defaults or nested info, what would be the point?
+    # receives a line like
+    # &gt;in socketname sockettype
+
+    line = trim_comment(line)
+
+    lsp = line.strip().split()
+    if len(lsp) &gt; 3:
+        lsp = lsp[:3]
+
+    if len(lsp) == 3:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        return socket_type, socket_name, None, None
+
+    node.error(f&#39;directive: (socket line) &#34;{line}&#34; -&gt; is malformed, missing socket type? {lsp}&#39;)
+    return UNPARSABLE
+
+
+def parse_extended_socket_line(node, line):
+    &#34;&#34;&#34;
+    returns socket_info: 
+        socket_type, socket_name, default, nested  (display name)
+    &#34;&#34;&#34;
+    socket_info = [None, None, None, None, None]
+
+    pattern = &#34;&#34;&#34;
+    \+in\s+              # valid for inputs
+    (\w+)\s+             # list name to use
+    (\w+)\s+             # socket type
+    d=(.+)\s+            # default value
+    n=(\d)               # nested value
+    (.+name=&#34;(.+)&#34;)?     # optional socket label
+    &#34;&#34;&#34;
+
+    try:
+        p = re.compile(pattern, re.VERBOSE)
+        g = p.search(line.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                if idx == 0:
+                    # the socket name used by user passing info to lists.
+                    socket_info[1] = m
+                elif idx == 1:
+                    # remap to the bl_idname of a sockettype
+                    socket_info[0] = sock_dict.get(m.strip())
+                elif idx in (2, 3): 
+                    # defaults or nested, are still a string at this point
+                    socket_info[idx] = ast.literal_eval(m)
+                elif idx == 4:
+                    # if 4 is a match, then 5 contains the desired label
+                    socket_info[idx] = matches[5]
+                    break
+
+        # print(f&#34;socket_info:{socket_info}&#34;)
+        return socket_info
+
+    except Exception as err:
+        print(&#34;SNLITE ERROR:&#34;, err)
+
+
+
+def extract_directive_as_multiline_string(lines):
+    pattern = &#34;&#34;&#34;
+    \&#34;{3}(.*?)\&#34;{3}   # double quote enclosure
+    |                 # or
+    \&#39;{3}(.*?)\&#39;{3}   # single quote enclosure
+    &#34;&#34;&#34;
+
+    try:
+        p = re.compile(pattern, re.MULTILINE|re.DOTALL|re.VERBOSE)
+        g = p.search(lines.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                return m
+    except Exception as err:
+        print(&#34;SNLITE ERROR:&#34;, err)
+        return 
+
+    return
+
+def print_node_script(node):
+    err_message = &#39;failed to find a directive in this script: SNLITE Error 1 (see docs for more info)&#39;
+    print(node.script_name, err_message)
+    print(&#34;start ---&gt;&#34;)
+    print(node.script_str)
+    print(&#34;&lt;--- end&#34;)
+
+
+def parse_sockets(node):
+
+    if hasattr(node, &#39;inject_params&#39;):
+        node.inject_params = False
+
+    snlite_info = {
+        &#39;inputs&#39;: [], &#39;outputs&#39;: [],
+        &#39;snlite_ui&#39;: [], &#39;includes&#39;: {},
+        &#39;custom_enum&#39;: [], &#39;custom_enum_2&#39;: [],
+        &#39;callbacks&#39;: {}, &#39;inputs_required&#39;: [],
+    }
+
+    directive = extract_directive_as_multiline_string(node.script_str)
+    if not directive:
+        print_node_script(node)
+        return snlite_info
+
+    for line in directive.split(&#39;\n&#39;):
+        L = line.strip()
+
+        if L.startswith(&#39;in &#39;) or L.startswith(&#39;out &#39;):
+            socket_dir = L.split(&#39; &#39;)[0] + &#39;puts&#39;
+            snlite_info[socket_dir].append(parse_socket_line(node, L))
+
+        if L.startswith(&#39;&gt;in &#39;):
+            # one or more inputs can be required before processing/showing errors
+            input_info = parse_required_socket_line(node, L)
+            snlite_info[&#39;inputs&#39;].append(input_info)
+            snlite_info[&#39;inputs_required&#39;].append(input_info[1])
+
+        if L.startswith(&#39;+in &#39;):
+            # this is extended :regex: parsing of socket info line.
+            input_info = parse_extended_socket_line(node, L)
+            snlite_info[&#39;inputs&#39;].append(input_info)
+
+        elif L.startswith(&#39;inject&#39;):
+            if hasattr(node, &#39;inject_params&#39;):
+                node.inject_params = True
+
+        elif L.startswith(&#39;enum =&#39;):
+            snlite_info[&#39;custom_enum&#39;] = L[6:].strip().split(&#39; &#39;)
+
+        elif L.startswith(&#39;enum2 =&#39;):
+            snlite_info[&#39;custom_enum_2&#39;] = L[7:].strip().split(&#39; &#39;)
+
+        elif L.startswith(&#39;include &lt;&#39;) and L.endswith(&#39;&gt;&#39;):
+            filename = L[9:-1]
+            file = bpy.data.texts.get(filename)
+            if file:
+                snlite_info[&#39;includes&#39;][filename] = file.as_string()
+
+        elif L in {&#39;fh&#39;, &#39;filehandler&#39;}:
+            snlite_info[&#39;display_file_handler&#39;] = True
+
+    return snlite_info
+
+
+def are_matched(sock_, socket_description):
+    return (sock_.bl_idname, sock_.name) == socket_description[:2]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.snlite_importhelper.are_matched"><code class="name flex">
+<span>def <span class="ident">are_matched</span></span>(<span>sock_, socket_description)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def are_matched(sock_, socket_description):
+    return (sock_.bl_idname, sock_.name) == socket_description[:2]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.extract_directive_as_multiline_string"><code class="name flex">
+<span>def <span class="ident">extract_directive_as_multiline_string</span></span>(<span>lines)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_directive_as_multiline_string(lines):
+    pattern = &#34;&#34;&#34;
+    \&#34;{3}(.*?)\&#34;{3}   # double quote enclosure
+    |                 # or
+    \&#39;{3}(.*?)\&#39;{3}   # single quote enclosure
+    &#34;&#34;&#34;
+
+    try:
+        p = re.compile(pattern, re.MULTILINE|re.DOTALL|re.VERBOSE)
+        g = p.search(lines.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                return m
+    except Exception as err:
+        print(&#34;SNLITE ERROR:&#34;, err)
+        return 
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.parse_extended_socket_line"><code class="name flex">
+<span>def <span class="ident">parse_extended_socket_line</span></span>(<span>node, line)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns socket_info:
+socket_type, socket_name, default, nested
+(display name)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_extended_socket_line(node, line):
+    &#34;&#34;&#34;
+    returns socket_info: 
+        socket_type, socket_name, default, nested  (display name)
+    &#34;&#34;&#34;
+    socket_info = [None, None, None, None, None]
+
+    pattern = &#34;&#34;&#34;
+    \+in\s+              # valid for inputs
+    (\w+)\s+             # list name to use
+    (\w+)\s+             # socket type
+    d=(.+)\s+            # default value
+    n=(\d)               # nested value
+    (.+name=&#34;(.+)&#34;)?     # optional socket label
+    &#34;&#34;&#34;
+
+    try:
+        p = re.compile(pattern, re.VERBOSE)
+        g = p.search(line.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                if idx == 0:
+                    # the socket name used by user passing info to lists.
+                    socket_info[1] = m
+                elif idx == 1:
+                    # remap to the bl_idname of a sockettype
+                    socket_info[0] = sock_dict.get(m.strip())
+                elif idx in (2, 3): 
+                    # defaults or nested, are still a string at this point
+                    socket_info[idx] = ast.literal_eval(m)
+                elif idx == 4:
+                    # if 4 is a match, then 5 contains the desired label
+                    socket_info[idx] = matches[5]
+                    break
+
+        # print(f&#34;socket_info:{socket_info}&#34;)
+        return socket_info
+
+    except Exception as err:
+        print(&#34;SNLITE ERROR:&#34;, err)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.parse_required_socket_line"><code class="name flex">
+<span>def <span class="ident">parse_required_socket_line</span></span>(<span>node, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_required_socket_line(node, line):
+    # required input sockets do not accept defaults or nested info, what would be the point?
+    # receives a line like
+    # &gt;in socketname sockettype
+
+    line = trim_comment(line)
+
+    lsp = line.strip().split()
+    if len(lsp) &gt; 3:
+        lsp = lsp[:3]
+
+    if len(lsp) == 3:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        return socket_type, socket_name, None, None
+
+    node.error(f&#39;directive: (socket line) &#34;{line}&#34; -&gt; is malformed, missing socket type? {lsp}&#39;)
+    return UNPARSABLE</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.parse_socket_line"><code class="name flex">
+<span>def <span class="ident">parse_socket_line</span></span>(<span>node, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_socket_line(node, line):
+    lsp = line.strip().split()
+    if not len(lsp) in {3, 5}:
+        node.error(
+            f&#39;directive: (socket line) &#34;{line}&#34; -&gt; is malformed &#39;
+            f&#39;(too little information, probably forgot to specify the socket-kind&#39;
+            f&#39;: {sock_dict.keys()}&#39;
+        )
+        return UNPARSABLE
+    else:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        elif len(lsp) == 3:
+            return socket_type, socket_name, None, None
+        else:
+            default = processed(lsp[3])
+            nested = processed(lsp[4])
+            return socket_type, socket_name, default, nested</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.parse_sockets"><code class="name flex">
+<span>def <span class="ident">parse_sockets</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_sockets(node):
+
+    if hasattr(node, &#39;inject_params&#39;):
+        node.inject_params = False
+
+    snlite_info = {
+        &#39;inputs&#39;: [], &#39;outputs&#39;: [],
+        &#39;snlite_ui&#39;: [], &#39;includes&#39;: {},
+        &#39;custom_enum&#39;: [], &#39;custom_enum_2&#39;: [],
+        &#39;callbacks&#39;: {}, &#39;inputs_required&#39;: [],
+    }
+
+    directive = extract_directive_as_multiline_string(node.script_str)
+    if not directive:
+        print_node_script(node)
+        return snlite_info
+
+    for line in directive.split(&#39;\n&#39;):
+        L = line.strip()
+
+        if L.startswith(&#39;in &#39;) or L.startswith(&#39;out &#39;):
+            socket_dir = L.split(&#39; &#39;)[0] + &#39;puts&#39;
+            snlite_info[socket_dir].append(parse_socket_line(node, L))
+
+        if L.startswith(&#39;&gt;in &#39;):
+            # one or more inputs can be required before processing/showing errors
+            input_info = parse_required_socket_line(node, L)
+            snlite_info[&#39;inputs&#39;].append(input_info)
+            snlite_info[&#39;inputs_required&#39;].append(input_info[1])
+
+        if L.startswith(&#39;+in &#39;):
+            # this is extended :regex: parsing of socket info line.
+            input_info = parse_extended_socket_line(node, L)
+            snlite_info[&#39;inputs&#39;].append(input_info)
+
+        elif L.startswith(&#39;inject&#39;):
+            if hasattr(node, &#39;inject_params&#39;):
+                node.inject_params = True
+
+        elif L.startswith(&#39;enum =&#39;):
+            snlite_info[&#39;custom_enum&#39;] = L[6:].strip().split(&#39; &#39;)
+
+        elif L.startswith(&#39;enum2 =&#39;):
+            snlite_info[&#39;custom_enum_2&#39;] = L[7:].strip().split(&#39; &#39;)
+
+        elif L.startswith(&#39;include &lt;&#39;) and L.endswith(&#39;&gt;&#39;):
+            filename = L[9:-1]
+            file = bpy.data.texts.get(filename)
+            if file:
+                snlite_info[&#39;includes&#39;][filename] = file.as_string()
+
+        elif L in {&#39;fh&#39;, &#39;filehandler&#39;}:
+            snlite_info[&#39;display_file_handler&#39;] = True
+
+    return snlite_info</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.print_node_script"><code class="name flex">
+<span>def <span class="ident">print_node_script</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_node_script(node):
+    err_message = &#39;failed to find a directive in this script: SNLITE Error 1 (see docs for more info)&#39;
+    print(node.script_name, err_message)
+    print(&#34;start ---&gt;&#34;)
+    print(node.script_str)
+    print(&#34;&lt;--- end&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.processed"><code class="name flex">
+<span>def <span class="ident">processed</span></span>(<span>str_in)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def processed(str_in):
+    _, b = str_in.split(&#39;=&#39;)
+    return ast.literal_eval(b)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.set_autocolor"><code class="name flex">
+<span>def <span class="ident">set_autocolor</span></span>(<span>node, use_me, color_me)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_autocolor(node, use_me, color_me):
+    node.use_custom_color = use_me
+    node.color = color_me</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.snlite_importhelper.trim_comment"><code class="name flex">
+<span>def <span class="ident">trim_comment</span></span>(<span>line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trim_comment(line):
+    idx = line.find(&#34;#&#34;)
+    if idx &lt; 0:
+        return line
+    return line[:idx]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.snlite_importhelper.are_matched" href="#sverchok.utils.snlite_importhelper.are_matched">are_matched</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.extract_directive_as_multiline_string" href="#sverchok.utils.snlite_importhelper.extract_directive_as_multiline_string">extract_directive_as_multiline_string</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.parse_extended_socket_line" href="#sverchok.utils.snlite_importhelper.parse_extended_socket_line">parse_extended_socket_line</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.parse_required_socket_line" href="#sverchok.utils.snlite_importhelper.parse_required_socket_line">parse_required_socket_line</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.parse_socket_line" href="#sverchok.utils.snlite_importhelper.parse_socket_line">parse_socket_line</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.parse_sockets" href="#sverchok.utils.snlite_importhelper.parse_sockets">parse_sockets</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.print_node_script" href="#sverchok.utils.snlite_importhelper.print_node_script">print_node_script</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.processed" href="#sverchok.utils.snlite_importhelper.processed">processed</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.set_autocolor" href="#sverchok.utils.snlite_importhelper.set_autocolor">set_autocolor</a></code></li>
+<li><code><a title="sverchok.utils.snlite_importhelper.trim_comment" href="#sverchok.utils.snlite_importhelper.trim_comment">trim_comment</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

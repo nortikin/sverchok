@@ -1,0 +1,3284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.node_tree API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.node_tree</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+import inspect
+import time
+from contextlib import contextmanager
+from itertools import chain, cycle
+from typing import Iterable
+
+import bpy
+from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.types import NodeTree, NodeSocket
+
+from sverchok.core.sv_custom_exceptions import SvNoDataError
+import sverchok.core.events as ev
+from sverchok.core.event_system import handle_event
+from sverchok.data_structure import classproperty, post_load_call
+from sverchok.utils import get_node_class_reference
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.utils.docstring import SvDocstring
+import sverchok.utils.logging
+from sverchok.utils.logging import debug, catch_log_error
+
+from sverchok.ui import color_def
+from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
+from sverchok.ui import bgl_callback_nodeview as sv_bgl
+
+
+class SvNodeTreeCommon:
+    &#34;&#34;&#34;Common class for all Sverchok trees (regular trees and group ones)&#34;&#34;&#34;
+    tree_id_memory: StringProperty(default=&#34;&#34;)  # identifier of the tree, should be used via `tree_id` property
+    sv_show_time_nodes: BoolProperty(
+        name=&#34;Node times&#34;,
+        default=False,
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)))
+    show_time_mode: EnumProperty(
+        items=[(n, n, &#39;&#39;) for n in [&#34;Per node&#34;, &#34;Cumulative&#34;]],
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        description=&#34;Mode of showing node update timings&#34;,
+    )
+
+    @property
+    def tree_id(self):
+        &#34;&#34;&#34;Identifier of the tree&#34;&#34;&#34;
+        if not self.tree_id_memory:
+            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id_memory
+
+    def update_gl_scale_info(self, origin=None):
+        &#34;&#34;&#34;
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+
+        this is instead of calling `get_dpi_factor` on every redraw.
+        &#34;&#34;&#34;
+
+        debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+        try:
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                prefs.set_nodeview_render_params(None)
+        except Exception as err:
+            debug(&#39;failed to get gl scale info&#39;, err)
+
+    @contextmanager
+    def init_tree(self):
+        &#34;&#34;&#34;It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)&#34;&#34;&#34;
+        is_already_initializing = &#39;init_tree&#39; in self
+        if is_already_initializing:
+            yield self
+        else:
+            self[&#39;init_tree&#39;] = &#39;&#39;
+            try:
+                yield self
+            finally:
+                del self[&#39;init_tree&#39;]
+
+    def update_ui(self, nodes_errors, update_time):
+        &#34;&#34;&#34; The method get information about node statistic of last update from the handler to show in view space
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode&#34;&#34;&#34;
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, &#39;update_ui&#39;):
+                node.update_ui(error, update)
+
+
+class SverchCustomTree(NodeTree, SvNodeTreeCommon):
+    &#39;&#39;&#39; Sverchok - architectural node programming of geometry in low level &#39;&#39;&#39;
+    bl_idname = &#39;SverchCustomTreeType&#39;
+    bl_label = &#39;Sverchok Nodes&#39;
+    bl_icon = &#39;RNA&#39;
+
+    def turn_off_ng(self, context):
+        &#34;&#34;&#34;
+        Turn on/off displaying objects in viewport generated by viewer nodes
+        Viewer nodes should have `show_viewport` method which takes &#39;to_show&#39; bool argument
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            try:
+                node.show_viewport(self.sv_show)
+            except AttributeError:
+                pass
+
+    def on_draft_mode_changed(self, context):
+        &#34;&#34;&#34;
+        This is triggered when Draft mode of the tree is toggled.
+        &#34;&#34;&#34;
+        draft_nodes = []
+        for node in self.nodes:
+            if hasattr(node, &#39;does_support_draft_mode&#39;) and node.does_support_draft_mode():
+                draft_nodes.append(node)
+                node.on_draft_mode_changed(self.sv_draft)
+
+        # From the user perspective, some of node parameters
+        # got new parameter values, so the setup should be recalculated;
+        # but technically, node properties were not changed
+        # (only other properties were shown in UI), so enabling/disabling
+        # of draft mode does not automatically trigger tree update.
+        # Here we trigger it manually.
+
+        if draft_nodes:
+            self.update_nodes(draft_nodes)
+
+    sv_process: BoolProperty(
+        name=&#34;Process&#34;,
+        default=True,
+        description=&#39;Update upon tree and node property changes&#39;,
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        options=set(),
+    )
+    sv_animate: BoolProperty(name=&#34;Animate&#34;, default=True, description=&#39;Animate this layout&#39;, options=set())
+    sv_show: BoolProperty(name=&#34;Show&#34;, default=True, description=&#39;Show this layout&#39;, update=turn_off_ng, options=set())
+
+    sv_show_socket_menus: BoolProperty(
+        name = &#34;Show socket menus&#34;,
+        description = &#34;Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!&#34;,
+        default = False,
+        options=set())
+
+    # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
+    sv_draft: BoolProperty(
+        name=&#34;Draft&#34;,
+        description=&#34;Draft (simplified processing) mode&#34;,
+        default=False,
+        update=on_draft_mode_changed,
+        options=set(),
+    )
+    sv_scene_update: BoolProperty(name=&#34;Scene update&#34;, description=&#34;Update upon changes in the scene&#34;, options=set(),
+                                  default=True)
+
+    def update(self):
+        &#34;&#34;&#34;This method is called if collection of nodes or links of the tree was changed&#34;&#34;&#34;
+        handle_event(ev.TreeEvent(self))
+
+    def force_update(self):
+        &#34;&#34;&#34;Update whole tree from scratch&#34;&#34;&#34;
+        # ideally we would never like to use this method but we live in the real world
+        handle_event(ev.ForceEvent(self))
+
+    def update_nodes(self, nodes, cancel=True):
+        &#34;&#34;&#34;This method expects to get list of its nodes which should be updated&#34;&#34;&#34;
+        return handle_event(ev.PropertyEvent(self, nodes))
+
+    def scene_update(self):
+        &#34;&#34;&#34;This method should be called by scene changes handler
+        it ignores events related with S
+        sverchok trees in other cases it updates nodes which read data from Blender&#34;&#34;&#34;
+        handle_event(ev.SceneEvent(self))
+
+    def process_ani(self, frame_changed: bool, animation_playing: bool):
+        &#34;&#34;&#34;
+        Process the Sverchok node tree if animation layers show true.
+        For animation callback/handler
+        &#34;&#34;&#34;
+        handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))
+
+
+class UpdateNodes:
+    &#34;&#34;&#34;Everything related with update system of nodes&#34;&#34;&#34;
+
+    # identifier of the node, should be used via `node_id` property
+    # overriding the property without `skip_save` option can lead to wrong importing bgl viewer nodes
+    n_id: StringProperty(options={&#39;SKIP_SAVE&#39;})
+
+    @property
+    def node_id(self):
+        &#34;&#34;&#34;Identifier of the node&#34;&#34;&#34;
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
+
+    def update_interactive_mode(self, context):
+        if self.is_interactive:
+            self.process_node(context)
+
+    is_interactive: BoolProperty(default=True, description=&#34;Update node upon changes in the scene&#34;,
+                                 update=update_interactive_mode, name=&#34;Interactive&#34;)
+    is_scene_dependent = False  # if True and is_interactive then the node will be updated upon scene changes
+
+    def refresh_node(self, context):
+        if self.refresh:
+            self.refresh = False
+            self.process_node(context)
+
+    refresh: BoolProperty(name=&#34;Update Node&#34;, description=&#34;Update Node&#34;, update=refresh_node)
+    is_animatable: BoolProperty(name=&#34;Animate Node&#34;,
+                                description=&#34;Update Node on frame change&#34;,
+                                default=True,
+                                update=lambda s, c: s.process_node(c))  # it would be better to have special event
+    is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
+
+    def sv_init(self, context):
+        &#34;&#34;&#34;
+        This method will be called during node creation
+        Typically it is used for socket creating and assigning properties to sockets
+        &#34;&#34;&#34;
+        pass
+
+    def sv_update(self):
+        &#34;&#34;&#34;
+        This method can be overridden in inherited classes.
+        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+        Calling of this method is unordered among other calls of the method of other nodes in a tree.
+        &#34;&#34;&#34;
+        pass
+
+    def sv_copy(self, original):
+        &#34;&#34;&#34;
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        &#34;&#34;&#34;
+        pass
+
+    def sv_free(self):
+        &#34;&#34;&#34;
+        Override this method to do anything node-specific upon node removal
+        &#34;&#34;&#34;
+        pass
+
+    def init(self, context):
+        &#34;&#34;&#34;
+        this function is triggered upon node creation,
+        - delegates further initialization information to sv_init
+        &#34;&#34;&#34;
+        if self.sv_default_color:
+            self.use_custom_color = True
+            self.color = self.sv_default_color
+
+        with catch_log_error():
+            self.sv_init(context)
+
+    def sv_new_input(self, socket_type, name, **attrib_dict):
+        socket = self.inputs.new(socket_type, name)
+        for att in attrib_dict:
+            setattr(socket, att, attrib_dict[att])
+        return socket
+
+    def free(self):
+        &#34;&#34;&#34;Called upon the node removal&#34;&#34;&#34;
+        # custom free function
+        self.sv_free()
+
+        # free sockets memory
+        for s in chain(self.inputs, self.outputs):
+            s.sv_forget()
+
+        # remove tree space drawings
+        self.update_ui()
+
+    def copy(self, original):
+        &#34;&#34;&#34;Called upon the node being copied&#34;&#34;&#34;
+        self.n_id = &#34;&#34;
+        for sock in chain(self.inputs, self.outputs):
+            sock.s_id = &#39;&#39;
+        self.sv_copy(original)
+
+    def update(self):
+        &#34;&#34;&#34;
+        The method will be triggered upon editor changes, typically before node tree update method.
+        It is better to avoid using this trigger.
+        &#34;&#34;&#34;
+        if &#39;init_tree&#39; in self.id_data:  # tree is building by a script - let it do this
+            return
+
+        self.sv_update()
+
+    def update_ui(self, error=None, update_time=None):
+        &#34;&#34;&#34;updating tree contextual information -&gt; node colors, text
+        node_id only for usage of a group tree&#34;&#34;&#34;
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        exception_color = sv_settings.exception_color
+        no_data_color = sv_settings.no_data_color
+        error_pref = &#34;error&#34;
+        update_pref = &#34;update_time&#34;
+
+        # update error colors
+        if error is not None:
+            color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            self.set_temp_color(color)
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+        else:
+            sv_bgl.callback_disable(error_pref + self.node_id)
+            self.set_temp_color()
+
+        # show update timing
+        if update_time is not None:
+            update_time = int(update_time * 1000)
+            sv_bgl.draw_text(self, f&#39;{update_time}ms&#39;, update_pref + self.node_id, align=&#34;UP&#34;, dynamic_location=False)
+        else:
+            sv_bgl.callback_disable(update_pref + self.node_id)
+
+    def insert_link(self, link):
+        &#34;&#34;&#34;It will be triggered only if one socket is connected with another by user&#34;&#34;&#34;
+
+    def process_node(self, context):
+        &#34;&#34;&#34;Call this method to revaluate the node tree whenever node properties was changed&#34;&#34;&#34;
+        self.id_data.update_nodes([self])
+
+
+class NodeUtils:
+    &#34;&#34;&#34;
+    Helper methods.
+    Most of them have nothing related with nodes and using as aliases of some functionality.
+    The class can be surely ignored during creating of new nodes.
+    &#34;&#34;&#34;
+    def get_logger(self):
+        if hasattr(self, &#34;draw_label&#34;):
+            name = self.draw_label()
+        else:
+            name = self.label
+        if not name:
+            name = self.bl_label
+        if not name:
+            name = self.__class__.__name__
+
+        # add information about the module location
+        frame, _, line, *_ = inspect.stack()[2]
+        module = inspect.getmodule(frame)
+        module_name = module.__name__ if module is not None else &#39;&#39;
+        name = f&#39;{module_name} {line} ({name})&#39;
+        return sverchok.utils.logging.getLogger(name)
+
+    def debug(self, msg, *args, **kwargs):
+        self.get_logger().debug(msg, *args, **kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self.get_logger().info(msg, *args, **kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        self.get_logger().warning(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self.get_logger().error(msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        self.get_logger().exception(msg, *args, **kwargs)
+
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        &#34;&#34;&#34;
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the node_name and tree_name to the operator.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, &#34;node.view3d_align_from&#34;, icon=&#39;CURSOR&#39;, text=&#39;&#39;)
+
+        &#34;&#34;&#34;
+        op = layout_element.operator(operator_idname, **keywords)
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        return op
+
+    def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
+        &#34;&#34;&#34;
+        fail gracefully?
+        This function acknowledges that the identifier being passed can be a string or an object proper.
+        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+        be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+        but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+        https://developer.blender.org/T58641
+
+        example usage inside a node:
+
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+
+        if the text does not exist you get None
+        &#34;&#34;&#34;
+        if not identifier:
+            # this can happen if a json import goes through attributes arbitrarily.
+            # self.info(&#34;no identifier passed to the get_bpy_data_from_name function.&#34;)
+            return None
+
+        try:
+            if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
+                return bpy_data_kind.get(identifier.name)  # todo it looks ridiculous to search known object
+
+            elif isinstance(identifier, str):
+                if identifier in bpy_data_kind:
+                    return bpy_data_kind.get(identifier)
+                elif identifier[3:] in bpy_data_kind:
+                    return bpy_data_kind.get(identifier[3:])
+                
+                # something went wrong. the blend does not contain the objectname
+                self.info(f&#34;{identifier} not found in {bpy_data_kind}, returning None instead&#34;)
+                if bpy_data_kind.bl_rna.identifier == &#39;BlendDataTexts&#39;:
+                    # if we are in texts and this key is not found:
+                    # - it&#39;s possible the named datablock incurred name collision
+                    # - or it has not yet been created (usually json import, attribute order issue)
+                    file_names = {t.name for t in bpy_data_kind}
+                    self.info(f&#34;The currently loaded blend file does contain the following text files {file_names}&#34;)
+
+
+        except Exception as err:
+            self.error(f&#34;identifier &#39;{identifier}&#39; not found in {bpy_data_kind} - with error {err}&#34;)
+
+        return None
+
+    def safe_socket_remove(self, kind, key, failure_message=None):
+        sockets = getattr(self, kind)
+        if key in sockets:
+            sockets.remove(sockets[key])
+        else:
+            canned_msg = f&#34;{self.name}.{kind} has no socket named {key} - did not remove&#34;
+            self.debug(failure_message or canned_msg)
+
+
+class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+    &#34;&#34;&#34;Base class for all nodes&#34;&#34;&#34;
+    _docstring = None  # A cache for docstring property
+
+    def draw_buttons(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;, icon_only=True)
+            if self.is_scene_dependent:
+                row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;, icon_only=True)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+        self.sv_draw_buttons(context, layout)
+
+    def sv_draw_buttons(self, context, layout):
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;)
+            if self.is_scene_dependent:
+                row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+        self.sv_draw_buttons_ext(context, layout)
+
+    def sv_draw_buttons_ext(self, context, layout):
+        self.sv_draw_buttons(context, layout)
+
+    @property
+    def sv_internal_links(self) -&gt; Iterable[tuple[NodeSocket, NodeSocket]]:
+        &#34;&#34;&#34;Override the property to change logic of connecting sockets
+        when the node is muted.
+        Also, there are some basic implementations `utils/nodes_mixins/sockets_config`&#34;&#34;&#34;
+        for link in self.internal_links:
+            yield link.from_socket, link.to_socket
+
+    @classproperty
+    def docstring(cls):
+        &#34;&#34;&#34;
+        Get SvDocstring instance parsed from node&#39;s docstring.
+        &#34;&#34;&#34;
+        if cls._docstring is None:
+            cls._docstring = SvDocstring(cls.__doc__)
+        return cls._docstring
+
+    @classmethod
+    def poll(cls, ntree):
+        return ntree.bl_idname in [&#39;SverchCustomTreeType&#39;, &#39;SvGroupTree&#39;]
+
+    @property
+    def absolute_location(self):
+        &#34;&#34;&#34;
+        When a node is inside a frame (and parented to it) then node.location is relative to its parent&#39;s location.
+        This function returns the location in absolute screen terms whether the node is framed or not.
+
+        The return type is a tuple (x, y)  (not a Vector)
+        &#34;&#34;&#34;
+        return recursive_framed_location_finder(self, self.location[:])
+
+    @property
+    def sv_default_color(self):
+        return color_def.get_color(self.bl_idname)
+
+    def set_temp_color(self, color=None):
+        &#34;&#34;&#34;This method memorize its initial color and override it with given one
+        if given color is None it tries to return its initial color or do nothing&#34;&#34;&#34;
+
+        if color is None:
+            # looks like the node should return its initial color (user choice)
+            if &#39;user_color&#39; in self:
+                self.use_custom_color = self[&#39;use_user_color&#39;]
+                del self[&#39;use_user_color&#39;]
+                self.color = self[&#39;user_color&#39;]
+                del self[&#39;user_color&#39;]
+
+        # set temporary color
+        else:
+            # save overridden color (only once)
+            if &#39;user_color&#39; not in self:
+                self[&#39;use_user_color&#39;] = self.use_custom_color
+                self[&#39;user_color&#39;] = self.color
+            self.use_custom_color = True
+            self.color = color
+
+    def rclick_menu(self, context, layout):
+        &#34;&#34;&#34;
+        Override this method to add specific items into the node&#39;s right-click menu.
+        Default implementation calls `node_replacement_menu&#39;.
+        &#34;&#34;&#34;
+        self.node_replacement_menu(context, layout)
+
+    # Replacing old nodes by new - functionality
+
+    def node_replacement_menu(self, context, layout):
+        &#34;&#34;&#34;
+        Draw menu items with node replacement operators.
+        This is called from `rclick_menu()&#39; method by default.
+        Items are defined by `replacement_nodes&#39; class property.
+        Expected format is
+
+            replacement_nodes = [
+                (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+            ]
+
+        where new_node_bl_idname is bl_idname of replacement node class,
+        inputs_mapping_dict is a dictionary mapping names of inputs of this node
+        to names of inputs to new node, and outputs_mapping_dict is a dictionary
+        mapping names of outputs of this node to names of outputs of new node.
+        inputs_mapping_dict and outputs_mapping_dict can be None.
+        &#34;&#34;&#34;
+        if hasattr(self, &#34;replacement_nodes&#34;):
+            for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
+                node_class = get_node_class_reference(bl_idname)
+                if node_class:
+                    text = &#34;Replace with {}&#34;.format(node_class.bl_label)
+                    op = layout.operator(&#34;node.sv_replace_node&#34;, text=text)
+                    op.old_node_name = self.name
+                    op.new_bl_idname = bl_idname
+                    set_inputs_mapping(op, inputs_mapping)
+                    set_outputs_mapping(op, outputs_mapping)
+                else:
+                    self.error(&#34;Can&#39;t build replacement menu: no such node class: %s&#34;,bl_idname)
+
+    def migrate_links_from(self, old_node, operator):
+        &#34;&#34;&#34;
+        This method is called by node replacement operator.
+        By default, it removes existing links from old_node
+        and creates corresponding links for this (new) node.
+        Override it to implement custom re-linking at node
+        replacement.
+        Most nodes do not have to override this method.
+        &#34;&#34;&#34;
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug(&#34;New node %s has no input named %s, skipping&#34;, self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug(&#34;New node %s has no output named %s, skipping&#34;, self.name, new_source_socket_name)
+
+    def migrate_from(self, old_node):
+        &#34;&#34;&#34;
+        This method is called by node replacement operator.
+        Override it to correctly copy settings from old_node
+        to this (new) node.
+        This is called after migrate_links_from().
+        Default implementation does nothing.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def prefs_over_sized_buttons(self):
+        try:
+            addon = bpy.context.preferences.addons.get(sverchok.__name__)
+            prefs = addon.preferences
+        except Exception as err:
+            print(&#39;failed to access addon preferences for button size&#39;, err)
+            return False
+        return prefs.over_sized_buttons
+
+
+@post_load_call
+def add_use_fake_user_to_trees():
+    &#34;&#34;&#34;When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees&#34;&#34;&#34;
+    def set_fake_user():
+        [setattr(t, &#39;use_fake_user&#39;, True) for t in bpy.data.node_groups if t.bl_idname == &#39;SverchCustomTreeType&#39;]
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, &#39;node_tree&#39;), owner=object(), args=(),
+                             notify=set_fake_user)
+
+
+register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.node_tree.add_use_fake_user_to_trees"><code class="name flex">
+<span>def <span class="ident">add_use_fake_user_to_trees</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>When ever space node editor switches to another tree or creates new one,
+this function will set True to <code>use_fake_user</code> of all Sverchok trees</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@post_load_call
+def add_use_fake_user_to_trees():
+    &#34;&#34;&#34;When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees&#34;&#34;&#34;
+    def set_fake_user():
+        [setattr(t, &#39;use_fake_user&#39;, True) for t in bpy.data.node_groups if t.bl_idname == &#39;SverchCustomTreeType&#39;]
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, &#39;node_tree&#39;), owner=object(), args=(),
+                             notify=set_fake_user)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.node_tree.NodeUtils"><code class="flex name class">
+<span>class <span class="ident">NodeUtils</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper methods.
+Most of them have nothing related with nodes and using as aliases of some functionality.
+The class can be surely ignored during creating of new nodes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NodeUtils:
+    &#34;&#34;&#34;
+    Helper methods.
+    Most of them have nothing related with nodes and using as aliases of some functionality.
+    The class can be surely ignored during creating of new nodes.
+    &#34;&#34;&#34;
+    def get_logger(self):
+        if hasattr(self, &#34;draw_label&#34;):
+            name = self.draw_label()
+        else:
+            name = self.label
+        if not name:
+            name = self.bl_label
+        if not name:
+            name = self.__class__.__name__
+
+        # add information about the module location
+        frame, _, line, *_ = inspect.stack()[2]
+        module = inspect.getmodule(frame)
+        module_name = module.__name__ if module is not None else &#39;&#39;
+        name = f&#39;{module_name} {line} ({name})&#39;
+        return sverchok.utils.logging.getLogger(name)
+
+    def debug(self, msg, *args, **kwargs):
+        self.get_logger().debug(msg, *args, **kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self.get_logger().info(msg, *args, **kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        self.get_logger().warning(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self.get_logger().error(msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        self.get_logger().exception(msg, *args, **kwargs)
+
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        &#34;&#34;&#34;
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the node_name and tree_name to the operator.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, &#34;node.view3d_align_from&#34;, icon=&#39;CURSOR&#39;, text=&#39;&#39;)
+
+        &#34;&#34;&#34;
+        op = layout_element.operator(operator_idname, **keywords)
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        return op
+
+    def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
+        &#34;&#34;&#34;
+        fail gracefully?
+        This function acknowledges that the identifier being passed can be a string or an object proper.
+        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+        be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+        but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+        https://developer.blender.org/T58641
+
+        example usage inside a node:
+
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+
+        if the text does not exist you get None
+        &#34;&#34;&#34;
+        if not identifier:
+            # this can happen if a json import goes through attributes arbitrarily.
+            # self.info(&#34;no identifier passed to the get_bpy_data_from_name function.&#34;)
+            return None
+
+        try:
+            if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
+                return bpy_data_kind.get(identifier.name)  # todo it looks ridiculous to search known object
+
+            elif isinstance(identifier, str):
+                if identifier in bpy_data_kind:
+                    return bpy_data_kind.get(identifier)
+                elif identifier[3:] in bpy_data_kind:
+                    return bpy_data_kind.get(identifier[3:])
+                
+                # something went wrong. the blend does not contain the objectname
+                self.info(f&#34;{identifier} not found in {bpy_data_kind}, returning None instead&#34;)
+                if bpy_data_kind.bl_rna.identifier == &#39;BlendDataTexts&#39;:
+                    # if we are in texts and this key is not found:
+                    # - it&#39;s possible the named datablock incurred name collision
+                    # - or it has not yet been created (usually json import, attribute order issue)
+                    file_names = {t.name for t in bpy_data_kind}
+                    self.info(f&#34;The currently loaded blend file does contain the following text files {file_names}&#34;)
+
+
+        except Exception as err:
+            self.error(f&#34;identifier &#39;{identifier}&#39; not found in {bpy_data_kind} - with error {err}&#34;)
+
+        return None
+
+    def safe_socket_remove(self, kind, key, failure_message=None):
+        sockets = getattr(self, kind)
+        if key in sockets:
+            sockets.remove(sockets[key])
+        else:
+            canned_msg = f&#34;{self.name}.{kind} has no socket named {key} - did not remove&#34;
+            self.debug(failure_message or canned_msg)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.node_tree.SverchCustomTreeNode" href="#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.node_tree.NodeUtils.debug"><code class="name flex">
+<span>def <span class="ident">debug</span></span>(<span>self, msg, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug(self, msg, *args, **kwargs):
+    self.get_logger().debug(msg, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.error"><code class="name flex">
+<span>def <span class="ident">error</span></span>(<span>self, msg, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error(self, msg, *args, **kwargs):
+    self.get_logger().error(msg, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.exception"><code class="name flex">
+<span>def <span class="ident">exception</span></span>(<span>self, msg, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exception(self, msg, *args, **kwargs):
+    self.get_logger().exception(msg, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.get_bpy_data_from_name"><code class="name flex">
+<span>def <span class="ident">get_bpy_data_from_name</span></span>(<span>self, identifier, bpy_data_kind)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>fail gracefully?
+This function acknowledges that the identifier being passed can be a string or an object proper.
+for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+<a href="https://developer.blender.org/T58641">https://developer.blender.org/T58641</a></p>
+<p>example usage inside a node:</p>
+<pre><code>text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+</code></pre>
+<p>if the text does not exist you get None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
+    &#34;&#34;&#34;
+    fail gracefully?
+    This function acknowledges that the identifier being passed can be a string or an object proper.
+    for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+    be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+    but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+    regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+    https://developer.blender.org/T58641
+
+    example usage inside a node:
+
+        text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+
+    if the text does not exist you get None
+    &#34;&#34;&#34;
+    if not identifier:
+        # this can happen if a json import goes through attributes arbitrarily.
+        # self.info(&#34;no identifier passed to the get_bpy_data_from_name function.&#34;)
+        return None
+
+    try:
+        if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
+            return bpy_data_kind.get(identifier.name)  # todo it looks ridiculous to search known object
+
+        elif isinstance(identifier, str):
+            if identifier in bpy_data_kind:
+                return bpy_data_kind.get(identifier)
+            elif identifier[3:] in bpy_data_kind:
+                return bpy_data_kind.get(identifier[3:])
+            
+            # something went wrong. the blend does not contain the objectname
+            self.info(f&#34;{identifier} not found in {bpy_data_kind}, returning None instead&#34;)
+            if bpy_data_kind.bl_rna.identifier == &#39;BlendDataTexts&#39;:
+                # if we are in texts and this key is not found:
+                # - it&#39;s possible the named datablock incurred name collision
+                # - or it has not yet been created (usually json import, attribute order issue)
+                file_names = {t.name for t in bpy_data_kind}
+                self.info(f&#34;The currently loaded blend file does contain the following text files {file_names}&#34;)
+
+
+    except Exception as err:
+        self.error(f&#34;identifier &#39;{identifier}&#39; not found in {bpy_data_kind} - with error {err}&#34;)
+
+    return None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.get_logger"><code class="name flex">
+<span>def <span class="ident">get_logger</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_logger(self):
+    if hasattr(self, &#34;draw_label&#34;):
+        name = self.draw_label()
+    else:
+        name = self.label
+    if not name:
+        name = self.bl_label
+    if not name:
+        name = self.__class__.__name__
+
+    # add information about the module location
+    frame, _, line, *_ = inspect.stack()[2]
+    module = inspect.getmodule(frame)
+    module_name = module.__name__ if module is not None else &#39;&#39;
+    name = f&#39;{module_name} {line} ({name})&#39;
+    return sverchok.utils.logging.getLogger(name)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>self, msg, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info(self, msg, *args, **kwargs):
+    self.get_logger().info(msg, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.safe_socket_remove"><code class="name flex">
+<span>def <span class="ident">safe_socket_remove</span></span>(<span>self, kind, key, failure_message=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def safe_socket_remove(self, kind, key, failure_message=None):
+    sockets = getattr(self, kind)
+    if key in sockets:
+        sockets.remove(sockets[key])
+    else:
+        canned_msg = f&#34;{self.name}.{kind} has no socket named {key} - did not remove&#34;
+        self.debug(failure_message or canned_msg)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.warning"><code class="name flex">
+<span>def <span class="ident">warning</span></span>(<span>self, msg, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def warning(self, msg, *args, **kwargs):
+    self.get_logger().warning(msg, *args, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op"><code class="name flex">
+<span>def <span class="ident">wrapper_tracked_ui_draw_op</span></span>(<span>self, layout_element, operator_idname, **keywords)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>this wrapper allows you to track the origin of a clicked operator, by automatically passing
+the node_name and tree_name to the operator.</p>
+<p>example usage:</p>
+<pre><code>row.separator()
+self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+    &#34;&#34;&#34;
+    this wrapper allows you to track the origin of a clicked operator, by automatically passing
+    the node_name and tree_name to the operator.
+
+    example usage:
+
+        row.separator()
+        self.wrapper_tracked_ui_draw_op(row, &#34;node.view3d_align_from&#34;, icon=&#39;CURSOR&#39;, text=&#39;&#39;)
+
+    &#34;&#34;&#34;
+    op = layout_element.operator(operator_idname, **keywords)
+    op.node_name = self.name
+    op.tree_name = self.id_data.name
+    return op</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.node_tree.SvNodeTreeCommon"><code class="flex name class">
+<span>class <span class="ident">SvNodeTreeCommon</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common class for all Sverchok trees (regular trees and group ones)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNodeTreeCommon:
+    &#34;&#34;&#34;Common class for all Sverchok trees (regular trees and group ones)&#34;&#34;&#34;
+    tree_id_memory: StringProperty(default=&#34;&#34;)  # identifier of the tree, should be used via `tree_id` property
+    sv_show_time_nodes: BoolProperty(
+        name=&#34;Node times&#34;,
+        default=False,
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)))
+    show_time_mode: EnumProperty(
+        items=[(n, n, &#39;&#39;) for n in [&#34;Per node&#34;, &#34;Cumulative&#34;]],
+        options=set(),
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        description=&#34;Mode of showing node update timings&#34;,
+    )
+
+    @property
+    def tree_id(self):
+        &#34;&#34;&#34;Identifier of the tree&#34;&#34;&#34;
+        if not self.tree_id_memory:
+            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id_memory
+
+    def update_gl_scale_info(self, origin=None):
+        &#34;&#34;&#34;
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+
+        this is instead of calling `get_dpi_factor` on every redraw.
+        &#34;&#34;&#34;
+
+        debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+        try:
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                prefs.set_nodeview_render_params(None)
+        except Exception as err:
+            debug(&#39;failed to get gl scale info&#39;, err)
+
+    @contextmanager
+    def init_tree(self):
+        &#34;&#34;&#34;It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)&#34;&#34;&#34;
+        is_already_initializing = &#39;init_tree&#39; in self
+        if is_already_initializing:
+            yield self
+        else:
+            self[&#39;init_tree&#39;] = &#39;&#39;
+            try:
+                yield self
+            finally:
+                del self[&#39;init_tree&#39;]
+
+    def update_ui(self, nodes_errors, update_time):
+        &#34;&#34;&#34; The method get information about node statistic of last update from the handler to show in view space
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode&#34;&#34;&#34;
+        update_time = update_time if self.sv_show_time_nodes else cycle([None])
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, &#39;update_ui&#39;):
+                node.update_ui(error, update)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.node_group.SvGroupTree" href="core/node_group.html#sverchok.core.node_group.SvGroupTree">SvGroupTree</a></li>
+<li><a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f8c12b3fe50>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f8c12b3f5e0>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.tree_id_memory"><code class="name">var <span class="ident">tree_id_memory</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': '', 'attr': 'tree_id_memory'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.tree_id"><code class="name">var <span class="ident">tree_id</span></code></dt>
+<dd>
+<div class="desc"><p>Identifier of the tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tree_id(self):
+    &#34;&#34;&#34;Identifier of the tree&#34;&#34;&#34;
+    if not self.tree_id_memory:
+        self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+    return self.tree_id_memory</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.init_tree"><code class="name flex">
+<span>def <span class="ident">init_tree</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It suppresses calling the update method of nodes,
+main usage of it is during generating tree with python (JSON import)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def init_tree(self):
+    &#34;&#34;&#34;It suppresses calling the update method of nodes,
+    main usage of it is during generating tree with python (JSON import)&#34;&#34;&#34;
+    is_already_initializing = &#39;init_tree&#39; in self
+    if is_already_initializing:
+        yield self
+    else:
+        self[&#39;init_tree&#39;] = &#39;&#39;
+        try:
+            yield self
+        finally:
+            del self[&#39;init_tree&#39;]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info"><code class="name flex">
+<span>def <span class="ident">update_gl_scale_info</span></span>(<span>self, origin=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+x,y and dpi scale info.</p>
+<p>this is instead of calling <code>get_dpi_factor</code> on every redraw.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_gl_scale_info(self, origin=None):
+    &#34;&#34;&#34;
+    the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+    x,y and dpi scale info.
+
+    this is instead of calling `get_dpi_factor` on every redraw.
+    &#34;&#34;&#34;
+
+    debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+    try:
+        from sverchok.utils.context_managers import sv_preferences
+        with sv_preferences() as prefs:
+            prefs.set_nodeview_render_params(None)
+    except Exception as err:
+        debug(&#39;failed to get gl scale info&#39;, err)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.update_ui"><code class="name flex">
+<span>def <span class="ident">update_ui</span></span>(<span>self, nodes_errors, update_time)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The method get information about node statistic of last update from the handler to show in view space
+The method is usually called by main handler to reevaluate view of the nodes in the tree
+even if the tree is not in the Live update mode</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_ui(self, nodes_errors, update_time):
+    &#34;&#34;&#34; The method get information about node statistic of last update from the handler to show in view space
+    The method is usually called by main handler to reevaluate view of the nodes in the tree
+    even if the tree is not in the Live update mode&#34;&#34;&#34;
+    update_time = update_time if self.sv_show_time_nodes else cycle([None])
+    for node, error, update in zip(self.nodes, nodes_errors, update_time):
+        if hasattr(node, &#39;update_ui&#39;):
+            node.update_ui(error, update)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree"><code class="flex name class">
+<span>class <span class="ident">SverchCustomTree</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sverchok - architectural node programming of geometry in low level</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SverchCustomTree(NodeTree, SvNodeTreeCommon):
+    &#39;&#39;&#39; Sverchok - architectural node programming of geometry in low level &#39;&#39;&#39;
+    bl_idname = &#39;SverchCustomTreeType&#39;
+    bl_label = &#39;Sverchok Nodes&#39;
+    bl_icon = &#39;RNA&#39;
+
+    def turn_off_ng(self, context):
+        &#34;&#34;&#34;
+        Turn on/off displaying objects in viewport generated by viewer nodes
+        Viewer nodes should have `show_viewport` method which takes &#39;to_show&#39; bool argument
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            try:
+                node.show_viewport(self.sv_show)
+            except AttributeError:
+                pass
+
+    def on_draft_mode_changed(self, context):
+        &#34;&#34;&#34;
+        This is triggered when Draft mode of the tree is toggled.
+        &#34;&#34;&#34;
+        draft_nodes = []
+        for node in self.nodes:
+            if hasattr(node, &#39;does_support_draft_mode&#39;) and node.does_support_draft_mode():
+                draft_nodes.append(node)
+                node.on_draft_mode_changed(self.sv_draft)
+
+        # From the user perspective, some of node parameters
+        # got new parameter values, so the setup should be recalculated;
+        # but technically, node properties were not changed
+        # (only other properties were shown in UI), so enabling/disabling
+        # of draft mode does not automatically trigger tree update.
+        # Here we trigger it manually.
+
+        if draft_nodes:
+            self.update_nodes(draft_nodes)
+
+    sv_process: BoolProperty(
+        name=&#34;Process&#34;,
+        default=True,
+        description=&#39;Update upon tree and node property changes&#39;,
+        update=lambda s, c: handle_event(ev.TreeEvent(s)),
+        options=set(),
+    )
+    sv_animate: BoolProperty(name=&#34;Animate&#34;, default=True, description=&#39;Animate this layout&#39;, options=set())
+    sv_show: BoolProperty(name=&#34;Show&#34;, default=True, description=&#39;Show this layout&#39;, update=turn_off_ng, options=set())
+
+    sv_show_socket_menus: BoolProperty(
+        name = &#34;Show socket menus&#34;,
+        description = &#34;Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!&#34;,
+        default = False,
+        options=set())
+
+    # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
+    sv_draft: BoolProperty(
+        name=&#34;Draft&#34;,
+        description=&#34;Draft (simplified processing) mode&#34;,
+        default=False,
+        update=on_draft_mode_changed,
+        options=set(),
+    )
+    sv_scene_update: BoolProperty(name=&#34;Scene update&#34;, description=&#34;Update upon changes in the scene&#34;, options=set(),
+                                  default=True)
+
+    def update(self):
+        &#34;&#34;&#34;This method is called if collection of nodes or links of the tree was changed&#34;&#34;&#34;
+        handle_event(ev.TreeEvent(self))
+
+    def force_update(self):
+        &#34;&#34;&#34;Update whole tree from scratch&#34;&#34;&#34;
+        # ideally we would never like to use this method but we live in the real world
+        handle_event(ev.ForceEvent(self))
+
+    def update_nodes(self, nodes, cancel=True):
+        &#34;&#34;&#34;This method expects to get list of its nodes which should be updated&#34;&#34;&#34;
+        return handle_event(ev.PropertyEvent(self, nodes))
+
+    def scene_update(self):
+        &#34;&#34;&#34;This method should be called by scene changes handler
+        it ignores events related with S
+        sverchok trees in other cases it updates nodes which read data from Blender&#34;&#34;&#34;
+        handle_event(ev.SceneEvent(self))
+
+    def process_ani(self, frame_changed: bool, animation_playing: bool):
+        &#34;&#34;&#34;
+        Process the Sverchok node tree if animation layers show true.
+        For animation callback/handler
+        &#34;&#34;&#34;
+        handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.NodeTree</li>
+<li>bpy.types.ID</li>
+<li>builtins.bpy_struct</li>
+<li><a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTree.bl_icon"><code class="name">var <span class="ident">bl_icon</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_animate"><code class="name">var <span class="ident">sv_animate</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate', 'default': True, 'description': 'Animate this layout', 'options': set(), 'attr': 'sv_animate'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f8c12ace280>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f8c12ace310>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_scene_update"><code class="name">var <span class="ident">sv_scene_update</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Scene update', 'description': 'Update upon changes in the scene', 'options': set(), 'default': True, 'attr': 'sv_scene_update'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f8c12ace1f0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show_socket_menus"><code class="name">var <span class="ident">sv_show_socket_menus</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show socket menus', 'description': 'Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!', 'default': False, 'options': set(), 'attr': 'sv_show_socket_menus'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTree.force_update"><code class="name flex">
+<span>def <span class="ident">force_update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update whole tree from scratch</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def force_update(self):
+    &#34;&#34;&#34;Update whole tree from scratch&#34;&#34;&#34;
+    # ideally we would never like to use this method but we live in the real world
+    handle_event(ev.ForceEvent(self))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed"><code class="name flex">
+<span>def <span class="ident">on_draft_mode_changed</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This is triggered when Draft mode of the tree is toggled.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def on_draft_mode_changed(self, context):
+    &#34;&#34;&#34;
+    This is triggered when Draft mode of the tree is toggled.
+    &#34;&#34;&#34;
+    draft_nodes = []
+    for node in self.nodes:
+        if hasattr(node, &#39;does_support_draft_mode&#39;) and node.does_support_draft_mode():
+            draft_nodes.append(node)
+            node.on_draft_mode_changed(self.sv_draft)
+
+    # From the user perspective, some of node parameters
+    # got new parameter values, so the setup should be recalculated;
+    # but technically, node properties were not changed
+    # (only other properties were shown in UI), so enabling/disabling
+    # of draft mode does not automatically trigger tree update.
+    # Here we trigger it manually.
+
+    if draft_nodes:
+        self.update_nodes(draft_nodes)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.process_ani"><code class="name flex">
+<span>def <span class="ident">process_ani</span></span>(<span>self, frame_changed: bool, animation_playing: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Process the Sverchok node tree if animation layers show true.
+For animation callback/handler</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_ani(self, frame_changed: bool, animation_playing: bool):
+    &#34;&#34;&#34;
+    Process the Sverchok node tree if animation layers show true.
+    For animation callback/handler
+    &#34;&#34;&#34;
+    handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.scene_update"><code class="name flex">
+<span>def <span class="ident">scene_update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method should be called by scene changes handler
+it ignores events related with S
+sverchok trees in other cases it updates nodes which read data from Blender</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scene_update(self):
+    &#34;&#34;&#34;This method should be called by scene changes handler
+    it ignores events related with S
+    sverchok trees in other cases it updates nodes which read data from Blender&#34;&#34;&#34;
+    handle_event(ev.SceneEvent(self))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.turn_off_ng"><code class="name flex">
+<span>def <span class="ident">turn_off_ng</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Turn on/off displaying objects in viewport generated by viewer nodes
+Viewer nodes should have <code>show_viewport</code> method which takes 'to_show' bool argument</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def turn_off_ng(self, context):
+    &#34;&#34;&#34;
+    Turn on/off displaying objects in viewport generated by viewer nodes
+    Viewer nodes should have `show_viewport` method which takes &#39;to_show&#39; bool argument
+    &#34;&#34;&#34;
+    for node in self.nodes:
+        try:
+            node.show_viewport(self.sv_show)
+        except AttributeError:
+            pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method is called if collection of nodes or links of the tree was changed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self):
+    &#34;&#34;&#34;This method is called if collection of nodes or links of the tree was changed&#34;&#34;&#34;
+    handle_event(ev.TreeEvent(self))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTree.update_nodes"><code class="name flex">
+<span>def <span class="ident">update_nodes</span></span>(<span>self, nodes, cancel=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method expects to get list of its nodes which should be updated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_nodes(self, nodes, cancel=True):
+    &#34;&#34;&#34;This method expects to get list of its nodes which should be updated&#34;&#34;&#34;
+    return handle_event(ev.PropertyEvent(self, nodes))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.init_tree" href="#sverchok.node_tree.SvNodeTreeCommon.init_tree">init_tree</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.tree_id" href="#sverchok.node_tree.SvNodeTreeCommon.tree_id">tree_id</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info" href="#sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info">update_gl_scale_info</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_ui" href="#sverchok.node_tree.SvNodeTreeCommon.update_ui">update_ui</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode"><code class="flex name class">
+<span>class <span class="ident">SverchCustomTreeNode</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all nodes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+    &#34;&#34;&#34;Base class for all nodes&#34;&#34;&#34;
+    _docstring = None  # A cache for docstring property
+
+    def draw_buttons(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;, icon_only=True)
+            if self.is_scene_dependent:
+                row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;, icon_only=True)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+        self.sv_draw_buttons(context, layout)
+
+    def sv_draw_buttons(self, context, layout):
+        pass
+
+    def draw_buttons_ext(self, context, layout):
+        if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+            row = layout.row(align=True)
+            if self.is_animation_dependent:
+                row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;)
+            if self.is_scene_dependent:
+                row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;)
+            if self.is_animation_dependent or self.is_scene_dependent:
+                row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+        self.sv_draw_buttons_ext(context, layout)
+
+    def sv_draw_buttons_ext(self, context, layout):
+        self.sv_draw_buttons(context, layout)
+
+    @property
+    def sv_internal_links(self) -&gt; Iterable[tuple[NodeSocket, NodeSocket]]:
+        &#34;&#34;&#34;Override the property to change logic of connecting sockets
+        when the node is muted.
+        Also, there are some basic implementations `utils/nodes_mixins/sockets_config`&#34;&#34;&#34;
+        for link in self.internal_links:
+            yield link.from_socket, link.to_socket
+
+    @classproperty
+    def docstring(cls):
+        &#34;&#34;&#34;
+        Get SvDocstring instance parsed from node&#39;s docstring.
+        &#34;&#34;&#34;
+        if cls._docstring is None:
+            cls._docstring = SvDocstring(cls.__doc__)
+        return cls._docstring
+
+    @classmethod
+    def poll(cls, ntree):
+        return ntree.bl_idname in [&#39;SverchCustomTreeType&#39;, &#39;SvGroupTree&#39;]
+
+    @property
+    def absolute_location(self):
+        &#34;&#34;&#34;
+        When a node is inside a frame (and parented to it) then node.location is relative to its parent&#39;s location.
+        This function returns the location in absolute screen terms whether the node is framed or not.
+
+        The return type is a tuple (x, y)  (not a Vector)
+        &#34;&#34;&#34;
+        return recursive_framed_location_finder(self, self.location[:])
+
+    @property
+    def sv_default_color(self):
+        return color_def.get_color(self.bl_idname)
+
+    def set_temp_color(self, color=None):
+        &#34;&#34;&#34;This method memorize its initial color and override it with given one
+        if given color is None it tries to return its initial color or do nothing&#34;&#34;&#34;
+
+        if color is None:
+            # looks like the node should return its initial color (user choice)
+            if &#39;user_color&#39; in self:
+                self.use_custom_color = self[&#39;use_user_color&#39;]
+                del self[&#39;use_user_color&#39;]
+                self.color = self[&#39;user_color&#39;]
+                del self[&#39;user_color&#39;]
+
+        # set temporary color
+        else:
+            # save overridden color (only once)
+            if &#39;user_color&#39; not in self:
+                self[&#39;use_user_color&#39;] = self.use_custom_color
+                self[&#39;user_color&#39;] = self.color
+            self.use_custom_color = True
+            self.color = color
+
+    def rclick_menu(self, context, layout):
+        &#34;&#34;&#34;
+        Override this method to add specific items into the node&#39;s right-click menu.
+        Default implementation calls `node_replacement_menu&#39;.
+        &#34;&#34;&#34;
+        self.node_replacement_menu(context, layout)
+
+    # Replacing old nodes by new - functionality
+
+    def node_replacement_menu(self, context, layout):
+        &#34;&#34;&#34;
+        Draw menu items with node replacement operators.
+        This is called from `rclick_menu()&#39; method by default.
+        Items are defined by `replacement_nodes&#39; class property.
+        Expected format is
+
+            replacement_nodes = [
+                (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+            ]
+
+        where new_node_bl_idname is bl_idname of replacement node class,
+        inputs_mapping_dict is a dictionary mapping names of inputs of this node
+        to names of inputs to new node, and outputs_mapping_dict is a dictionary
+        mapping names of outputs of this node to names of outputs of new node.
+        inputs_mapping_dict and outputs_mapping_dict can be None.
+        &#34;&#34;&#34;
+        if hasattr(self, &#34;replacement_nodes&#34;):
+            for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
+                node_class = get_node_class_reference(bl_idname)
+                if node_class:
+                    text = &#34;Replace with {}&#34;.format(node_class.bl_label)
+                    op = layout.operator(&#34;node.sv_replace_node&#34;, text=text)
+                    op.old_node_name = self.name
+                    op.new_bl_idname = bl_idname
+                    set_inputs_mapping(op, inputs_mapping)
+                    set_outputs_mapping(op, outputs_mapping)
+                else:
+                    self.error(&#34;Can&#39;t build replacement menu: no such node class: %s&#34;,bl_idname)
+
+    def migrate_links_from(self, old_node, operator):
+        &#34;&#34;&#34;
+        This method is called by node replacement operator.
+        By default, it removes existing links from old_node
+        and creates corresponding links for this (new) node.
+        Override it to implement custom re-linking at node
+        replacement.
+        Most nodes do not have to override this method.
+        &#34;&#34;&#34;
+        tree = self.id_data
+        # Copy incoming / outgoing links
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug(&#34;New node %s has no input named %s, skipping&#34;, self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug(&#34;New node %s has no output named %s, skipping&#34;, self.name, new_source_socket_name)
+
+    def migrate_from(self, old_node):
+        &#34;&#34;&#34;
+        This method is called by node replacement operator.
+        Override it to correctly copy settings from old_node
+        to this (new) node.
+        This is called after migrate_links_from().
+        Default implementation does nothing.
+        &#34;&#34;&#34;
+        pass
+
+    @property
+    def prefs_over_sized_buttons(self):
+        try:
+            addon = bpy.context.preferences.addons.get(sverchok.__name__)
+            prefs = addon.preferences
+        except Exception as err:
+            print(&#39;failed to access addon preferences for button size&#39;, err)
+            return False
+        return prefs.over_sized_buttons</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a></li>
+<li><a title="sverchok.node_tree.NodeUtils" href="#sverchok.node_tree.NodeUtils">NodeUtils</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.node_group.SvGroupTreeNode" href="core/node_group.html#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a></li>
+<li>sverchok.nodes.CAD.crop_mesh_2d.SvCropMesh2D</li>
+<li>sverchok.nodes.CAD.edges_intersect_mk3.SvIntersectEdgesNodeMK3</li>
+<li>sverchok.nodes.CAD.edges_to_faces_2d.SvEdgesToFaces2D</li>
+<li>sverchok.nodes.CAD.inset_special_mk2.SvInsetSpecialMk2</li>
+<li>sverchok.nodes.CAD.merge_mesh_2d.SvMergeMesh2D</li>
+<li>sverchok.nodes.CAD.merge_mesh_2d_lite.SvMergeMesh2DLite</li>
+<li>sverchok.nodes.analyzer.area.SvAreaNode</li>
+<li>sverchok.nodes.analyzer.bbox_mk3.SvBBoxNodeMk3</li>
+<li>sverchok.nodes.analyzer.bvh_overlap_polys.SvBvhOverlapNodeNew</li>
+<li>sverchok.nodes.analyzer.chess_selection.SvChessSelection</li>
+<li>sverchok.nodes.analyzer.circle_approx.SvCircleApproxNode</li>
+<li>sverchok.nodes.analyzer.component_analyzer.SvComponentAnalyzerNode</li>
+<li>sverchok.nodes.analyzer.deformation.SvDeformationNode</li>
+<li>sverchok.nodes.analyzer.diameter.SvDiameterNode</li>
+<li>sverchok.nodes.analyzer.distance_line_line.SvDistancetLineLineNode</li>
+<li>sverchok.nodes.analyzer.distance_point_line.SvDistancePointLineNode</li>
+<li>sverchok.nodes.analyzer.distance_point_plane.SvDistancePointPlaneNode</li>
+<li>sverchok.nodes.analyzer.distance_pp.DistancePPNode</li>
+<li>sverchok.nodes.analyzer.edge_angles.SvEdgeAnglesNode</li>
+<li>sverchok.nodes.analyzer.image_components.SvImageComponentsNode</li>
+<li>sverchok.nodes.analyzer.inscribed_circle.SvInscribedCircleNode</li>
+<li>sverchok.nodes.analyzer.intersect_circle_circle.SvIntersectCircleCircleNode</li>
+<li>sverchok.nodes.analyzer.intersect_line_sphere.SvIntersectLineSphereNode</li>
+<li>sverchok.nodes.analyzer.intersect_plane_plane.SvIntersectPlanePlaneNode</li>
+<li>sverchok.nodes.analyzer.kd_tree_MK2.SvKDTreeNodeMK2</li>
+<li>sverchok.nodes.analyzer.kd_tree_edges.SvKDTreeEdgesNodeMK3</li>
+<li>sverchok.nodes.analyzer.kd_tree_path.SvKDTreePathNode</li>
+<li>sverchok.nodes.analyzer.linear_approx.SvLinearApproxNode</li>
+<li>sverchok.nodes.analyzer.linked_verts.SvLinkedVertsNode</li>
+<li>sverchok.nodes.analyzer.mesh_filter.SvMeshFilterNode</li>
+<li>sverchok.nodes.analyzer.mesh_select_mk2.SvMeshSelectNodeMk2</li>
+<li>sverchok.nodes.analyzer.nearest_point_on_mesh.SvNearestPointOnMeshNode</li>
+<li>sverchok.nodes.analyzer.normals_mk2.SvGetNormalsNodeMk2</li>
+<li>sverchok.nodes.analyzer.object_insolation.SvOBJInsolationNode</li>
+<li>sverchok.nodes.analyzer.origins.SvOrigins</li>
+<li>sverchok.nodes.analyzer.path_length_2.SvPathLengthMk2Node</li>
+<li>sverchok.nodes.analyzer.points_inside_mesh.SvPointInside</li>
+<li>sverchok.nodes.analyzer.project_point_to_line.SvProjectPointToLine</li>
+<li>sverchok.nodes.analyzer.proportional.SvProportionalEditNode</li>
+<li>sverchok.nodes.analyzer.raycaster_lite.SvRaycasterLiteNode</li>
+<li>sverchok.nodes.analyzer.select_similar.SvSelectSimilarNode</li>
+<li>sverchok.nodes.analyzer.sphere_approx.SvSphereApproxNode</li>
+<li>sverchok.nodes.analyzer.steiner_ellipse.SvSteinerEllipseNode</li>
+<li>sverchok.nodes.analyzer.volume.SvVolumeNodeMK2</li>
+<li>sverchok.nodes.analyzer.wave_paint.SvWavePainterNode</li>
+<li>sverchok.nodes.bmesh_nodes.bmesh_analyzer_big.SvBManalyzinNode</li>
+<li>sverchok.nodes.bmesh_nodes.bmesh_obj_in.SvBMObjinputNode</li>
+<li>sverchok.nodes.bmesh_nodes.bmesh_out.SvBMoutputNode</li>
+<li>sverchok.nodes.bmesh_nodes.bmesh_to_element.SvBMtoElementNode</li>
+<li>sverchok.nodes.color.color_in_mk1.SvColorsInNodeMK1</li>
+<li>sverchok.nodes.color.color_input.SvColorInputNode</li>
+<li>sverchok.nodes.color.color_mix.SvColorMixNode</li>
+<li>sverchok.nodes.color.color_out_mk1.SvColorsOutNodeMK1</li>
+<li>sverchok.nodes.color.color_ramp.SvColorRampNode</li>
+<li>sverchok.nodes.color.formula_color.SvFormulaColorNode</li>
+<li>sverchok.nodes.color.texture_evaluate_mk2.SvTextureEvaluateNodeMk2</li>
+<li>sverchok.nodes.curve.adaptive_plot.SvAdaptivePlotCurveNode</li>
+<li>sverchok.nodes.curve.adaptive_plot_nurbs.SvAdaptivePlotNurbsCurveNode</li>
+<li>sverchok.nodes.curve.apply_field_to_curve.SvApplyFieldToCurveNode</li>
+<li>sverchok.nodes.curve.approximate_nurbs_curve.SvApproxNurbsCurveMk2Node</li>
+<li>sverchok.nodes.curve.arc_3pt.SvArc3ptCurveNode</li>
+<li>sverchok.nodes.curve.arc_sed.SvArcSedCurveNode</li>
+<li>sverchok.nodes.curve.bezier_fit.SvExBezierCurveFitNode</li>
+<li>sverchok.nodes.curve.bezier_spline.SvBezierSplineNode</li>
+<li>sverchok.nodes.curve.biarc.SvBiArcNode</li>
+<li>sverchok.nodes.curve.blend_curves.SvBlendCurvesMk2Node</li>
+<li>sverchok.nodes.curve.cast_curve.SvCastCurveNode</li>
+<li>sverchok.nodes.curve.catenary_curve.SvExCatenaryCurveNode</li>
+<li>sverchok.nodes.curve.circle.SvCircleCurveMk2Node</li>
+<li>sverchok.nodes.curve.concat_curves.SvConcatCurvesNode</li>
+<li>sverchok.nodes.curve.cubic_spline.SvCubicSplineNode</li>
+<li>sverchok.nodes.curve.curvature.SvCurveCurvatureNode</li>
+<li>sverchok.nodes.curve.curve_formula.SvCurveFormulaNode</li>
+<li>sverchok.nodes.curve.curve_frame.SvCurveFrameNode</li>
+<li>sverchok.nodes.curve.curve_frame_on_surface.SvCurveFrameOnSurfNode</li>
+<li>sverchok.nodes.curve.curve_length.SvCurveLengthNode</li>
+<li>sverchok.nodes.curve.curve_lerp.SvCurveLerpCurveNode</li>
+<li>sverchok.nodes.curve.curve_on_surface.SvCurveOnSurfaceNode</li>
+<li>sverchok.nodes.curve.curve_range.SvCurveRangeNode</li>
+<li>sverchok.nodes.curve.curve_segment.SvCurveSegmentNode</li>
+<li>sverchok.nodes.curve.deconstruct_curve.SvDeconstructCurveNode</li>
+<li>sverchok.nodes.curve.elevate_degree.SvCurveElevateDegreeNode</li>
+<li>sverchok.nodes.curve.ellipse.SvEllipseCurveNode</li>
+<li>sverchok.nodes.curve.endpoints.SvCurveEndpointsNode</li>
+<li>sverchok.nodes.curve.eval_curve.SvEvalCurveNode</li>
+<li>sverchok.nodes.curve.extend_curve.SvExtendCurveNode</li>
+<li>sverchok.nodes.curve.extremes.SvExCurveExtremesNode</li>
+<li>sverchok.nodes.curve.fillet_polyline.SvFilletPolylineNode</li>
+<li>sverchok.nodes.curve.flip_curve.SvFlipCurveNode</li>
+<li>sverchok.nodes.curve.freecad_helix.SvFreeCadHelixNode</li>
+<li>sverchok.nodes.curve.insert_knot.SvCurveInsertKnotNode</li>
+<li>sverchok.nodes.curve.interpolate_frame.SvExSlerpCurveFrameNode</li>
+<li>sverchok.nodes.curve.interpolate_nurbs_curve.SvExInterpolateNurbsCurveNode</li>
+<li>sverchok.nodes.curve.intersect_curve_plane.SvExCrossCurvePlaneNode</li>
+<li>sverchok.nodes.curve.intersect_curves.SvIntersectNurbsCurvesNode</li>
+<li>sverchok.nodes.curve.iso_uv_curve.SvIsoUvCurveNode</li>
+<li>sverchok.nodes.curve.kinky_curve.SvKinkyCurveNode</li>
+<li>sverchok.nodes.curve.length_parameter.SvCurveLengthParameterNode</li>
+<li>sverchok.nodes.curve.length_rebuild.SvLengthRebuildCurveNode</li>
+<li>sverchok.nodes.curve.line.SvLineCurveNode</li>
+<li>sverchok.nodes.curve.marching_squares.SvExMarchingSquaresNode</li>
+<li>sverchok.nodes.curve.marching_squares_on_surface.SvExMSquaresOnSurfaceNode</li>
+<li>sverchok.nodes.curve.move_nurbs_curve_point.SvNurbsCurveMovePointNode</li>
+<li>sverchok.nodes.curve.nearest_point.SvExNearestPointOnCurveNode</li>
+<li>sverchok.nodes.curve.nurbs_curve.SvExNurbsCurveNode</li>
+<li>sverchok.nodes.curve.nurbs_curve_nodes.SvNurbsCurveNodesNode</li>
+<li>sverchok.nodes.curve.offset_mk2.SvOffsetCurveMk2Node</li>
+<li>sverchok.nodes.curve.offset_on_surface.SvCurveOffsetOnSurfaceNode</li>
+<li>sverchok.nodes.curve.ortho_project.SvExOrthoProjectCurveNode</li>
+<li>sverchok.nodes.curve.polyarc.SvPolyArcNode</li>
+<li>sverchok.nodes.curve.polyline.SvPolylineNode</li>
+<li>sverchok.nodes.curve.project_curve_surface.SvProjectCurveSurfaceNode</li>
+<li>sverchok.nodes.curve.rbf_curve.SvExRbfCurveNode</li>
+<li>sverchok.nodes.curve.reduce_degree.SvCurveReduceDegreeNode</li>
+<li>sverchok.nodes.curve.refine_nurbs_curve.SvRefineNurbsCurveNode</li>
+<li>sverchok.nodes.curve.remove_excessive_knots.SvCurveRemoveExcessiveKnotsNode</li>
+<li>sverchok.nodes.curve.remove_knot.SvCurveRemoveKnotNode</li>
+<li>sverchok.nodes.curve.reparametrize.SvReparametrizeCurveNode</li>
+<li>sverchok.nodes.curve.rounded_rectangle.SvRoundedRectangleNode</li>
+<li>sverchok.nodes.curve.sort_curves.SvSortCurvesNode</li>
+<li>sverchok.nodes.curve.split_curve.SvSplitCurveNode</li>
+<li>sverchok.nodes.curve.surface_boundary.SvSurfaceBoundaryNode</li>
+<li>sverchok.nodes.curve.tangent_curve.SvTangentsCurveNode</li>
+<li>sverchok.nodes.curve.torsion.SvCurveTorsionNode</li>
+<li>sverchok.nodes.curve.zero_twist_frame.SvCurveZeroTwistFrameNode</li>
+<li>sverchok.nodes.dictionary.dictionary_in.SvDictionaryIn</li>
+<li>sverchok.nodes.dictionary.dictionary_out.SvDictionaryOut</li>
+<li>sverchok.nodes.exchange.bezier_in.SvBezierInNode</li>
+<li>sverchok.nodes.exchange.export_rw3dm_json.SvExNurbsToJsonNode</li>
+<li>sverchok.nodes.exchange.gcode_exporter.SvExportGcodeNode</li>
+<li>sverchok.nodes.exchange.import_rw3dm_json.SvExJsonToNurbsNode</li>
+<li>sverchok.nodes.exchange.nurbs_in.SvExNurbsInNode</li>
+<li>sverchok.nodes.exchange.receive_from_sorcar.SvReceiveFromSorcarNode</li>
+<li>sverchok.nodes.field.attractor_field_mk2.SvAttractorFieldNodeMk2</li>
+<li>sverchok.nodes.field.bend_along_surface.SvBendAlongSurfaceFieldNode</li>
+<li>sverchok.nodes.field.compose_vector_field.SvComposeVectorFieldNode</li>
+<li>sverchok.nodes.field.coordinate_scalar_field.SvCoordScalarFieldNode</li>
+<li>sverchok.nodes.field.curve_bend_field.SvBendAlongCurveFieldNode</li>
+<li>sverchok.nodes.field.decompose_vector_field.SvDecomposeVectorFieldNode</li>
+<li>sverchok.nodes.field.differential_operations.SvFieldDiffOpsNode</li>
+<li>sverchok.nodes.field.image_field.SvImageFieldNode</li>
+<li>sverchok.nodes.field.merge_scalar_fields.SvMergeScalarFieldsNode</li>
+<li>sverchok.nodes.field.mesh_normal_field.SvExMeshNormalFieldNode</li>
+<li>sverchok.nodes.field.mesh_surface_field.SvMeshSurfaceFieldNode</li>
+<li>sverchok.nodes.field.minimal_sfield.SvExMinimalScalarFieldNode</li>
+<li>sverchok.nodes.field.minimal_vfield.SvExMinimalVectorFieldNode</li>
+<li>sverchok.nodes.field.noise_vfield.SvNoiseVectorFieldNode</li>
+<li>sverchok.nodes.field.rotation_field.SvRotationFieldNode</li>
+<li>sverchok.nodes.field.scalar_field_curvature.SvScalarFieldCurvatureNode</li>
+<li>sverchok.nodes.field.scalar_field_curve_map.SvScalarFieldCurveMapNode</li>
+<li>sverchok.nodes.field.scalar_field_eval.SvScalarFieldEvaluateNode</li>
+<li>sverchok.nodes.field.scalar_field_formula.SvScalarFieldFormulaNode</li>
+<li>sverchok.nodes.field.scalar_field_graph.SvExScalarFieldGraphNode</li>
+<li>sverchok.nodes.field.scalar_field_math.SvScalarFieldMathNode</li>
+<li>sverchok.nodes.field.scalar_field_point.SvScalarFieldPointNode</li>
+<li>sverchok.nodes.field.vector_field_apply.SvVectorFieldApplyNode</li>
+<li>sverchok.nodes.field.vector_field_eval.SvVectorFieldEvaluateNode</li>
+<li>sverchok.nodes.field.vector_field_formula.SvVectorFieldFormulaNode</li>
+<li>sverchok.nodes.field.vector_field_graph.SvVectorFieldGraphNode</li>
+<li>sverchok.nodes.field.vector_field_lines.SvVectorFieldLinesNode</li>
+<li>sverchok.nodes.field.vector_field_math.SvVectorFieldMathNode</li>
+<li>sverchok.nodes.field.voronoi_field.SvVoronoiFieldNode</li>
+<li>sverchok.nodes.generator.basic_3pt_arc.svBasicArcNode</li>
+<li>sverchok.nodes.generator.basic_spline.BasicSplineNode</li>
+<li>sverchok.nodes.generator.box_mk2.SvBoxNodeMk2</li>
+<li>sverchok.nodes.generator.bricks.SvBricksNode</li>
+<li>sverchok.nodes.generator.circle.SvCircleNode</li>
+<li>sverchok.nodes.generator.cricket.SvCricketNode</li>
+<li>sverchok.nodes.generator.cylinder_mk2.SvCylinderNodeMK2</li>
+<li>sverchok.nodes.generator.formula_shape.SvFormulaShapeNode</li>
+<li>sverchok.nodes.generator.icosphere.SvIcosphereNode</li>
+<li>sverchok.nodes.generator.image.ImageNode</li>
+<li>sverchok.nodes.generator.line_mk4.SvLineNodeMK4</li>
+<li>sverchok.nodes.generator.ngon.SvNGonNode</li>
+<li>sverchok.nodes.generator.plane_mk3.SvPlaneNodeMk3</li>
+<li>sverchok.nodes.generator.quad_spline.SvQuadraticSplineNode</li>
+<li>sverchok.nodes.generator.random_vector_mk3.RandomVectorNodeMK3</li>
+<li>sverchok.nodes.generator.segment.SvSegmentGenerator</li>
+<li>sverchok.nodes.generator.sphere.SphereNode</li>
+<li>sverchok.nodes.generator.suzanne.SvSuzanneNode</li>
+<li>sverchok.nodes.generator.torus_mk2.SvTorusNodeMK2</li>
+<li>sverchok.nodes.generators_extended.box_rounded.SvBoxRoundedNode</li>
+<li>sverchok.nodes.generators_extended.conic_section.SvConicSectionNode</li>
+<li>sverchok.nodes.generators_extended.ellipse_mk3.SvEllipseNodeMK3</li>
+<li>sverchok.nodes.generators_extended.hilbert.HilbertNode</li>
+<li>sverchok.nodes.generators_extended.hilbert3d.Hilbert3dNode</li>
+<li>sverchok.nodes.generators_extended.hilbert_image.HilbertImageNode</li>
+<li>sverchok.nodes.generators_extended.pentagon_tiler.SvPentagonTilerNode</li>
+<li>sverchok.nodes.generators_extended.polygon_grid.SvPolygonGridNode</li>
+<li>sverchok.nodes.generators_extended.regular_solid.SvRegularSolid</li>
+<li>sverchok.nodes.generators_extended.ring_mk2.SvRingNodeMK2</li>
+<li>sverchok.nodes.generators_extended.smooth_lines.SvSmoothLines</li>
+<li>sverchok.nodes.generators_extended.spiral_mk2.SvSpiralNodeMK2</li>
+<li>sverchok.nodes.generators_extended.super_ellipsoid.SvSuperEllipsoidNode</li>
+<li>sverchok.nodes.generators_extended.torus_knot_mk2.SvTorusKnotNodeMK2</li>
+<li>sverchok.nodes.generators_extended.triangle.SvTriangleNode</li>
+<li>sverchok.nodes.generators_extended.wfc_texture.SvWFCTextureNode</li>
+<li>sverchok.nodes.layout.converter.ConverterNode</li>
+<li>sverchok.nodes.layout.wifi_in.WifiInNode</li>
+<li>sverchok.nodes.layout.wifi_out.WifiOutNode</li>
+<li>sverchok.nodes.list_main.constant.SvConstantListNode</li>
+<li>sverchok.nodes.list_main.decompose.SvListDecomposeNode</li>
+<li>sverchok.nodes.list_main.func.ListFuncNode</li>
+<li>sverchok.nodes.list_main.index.SvIndexListNode</li>
+<li>sverchok.nodes.list_main.join.ListJoinNode</li>
+<li>sverchok.nodes.list_main.length.ListLengthNode</li>
+<li>sverchok.nodes.list_main.levels.ListLevelsNode</li>
+<li>sverchok.nodes.list_main.match.ListMatchNode</li>
+<li>sverchok.nodes.list_main.statistics.SvListStatisticsNode</li>
+<li>sverchok.nodes.list_main.sum_mk2.ListSumNodeMK2</li>
+<li>sverchok.nodes.list_main.zip.ZipNode</li>
+<li>sverchok.nodes.list_masks.calc_mask.SvCalcMaskNode</li>
+<li>sverchok.nodes.list_masks.index_to_mask.SvIndexToMaskNode</li>
+<li>sverchok.nodes.list_masks.mask.MaskListNode</li>
+<li>sverchok.nodes.list_masks.mask_convert.SvMaskConvertNode</li>
+<li>sverchok.nodes.list_masks.mask_join.SvMaskJoinNodeMK2</li>
+<li>sverchok.nodes.list_masks.mask_to_index.SvMaskToIndexNode</li>
+<li>sverchok.nodes.list_mutators.combinatorics.SvCombinatoricsNode</li>
+<li>sverchok.nodes.list_mutators.filter_empty_lists.SvFixEmptyObjectsNode</li>
+<li>sverchok.nodes.list_mutators.find_closest.SvFindClosestValue</li>
+<li>sverchok.nodes.list_mutators.modifier.SvListModifierNode</li>
+<li>sverchok.nodes.list_mutators.multi_cache.SvMultiCacheNode</li>
+<li>sverchok.nodes.list_mutators.polygon_sort.SvPolygonSortNode</li>
+<li>sverchok.nodes.list_mutators.unique_items.SvUniqueItemsNode</li>
+<li>sverchok.nodes.list_mutators.vd_attr_node_mk2.SvVDAttrsNodeMk2</li>
+<li>sverchok.nodes.list_struct.flip.ListFlipNode</li>
+<li>sverchok.nodes.list_struct.item.SvListItemNode</li>
+<li>sverchok.nodes.list_struct.item_insert.SvListItemInsertNode</li>
+<li>sverchok.nodes.list_struct.levels.SvListLevelsNodeMK2</li>
+<li>sverchok.nodes.list_struct.numpy_array.SvNumpyArrayNode</li>
+<li>sverchok.nodes.list_struct.repeater.ListRepeaterNode</li>
+<li>sverchok.nodes.list_struct.reverse.ListReverseNode</li>
+<li>sverchok.nodes.list_struct.shift_mk2.ShiftNodeMK2</li>
+<li>sverchok.nodes.list_struct.shuffle.ListShuffleNode</li>
+<li>sverchok.nodes.list_struct.slice.ListSliceNode</li>
+<li>sverchok.nodes.list_struct.slice_lite.SvListSliceLiteNode</li>
+<li>sverchok.nodes.list_struct.sort.SvListSortNode</li>
+<li>sverchok.nodes.list_struct.split.SvListSplitNode</li>
+<li>sverchok.nodes.list_struct.start_end.ListFLNode</li>
+<li>sverchok.nodes.logic.custom_switcher.SvCustomSwitcher</li>
+<li>sverchok.nodes.logic.evolver.SvEvolverNode</li>
+<li>sverchok.nodes.logic.genes_holder.SvGenesHolderNode</li>
+<li>sverchok.nodes.logic.input_switch_mod.SvInputSwitchNodeMOD</li>
+<li>sverchok.nodes.logic.logic_node.SvLogicNodeMK2</li>
+<li>sverchok.nodes.logic.loop_in.SvLoopInNode</li>
+<li>sverchok.nodes.logic.loop_out.SvLoopOutNode</li>
+<li>sverchok.nodes.logic.neuro_elman.SvNeuroElman1LNode</li>
+<li>sverchok.nodes.logic.range_switch.SvRangeSwitchNode</li>
+<li>sverchok.nodes.logic.switch_MK2.SvSwitchNodeMK2</li>
+<li>sverchok.nodes.matrix.apply_and_join.SvMatrixApplyJoinNode</li>
+<li>sverchok.nodes.matrix.deform.MatrixDeformNode</li>
+<li>sverchok.nodes.matrix.euler.SvMatrixEulerNode</li>
+<li>sverchok.nodes.matrix.input.SvMatrixValueIn</li>
+<li>sverchok.nodes.matrix.interpolation.MatrixInterpolationNode</li>
+<li>sverchok.nodes.matrix.iterate.SvIterateNode</li>
+<li>sverchok.nodes.matrix.matrix_in_mk4.SvMatrixInNodeMK4</li>
+<li>sverchok.nodes.matrix.matrix_math.SvMatrixMathNode</li>
+<li>sverchok.nodes.matrix.matrix_normal.SvMatrixNormalNode</li>
+<li>sverchok.nodes.matrix.matrix_out_mk2.SvMatrixOutNodeMK2</li>
+<li>sverchok.nodes.matrix.matrix_track_to.SvMatrixTrackToNode</li>
+<li>sverchok.nodes.matrix.shear.MatrixShearNode</li>
+<li>sverchok.nodes.modifier_change.bevel.SvBevelNode</li>
+<li>sverchok.nodes.modifier_change.delete_loose.SvDeleteLooseNode</li>
+<li>sverchok.nodes.modifier_change.dissolve_mesh_elements.SvDissolveMeshElements</li>
+<li>sverchok.nodes.modifier_change.edge_boom.SvEdgeBoomNode</li>
+<li>sverchok.nodes.modifier_change.edge_split.SvSplitEdgesMk3Node</li>
+<li>sverchok.nodes.modifier_change.edgenet_to_paths.SvEdgenetToPathsNode</li>
+<li>sverchok.nodes.modifier_change.extrude_edges_mk2.SvExtrudeEdgesNodeMk2</li>
+<li>sverchok.nodes.modifier_change.extrude_multi_alt.SvMultiExtrudeAlt</li>
+<li>sverchok.nodes.modifier_change.extrude_region.SvExtrudeRegionNode</li>
+<li>sverchok.nodes.modifier_change.extrude_separate.SvExtrudeSeparateNode</li>
+<li>sverchok.nodes.modifier_change.extrude_separate_lite.SvExtrudeSeparateLiteNode</li>
+<li>sverchok.nodes.modifier_change.flat_geometry.SvFlatGeometryNode</li>
+<li>sverchok.nodes.modifier_change.flip_normals.SvFlipNormalsNode</li>
+<li>sverchok.nodes.modifier_change.follow_active_quads.SvFollowActiveQuads</li>
+<li>sverchok.nodes.modifier_change.holes_fill.SvFillHolesNode</li>
+<li>sverchok.nodes.modifier_change.inset_faces.SvInsetFaces</li>
+<li>sverchok.nodes.modifier_change.limited_dissolve.SvLimitedDissolve</li>
+<li>sverchok.nodes.modifier_change.limited_dissolve_mk2.SvLimitedDissolveMK2</li>
+<li>sverchok.nodes.modifier_change.make_monotone.SvMakeMonotone</li>
+<li>sverchok.nodes.modifier_change.merge_by_distance.SvMergeByDistanceNode</li>
+<li>sverchok.nodes.modifier_change.mesh_beautify.SvMeshBeautify</li>
+<li>sverchok.nodes.modifier_change.mesh_clean.SvMeshCleanNode</li>
+<li>sverchok.nodes.modifier_change.mesh_join_mk2.SvMeshJoinNodeMk2</li>
+<li>sverchok.nodes.modifier_change.mesh_separate.SvSeparateMeshNode</li>
+<li>sverchok.nodes.modifier_change.mesh_separate_mk2.SvSeparateMeshNodeMK2</li>
+<li>sverchok.nodes.modifier_change.objects_along_edge.SvDuplicateAlongEdgeNode</li>
+<li>sverchok.nodes.modifier_change.offset.SvOffsetNode</li>
+<li>sverchok.nodes.modifier_change.opensubdivision.SvOpenSubdivisionNode</li>
+<li>sverchok.nodes.modifier_change.planar_edgenet_to_polygons.SvPlanarEdgenetToPolygons</li>
+<li>sverchok.nodes.modifier_change.planar_faces.SvPlanarFacesNode</li>
+<li>sverchok.nodes.modifier_change.poke.SvPokeFacesNode</li>
+<li>sverchok.nodes.modifier_change.polygons_boom.PolygonBoomNode</li>
+<li>sverchok.nodes.modifier_change.polygons_to_edges_mk2.SvPols2EdgsNodeMk2</li>
+<li>sverchok.nodes.modifier_change.recalc_normals.SvRecalcNormalsNode</li>
+<li>sverchok.nodes.modifier_change.relax_mesh.SvRelaxMeshNode</li>
+<li>sverchok.nodes.modifier_change.rigid_origami.SvRigidOrigamiNode</li>
+<li>sverchok.nodes.modifier_change.separate_parts_to_indexes.SvSeparatePartsToIndexes</li>
+<li>sverchok.nodes.modifier_change.smooth.SvSmoothNode</li>
+<li>sverchok.nodes.modifier_change.split_faces.SvSplitFacesNode</li>
+<li>sverchok.nodes.modifier_change.split_mesh_elements.SvSplitMeshElements</li>
+<li>sverchok.nodes.modifier_change.subdivide_lite.SvSubdivideLiteNode</li>
+<li>sverchok.nodes.modifier_change.subdivide_mk2.SvSubdivideNodeMK2</li>
+<li>sverchok.nodes.modifier_change.subdivide_to_quads.SvSubdivideToQuadsNode</li>
+<li>sverchok.nodes.modifier_change.triangulate.SvTriangulateNode</li>
+<li>sverchok.nodes.modifier_change.triangulate_heavy.SvHeavyTriangulateNode</li>
+<li>sverchok.nodes.modifier_change.unsubdivide.SvUnsubdivideNode</li>
+<li>sverchok.nodes.modifier_change.vertices_mask.SvVertMaskNode</li>
+<li>sverchok.nodes.modifier_make.adaptive_polygons_mk3.SvAdaptivePolygonsNodeMk3</li>
+<li>sverchok.nodes.modifier_make.bevel_curve.SvBevelCurveNode</li>
+<li>sverchok.nodes.modifier_make.bisect.SvBisectNode</li>
+<li>sverchok.nodes.modifier_make.clip_verts.SvClipVertsNode</li>
+<li>sverchok.nodes.modifier_make.contour2D.SvContourNode</li>
+<li>sverchok.nodes.modifier_make.cross_section.CrossSectionNode</li>
+<li>sverchok.nodes.modifier_make.csg_booleanMK2.SvCSGBooleanNodeMK2</li>
+<li>sverchok.nodes.modifier_make.cut_object_by_surface.SvCutObjBySurfaceNode</li>
+<li>sverchok.nodes.modifier_make.diamond_mesh.SvDiamondMeshNode</li>
+<li>sverchok.nodes.modifier_make.dual_mesh.SvDualMeshNode</li>
+<li>sverchok.nodes.modifier_make.edges_adaptative.SvAdaptiveEdgeNode</li>
+<li>sverchok.nodes.modifier_make.fractal_curve.SvFractalCurveNode</li>
+<li>sverchok.nodes.modifier_make.framework.SvFrameworkNode</li>
+<li>sverchok.nodes.modifier_make.join_tris.SvJoinTrianglesNode</li>
+<li>sverchok.nodes.modifier_make.lathe.SvLatheNode</li>
+<li>sverchok.nodes.modifier_make.matrix_tube.SvMatrixTubeNode</li>
+<li>sverchok.nodes.modifier_make.offset_line.SvOffsetLineNode</li>
+<li>sverchok.nodes.modifier_make.pipe_tubes.SvPipeNode</li>
+<li>sverchok.nodes.modifier_make.solidify_mk2.SvSolidifyNodeMk2</li>
+<li>sverchok.nodes.modifier_make.sweep_modulator.SvSweepModulator</li>
+<li>sverchok.nodes.modifier_make.uv_connect.LineConnectNodeMK2</li>
+<li>sverchok.nodes.modifier_make.wafel.SvWafelNode</li>
+<li>sverchok.nodes.modifier_make.wireframe.SvWireframeNode</li>
+<li>sverchok.nodes.network.file_path.SvFilePathNode</li>
+<li>sverchok.nodes.network.udp_client.UdpClientNode</li>
+<li>sverchok.nodes.number.curve_mapper.SvCurveMapperNode</li>
+<li>sverchok.nodes.number.easing.SvEasingNode</li>
+<li>sverchok.nodes.number.exponential.SvGenExponential</li>
+<li>sverchok.nodes.number.fibonacci.SvGenFibonacci</li>
+<li>sverchok.nodes.number.float_to_int.Float2IntNode</li>
+<li>sverchok.nodes.number.list_input.SvListInputNode</li>
+<li>sverchok.nodes.number.mix_inputs.SvMixInputsNode</li>
+<li>sverchok.nodes.number.mix_numbers.SvMixNumbersNode</li>
+<li>sverchok.nodes.number.number_range.SvGenNumberRange</li>
+<li>sverchok.nodes.number.numbers.SvNumberNode</li>
+<li>sverchok.nodes.number.oscillator.SvOscillatorNode</li>
+<li>sverchok.nodes.number.random.RandomNode</li>
+<li>sverchok.nodes.number.random_num_gen.SvRndNumGen</li>
+<li>sverchok.nodes.number.range_map.SvMapRangeNode</li>
+<li>sverchok.nodes.number.scalar_mk4.SvScalarMathNodeMK4</li>
+<li>sverchok.nodes.number.smooth_numbers.SvSmoothNumbersNode</li>
+<li>sverchok.nodes.object_nodes.armature_analyzer.SvArmaturePropsNode</li>
+<li>sverchok.nodes.object_nodes.assign_materials.SvAssignMaterialListNode</li>
+<li>sverchok.nodes.object_nodes.closest_point_on_mesh2.SvPointOnMeshNodeMK2</li>
+<li>sverchok.nodes.object_nodes.color_uv_texture.SvMeshUVColorNode</li>
+<li>sverchok.nodes.object_nodes.copy_modifiers.SvCopyModifiersNode</li>
+<li>sverchok.nodes.object_nodes.custom_mesh_normals.SvSetCustomMeshNormals</li>
+<li>sverchok.nodes.object_nodes.filter_blenddata.SvFilterObjsNode</li>
+<li>sverchok.nodes.object_nodes.get_asset_properties_mk2.SvGetAssetPropertiesMK2</li>
+<li>sverchok.nodes.object_nodes.getsetprop_mk2.SvGetPropNodeMK2</li>
+<li>sverchok.nodes.object_nodes.getsetprop_mk2.SvSetPropNodeMK2</li>
+<li>sverchok.nodes.object_nodes.lattice_analyzer.SvLatticePropsNode</li>
+<li>sverchok.nodes.object_nodes.material_index.SvMaterialIndexNode</li>
+<li>sverchok.nodes.object_nodes.named_attribute.SvNamedMeshAttributeNode</li>
+<li>sverchok.nodes.object_nodes.object_raycast2.SvOBJRayCastNodeMK2</li>
+<li>sverchok.nodes.object_nodes.points_from_uv_to_mesh.SvUVPointonMeshNode</li>
+<li>sverchok.nodes.object_nodes.sample_uv_color.SvSampleUVColorNode</li>
+<li>sverchok.nodes.object_nodes.scene_raycast2.SvSCNRayCastNodeMK2</li>
+<li>sverchok.nodes.object_nodes.sculpt_mask.SvSculptMaskNode</li>
+<li>sverchok.nodes.object_nodes.select_mesh_verts.SvSelectMeshVerts</li>
+<li>sverchok.nodes.object_nodes.set_blenddata2.SvSetDataObjectNodeMK2</li>
+<li>sverchok.nodes.object_nodes.set_collection.SvSetCollection</li>
+<li>sverchok.nodes.object_nodes.set_custom_uv_map.SvSetCustomUVMap</li>
+<li>sverchok.nodes.object_nodes.set_loop_normals.SvSetLoopNormalsNode</li>
+<li>sverchok.nodes.object_nodes.set_mesh_attribute.SvSetMeshAttributeNode</li>
+<li>sverchok.nodes.object_nodes.sort_blenddata.SvSortObjsNode</li>
+<li>sverchok.nodes.object_nodes.vertex_colors_mk3.SvVertexColorNodeMK3</li>
+<li>sverchok.nodes.object_nodes.weightsmk2.SvVertexGroupNodeMK2</li>
+<li>sverchok.nodes.pulga_physics.pulga_align_force.SvPulgaAlignForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_angle_force.SvPulgaAngleForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_attraction_force.SvPulgaAttractionForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_attractors_force_mk2.SvPulgaAttractorsForceNodeMk2</li>
+<li>sverchok.nodes.pulga_physics.pulga_boundaries_force.SvPulgaBoundingBoxForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_collision_force.SvPulgaCollisionForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_drag_force.SvPulgaDragForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_fit_force.SvPulgaFitForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_inflate_force.SvPulgaInflateForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_obstacle_force.SvPulgaObstacleForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_physics_lite.SvPulgaPhysicsNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_physics_solver.SvPulgaPhysicsSolverNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_pin_force.SvPulgaPinForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_random_force.SvPulgaRandomForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_springs_force.SvPulgaSpringsForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_timed_force.SvPulgaTimedForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_vector_force.SvPulgaVectorForceNode</li>
+<li>sverchok.nodes.pulga_physics.pulga_vortex_force.SvPulgaVortexForceNode</li>
+<li>sverchok.nodes.quaternion.quaternion_in_mk2.SvQuaternionInNodeMK2</li>
+<li>sverchok.nodes.quaternion.quaternion_math.SvQuaternionMathNode</li>
+<li>sverchok.nodes.quaternion.quaternion_out_mk2.SvQuaternionOutNodeMK2</li>
+<li>sverchok.nodes.quaternion.rotation_difference.SvRotationDifference</li>
+<li>sverchok.nodes.scene.3dview_props.Sv3DviewPropsNode</li>
+<li>sverchok.nodes.scene.BMOperatorsMK2.SvBMOpsNodeMK2</li>
+<li>sverchok.nodes.scene.FCurve_in.SvFCurveInNodeMK1</li>
+<li>sverchok.nodes.scene.cache.SvCacheNode</li>
+<li>sverchok.nodes.scene.collection_picker_mk1.SvCollectionPicker</li>
+<li>sverchok.nodes.scene.curve_in.SvCurveInputNode</li>
+<li>sverchok.nodes.scene.frame_info_mk2.SvFrameInfoNodeMK2</li>
+<li>sverchok.nodes.scene.get_objects_data.SvGetObjectsData</li>
+<li>sverchok.nodes.scene.node_remote_mk2.SvNodeRemoteNodeMK2</li>
+<li>sverchok.nodes.scene.obj_edit.SvObjEdit</li>
+<li>sverchok.nodes.scene.obj_remote_mk2.SvObjRemoteNodeMK2</li>
+<li>sverchok.nodes.scene.objects_in_lite.SvObjInLite</li>
+<li>sverchok.nodes.scene.particles_MK2.SvParticlesMK2Node</li>
+<li>sverchok.nodes.scene.selection_grabber_lite.SvSelectionGrabberLite</li>
+<li>sverchok.nodes.scene.timer.SvTimerNode</li>
+<li>sverchok.nodes.scene.uv_texture.SvUVtextureNode</li>
+<li>sverchok.nodes.script.formula_interpolate.SvFormulaInterpolateNode</li>
+<li>sverchok.nodes.script.formula_mk5.SvFormulaNodeMk5</li>
+<li>sverchok.nodes.script.generative_art.SvGenerativeArtNode</li>
+<li>sverchok.nodes.script.mesh_eval.SvMeshEvalNode</li>
+<li>sverchok.nodes.script.multi_exec.SvExecNodeMod</li>
+<li>sverchok.nodes.script.profile_mk3.SvProfileNodeMK3</li>
+<li>sverchok.nodes.script.script1_lite.SvScriptNodeLite</li>
+<li>sverchok.nodes.script.sn_functor_b.SvSNFunctorB</li>
+<li>sverchok.nodes.script.topology_simple.SvTopologySimple</li>
+<li>sverchok.nodes.solid.area.SvSolidAreaNode</li>
+<li>sverchok.nodes.solid.bound_box.SvSolidBoundBoxNode</li>
+<li>sverchok.nodes.solid.center_of_mass.SvSolidCenterOfMassNode</li>
+<li>sverchok.nodes.solid.extrude_face.SvSolidFaceExtrudeNode</li>
+<li>sverchok.nodes.solid.face_area.SvSolidFaceAreaNode</li>
+<li>sverchok.nodes.solid.general_fuse.SvSolidGeneralFuseNode</li>
+<li>sverchok.nodes.solid.hollow_solid.SvHollowSolidNode</li>
+<li>sverchok.nodes.solid.is_closed.SvIsSolidClosedNode</li>
+<li>sverchok.nodes.solid.polygon_face.SvSolidPolygonFaceNode</li>
+<li>sverchok.nodes.solid.projection_trim_face.SvProjectTrimFaceNode</li>
+<li>sverchok.nodes.solid.refine.SvRefineSolidNode</li>
+<li>sverchok.nodes.solid.revolve_face.SvSolidFaceRevolveNode</li>
+<li>sverchok.nodes.solid.ruled_solid.SvRuledSolidNode</li>
+<li>sverchok.nodes.solid.solid_boolean.SvSolidBooleanNode</li>
+<li>sverchok.nodes.solid.solid_from_faces.SvSolidFromFacesNode</li>
+<li>sverchok.nodes.solid.solid_select.SvSelectSolidNode</li>
+<li>sverchok.nodes.solid.solidify_face.SvSolidFaceSolidifyNode</li>
+<li>sverchok.nodes.solid.split_solid.SvSplitSolidNode</li>
+<li>sverchok.nodes.solid.sweep_face.SvSweepSolidFaceNode</li>
+<li>sverchok.nodes.solid.validate.SvSolidValidateNode</li>
+<li>sverchok.nodes.solid.volume.SvSolidVolumeNode</li>
+<li>sverchok.nodes.solid.wire_face.SvSolidWireFaceNode</li>
+<li>sverchok.nodes.spatial.concave_hull.SvConcaveHullNode</li>
+<li>sverchok.nodes.spatial.convex_hull_mk2.SvConvexHullNodeMK2</li>
+<li>sverchok.nodes.spatial.delaunay3d.SvDelaunay3dMk2Node</li>
+<li>sverchok.nodes.spatial.delaunay_2d.DelaunayTriangulation2DNode</li>
+<li>sverchok.nodes.spatial.delaunay_2d_cdt.SvDelaunay2DCdt</li>
+<li>sverchok.nodes.spatial.field_random_probe.SvFieldRandomProbeMk3Node</li>
+<li>sverchok.nodes.spatial.homogenous_vector_field.SvHomogenousVectorField</li>
+<li>sverchok.nodes.spatial.lloyd2d.SvLloyd2dNode</li>
+<li>sverchok.nodes.spatial.lloyd3d.SvLloyd3dNode</li>
+<li>sverchok.nodes.spatial.lloyd_on_mesh.SvLloydOnMeshNode</li>
+<li>sverchok.nodes.spatial.lloyd_on_sphere.SvLloydOnSphereNode</li>
+<li>sverchok.nodes.spatial.lloyd_solid.SvLloydSolidNode</li>
+<li>sverchok.nodes.spatial.lloyd_solid_face.SvLloydSolidFaceNode</li>
+<li>sverchok.nodes.spatial.populate_solid.SvPopulateSolidMk2Node</li>
+<li>sverchok.nodes.spatial.populate_surface.SvPopulateSurfaceMk2Node</li>
+<li>sverchok.nodes.spatial.random_points_on_mesh.SvRandomPointsOnMesh</li>
+<li>sverchok.nodes.spatial.voronoi3d.SvExVoronoi3DNode</li>
+<li>sverchok.nodes.spatial.voronoi_2d.Voronoi2DNode</li>
+<li>sverchok.nodes.spatial.voronoi_on_mesh.SvVoronoiOnMeshNode</li>
+<li>sverchok.nodes.spatial.voronoi_on_solid.SvVoronoiOnSolidNode</li>
+<li>sverchok.nodes.spatial.voronoi_on_surface.SvVoronoiOnSurfaceNode</li>
+<li>sverchok.nodes.spatial.voronoi_sphere.SvExVoronoiSphereNode</li>
+<li>sverchok.nodes.surface.adaptive_tessellate.SvAdaptiveTessellateNode</li>
+<li>sverchok.nodes.surface.apply_field_to_surface.SvApplyFieldToSurfaceNode</li>
+<li>sverchok.nodes.surface.approximate_nurbs_surface.SvExApproxNurbsSurfaceNode</li>
+<li>sverchok.nodes.surface.bevel_curve.SvBendCurveSurfaceNode</li>
+<li>sverchok.nodes.surface.blend_surface.SvBlendSurfaceNode</li>
+<li>sverchok.nodes.surface.coons_patch.SvCoonsPatchNode</li>
+<li>sverchok.nodes.surface.curvatures.SvSurfaceCurvaturesNode</li>
+<li>sverchok.nodes.surface.curve_lerp.SvCurveLerpNode</li>
+<li>sverchok.nodes.surface.deconstruct_surface.SvDeconstructSurfaceNode</li>
+<li>sverchok.nodes.surface.elevate_degree.SvSurfaceElevateDegreeNode</li>
+<li>sverchok.nodes.surface.evaluate_surface.SvEvalSurfaceNode</li>
+<li>sverchok.nodes.surface.extremes.SvExSurfaceExtremesNode</li>
+<li>sverchok.nodes.surface.extrude_curve.SvExtrudeCurveCurveSurfaceNode</li>
+<li>sverchok.nodes.surface.extrude_point.SvExtrudeCurvePointNode</li>
+<li>sverchok.nodes.surface.extrude_vector.SvExtrudeCurveVectorNode</li>
+<li>sverchok.nodes.surface.flip.SvFlipSurfaceNode</li>
+<li>sverchok.nodes.surface.gauss_curvature.SvSurfaceGaussCurvatureNode</li>
+<li>sverchok.nodes.surface.gordon_surface.SvGordonSurfaceNode</li>
+<li>sverchok.nodes.surface.implicit_surface_raycast.SvExImplSurfaceRaycastNode</li>
+<li>sverchok.nodes.surface.insert_knot.SvSurfaceInsertKnotNode</li>
+<li>sverchok.nodes.surface.interpolate_nurbs_surface.SvExInterpolateNurbsSurfaceNode</li>
+<li>sverchok.nodes.surface.interpolating_surface.SvInterpolatingSurfaceNode</li>
+<li>sverchok.nodes.surface.intersect_curve_surface.SvExCrossCurveSurfaceNode</li>
+<li>sverchok.nodes.surface.marching_cubes.SvExMarchingCubesNode</li>
+<li>sverchok.nodes.surface.min_surface_from_curve.SvExMinSurfaceFromCurveNode</li>
+<li>sverchok.nodes.surface.minimal_surface.SvExMinimalSurfaceNode</li>
+<li>sverchok.nodes.surface.nearest_point.SvExNearestPointOnSurfaceNode</li>
+<li>sverchok.nodes.surface.normals.SvSurfaceNormalsNode</li>
+<li>sverchok.nodes.surface.nurbs_birail.SvNurbsBirailNode</li>
+<li>sverchok.nodes.surface.nurbs_loft.SvNurbsLoftNode</li>
+<li>sverchok.nodes.surface.nurbs_surface.SvExNurbsSurfaceNode</li>
+<li>sverchok.nodes.surface.nurbs_sweep.SvNurbsSweepNode</li>
+<li>sverchok.nodes.surface.ortho_project.SvExOrthoProjectSurfaceNode</li>
+<li>sverchok.nodes.surface.pipe.SvPipeSurfaceNode</li>
+<li>sverchok.nodes.surface.plane.SvPlaneSurfaceNode</li>
+<li>sverchok.nodes.surface.quads_to_nurbs.SvExQuadsToNurbsNode</li>
+<li>sverchok.nodes.surface.raycast.SvExRaycastSurfaceNode</li>
+<li>sverchok.nodes.surface.reduce_degree.SvSurfaceReduceDegreeNode</li>
+<li>sverchok.nodes.surface.remove_excessive_knots.SvSurfaceRemoveExcessiveKnotsNode</li>
+<li>sverchok.nodes.surface.remove_knot.SvSurfaceRemoveKnotNode</li>
+<li>sverchok.nodes.surface.reparametrize.SvReparametrizeSurfaceNode</li>
+<li>sverchok.nodes.surface.revolution_surface.SvRevolutionSurfaceNode</li>
+<li>sverchok.nodes.surface.sphere.SvSphereNode</li>
+<li>sverchok.nodes.surface.subdomain.SvSurfaceSubdomainNode</li>
+<li>sverchok.nodes.surface.surface_domain.SvSurfaceDomainNode</li>
+<li>sverchok.nodes.surface.surface_formula.SvSurfaceFormulaNode</li>
+<li>sverchok.nodes.surface.surface_lerp.SvSurfaceLerpNode</li>
+<li>sverchok.nodes.surface.swap.SvSwapSurfaceNode</li>
+<li>sverchok.nodes.surface.taper_sweep.SvTaperSweepSurfaceNode</li>
+<li>sverchok.nodes.surface.tessellate_trim.SvExTessellateTrimSurfaceNode</li>
+<li>sverchok.nodes.svg.circle_svg.SvSvgCircleNode</li>
+<li>sverchok.nodes.svg.dimensions_svg.SvSvgDimensionNode</li>
+<li>sverchok.nodes.svg.fill_stroke_mk2.SvSvgFillStrokeNodeMk2</li>
+<li>sverchok.nodes.svg.group_svg.SvSvgGroupNode</li>
+<li>sverchok.nodes.svg.mesh_svg.SvSvgMeshNode</li>
+<li>sverchok.nodes.svg.path_svg_mk2.SvSvgPathNodeMk2</li>
+<li>sverchok.nodes.svg.pattern_svg.SvSvgPatternNode</li>
+<li>sverchok.nodes.svg.svg_document.SvSvgDocumentNode</li>
+<li>sverchok.nodes.svg.text_svg.SvSvgTextNode</li>
+<li>sverchok.nodes.text.datetime_strings.SvDatetimeStrings</li>
+<li>sverchok.nodes.text.debug_print.SvDebugPrintNode</li>
+<li>sverchok.nodes.text.gtext.SvGTextNode</li>
+<li>sverchok.nodes.text.note.NoteNode</li>
+<li>sverchok.nodes.text.shape.SvDataShapeNode</li>
+<li>sverchok.nodes.text.simple_text.SvSimpleTextNode</li>
+<li>sverchok.nodes.text.stethoscope_v28.SvStethoscopeNodeMK2</li>
+<li>sverchok.nodes.text.string_tools.SvStringsToolsNode</li>
+<li>sverchok.nodes.text.text_in_mk2.SvTextInNodeMK2</li>
+<li>sverchok.nodes.text.text_out_mk2.SvTextOutNodeMK2</li>
+<li>sverchok.nodes.text.viewer_text_mk3.ViewerNodeTextMK3</li>
+<li>sverchok.nodes.transforms.align_mesh_by_mesh.SvAlignMeshByMesh</li>
+<li>sverchok.nodes.transforms.apply.MatrixApplyNode</li>
+<li>sverchok.nodes.transforms.barycentric_transform.SvBarycentricTransformNode</li>
+<li>sverchok.nodes.transforms.bend_along_path.SvBendAlongPathNode</li>
+<li>sverchok.nodes.transforms.bend_along_surface.SvBendAlongSurfaceNode</li>
+<li>sverchok.nodes.transforms.cast.SvCastNode</li>
+<li>sverchok.nodes.transforms.deform.SvSimpleDeformNode</li>
+<li>sverchok.nodes.transforms.formula_deform_mk2.SvFormulaDeformMK2Node</li>
+<li>sverchok.nodes.transforms.mirror_mk2.SvMirrorNodeMk2</li>
+<li>sverchok.nodes.transforms.move_mk3.SvMoveNodeMk3</li>
+<li>sverchok.nodes.transforms.noise_displace.SvNoiseDisplaceNode</li>
+<li>sverchok.nodes.transforms.randomize.SvRandomizeVerticesNode</li>
+<li>sverchok.nodes.transforms.rotate_mk3.SvRotationNodeMk3</li>
+<li>sverchok.nodes.transforms.scale_mk3.SvScaleNodeMk3</li>
+<li>sverchok.nodes.transforms.symmetrize.SvSymmetrizeNode</li>
+<li>sverchok.nodes.transforms.texture_displace_mk2.SvDisplaceNodeMk2</li>
+<li>sverchok.nodes.transforms.transform_mesh.SvTransformMesh</li>
+<li>sverchok.nodes.transforms.transform_select.SvTransformSelectNode</li>
+<li>sverchok.nodes.vector.attractor.SvAttractorNode</li>
+<li>sverchok.nodes.vector.axis_input_mk2.SvAxisInputNodeMK2</li>
+<li>sverchok.nodes.vector.drop.VectorDropNode</li>
+<li>sverchok.nodes.vector.fractal.SvVectorFractal</li>
+<li>sverchok.nodes.vector.interpolation_mk2.SvInterpolationNodeMK2</li>
+<li>sverchok.nodes.vector.interpolation_mk3.SvInterpolationNodeMK3</li>
+<li>sverchok.nodes.vector.interpolation_stripes.SvInterpolationStripesNode</li>
+<li>sverchok.nodes.vector.lerp.SvVectorLerp</li>
+<li>sverchok.nodes.vector.math_mk3.SvVectorMathNodeMK3</li>
+<li>sverchok.nodes.vector.noise_mk3.SvNoiseNodeMK3</li>
+<li>sverchok.nodes.vector.quad_grid.SvQuadGridSortVertsNode</li>
+<li>sverchok.nodes.vector.turbulence.SvTurbulenceNode</li>
+<li>sverchok.nodes.vector.variable_lacunarity.SvLacunarityNode</li>
+<li>sverchok.nodes.vector.vector_in.GenVectorsNode</li>
+<li>sverchok.nodes.vector.vector_out.VectorsOutNode</li>
+<li>sverchok.nodes.vector.vector_polar_in.VectorPolarInNode</li>
+<li>sverchok.nodes.vector.vector_polar_out.VectorPolarOutNode</li>
+<li>sverchok.nodes.vector.vector_rewire.SvVectorRewire</li>
+<li>sverchok.nodes.vector.vertices_delete_doubles.VertsDelDoublesNode</li>
+<li>sverchok.nodes.vector.vertices_sort.SvVertSortNode</li>
+<li>sverchok.nodes.viz.console_node.SvConsoleNode</li>
+<li>sverchok.nodes.viz.dupli_instances_lite.SvDupliInstancesLite</li>
+<li>sverchok.nodes.viz.dupli_instances_mk5.SvDupliInstancesMK5</li>
+<li>sverchok.nodes.viz.empty_out.SvEmptyOutNode</li>
+<li>sverchok.nodes.viz.instancer.SvInstancerNodeMK3</li>
+<li>sverchok.nodes.viz.light_viewer.SvLightViewerNode</li>
+<li>sverchok.nodes.viz.mesh_viewer.SvMeshViewer</li>
+<li>sverchok.nodes.viz.polyline_viewer.SvPolylineViewerNode</li>
+<li>sverchok.nodes.viz.vd_matrix.SvMatrixViewer28</li>
+<li>sverchok.nodes.viz.viewer_2d.SvViewer2D</li>
+<li>sverchok.nodes.viz.viewer_bezier_curve.SvBezierCurveOutNode</li>
+<li>sverchok.nodes.viz.viewer_curves.SvCurveViewerNodeV28</li>
+<li>sverchok.nodes.viz.viewer_draw_curve.SvCurveViewerDrawNode</li>
+<li>sverchok.nodes.viz.viewer_draw_mk4.SvViewerDrawMk4</li>
+<li>sverchok.nodes.viz.viewer_draw_surface.SvSurfaceViewerDrawNode</li>
+<li>sverchok.nodes.viz.viewer_gp.SvGreasePencilStrokes</li>
+<li>sverchok.nodes.viz.viewer_idx28.SvIDXViewer28</li>
+<li>sverchok.nodes.viz.viewer_metaball.SvMetaballOutNode</li>
+<li>sverchok.nodes.viz.viewer_nurbs_curve.SvNurbsCurveOutNode</li>
+<li>sverchok.nodes.viz.viewer_nurbs_surface.SvNurbsSurfaceOutNode</li>
+<li>sverchok.nodes.viz.viewer_skin.SvSkinViewerNodeV28</li>
+<li>sverchok.nodes.viz.viewer_texture.SvTextureViewerNode</li>
+<li>sverchok.nodes.viz.viewer_texture_lite.SvTextureViewerNodeLite</li>
+<li>sverchok.nodes.viz.viewer_typography.SvTypeViewerNodeV28</li>
+<li>sverchok.nodes.viz.viewer_waveform_output.SvWaveformViewer</li>
+<li>sverchok.old_nodes.getsetprop.SvGetPropNode</li>
+<li>sverchok.old_nodes.getsetprop.SvSetPropNode</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.docstring"><code class="name">var <span class="ident">docstring</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f8c12ace820>, 'attr': 'is_animatable'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f8c12ace700>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f8c12ace790>, 'attr': 'refresh'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.poll"><code class="name flex">
+<span>def <span class="ident">poll</span></span>(<span>ntree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def poll(cls, ntree):
+    return ntree.bl_idname in [&#39;SverchCustomTreeType&#39;, &#39;SvGroupTree&#39;]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.absolute_location"><code class="name">var <span class="ident">absolute_location</span></code></dt>
+<dd>
+<div class="desc"><p>When a node is inside a frame (and parented to it) then node.location is relative to its parent's location.
+This function returns the location in absolute screen terms whether the node is framed or not.</p>
+<p>The return type is a tuple (x, y)
+(not a Vector)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def absolute_location(self):
+    &#34;&#34;&#34;
+    When a node is inside a frame (and parented to it) then node.location is relative to its parent&#39;s location.
+    This function returns the location in absolute screen terms whether the node is framed or not.
+
+    The return type is a tuple (x, y)  (not a Vector)
+    &#34;&#34;&#34;
+    return recursive_framed_location_finder(self, self.location[:])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons"><code class="name">var <span class="ident">prefs_over_sized_buttons</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def prefs_over_sized_buttons(self):
+    try:
+        addon = bpy.context.preferences.addons.get(sverchok.__name__)
+        prefs = addon.preferences
+    except Exception as err:
+        print(&#39;failed to access addon preferences for button size&#39;, err)
+        return False
+    return prefs.over_sized_buttons</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.sv_default_color"><code class="name">var <span class="ident">sv_default_color</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_default_color(self):
+    return color_def.get_color(self.bl_idname)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.sv_internal_links"><code class="name">var <span class="ident">sv_internal_links</span> : Iterable[tuple[bpy_types.NodeSocket, bpy_types.NodeSocket]]</code></dt>
+<dd>
+<div class="desc"><p>Override the property to change logic of connecting sockets
+when the node is muted.
+Also, there are some basic implementations <code>utils/nodes_mixins/sockets_config</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_internal_links(self) -&gt; Iterable[tuple[NodeSocket, NodeSocket]]:
+    &#34;&#34;&#34;Override the property to change logic of connecting sockets
+    when the node is muted.
+    Also, there are some basic implementations `utils/nodes_mixins/sockets_config`&#34;&#34;&#34;
+    for link in self.internal_links:
+        yield link.from_socket, link.to_socket</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.draw_buttons"><code class="name flex">
+<span>def <span class="ident">draw_buttons</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_buttons(self, context, layout):
+    if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+        row = layout.row(align=True)
+        if self.is_animation_dependent:
+            row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;, icon_only=True)
+        if self.is_scene_dependent:
+            row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;, icon_only=True)
+        if self.is_animation_dependent or self.is_scene_dependent:
+            row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+    self.sv_draw_buttons(context, layout)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.draw_buttons_ext"><code class="name flex">
+<span>def <span class="ident">draw_buttons_ext</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_buttons_ext(self, context, layout):
+    if self.id_data.bl_idname == SverchCustomTree.bl_idname:
+        row = layout.row(align=True)
+        if self.is_animation_dependent:
+            row.prop(self, &#39;is_animatable&#39;, icon=&#39;ANIM&#39;)
+        if self.is_scene_dependent:
+            row.prop(self, &#39;is_interactive&#39;, icon=&#39;SCENE_DATA&#39;)
+        if self.is_animation_dependent or self.is_scene_dependent:
+            row.prop(self, &#39;refresh&#39;, icon=&#39;FILE_REFRESH&#39;)
+    self.sv_draw_buttons_ext(context, layout)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.migrate_from"><code class="name flex">
+<span>def <span class="ident">migrate_from</span></span>(<span>self, old_node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method is called by node replacement operator.
+Override it to correctly copy settings from old_node
+to this (new) node.
+This is called after migrate_links_from().
+Default implementation does nothing.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def migrate_from(self, old_node):
+    &#34;&#34;&#34;
+    This method is called by node replacement operator.
+    Override it to correctly copy settings from old_node
+    to this (new) node.
+    This is called after migrate_links_from().
+    Default implementation does nothing.
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.migrate_links_from"><code class="name flex">
+<span>def <span class="ident">migrate_links_from</span></span>(<span>self, old_node, operator)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method is called by node replacement operator.
+By default, it removes existing links from old_node
+and creates corresponding links for this (new) node.
+Override it to implement custom re-linking at node
+replacement.
+Most nodes do not have to override this method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def migrate_links_from(self, old_node, operator):
+    &#34;&#34;&#34;
+    This method is called by node replacement operator.
+    By default, it removes existing links from old_node
+    and creates corresponding links for this (new) node.
+    Override it to implement custom re-linking at node
+    replacement.
+    Most nodes do not have to override this method.
+    &#34;&#34;&#34;
+    tree = self.id_data
+    # Copy incoming / outgoing links
+    old_in_links = [link for link in tree.links if link.to_node == old_node]
+    old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+    for old_link in old_in_links:
+        new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+        if new_target_socket_name in self.inputs:
+            new_target_socket = self.inputs[new_target_socket_name]
+            new_link = tree.links.new(old_link.from_socket, new_target_socket)
+        else:
+            self.debug(&#34;New node %s has no input named %s, skipping&#34;, self.name, new_target_socket_name)
+        tree.links.remove(old_link)
+
+    for old_link in old_out_links:
+        new_source_socket_name = operator.get_new_output_name(old_link.from_socket.name)
+        # We have to remove old link before creating new one
+        # Blender would not allow two links pointing to the same target socket
+        old_target_socket = old_link.to_socket
+        tree.links.remove(old_link)
+        if new_source_socket_name in self.outputs:
+            new_source_socket = self.outputs[new_source_socket_name]
+            new_link = tree.links.new(new_source_socket, old_target_socket)
+        else:
+            self.debug(&#34;New node %s has no output named %s, skipping&#34;, self.name, new_source_socket_name)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu"><code class="name flex">
+<span>def <span class="ident">node_replacement_menu</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw menu items with node replacement operators.
+This is called from <code>rclick_menu()' method by default.
+Items are defined by</code>replacement_nodes' class property.
+Expected format is</p>
+<pre><code>replacement_nodes = [
+    (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+]
+</code></pre>
+<p>where new_node_bl_idname is bl_idname of replacement node class,
+inputs_mapping_dict is a dictionary mapping names of inputs of this node
+to names of inputs to new node, and outputs_mapping_dict is a dictionary
+mapping names of outputs of this node to names of outputs of new node.
+inputs_mapping_dict and outputs_mapping_dict can be None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_replacement_menu(self, context, layout):
+    &#34;&#34;&#34;
+    Draw menu items with node replacement operators.
+    This is called from `rclick_menu()&#39; method by default.
+    Items are defined by `replacement_nodes&#39; class property.
+    Expected format is
+
+        replacement_nodes = [
+            (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+        ]
+
+    where new_node_bl_idname is bl_idname of replacement node class,
+    inputs_mapping_dict is a dictionary mapping names of inputs of this node
+    to names of inputs to new node, and outputs_mapping_dict is a dictionary
+    mapping names of outputs of this node to names of outputs of new node.
+    inputs_mapping_dict and outputs_mapping_dict can be None.
+    &#34;&#34;&#34;
+    if hasattr(self, &#34;replacement_nodes&#34;):
+        for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
+            node_class = get_node_class_reference(bl_idname)
+            if node_class:
+                text = &#34;Replace with {}&#34;.format(node_class.bl_label)
+                op = layout.operator(&#34;node.sv_replace_node&#34;, text=text)
+                op.old_node_name = self.name
+                op.new_bl_idname = bl_idname
+                set_inputs_mapping(op, inputs_mapping)
+                set_outputs_mapping(op, outputs_mapping)
+            else:
+                self.error(&#34;Can&#39;t build replacement menu: no such node class: %s&#34;,bl_idname)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.rclick_menu"><code class="name flex">
+<span>def <span class="ident">rclick_menu</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override this method to add specific items into the node's right-click menu.
+Default implementation calls `node_replacement_menu'.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rclick_menu(self, context, layout):
+    &#34;&#34;&#34;
+    Override this method to add specific items into the node&#39;s right-click menu.
+    Default implementation calls `node_replacement_menu&#39;.
+    &#34;&#34;&#34;
+    self.node_replacement_menu(context, layout)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.set_temp_color"><code class="name flex">
+<span>def <span class="ident">set_temp_color</span></span>(<span>self, color=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method memorize its initial color and override it with given one
+if given color is None it tries to return its initial color or do nothing</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_temp_color(self, color=None):
+    &#34;&#34;&#34;This method memorize its initial color and override it with given one
+    if given color is None it tries to return its initial color or do nothing&#34;&#34;&#34;
+
+    if color is None:
+        # looks like the node should return its initial color (user choice)
+        if &#39;user_color&#39; in self:
+            self.use_custom_color = self[&#39;use_user_color&#39;]
+            del self[&#39;use_user_color&#39;]
+            self.color = self[&#39;user_color&#39;]
+            del self[&#39;user_color&#39;]
+
+    # set temporary color
+    else:
+        # save overridden color (only once)
+        if &#39;user_color&#39; not in self:
+            self[&#39;use_user_color&#39;] = self.use_custom_color
+            self[&#39;user_color&#39;] = self.color
+        self.use_custom_color = True
+        self.color = color</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons"><code class="name flex">
+<span>def <span class="ident">sv_draw_buttons</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_draw_buttons(self, context, layout):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext"><code class="name flex">
+<span>def <span class="ident">sv_draw_buttons_ext</span></span>(<span>self, context, layout)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_draw_buttons_ext(self, context, layout):
+    self.sv_draw_buttons(context, layout)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.node_tree.UpdateNodes.copy" href="#sverchok.node_tree.UpdateNodes.copy">copy</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.free" href="#sverchok.node_tree.UpdateNodes.free">free</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.init" href="#sverchok.node_tree.UpdateNodes.init">init</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.insert_link" href="#sverchok.node_tree.UpdateNodes.insert_link">insert_link</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.node_id" href="#sverchok.node_tree.UpdateNodes.node_id">node_id</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.process_node" href="#sverchok.node_tree.UpdateNodes.process_node">process_node</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_copy" href="#sverchok.node_tree.UpdateNodes.sv_copy">sv_copy</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_free" href="#sverchok.node_tree.UpdateNodes.sv_free">sv_free</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_init" href="#sverchok.node_tree.UpdateNodes.sv_init">sv_init</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_update" href="#sverchok.node_tree.UpdateNodes.sv_update">sv_update</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.update" href="#sverchok.node_tree.UpdateNodes.update">update</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.update_ui" href="#sverchok.node_tree.UpdateNodes.update_ui">update_ui</a></code></li>
+</ul>
+</li>
+<li><code><b><a title="sverchok.node_tree.NodeUtils" href="#sverchok.node_tree.NodeUtils">NodeUtils</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.node_tree.NodeUtils.get_bpy_data_from_name" href="#sverchok.node_tree.NodeUtils.get_bpy_data_from_name">get_bpy_data_from_name</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op" href="#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes"><code class="flex name class">
+<span>class <span class="ident">UpdateNodes</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Everything related with update system of nodes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UpdateNodes:
+    &#34;&#34;&#34;Everything related with update system of nodes&#34;&#34;&#34;
+
+    # identifier of the node, should be used via `node_id` property
+    # overriding the property without `skip_save` option can lead to wrong importing bgl viewer nodes
+    n_id: StringProperty(options={&#39;SKIP_SAVE&#39;})
+
+    @property
+    def node_id(self):
+        &#34;&#34;&#34;Identifier of the node&#34;&#34;&#34;
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
+
+    def update_interactive_mode(self, context):
+        if self.is_interactive:
+            self.process_node(context)
+
+    is_interactive: BoolProperty(default=True, description=&#34;Update node upon changes in the scene&#34;,
+                                 update=update_interactive_mode, name=&#34;Interactive&#34;)
+    is_scene_dependent = False  # if True and is_interactive then the node will be updated upon scene changes
+
+    def refresh_node(self, context):
+        if self.refresh:
+            self.refresh = False
+            self.process_node(context)
+
+    refresh: BoolProperty(name=&#34;Update Node&#34;, description=&#34;Update Node&#34;, update=refresh_node)
+    is_animatable: BoolProperty(name=&#34;Animate Node&#34;,
+                                description=&#34;Update Node on frame change&#34;,
+                                default=True,
+                                update=lambda s, c: s.process_node(c))  # it would be better to have special event
+    is_animation_dependent = False  # if True and is_animatable the the node will be updated on frame change
+
+    def sv_init(self, context):
+        &#34;&#34;&#34;
+        This method will be called during node creation
+        Typically it is used for socket creating and assigning properties to sockets
+        &#34;&#34;&#34;
+        pass
+
+    def sv_update(self):
+        &#34;&#34;&#34;
+        This method can be overridden in inherited classes.
+        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+        Calling of this method is unordered among other calls of the method of other nodes in a tree.
+        &#34;&#34;&#34;
+        pass
+
+    def sv_copy(self, original):
+        &#34;&#34;&#34;
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        &#34;&#34;&#34;
+        pass
+
+    def sv_free(self):
+        &#34;&#34;&#34;
+        Override this method to do anything node-specific upon node removal
+        &#34;&#34;&#34;
+        pass
+
+    def init(self, context):
+        &#34;&#34;&#34;
+        this function is triggered upon node creation,
+        - delegates further initialization information to sv_init
+        &#34;&#34;&#34;
+        if self.sv_default_color:
+            self.use_custom_color = True
+            self.color = self.sv_default_color
+
+        with catch_log_error():
+            self.sv_init(context)
+
+    def sv_new_input(self, socket_type, name, **attrib_dict):
+        socket = self.inputs.new(socket_type, name)
+        for att in attrib_dict:
+            setattr(socket, att, attrib_dict[att])
+        return socket
+
+    def free(self):
+        &#34;&#34;&#34;Called upon the node removal&#34;&#34;&#34;
+        # custom free function
+        self.sv_free()
+
+        # free sockets memory
+        for s in chain(self.inputs, self.outputs):
+            s.sv_forget()
+
+        # remove tree space drawings
+        self.update_ui()
+
+    def copy(self, original):
+        &#34;&#34;&#34;Called upon the node being copied&#34;&#34;&#34;
+        self.n_id = &#34;&#34;
+        for sock in chain(self.inputs, self.outputs):
+            sock.s_id = &#39;&#39;
+        self.sv_copy(original)
+
+    def update(self):
+        &#34;&#34;&#34;
+        The method will be triggered upon editor changes, typically before node tree update method.
+        It is better to avoid using this trigger.
+        &#34;&#34;&#34;
+        if &#39;init_tree&#39; in self.id_data:  # tree is building by a script - let it do this
+            return
+
+        self.sv_update()
+
+    def update_ui(self, error=None, update_time=None):
+        &#34;&#34;&#34;updating tree contextual information -&gt; node colors, text
+        node_id only for usage of a group tree&#34;&#34;&#34;
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        exception_color = sv_settings.exception_color
+        no_data_color = sv_settings.no_data_color
+        error_pref = &#34;error&#34;
+        update_pref = &#34;update_time&#34;
+
+        # update error colors
+        if error is not None:
+            color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            self.set_temp_color(color)
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+        else:
+            sv_bgl.callback_disable(error_pref + self.node_id)
+            self.set_temp_color()
+
+        # show update timing
+        if update_time is not None:
+            update_time = int(update_time * 1000)
+            sv_bgl.draw_text(self, f&#39;{update_time}ms&#39;, update_pref + self.node_id, align=&#34;UP&#34;, dynamic_location=False)
+        else:
+            sv_bgl.callback_disable(update_pref + self.node_id)
+
+    def insert_link(self, link):
+        &#34;&#34;&#34;It will be triggered only if one socket is connected with another by user&#34;&#34;&#34;
+
+    def process_node(self, context):
+        &#34;&#34;&#34;Call this method to revaluate the node tree whenever node properties was changed&#34;&#34;&#34;
+        self.id_data.update_nodes([self])</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.node_tree.SverchCustomTreeNode" href="#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f8c12ace820>, 'attr': 'is_animatable'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.is_animation_dependent"><code class="name">var <span class="ident">is_animation_dependent</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f8c12ace700>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.is_scene_dependent"><code class="name">var <span class="ident">is_scene_dependent</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f8c12ace790>, 'attr': 'refresh'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.node_tree.UpdateNodes.node_id"><code class="name">var <span class="ident">node_id</span></code></dt>
+<dd>
+<div class="desc"><p>Identifier of the node</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def node_id(self):
+    &#34;&#34;&#34;Identifier of the node&#34;&#34;&#34;
+    if not self.n_id:
+        self.n_id = str(hash(self) ^ hash(time.monotonic()))
+    return self.n_id</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.node_tree.UpdateNodes.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self, original)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called upon the node being copied</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, original):
+    &#34;&#34;&#34;Called upon the node being copied&#34;&#34;&#34;
+    self.n_id = &#34;&#34;
+    for sock in chain(self.inputs, self.outputs):
+        sock.s_id = &#39;&#39;
+    self.sv_copy(original)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.free"><code class="name flex">
+<span>def <span class="ident">free</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called upon the node removal</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def free(self):
+    &#34;&#34;&#34;Called upon the node removal&#34;&#34;&#34;
+    # custom free function
+    self.sv_free()
+
+    # free sockets memory
+    for s in chain(self.inputs, self.outputs):
+        s.sv_forget()
+
+    # remove tree space drawings
+    self.update_ui()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.init"><code class="name flex">
+<span>def <span class="ident">init</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>this function is triggered upon node creation,
+- delegates further initialization information to sv_init</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init(self, context):
+    &#34;&#34;&#34;
+    this function is triggered upon node creation,
+    - delegates further initialization information to sv_init
+    &#34;&#34;&#34;
+    if self.sv_default_color:
+        self.use_custom_color = True
+        self.color = self.sv_default_color
+
+    with catch_log_error():
+        self.sv_init(context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.insert_link"><code class="name flex">
+<span>def <span class="ident">insert_link</span></span>(<span>self, link)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It will be triggered only if one socket is connected with another by user</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert_link(self, link):
+    &#34;&#34;&#34;It will be triggered only if one socket is connected with another by user&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.process_node"><code class="name flex">
+<span>def <span class="ident">process_node</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call this method to revaluate the node tree whenever node properties was changed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_node(self, context):
+    &#34;&#34;&#34;Call this method to revaluate the node tree whenever node properties was changed&#34;&#34;&#34;
+    self.id_data.update_nodes([self])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.refresh_node"><code class="name flex">
+<span>def <span class="ident">refresh_node</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def refresh_node(self, context):
+    if self.refresh:
+        self.refresh = False
+        self.process_node(context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.sv_copy"><code class="name flex">
+<span>def <span class="ident">sv_copy</span></span>(<span>self, original)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override this method to do anything node-specific
+at the moment of node being copied.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_copy(self, original):
+    &#34;&#34;&#34;
+    Override this method to do anything node-specific
+    at the moment of node being copied.
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.sv_free"><code class="name flex">
+<span>def <span class="ident">sv_free</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Override this method to do anything node-specific upon node removal</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_free(self):
+    &#34;&#34;&#34;
+    Override this method to do anything node-specific upon node removal
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.sv_init"><code class="name flex">
+<span>def <span class="ident">sv_init</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method will be called during node creation
+Typically it is used for socket creating and assigning properties to sockets</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_init(self, context):
+    &#34;&#34;&#34;
+    This method will be called during node creation
+    Typically it is used for socket creating and assigning properties to sockets
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.sv_new_input"><code class="name flex">
+<span>def <span class="ident">sv_new_input</span></span>(<span>self, socket_type, name, **attrib_dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_new_input(self, socket_type, name, **attrib_dict):
+    socket = self.inputs.new(socket_type, name)
+    for att in attrib_dict:
+        setattr(socket, att, attrib_dict[att])
+    return socket</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.sv_update"><code class="name flex">
+<span>def <span class="ident">sv_update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method can be overridden in inherited classes.
+It will be triggered upon any <code>node tree</code> editor changes (new/copy/delete links/nodes).
+Calling of this method is unordered among other calls of the method of other nodes in a tree.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_update(self):
+    &#34;&#34;&#34;
+    This method can be overridden in inherited classes.
+    It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+    Calling of this method is unordered among other calls of the method of other nodes in a tree.
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The method will be triggered upon editor changes, typically before node tree update method.
+It is better to avoid using this trigger.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self):
+    &#34;&#34;&#34;
+    The method will be triggered upon editor changes, typically before node tree update method.
+    It is better to avoid using this trigger.
+    &#34;&#34;&#34;
+    if &#39;init_tree&#39; in self.id_data:  # tree is building by a script - let it do this
+        return
+
+    self.sv_update()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.update_interactive_mode"><code class="name flex">
+<span>def <span class="ident">update_interactive_mode</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_interactive_mode(self, context):
+    if self.is_interactive:
+        self.process_node(context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.UpdateNodes.update_ui"><code class="name flex">
+<span>def <span class="ident">update_ui</span></span>(<span>self, error=None, update_time=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>updating tree contextual information -&gt; node colors, text
+node_id only for usage of a group tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_ui(self, error=None, update_time=None):
+    &#34;&#34;&#34;updating tree contextual information -&gt; node colors, text
+    node_id only for usage of a group tree&#34;&#34;&#34;
+    sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+    exception_color = sv_settings.exception_color
+    no_data_color = sv_settings.no_data_color
+    error_pref = &#34;error&#34;
+    update_pref = &#34;update_time&#34;
+
+    # update error colors
+    if error is not None:
+        color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+        self.set_temp_color(color)
+        sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+    else:
+        sv_bgl.callback_disable(error_pref + self.node_id)
+        self.set_temp_color()
+
+    # show update timing
+    if update_time is not None:
+        update_time = int(update_time * 1000)
+        sv_bgl.draw_text(self, f&#39;{update_time}ms&#39;, update_pref + self.node_id, align=&#34;UP&#34;, dynamic_location=False)
+    else:
+        sv_bgl.callback_disable(update_pref + self.node_id)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.node_tree.add_use_fake_user_to_trees" href="#sverchok.node_tree.add_use_fake_user_to_trees">add_use_fake_user_to_trees</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.node_tree.NodeUtils" href="#sverchok.node_tree.NodeUtils">NodeUtils</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.NodeUtils.debug" href="#sverchok.node_tree.NodeUtils.debug">debug</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.error" href="#sverchok.node_tree.NodeUtils.error">error</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.exception" href="#sverchok.node_tree.NodeUtils.exception">exception</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.get_bpy_data_from_name" href="#sverchok.node_tree.NodeUtils.get_bpy_data_from_name">get_bpy_data_from_name</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.get_logger" href="#sverchok.node_tree.NodeUtils.get_logger">get_logger</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.info" href="#sverchok.node_tree.NodeUtils.info">info</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.safe_socket_remove" href="#sverchok.node_tree.NodeUtils.safe_socket_remove">safe_socket_remove</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.warning" href="#sverchok.node_tree.NodeUtils.warning">warning</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op" href="#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.init_tree" href="#sverchok.node_tree.SvNodeTreeCommon.init_tree">init_tree</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.show_time_mode" href="#sverchok.node_tree.SvNodeTreeCommon.show_time_mode">show_time_mode</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes" href="#sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes">sv_show_time_nodes</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.tree_id" href="#sverchok.node_tree.SvNodeTreeCommon.tree_id">tree_id</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.tree_id_memory" href="#sverchok.node_tree.SvNodeTreeCommon.tree_id_memory">tree_id_memory</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info" href="#sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info">update_gl_scale_info</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_ui" href="#sverchok.node_tree.SvNodeTreeCommon.update_ui">update_ui</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.SverchCustomTree.bl_icon" href="#sverchok.node_tree.SverchCustomTree.bl_icon">bl_icon</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.bl_idname" href="#sverchok.node_tree.SverchCustomTree.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.bl_label" href="#sverchok.node_tree.SverchCustomTree.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.bl_rna" href="#sverchok.node_tree.SverchCustomTree.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.force_update" href="#sverchok.node_tree.SverchCustomTree.force_update">force_update</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">on_draft_mode_changed</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.process_ani" href="#sverchok.node_tree.SverchCustomTree.process_ani">process_ani</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.scene_update" href="#sverchok.node_tree.SverchCustomTree.scene_update">scene_update</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_animate" href="#sverchok.node_tree.SverchCustomTree.sv_animate">sv_animate</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_draft" href="#sverchok.node_tree.SverchCustomTree.sv_draft">sv_draft</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_process" href="#sverchok.node_tree.SverchCustomTree.sv_process">sv_process</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_scene_update" href="#sverchok.node_tree.SverchCustomTree.sv_scene_update">sv_scene_update</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_show" href="#sverchok.node_tree.SverchCustomTree.sv_show">sv_show</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.sv_show_socket_menus" href="#sverchok.node_tree.SverchCustomTree.sv_show_socket_menus">sv_show_socket_menus</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">turn_off_ng</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.update" href="#sverchok.node_tree.SverchCustomTree.update">update</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTree.update_nodes" href="#sverchok.node_tree.SverchCustomTree.update_nodes">update_nodes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.node_tree.SverchCustomTreeNode" href="#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.absolute_location" href="#sverchok.node_tree.SverchCustomTreeNode.absolute_location">absolute_location</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.docstring" href="#sverchok.node_tree.SverchCustomTreeNode.docstring">docstring</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.draw_buttons">draw_buttons</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.draw_buttons_ext" href="#sverchok.node_tree.SverchCustomTreeNode.draw_buttons_ext">draw_buttons_ext</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_animatable" href="#sverchok.node_tree.SverchCustomTreeNode.is_animatable">is_animatable</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_interactive" href="#sverchok.node_tree.SverchCustomTreeNode.is_interactive">is_interactive</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_from" href="#sverchok.node_tree.SverchCustomTreeNode.migrate_from">migrate_from</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_links_from" href="#sverchok.node_tree.SverchCustomTreeNode.migrate_links_from">migrate_links_from</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.n_id" href="#sverchok.node_tree.SverchCustomTreeNode.n_id">n_id</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu" href="#sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu">node_replacement_menu</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.poll" href="#sverchok.node_tree.SverchCustomTreeNode.poll">poll</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons">prefs_over_sized_buttons</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.rclick_menu" href="#sverchok.node_tree.SverchCustomTreeNode.rclick_menu">rclick_menu</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.refresh" href="#sverchok.node_tree.SverchCustomTreeNode.refresh">refresh</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.set_temp_color" href="#sverchok.node_tree.SverchCustomTreeNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_default_color" href="#sverchok.node_tree.SverchCustomTreeNode.sv_default_color">sv_default_color</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">sv_draw_buttons</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext">sv_draw_buttons_ext</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_internal_links" href="#sverchok.node_tree.SverchCustomTreeNode.sv_internal_links">sv_internal_links</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.UpdateNodes.copy" href="#sverchok.node_tree.UpdateNodes.copy">copy</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.free" href="#sverchok.node_tree.UpdateNodes.free">free</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.init" href="#sverchok.node_tree.UpdateNodes.init">init</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.insert_link" href="#sverchok.node_tree.UpdateNodes.insert_link">insert_link</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">is_animatable</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">is_animation_dependent</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_interactive" href="#sverchok.node_tree.UpdateNodes.is_interactive">is_interactive</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_scene_dependent" href="#sverchok.node_tree.UpdateNodes.is_scene_dependent">is_scene_dependent</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.n_id" href="#sverchok.node_tree.UpdateNodes.n_id">n_id</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.node_id" href="#sverchok.node_tree.UpdateNodes.node_id">node_id</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.process_node" href="#sverchok.node_tree.UpdateNodes.process_node">process_node</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.refresh" href="#sverchok.node_tree.UpdateNodes.refresh">refresh</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">refresh_node</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_copy" href="#sverchok.node_tree.UpdateNodes.sv_copy">sv_copy</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_free" href="#sverchok.node_tree.UpdateNodes.sv_free">sv_free</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_init" href="#sverchok.node_tree.UpdateNodes.sv_init">sv_init</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_new_input" href="#sverchok.node_tree.UpdateNodes.sv_new_input">sv_new_input</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.sv_update" href="#sverchok.node_tree.UpdateNodes.sv_update">sv_update</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.update" href="#sverchok.node_tree.UpdateNodes.update">update</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">update_interactive_mode</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.update_ui" href="#sverchok.node_tree.UpdateNodes.update_ui">update_ui</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.nurbs_common API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.nurbs_common</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+from math import sqrt
+
+from sverchok.utils.math import binomial
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.dependencies import geomdl
+
+class SvNurbsMaths(object):
+    &#34;&#34;&#34;
+    This class allows modules such as curve.primitives and others to
+    create NURBS curves or surfaces without need to import curves.nurbs
+    or surfaces.nurbs. It is required to exclude such imports because
+    curves.nurbs and surfaces.nurbs require curves.primitives and several
+    other curves.* and surfaces.* modules.
+    &#34;&#34;&#34;
+    NATIVE = &#39;NATIVE&#39;
+    GEOMDL = &#39;GEOMDL&#39;
+    FREECAD = &#39;FREECAD&#39;
+
+    # Classes by implementation
+    curve_classes = dict()
+    surface_classes = dict()
+
+    @staticmethod
+    def build_curve(implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.build(implementation, degree, knotvector, control_points, weights, normalize_knots)
+
+    @staticmethod
+    def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
+        if kv_error is not None:
+            raise Exception(&#34;U direction: &#34; + kv_error)
+        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
+        if kv_error is not None:
+            raise Exception(&#34;V direction: &#34; + kv_error)
+
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def to_nurbs_curve(curve, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.to_nurbs(curve, implementation)
+
+    @staticmethod
+    def to_nurbs_surface(surface, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.to_nurbs(surface, implementation)
+
+def nurbs_divide(numerator, denominator):
+    if denominator.ndim &lt; 2:
+        denominator = denominator[np.newaxis].T
+    good = (denominator != 0)
+    good_num = good.flatten()
+    result = np.zeros_like(numerator)
+    result[good_num] = numerator[good_num] / denominator[good][np.newaxis].T
+    return result
+
+def nurbs_divide_flat(numerator, denominator):
+    good = (denominator != 0)
+    result = np.zeros_like(numerator)
+    result[good] = numerator[good] / denominator[good]
+    return result
+
+def bezier_coefficient(n, k, ts):
+    C = binomial(n, k)
+    return C * ts**k * (1 - ts)**(n-k)
+
+def elevate_bezier_degree(self_degree, control_points, delta=1):
+    # See &#34;The NURBS book&#34; (2nd edition), p.5.5, eq. 5.36
+    t = delta
+    p = self_degree
+    new_points = []
+    P = control_points
+    for i in range(p+t+1):
+        j0 = max(0, i-t)
+        j1 = min(p, i)
+        js = range(j0, j1+1)
+        c1 = np.array([binomial(p, j) for j in js])
+        c2 = np.array([binomial(t, i-j) for j in js])
+        ps = P[j0:j1+1, :]
+        numerator = (c1 * c2)[np.newaxis].T * ps
+        denominator = binomial(p+t, i)
+        #print(f&#34;E: p {p}, i {i}, c1 {c1}, c2 {c2}, denom {denominator}, ps {ps}&#34;)
+        point = numerator.sum(axis=0) / denominator
+        new_points.append(point)
+    return np.array(new_points)
+
+def reduce_bezier_degree_once(self_degree, control_points):
+    # See &#34;The NURBS Book&#34; (2nd edition), p.5.6 eq. 5.40, 5.41, 5.42
+    # Also, from eq. 5.43 and 5.44 there, we derive estimations of error
+    # bounds more precise than those which are given in eq. 5.45, 5.46
+    # in the same paragraph later.
+    p = self_degree
+    r = (p-1) // 2
+    ndim = control_points.shape[1]
+    alpha = [float(i) / float(p) for i in range(p)]
+    new_control_points = np.zeros((p, ndim))
+    new_control_points[0] = control_points[0]
+    new_control_points[p-1] = control_points[p]
+    if p % 2 == 0:
+        for i in range(1, r+1):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        error = np.linalg.norm(control_points[r+1] - 0.5*(new_control_points[r] + new_control_points[r+1]))
+        # directly follows from eq. 5.43
+        error *= bezier_coefficient(p, r+1, 0.5)
+    else:
+        for i in range(1, r):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        p_l = (control_points[r] - alpha[r]*new_control_points[r-1]) / (1 - alpha[r])
+        p_r = (control_points[r+1] - (1 - alpha[r+1])*new_control_points[r+1]) / alpha[r+1]
+        new_control_points[r] = 0.5 * (p_l + p_r)
+        error = np.linalg.norm(p_l - p_r)
+        # See eq. 5.44. Knowing that r == (p-1)/2 and p is odd, and
+        # knowing properties of binomial coefficients, we know that
+        # C(p,r) == C(p, r+1); from that, one can write that
+        # B[r,p](u) - B[r+1,p](u) = C(p,r) * u^r * (1-u)^(r+1) * (1 - 2*u)        (*)
+        # By manually differentiating this, one can find out that it
+        # reaches maximums at u = (p +- sqrt(p)) / (2*p)
+        # (both maximums are equal due to symmetry).
+        max_u = (p - sqrt(p)) / (2*p)
+        # from (*); it&#39;s quite obvious that this is positive since max_u &lt; 1/2
+        b_error = binomial(p,r) * max_u**r * (1 - max_u)**(r+1) * (1 - 2*max_u)
+        error *= 0.5 * (1 - alpha[r]) * b_error
+    return new_control_points, error
+
+def reduce_bezier_degree(self_degree, control_points, delta=1):
+    max_error = 0.0
+    degree = self_degree
+    for i in range(delta):
+        control_points, error = reduce_bezier_degree_once(degree, control_points)
+        max_error = max(max_error, error)
+    return control_points, max_error
+
+def from_homogenous(control_points):
+    if control_points.ndim == 2: # curve
+        weights = control_points[:,3]
+        weighted = control_points[:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    elif control_points.ndim == 3: # surface
+        weights = control_points[:,:,3]
+        weighted = control_points[:,:,0:3]
+        points = weighted / np.transpose(weights[np.newaxis], axes=(1,2,0))
+        return points, weights
+    else:
+        raise Exception(f&#34;control_points have ndim={control_points.ndim}, supported are only 2 and 3&#34;)
+
+class SvNurbsBasisFunctions(object):
+    def __init__(self, knotvector):
+        self.knotvector = np.array(knotvector)
+        self._cache = dict()
+
+    def function(self, i, p, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        def calc(us):
+            value = self._cache.get((i,p, 0))
+            if value is not None:
+                return value
+
+            u = self.knotvector
+            if p &lt;= 0:
+                if i &lt; 0 or i &gt;= len(u):
+
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                        
+                else:
+
+                    if i+1 &gt;= len(u):
+                        u_next = u[-1]
+                        is_last = True
+                    else:
+                        u_next = u[i+1]
+                        is_last = u_next &gt;= u[-1]
+                    if is_last:
+                        c2 = us &lt;= u_next
+                    else:
+                        c2 = us &lt; u_next
+                    condition = np.logical_and(u[i] &lt;= us, c2)
+                    value = np.where(condition, 1.0, 0.0)
+                    self._cache[(i,p,0)] = value
+                    return value
+
+            else:
+                denom1 = (u[i+p] - u[i])
+                denom2 = (u[i+p+1] - u[i+1])
+
+                if denom1 != 0:
+                    n1 = self.function(i, p-1, reset_cache=False)(us)
+                if denom2 != 0:
+                    n2 = self.function(i+1, p-1, reset_cache=False)(us)
+
+                if denom1 == 0 and denom2 == 0:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 == 0 and denom2 != 0:
+                    c2 = (u[i+p+1] - us) / denom2
+                    value = c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 != 0 and denom2 == 0:
+                    c1 = (us - u[i]) / denom1
+                    value = c1 * n1
+                    self._cache[(i,p,0)] = value
+                    return value
+                else: # denom1 != 0 and denom2 != 0
+                    c1 = (us - u[i]) / denom1
+                    c2 = (u[i+p+1] - us) / denom2
+                    value = c1 * n1 + c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+        return calc
+
+    def derivative(self, i, p, k, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+
+        if k == 0:
+            return self.function(i, p, reset_cache=False)
+
+        def calc(us):
+            value = self._cache.get((i, p, k))
+            if value is not None:
+                return value
+            
+            n1 = self.derivative(i, p-1, k-1, reset_cache=False)(us)
+            n2 = self.derivative(i+1, p-1, k-1, reset_cache=False)(us)
+            u = self.knotvector
+
+            denom1 = u[i+p] - u[i]
+            denom2 = u[i+p+1] - u[i+1]
+
+            if denom1 == 0:
+                s1 = np.zeros_like(us)
+            else:
+                s1 = n1 / denom1
+
+            if denom2 == 0:
+                s2 = np.zeros_like(us)
+            else:
+                s2 = n2 / denom2
+
+            value = p*(s1 - s2)
+            self._cache[(i,p,k)] = value
+            return value
+        
+        return calc
+
+    def fraction(self, i, p, weights, reset_cache=True):
+
+        if reset_cache:
+            self._cache = dict()
+        n = len(weights)
+
+        def calc(us):
+            numerator = self.function(i,p, reset_cache=reset_cache)(us) * weights[i]
+            ds = [self.function(j,p, reset_cache=False)(us) * weights[j] for j in range(n)]
+            denominator = sum(ds)
+            return nurbs_divide_flat(numerator, denominator)
+
+        return calc
+
+    def weighted_derivative(self, i, p, k, weights, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        n = len(weights)
+
+        def calc(us):
+            ns = self.derivative(i, p, k)(us)
+            numerator = ns * weights[i]
+            denominator = weights.sum()
+            return numerator / denominator
+        
+        return calc
+
+
+class CantInsertKnotException(Exception):
+    pass
+
+class CantRemoveKnotException(Exception):
+    pass
+
+class CantReduceDegreeException(Exception):
+    pass</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.nurbs_common.bezier_coefficient"><code class="name flex">
+<span>def <span class="ident">bezier_coefficient</span></span>(<span>n, k, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bezier_coefficient(n, k, ts):
+    C = binomial(n, k)
+    return C * ts**k * (1 - ts)**(n-k)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.elevate_bezier_degree"><code class="name flex">
+<span>def <span class="ident">elevate_bezier_degree</span></span>(<span>self_degree, control_points, delta=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def elevate_bezier_degree(self_degree, control_points, delta=1):
+    # See &#34;The NURBS book&#34; (2nd edition), p.5.5, eq. 5.36
+    t = delta
+    p = self_degree
+    new_points = []
+    P = control_points
+    for i in range(p+t+1):
+        j0 = max(0, i-t)
+        j1 = min(p, i)
+        js = range(j0, j1+1)
+        c1 = np.array([binomial(p, j) for j in js])
+        c2 = np.array([binomial(t, i-j) for j in js])
+        ps = P[j0:j1+1, :]
+        numerator = (c1 * c2)[np.newaxis].T * ps
+        denominator = binomial(p+t, i)
+        #print(f&#34;E: p {p}, i {i}, c1 {c1}, c2 {c2}, denom {denominator}, ps {ps}&#34;)
+        point = numerator.sum(axis=0) / denominator
+        new_points.append(point)
+    return np.array(new_points)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.from_homogenous"><code class="name flex">
+<span>def <span class="ident">from_homogenous</span></span>(<span>control_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_homogenous(control_points):
+    if control_points.ndim == 2: # curve
+        weights = control_points[:,3]
+        weighted = control_points[:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    elif control_points.ndim == 3: # surface
+        weights = control_points[:,:,3]
+        weighted = control_points[:,:,0:3]
+        points = weighted / np.transpose(weights[np.newaxis], axes=(1,2,0))
+        return points, weights
+    else:
+        raise Exception(f&#34;control_points have ndim={control_points.ndim}, supported are only 2 and 3&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.nurbs_divide"><code class="name flex">
+<span>def <span class="ident">nurbs_divide</span></span>(<span>numerator, denominator)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_divide(numerator, denominator):
+    if denominator.ndim &lt; 2:
+        denominator = denominator[np.newaxis].T
+    good = (denominator != 0)
+    good_num = good.flatten()
+    result = np.zeros_like(numerator)
+    result[good_num] = numerator[good_num] / denominator[good][np.newaxis].T
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.nurbs_divide_flat"><code class="name flex">
+<span>def <span class="ident">nurbs_divide_flat</span></span>(<span>numerator, denominator)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_divide_flat(numerator, denominator):
+    good = (denominator != 0)
+    result = np.zeros_like(numerator)
+    result[good] = numerator[good] / denominator[good]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.reduce_bezier_degree"><code class="name flex">
+<span>def <span class="ident">reduce_bezier_degree</span></span>(<span>self_degree, control_points, delta=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reduce_bezier_degree(self_degree, control_points, delta=1):
+    max_error = 0.0
+    degree = self_degree
+    for i in range(delta):
+        control_points, error = reduce_bezier_degree_once(degree, control_points)
+        max_error = max(max_error, error)
+    return control_points, max_error</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.reduce_bezier_degree_once"><code class="name flex">
+<span>def <span class="ident">reduce_bezier_degree_once</span></span>(<span>self_degree, control_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reduce_bezier_degree_once(self_degree, control_points):
+    # See &#34;The NURBS Book&#34; (2nd edition), p.5.6 eq. 5.40, 5.41, 5.42
+    # Also, from eq. 5.43 and 5.44 there, we derive estimations of error
+    # bounds more precise than those which are given in eq. 5.45, 5.46
+    # in the same paragraph later.
+    p = self_degree
+    r = (p-1) // 2
+    ndim = control_points.shape[1]
+    alpha = [float(i) / float(p) for i in range(p)]
+    new_control_points = np.zeros((p, ndim))
+    new_control_points[0] = control_points[0]
+    new_control_points[p-1] = control_points[p]
+    if p % 2 == 0:
+        for i in range(1, r+1):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        error = np.linalg.norm(control_points[r+1] - 0.5*(new_control_points[r] + new_control_points[r+1]))
+        # directly follows from eq. 5.43
+        error *= bezier_coefficient(p, r+1, 0.5)
+    else:
+        for i in range(1, r):
+            new_control_points[i] = (control_points[i] - alpha[i] * new_control_points[i-1]) / (1 - alpha[i])
+        for i in range(p-2, r, -1): # reverse order
+            new_control_points[i] = (control_points[i+1] - (1 - alpha[i+1])*new_control_points[i+1]) / alpha[i+1]
+        p_l = (control_points[r] - alpha[r]*new_control_points[r-1]) / (1 - alpha[r])
+        p_r = (control_points[r+1] - (1 - alpha[r+1])*new_control_points[r+1]) / alpha[r+1]
+        new_control_points[r] = 0.5 * (p_l + p_r)
+        error = np.linalg.norm(p_l - p_r)
+        # See eq. 5.44. Knowing that r == (p-1)/2 and p is odd, and
+        # knowing properties of binomial coefficients, we know that
+        # C(p,r) == C(p, r+1); from that, one can write that
+        # B[r,p](u) - B[r+1,p](u) = C(p,r) * u^r * (1-u)^(r+1) * (1 - 2*u)        (*)
+        # By manually differentiating this, one can find out that it
+        # reaches maximums at u = (p +- sqrt(p)) / (2*p)
+        # (both maximums are equal due to symmetry).
+        max_u = (p - sqrt(p)) / (2*p)
+        # from (*); it&#39;s quite obvious that this is positive since max_u &lt; 1/2
+        b_error = binomial(p,r) * max_u**r * (1 - max_u)**(r+1) * (1 - 2*max_u)
+        error *= 0.5 * (1 - alpha[r]) * b_error
+    return new_control_points, error</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.nurbs_common.CantInsertKnotException"><code class="flex name class">
+<span>class <span class="ident">CantInsertKnotException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CantInsertKnotException(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.nurbs_common.CantReduceDegreeException"><code class="flex name class">
+<span>class <span class="ident">CantReduceDegreeException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CantReduceDegreeException(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.nurbs_common.CantRemoveKnotException"><code class="flex name class">
+<span>class <span class="ident">CantRemoveKnotException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CantRemoveKnotException(Exception):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsBasisFunctions"><code class="flex name class">
+<span>class <span class="ident">SvNurbsBasisFunctions</span></span>
+<span>(</span><span>knotvector)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNurbsBasisFunctions(object):
+    def __init__(self, knotvector):
+        self.knotvector = np.array(knotvector)
+        self._cache = dict()
+
+    def function(self, i, p, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        def calc(us):
+            value = self._cache.get((i,p, 0))
+            if value is not None:
+                return value
+
+            u = self.knotvector
+            if p &lt;= 0:
+                if i &lt; 0 or i &gt;= len(u):
+
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                        
+                else:
+
+                    if i+1 &gt;= len(u):
+                        u_next = u[-1]
+                        is_last = True
+                    else:
+                        u_next = u[i+1]
+                        is_last = u_next &gt;= u[-1]
+                    if is_last:
+                        c2 = us &lt;= u_next
+                    else:
+                        c2 = us &lt; u_next
+                    condition = np.logical_and(u[i] &lt;= us, c2)
+                    value = np.where(condition, 1.0, 0.0)
+                    self._cache[(i,p,0)] = value
+                    return value
+
+            else:
+                denom1 = (u[i+p] - u[i])
+                denom2 = (u[i+p+1] - u[i+1])
+
+                if denom1 != 0:
+                    n1 = self.function(i, p-1, reset_cache=False)(us)
+                if denom2 != 0:
+                    n2 = self.function(i+1, p-1, reset_cache=False)(us)
+
+                if denom1 == 0 and denom2 == 0:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 == 0 and denom2 != 0:
+                    c2 = (u[i+p+1] - us) / denom2
+                    value = c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 != 0 and denom2 == 0:
+                    c1 = (us - u[i]) / denom1
+                    value = c1 * n1
+                    self._cache[(i,p,0)] = value
+                    return value
+                else: # denom1 != 0 and denom2 != 0
+                    c1 = (us - u[i]) / denom1
+                    c2 = (u[i+p+1] - us) / denom2
+                    value = c1 * n1 + c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+        return calc
+
+    def derivative(self, i, p, k, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+
+        if k == 0:
+            return self.function(i, p, reset_cache=False)
+
+        def calc(us):
+            value = self._cache.get((i, p, k))
+            if value is not None:
+                return value
+            
+            n1 = self.derivative(i, p-1, k-1, reset_cache=False)(us)
+            n2 = self.derivative(i+1, p-1, k-1, reset_cache=False)(us)
+            u = self.knotvector
+
+            denom1 = u[i+p] - u[i]
+            denom2 = u[i+p+1] - u[i+1]
+
+            if denom1 == 0:
+                s1 = np.zeros_like(us)
+            else:
+                s1 = n1 / denom1
+
+            if denom2 == 0:
+                s2 = np.zeros_like(us)
+            else:
+                s2 = n2 / denom2
+
+            value = p*(s1 - s2)
+            self._cache[(i,p,k)] = value
+            return value
+        
+        return calc
+
+    def fraction(self, i, p, weights, reset_cache=True):
+
+        if reset_cache:
+            self._cache = dict()
+        n = len(weights)
+
+        def calc(us):
+            numerator = self.function(i,p, reset_cache=reset_cache)(us) * weights[i]
+            ds = [self.function(j,p, reset_cache=False)(us) * weights[j] for j in range(n)]
+            denominator = sum(ds)
+            return nurbs_divide_flat(numerator, denominator)
+
+        return calc
+
+    def weighted_derivative(self, i, p, k, weights, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        n = len(weights)
+
+        def calc(us):
+            ns = self.derivative(i, p, k)(us)
+            numerator = ns * weights[i]
+            denominator = weights.sum()
+            return numerator / denominator
+        
+        return calc</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self, i, p, k, reset_cache=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self, i, p, k, reset_cache=True):
+    if reset_cache:
+        self._cache = dict()
+
+    if k == 0:
+        return self.function(i, p, reset_cache=False)
+
+    def calc(us):
+        value = self._cache.get((i, p, k))
+        if value is not None:
+            return value
+        
+        n1 = self.derivative(i, p-1, k-1, reset_cache=False)(us)
+        n2 = self.derivative(i+1, p-1, k-1, reset_cache=False)(us)
+        u = self.knotvector
+
+        denom1 = u[i+p] - u[i]
+        denom2 = u[i+p+1] - u[i+1]
+
+        if denom1 == 0:
+            s1 = np.zeros_like(us)
+        else:
+            s1 = n1 / denom1
+
+        if denom2 == 0:
+            s2 = np.zeros_like(us)
+        else:
+            s2 = n2 / denom2
+
+        value = p*(s1 - s2)
+        self._cache[(i,p,k)] = value
+        return value
+    
+    return calc</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.fraction"><code class="name flex">
+<span>def <span class="ident">fraction</span></span>(<span>self, i, p, weights, reset_cache=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fraction(self, i, p, weights, reset_cache=True):
+
+    if reset_cache:
+        self._cache = dict()
+    n = len(weights)
+
+    def calc(us):
+        numerator = self.function(i,p, reset_cache=reset_cache)(us) * weights[i]
+        ds = [self.function(j,p, reset_cache=False)(us) * weights[j] for j in range(n)]
+        denominator = sum(ds)
+        return nurbs_divide_flat(numerator, denominator)
+
+    return calc</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.function"><code class="name flex">
+<span>def <span class="ident">function</span></span>(<span>self, i, p, reset_cache=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def function(self, i, p, reset_cache=True):
+    if reset_cache:
+        self._cache = dict()
+    def calc(us):
+        value = self._cache.get((i,p, 0))
+        if value is not None:
+            return value
+
+        u = self.knotvector
+        if p &lt;= 0:
+            if i &lt; 0 or i &gt;= len(u):
+
+                value = np.zeros_like(us)
+                self._cache[(i,p,0)] = value
+                return value
+                    
+            else:
+
+                if i+1 &gt;= len(u):
+                    u_next = u[-1]
+                    is_last = True
+                else:
+                    u_next = u[i+1]
+                    is_last = u_next &gt;= u[-1]
+                if is_last:
+                    c2 = us &lt;= u_next
+                else:
+                    c2 = us &lt; u_next
+                condition = np.logical_and(u[i] &lt;= us, c2)
+                value = np.where(condition, 1.0, 0.0)
+                self._cache[(i,p,0)] = value
+                return value
+
+        else:
+            denom1 = (u[i+p] - u[i])
+            denom2 = (u[i+p+1] - u[i+1])
+
+            if denom1 != 0:
+                n1 = self.function(i, p-1, reset_cache=False)(us)
+            if denom2 != 0:
+                n2 = self.function(i+1, p-1, reset_cache=False)(us)
+
+            if denom1 == 0 and denom2 == 0:
+                value = np.zeros_like(us)
+                self._cache[(i,p,0)] = value
+                return value
+            elif denom1 == 0 and denom2 != 0:
+                c2 = (u[i+p+1] - us) / denom2
+                value = c2 * n2
+                self._cache[(i,p,0)] = value
+                return value
+            elif denom1 != 0 and denom2 == 0:
+                c1 = (us - u[i]) / denom1
+                value = c1 * n1
+                self._cache[(i,p,0)] = value
+                return value
+            else: # denom1 != 0 and denom2 != 0
+                c1 = (us - u[i]) / denom1
+                c2 = (u[i+p+1] - us) / denom2
+                value = c1 * n1 + c2 * n2
+                self._cache[(i,p,0)] = value
+                return value
+    return calc</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.weighted_derivative"><code class="name flex">
+<span>def <span class="ident">weighted_derivative</span></span>(<span>self, i, p, k, weights, reset_cache=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weighted_derivative(self, i, p, k, weights, reset_cache=True):
+    if reset_cache:
+        self._cache = dict()
+    n = len(weights)
+
+    def calc(us):
+        ns = self.derivative(i, p, k)(us)
+        numerator = ns * weights[i]
+        denominator = weights.sum()
+        return numerator / denominator
+    
+    return calc</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths"><code class="flex name class">
+<span>class <span class="ident">SvNurbsMaths</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class allows modules such as curve.primitives and others to
+create NURBS curves or surfaces without need to import curves.nurbs
+or surfaces.nurbs. It is required to exclude such imports because
+curves.nurbs and surfaces.nurbs require curves.primitives and several
+other curves.<em> and surfaces.</em> modules.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNurbsMaths(object):
+    &#34;&#34;&#34;
+    This class allows modules such as curve.primitives and others to
+    create NURBS curves or surfaces without need to import curves.nurbs
+    or surfaces.nurbs. It is required to exclude such imports because
+    curves.nurbs and surfaces.nurbs require curves.primitives and several
+    other curves.* and surfaces.* modules.
+    &#34;&#34;&#34;
+    NATIVE = &#39;NATIVE&#39;
+    GEOMDL = &#39;GEOMDL&#39;
+    FREECAD = &#39;FREECAD&#39;
+
+    # Classes by implementation
+    curve_classes = dict()
+    surface_classes = dict()
+
+    @staticmethod
+    def build_curve(implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.build(implementation, degree, knotvector, control_points, weights, normalize_knots)
+
+    @staticmethod
+    def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
+        if kv_error is not None:
+            raise Exception(&#34;U direction: &#34; + kv_error)
+        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
+        if kv_error is not None:
+            raise Exception(&#34;V direction: &#34; + kv_error)
+
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def to_nurbs_curve(curve, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.to_nurbs(curve, implementation)
+
+    @staticmethod
+    def to_nurbs_surface(surface, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+        else:
+            return nurbs_class.to_nurbs(surface, implementation)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.FREECAD"><code class="name">var <span class="ident">FREECAD</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.GEOMDL"><code class="name">var <span class="ident">GEOMDL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.NATIVE"><code class="name">var <span class="ident">NATIVE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes"><code class="name">var <span class="ident">curve_classes</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes"><code class="name">var <span class="ident">surface_classes</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.build_curve"><code class="name flex">
+<span>def <span class="ident">build_curve</span></span>(<span>implementation, degree, knotvector, control_points, weights=None, normalize_knots=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def build_curve(implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+    kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+    if kv_error is not None:
+        raise Exception(kv_error)
+    nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+    if nurbs_class is None:
+        raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+    else:
+        return nurbs_class.build(implementation, degree, knotvector, control_points, weights, normalize_knots)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.build_surface"><code class="name flex">
+<span>def <span class="ident">build_surface</span></span>(<span>implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+    kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
+    if kv_error is not None:
+        raise Exception(&#34;U direction: &#34; + kv_error)
+    kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
+    if kv_error is not None:
+        raise Exception(&#34;V direction: &#34; + kv_error)
+
+    nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+    if nurbs_class is None:
+        raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+    else:
+        return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve"><code class="name flex">
+<span>def <span class="ident">to_nurbs_curve</span></span>(<span>curve, implementation='NATIVE')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def to_nurbs_curve(curve, implementation = NATIVE):
+    nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+    if nurbs_class is None:
+        raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
+    else:
+        return nurbs_class.to_nurbs(curve, implementation)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface"><code class="name flex">
+<span>def <span class="ident">to_nurbs_surface</span></span>(<span>surface, implementation='NATIVE')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def to_nurbs_surface(surface, implementation = NATIVE):
+    nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+    if nurbs_class is None:
+        raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
+    else:
+        return nurbs_class.to_nurbs(surface, implementation)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.nurbs_common.bezier_coefficient" href="#sverchok.utils.nurbs_common.bezier_coefficient">bezier_coefficient</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.elevate_bezier_degree" href="#sverchok.utils.nurbs_common.elevate_bezier_degree">elevate_bezier_degree</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.from_homogenous" href="#sverchok.utils.nurbs_common.from_homogenous">from_homogenous</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.nurbs_divide" href="#sverchok.utils.nurbs_common.nurbs_divide">nurbs_divide</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.nurbs_divide_flat" href="#sverchok.utils.nurbs_common.nurbs_divide_flat">nurbs_divide_flat</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.reduce_bezier_degree" href="#sverchok.utils.nurbs_common.reduce_bezier_degree">reduce_bezier_degree</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.reduce_bezier_degree_once" href="#sverchok.utils.nurbs_common.reduce_bezier_degree_once">reduce_bezier_degree_once</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.nurbs_common.CantInsertKnotException" href="#sverchok.utils.nurbs_common.CantInsertKnotException">CantInsertKnotException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.nurbs_common.CantReduceDegreeException" href="#sverchok.utils.nurbs_common.CantReduceDegreeException">CantReduceDegreeException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.nurbs_common.CantRemoveKnotException" href="#sverchok.utils.nurbs_common.CantRemoveKnotException">CantRemoveKnotException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.nurbs_common.SvNurbsBasisFunctions" href="#sverchok.utils.nurbs_common.SvNurbsBasisFunctions">SvNurbsBasisFunctions</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.derivative" href="#sverchok.utils.nurbs_common.SvNurbsBasisFunctions.derivative">derivative</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.fraction" href="#sverchok.utils.nurbs_common.SvNurbsBasisFunctions.fraction">fraction</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.function" href="#sverchok.utils.nurbs_common.SvNurbsBasisFunctions.function">function</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsBasisFunctions.weighted_derivative" href="#sverchok.utils.nurbs_common.SvNurbsBasisFunctions.weighted_derivative">weighted_derivative</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths" href="#sverchok.utils.nurbs_common.SvNurbsMaths">SvNurbsMaths</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.FREECAD" href="#sverchok.utils.nurbs_common.SvNurbsMaths.FREECAD">FREECAD</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.GEOMDL" href="#sverchok.utils.nurbs_common.SvNurbsMaths.GEOMDL">GEOMDL</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.NATIVE" href="#sverchok.utils.nurbs_common.SvNurbsMaths.NATIVE">NATIVE</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.build_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.build_curve">build_curve</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.build_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.build_surface">build_surface</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes">curve_classes</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes">surface_classes</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve">to_nurbs_curve</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface">to_nurbs_surface</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

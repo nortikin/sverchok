@@ -1,0 +1,4186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.voronoi API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.voronoi</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#############################################################################
+#
+# Voronoi diagram calculator/ Delaunay triangulator
+# Translated to Python by Bill Simons
+# September, 2005
+#
+# Additional changes by Carson Farmer added November 2010
+#
+# Calculate Delaunay triangulation or the Voronoi polygons for a set of 
+# 2D input points.
+#
+# Derived from code bearing the following notice:
+#
+#  The author of this software is Steven Fortune.  Copyright (c) 1994 by AT&amp;T
+#  Bell Laboratories.
+#  Permission to use, copy, modify, and distribute this software for any
+#  purpose without fee is hereby granted, provided that this entire notice
+#  is included in all copies of any software which is or includes a copy
+#  or modification of this software and in all copies of the supporting
+#  documentation for such software.
+#  THIS SOFTWARE IS BEING PROVIDED &#34;AS IS&#34;, WITHOUT ANY EXPRESS OR IMPLIED
+#  WARRANTY.  IN PARTICULAR, NEITHER THE AUTHORS NOR AT&amp;T MAKE ANY
+#  REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
+#  OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
+#
+# Comments were incorporated from Shane O&#39;Sullivan&#39;s translation of the 
+# original code into C++ (http://mapviewer.skynet.ie/voronoi.html)
+#
+# Steve Fortune&#39;s homepage: http://netlib.bell-labs.com/cm/cs/who/sjf/index.html
+#
+#############################################################################
+#
+# python 2 to conversion 3 using 2to3 by Linus Yng, added Site.__lt__ and cmp,
+# modified output,downloaded from:
+# http://svn.osgeo.org/qgis/trunk/qgis/python/plugins/fTools/tools/voronoi.py
+#
+#############################################################################
+
+def usage():
+    print(&#34;&#34;&#34;
+voronoi - compute Voronoi diagram or Delaunay triangulation
+
+voronoi [-t -p -d]  [filename]
+
+Voronoi reads from filename (or standard input if no filename given) for a set 
+of points in the plane and writes either the Voronoi diagram or the Delaunay 
+triangulation to the standard output.  Each input line should consist of two 
+real numbers, separated by white space.
+
+If option -t is present, the Delaunay triangulation is produced. 
+Each output line is a triple i j k, which are the indices of the three points
+in a Delaunay triangle. Points are numbered starting at 0.
+
+If option -t is not present, the Voronoi diagram is produced.  
+There are four output record types.
+
+s a b      indicates that an input point at coordinates a b was seen.
+l a b c    indicates a line with equation ax + by = c.
+v a b      indicates a vertex at a b.
+e l v1 v2  indicates a Voronoi segment which is a subsegment of line number l
+           with endpoints numbered v1 and v2.  If v1 or v2 is -1, the line 
+           extends to infinity.
+
+Other options include:
+
+d    Print debugging info
+
+p    Produce output suitable for input to plot (1), rather than the forms 
+     described above.
+
+On unsorted data uniformly distributed in the unit square, voronoi uses about 
+20n+140 bytes of storage.
+
+AUTHOR
+Steve J. Fortune (1987) A Sweepline Algorithm for Voronoi Diagrams,
+Algorithmica 2, 153-174.
+&#34;&#34;&#34;)
+
+#############################################################################
+#
+# For programmatic use two functions are available:
+#
+#   computeVoronoiDiagram(points)
+#
+#        Takes a list of point objects (which must have x and y fields).
+#        Returns a 3-tuple of:
+#
+#           (1) a list of 2-tuples, which are the x,y coordinates of the 
+#               Voronoi diagram vertices
+#           (2) a list of 3-tuples (a,b,c) which are the equations of the
+#               lines in the Voronoi diagram: a*x + b*y = c
+#           (3) a list of 3-tuples, (l, v1, v2) representing edges of the 
+#               Voronoi diagram.  l is the index of the line, v1 and v2 are
+#               the indices of the vetices at the end of the edge.  If 
+#               v1 or v2 is -1, the line extends to infinity.
+#
+#   computeDelaunayTriangulation(points):
+#
+#        Takes a list of point objects (which must have x and y fields).
+#        Returns a list of 3-tuples: the indices of the points that form a
+#        Delaunay triangle.
+#
+#############################################################################
+import math
+import sys
+import getopt
+import numpy as np
+
+from math import sqrt, atan2
+from collections import defaultdict
+
+import bmesh
+from mathutils import Vector
+from mathutils.geometry import intersect_line_line_2d
+from mathutils.bvhtree import BVHTree
+from mathutils.kdtree import KDTree
+
+from sverchok.utils.logging import debug, info, error
+from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
+from sverchok.utils.math import weighted_center
+from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
+
+TOLERANCE = 1e-9
+BIG_FLOAT = 1e38
+
+
+def cmp(x,y):
+    return x.__cmp__(y)
+    
+#------------------------------------------------------------------
+class Context(object):
+    def __init__(self):
+        self.doPrint = 0
+        self.debug   = 0
+        self.plot    = 0
+        self.triangulate = False
+        self.vertices  = []    # list of vertex 2-tuples: (x,y)
+        self.lines     = []    # equation of line 3-tuple (a b c), for the equation of the line a*x+b*y = c  
+        self.edges     = []    # edge 3-tuple: (line index, vertex 1 index, vertex 2 index)   if either vertex index is -1, the edge extends to infiinity
+        self.triangles = []    # 3-tuple of vertex indices
+        self.polygons  = {}    # a dict of site:[edges] pairs
+
+    def circle(self,x,y,rad):
+        pass
+
+    def clip_line(self,edge):
+        pass
+
+    def line(self,x0,y0,x1,y1):
+        pass
+
+    def outSite(self,s):
+        if(self.debug):
+            print(&#34;site (%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+        elif(self.triangulate):
+            pass
+        elif(self.plot):
+            self.circle (s.x, s.y, cradius)
+        elif(self.doPrint):
+            print(&#34;s %f %f&#34; % (s.x, s.y))
+
+    def outVertex(self,s):
+        self.vertices.append((s.x,s.y))
+        if(self.debug):
+            print(&#34;vertex(%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+        elif(self.triangulate):
+            pass
+        elif(self.doPrint and not self.plot):
+            print(&#34;v %f %f&#34; % (s.x,s.y))
+
+    def outTriple(self,s1,s2,s3):
+        self.triangles.append((s1.sitenum, s2.sitenum, s3.sitenum))
+        if(self.debug):
+            print(&#34;circle through left=%d right=%d bottom=%d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))
+        elif(self.triangulate and self.doPrint and not self.plot):
+            print(&#34;%d %d %d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))
+
+    def outBisector(self,edge):
+        self.lines.append((edge.a, edge.b, edge.c))
+        if(self.debug):
+            print(&#34;line(%d) %gx+%gy=%g, bisecting %d %d&#34; % (edge.edgenum, edge.a, edge.b, edge.c, edge.reg[0].sitenum, edge.reg[1].sitenum))
+        elif(self.triangulate):
+            if(self.plot):
+                self.line(edge.reg[0].x, edge.reg[0].y, edge.reg[1].x, edge.reg[1].y)
+        elif(self.doPrint and not self.plot):
+            print(&#34;l %f %f %f&#34; % (edge.a, edge.b, edge.c))
+
+    def outEdge(self,edge):
+        sitenumL = -1
+        if edge.ep[Edge.LE] is not None:
+            sitenumL = edge.ep[Edge.LE].sitenum
+        sitenumR = -1
+        if edge.ep[Edge.RE] is not None:
+            sitenumR = edge.ep[Edge.RE].sitenum
+        if edge.reg[0].sitenum not in self.polygons:
+            self.polygons[edge.reg[0].sitenum] = []
+        if edge.reg[1].sitenum not in self.polygons:
+            self.polygons[edge.reg[1].sitenum] = []
+        self.polygons[edge.reg[0].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+        self.polygons[edge.reg[1].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+        self.edges.append((edge.edgenum,sitenumL,sitenumR))
+        if(not self.triangulate):
+            if self.plot:
+                self.clip_line(edge)
+            elif(self.doPrint): 
+                print(&#34;e %d&#34; % edge.edgenum, end=&#39; &#39;)
+                print(&#34; %d &#34; % sitenumL, end=&#39; &#39;)
+                print(&#34;%d&#34; % sitenumR)
+
+#------------------------------------------------------------------
+def voronoi(siteList,context, raise_exception=False):
+    try:
+      edgeList  = EdgeList(siteList.xmin,siteList.xmax,len(siteList))
+      priorityQ = PriorityQueue(siteList.ymin,siteList.ymax,len(siteList))
+      siteIter = siteList.iterator()
+      
+      bottomsite = next(siteIter)
+      context.outSite(bottomsite)
+      newsite = next(siteIter)
+      minpt = Site(-BIG_FLOAT,-BIG_FLOAT)
+      while True:
+          if not priorityQ.isEmpty():
+              minpt = priorityQ.getMinPt()
+
+          if (newsite and (priorityQ.isEmpty() or cmp(newsite,minpt) &lt; 0)):
+              # newsite is smallest -  this is a site event
+              context.outSite(newsite)
+              
+              # get first Halfedge to the LEFT and RIGHT of the new site 
+              lbnd = edgeList.leftbnd(newsite) 
+              rbnd = lbnd.right                    
+              
+              # if this halfedge has no edge, bot = bottom site (whatever that is)
+              # create a new edge that bisects
+              bot  = lbnd.rightreg(bottomsite)     
+              edge = Edge.bisect(bot,newsite)      
+              context.outBisector(edge)
+              
+              # create a new Halfedge, setting its pm field to 0 and insert 
+              # this new bisector edge between the left and right vectors in
+              # a linked list
+              bisector = Halfedge(edge,Edge.LE)    
+              edgeList.insert(lbnd,bisector)       
+
+              # if the new bisector intersects with the left edge, remove 
+              # the left edge&#39;s vertex, and put in the new one
+              p = lbnd.intersect(bisector)
+              if p is not None:
+                  priorityQ.delete(lbnd)
+                  priorityQ.insert(lbnd,p,newsite.distance(p))
+
+              # create a new Halfedge, setting its pm field to 1
+              # insert the new Halfedge to the right of the original bisector
+              lbnd = bisector
+              bisector = Halfedge(edge,Edge.RE)     
+              edgeList.insert(lbnd,bisector)        
+
+              # if this new bisector intersects with the right Halfedge
+              p = bisector.intersect(rbnd)
+              if p is not None:
+                  # push the Halfedge into the ordered linked list of vertices
+                  priorityQ.insert(bisector,p,newsite.distance(p))
+              
+              newsite = next(siteIter)
+
+          elif not priorityQ.isEmpty():
+              # intersection is smallest - this is a vector (circle) event 
+
+              # pop the Halfedge with the lowest vector off the ordered list of 
+              # vectors.  Get the Halfedge to the left and right of the above HE
+              # and also the Halfedge to the right of the right HE
+              lbnd  = priorityQ.popMinHalfedge()      
+              llbnd = lbnd.left               
+              rbnd  = lbnd.right              
+              rrbnd = rbnd.right              
+              
+              # get the Site to the left of the left HE and to the right of
+              # the right HE which it bisects
+              bot = lbnd.leftreg(bottomsite)  
+              top = rbnd.rightreg(bottomsite) 
+              
+              # output the triple of sites, stating that a circle goes through them
+              mid = lbnd.rightreg(bottomsite)
+              context.outTriple(bot,top,mid)          
+
+              # get the vertex that caused this event and set the vertex number
+              # couldn&#39;t do this earlier since we didn&#39;t know when it would be processed
+              v = lbnd.vertex                 
+              siteList.setSiteNumber(v)
+              context.outVertex(v)
+              
+              # set the endpoint of the left and right Halfedge to be this vector
+              if lbnd.edge.setEndpoint(lbnd.pm,v):
+                  context.outEdge(lbnd.edge)
+              
+              if rbnd.edge.setEndpoint(rbnd.pm,v):
+                  context.outEdge(rbnd.edge)
+
+              
+              # delete the lowest HE, remove all vertex events to do with the 
+              # right HE and delete the right HE
+              edgeList.delete(lbnd)           
+              priorityQ.delete(rbnd)
+              edgeList.delete(rbnd)
+              
+              
+              # if the site to the left of the event is higher than the Site
+              # to the right of it, then swap them and set &#39;pm&#39; to RIGHT
+              pm = Edge.LE
+              if bot.y &gt; top.y:
+                  bot,top = top,bot
+                  pm = Edge.RE
+
+              # Create an Edge (or line) that is between the two Sites.  This 
+              # creates the formula of the line, and assigns a line number to it
+              edge = Edge.bisect(bot, top)     
+              context.outBisector(edge)
+
+              # create a HE from the edge 
+              bisector = Halfedge(edge, pm)    
+              
+              # insert the new bisector to the right of the left HE
+              # set one endpoint to the new edge to be the vector point &#39;v&#39;
+              # If the site to the left of this bisector is higher than the right
+              # Site, then this endpoint is put in position 0; otherwise in pos 1
+              edgeList.insert(llbnd, bisector) 
+              if edge.setEndpoint(Edge.RE - pm, v):
+                  context.outEdge(edge)
+              
+              # if left HE and the new bisector don&#39;t intersect, then delete 
+              # the left HE, and reinsert it 
+              p = llbnd.intersect(bisector)
+              if p is not None:
+                  priorityQ.delete(llbnd);
+                  priorityQ.insert(llbnd, p, bot.distance(p))
+
+              # if right HE and the new bisector don&#39;t intersect, then reinsert it 
+              p = bisector.intersect(rrbnd)
+              if p is not None:
+                  priorityQ.insert(bisector, p, bot.distance(p))
+          else:
+              break
+
+      he = edgeList.leftend.right
+      while he is not edgeList.rightend:
+          context.outEdge(he.edge)
+          he = he.right
+      Edge.EDGE_NUM = 0
+    except Exception as err:
+        if raise_exception:
+            raise err
+        else:
+          print(&#34;#Voronoi error#&#34;)
+          print(str(err))
+
+#------------------------------------------------------------------
+def isEqual(a,b,relativeError=TOLERANCE):
+    # is nearly equal to within the allowed relative error
+    norm = max(abs(a),abs(b))
+    return (norm &lt; relativeError) or (abs(a - b) &lt; (relativeError * norm))
+
+#------------------------------------------------------------------
+class Site(object):
+    def __init__(self,x=0.0,y=0.0,sitenum=0):
+        self.x = x
+        self.y = y
+        self.sitenum = sitenum
+
+    def dump(self):
+        print(&#34;Site #%d (%g, %g)&#34; % (self.sitenum,self.x,self.y))
+    
+    
+    def __lt__(self, other):
+        if self.y &lt; other.y:
+            return 1
+        elif self.y &gt; other.y:
+            return 0
+        elif self.x &lt; other.x:
+            return 1
+        elif self.x &gt; other.x:
+            return 0 
+                   
+    def __str__(self):
+        return str((self.x,self.y))
+         
+    def __cmp__(self,other):
+        if self.y &lt; other.y:
+            return -1
+        elif self.y &gt; other.y:
+            return 1
+        elif self.x &lt; other.x:
+            return -1
+        elif self.x &gt; other.x:
+            return 1
+        else:
+            return 0
+
+    def distance(self,other):
+        dx = self.x - other.x
+        dy = self.y - other.y
+        return math.sqrt(dx*dx + dy*dy)
+
+#------------------------------------------------------------------
+class Edge(object):
+    LE = 0
+    RE = 1
+    EDGE_NUM = 0
+    DELETED = {}   # marker value
+
+    def __init__(self):
+        self.a = 0.0
+        self.b = 0.0
+        self.c = 0.0
+        self.ep  = [None,None]
+        self.reg = [None,None]
+        self.edgenum = 0
+
+    def dump(self):
+        print(&#34;(#%d a=%g, b=%g, c=%g)&#34; % (self.edgenum,self.a,self.b,self.c))
+        print(&#34;ep&#34;,self.ep)
+        print(&#34;reg&#34;,self.reg)
+
+    def setEndpoint(self, lrFlag, site):
+        self.ep[lrFlag] = site
+        if self.ep[Edge.RE - lrFlag] is None:
+            return False
+        return True
+
+    @staticmethod
+    def bisect(s1,s2):
+        newedge = Edge()
+        newedge.reg[0] = s1 # store the sites that this edge is bisecting
+        newedge.reg[1] = s2
+
+        # to begin with, there are no endpoints on the bisector - it goes to infinity
+        # ep[0] and ep[1] are None
+
+        # get the difference in x dist between the sites
+        dx = float(s2.x - s1.x)
+        dy = float(s2.y - s1.y)
+        adx = abs(dx)  # make sure that the difference in positive
+        ady = abs(dy)
+        
+        # get the slope of the line
+        newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
+        if dx == 0 and dy == 0:
+            raise Exception(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
+        if adx &gt; ady :
+            # set formula of line, with x fixed to 1
+            newedge.a = 1.0
+            newedge.b = dy/dx
+            newedge.c /= dx
+        else:
+            # set formula of line, with y fixed to 1
+            newedge.b = 1.0
+            newedge.a = dx/dy
+            newedge.c /= dy
+
+        newedge.edgenum = Edge.EDGE_NUM
+        Edge.EDGE_NUM += 1
+        return newedge
+
+
+#------------------------------------------------------------------
+class Halfedge(object):
+    def __init__(self,edge=None,pm=Edge.LE):
+        self.left  = None   # left Halfedge in the edge list
+        self.right = None   # right Halfedge in the edge list
+        self.qnext = None   # priority queue linked list pointer
+        self.edge  = edge   # edge list Edge
+        self.pm     = pm
+        self.vertex = None  # Site()
+        self.ystar  = BIG_FLOAT
+
+    def dump(self):
+        print(&#34;Halfedge--------------------------&#34;)
+        print(&#34;left: &#34;,    self.left)  
+        print(&#34;right: &#34;,   self.right) 
+        print(&#34;edge: &#34;,    self.edge)  
+        print(&#34;pm: &#34;,      self.pm)    
+        print(&#34;vertex: &#34;, end=&#39; &#39;)
+        if self.vertex: self.vertex.dump()
+        else: print(&#34;None&#34;)
+        print(&#34;ystar: &#34;,   self.ystar) 
+
+
+    def __cmp__(self,other):
+        if self.ystar &gt; other.ystar:
+            return 1
+        elif self.ystar &lt; other.ystar:
+            return -1
+        elif self.vertex.x &gt; other.vertex.x:
+            return 1
+        elif self.vertex.x &lt; other.vertex.x:
+            return -1
+        else:
+            return 0
+
+    def leftreg(self,default):
+        if not self.edge: 
+            return default
+        elif self.pm == Edge.LE:
+            return self.edge.reg[Edge.LE]
+        else:
+            return self.edge.reg[Edge.RE]
+
+    def rightreg(self,default):
+        if not self.edge: 
+            return default
+        elif self.pm == Edge.LE:
+            return self.edge.reg[Edge.RE]
+        else:
+            return self.edge.reg[Edge.LE]
+
+
+    # returns True if p is to right of halfedge self
+    def isPointRightOf(self,pt):
+        e = self.edge
+        topsite = e.reg[1]
+        right_of_site = pt.x &gt; topsite.x
+        
+        if(right_of_site and self.pm == Edge.LE): 
+            return True
+        
+        if(not right_of_site and self.pm == Edge.RE):
+            return False
+        
+        if(e.a == 1.0):
+            dyp = pt.y - topsite.y
+            dxp = pt.x - topsite.x
+            fast = 0;
+            if ((not right_of_site and e.b &lt; 0.0) or (right_of_site and e.b &gt;= 0.0)):
+                above = dyp &gt;= e.b * dxp
+                fast = above
+            else:
+                above = pt.x + pt.y * e.b &gt; e.c
+                if(e.b &lt; 0.0):
+                    above = not above
+                if (not above):
+                    fast = 1
+            if (not fast):
+                dxs = topsite.x - (e.reg[0]).x
+                above = e.b * (dxp*dxp - dyp*dyp) &lt; dxs*dyp*(1.0+2.0*dxp/dxs + e.b*e.b)
+                if(e.b &lt; 0.0):
+                    above = not above
+        else:  # e.b == 1.0 
+            yl = e.c - e.a * pt.x
+            t1 = pt.y - yl
+            t2 = pt.x - topsite.x
+            t3 = yl - topsite.y
+            above = t1*t1 &gt; t2*t2 + t3*t3
+        
+        if(self.pm==Edge.LE):
+            return above
+        else:
+            return not above
+
+    #--------------------------
+    # create a new site where the Halfedges el1 and el2 intersect
+    def intersect(self,other):
+        e1 = self.edge
+        e2 = other.edge
+        if (e1 is None) or (e2 is None):
+            return None
+
+        # if the two edges bisect the same parent return None
+        if e1.reg[1] is e2.reg[1]:
+            return None
+
+        d = e1.a * e2.b - e1.b * e2.a
+        if isEqual(d,0.0):
+            return None
+
+        xint = (e1.c*e2.b - e2.c*e1.b) / d
+        yint = (e2.c*e1.a - e1.c*e2.a) / d
+        if(cmp(e1.reg[1],e2.reg[1]) &lt; 0):
+            he = self
+            e = e1
+        else:
+            he = other
+            e = e2
+
+        rightOfSite = xint &gt;= e.reg[1].x
+        if((rightOfSite     and he.pm == Edge.LE) or
+           (not rightOfSite and he.pm == Edge.RE)):
+            return None
+
+        # create a new site at the point of intersection - this is a new 
+        # vector event waiting to happen
+        return Site(xint,yint)
+
+        
+
+#------------------------------------------------------------------
+class EdgeList(object):
+    def __init__(self,xmin,xmax,nsites):
+        if xmin &gt; xmax: xmin,xmax = xmax,xmin
+        self.hashsize = int(2*math.sqrt(nsites+4))
+        
+        self.xmin   = xmin
+        self.deltax = float(xmax - xmin)
+        self.hash   = [None]*self.hashsize
+        
+        self.leftend  = Halfedge()
+        self.rightend = Halfedge()
+        self.leftend.right = self.rightend
+        self.rightend.left = self.leftend
+        self.hash[0]  = self.leftend
+        self.hash[-1] = self.rightend
+
+    def insert(self,left,he):
+        he.left  = left
+        he.right = left.right
+        left.right.left = he
+        left.right = he
+
+    def delete(self,he):
+        he.left.right = he.right
+        he.right.left = he.left
+        he.edge = Edge.DELETED
+
+    # Get entry from hash table, pruning any deleted nodes 
+    def gethash(self,b):
+        if(b &lt; 0 or b &gt;= self.hashsize):
+            return None
+        he = self.hash[b]
+        if he is None or he.edge is not Edge.DELETED:
+            return he
+
+        #  Hash table points to deleted half edge.  Patch as necessary.
+        self.hash[b] = None
+        return None
+
+    def leftbnd(self,pt):
+        # Use hash table to get close to desired halfedge 
+        bucket = int(((pt.x - self.xmin)/self.deltax * self.hashsize))
+        
+        if(bucket &lt; 0): 
+            bucket =0;
+        
+        if(bucket &gt;=self.hashsize): 
+            bucket = self.hashsize-1
+
+        he = self.gethash(bucket)
+        if(he is None):
+            i = 1
+            while True:
+                he = self.gethash(bucket-i)
+                if (he is not None): break;
+                he = self.gethash(bucket+i)
+                if (he is not None): break;
+                i += 1
+    
+        # Now search linear list of halfedges for the correct one
+        if (he is self.leftend) or (he is not self.rightend and he.isPointRightOf(pt)):
+            he = he.right
+            while he is not self.rightend and he.isPointRightOf(pt):
+                he = he.right
+            he = he.left;
+        else:
+            he = he.left
+            while (he is not self.leftend and not he.isPointRightOf(pt)):
+                he = he.left
+
+        # Update hash table and reference counts
+        if(bucket &gt; 0 and bucket &lt; self.hashsize-1):
+            self.hash[bucket] = he
+        return he
+
+
+#------------------------------------------------------------------
+class PriorityQueue(object):
+    def __init__(self,ymin,ymax,nsites):
+        self.ymin = ymin
+        self.deltay = ymax - ymin
+        self.hashsize = int(4 * math.sqrt(nsites))
+        self.count = 0
+        self.minidx = 0
+        self.hash = []
+        for i in range(self.hashsize):
+            self.hash.append(Halfedge())
+
+    def __len__(self):
+        return self.count
+
+    def isEmpty(self):
+        return self.count == 0
+
+    def insert(self,he,site,offset):
+        he.vertex = site
+        he.ystar  = site.y + offset
+        last = self.hash[self.getBucket(he)]
+        next = last.qnext
+        while((next is not None) and cmp(he,next) &gt; 0):
+            last = next
+            next = last.qnext
+        he.qnext = last.qnext
+        last.qnext = he
+        self.count += 1
+
+    def delete(self,he):
+        if (he.vertex is not None):
+            last = self.hash[self.getBucket(he)]
+            while last.qnext is not he:
+                last = last.qnext
+            last.qnext = he.qnext
+            self.count -= 1
+            he.vertex = None
+
+    def getBucket(self,he):
+        bucket = int(((he.ystar - self.ymin) / self.deltay) * self.hashsize)
+        if bucket &lt; 0: bucket = 0
+        if bucket &gt;= self.hashsize: bucket = self.hashsize-1
+        if bucket &lt; self.minidx:  self.minidx = bucket
+        return bucket
+
+    def getMinPt(self):
+        while(self.hash[self.minidx].qnext is None):
+            self.minidx += 1
+        he = self.hash[self.minidx].qnext
+        x = he.vertex.x
+        y = he.ystar
+        return Site(x,y)
+
+    def popMinHalfedge(self):
+        curr = self.hash[self.minidx].qnext
+        self.hash[self.minidx].qnext = curr.qnext
+        self.count -= 1
+        return curr
+
+
+#------------------------------------------------------------------
+class SiteList(object):
+    def __init__(self,pointList):
+        self.__sites = []
+        self.__sitenum = 0
+
+        self.__xmin = pointList[0].x
+        self.__ymin = pointList[0].y
+        self.__xmax = pointList[0].x
+        self.__ymax = pointList[0].y
+        for i,pt in enumerate(pointList):
+            self.__sites.append(Site(pt.x,pt.y,i))
+            if pt.x &lt; self.__xmin: self.__xmin = pt.x
+            if pt.y &lt; self.__ymin: self.__ymin = pt.y
+            if pt.x &gt; self.__xmax: self.__xmax = pt.x
+            if pt.y &gt; self.__ymax: self.__ymax = pt.y
+        self.__sites.sort()
+
+    def setSiteNumber(self,site):
+        site.sitenum = self.__sitenum
+        self.__sitenum += 1
+
+    class Iterator(object):
+        def __init__(this,lst):  this.generator = (s for s in lst)
+        def __iter__(this):      return this
+        def __next__(this): 
+            try:
+                return next(this.generator)
+            except StopIteration:
+                return None
+
+    def iterator(self):
+        return SiteList.Iterator(self.__sites)
+
+    def __iter__(self):
+        return SiteList.Iterator(self.__sites)
+
+    def __len__(self):
+        return len(self.__sites)
+
+    def _getxmin(self): return self.__xmin
+    def _getymin(self): return self.__ymin
+    def _getxmax(self): return self.__xmax
+    def _getymax(self): return self.__ymax
+    xmin = property(_getxmin)
+    ymin = property(_getymin)
+    xmax = property(_getxmax)
+    ymax = property(_getymax)
+
+
+
+#    siteList = SiteList(points)
+#     context  = Context()
+#     voronoi(siteList,context)
+#     return (context.vertices,context.lines,context.edges)
+
+
+ 
+#------------------------------------------------------------------
+def computeVoronoiDiagram(points, raise_exception=False):
+    &#34;&#34;&#34; Takes a list of point objects (which must have x and y fields).
+        Returns a Context object.
+
+           (1) context.vertices: a list of 2-tuples, which are the x,y
+               coordinates of the Voronoi diagram vertices
+           (2) context.lines: a list of 3-tuples (a,b,c) which are the
+               equations of the lines in the Voronoi diagram: a*x + b*y = c
+           (3) context.edges: a list of 3-tuples, (l, v1, v2) representing edges of the 
+               Voronoi diagram.  l is the index of the line, v1 and v2 are
+               the indices of the vetices at the end of the edge.  If 
+               v1 or v2 is -1, the line extends to infinity.
+           (4) context.polygons: a dict of site:[edges] pairs
+    &#34;&#34;&#34;
+
+    siteList = SiteList(points)
+    context  = Context()
+    context.triangulate = True
+    voronoi(siteList,context, raise_exception)
+    return context
+
+#------------------------------------------------------------------
+def computeDelaunayTriangulation(points):
+    &#34;&#34;&#34; Takes a list of point objects (which must have x and y fields).
+        Returns a list of 3-tuples: the indices of the points that form a
+        Delaunay triangle.
+    &#34;&#34;&#34;
+#   original function in comment    
+#    siteList = SiteList(points)
+#     context  = Context()
+#     context.triangulate = true
+#     voronoi(siteList,context)
+#     return context.triangles
+    
+    siteList = SiteList(points)
+    context  = Context()
+    context.triangulate = True
+    voronoi(siteList,context)
+    return context.triangles
+
+#-----------------------------------------------------------------------------
+# if __name__==&#34;__main__&#34;:
+#     try:
+#         optlist,args = getopt.getopt(sys.argv[1:],&#34;thdp&#34;)
+#     except getopt.GetoptError:
+#         usage()
+#         sys.exit(2)
+#       
+#     doHelp = 0
+#     c = Context()
+#     c.doPrint = 1
+#     for opt in optlist:
+#         if opt[0] == &#34;-d&#34;:  c.debug = 1
+#         if opt[0] == &#34;-p&#34;:  c.plot  = 1
+#         if opt[0] == &#34;-t&#34;:  c.triangulate = 1
+#         if opt[0] == &#34;-h&#34;:  doHelp = 1
+# 
+#     if not doHelp:
+#         pts = []
+#         fp = sys.stdin
+#         if len(args) &gt; 0:
+#             fp = open(args[0],&#39;r&#39;)
+#         for line in fp:
+#             fld = line.split()
+#             x = float(fld[0])
+#             y = float(fld[1])
+#             pts.append(Site(x,y))
+#         if len(args) &gt; 0: fp.close()
+# 
+#     if doHelp or len(pts) == 0:
+#         usage()
+#         sys.exit(2)
+# 
+#     sl = SiteList(pts)
+#     voronoi(sl,c)
+
+class Bounds(object):
+    def __init__(self):
+        self.x_max = 0
+        self.y_max = 0
+        self.x_min = 0
+        self.y_min = 0
+        self.r_max = 0
+        self.center = (0,0)
+
+    @classmethod
+    def new(cls, mode):
+        if mode == &#39;BOX&#39;:
+            return BoxBounds()
+        elif mode == &#39;CIRCLE&#39;:
+            return CircleBounds()
+        else:
+            raise Exception(&#34;Unknown bounds type&#34;)
+
+    def __repr__(self):
+        return f&#34;Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]&#34;
+
+    def restrict(self, point):
+        raise Exception(&#34;not implemented&#34;)
+
+    def init_from_sites(self, sites):
+        self.x_max = -BIG_FLOAT
+        self.x_min = BIG_FLOAT
+        self.y_min = BIG_FLOAT
+        self.y_max = -BIG_FLOAT
+        x0, y0, z0 = center(sites)
+        self.center = (x0, y0)
+        # creates points in format for voronoi library, throwing away z
+        for x, y, z in sites:
+            r = sqrt((x-x0)**2 + (y-y0)**2)
+            self.r_max = max(r, self.r_max)
+            self.x_max = max(x, self.x_max)
+            self.x_min = min(x, self.x_min)
+            self.y_max = max(y, self.y_max)
+            self.y_min = min(y, self.y_min)
+
+class Mesh2D(object):
+    def __init__(self):
+        self.verts = []
+        self.all_edges = set()
+        self.linked_verts = defaultdict(set)
+        self._next_vert = 0
+
+    @classmethod
+    def from_pydata(cls, verts, edges):
+        mesh = Mesh2D()
+        for vert in verts:
+            mesh.new_vert(vert)
+        for i, j in edges:
+            mesh.new_edge(i, j)
+        return mesh
+
+    def new_vert(self, vert):
+        if vert is None:
+            raise Exception(&#34;new_vert(None)&#34;)
+        if vert[0] is None or vert[1] is None:
+            raise Exception(f&#34;new_vert({vert})&#34;)
+        self.verts.append(vert)
+        idx = self._next_vert
+        self._next_vert += 1
+        return idx
+
+    def new_edge(self, i, j):
+        v1, v2 = self.verts[i], self.verts[j]
+        #info(&#34;Add: %s (%s) =&gt; %s (%s)&#34;, i, v1, j, v2)
+        self.all_edges.add((v1, v2))
+        self.linked_verts[i].add(j)
+        self.linked_verts[j].add(i)
+
+    def remove_edge(self, i, j):
+        if (self.verts[i], self.verts[j]) in self.all_edges:
+            self.all_edges.remove((self.verts[i], self.verts[j]))
+        if (self.verts[j], self.verts[i]) in self.all_edges:
+            self.all_edges.remove((self.verts[j], self.verts[i]))
+        if j in self.linked_verts[i]:
+            self.linked_verts[i].remove(j)
+        if i in self.linked_verts[j]:
+            self.linked_verts[j].remove(i)
+
+    def to_pydata(self):
+        verts = [vert for vert in self.verts if vert is not None]
+        lut = dict((vert, idx) for idx, vert in enumerate(verts))
+        #info(lut)
+        edges = []
+        for v1, v2 in self.all_edges:
+            i1 = lut.get(v1, None)
+            i2 = lut.get(v2, None)
+            #info(&#34;Get: %s (%s) =&gt; %s (%s)&#34;, v1, i1, v2, i2)
+            if i1 is not None and i2 is not None and i1 != i2:
+                edges.append((i1, i2))
+
+        return verts, edges
+
+class BoxBounds(Bounds):
+
+    def contains(self, p, edge_ok = True):
+        x, y = tuple(p)
+        if edge_ok:
+            return (self.x_min &lt;= x &lt;= self.x_max) and (self.y_min &lt;= y &lt;= self.y_max)
+        else:
+            return (self.x_min &lt; x &lt; self.x_max) and (self.y_min &lt; y &lt; self.y_max)
+    
+    @property
+    def edges(self):
+        v1 = (self.x_min, self.y_min)
+        v2 = (self.x_min, self.y_max)
+        v3 = (self.x_max, self.y_max)
+        v4 = (self.x_max, self.y_min)
+
+        e1 = (v1, v2)
+        e2 = (v2, v3)
+        e3 = (v3, v4)
+        e4 = (v4, v1)
+
+        return [e1, e2, e3, e4]
+
+    def segment_intersection(self, p1, p2):
+        if not isinstance(p1, Vector):
+            p1 = Vector(p1)
+        if not isinstance(p2, Vector):
+            p2 = Vector(p2)
+
+        min_r = BIG_FLOAT
+        nearest = None
+
+        for v_i, v_j in self.edges:
+            intersection = intersect_line_line_2d(p1, p2, v_i, v_j)
+            if intersection is not None:
+                r = (p1 - intersection).length
+                if r &lt; min_r:
+                    nearest = intersection
+                    min_r = r
+
+        return nearest
+
+    def ray_intersection(self, p, line):
+        p = Vector(center(line.sites))
+
+        min_r = BIG_FLOAT
+        nearest = None
+
+        for v_i, v_j in self.edges:
+            bound = LineEquation2D.from_two_points(v_i, v_j)
+            intersection = bound.intersect_with_line(line)
+            if intersection is not None:
+                r = (p - intersection).length
+                #info(&#34;INT: [%s - %s] X [%s] =&gt; %s (%s)&#34;, v_i, v_j, line, intersection, r)
+                if r &lt; min_r:
+                    nearest = intersection
+                    min_r = r
+
+        return nearest
+
+    def line_intersection(self, line):
+        result = []
+        eps = 1e-8
+        for v_i, v_j in self.edges:
+            bound = LineEquation2D.from_two_points(v_i, v_j)
+            intersection = bound.intersect_with_line(line)
+            if intersection is not None:
+                x,y = tuple(intersection)
+                if (self.x_min-eps &lt;= x &lt;= self.x_max+eps) and (self.y_min-eps &lt;= y &lt;= self.y_max+eps):
+                    result.append(intersection)
+        return result
+
+    def restrict(self, point):
+        def chop(t, m, M):
+            return min(max(t, m), M)
+
+        x, y, z = tuple(point)
+        x = chop(x, self.x_min, self.x_max)
+        y = chop(y, self.y_min, self.y_max)
+
+        return x,y,z
+
+    def project(self, point):
+        x, y, z = tuple(point)
+        mid_x = 0.5*(self.x_min + self.x_max)
+        mid_y = 0.5*(self.y_min + self.y_max)
+        if x &gt; mid_x:
+            x = self.x_max
+        else:
+            x = self.x_min
+        if y &gt; mid_y:
+            y = self.y_max
+        else:
+            y = self.y_min
+        return x, y, z
+
+class CircleBounds(Bounds):
+
+    @property
+    def circle(self):
+        return CircleEquation2D(self.center, self.r_max)
+
+    def contains(self, p, edge_ok=True):
+        return self.circle.contains(p, include_bound=edge_ok)
+
+    def segment_intersection(self, p1, p2):
+        r = self.circle.intersect_with_segment(p1, p2)
+        if r is None:
+            return None
+        if r[0] is None and r[1] is None:
+            return None
+        if r[0] is not None:
+            return r[0]
+        if r[1] is not None:
+            return r[1]
+
+    def ray_intersection(self, p, line):
+        p = Vector(center(line.sites))
+        intersection = self.circle.intersect_with_line(line)
+        #info(&#34;RI: {line} X {self.circle} =&gt; {intersection}&#34;)
+        if intersection is None:
+            return None
+        else:
+            v1, v2 = intersection
+            r1 = (p - v1).length
+            r2 = (p - v2).length
+            if r1 &lt; r2:
+                return v1
+            else:
+                return v2
+
+    def line_intersection(self, line):
+        intersection = self.circle.intersect_with_line(line)
+        return intersection
+
+    def restrict(self, point):
+        pt2d = (point[0], point[1])
+        if self.contains(pt2d):
+            return point
+        else:
+            v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+            x,y = tuple(v)
+            return x,y,0
+
+    def project(self, point):
+        pt2d = (point[0], point[1])
+        v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+        x,y = tuple(v)
+        return x,y,0
+
+def voronoi_bounded(sites, bound_mode=&#39;BOX&#39;, clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, ordered_faces=False, max_sides=10):
+
+    bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(sites)
+    source_sites = []
+    for x, y, z in sites:
+        source_sites.append(Site(x, y))
+
+    delta = clip
+    bounds.x_max = bounds.x_max + delta
+    bounds.y_max = bounds.y_max + delta
+
+    bounds.x_min = bounds.x_min - delta
+    bounds.y_min = bounds.y_min - delta
+
+    bounds.r_max = bounds.r_max + delta
+
+    voronoi_data = computeVoronoiDiagram(source_sites, raise_exception=True)
+    verts = voronoi_data.vertices
+    lines = voronoi_data.lines
+    all_edges = voronoi_data.edges
+
+    finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
+    bm = Mesh2D.from_pydata(verts, finite_edges)
+
+    # clipping box to bounding box.
+    verts_to_remove = set()
+    edges_to_remove = set()
+    bounding_verts = []
+
+    # For each diagram vertex that is outside of the bounds,
+    # cut each edge connected with that vertex by bounding line.
+    # Remove such vertices, remove such edges, and instead add
+    # vertices lying on the bounding line and corresponding edges.
+    for vert_idx, vert in enumerate(bm.verts[:]):
+        x, y = tuple(vert)
+        if not bounds.contains((x,y)):
+            verts_to_remove.add(vert_idx)
+            for other_vert_idx in list(bm.linked_verts[vert_idx]):
+                edges_to_remove.add((vert_idx, other_vert_idx))
+                if draw_hangs or draw_bounds:
+                    other_vert = bm.verts[other_vert_idx]
+                    if other_vert is not None:
+                        x2, y2 = tuple(other_vert)
+                        intersection = bounds.segment_intersection((x,y), (x2,y2))
+                        if intersection is not None:
+                            intersection = tuple(intersection)
+                            new_vert_idx = bm.new_vert(intersection)
+                            bounding_verts.append(new_vert_idx)
+                            #info(&#34;CLIP: Added point: %s =&gt; %s&#34;, (x_i, y_i), new_vert_idx)
+                            bm.new_edge(other_vert_idx, new_vert_idx)
+
+    # Diagram lines that go infinitely from one side of diagram to another
+    infinite_lines = []
+    # Lines that start at the one vertex of the diagram and go to infinity
+    rays = defaultdict(list)
+    if draw_hangs or draw_bounds:
+        sites_by_line = defaultdict(list)
+
+        for site_idx in voronoi_data.polygons.keys():
+            for line_index, i1, i2 in voronoi_data.polygons[site_idx]:
+                if i1 == -1 or i2 == -1:
+                    site = source_sites[site_idx]
+                    sites_by_line[line_index].append((site.x, site.y))
+
+        for line_index, i1, i2 in all_edges:
+            if i1 == -1 or i2 == -1:
+                line = lines[line_index]
+                a, b, c = line
+                eqn = LineEquation2D(a, b, -c)
+                if i1 == -1 and i2 != -1:
+                    eqn.sites = sites_by_line[line_index]
+                    rays[i2].append(eqn)
+                elif i2 == -1 and i1 != -1:
+                    eqn.sites = sites_by_line[line_index]
+                    rays[i1].append(eqn)
+                elif i1 == -1 and i2 == -1:
+                    infinite_lines.append(eqn)
+
+        # For each (half-infinite) ray, calculate it&#39;s intersection
+        # with the bounding line and draw an edge from ray&#39;s beginning to
+        # the bounding line.
+        # NB: The data returned from voronoi.py for such lines
+        # is a vertex and a line equation. The line obviously intersects
+        # the bounding line in two points; which one should we choose?
+        # Let&#39;s choose that one which is closer to site points which the
+        # line is dividing.
+        for vert_index in rays.keys():
+            x,y = bm.verts[vert_index]
+            vert = Vector((x,y))
+            if vert_index not in verts_to_remove:
+                for line in rays[vert_index]:
+                    intersection = bounds.ray_intersection(vert, line)
+                    intersection = tuple(intersection)
+                    new_vert_idx = bm.new_vert(intersection)
+                    bounding_verts.append(new_vert_idx)
+                    #info(&#34;INF: Added point: %s: %s =&gt; %s&#34;, (x,y), (x_i, y_i), new_vert_idx)
+                    bm.new_edge(vert_index, new_vert_idx)
+
+        # For each infinite (in two directions) line,
+        # calculate two it&#39;s intersections with the bounding
+        # line and connect them by an edge.
+        for eqn in infinite_lines:
+            intersections = bounds.line_intersection(eqn)
+            if len(intersections) == 2:
+                v1, v2 = intersections
+                new_vert_1_idx = bm.new_vert(tuple(v1))
+                new_vert_2_idx = bm.new_vert(tuple(v2))
+                bounding_verts.append(new_vert_1_idx)
+                bounding_verts.append(new_vert_2_idx)
+                bm.new_edge(new_vert_1_idx, new_vert_2_idx)
+            elif len(intersections) == 1:
+                v = intersections[0]
+                new_vert_idx = bm.new_vert(tuple(v))
+                bounding_verts.append(new_vert_idx)
+            else:
+                error(&#34;unexpected number of intersections of infinite line %s with area bounds %s: %s&#34;, eqn, bounds, intersections)
+
+        # TODO: there could be (finite) edges, which have both ends
+        # outside of the bounding line. We could detect such edges and
+        # process similarly to infinite lines - calculate two intersections
+        # with the bounding line and connect them by an edge.
+        # Currently I consider such cases as rare, so this is a low priority issue.
+        # Btw, such edges do not fall under definition of either &#34;bounding edge&#34;
+        # or &#34;hanging edge&#34;; so should we add a separate checkbox for such edges?...
+
+    if draw_bounds and bounding_verts:
+        bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
+        for i, j in zip(bounding_verts, bounding_verts[1:]):
+            bm.new_edge(i, j)
+        bm.new_edge(bounding_verts[-1], bounding_verts[0])
+
+    for i, j in edges_to_remove:
+        bm.remove_edge(i, j)
+    for vert_idx in verts_to_remove:
+        bm.verts[vert_idx] = None
+
+    verts, edges = bm.to_pydata()
+
+    new_vertices = [(vert[0], vert[1], 0) for vert in verts]
+
+    if make_faces:
+        for i,j in edges:
+            if i==j:
+                print(i,j)
+        bm = bmesh_from_pydata(new_vertices, edges, [])
+        bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=max_sides)
+        new_vertices, edges, new_faces = pydata_from_bmesh(bm)
+        bm.free()
+        if ordered_faces:
+            bvh = BVHTree.FromPolygons(new_vertices, new_faces)
+            face_by_site = dict()
+            for site_idx, site in enumerate(sites):
+                loc, normal, index, distance = bvh.find_nearest(site)
+                if index is not None:
+                    face_by_site[site_idx] = index
+            r = []
+            for i in range(len(sites)):
+                if i not in face_by_site:
+                    raise Exception(f&#34;Can&#39;t find a face for site #{i}&#34;)
+                face_idx = face_by_site[i]
+                face = new_faces[face_idx]
+                r.append(face)
+            new_faces = r
+    else:
+        new_faces = []
+
+    return new_vertices, edges, new_faces
+
+def unique_points(points, eps=1e-4):
+    kdt = KDTree(len(points))
+    for i, p in enumerate(points):
+        kdt.insert(p, i)
+    kdt.balance()
+    unique = []
+    repeating = []
+    mask = []
+    for p in points:
+        found = kdt.find_n(p, 2)
+        if len(found) &gt; 1:
+            loc, idx, distance = found[1]
+            ok = distance &gt; eps
+            mask.append(ok)
+            if ok:
+                unique.append(p)
+            else:
+                repeating.append(p)
+    return mask, unique, repeating
+
+def lloyd2d(bound_mode, verts, n_iterations, clip=0.0, weight_field=None):
+    bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(verts)
+
+    def invert_points(pts):
+        result = []
+        for pt in pts:
+            pt2d = x0,y0 = (pt[0], pt[1])
+            if bounds.contains(pt2d, edge_ok=False):
+                x1,y1,z1 = bounds.project(pt)
+                if x1 == x0 and y1 == y0:
+                    continue
+                x2 = x0 + 2*(x1-x0)
+                y2 = y0 + 2*(y1-y0)
+                out_pt = (x2, y2, z1)
+                result.append(out_pt)
+        return result
+    
+    def iteration(pts):
+        mask, pts, repeating = unique_points(pts)
+        n = len(pts)
+        all_pts = pts + invert_points(pts)
+        voronoi_verts, _, voronoi_faces = voronoi_bounded(all_pts,
+                    bound_mode = bound_mode,
+                    clip = clip,
+                    draw_bounds = True,
+                    draw_hangs = True,
+                    make_faces = True,
+                    ordered_faces = True,
+                    max_sides = 20)
+        centers = []
+        for face in voronoi_faces[:n]:
+            face_verts = np.array([voronoi_verts[i] for i in face])
+            new_pt = weighted_center(face_verts, weight_field)
+            centers.append(tuple(new_pt))
+
+        result = []
+        i = 0
+        j = 0
+        for is_unique in mask:
+            if is_unique:
+                result.append(centers[i])
+                i += 1
+            else:
+                result.append(repeating[j])
+                j += 1
+        return result
+
+    def restrict(pts):
+        return [bounds.restrict(pt) for pt in pts]
+
+    points = restrict(verts)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+    return points</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.voronoi.cmp"><code class="name flex">
+<span>def <span class="ident">cmp</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cmp(x,y):
+    return x.__cmp__(y)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.computeDelaunayTriangulation"><code class="name flex">
+<span>def <span class="ident">computeDelaunayTriangulation</span></span>(<span>points)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Takes a list of point objects (which must have x and y fields).
+Returns a list of 3-tuples: the indices of the points that form a
+Delaunay triangle.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def computeDelaunayTriangulation(points):
+    &#34;&#34;&#34; Takes a list of point objects (which must have x and y fields).
+        Returns a list of 3-tuples: the indices of the points that form a
+        Delaunay triangle.
+    &#34;&#34;&#34;
+#   original function in comment    
+#    siteList = SiteList(points)
+#     context  = Context()
+#     context.triangulate = true
+#     voronoi(siteList,context)
+#     return context.triangles
+    
+    siteList = SiteList(points)
+    context  = Context()
+    context.triangulate = True
+    voronoi(siteList,context)
+    return context.triangles</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.computeVoronoiDiagram"><code class="name flex">
+<span>def <span class="ident">computeVoronoiDiagram</span></span>(<span>points, raise_exception=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Takes a list of point objects (which must have x and y fields).
+Returns a Context object.</p>
+<p>(1) context.vertices: a list of 2-tuples, which are the x,y
+coordinates of the Voronoi diagram vertices
+(2) context.lines: a list of 3-tuples (a,b,c) which are the
+equations of the lines in the Voronoi diagram: a<em>x + b</em>y = c
+(3) context.edges: a list of 3-tuples, (l, v1, v2) representing edges of the
+Voronoi diagram.
+l is the index of the line, v1 and v2 are
+the indices of the vetices at the end of the edge.
+If
+v1 or v2 is -1, the line extends to infinity.
+(4) context.polygons: a dict of site:[edges] pairs</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def computeVoronoiDiagram(points, raise_exception=False):
+    &#34;&#34;&#34; Takes a list of point objects (which must have x and y fields).
+        Returns a Context object.
+
+           (1) context.vertices: a list of 2-tuples, which are the x,y
+               coordinates of the Voronoi diagram vertices
+           (2) context.lines: a list of 3-tuples (a,b,c) which are the
+               equations of the lines in the Voronoi diagram: a*x + b*y = c
+           (3) context.edges: a list of 3-tuples, (l, v1, v2) representing edges of the 
+               Voronoi diagram.  l is the index of the line, v1 and v2 are
+               the indices of the vetices at the end of the edge.  If 
+               v1 or v2 is -1, the line extends to infinity.
+           (4) context.polygons: a dict of site:[edges] pairs
+    &#34;&#34;&#34;
+
+    siteList = SiteList(points)
+    context  = Context()
+    context.triangulate = True
+    voronoi(siteList,context, raise_exception)
+    return context</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.isEqual"><code class="name flex">
+<span>def <span class="ident">isEqual</span></span>(<span>a, b, relativeError=1e-09)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isEqual(a,b,relativeError=TOLERANCE):
+    # is nearly equal to within the allowed relative error
+    norm = max(abs(a),abs(b))
+    return (norm &lt; relativeError) or (abs(a - b) &lt; (relativeError * norm))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.lloyd2d"><code class="name flex">
+<span>def <span class="ident">lloyd2d</span></span>(<span>bound_mode, verts, n_iterations, clip=0.0, weight_field=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lloyd2d(bound_mode, verts, n_iterations, clip=0.0, weight_field=None):
+    bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(verts)
+
+    def invert_points(pts):
+        result = []
+        for pt in pts:
+            pt2d = x0,y0 = (pt[0], pt[1])
+            if bounds.contains(pt2d, edge_ok=False):
+                x1,y1,z1 = bounds.project(pt)
+                if x1 == x0 and y1 == y0:
+                    continue
+                x2 = x0 + 2*(x1-x0)
+                y2 = y0 + 2*(y1-y0)
+                out_pt = (x2, y2, z1)
+                result.append(out_pt)
+        return result
+    
+    def iteration(pts):
+        mask, pts, repeating = unique_points(pts)
+        n = len(pts)
+        all_pts = pts + invert_points(pts)
+        voronoi_verts, _, voronoi_faces = voronoi_bounded(all_pts,
+                    bound_mode = bound_mode,
+                    clip = clip,
+                    draw_bounds = True,
+                    draw_hangs = True,
+                    make_faces = True,
+                    ordered_faces = True,
+                    max_sides = 20)
+        centers = []
+        for face in voronoi_faces[:n]:
+            face_verts = np.array([voronoi_verts[i] for i in face])
+            new_pt = weighted_center(face_verts, weight_field)
+            centers.append(tuple(new_pt))
+
+        result = []
+        i = 0
+        j = 0
+        for is_unique in mask:
+            if is_unique:
+                result.append(centers[i])
+                i += 1
+            else:
+                result.append(repeating[j])
+                j += 1
+        return result
+
+    def restrict(pts):
+        return [bounds.restrict(pt) for pt in pts]
+
+    points = restrict(verts)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+    return points</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.unique_points"><code class="name flex">
+<span>def <span class="ident">unique_points</span></span>(<span>points, eps=0.0001)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unique_points(points, eps=1e-4):
+    kdt = KDTree(len(points))
+    for i, p in enumerate(points):
+        kdt.insert(p, i)
+    kdt.balance()
+    unique = []
+    repeating = []
+    mask = []
+    for p in points:
+        found = kdt.find_n(p, 2)
+        if len(found) &gt; 1:
+            loc, idx, distance = found[1]
+            ok = distance &gt; eps
+            mask.append(ok)
+            if ok:
+                unique.append(p)
+            else:
+                repeating.append(p)
+    return mask, unique, repeating</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.usage"><code class="name flex">
+<span>def <span class="ident">usage</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def usage():
+    print(&#34;&#34;&#34;
+voronoi - compute Voronoi diagram or Delaunay triangulation
+
+voronoi [-t -p -d]  [filename]
+
+Voronoi reads from filename (or standard input if no filename given) for a set 
+of points in the plane and writes either the Voronoi diagram or the Delaunay 
+triangulation to the standard output.  Each input line should consist of two 
+real numbers, separated by white space.
+
+If option -t is present, the Delaunay triangulation is produced. 
+Each output line is a triple i j k, which are the indices of the three points
+in a Delaunay triangle. Points are numbered starting at 0.
+
+If option -t is not present, the Voronoi diagram is produced.  
+There are four output record types.
+
+s a b      indicates that an input point at coordinates a b was seen.
+l a b c    indicates a line with equation ax + by = c.
+v a b      indicates a vertex at a b.
+e l v1 v2  indicates a Voronoi segment which is a subsegment of line number l
+           with endpoints numbered v1 and v2.  If v1 or v2 is -1, the line 
+           extends to infinity.
+
+Other options include:
+
+d    Print debugging info
+
+p    Produce output suitable for input to plot (1), rather than the forms 
+     described above.
+
+On unsorted data uniformly distributed in the unit square, voronoi uses about 
+20n+140 bytes of storage.
+
+AUTHOR
+Steve J. Fortune (1987) A Sweepline Algorithm for Voronoi Diagrams,
+Algorithmica 2, 153-174.
+&#34;&#34;&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.voronoi"><code class="name flex">
+<span>def <span class="ident">voronoi</span></span>(<span>siteList, context, raise_exception=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def voronoi(siteList,context, raise_exception=False):
+    try:
+      edgeList  = EdgeList(siteList.xmin,siteList.xmax,len(siteList))
+      priorityQ = PriorityQueue(siteList.ymin,siteList.ymax,len(siteList))
+      siteIter = siteList.iterator()
+      
+      bottomsite = next(siteIter)
+      context.outSite(bottomsite)
+      newsite = next(siteIter)
+      minpt = Site(-BIG_FLOAT,-BIG_FLOAT)
+      while True:
+          if not priorityQ.isEmpty():
+              minpt = priorityQ.getMinPt()
+
+          if (newsite and (priorityQ.isEmpty() or cmp(newsite,minpt) &lt; 0)):
+              # newsite is smallest -  this is a site event
+              context.outSite(newsite)
+              
+              # get first Halfedge to the LEFT and RIGHT of the new site 
+              lbnd = edgeList.leftbnd(newsite) 
+              rbnd = lbnd.right                    
+              
+              # if this halfedge has no edge, bot = bottom site (whatever that is)
+              # create a new edge that bisects
+              bot  = lbnd.rightreg(bottomsite)     
+              edge = Edge.bisect(bot,newsite)      
+              context.outBisector(edge)
+              
+              # create a new Halfedge, setting its pm field to 0 and insert 
+              # this new bisector edge between the left and right vectors in
+              # a linked list
+              bisector = Halfedge(edge,Edge.LE)    
+              edgeList.insert(lbnd,bisector)       
+
+              # if the new bisector intersects with the left edge, remove 
+              # the left edge&#39;s vertex, and put in the new one
+              p = lbnd.intersect(bisector)
+              if p is not None:
+                  priorityQ.delete(lbnd)
+                  priorityQ.insert(lbnd,p,newsite.distance(p))
+
+              # create a new Halfedge, setting its pm field to 1
+              # insert the new Halfedge to the right of the original bisector
+              lbnd = bisector
+              bisector = Halfedge(edge,Edge.RE)     
+              edgeList.insert(lbnd,bisector)        
+
+              # if this new bisector intersects with the right Halfedge
+              p = bisector.intersect(rbnd)
+              if p is not None:
+                  # push the Halfedge into the ordered linked list of vertices
+                  priorityQ.insert(bisector,p,newsite.distance(p))
+              
+              newsite = next(siteIter)
+
+          elif not priorityQ.isEmpty():
+              # intersection is smallest - this is a vector (circle) event 
+
+              # pop the Halfedge with the lowest vector off the ordered list of 
+              # vectors.  Get the Halfedge to the left and right of the above HE
+              # and also the Halfedge to the right of the right HE
+              lbnd  = priorityQ.popMinHalfedge()      
+              llbnd = lbnd.left               
+              rbnd  = lbnd.right              
+              rrbnd = rbnd.right              
+              
+              # get the Site to the left of the left HE and to the right of
+              # the right HE which it bisects
+              bot = lbnd.leftreg(bottomsite)  
+              top = rbnd.rightreg(bottomsite) 
+              
+              # output the triple of sites, stating that a circle goes through them
+              mid = lbnd.rightreg(bottomsite)
+              context.outTriple(bot,top,mid)          
+
+              # get the vertex that caused this event and set the vertex number
+              # couldn&#39;t do this earlier since we didn&#39;t know when it would be processed
+              v = lbnd.vertex                 
+              siteList.setSiteNumber(v)
+              context.outVertex(v)
+              
+              # set the endpoint of the left and right Halfedge to be this vector
+              if lbnd.edge.setEndpoint(lbnd.pm,v):
+                  context.outEdge(lbnd.edge)
+              
+              if rbnd.edge.setEndpoint(rbnd.pm,v):
+                  context.outEdge(rbnd.edge)
+
+              
+              # delete the lowest HE, remove all vertex events to do with the 
+              # right HE and delete the right HE
+              edgeList.delete(lbnd)           
+              priorityQ.delete(rbnd)
+              edgeList.delete(rbnd)
+              
+              
+              # if the site to the left of the event is higher than the Site
+              # to the right of it, then swap them and set &#39;pm&#39; to RIGHT
+              pm = Edge.LE
+              if bot.y &gt; top.y:
+                  bot,top = top,bot
+                  pm = Edge.RE
+
+              # Create an Edge (or line) that is between the two Sites.  This 
+              # creates the formula of the line, and assigns a line number to it
+              edge = Edge.bisect(bot, top)     
+              context.outBisector(edge)
+
+              # create a HE from the edge 
+              bisector = Halfedge(edge, pm)    
+              
+              # insert the new bisector to the right of the left HE
+              # set one endpoint to the new edge to be the vector point &#39;v&#39;
+              # If the site to the left of this bisector is higher than the right
+              # Site, then this endpoint is put in position 0; otherwise in pos 1
+              edgeList.insert(llbnd, bisector) 
+              if edge.setEndpoint(Edge.RE - pm, v):
+                  context.outEdge(edge)
+              
+              # if left HE and the new bisector don&#39;t intersect, then delete 
+              # the left HE, and reinsert it 
+              p = llbnd.intersect(bisector)
+              if p is not None:
+                  priorityQ.delete(llbnd);
+                  priorityQ.insert(llbnd, p, bot.distance(p))
+
+              # if right HE and the new bisector don&#39;t intersect, then reinsert it 
+              p = bisector.intersect(rrbnd)
+              if p is not None:
+                  priorityQ.insert(bisector, p, bot.distance(p))
+          else:
+              break
+
+      he = edgeList.leftend.right
+      while he is not edgeList.rightend:
+          context.outEdge(he.edge)
+          he = he.right
+      Edge.EDGE_NUM = 0
+    except Exception as err:
+        if raise_exception:
+            raise err
+        else:
+          print(&#34;#Voronoi error#&#34;)
+          print(str(err))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.voronoi_bounded"><code class="name flex">
+<span>def <span class="ident">voronoi_bounded</span></span>(<span>sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, ordered_faces=False, max_sides=10)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def voronoi_bounded(sites, bound_mode=&#39;BOX&#39;, clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, ordered_faces=False, max_sides=10):
+
+    bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(sites)
+    source_sites = []
+    for x, y, z in sites:
+        source_sites.append(Site(x, y))
+
+    delta = clip
+    bounds.x_max = bounds.x_max + delta
+    bounds.y_max = bounds.y_max + delta
+
+    bounds.x_min = bounds.x_min - delta
+    bounds.y_min = bounds.y_min - delta
+
+    bounds.r_max = bounds.r_max + delta
+
+    voronoi_data = computeVoronoiDiagram(source_sites, raise_exception=True)
+    verts = voronoi_data.vertices
+    lines = voronoi_data.lines
+    all_edges = voronoi_data.edges
+
+    finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
+    bm = Mesh2D.from_pydata(verts, finite_edges)
+
+    # clipping box to bounding box.
+    verts_to_remove = set()
+    edges_to_remove = set()
+    bounding_verts = []
+
+    # For each diagram vertex that is outside of the bounds,
+    # cut each edge connected with that vertex by bounding line.
+    # Remove such vertices, remove such edges, and instead add
+    # vertices lying on the bounding line and corresponding edges.
+    for vert_idx, vert in enumerate(bm.verts[:]):
+        x, y = tuple(vert)
+        if not bounds.contains((x,y)):
+            verts_to_remove.add(vert_idx)
+            for other_vert_idx in list(bm.linked_verts[vert_idx]):
+                edges_to_remove.add((vert_idx, other_vert_idx))
+                if draw_hangs or draw_bounds:
+                    other_vert = bm.verts[other_vert_idx]
+                    if other_vert is not None:
+                        x2, y2 = tuple(other_vert)
+                        intersection = bounds.segment_intersection((x,y), (x2,y2))
+                        if intersection is not None:
+                            intersection = tuple(intersection)
+                            new_vert_idx = bm.new_vert(intersection)
+                            bounding_verts.append(new_vert_idx)
+                            #info(&#34;CLIP: Added point: %s =&gt; %s&#34;, (x_i, y_i), new_vert_idx)
+                            bm.new_edge(other_vert_idx, new_vert_idx)
+
+    # Diagram lines that go infinitely from one side of diagram to another
+    infinite_lines = []
+    # Lines that start at the one vertex of the diagram and go to infinity
+    rays = defaultdict(list)
+    if draw_hangs or draw_bounds:
+        sites_by_line = defaultdict(list)
+
+        for site_idx in voronoi_data.polygons.keys():
+            for line_index, i1, i2 in voronoi_data.polygons[site_idx]:
+                if i1 == -1 or i2 == -1:
+                    site = source_sites[site_idx]
+                    sites_by_line[line_index].append((site.x, site.y))
+
+        for line_index, i1, i2 in all_edges:
+            if i1 == -1 or i2 == -1:
+                line = lines[line_index]
+                a, b, c = line
+                eqn = LineEquation2D(a, b, -c)
+                if i1 == -1 and i2 != -1:
+                    eqn.sites = sites_by_line[line_index]
+                    rays[i2].append(eqn)
+                elif i2 == -1 and i1 != -1:
+                    eqn.sites = sites_by_line[line_index]
+                    rays[i1].append(eqn)
+                elif i1 == -1 and i2 == -1:
+                    infinite_lines.append(eqn)
+
+        # For each (half-infinite) ray, calculate it&#39;s intersection
+        # with the bounding line and draw an edge from ray&#39;s beginning to
+        # the bounding line.
+        # NB: The data returned from voronoi.py for such lines
+        # is a vertex and a line equation. The line obviously intersects
+        # the bounding line in two points; which one should we choose?
+        # Let&#39;s choose that one which is closer to site points which the
+        # line is dividing.
+        for vert_index in rays.keys():
+            x,y = bm.verts[vert_index]
+            vert = Vector((x,y))
+            if vert_index not in verts_to_remove:
+                for line in rays[vert_index]:
+                    intersection = bounds.ray_intersection(vert, line)
+                    intersection = tuple(intersection)
+                    new_vert_idx = bm.new_vert(intersection)
+                    bounding_verts.append(new_vert_idx)
+                    #info(&#34;INF: Added point: %s: %s =&gt; %s&#34;, (x,y), (x_i, y_i), new_vert_idx)
+                    bm.new_edge(vert_index, new_vert_idx)
+
+        # For each infinite (in two directions) line,
+        # calculate two it&#39;s intersections with the bounding
+        # line and connect them by an edge.
+        for eqn in infinite_lines:
+            intersections = bounds.line_intersection(eqn)
+            if len(intersections) == 2:
+                v1, v2 = intersections
+                new_vert_1_idx = bm.new_vert(tuple(v1))
+                new_vert_2_idx = bm.new_vert(tuple(v2))
+                bounding_verts.append(new_vert_1_idx)
+                bounding_verts.append(new_vert_2_idx)
+                bm.new_edge(new_vert_1_idx, new_vert_2_idx)
+            elif len(intersections) == 1:
+                v = intersections[0]
+                new_vert_idx = bm.new_vert(tuple(v))
+                bounding_verts.append(new_vert_idx)
+            else:
+                error(&#34;unexpected number of intersections of infinite line %s with area bounds %s: %s&#34;, eqn, bounds, intersections)
+
+        # TODO: there could be (finite) edges, which have both ends
+        # outside of the bounding line. We could detect such edges and
+        # process similarly to infinite lines - calculate two intersections
+        # with the bounding line and connect them by an edge.
+        # Currently I consider such cases as rare, so this is a low priority issue.
+        # Btw, such edges do not fall under definition of either &#34;bounding edge&#34;
+        # or &#34;hanging edge&#34;; so should we add a separate checkbox for such edges?...
+
+    if draw_bounds and bounding_verts:
+        bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
+        for i, j in zip(bounding_verts, bounding_verts[1:]):
+            bm.new_edge(i, j)
+        bm.new_edge(bounding_verts[-1], bounding_verts[0])
+
+    for i, j in edges_to_remove:
+        bm.remove_edge(i, j)
+    for vert_idx in verts_to_remove:
+        bm.verts[vert_idx] = None
+
+    verts, edges = bm.to_pydata()
+
+    new_vertices = [(vert[0], vert[1], 0) for vert in verts]
+
+    if make_faces:
+        for i,j in edges:
+            if i==j:
+                print(i,j)
+        bm = bmesh_from_pydata(new_vertices, edges, [])
+        bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=max_sides)
+        new_vertices, edges, new_faces = pydata_from_bmesh(bm)
+        bm.free()
+        if ordered_faces:
+            bvh = BVHTree.FromPolygons(new_vertices, new_faces)
+            face_by_site = dict()
+            for site_idx, site in enumerate(sites):
+                loc, normal, index, distance = bvh.find_nearest(site)
+                if index is not None:
+                    face_by_site[site_idx] = index
+            r = []
+            for i in range(len(sites)):
+                if i not in face_by_site:
+                    raise Exception(f&#34;Can&#39;t find a face for site #{i}&#34;)
+                face_idx = face_by_site[i]
+                face = new_faces[face_idx]
+                r.append(face)
+            new_faces = r
+    else:
+        new_faces = []
+
+    return new_vertices, edges, new_faces</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.voronoi.Bounds"><code class="flex name class">
+<span>class <span class="ident">Bounds</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Bounds(object):
+    def __init__(self):
+        self.x_max = 0
+        self.y_max = 0
+        self.x_min = 0
+        self.y_min = 0
+        self.r_max = 0
+        self.center = (0,0)
+
+    @classmethod
+    def new(cls, mode):
+        if mode == &#39;BOX&#39;:
+            return BoxBounds()
+        elif mode == &#39;CIRCLE&#39;:
+            return CircleBounds()
+        else:
+            raise Exception(&#34;Unknown bounds type&#34;)
+
+    def __repr__(self):
+        return f&#34;Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]&#34;
+
+    def restrict(self, point):
+        raise Exception(&#34;not implemented&#34;)
+
+    def init_from_sites(self, sites):
+        self.x_max = -BIG_FLOAT
+        self.x_min = BIG_FLOAT
+        self.y_min = BIG_FLOAT
+        self.y_max = -BIG_FLOAT
+        x0, y0, z0 = center(sites)
+        self.center = (x0, y0)
+        # creates points in format for voronoi library, throwing away z
+        for x, y, z in sites:
+            r = sqrt((x-x0)**2 + (y-y0)**2)
+            self.r_max = max(r, self.r_max)
+            self.x_max = max(x, self.x_max)
+            self.x_min = min(x, self.x_min)
+            self.y_max = max(y, self.y_max)
+            self.y_min = min(y, self.y_min)</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.voronoi.BoxBounds" href="#sverchok.utils.voronoi.BoxBounds">BoxBounds</a></li>
+<li><a title="sverchok.utils.voronoi.CircleBounds" href="#sverchok.utils.voronoi.CircleBounds">CircleBounds</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Bounds.new"><code class="name flex">
+<span>def <span class="ident">new</span></span>(<span>mode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def new(cls, mode):
+    if mode == &#39;BOX&#39;:
+        return BoxBounds()
+    elif mode == &#39;CIRCLE&#39;:
+        return CircleBounds()
+    else:
+        raise Exception(&#34;Unknown bounds type&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Bounds.init_from_sites"><code class="name flex">
+<span>def <span class="ident">init_from_sites</span></span>(<span>self, sites)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_from_sites(self, sites):
+    self.x_max = -BIG_FLOAT
+    self.x_min = BIG_FLOAT
+    self.y_min = BIG_FLOAT
+    self.y_max = -BIG_FLOAT
+    x0, y0, z0 = center(sites)
+    self.center = (x0, y0)
+    # creates points in format for voronoi library, throwing away z
+    for x, y, z in sites:
+        r = sqrt((x-x0)**2 + (y-y0)**2)
+        self.r_max = max(r, self.r_max)
+        self.x_max = max(x, self.x_max)
+        self.x_min = min(x, self.x_min)
+        self.y_max = max(y, self.y_max)
+        self.y_min = min(y, self.y_min)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Bounds.restrict"><code class="name flex">
+<span>def <span class="ident">restrict</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def restrict(self, point):
+    raise Exception(&#34;not implemented&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds"><code class="flex name class">
+<span>class <span class="ident">BoxBounds</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BoxBounds(Bounds):
+
+    def contains(self, p, edge_ok = True):
+        x, y = tuple(p)
+        if edge_ok:
+            return (self.x_min &lt;= x &lt;= self.x_max) and (self.y_min &lt;= y &lt;= self.y_max)
+        else:
+            return (self.x_min &lt; x &lt; self.x_max) and (self.y_min &lt; y &lt; self.y_max)
+    
+    @property
+    def edges(self):
+        v1 = (self.x_min, self.y_min)
+        v2 = (self.x_min, self.y_max)
+        v3 = (self.x_max, self.y_max)
+        v4 = (self.x_max, self.y_min)
+
+        e1 = (v1, v2)
+        e2 = (v2, v3)
+        e3 = (v3, v4)
+        e4 = (v4, v1)
+
+        return [e1, e2, e3, e4]
+
+    def segment_intersection(self, p1, p2):
+        if not isinstance(p1, Vector):
+            p1 = Vector(p1)
+        if not isinstance(p2, Vector):
+            p2 = Vector(p2)
+
+        min_r = BIG_FLOAT
+        nearest = None
+
+        for v_i, v_j in self.edges:
+            intersection = intersect_line_line_2d(p1, p2, v_i, v_j)
+            if intersection is not None:
+                r = (p1 - intersection).length
+                if r &lt; min_r:
+                    nearest = intersection
+                    min_r = r
+
+        return nearest
+
+    def ray_intersection(self, p, line):
+        p = Vector(center(line.sites))
+
+        min_r = BIG_FLOAT
+        nearest = None
+
+        for v_i, v_j in self.edges:
+            bound = LineEquation2D.from_two_points(v_i, v_j)
+            intersection = bound.intersect_with_line(line)
+            if intersection is not None:
+                r = (p - intersection).length
+                #info(&#34;INT: [%s - %s] X [%s] =&gt; %s (%s)&#34;, v_i, v_j, line, intersection, r)
+                if r &lt; min_r:
+                    nearest = intersection
+                    min_r = r
+
+        return nearest
+
+    def line_intersection(self, line):
+        result = []
+        eps = 1e-8
+        for v_i, v_j in self.edges:
+            bound = LineEquation2D.from_two_points(v_i, v_j)
+            intersection = bound.intersect_with_line(line)
+            if intersection is not None:
+                x,y = tuple(intersection)
+                if (self.x_min-eps &lt;= x &lt;= self.x_max+eps) and (self.y_min-eps &lt;= y &lt;= self.y_max+eps):
+                    result.append(intersection)
+        return result
+
+    def restrict(self, point):
+        def chop(t, m, M):
+            return min(max(t, m), M)
+
+        x, y, z = tuple(point)
+        x = chop(x, self.x_min, self.x_max)
+        y = chop(y, self.y_min, self.y_max)
+
+        return x,y,z
+
+    def project(self, point):
+        x, y, z = tuple(point)
+        mid_x = 0.5*(self.x_min + self.x_max)
+        mid_y = 0.5*(self.y_min + self.y_max)
+        if x &gt; mid_x:
+            x = self.x_max
+        else:
+            x = self.x_min
+        if y &gt; mid_y:
+            y = self.y_max
+        else:
+            y = self.y_min
+        return x, y, z</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.voronoi.Bounds" href="#sverchok.utils.voronoi.Bounds">Bounds</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.BoxBounds.edges"><code class="name">var <span class="ident">edges</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def edges(self):
+    v1 = (self.x_min, self.y_min)
+    v2 = (self.x_min, self.y_max)
+    v3 = (self.x_max, self.y_max)
+    v4 = (self.x_max, self.y_min)
+
+    e1 = (v1, v2)
+    e2 = (v2, v3)
+    e3 = (v3, v4)
+    e4 = (v4, v1)
+
+    return [e1, e2, e3, e4]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.BoxBounds.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, p, edge_ok=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, p, edge_ok = True):
+    x, y = tuple(p)
+    if edge_ok:
+        return (self.x_min &lt;= x &lt;= self.x_max) and (self.y_min &lt;= y &lt;= self.y_max)
+    else:
+        return (self.x_min &lt; x &lt; self.x_max) and (self.y_min &lt; y &lt; self.y_max)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds.line_intersection"><code class="name flex">
+<span>def <span class="ident">line_intersection</span></span>(<span>self, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def line_intersection(self, line):
+    result = []
+    eps = 1e-8
+    for v_i, v_j in self.edges:
+        bound = LineEquation2D.from_two_points(v_i, v_j)
+        intersection = bound.intersect_with_line(line)
+        if intersection is not None:
+            x,y = tuple(intersection)
+            if (self.x_min-eps &lt;= x &lt;= self.x_max+eps) and (self.y_min-eps &lt;= y &lt;= self.y_max+eps):
+                result.append(intersection)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds.project"><code class="name flex">
+<span>def <span class="ident">project</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def project(self, point):
+    x, y, z = tuple(point)
+    mid_x = 0.5*(self.x_min + self.x_max)
+    mid_y = 0.5*(self.y_min + self.y_max)
+    if x &gt; mid_x:
+        x = self.x_max
+    else:
+        x = self.x_min
+    if y &gt; mid_y:
+        y = self.y_max
+    else:
+        y = self.y_min
+    return x, y, z</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds.ray_intersection"><code class="name flex">
+<span>def <span class="ident">ray_intersection</span></span>(<span>self, p, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ray_intersection(self, p, line):
+    p = Vector(center(line.sites))
+
+    min_r = BIG_FLOAT
+    nearest = None
+
+    for v_i, v_j in self.edges:
+        bound = LineEquation2D.from_two_points(v_i, v_j)
+        intersection = bound.intersect_with_line(line)
+        if intersection is not None:
+            r = (p - intersection).length
+            #info(&#34;INT: [%s - %s] X [%s] =&gt; %s (%s)&#34;, v_i, v_j, line, intersection, r)
+            if r &lt; min_r:
+                nearest = intersection
+                min_r = r
+
+    return nearest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds.restrict"><code class="name flex">
+<span>def <span class="ident">restrict</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def restrict(self, point):
+    def chop(t, m, M):
+        return min(max(t, m), M)
+
+    x, y, z = tuple(point)
+    x = chop(x, self.x_min, self.x_max)
+    y = chop(y, self.y_min, self.y_max)
+
+    return x,y,z</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.BoxBounds.segment_intersection"><code class="name flex">
+<span>def <span class="ident">segment_intersection</span></span>(<span>self, p1, p2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def segment_intersection(self, p1, p2):
+    if not isinstance(p1, Vector):
+        p1 = Vector(p1)
+    if not isinstance(p2, Vector):
+        p2 = Vector(p2)
+
+    min_r = BIG_FLOAT
+    nearest = None
+
+    for v_i, v_j in self.edges:
+        intersection = intersect_line_line_2d(p1, p2, v_i, v_j)
+        if intersection is not None:
+            r = (p1 - intersection).length
+            if r &lt; min_r:
+                nearest = intersection
+                min_r = r
+
+    return nearest</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds"><code class="flex name class">
+<span>class <span class="ident">CircleBounds</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CircleBounds(Bounds):
+
+    @property
+    def circle(self):
+        return CircleEquation2D(self.center, self.r_max)
+
+    def contains(self, p, edge_ok=True):
+        return self.circle.contains(p, include_bound=edge_ok)
+
+    def segment_intersection(self, p1, p2):
+        r = self.circle.intersect_with_segment(p1, p2)
+        if r is None:
+            return None
+        if r[0] is None and r[1] is None:
+            return None
+        if r[0] is not None:
+            return r[0]
+        if r[1] is not None:
+            return r[1]
+
+    def ray_intersection(self, p, line):
+        p = Vector(center(line.sites))
+        intersection = self.circle.intersect_with_line(line)
+        #info(&#34;RI: {line} X {self.circle} =&gt; {intersection}&#34;)
+        if intersection is None:
+            return None
+        else:
+            v1, v2 = intersection
+            r1 = (p - v1).length
+            r2 = (p - v2).length
+            if r1 &lt; r2:
+                return v1
+            else:
+                return v2
+
+    def line_intersection(self, line):
+        intersection = self.circle.intersect_with_line(line)
+        return intersection
+
+    def restrict(self, point):
+        pt2d = (point[0], point[1])
+        if self.contains(pt2d):
+            return point
+        else:
+            v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+            x,y = tuple(v)
+            return x,y,0
+
+    def project(self, point):
+        pt2d = (point[0], point[1])
+        v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+        x,y = tuple(v)
+        return x,y,0</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.voronoi.Bounds" href="#sverchok.utils.voronoi.Bounds">Bounds</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.CircleBounds.circle"><code class="name">var <span class="ident">circle</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def circle(self):
+    return CircleEquation2D(self.center, self.r_max)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.CircleBounds.contains"><code class="name flex">
+<span>def <span class="ident">contains</span></span>(<span>self, p, edge_ok=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains(self, p, edge_ok=True):
+    return self.circle.contains(p, include_bound=edge_ok)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds.line_intersection"><code class="name flex">
+<span>def <span class="ident">line_intersection</span></span>(<span>self, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def line_intersection(self, line):
+    intersection = self.circle.intersect_with_line(line)
+    return intersection</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds.project"><code class="name flex">
+<span>def <span class="ident">project</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def project(self, point):
+    pt2d = (point[0], point[1])
+    v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+    x,y = tuple(v)
+    return x,y,0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds.ray_intersection"><code class="name flex">
+<span>def <span class="ident">ray_intersection</span></span>(<span>self, p, line)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ray_intersection(self, p, line):
+    p = Vector(center(line.sites))
+    intersection = self.circle.intersect_with_line(line)
+    #info(&#34;RI: {line} X {self.circle} =&gt; {intersection}&#34;)
+    if intersection is None:
+        return None
+    else:
+        v1, v2 = intersection
+        r1 = (p - v1).length
+        r2 = (p - v2).length
+        if r1 &lt; r2:
+            return v1
+        else:
+            return v2</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds.restrict"><code class="name flex">
+<span>def <span class="ident">restrict</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def restrict(self, point):
+    pt2d = (point[0], point[1])
+    if self.contains(pt2d):
+        return point
+    else:
+        v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+        x,y = tuple(v)
+        return x,y,0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.CircleBounds.segment_intersection"><code class="name flex">
+<span>def <span class="ident">segment_intersection</span></span>(<span>self, p1, p2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def segment_intersection(self, p1, p2):
+    r = self.circle.intersect_with_segment(p1, p2)
+    if r is None:
+        return None
+    if r[0] is None and r[1] is None:
+        return None
+    if r[0] is not None:
+        return r[0]
+    if r[1] is not None:
+        return r[1]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.Context"><code class="flex name class">
+<span>class <span class="ident">Context</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Context(object):
+    def __init__(self):
+        self.doPrint = 0
+        self.debug   = 0
+        self.plot    = 0
+        self.triangulate = False
+        self.vertices  = []    # list of vertex 2-tuples: (x,y)
+        self.lines     = []    # equation of line 3-tuple (a b c), for the equation of the line a*x+b*y = c  
+        self.edges     = []    # edge 3-tuple: (line index, vertex 1 index, vertex 2 index)   if either vertex index is -1, the edge extends to infiinity
+        self.triangles = []    # 3-tuple of vertex indices
+        self.polygons  = {}    # a dict of site:[edges] pairs
+
+    def circle(self,x,y,rad):
+        pass
+
+    def clip_line(self,edge):
+        pass
+
+    def line(self,x0,y0,x1,y1):
+        pass
+
+    def outSite(self,s):
+        if(self.debug):
+            print(&#34;site (%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+        elif(self.triangulate):
+            pass
+        elif(self.plot):
+            self.circle (s.x, s.y, cradius)
+        elif(self.doPrint):
+            print(&#34;s %f %f&#34; % (s.x, s.y))
+
+    def outVertex(self,s):
+        self.vertices.append((s.x,s.y))
+        if(self.debug):
+            print(&#34;vertex(%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+        elif(self.triangulate):
+            pass
+        elif(self.doPrint and not self.plot):
+            print(&#34;v %f %f&#34; % (s.x,s.y))
+
+    def outTriple(self,s1,s2,s3):
+        self.triangles.append((s1.sitenum, s2.sitenum, s3.sitenum))
+        if(self.debug):
+            print(&#34;circle through left=%d right=%d bottom=%d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))
+        elif(self.triangulate and self.doPrint and not self.plot):
+            print(&#34;%d %d %d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))
+
+    def outBisector(self,edge):
+        self.lines.append((edge.a, edge.b, edge.c))
+        if(self.debug):
+            print(&#34;line(%d) %gx+%gy=%g, bisecting %d %d&#34; % (edge.edgenum, edge.a, edge.b, edge.c, edge.reg[0].sitenum, edge.reg[1].sitenum))
+        elif(self.triangulate):
+            if(self.plot):
+                self.line(edge.reg[0].x, edge.reg[0].y, edge.reg[1].x, edge.reg[1].y)
+        elif(self.doPrint and not self.plot):
+            print(&#34;l %f %f %f&#34; % (edge.a, edge.b, edge.c))
+
+    def outEdge(self,edge):
+        sitenumL = -1
+        if edge.ep[Edge.LE] is not None:
+            sitenumL = edge.ep[Edge.LE].sitenum
+        sitenumR = -1
+        if edge.ep[Edge.RE] is not None:
+            sitenumR = edge.ep[Edge.RE].sitenum
+        if edge.reg[0].sitenum not in self.polygons:
+            self.polygons[edge.reg[0].sitenum] = []
+        if edge.reg[1].sitenum not in self.polygons:
+            self.polygons[edge.reg[1].sitenum] = []
+        self.polygons[edge.reg[0].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+        self.polygons[edge.reg[1].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+        self.edges.append((edge.edgenum,sitenumL,sitenumR))
+        if(not self.triangulate):
+            if self.plot:
+                self.clip_line(edge)
+            elif(self.doPrint): 
+                print(&#34;e %d&#34; % edge.edgenum, end=&#39; &#39;)
+                print(&#34; %d &#34; % sitenumL, end=&#39; &#39;)
+                print(&#34;%d&#34; % sitenumR)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Context.circle"><code class="name flex">
+<span>def <span class="ident">circle</span></span>(<span>self, x, y, rad)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def circle(self,x,y,rad):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.clip_line"><code class="name flex">
+<span>def <span class="ident">clip_line</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clip_line(self,edge):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.line"><code class="name flex">
+<span>def <span class="ident">line</span></span>(<span>self, x0, y0, x1, y1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def line(self,x0,y0,x1,y1):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.outBisector"><code class="name flex">
+<span>def <span class="ident">outBisector</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outBisector(self,edge):
+    self.lines.append((edge.a, edge.b, edge.c))
+    if(self.debug):
+        print(&#34;line(%d) %gx+%gy=%g, bisecting %d %d&#34; % (edge.edgenum, edge.a, edge.b, edge.c, edge.reg[0].sitenum, edge.reg[1].sitenum))
+    elif(self.triangulate):
+        if(self.plot):
+            self.line(edge.reg[0].x, edge.reg[0].y, edge.reg[1].x, edge.reg[1].y)
+    elif(self.doPrint and not self.plot):
+        print(&#34;l %f %f %f&#34; % (edge.a, edge.b, edge.c))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.outEdge"><code class="name flex">
+<span>def <span class="ident">outEdge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outEdge(self,edge):
+    sitenumL = -1
+    if edge.ep[Edge.LE] is not None:
+        sitenumL = edge.ep[Edge.LE].sitenum
+    sitenumR = -1
+    if edge.ep[Edge.RE] is not None:
+        sitenumR = edge.ep[Edge.RE].sitenum
+    if edge.reg[0].sitenum not in self.polygons:
+        self.polygons[edge.reg[0].sitenum] = []
+    if edge.reg[1].sitenum not in self.polygons:
+        self.polygons[edge.reg[1].sitenum] = []
+    self.polygons[edge.reg[0].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+    self.polygons[edge.reg[1].sitenum].append((edge.edgenum,sitenumL,sitenumR))
+    self.edges.append((edge.edgenum,sitenumL,sitenumR))
+    if(not self.triangulate):
+        if self.plot:
+            self.clip_line(edge)
+        elif(self.doPrint): 
+            print(&#34;e %d&#34; % edge.edgenum, end=&#39; &#39;)
+            print(&#34; %d &#34; % sitenumL, end=&#39; &#39;)
+            print(&#34;%d&#34; % sitenumR)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.outSite"><code class="name flex">
+<span>def <span class="ident">outSite</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outSite(self,s):
+    if(self.debug):
+        print(&#34;site (%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+    elif(self.triangulate):
+        pass
+    elif(self.plot):
+        self.circle (s.x, s.y, cradius)
+    elif(self.doPrint):
+        print(&#34;s %f %f&#34; % (s.x, s.y))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.outTriple"><code class="name flex">
+<span>def <span class="ident">outTriple</span></span>(<span>self, s1, s2, s3)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outTriple(self,s1,s2,s3):
+    self.triangles.append((s1.sitenum, s2.sitenum, s3.sitenum))
+    if(self.debug):
+        print(&#34;circle through left=%d right=%d bottom=%d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))
+    elif(self.triangulate and self.doPrint and not self.plot):
+        print(&#34;%d %d %d&#34; % (s1.sitenum, s2.sitenum, s3.sitenum))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Context.outVertex"><code class="name flex">
+<span>def <span class="ident">outVertex</span></span>(<span>self, s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outVertex(self,s):
+    self.vertices.append((s.x,s.y))
+    if(self.debug):
+        print(&#34;vertex(%d) at %f %f&#34; % (s.sitenum, s.x, s.y))
+    elif(self.triangulate):
+        pass
+    elif(self.doPrint and not self.plot):
+        print(&#34;v %f %f&#34; % (s.x,s.y))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.Edge"><code class="flex name class">
+<span>class <span class="ident">Edge</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Edge(object):
+    LE = 0
+    RE = 1
+    EDGE_NUM = 0
+    DELETED = {}   # marker value
+
+    def __init__(self):
+        self.a = 0.0
+        self.b = 0.0
+        self.c = 0.0
+        self.ep  = [None,None]
+        self.reg = [None,None]
+        self.edgenum = 0
+
+    def dump(self):
+        print(&#34;(#%d a=%g, b=%g, c=%g)&#34; % (self.edgenum,self.a,self.b,self.c))
+        print(&#34;ep&#34;,self.ep)
+        print(&#34;reg&#34;,self.reg)
+
+    def setEndpoint(self, lrFlag, site):
+        self.ep[lrFlag] = site
+        if self.ep[Edge.RE - lrFlag] is None:
+            return False
+        return True
+
+    @staticmethod
+    def bisect(s1,s2):
+        newedge = Edge()
+        newedge.reg[0] = s1 # store the sites that this edge is bisecting
+        newedge.reg[1] = s2
+
+        # to begin with, there are no endpoints on the bisector - it goes to infinity
+        # ep[0] and ep[1] are None
+
+        # get the difference in x dist between the sites
+        dx = float(s2.x - s1.x)
+        dy = float(s2.y - s1.y)
+        adx = abs(dx)  # make sure that the difference in positive
+        ady = abs(dy)
+        
+        # get the slope of the line
+        newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
+        if dx == 0 and dy == 0:
+            raise Exception(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
+        if adx &gt; ady :
+            # set formula of line, with x fixed to 1
+            newedge.a = 1.0
+            newedge.b = dy/dx
+            newedge.c /= dx
+        else:
+            # set formula of line, with y fixed to 1
+            newedge.b = 1.0
+            newedge.a = dx/dy
+            newedge.c /= dy
+
+        newedge.edgenum = Edge.EDGE_NUM
+        Edge.EDGE_NUM += 1
+        return newedge</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Edge.DELETED"><code class="name">var <span class="ident">DELETED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.voronoi.Edge.EDGE_NUM"><code class="name">var <span class="ident">EDGE_NUM</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.voronoi.Edge.LE"><code class="name">var <span class="ident">LE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.voronoi.Edge.RE"><code class="name">var <span class="ident">RE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Edge.bisect"><code class="name flex">
+<span>def <span class="ident">bisect</span></span>(<span>s1, s2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def bisect(s1,s2):
+    newedge = Edge()
+    newedge.reg[0] = s1 # store the sites that this edge is bisecting
+    newedge.reg[1] = s2
+
+    # to begin with, there are no endpoints on the bisector - it goes to infinity
+    # ep[0] and ep[1] are None
+
+    # get the difference in x dist between the sites
+    dx = float(s2.x - s1.x)
+    dy = float(s2.y - s1.y)
+    adx = abs(dx)  # make sure that the difference in positive
+    ady = abs(dy)
+    
+    # get the slope of the line
+    newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
+    if dx == 0 and dy == 0:
+        raise Exception(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
+    if adx &gt; ady :
+        # set formula of line, with x fixed to 1
+        newedge.a = 1.0
+        newedge.b = dy/dx
+        newedge.c /= dx
+    else:
+        # set formula of line, with y fixed to 1
+        newedge.b = 1.0
+        newedge.a = dx/dy
+        newedge.c /= dy
+
+    newedge.edgenum = Edge.EDGE_NUM
+    Edge.EDGE_NUM += 1
+    return newedge</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Edge.dump"><code class="name flex">
+<span>def <span class="ident">dump</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dump(self):
+    print(&#34;(#%d a=%g, b=%g, c=%g)&#34; % (self.edgenum,self.a,self.b,self.c))
+    print(&#34;ep&#34;,self.ep)
+    print(&#34;reg&#34;,self.reg)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Edge.setEndpoint"><code class="name flex">
+<span>def <span class="ident">setEndpoint</span></span>(<span>self, lrFlag, site)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setEndpoint(self, lrFlag, site):
+    self.ep[lrFlag] = site
+    if self.ep[Edge.RE - lrFlag] is None:
+        return False
+    return True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.EdgeList"><code class="flex name class">
+<span>class <span class="ident">EdgeList</span></span>
+<span>(</span><span>xmin, xmax, nsites)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EdgeList(object):
+    def __init__(self,xmin,xmax,nsites):
+        if xmin &gt; xmax: xmin,xmax = xmax,xmin
+        self.hashsize = int(2*math.sqrt(nsites+4))
+        
+        self.xmin   = xmin
+        self.deltax = float(xmax - xmin)
+        self.hash   = [None]*self.hashsize
+        
+        self.leftend  = Halfedge()
+        self.rightend = Halfedge()
+        self.leftend.right = self.rightend
+        self.rightend.left = self.leftend
+        self.hash[0]  = self.leftend
+        self.hash[-1] = self.rightend
+
+    def insert(self,left,he):
+        he.left  = left
+        he.right = left.right
+        left.right.left = he
+        left.right = he
+
+    def delete(self,he):
+        he.left.right = he.right
+        he.right.left = he.left
+        he.edge = Edge.DELETED
+
+    # Get entry from hash table, pruning any deleted nodes 
+    def gethash(self,b):
+        if(b &lt; 0 or b &gt;= self.hashsize):
+            return None
+        he = self.hash[b]
+        if he is None or he.edge is not Edge.DELETED:
+            return he
+
+        #  Hash table points to deleted half edge.  Patch as necessary.
+        self.hash[b] = None
+        return None
+
+    def leftbnd(self,pt):
+        # Use hash table to get close to desired halfedge 
+        bucket = int(((pt.x - self.xmin)/self.deltax * self.hashsize))
+        
+        if(bucket &lt; 0): 
+            bucket =0;
+        
+        if(bucket &gt;=self.hashsize): 
+            bucket = self.hashsize-1
+
+        he = self.gethash(bucket)
+        if(he is None):
+            i = 1
+            while True:
+                he = self.gethash(bucket-i)
+                if (he is not None): break;
+                he = self.gethash(bucket+i)
+                if (he is not None): break;
+                i += 1
+    
+        # Now search linear list of halfedges for the correct one
+        if (he is self.leftend) or (he is not self.rightend and he.isPointRightOf(pt)):
+            he = he.right
+            while he is not self.rightend and he.isPointRightOf(pt):
+                he = he.right
+            he = he.left;
+        else:
+            he = he.left
+            while (he is not self.leftend and not he.isPointRightOf(pt)):
+                he = he.left
+
+        # Update hash table and reference counts
+        if(bucket &gt; 0 and bucket &lt; self.hashsize-1):
+            self.hash[bucket] = he
+        return he</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.EdgeList.delete"><code class="name flex">
+<span>def <span class="ident">delete</span></span>(<span>self, he)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete(self,he):
+    he.left.right = he.right
+    he.right.left = he.left
+    he.edge = Edge.DELETED</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.EdgeList.gethash"><code class="name flex">
+<span>def <span class="ident">gethash</span></span>(<span>self, b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gethash(self,b):
+    if(b &lt; 0 or b &gt;= self.hashsize):
+        return None
+    he = self.hash[b]
+    if he is None or he.edge is not Edge.DELETED:
+        return he
+
+    #  Hash table points to deleted half edge.  Patch as necessary.
+    self.hash[b] = None
+    return None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.EdgeList.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, left, he)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self,left,he):
+    he.left  = left
+    he.right = left.right
+    left.right.left = he
+    left.right = he</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.EdgeList.leftbnd"><code class="name flex">
+<span>def <span class="ident">leftbnd</span></span>(<span>self, pt)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def leftbnd(self,pt):
+    # Use hash table to get close to desired halfedge 
+    bucket = int(((pt.x - self.xmin)/self.deltax * self.hashsize))
+    
+    if(bucket &lt; 0): 
+        bucket =0;
+    
+    if(bucket &gt;=self.hashsize): 
+        bucket = self.hashsize-1
+
+    he = self.gethash(bucket)
+    if(he is None):
+        i = 1
+        while True:
+            he = self.gethash(bucket-i)
+            if (he is not None): break;
+            he = self.gethash(bucket+i)
+            if (he is not None): break;
+            i += 1
+
+    # Now search linear list of halfedges for the correct one
+    if (he is self.leftend) or (he is not self.rightend and he.isPointRightOf(pt)):
+        he = he.right
+        while he is not self.rightend and he.isPointRightOf(pt):
+            he = he.right
+        he = he.left;
+    else:
+        he = he.left
+        while (he is not self.leftend and not he.isPointRightOf(pt)):
+            he = he.left
+
+    # Update hash table and reference counts
+    if(bucket &gt; 0 and bucket &lt; self.hashsize-1):
+        self.hash[bucket] = he
+    return he</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.Halfedge"><code class="flex name class">
+<span>class <span class="ident">Halfedge</span></span>
+<span>(</span><span>edge=None, pm=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Halfedge(object):
+    def __init__(self,edge=None,pm=Edge.LE):
+        self.left  = None   # left Halfedge in the edge list
+        self.right = None   # right Halfedge in the edge list
+        self.qnext = None   # priority queue linked list pointer
+        self.edge  = edge   # edge list Edge
+        self.pm     = pm
+        self.vertex = None  # Site()
+        self.ystar  = BIG_FLOAT
+
+    def dump(self):
+        print(&#34;Halfedge--------------------------&#34;)
+        print(&#34;left: &#34;,    self.left)  
+        print(&#34;right: &#34;,   self.right) 
+        print(&#34;edge: &#34;,    self.edge)  
+        print(&#34;pm: &#34;,      self.pm)    
+        print(&#34;vertex: &#34;, end=&#39; &#39;)
+        if self.vertex: self.vertex.dump()
+        else: print(&#34;None&#34;)
+        print(&#34;ystar: &#34;,   self.ystar) 
+
+
+    def __cmp__(self,other):
+        if self.ystar &gt; other.ystar:
+            return 1
+        elif self.ystar &lt; other.ystar:
+            return -1
+        elif self.vertex.x &gt; other.vertex.x:
+            return 1
+        elif self.vertex.x &lt; other.vertex.x:
+            return -1
+        else:
+            return 0
+
+    def leftreg(self,default):
+        if not self.edge: 
+            return default
+        elif self.pm == Edge.LE:
+            return self.edge.reg[Edge.LE]
+        else:
+            return self.edge.reg[Edge.RE]
+
+    def rightreg(self,default):
+        if not self.edge: 
+            return default
+        elif self.pm == Edge.LE:
+            return self.edge.reg[Edge.RE]
+        else:
+            return self.edge.reg[Edge.LE]
+
+
+    # returns True if p is to right of halfedge self
+    def isPointRightOf(self,pt):
+        e = self.edge
+        topsite = e.reg[1]
+        right_of_site = pt.x &gt; topsite.x
+        
+        if(right_of_site and self.pm == Edge.LE): 
+            return True
+        
+        if(not right_of_site and self.pm == Edge.RE):
+            return False
+        
+        if(e.a == 1.0):
+            dyp = pt.y - topsite.y
+            dxp = pt.x - topsite.x
+            fast = 0;
+            if ((not right_of_site and e.b &lt; 0.0) or (right_of_site and e.b &gt;= 0.0)):
+                above = dyp &gt;= e.b * dxp
+                fast = above
+            else:
+                above = pt.x + pt.y * e.b &gt; e.c
+                if(e.b &lt; 0.0):
+                    above = not above
+                if (not above):
+                    fast = 1
+            if (not fast):
+                dxs = topsite.x - (e.reg[0]).x
+                above = e.b * (dxp*dxp - dyp*dyp) &lt; dxs*dyp*(1.0+2.0*dxp/dxs + e.b*e.b)
+                if(e.b &lt; 0.0):
+                    above = not above
+        else:  # e.b == 1.0 
+            yl = e.c - e.a * pt.x
+            t1 = pt.y - yl
+            t2 = pt.x - topsite.x
+            t3 = yl - topsite.y
+            above = t1*t1 &gt; t2*t2 + t3*t3
+        
+        if(self.pm==Edge.LE):
+            return above
+        else:
+            return not above
+
+    #--------------------------
+    # create a new site where the Halfedges el1 and el2 intersect
+    def intersect(self,other):
+        e1 = self.edge
+        e2 = other.edge
+        if (e1 is None) or (e2 is None):
+            return None
+
+        # if the two edges bisect the same parent return None
+        if e1.reg[1] is e2.reg[1]:
+            return None
+
+        d = e1.a * e2.b - e1.b * e2.a
+        if isEqual(d,0.0):
+            return None
+
+        xint = (e1.c*e2.b - e2.c*e1.b) / d
+        yint = (e2.c*e1.a - e1.c*e2.a) / d
+        if(cmp(e1.reg[1],e2.reg[1]) &lt; 0):
+            he = self
+            e = e1
+        else:
+            he = other
+            e = e2
+
+        rightOfSite = xint &gt;= e.reg[1].x
+        if((rightOfSite     and he.pm == Edge.LE) or
+           (not rightOfSite and he.pm == Edge.RE)):
+            return None
+
+        # create a new site at the point of intersection - this is a new 
+        # vector event waiting to happen
+        return Site(xint,yint)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Halfedge.dump"><code class="name flex">
+<span>def <span class="ident">dump</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dump(self):
+    print(&#34;Halfedge--------------------------&#34;)
+    print(&#34;left: &#34;,    self.left)  
+    print(&#34;right: &#34;,   self.right) 
+    print(&#34;edge: &#34;,    self.edge)  
+    print(&#34;pm: &#34;,      self.pm)    
+    print(&#34;vertex: &#34;, end=&#39; &#39;)
+    if self.vertex: self.vertex.dump()
+    else: print(&#34;None&#34;)
+    print(&#34;ystar: &#34;,   self.ystar) </code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Halfedge.intersect"><code class="name flex">
+<span>def <span class="ident">intersect</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect(self,other):
+    e1 = self.edge
+    e2 = other.edge
+    if (e1 is None) or (e2 is None):
+        return None
+
+    # if the two edges bisect the same parent return None
+    if e1.reg[1] is e2.reg[1]:
+        return None
+
+    d = e1.a * e2.b - e1.b * e2.a
+    if isEqual(d,0.0):
+        return None
+
+    xint = (e1.c*e2.b - e2.c*e1.b) / d
+    yint = (e2.c*e1.a - e1.c*e2.a) / d
+    if(cmp(e1.reg[1],e2.reg[1]) &lt; 0):
+        he = self
+        e = e1
+    else:
+        he = other
+        e = e2
+
+    rightOfSite = xint &gt;= e.reg[1].x
+    if((rightOfSite     and he.pm == Edge.LE) or
+       (not rightOfSite and he.pm == Edge.RE)):
+        return None
+
+    # create a new site at the point of intersection - this is a new 
+    # vector event waiting to happen
+    return Site(xint,yint)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Halfedge.isPointRightOf"><code class="name flex">
+<span>def <span class="ident">isPointRightOf</span></span>(<span>self, pt)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isPointRightOf(self,pt):
+    e = self.edge
+    topsite = e.reg[1]
+    right_of_site = pt.x &gt; topsite.x
+    
+    if(right_of_site and self.pm == Edge.LE): 
+        return True
+    
+    if(not right_of_site and self.pm == Edge.RE):
+        return False
+    
+    if(e.a == 1.0):
+        dyp = pt.y - topsite.y
+        dxp = pt.x - topsite.x
+        fast = 0;
+        if ((not right_of_site and e.b &lt; 0.0) or (right_of_site and e.b &gt;= 0.0)):
+            above = dyp &gt;= e.b * dxp
+            fast = above
+        else:
+            above = pt.x + pt.y * e.b &gt; e.c
+            if(e.b &lt; 0.0):
+                above = not above
+            if (not above):
+                fast = 1
+        if (not fast):
+            dxs = topsite.x - (e.reg[0]).x
+            above = e.b * (dxp*dxp - dyp*dyp) &lt; dxs*dyp*(1.0+2.0*dxp/dxs + e.b*e.b)
+            if(e.b &lt; 0.0):
+                above = not above
+    else:  # e.b == 1.0 
+        yl = e.c - e.a * pt.x
+        t1 = pt.y - yl
+        t2 = pt.x - topsite.x
+        t3 = yl - topsite.y
+        above = t1*t1 &gt; t2*t2 + t3*t3
+    
+    if(self.pm==Edge.LE):
+        return above
+    else:
+        return not above</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Halfedge.leftreg"><code class="name flex">
+<span>def <span class="ident">leftreg</span></span>(<span>self, default)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def leftreg(self,default):
+    if not self.edge: 
+        return default
+    elif self.pm == Edge.LE:
+        return self.edge.reg[Edge.LE]
+    else:
+        return self.edge.reg[Edge.RE]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Halfedge.rightreg"><code class="name flex">
+<span>def <span class="ident">rightreg</span></span>(<span>self, default)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rightreg(self,default):
+    if not self.edge: 
+        return default
+    elif self.pm == Edge.LE:
+        return self.edge.reg[Edge.RE]
+    else:
+        return self.edge.reg[Edge.LE]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.Mesh2D"><code class="flex name class">
+<span>class <span class="ident">Mesh2D</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Mesh2D(object):
+    def __init__(self):
+        self.verts = []
+        self.all_edges = set()
+        self.linked_verts = defaultdict(set)
+        self._next_vert = 0
+
+    @classmethod
+    def from_pydata(cls, verts, edges):
+        mesh = Mesh2D()
+        for vert in verts:
+            mesh.new_vert(vert)
+        for i, j in edges:
+            mesh.new_edge(i, j)
+        return mesh
+
+    def new_vert(self, vert):
+        if vert is None:
+            raise Exception(&#34;new_vert(None)&#34;)
+        if vert[0] is None or vert[1] is None:
+            raise Exception(f&#34;new_vert({vert})&#34;)
+        self.verts.append(vert)
+        idx = self._next_vert
+        self._next_vert += 1
+        return idx
+
+    def new_edge(self, i, j):
+        v1, v2 = self.verts[i], self.verts[j]
+        #info(&#34;Add: %s (%s) =&gt; %s (%s)&#34;, i, v1, j, v2)
+        self.all_edges.add((v1, v2))
+        self.linked_verts[i].add(j)
+        self.linked_verts[j].add(i)
+
+    def remove_edge(self, i, j):
+        if (self.verts[i], self.verts[j]) in self.all_edges:
+            self.all_edges.remove((self.verts[i], self.verts[j]))
+        if (self.verts[j], self.verts[i]) in self.all_edges:
+            self.all_edges.remove((self.verts[j], self.verts[i]))
+        if j in self.linked_verts[i]:
+            self.linked_verts[i].remove(j)
+        if i in self.linked_verts[j]:
+            self.linked_verts[j].remove(i)
+
+    def to_pydata(self):
+        verts = [vert for vert in self.verts if vert is not None]
+        lut = dict((vert, idx) for idx, vert in enumerate(verts))
+        #info(lut)
+        edges = []
+        for v1, v2 in self.all_edges:
+            i1 = lut.get(v1, None)
+            i2 = lut.get(v2, None)
+            #info(&#34;Get: %s (%s) =&gt; %s (%s)&#34;, v1, i1, v2, i2)
+            if i1 is not None and i2 is not None and i1 != i2:
+                edges.append((i1, i2))
+
+        return verts, edges</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Mesh2D.from_pydata"><code class="name flex">
+<span>def <span class="ident">from_pydata</span></span>(<span>verts, edges)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_pydata(cls, verts, edges):
+    mesh = Mesh2D()
+    for vert in verts:
+        mesh.new_vert(vert)
+    for i, j in edges:
+        mesh.new_edge(i, j)
+    return mesh</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Mesh2D.new_edge"><code class="name flex">
+<span>def <span class="ident">new_edge</span></span>(<span>self, i, j)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_edge(self, i, j):
+    v1, v2 = self.verts[i], self.verts[j]
+    #info(&#34;Add: %s (%s) =&gt; %s (%s)&#34;, i, v1, j, v2)
+    self.all_edges.add((v1, v2))
+    self.linked_verts[i].add(j)
+    self.linked_verts[j].add(i)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Mesh2D.new_vert"><code class="name flex">
+<span>def <span class="ident">new_vert</span></span>(<span>self, vert)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def new_vert(self, vert):
+    if vert is None:
+        raise Exception(&#34;new_vert(None)&#34;)
+    if vert[0] is None or vert[1] is None:
+        raise Exception(f&#34;new_vert({vert})&#34;)
+    self.verts.append(vert)
+    idx = self._next_vert
+    self._next_vert += 1
+    return idx</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Mesh2D.remove_edge"><code class="name flex">
+<span>def <span class="ident">remove_edge</span></span>(<span>self, i, j)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_edge(self, i, j):
+    if (self.verts[i], self.verts[j]) in self.all_edges:
+        self.all_edges.remove((self.verts[i], self.verts[j]))
+    if (self.verts[j], self.verts[i]) in self.all_edges:
+        self.all_edges.remove((self.verts[j], self.verts[i]))
+    if j in self.linked_verts[i]:
+        self.linked_verts[i].remove(j)
+    if i in self.linked_verts[j]:
+        self.linked_verts[j].remove(i)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Mesh2D.to_pydata"><code class="name flex">
+<span>def <span class="ident">to_pydata</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_pydata(self):
+    verts = [vert for vert in self.verts if vert is not None]
+    lut = dict((vert, idx) for idx, vert in enumerate(verts))
+    #info(lut)
+    edges = []
+    for v1, v2 in self.all_edges:
+        i1 = lut.get(v1, None)
+        i2 = lut.get(v2, None)
+        #info(&#34;Get: %s (%s) =&gt; %s (%s)&#34;, v1, i1, v2, i2)
+        if i1 is not None and i2 is not None and i1 != i2:
+            edges.append((i1, i2))
+
+    return verts, edges</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue"><code class="flex name class">
+<span>class <span class="ident">PriorityQueue</span></span>
+<span>(</span><span>ymin, ymax, nsites)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PriorityQueue(object):
+    def __init__(self,ymin,ymax,nsites):
+        self.ymin = ymin
+        self.deltay = ymax - ymin
+        self.hashsize = int(4 * math.sqrt(nsites))
+        self.count = 0
+        self.minidx = 0
+        self.hash = []
+        for i in range(self.hashsize):
+            self.hash.append(Halfedge())
+
+    def __len__(self):
+        return self.count
+
+    def isEmpty(self):
+        return self.count == 0
+
+    def insert(self,he,site,offset):
+        he.vertex = site
+        he.ystar  = site.y + offset
+        last = self.hash[self.getBucket(he)]
+        next = last.qnext
+        while((next is not None) and cmp(he,next) &gt; 0):
+            last = next
+            next = last.qnext
+        he.qnext = last.qnext
+        last.qnext = he
+        self.count += 1
+
+    def delete(self,he):
+        if (he.vertex is not None):
+            last = self.hash[self.getBucket(he)]
+            while last.qnext is not he:
+                last = last.qnext
+            last.qnext = he.qnext
+            self.count -= 1
+            he.vertex = None
+
+    def getBucket(self,he):
+        bucket = int(((he.ystar - self.ymin) / self.deltay) * self.hashsize)
+        if bucket &lt; 0: bucket = 0
+        if bucket &gt;= self.hashsize: bucket = self.hashsize-1
+        if bucket &lt; self.minidx:  self.minidx = bucket
+        return bucket
+
+    def getMinPt(self):
+        while(self.hash[self.minidx].qnext is None):
+            self.minidx += 1
+        he = self.hash[self.minidx].qnext
+        x = he.vertex.x
+        y = he.ystar
+        return Site(x,y)
+
+    def popMinHalfedge(self):
+        curr = self.hash[self.minidx].qnext
+        self.hash[self.minidx].qnext = curr.qnext
+        self.count -= 1
+        return curr</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.PriorityQueue.delete"><code class="name flex">
+<span>def <span class="ident">delete</span></span>(<span>self, he)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete(self,he):
+    if (he.vertex is not None):
+        last = self.hash[self.getBucket(he)]
+        while last.qnext is not he:
+            last = last.qnext
+        last.qnext = he.qnext
+        self.count -= 1
+        he.vertex = None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue.getBucket"><code class="name flex">
+<span>def <span class="ident">getBucket</span></span>(<span>self, he)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getBucket(self,he):
+    bucket = int(((he.ystar - self.ymin) / self.deltay) * self.hashsize)
+    if bucket &lt; 0: bucket = 0
+    if bucket &gt;= self.hashsize: bucket = self.hashsize-1
+    if bucket &lt; self.minidx:  self.minidx = bucket
+    return bucket</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue.getMinPt"><code class="name flex">
+<span>def <span class="ident">getMinPt</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getMinPt(self):
+    while(self.hash[self.minidx].qnext is None):
+        self.minidx += 1
+    he = self.hash[self.minidx].qnext
+    x = he.vertex.x
+    y = he.ystar
+    return Site(x,y)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, he, site, offset)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self,he,site,offset):
+    he.vertex = site
+    he.ystar  = site.y + offset
+    last = self.hash[self.getBucket(he)]
+    next = last.qnext
+    while((next is not None) and cmp(he,next) &gt; 0):
+        last = next
+        next = last.qnext
+    he.qnext = last.qnext
+    last.qnext = he
+    self.count += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue.isEmpty"><code class="name flex">
+<span>def <span class="ident">isEmpty</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isEmpty(self):
+    return self.count == 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.PriorityQueue.popMinHalfedge"><code class="name flex">
+<span>def <span class="ident">popMinHalfedge</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def popMinHalfedge(self):
+    curr = self.hash[self.minidx].qnext
+    self.hash[self.minidx].qnext = curr.qnext
+    self.count -= 1
+    return curr</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.Site"><code class="flex name class">
+<span>class <span class="ident">Site</span></span>
+<span>(</span><span>x=0.0, y=0.0, sitenum=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Site(object):
+    def __init__(self,x=0.0,y=0.0,sitenum=0):
+        self.x = x
+        self.y = y
+        self.sitenum = sitenum
+
+    def dump(self):
+        print(&#34;Site #%d (%g, %g)&#34; % (self.sitenum,self.x,self.y))
+    
+    
+    def __lt__(self, other):
+        if self.y &lt; other.y:
+            return 1
+        elif self.y &gt; other.y:
+            return 0
+        elif self.x &lt; other.x:
+            return 1
+        elif self.x &gt; other.x:
+            return 0 
+                   
+    def __str__(self):
+        return str((self.x,self.y))
+         
+    def __cmp__(self,other):
+        if self.y &lt; other.y:
+            return -1
+        elif self.y &gt; other.y:
+            return 1
+        elif self.x &lt; other.x:
+            return -1
+        elif self.x &gt; other.x:
+            return 1
+        else:
+            return 0
+
+    def distance(self,other):
+        dx = self.x - other.x
+        dy = self.y - other.y
+        return math.sqrt(dx*dx + dy*dy)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.Site.distance"><code class="name flex">
+<span>def <span class="ident">distance</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def distance(self,other):
+    dx = self.x - other.x
+    dy = self.y - other.y
+    return math.sqrt(dx*dx + dy*dy)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.Site.dump"><code class="name flex">
+<span>def <span class="ident">dump</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dump(self):
+    print(&#34;Site #%d (%g, %g)&#34; % (self.sitenum,self.x,self.y))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.voronoi.SiteList"><code class="flex name class">
+<span>class <span class="ident">SiteList</span></span>
+<span>(</span><span>pointList)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiteList(object):
+    def __init__(self,pointList):
+        self.__sites = []
+        self.__sitenum = 0
+
+        self.__xmin = pointList[0].x
+        self.__ymin = pointList[0].y
+        self.__xmax = pointList[0].x
+        self.__ymax = pointList[0].y
+        for i,pt in enumerate(pointList):
+            self.__sites.append(Site(pt.x,pt.y,i))
+            if pt.x &lt; self.__xmin: self.__xmin = pt.x
+            if pt.y &lt; self.__ymin: self.__ymin = pt.y
+            if pt.x &gt; self.__xmax: self.__xmax = pt.x
+            if pt.y &gt; self.__ymax: self.__ymax = pt.y
+        self.__sites.sort()
+
+    def setSiteNumber(self,site):
+        site.sitenum = self.__sitenum
+        self.__sitenum += 1
+
+    class Iterator(object):
+        def __init__(this,lst):  this.generator = (s for s in lst)
+        def __iter__(this):      return this
+        def __next__(this): 
+            try:
+                return next(this.generator)
+            except StopIteration:
+                return None
+
+    def iterator(self):
+        return SiteList.Iterator(self.__sites)
+
+    def __iter__(self):
+        return SiteList.Iterator(self.__sites)
+
+    def __len__(self):
+        return len(self.__sites)
+
+    def _getxmin(self): return self.__xmin
+    def _getymin(self): return self.__ymin
+    def _getxmax(self): return self.__xmax
+    def _getymax(self): return self.__ymax
+    xmin = property(_getxmin)
+    ymin = property(_getymin)
+    xmax = property(_getxmax)
+    ymax = property(_getymax)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.SiteList.Iterator"><code class="name">var <span class="ident">Iterator</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.SiteList.xmax"><code class="name">var <span class="ident">xmax</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _getxmax(self): return self.__xmax</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.SiteList.xmin"><code class="name">var <span class="ident">xmin</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _getxmin(self): return self.__xmin</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.SiteList.ymax"><code class="name">var <span class="ident">ymax</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _getymax(self): return self.__ymax</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.SiteList.ymin"><code class="name">var <span class="ident">ymin</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _getymin(self): return self.__ymin</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.voronoi.SiteList.iterator"><code class="name flex">
+<span>def <span class="ident">iterator</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iterator(self):
+    return SiteList.Iterator(self.__sites)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.voronoi.SiteList.setSiteNumber"><code class="name flex">
+<span>def <span class="ident">setSiteNumber</span></span>(<span>self, site)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSiteNumber(self,site):
+    site.sitenum = self.__sitenum
+    self.__sitenum += 1</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.cmp" href="#sverchok.utils.voronoi.cmp">cmp</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.computeDelaunayTriangulation" href="#sverchok.utils.voronoi.computeDelaunayTriangulation">computeDelaunayTriangulation</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.computeVoronoiDiagram" href="#sverchok.utils.voronoi.computeVoronoiDiagram">computeVoronoiDiagram</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.isEqual" href="#sverchok.utils.voronoi.isEqual">isEqual</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.lloyd2d" href="#sverchok.utils.voronoi.lloyd2d">lloyd2d</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.unique_points" href="#sverchok.utils.voronoi.unique_points">unique_points</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.usage" href="#sverchok.utils.voronoi.usage">usage</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.voronoi" href="#sverchok.utils.voronoi.voronoi">voronoi</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.voronoi_bounded" href="#sverchok.utils.voronoi.voronoi_bounded">voronoi_bounded</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Bounds" href="#sverchok.utils.voronoi.Bounds">Bounds</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.Bounds.init_from_sites" href="#sverchok.utils.voronoi.Bounds.init_from_sites">init_from_sites</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Bounds.new" href="#sverchok.utils.voronoi.Bounds.new">new</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Bounds.restrict" href="#sverchok.utils.voronoi.Bounds.restrict">restrict</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.BoxBounds" href="#sverchok.utils.voronoi.BoxBounds">BoxBounds</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.contains" href="#sverchok.utils.voronoi.BoxBounds.contains">contains</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.edges" href="#sverchok.utils.voronoi.BoxBounds.edges">edges</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.line_intersection" href="#sverchok.utils.voronoi.BoxBounds.line_intersection">line_intersection</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.project" href="#sverchok.utils.voronoi.BoxBounds.project">project</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.ray_intersection" href="#sverchok.utils.voronoi.BoxBounds.ray_intersection">ray_intersection</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.restrict" href="#sverchok.utils.voronoi.BoxBounds.restrict">restrict</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.BoxBounds.segment_intersection" href="#sverchok.utils.voronoi.BoxBounds.segment_intersection">segment_intersection</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.CircleBounds" href="#sverchok.utils.voronoi.CircleBounds">CircleBounds</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.circle" href="#sverchok.utils.voronoi.CircleBounds.circle">circle</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.contains" href="#sverchok.utils.voronoi.CircleBounds.contains">contains</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.line_intersection" href="#sverchok.utils.voronoi.CircleBounds.line_intersection">line_intersection</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.project" href="#sverchok.utils.voronoi.CircleBounds.project">project</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.ray_intersection" href="#sverchok.utils.voronoi.CircleBounds.ray_intersection">ray_intersection</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.restrict" href="#sverchok.utils.voronoi.CircleBounds.restrict">restrict</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.CircleBounds.segment_intersection" href="#sverchok.utils.voronoi.CircleBounds.segment_intersection">segment_intersection</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Context" href="#sverchok.utils.voronoi.Context">Context</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.voronoi.Context.circle" href="#sverchok.utils.voronoi.Context.circle">circle</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.clip_line" href="#sverchok.utils.voronoi.Context.clip_line">clip_line</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.line" href="#sverchok.utils.voronoi.Context.line">line</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.outBisector" href="#sverchok.utils.voronoi.Context.outBisector">outBisector</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.outEdge" href="#sverchok.utils.voronoi.Context.outEdge">outEdge</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.outSite" href="#sverchok.utils.voronoi.Context.outSite">outSite</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.outTriple" href="#sverchok.utils.voronoi.Context.outTriple">outTriple</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Context.outVertex" href="#sverchok.utils.voronoi.Context.outVertex">outVertex</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Edge" href="#sverchok.utils.voronoi.Edge">Edge</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.voronoi.Edge.DELETED" href="#sverchok.utils.voronoi.Edge.DELETED">DELETED</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.EDGE_NUM" href="#sverchok.utils.voronoi.Edge.EDGE_NUM">EDGE_NUM</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.LE" href="#sverchok.utils.voronoi.Edge.LE">LE</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.RE" href="#sverchok.utils.voronoi.Edge.RE">RE</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.bisect" href="#sverchok.utils.voronoi.Edge.bisect">bisect</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.dump" href="#sverchok.utils.voronoi.Edge.dump">dump</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Edge.setEndpoint" href="#sverchok.utils.voronoi.Edge.setEndpoint">setEndpoint</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.EdgeList" href="#sverchok.utils.voronoi.EdgeList">EdgeList</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.EdgeList.delete" href="#sverchok.utils.voronoi.EdgeList.delete">delete</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.EdgeList.gethash" href="#sverchok.utils.voronoi.EdgeList.gethash">gethash</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.EdgeList.insert" href="#sverchok.utils.voronoi.EdgeList.insert">insert</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.EdgeList.leftbnd" href="#sverchok.utils.voronoi.EdgeList.leftbnd">leftbnd</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Halfedge" href="#sverchok.utils.voronoi.Halfedge">Halfedge</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.Halfedge.dump" href="#sverchok.utils.voronoi.Halfedge.dump">dump</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Halfedge.intersect" href="#sverchok.utils.voronoi.Halfedge.intersect">intersect</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Halfedge.isPointRightOf" href="#sverchok.utils.voronoi.Halfedge.isPointRightOf">isPointRightOf</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Halfedge.leftreg" href="#sverchok.utils.voronoi.Halfedge.leftreg">leftreg</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Halfedge.rightreg" href="#sverchok.utils.voronoi.Halfedge.rightreg">rightreg</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Mesh2D" href="#sverchok.utils.voronoi.Mesh2D">Mesh2D</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.Mesh2D.from_pydata" href="#sverchok.utils.voronoi.Mesh2D.from_pydata">from_pydata</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Mesh2D.new_edge" href="#sverchok.utils.voronoi.Mesh2D.new_edge">new_edge</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Mesh2D.new_vert" href="#sverchok.utils.voronoi.Mesh2D.new_vert">new_vert</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Mesh2D.remove_edge" href="#sverchok.utils.voronoi.Mesh2D.remove_edge">remove_edge</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Mesh2D.to_pydata" href="#sverchok.utils.voronoi.Mesh2D.to_pydata">to_pydata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.PriorityQueue" href="#sverchok.utils.voronoi.PriorityQueue">PriorityQueue</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.delete" href="#sverchok.utils.voronoi.PriorityQueue.delete">delete</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.getBucket" href="#sverchok.utils.voronoi.PriorityQueue.getBucket">getBucket</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.getMinPt" href="#sverchok.utils.voronoi.PriorityQueue.getMinPt">getMinPt</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.insert" href="#sverchok.utils.voronoi.PriorityQueue.insert">insert</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.isEmpty" href="#sverchok.utils.voronoi.PriorityQueue.isEmpty">isEmpty</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.PriorityQueue.popMinHalfedge" href="#sverchok.utils.voronoi.PriorityQueue.popMinHalfedge">popMinHalfedge</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.Site" href="#sverchok.utils.voronoi.Site">Site</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.voronoi.Site.distance" href="#sverchok.utils.voronoi.Site.distance">distance</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.Site.dump" href="#sverchok.utils.voronoi.Site.dump">dump</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.voronoi.SiteList" href="#sverchok.utils.voronoi.SiteList">SiteList</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.voronoi.SiteList.Iterator" href="#sverchok.utils.voronoi.SiteList.Iterator">Iterator</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.iterator" href="#sverchok.utils.voronoi.SiteList.iterator">iterator</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.setSiteNumber" href="#sverchok.utils.voronoi.SiteList.setSiteNumber">setSiteNumber</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.xmax" href="#sverchok.utils.voronoi.SiteList.xmax">xmax</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.xmin" href="#sverchok.utils.voronoi.SiteList.xmin">xmin</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.ymax" href="#sverchok.utils.voronoi.SiteList.ymax">ymax</a></code></li>
+<li><code><a title="sverchok.utils.voronoi.SiteList.ymin" href="#sverchok.utils.voronoi.SiteList.ymin">ymin</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

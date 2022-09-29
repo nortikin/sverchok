@@ -1,0 +1,2468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.pulga_physics_core API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.pulga_physics_core</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+
+def cross_indices3(n):
+    &#39;&#39;&#39;create crossed indices&#39;&#39;&#39;
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind
+
+
+def numpy_match_long_repeat(p):
+    &#39;&#39;&#39;match list length by repeating last one&#39;&#39;&#39;
+    q = []
+    maxl = 0
+    for g in p:
+        maxl = max(maxl, g.shape[0])
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        q.append(g)
+    return q
+
+
+def numpy_fit_long_repeat(p, maxl):
+    &#39;&#39;&#39;match list length by repeating last one or removing end&#39;&#39;&#39;
+    q = []
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        if difl &lt; 0:
+            g = g[:maxl]
+        q.append(g)
+    return q
+
+
+def match_cylce(p, n):
+    &#39;&#39;&#39;append cylcing till have n items&#39;&#39;&#39;
+    difference = n - len(p)
+    for i in range(difference):
+        p.append(p[i % len(p)])
+
+
+def expand_pols_numpy(p, len_max):
+    &#39;&#39;&#39;to fit variable sided polygons in one array (cycling)&#39;&#39;&#39;
+    np_match_cycle = np.vectorize(match_cylce)
+    np_match_cycle(p, len_max)
+    new_pols = np.zeros((len(p), len_max), dtype=np.int32)
+    for i in range(len(p)):
+        new_pols[i, :] = p[i]
+    return new_pols
+
+
+def self_react(params):
+    &#39;&#39;&#39;behaviors between particles: collide, attract and fit&#39;&#39;&#39;
+    ps, collision, sum_rad, gates, att_params, fit_params = params
+    use_collide, use_attract, use_grow = gates
+    indexes = ps.params[&#39;indexes&#39;]
+    if use_grow:
+        sum_rad = ps.rads[indexes[:, 0]] + ps.rads[indexes[:, 1]]
+        if use_attract:
+            att_params[2] = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
+    dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+    dist = np.linalg.norm(dif_v, axis=1)
+    mask = sum_rad &gt; dist
+
+    index_inter = indexes[mask]
+    some_collisions = use_collide and len(index_inter) &gt; 0
+    some_attractions = use_attract and(len(index_inter) &lt; len(indexes))
+
+    if some_collisions or some_attractions:
+        result = np.zeros((ps.v_len, ps.v_len, 3), dtype=np.float64)
+        dist_cor = np.clip(dist, 1e-6, 1e4)
+        normal_v = dif_v/dist_cor[:, np.newaxis]
+
+        if some_collisions:
+            self_collision_force(result, dist, sum_rad, index_inter, mask, normal_v, collision)
+        if some_attractions:
+            antimask = np.invert(mask)
+            attract_force(result, dist_cor, antimask, indexes, normal_v, att_params)
+
+        ps.r += np.sum(result, axis=1)
+
+    if use_grow:
+        fit_force(ps, index_inter, fit_params)
+        ps.mass = ps.density * np.power(ps.rads, 3)
+
+
+def self_collision_force(result, dist, sum_rad, index_inter, mask, normal_v, self_collision):
+    &#39;&#39;&#39;apply collision forces between particles&#39;&#39;&#39;
+
+    id0 = index_inter[:, 0]
+    id1 = index_inter[:, 1]
+
+    le = dist[mask, np.newaxis] - sum_rad[mask, np.newaxis]
+    no = normal_v[mask]
+    variable_coll = len(self_collision) &gt; 1
+    sf = self_collision[:, np.newaxis]
+    len0, len1 = [sf[id1], sf[id0]] if variable_coll else [sf, sf]
+
+    result[id0, id1, :] = -no * le * len0
+    result[id1, id0, :] = no * le * len1
+
+
+def attract_force(result, dist, mask, index, norm_v, att_params):
+    &#39;&#39;&#39;apply attractions between particles&#39;&#39;&#39;
+    attract, att_decay, mass_product = att_params
+
+    dist2 = np.power(dist, att_decay)[mask, np.newaxis]
+    index_non_inter = index[mask]
+    id0 = index_non_inter[:, 0]
+    id1 = index_non_inter[:, 1]
+
+    direction = norm_v[mask] / dist2 * mass_product[mask, np.newaxis]
+
+    variable_att = len(attract) &gt; 1
+
+    att = attract
+    len0, len1 = [att[id1], att[id0]] if variable_att else [att, att]
+
+    result[id0, id1, :] = - direction * len0
+    result[id1, id0, :] = direction * len1
+
+
+def fit_force(ps, index_inter, fit_params):
+    &#39;&#39;&#39;the untouched particles will grow, the ones that collide will shrink&#39;&#39;&#39;
+    grow, min_rad, max_rad = fit_params
+    touch = np.unique(index_inter)
+    free = np.setdiff1d(np.arange(ps.v_len, dtype=np.int16), touch)
+    v_grow = len(grow) &gt; 1
+    grow_un, grow_tou = [grow[free], grow[touch]] if v_grow else [grow, grow]
+    ps.rads[free] += grow_un*0.1
+    ps.rads[touch] -= grow_tou*0.1
+
+    ps.rads = np.clip(ps.rads, min_rad, max_rad)
+
+
+def self_react_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare self reacting data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    collision, attract, att_decay, grow, min_rad, max_rad = local_params
+    use_self_collision, use_attract, use_grow = local_gates
+
+    np_collision = np.array(collision)
+    use_self_collision = use_self_collision and np.any(np_collision &gt; 0)
+    np_attract = np.array(attract)[:, np.newaxis]
+    use_attract = use_attract and np.any(np_attract != 0)
+    np_grow = np.array(grow)
+    use_grow = use_grow and np.any(np_grow != 0)
+
+    use_self_react = (use_attract or use_self_collision or use_grow)
+
+    if not use_self_react:
+        return
+
+    ps.params[&#39;indexes&#39;] = cross_indices3(ps.v_len)
+    sum_rad = ps.rads[ps.params[&#39;indexes&#39;][:, 0]] + ps.rads[ps.params[&#39;indexes&#39;][:, 1]]
+
+    att_params = att_setup(use_attract, ps, np_attract, att_decay)
+    fit_params = fit_setup(use_grow, np_grow, min_rad, max_rad)
+
+    gates = [use_self_collision, use_attract, use_grow]
+    params = [ps, np_collision, sum_rad, gates, att_params, fit_params]
+    forces_composite[0].append(local_func)
+    forces_composite[1].append(params)
+
+
+def att_setup(use_attract, ps, np_attract, attract_decay):
+    &#39;&#39;&#39;Prepare self-attracting data&#39;&#39;&#39;
+    if use_attract:
+        np_att_decay = np.array(attract_decay)
+        indexes = ps.params[&#39;indexes&#39;]
+        mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
+        att_params = [np_attract, np_att_decay, mass_product]
+    else:
+        att_params = []
+
+    return att_params
+
+
+def fit_setup(use_grow, np_grow, min_rad, max_rad):
+    &#39;&#39;&#39;Prepare fitting data&#39;&#39;&#39;
+    if use_grow:
+        np_min_rad = np.array(min_rad)
+        np_max_rad = np.array(max_rad)
+        fit_params = [np_grow, np_min_rad, np_max_rad]
+    else:
+        fit_params = []
+
+    return fit_params
+
+
+def attractors_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare attractors system and data&#39;&#39;&#39;
+    local_func, use_attractors, local_params = dicti
+    if use_attractors:
+        attractors, att_force, att_clamp, att_decay_power = local_params
+        np_attrac = np.array(attractors)
+        np_attrac_f = np.array(att_force)
+        np_attrac_clamp = np.array(att_clamp)
+        np_attrac_decay_pow = np.array(att_decay_power)
+        params = [np_attrac, np_attrac_f, np_attrac_clamp, np_attrac_decay_pow]
+
+        forces_composite[0].append(local_func)
+        forces_composite[1].append([ps] + numpy_match_long_repeat(params))
+
+
+def attractors_force(params):
+    &#39;&#39;&#39;apply attractors force (as planets)&#39;&#39;&#39;
+    ps, np_attrac, np_attrac_f, np_attrac_clamp, decay = params
+    v_attract = ps.verts[np.newaxis, :, :] - np_attrac[:, np.newaxis, :]
+    dist_attract = np.linalg.norm(v_attract, axis=2)
+    mask = dist_attract &gt; np_attrac_clamp[:, np.newaxis]
+    mask_true = np.invert(mask)
+    dist_attract2 = np.power(dist_attract, decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
+
+    v_attract *= np_attrac_f[:, np.newaxis, np.newaxis]
+    v_attract_normal = v_attract[mask_true] / dist_attract_cor[:, np.newaxis]
+
+    v_attract[mask_true] = -v_attract_normal
+    v_attract[mask, :] = 0
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.r += r_attract
+
+
+def calc_rest_length(np_verts, np_springs):
+    &#39;&#39;&#39;calculate edges length&#39;&#39;&#39;
+    pairs_springs = np_verts[np_springs, :]
+    vect_rest = (pairs_springs[:, 0, :] - pairs_springs[:, 1, :])
+    dist_rest = np.linalg.norm(vect_rest, axis=1)
+    return dist_rest
+
+
+def spring_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare spring system and data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    use_springs, use_fix_len = local_gates
+    if use_springs:
+        springs, fixed_len, spring_k = local_params
+        spring_k = np.array(spring_k)
+        if np.any(spring_k != 0):
+            springs = np.array(springs)
+
+            if use_fix_len or fixed_len[0] &gt; 0:
+                dist_rest = fixed_len
+            else:
+                dist_rest = calc_rest_length(ps.verts, springs)
+            spring_params = [ps, springs, dist_rest, spring_k]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(spring_params)
+
+
+def spring_force(spring_params):
+    &#39;&#39;&#39;apply spring forces related to edges resistance&#39;&#39;&#39;
+    ps, np_springs, dist_rest, spring_k = spring_params
+
+    pairs = ps.verts[np_springs, :]
+    dif_v = pairs[:, 0, :] - pairs[:, 1, :]
+    dist = np.linalg.norm(dif_v, axis=1)
+    dif_l = dist - dist_rest
+    dist[dist == 0] = 1
+    normal_v = dif_v / dist[:, np.newaxis]
+    x = dif_l[:, np.newaxis]
+    k = spring_k[:, np.newaxis]
+
+    result = np.zeros((ps.v_len, 3), dtype=np.float64)
+    np.add.at(result, np_springs[:, 0], -normal_v * x * k)
+    np.add.at(result, np_springs[:, 1], normal_v * x * k)
+
+    ps.r += result
+
+
+def inflate_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare data to inflate&#39;&#39;&#39;
+    local_func, use_inflate, local_params = dicti
+    if use_inflate:
+        pols, inflate = local_params
+        np_pols = np.array(pols)
+        p_len = len(pols)
+        if np_pols.dtype == np.object:
+            np_len = np.vectorize(len)
+            pols_sides = np_len(np_pols)
+            pol_side_max = np.amax(pols_sides)
+            np_pols = expand_pols_numpy(np_pols, pol_side_max)
+            p_regular = False
+        else:
+            p_regular = True
+            pols_sides = np.array(p_len)
+            pol_side_max = len(pols[0])
+
+        inflate_params = [ps, np_pols, pol_side_max, pols_sides, inflate, p_regular]
+        forces_composite[0].append(local_func)
+        forces_composite[1].append(inflate_params)
+
+
+def pols_normals(pol_v, mag):
+    &#39;&#39;&#39;get actual polygons normal with controlled magnitude&#39;&#39;&#39;
+    v1 = pol_v[:, 1, :] - pol_v[:, 0, :]
+    v2 = pol_v[:, 2, :] - pol_v[:, 0, :]
+    pols_normal = np.cross(v1, v2)
+    pols_normal_d = np.linalg.norm(pols_normal, axis=1)
+    return pols_normal / pols_normal_d[:, np.newaxis] * mag
+
+
+def inflate_force(inflate_params):
+    &#39;&#39;&#39;apply force based on normals&#39;&#39;&#39;
+    ps, np_pols, pol_side_max, pols_sides, inflate, p_regular = inflate_params
+
+    pol_v = ps.verts[np_pols, :]
+    pols_normal = pols_normals(pol_v, inflate)
+    result = np.zeros((ps.v_len, 3), dtype=np.float64)
+
+    if p_regular:
+        p_area = calc_area(pol_side_max, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            np.add.at(result, np_pols[:, i], pols_normal * p_area)
+
+    else:
+        p_area = calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            mask = pols_sides &gt; i
+            np.add.at(result, np_pols[mask, i], pols_normal[mask] * p_area[mask])
+
+    ps.r += result
+
+
+def calc_area(pol_side_max, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (equal sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_normal), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        prod[i, :, :] = np.cross(pol_v[:, i, :], pol_v[:, (i + 1) % pol_side_max, :])
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)
+
+
+def calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (variable sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_sides), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        mask = pols_sides &gt; i
+        prod[i, mask, :] = np.cross(pol_v[mask, i, :], pol_v[mask, (i + 1) % pol_side_max, :])
+
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)
+
+
+def drag_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare drag data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    use_drag, use_grow = local_gates
+    if use_drag:
+        drag_force = local_params
+        np_drag_force = np.array(drag_force)[:, np.newaxis]
+        use_drag = np.any(np_drag_force &gt; 0)
+        if use_drag:
+            surf = np.power(ps.rads, 2)
+            drag_params = [ps, use_grow, np_drag_force, surf]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(drag_params)
+
+
+def drag_force_apply(params):
+    &#39;&#39;&#39;apply drag force (resistance from environment)&#39;&#39;&#39;
+    ps, use_grow, drag_mag, surf = params
+    vel_mag = np.linalg.norm(ps.vel, axis=1)
+    vel_mag_zero = vel_mag == 0
+    vel_mag[vel_mag_zero] = 1
+    # squaring the speed is more accurate but harder to control
+    # vel_mag2 = vel_mag * vel_mag
+    vel_mag2 = vel_mag
+    vel_norm = ps.vel/vel_mag[:, np.newaxis]
+    if use_grow:
+        surf = np.power(ps.rads, 2)
+    drag = -vel_norm * drag_mag * vel_mag2[:, np.newaxis] * surf[:, np.newaxis]
+
+    ps.r += drag
+
+
+def random_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;initialize random force&#39;&#39;&#39;
+    local_func, local_gate, local_params = dicti
+    if local_gate:
+        random_seed, random_force, random_variation = local_params
+        np_random_force = np.array(random_force)
+        if any(np_random_force != 0):
+            np_random_variation = np.array(random_variation)
+            random_force = np_random_force[:, np.newaxis]
+            random_variation = np_random_variation[:, np.newaxis]
+            random_variate = any(random_variation != 0)
+            np.random.seed(random_seed[0])
+            ps.random_v = random_force * np.random.random((ps.v_len, 3)) - random_force / 2
+            random_params = [ps, random_force, random_variate, random_variation]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(random_params)
+
+
+def random_force_apply(params):
+    &#39;&#39;&#39;apply random vectors and change it&#39;&#39;&#39;
+    ps, random_force, random_variate, random_variation = params
+    if random_variate:
+        random_var = 2 * random_force * np.random.random((ps.v_len, 3)) - random_force
+        ps.random_v = ps.random_v * (1 - random_variation) + random_var * random_variation
+    ps.r += ps.random_v
+
+
+def baricentric_mask(p_triang, edges, np_pol_v, coll_normals, ed_id, rad_axis):
+    &#39;&#39;&#39;helper function to mask which points are inside the triangles&#39;&#39;&#39;
+    edge = edges[:, ed_id, :]
+    v0 = np_pol_v[:, ed_id, :]
+    vp0 = p_triang - v0[:, np.newaxis, :]
+    cross = np.cross(edge[:, np.newaxis, :], vp0)
+    return np.sum(coll_normals * cross, axis=2) &gt; -rad_axis
+
+
+def collisions_setup(ps, dicti, limits_composite):
+    &#39;&#39;&#39;prepare collision data&#39;&#39;&#39;
+    local_func, use_collide, local_params = dicti
+    if use_collide:
+        obstacles, obstacles_pols, obstacles_bounce = local_params
+
+        np_collide_v = np.array(obstacles)
+        np_collide_pol = np.array(obstacles_pols, dtype=np.int16)
+        np_pol_v = np_collide_v[np_collide_pol]
+        collide_v1 = np_pol_v[:, 1, :] - np_pol_v[:, 0, :]
+        collide_v2 = np_pol_v[:, 2, :] - np_pol_v[:, 0, :]
+        edges = np.zeros(np_pol_v.shape, dtype=np.float32)
+        edges[:, 0, :] = collide_v1
+        edges[:, 1, :] = np_pol_v[:, 2, :] - np_pol_v[:, 1, :]
+        edges[:, 2, :] = np_pol_v[:, 0, :] - np_pol_v[:, 2, :]
+
+        coll_norm = collide_normals_get(collide_v1, collide_v2)
+        coll_p_co = np_pol_v[:, 0, :]
+        bounce = np.array(obstacles_bounce)
+        collide_params = [ps, coll_p_co, coll_norm, np_pol_v, bounce, edges]
+        limits_composite[0].append(local_func)
+        limits_composite[1].append(collide_params)
+
+
+def collide_normals_get(collide_v1, collide_v2):
+    &#39;&#39;&#39;get normalized normals&#39;&#39;&#39;
+    collide_normals = np.cross(collide_v1, collide_v2)
+    collide_normals_d = np.linalg.norm(collide_normals, axis=1)
+    return collide_normals / collide_normals_d[:, np.newaxis]
+
+
+def b_box_coll_filter(np_pol_v, verts, rad):
+    &#39;&#39;&#39;filter intersections by checking bounding box overlap&#39;&#39;&#39;
+    verts_x = verts[np.newaxis, :, :]
+    rads_x = rad[np.newaxis, :, np.newaxis]
+    keep = np.amin(np_pol_v, axis=1)[:, np.newaxis, :] &lt; verts_x + rads_x
+    keep2 = np.amax(np_pol_v, axis=1)[:, np.newaxis, :] &gt; verts_x - rads_x
+    keep3 = np.any(keep*keep2, axis=0)
+    keep = np.any(keep*keep2, axis=1)
+    verts_m = np.all(keep3, axis=1)
+    pols_m = np.all(keep, axis=1)
+
+    return pols_m, verts_m
+
+
+def collisions_apply(collide_params):
+    &#39;&#39;&#39;apply collisions with obstacles&#39;&#39;&#39;
+    ps, collide_p_co, collide_normals, pol_v, bounce, edges = collide_params
+
+    pols_m, verts_m = b_box_coll_filter(pol_v, ps.verts, ps.rads)
+
+    verts = ps.verts[verts_m]
+    rads = ps.rads[verts_m]
+    vels = ps.vel[verts_m]
+    index = ps.index[verts_m]
+
+    coll_norm = collide_normals[pols_m, np.newaxis, :]
+    coll_dist = collision_dist(verts, collide_p_co[pols_m], coll_norm)
+    coll_inter = np.absolute(coll_dist) - rads[np.newaxis, :]
+    coll_mask = coll_inter &lt; 0
+    if not np.any(coll_mask):
+        return
+
+    coll_sign = 2*(coll_dist &gt; 0) - 1
+    mask_none = np.any(coll_mask, axis=0)
+
+    p_triang = verts[mask_none] + coll_dist[:, mask_none, np.newaxis] * coll_norm
+    rad_axis = rads[np.newaxis, mask_none]
+    index = index[mask_none]
+    coll_mask = coll_mask[:, mask_none]
+    coll_inter = coll_inter[:, mask_none]
+    coll_sign = coll_sign[:, mask_none]
+    vels = vels[mask_none]
+
+    wuv = pts_in_tris(p_triang, edges[pols_m], pol_v[pols_m], coll_norm, rad_axis, coll_mask)
+    num_int = np.maximum(np.sum(wuv, axis=0), 1)[:, np.newaxis]
+
+    displace = np.zeros((ps.v_len, 3), dtype=np.float32)
+    velocity = np.zeros((ps.v_len, 3), dtype=np.float32)
+    displace[index, :] = coll_displace(coll_norm, coll_inter, coll_sign, wuv, num_int)
+    velocity[index, :] = coll_vel(coll_norm, vels, wuv, num_int)
+    ps.verts += displace
+    ps.vel += velocity * bounce
+
+
+def collision_dist(verts, collide_p_co, coll_norm):
+    &#39;&#39;&#39;get collision distance and normal&#39;&#39;&#39;
+    vector_coll = verts[np.newaxis, :, :] - collide_p_co[:, np.newaxis, :]
+    coll_dist = np.sum(vector_coll * coll_norm, axis=2)
+    return coll_dist
+
+
+def pts_in_tris(p_triang, edges, pol_v, coll_normals, rad_axis, coll_mask):
+    &#39;&#39;&#39;calculate if points are inside the triangles&#39;&#39;&#39;
+    w = baricentric_mask(p_triang, edges, pol_v, coll_normals, 0, rad_axis)
+    u = baricentric_mask(p_triang, edges, pol_v, coll_normals, 1, rad_axis)
+    v = baricentric_mask(p_triang, edges, pol_v, coll_normals, 2, rad_axis)
+    return w * u * v * coll_mask
+
+
+def coll_displace(coll_normals, coll_inter, coll_sign, wuv, num_int):
+    &#39;&#39;&#39;calculate resultant collision displacement&#39;&#39;&#39;
+    rr = wuv[:, :, np.newaxis] * coll_normals * coll_inter[:, :, np.newaxis]*-coll_sign[:, :, np.newaxis]
+    return np.sum(rr, axis=0) / num_int
+
+
+def coll_vel(coll_normals, vels, wuv, num_int):
+    &#39;&#39;&#39;calculate resultant collision speed&#39;&#39;&#39;
+    new_vel_mag = np.sum(coll_normals * vels[np.newaxis, :, :], axis=-1)
+    new_vel = new_vel_mag[:, :, np.newaxis] * coll_normals * wuv[:, :, np.newaxis]
+    return np.sum(new_vel, axis=0)*-2 / num_int
+
+
+def b_box_setup(ps, dicti, limits_composite):
+    &#39;&#39;&#39;prepare b_box data&#39;&#39;&#39;
+    local_func, use_b_box, b_box = dicti
+    if use_b_box:
+        np_bbox = np.array(b_box)
+        bbox_max = np.amax(np_bbox, axis=0)
+        bbox_min = np.amin(np_bbox, axis=0)
+        b_box_params = [ps, bbox_min, bbox_max]
+        limits_composite[0].append(local_func)
+        limits_composite[1].append(b_box_params)
+
+
+def b_box_apply(b_box_params):
+    &#39;&#39;&#39;apply hard limit to verts&#39;&#39;&#39;
+    ps, bbox_min, bbox_max = b_box_params
+    ps.verts = np.clip(ps.verts, bbox_min + ps.rads[:, np.newaxis], bbox_max - ps.rads[:, np.newaxis])
+
+
+def world_forces_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare world forces data&#39;&#39;&#39;
+    local_func, gates, params = dicti
+    use_world_f, size_change = gates
+    world_forces, wind = params
+    if use_world_f:
+        np_world_f = np.array(world_forces)
+        np_wind = np.array(wind)
+        if len(world_forces) &gt; 1:
+            np_world_f = numpy_fit_long_repeat([np_world_f], ps.v_len)[0]
+        if not size_change:
+            np_world_f = np_world_f * ps.mass[:, np.newaxis]
+            func = local_func[0]
+        else:
+            func = local_func[1]
+        if len(np_wind)&gt; 1:
+            np_wind = numpy_fit_long_repeat([np_wind], ps.v_len)[0]
+
+        ps.params[&#39;gravity&#39;] = np_world_f
+        ps.params[&#39;wind&#39;] = np_wind
+        forces_composite[0].append(func)
+        forces_composite[1].append(ps)
+
+
+def world_forces_apply(ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+    ps.r += ps.params[&#39;gravity&#39;] + ps.params[&#39;wind&#39;]
+
+
+def world_forces_apply_var(ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+
+    ps.r += ps.params[&#39;gravity&#39;]  * ps.mass[:, np.newaxis] + ps.params[&#39;wind&#39;]
+
+
+def pins_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare pins data&#39;&#39;&#39;
+
+    ps.pins_init(dicti, forces_composite)
+
+
+def pins_apply(ps):
+    &#39;&#39;&#39;apply pin mask&#39;&#39;&#39;
+    ps.apply_pins()
+
+
+def apply_forces_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare applying all forces process&#39;&#39;&#39;
+    local_func, _, _ = dicti
+    forces_composite[0].append(local_func)
+    forces_composite[1].append(ps)
+
+
+def apply_all_forces(ps):
+    &#39;&#39;&#39;applying forces and resetting resultant&#39;&#39;&#39;
+    ps.apply_forces()
+
+
+def limit_speed(np_vel, max_vel):
+    &#39;&#39;&#39;&#39;constrain speed magniture&#39;&#39;&#39;
+    vel_mag = np.linalg.norm(np_vel, axis=1)
+    vel_exceded = vel_mag &gt; max_vel
+    np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel
+
+FORCE_CHAIN = [&#34;self_react&#34;, &#34;Springs&#34;, &#34;drag&#34;, &#34;inflate&#34;, &#34;random&#34;, &#34;attractors&#34;, &#34;world_f&#34;, &#34;Pins&#34;, &#34;apply_f&#34;, &#34;b_box&#34;, &#34;Obstacles&#34;]
+
+class PulgaSystem():
+    &#39;&#39;&#39;Store states&#39;&#39;&#39;
+    verts, rads, vel, density = [[], [], [], []]
+    v_len = []
+    params = {}
+    def __init__(self, init_params):
+        self.main_setup(init_params)
+        self.mass = self.density * np.power(self.rads, 3)
+        self.random_v = []
+        self.r = np.zeros((self.v_len, 3), dtype=np.float64)
+        self.index = np.arange(self.v_len)
+
+    def main_setup(self, local_params):
+        &#39;&#39;&#39;prepare main data&#39;&#39;&#39;
+        p = self.params
+        initial_pos, rads_in, initial_vel, max_vel, density = local_params
+        self.verts = np.array(initial_pos)
+        self.rads = np.array(rads_in, dtype=np.float64)
+        self.vel = np.array(initial_vel, dtype=np.float64)
+        self.v_len = len(self.verts)
+        p[&#39;max_vel&#39;] = np.array(max_vel)
+        self.rads, self.vel = numpy_fit_long_repeat([self.rads, self.vel], self.v_len)
+
+        if len(p[&#39;max_vel&#39;]) &gt; 1:
+            p[&#39;max_vel&#39;] = numpy_fit_long_repeat([p[&#39;max_vel&#39;]], self.v_len)[0]
+
+        self.density = np.array(density)
+        if len(density) &gt; 1:
+            self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
+        p[&#34;Pins Reactions&#34;] = []
+
+    def hard_update(self, cache, size_change, pins_gates):
+        &#39;&#39;&#39;replace verts, rads and vel (in NumPy)&#39;&#39;&#39;
+        verts, rads, vel, react = cache
+        if len(verts) == self.v_len:
+            if pins_gates[0] and pins_gates[1]:
+                unpinned = self.params[&#39;unpinned&#39;]
+                self.verts[unpinned] = verts[unpinned]
+            else:
+                self.verts = verts
+            self.vel = vel
+            if not size_change:
+                self.rads = rads
+
+    def hard_update_list(self, cache, size_change, pins_gates):
+        &#39;&#39;&#39;replace verts, rads and velocity&#39;&#39;&#39;
+        verts, rads, vel, react = cache
+        if type(verts) == list:
+            if len(verts) == self.v_len:
+                if pins_gates[0] and pins_gates[1]:
+                    unpinned = self.params[&#39;unpinned&#39;]
+                    self.verts[unpinned] = np.array(verts)[unpinned]
+                else:
+                    self.verts = np.array(verts)
+                if not size_change:
+                    self.rads = np.array(rads)
+                self.vel = np.array(vel)
+        else:
+            self.hard_update(cache, size_change, pins_gates)
+
+    def apply_forces(self):
+        &#39;&#39;&#39;resultant --&gt; acceleration --&gt; speed --&gt; position&#39;&#39;&#39;
+        acc = self.r / self.mass[:, np.newaxis]
+        self.vel += acc
+
+        if np.any(self.params[&#39;max_vel&#39;]) &gt; 0:
+            limit_speed(self.vel, self.params[&#39;max_vel&#39;])
+
+        self.verts += self.vel
+        self.r[:] = 0
+
+    def pins_init(self, dicti, forces_composite):
+        local_func, local_gates, local_params = dicti
+        pins, pins_goal_pos = local_params
+        use_pins, use_pins_goal = local_gates
+        
+        if not use_pins:
+            self.params[&#34;Pins Reactions&#34;] = np.array([[]])
+            return
+
+        self.params[&#39;Pins&#39;] = np.array(pins)
+
+        if self.params[&#39;Pins&#39;].dtype == np.int32:
+            if len(self.params[&#39;Pins&#39;]) == len(self.verts):
+                self.params[&#39;Pins&#39;] = self.params[&#39;Pins&#39;] == 1
+                self.params[&#39;unpinned&#39;] = np.invert(self.params[&#39;Pins&#39;])
+            else:
+                self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool)
+                self.params[&#39;unpinned&#39;][self.params[&#39;Pins&#39;]] = False
+
+        self.vel[self.params[&#39;Pins&#39;], :] = 0
+
+        if use_pins_goal:
+            self.verts[self.params[&#39;Pins&#39;], :] = np.array(pins_goal_pos)
+        forces_composite[0].append(local_func)
+        forces_composite[1].append(self)
+        return
+
+
+    def apply_pins(self):
+        &#39;&#39;&#39;cancel forces on pins&#39;&#39;&#39;
+        self.params[&#34;Pins Reactions&#34;] = -self.r[self.params[&#34;Pins&#34;]]
+        self.r[self.params[&#34;Pins&#34;], :] = 0
+
+
+FUNC_DICT = {
+    &#34;self_react&#34;: self_react,
+    &#34;Springs&#34;:    spring_force,
+    &#34;drag&#34;:       drag_force_apply,
+    &#34;inflate&#34;:    inflate_force,
+    &#34;random&#34;:     random_force_apply,
+    &#34;attractors&#34;: attractors_force,
+    &#34;world_f&#34;:    (world_forces_apply, world_forces_apply_var),
+    &#34;Pins&#34;:       PulgaSystem.apply_pins,
+    &#34;apply_f&#34;:    PulgaSystem.apply_forces,
+    &#34;b_box&#34;:      b_box_apply,
+    &#34;Obstacles&#34;:  collisions_apply
+
+    }
+INIT_FUNC_DICT = {
+    &#34;self_react&#34;: self_react_setup,
+    &#34;Springs&#34;:    spring_setup,
+    &#34;drag&#34;:       drag_setup,
+    &#34;inflate&#34;:    inflate_setup,
+    &#34;random&#34;:     random_setup,
+    &#34;attractors&#34;: attractors_setup,
+    &#34;world_f&#34;:    world_forces_setup,
+    &#34;Pins&#34;:       pins_setup,
+    &#34;apply_f&#34;:    apply_forces_setup,
+    &#34;b_box&#34;:      b_box_setup,
+    &#34;Obstacles&#34;:  collisions_setup
+
+    }
+
+
+PARAMS_GROUPS = {
+    &#34;main&#34;:    (&#34;Initial_Pos&#34;, &#34;rads_in&#34;, &#39;Initial Velocity&#39;, &#34;max_vel&#34;, &#34;Density&#34;),
+    &#34;Springs&#34;: (&#34;Springs&#34;, &#34;fixed_len&#34;, &#34;spring_k&#34; ),
+    &#34;Pins&#34;: (&#34;Pins&#34;, &#34;Pins Goal Position&#34;),
+    &#34;self_react&#34;: (&#34;self_collision&#34;,  &#34;self_attract&#34;, &#34;attract_decay&#34;, &#34;grow&#34;, &#34;min_rad&#34;, &#34;max_rad&#34;),
+    &#34;inflate&#34;: (&#34;Pols&#34;, &#34;inflate&#34;),
+    &#34;drag&#34;: (&#34;drag_force&#34;),
+    &#34;attractors&#34;: (&#34;Attractors&#34;, &#34;att_force&#34;, &#34;att_clamp&#34;, &#34;att_decay_power&#34;),
+    &#34;random&#34;: (&#34;random_seed&#34;, &#34;random_force&#34;, &#34;random_variation&#34;),
+    &#34;world_f&#34;: (&#34;Gravity&#34;, &#34;Wind&#34;),
+    &#34;b_box&#34;: (&#34;Bounding Box&#34;),
+    &#34;Obstacles&#34;: (&#34;Obstacles&#34;, &#34;Obstacles_pols&#34;, &#34;obstacles_bounce&#34;),
+
+}
+def fill_params_dict(p_dict, parameters, par):
+    &#39;&#39;&#39;redistribute parameters&#39;&#39;&#39;
+    for x in PARAMS_GROUPS:
+        if type(PARAMS_GROUPS[x]) == tuple:
+            p_dict[x] = [par[p] for p in PARAMS_GROUPS[x] ]
+        else:
+            p_dict[x] = par[PARAMS_GROUPS[x]]
+
+
+    p_dict[&#34;apply_f&#34;] = True
+
+
+def local_dict(dictionaries, name):
+    &#39;&#39;&#39;get all related to the name&#39;&#39;&#39;
+    return [dictionaries[0][name], dictionaries[1][name], dictionaries[2][name]]
+
+
+def pulga_system_init(params, parameters, gates, out_lists, cache):
+    &#39;&#39;&#39;the main function of the engine&#39;&#39;&#39;
+
+    dictionaries = [FUNC_DICT, gates, {}]
+    fill_params_dict(dictionaries[2], parameters, params)
+    force_map = []
+    force_parameters = []
+    forces_composite = [force_map, force_parameters]
+    ps = PulgaSystem(dictionaries[2][&#34;main&#34;])
+    for force in FORCE_CHAIN:
+        INIT_FUNC_DICT[force](ps, local_dict(dictionaries, force), forces_composite)
+
+    iterations = parameters[1]
+    iterations_max = max(iterations)
+    iterations_rec = [i-1 for i in iterations]
+    out_params = [iterations_rec, ps, dictionaries[1][&#34;output&#34;], out_lists]
+
+    if dictionaries[1][&#34;accumulate&#34;]:
+        if len(cache) &gt; 0:
+            ps.hard_update_list(cache, gates[&#34;self_react&#34;][2], gates[&#34;Pins&#34;])
+
+    iterate(iterations_max, force_map, force_parameters, out_params)
+
+    return ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;]
+
+
+def iterate(iterations_max, force_map, force_parameters, out_params):
+    &#39;&#39;&#39; execute repeatedly the defined force map&#39;&#39;&#39;
+    num_forces = len(force_map)
+    for it in range(iterations_max):
+        for i in range(num_forces):
+            force_map[i](force_parameters[i])
+        output_data(it, out_params)
+
+
+def output_data(it, params):
+    &#39;&#39;&#39;if is pertinent output the data&#39;&#39;&#39;
+    iterations_rec, ps, gate, out_lists = params
+    record_iteration = it in iterations_rec
+    if record_iteration:
+        data_out = prepare_output_data(ps, gate)
+        record_data(data_out, out_lists)
+
+
+def prepare_output_data(ps, gate):
+    &#39;&#39;&#39;prepare data to output&#39;&#39;&#39;
+    use_numpy_out = gate
+
+    if use_numpy_out:
+        return [ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;]]
+    else:
+        return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params[&#34;Pins Reactions&#34;].tolist()]
+
+
+def record_data(data_out, out_lists):
+    &#39;&#39;&#39;save data to main list&#39;&#39;&#39;
+    verts_out, rads_out, velocity_out, reactions_out = out_lists
+    new_verts, new_rad, new_vel, new_react = data_out
+    verts_out.append(new_verts)
+    rads_out.append(new_rad)
+    velocity_out.append(new_vel)
+    reactions_out.append(new_react)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.pulga_physics_core.apply_all_forces"><code class="name flex">
+<span>def <span class="ident">apply_all_forces</span></span>(<span>ps)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>applying forces and resetting resultant</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_all_forces(ps):
+    &#39;&#39;&#39;applying forces and resetting resultant&#39;&#39;&#39;
+    ps.apply_forces()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.apply_forces_setup"><code class="name flex">
+<span>def <span class="ident">apply_forces_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare applying all forces process</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_forces_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare applying all forces process&#39;&#39;&#39;
+    local_func, _, _ = dicti
+    forces_composite[0].append(local_func)
+    forces_composite[1].append(ps)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.att_setup"><code class="name flex">
+<span>def <span class="ident">att_setup</span></span>(<span>use_attract, ps, np_attract, attract_decay)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prepare self-attracting data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def att_setup(use_attract, ps, np_attract, attract_decay):
+    &#39;&#39;&#39;Prepare self-attracting data&#39;&#39;&#39;
+    if use_attract:
+        np_att_decay = np.array(attract_decay)
+        indexes = ps.params[&#39;indexes&#39;]
+        mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
+        att_params = [np_attract, np_att_decay, mass_product]
+    else:
+        att_params = []
+
+    return att_params</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.attract_force"><code class="name flex">
+<span>def <span class="ident">attract_force</span></span>(<span>result, dist, mask, index, norm_v, att_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply attractions between particles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attract_force(result, dist, mask, index, norm_v, att_params):
+    &#39;&#39;&#39;apply attractions between particles&#39;&#39;&#39;
+    attract, att_decay, mass_product = att_params
+
+    dist2 = np.power(dist, att_decay)[mask, np.newaxis]
+    index_non_inter = index[mask]
+    id0 = index_non_inter[:, 0]
+    id1 = index_non_inter[:, 1]
+
+    direction = norm_v[mask] / dist2 * mass_product[mask, np.newaxis]
+
+    variable_att = len(attract) &gt; 1
+
+    att = attract
+    len0, len1 = [att[id1], att[id0]] if variable_att else [att, att]
+
+    result[id0, id1, :] = - direction * len0
+    result[id1, id0, :] = direction * len1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.attractors_force"><code class="name flex">
+<span>def <span class="ident">attractors_force</span></span>(<span>params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply attractors force (as planets)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attractors_force(params):
+    &#39;&#39;&#39;apply attractors force (as planets)&#39;&#39;&#39;
+    ps, np_attrac, np_attrac_f, np_attrac_clamp, decay = params
+    v_attract = ps.verts[np.newaxis, :, :] - np_attrac[:, np.newaxis, :]
+    dist_attract = np.linalg.norm(v_attract, axis=2)
+    mask = dist_attract &gt; np_attrac_clamp[:, np.newaxis]
+    mask_true = np.invert(mask)
+    dist_attract2 = np.power(dist_attract, decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
+
+    v_attract *= np_attrac_f[:, np.newaxis, np.newaxis]
+    v_attract_normal = v_attract[mask_true] / dist_attract_cor[:, np.newaxis]
+
+    v_attract[mask_true] = -v_attract_normal
+    v_attract[mask, :] = 0
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.r += r_attract</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.attractors_setup"><code class="name flex">
+<span>def <span class="ident">attractors_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare attractors system and data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attractors_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare attractors system and data&#39;&#39;&#39;
+    local_func, use_attractors, local_params = dicti
+    if use_attractors:
+        attractors, att_force, att_clamp, att_decay_power = local_params
+        np_attrac = np.array(attractors)
+        np_attrac_f = np.array(att_force)
+        np_attrac_clamp = np.array(att_clamp)
+        np_attrac_decay_pow = np.array(att_decay_power)
+        params = [np_attrac, np_attrac_f, np_attrac_clamp, np_attrac_decay_pow]
+
+        forces_composite[0].append(local_func)
+        forces_composite[1].append([ps] + numpy_match_long_repeat(params))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.b_box_apply"><code class="name flex">
+<span>def <span class="ident">b_box_apply</span></span>(<span>b_box_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply hard limit to verts</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def b_box_apply(b_box_params):
+    &#39;&#39;&#39;apply hard limit to verts&#39;&#39;&#39;
+    ps, bbox_min, bbox_max = b_box_params
+    ps.verts = np.clip(ps.verts, bbox_min + ps.rads[:, np.newaxis], bbox_max - ps.rads[:, np.newaxis])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.b_box_coll_filter"><code class="name flex">
+<span>def <span class="ident">b_box_coll_filter</span></span>(<span>np_pol_v, verts, rad)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>filter intersections by checking bounding box overlap</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def b_box_coll_filter(np_pol_v, verts, rad):
+    &#39;&#39;&#39;filter intersections by checking bounding box overlap&#39;&#39;&#39;
+    verts_x = verts[np.newaxis, :, :]
+    rads_x = rad[np.newaxis, :, np.newaxis]
+    keep = np.amin(np_pol_v, axis=1)[:, np.newaxis, :] &lt; verts_x + rads_x
+    keep2 = np.amax(np_pol_v, axis=1)[:, np.newaxis, :] &gt; verts_x - rads_x
+    keep3 = np.any(keep*keep2, axis=0)
+    keep = np.any(keep*keep2, axis=1)
+    verts_m = np.all(keep3, axis=1)
+    pols_m = np.all(keep, axis=1)
+
+    return pols_m, verts_m</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.b_box_setup"><code class="name flex">
+<span>def <span class="ident">b_box_setup</span></span>(<span>ps, dicti, limits_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare b_box data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def b_box_setup(ps, dicti, limits_composite):
+    &#39;&#39;&#39;prepare b_box data&#39;&#39;&#39;
+    local_func, use_b_box, b_box = dicti
+    if use_b_box:
+        np_bbox = np.array(b_box)
+        bbox_max = np.amax(np_bbox, axis=0)
+        bbox_min = np.amin(np_bbox, axis=0)
+        b_box_params = [ps, bbox_min, bbox_max]
+        limits_composite[0].append(local_func)
+        limits_composite[1].append(b_box_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.baricentric_mask"><code class="name flex">
+<span>def <span class="ident">baricentric_mask</span></span>(<span>p_triang, edges, np_pol_v, coll_normals, ed_id, rad_axis)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>helper function to mask which points are inside the triangles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def baricentric_mask(p_triang, edges, np_pol_v, coll_normals, ed_id, rad_axis):
+    &#39;&#39;&#39;helper function to mask which points are inside the triangles&#39;&#39;&#39;
+    edge = edges[:, ed_id, :]
+    v0 = np_pol_v[:, ed_id, :]
+    vp0 = p_triang - v0[:, np.newaxis, :]
+    cross = np.cross(edge[:, np.newaxis, :], vp0)
+    return np.sum(coll_normals * cross, axis=2) &gt; -rad_axis</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.calc_area"><code class="name flex">
+<span>def <span class="ident">calc_area</span></span>(<span>pol_side_max, pol_v, pols_normal)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate polygons area (equal sided polygons)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_area(pol_side_max, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (equal sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_normal), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        prod[i, :, :] = np.cross(pol_v[:, i, :], pol_v[:, (i + 1) % pol_side_max, :])
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.calc_area_var_sides"><code class="name flex">
+<span>def <span class="ident">calc_area_var_sides</span></span>(<span>pol_side_max, pols_sides, pol_v, pols_normal)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate polygons area (variable sided polygons)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (variable sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_sides), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        mask = pols_sides &gt; i
+        prod[i, mask, :] = np.cross(pol_v[mask, i, :], pol_v[mask, (i + 1) % pol_side_max, :])
+
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.calc_rest_length"><code class="name flex">
+<span>def <span class="ident">calc_rest_length</span></span>(<span>np_verts, np_springs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate edges length</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_rest_length(np_verts, np_springs):
+    &#39;&#39;&#39;calculate edges length&#39;&#39;&#39;
+    pairs_springs = np_verts[np_springs, :]
+    vect_rest = (pairs_springs[:, 0, :] - pairs_springs[:, 1, :])
+    dist_rest = np.linalg.norm(vect_rest, axis=1)
+    return dist_rest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.coll_displace"><code class="name flex">
+<span>def <span class="ident">coll_displace</span></span>(<span>coll_normals, coll_inter, coll_sign, wuv, num_int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate resultant collision displacement</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def coll_displace(coll_normals, coll_inter, coll_sign, wuv, num_int):
+    &#39;&#39;&#39;calculate resultant collision displacement&#39;&#39;&#39;
+    rr = wuv[:, :, np.newaxis] * coll_normals * coll_inter[:, :, np.newaxis]*-coll_sign[:, :, np.newaxis]
+    return np.sum(rr, axis=0) / num_int</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.coll_vel"><code class="name flex">
+<span>def <span class="ident">coll_vel</span></span>(<span>coll_normals, vels, wuv, num_int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate resultant collision speed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def coll_vel(coll_normals, vels, wuv, num_int):
+    &#39;&#39;&#39;calculate resultant collision speed&#39;&#39;&#39;
+    new_vel_mag = np.sum(coll_normals * vels[np.newaxis, :, :], axis=-1)
+    new_vel = new_vel_mag[:, :, np.newaxis] * coll_normals * wuv[:, :, np.newaxis]
+    return np.sum(new_vel, axis=0)*-2 / num_int</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.collide_normals_get"><code class="name flex">
+<span>def <span class="ident">collide_normals_get</span></span>(<span>collide_v1, collide_v2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get normalized normals</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collide_normals_get(collide_v1, collide_v2):
+    &#39;&#39;&#39;get normalized normals&#39;&#39;&#39;
+    collide_normals = np.cross(collide_v1, collide_v2)
+    collide_normals_d = np.linalg.norm(collide_normals, axis=1)
+    return collide_normals / collide_normals_d[:, np.newaxis]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.collision_dist"><code class="name flex">
+<span>def <span class="ident">collision_dist</span></span>(<span>verts, collide_p_co, coll_norm)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get collision distance and normal</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collision_dist(verts, collide_p_co, coll_norm):
+    &#39;&#39;&#39;get collision distance and normal&#39;&#39;&#39;
+    vector_coll = verts[np.newaxis, :, :] - collide_p_co[:, np.newaxis, :]
+    coll_dist = np.sum(vector_coll * coll_norm, axis=2)
+    return coll_dist</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.collisions_apply"><code class="name flex">
+<span>def <span class="ident">collisions_apply</span></span>(<span>collide_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply collisions with obstacles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collisions_apply(collide_params):
+    &#39;&#39;&#39;apply collisions with obstacles&#39;&#39;&#39;
+    ps, collide_p_co, collide_normals, pol_v, bounce, edges = collide_params
+
+    pols_m, verts_m = b_box_coll_filter(pol_v, ps.verts, ps.rads)
+
+    verts = ps.verts[verts_m]
+    rads = ps.rads[verts_m]
+    vels = ps.vel[verts_m]
+    index = ps.index[verts_m]
+
+    coll_norm = collide_normals[pols_m, np.newaxis, :]
+    coll_dist = collision_dist(verts, collide_p_co[pols_m], coll_norm)
+    coll_inter = np.absolute(coll_dist) - rads[np.newaxis, :]
+    coll_mask = coll_inter &lt; 0
+    if not np.any(coll_mask):
+        return
+
+    coll_sign = 2*(coll_dist &gt; 0) - 1
+    mask_none = np.any(coll_mask, axis=0)
+
+    p_triang = verts[mask_none] + coll_dist[:, mask_none, np.newaxis] * coll_norm
+    rad_axis = rads[np.newaxis, mask_none]
+    index = index[mask_none]
+    coll_mask = coll_mask[:, mask_none]
+    coll_inter = coll_inter[:, mask_none]
+    coll_sign = coll_sign[:, mask_none]
+    vels = vels[mask_none]
+
+    wuv = pts_in_tris(p_triang, edges[pols_m], pol_v[pols_m], coll_norm, rad_axis, coll_mask)
+    num_int = np.maximum(np.sum(wuv, axis=0), 1)[:, np.newaxis]
+
+    displace = np.zeros((ps.v_len, 3), dtype=np.float32)
+    velocity = np.zeros((ps.v_len, 3), dtype=np.float32)
+    displace[index, :] = coll_displace(coll_norm, coll_inter, coll_sign, wuv, num_int)
+    velocity[index, :] = coll_vel(coll_norm, vels, wuv, num_int)
+    ps.verts += displace
+    ps.vel += velocity * bounce</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.collisions_setup"><code class="name flex">
+<span>def <span class="ident">collisions_setup</span></span>(<span>ps, dicti, limits_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare collision data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collisions_setup(ps, dicti, limits_composite):
+    &#39;&#39;&#39;prepare collision data&#39;&#39;&#39;
+    local_func, use_collide, local_params = dicti
+    if use_collide:
+        obstacles, obstacles_pols, obstacles_bounce = local_params
+
+        np_collide_v = np.array(obstacles)
+        np_collide_pol = np.array(obstacles_pols, dtype=np.int16)
+        np_pol_v = np_collide_v[np_collide_pol]
+        collide_v1 = np_pol_v[:, 1, :] - np_pol_v[:, 0, :]
+        collide_v2 = np_pol_v[:, 2, :] - np_pol_v[:, 0, :]
+        edges = np.zeros(np_pol_v.shape, dtype=np.float32)
+        edges[:, 0, :] = collide_v1
+        edges[:, 1, :] = np_pol_v[:, 2, :] - np_pol_v[:, 1, :]
+        edges[:, 2, :] = np_pol_v[:, 0, :] - np_pol_v[:, 2, :]
+
+        coll_norm = collide_normals_get(collide_v1, collide_v2)
+        coll_p_co = np_pol_v[:, 0, :]
+        bounce = np.array(obstacles_bounce)
+        collide_params = [ps, coll_p_co, coll_norm, np_pol_v, bounce, edges]
+        limits_composite[0].append(local_func)
+        limits_composite[1].append(collide_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.cross_indices3"><code class="name flex">
+<span>def <span class="ident">cross_indices3</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>create crossed indices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cross_indices3(n):
+    &#39;&#39;&#39;create crossed indices&#39;&#39;&#39;
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.drag_force_apply"><code class="name flex">
+<span>def <span class="ident">drag_force_apply</span></span>(<span>params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply drag force (resistance from environment)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_force_apply(params):
+    &#39;&#39;&#39;apply drag force (resistance from environment)&#39;&#39;&#39;
+    ps, use_grow, drag_mag, surf = params
+    vel_mag = np.linalg.norm(ps.vel, axis=1)
+    vel_mag_zero = vel_mag == 0
+    vel_mag[vel_mag_zero] = 1
+    # squaring the speed is more accurate but harder to control
+    # vel_mag2 = vel_mag * vel_mag
+    vel_mag2 = vel_mag
+    vel_norm = ps.vel/vel_mag[:, np.newaxis]
+    if use_grow:
+        surf = np.power(ps.rads, 2)
+    drag = -vel_norm * drag_mag * vel_mag2[:, np.newaxis] * surf[:, np.newaxis]
+
+    ps.r += drag</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.drag_setup"><code class="name flex">
+<span>def <span class="ident">drag_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare drag data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drag_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare drag data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    use_drag, use_grow = local_gates
+    if use_drag:
+        drag_force = local_params
+        np_drag_force = np.array(drag_force)[:, np.newaxis]
+        use_drag = np.any(np_drag_force &gt; 0)
+        if use_drag:
+            surf = np.power(ps.rads, 2)
+            drag_params = [ps, use_grow, np_drag_force, surf]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(drag_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.expand_pols_numpy"><code class="name flex">
+<span>def <span class="ident">expand_pols_numpy</span></span>(<span>p, len_max)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>to fit variable sided polygons in one array (cycling)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def expand_pols_numpy(p, len_max):
+    &#39;&#39;&#39;to fit variable sided polygons in one array (cycling)&#39;&#39;&#39;
+    np_match_cycle = np.vectorize(match_cylce)
+    np_match_cycle(p, len_max)
+    new_pols = np.zeros((len(p), len_max), dtype=np.int32)
+    for i in range(len(p)):
+        new_pols[i, :] = p[i]
+    return new_pols</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.fill_params_dict"><code class="name flex">
+<span>def <span class="ident">fill_params_dict</span></span>(<span>p_dict, parameters, par)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>redistribute parameters</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_params_dict(p_dict, parameters, par):
+    &#39;&#39;&#39;redistribute parameters&#39;&#39;&#39;
+    for x in PARAMS_GROUPS:
+        if type(PARAMS_GROUPS[x]) == tuple:
+            p_dict[x] = [par[p] for p in PARAMS_GROUPS[x] ]
+        else:
+            p_dict[x] = par[PARAMS_GROUPS[x]]
+
+
+    p_dict[&#34;apply_f&#34;] = True</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.fit_force"><code class="name flex">
+<span>def <span class="ident">fit_force</span></span>(<span>ps, index_inter, fit_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>the untouched particles will grow, the ones that collide will shrink</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fit_force(ps, index_inter, fit_params):
+    &#39;&#39;&#39;the untouched particles will grow, the ones that collide will shrink&#39;&#39;&#39;
+    grow, min_rad, max_rad = fit_params
+    touch = np.unique(index_inter)
+    free = np.setdiff1d(np.arange(ps.v_len, dtype=np.int16), touch)
+    v_grow = len(grow) &gt; 1
+    grow_un, grow_tou = [grow[free], grow[touch]] if v_grow else [grow, grow]
+    ps.rads[free] += grow_un*0.1
+    ps.rads[touch] -= grow_tou*0.1
+
+    ps.rads = np.clip(ps.rads, min_rad, max_rad)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.fit_setup"><code class="name flex">
+<span>def <span class="ident">fit_setup</span></span>(<span>use_grow, np_grow, min_rad, max_rad)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prepare fitting data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fit_setup(use_grow, np_grow, min_rad, max_rad):
+    &#39;&#39;&#39;Prepare fitting data&#39;&#39;&#39;
+    if use_grow:
+        np_min_rad = np.array(min_rad)
+        np_max_rad = np.array(max_rad)
+        fit_params = [np_grow, np_min_rad, np_max_rad]
+    else:
+        fit_params = []
+
+    return fit_params</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.inflate_force"><code class="name flex">
+<span>def <span class="ident">inflate_force</span></span>(<span>inflate_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply force based on normals</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inflate_force(inflate_params):
+    &#39;&#39;&#39;apply force based on normals&#39;&#39;&#39;
+    ps, np_pols, pol_side_max, pols_sides, inflate, p_regular = inflate_params
+
+    pol_v = ps.verts[np_pols, :]
+    pols_normal = pols_normals(pol_v, inflate)
+    result = np.zeros((ps.v_len, 3), dtype=np.float64)
+
+    if p_regular:
+        p_area = calc_area(pol_side_max, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            np.add.at(result, np_pols[:, i], pols_normal * p_area)
+
+    else:
+        p_area = calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            mask = pols_sides &gt; i
+            np.add.at(result, np_pols[mask, i], pols_normal[mask] * p_area[mask])
+
+    ps.r += result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.inflate_setup"><code class="name flex">
+<span>def <span class="ident">inflate_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare data to inflate</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inflate_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare data to inflate&#39;&#39;&#39;
+    local_func, use_inflate, local_params = dicti
+    if use_inflate:
+        pols, inflate = local_params
+        np_pols = np.array(pols)
+        p_len = len(pols)
+        if np_pols.dtype == np.object:
+            np_len = np.vectorize(len)
+            pols_sides = np_len(np_pols)
+            pol_side_max = np.amax(pols_sides)
+            np_pols = expand_pols_numpy(np_pols, pol_side_max)
+            p_regular = False
+        else:
+            p_regular = True
+            pols_sides = np.array(p_len)
+            pol_side_max = len(pols[0])
+
+        inflate_params = [ps, np_pols, pol_side_max, pols_sides, inflate, p_regular]
+        forces_composite[0].append(local_func)
+        forces_composite[1].append(inflate_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.iterate"><code class="name flex">
+<span>def <span class="ident">iterate</span></span>(<span>iterations_max, force_map, force_parameters, out_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>execute repeatedly the defined force map</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iterate(iterations_max, force_map, force_parameters, out_params):
+    &#39;&#39;&#39; execute repeatedly the defined force map&#39;&#39;&#39;
+    num_forces = len(force_map)
+    for it in range(iterations_max):
+        for i in range(num_forces):
+            force_map[i](force_parameters[i])
+        output_data(it, out_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.limit_speed"><code class="name flex">
+<span>def <span class="ident">limit_speed</span></span>(<span>np_vel, max_vel)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>'constrain speed magniture</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def limit_speed(np_vel, max_vel):
+    &#39;&#39;&#39;&#39;constrain speed magniture&#39;&#39;&#39;
+    vel_mag = np.linalg.norm(np_vel, axis=1)
+    vel_exceded = vel_mag &gt; max_vel
+    np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.local_dict"><code class="name flex">
+<span>def <span class="ident">local_dict</span></span>(<span>dictionaries, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get all related to the name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def local_dict(dictionaries, name):
+    &#39;&#39;&#39;get all related to the name&#39;&#39;&#39;
+    return [dictionaries[0][name], dictionaries[1][name], dictionaries[2][name]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.match_cylce"><code class="name flex">
+<span>def <span class="ident">match_cylce</span></span>(<span>p, n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>append cylcing till have n items</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_cylce(p, n):
+    &#39;&#39;&#39;append cylcing till have n items&#39;&#39;&#39;
+    difference = n - len(p)
+    for i in range(difference):
+        p.append(p[i % len(p)])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.numpy_fit_long_repeat"><code class="name flex">
+<span>def <span class="ident">numpy_fit_long_repeat</span></span>(<span>p, maxl)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>match list length by repeating last one or removing end</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_fit_long_repeat(p, maxl):
+    &#39;&#39;&#39;match list length by repeating last one or removing end&#39;&#39;&#39;
+    q = []
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        if difl &lt; 0:
+            g = g[:maxl]
+        q.append(g)
+    return q</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.numpy_match_long_repeat"><code class="name flex">
+<span>def <span class="ident">numpy_match_long_repeat</span></span>(<span>p)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>match list length by repeating last one</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_match_long_repeat(p):
+    &#39;&#39;&#39;match list length by repeating last one&#39;&#39;&#39;
+    q = []
+    maxl = 0
+    for g in p:
+        maxl = max(maxl, g.shape[0])
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        q.append(g)
+    return q</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.output_data"><code class="name flex">
+<span>def <span class="ident">output_data</span></span>(<span>it, params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>if is pertinent output the data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def output_data(it, params):
+    &#39;&#39;&#39;if is pertinent output the data&#39;&#39;&#39;
+    iterations_rec, ps, gate, out_lists = params
+    record_iteration = it in iterations_rec
+    if record_iteration:
+        data_out = prepare_output_data(ps, gate)
+        record_data(data_out, out_lists)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.pins_apply"><code class="name flex">
+<span>def <span class="ident">pins_apply</span></span>(<span>ps)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply pin mask</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pins_apply(ps):
+    &#39;&#39;&#39;apply pin mask&#39;&#39;&#39;
+    ps.apply_pins()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.pins_setup"><code class="name flex">
+<span>def <span class="ident">pins_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare pins data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pins_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare pins data&#39;&#39;&#39;
+
+    ps.pins_init(dicti, forces_composite)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.pols_normals"><code class="name flex">
+<span>def <span class="ident">pols_normals</span></span>(<span>pol_v, mag)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get actual polygons normal with controlled magnitude</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_normals(pol_v, mag):
+    &#39;&#39;&#39;get actual polygons normal with controlled magnitude&#39;&#39;&#39;
+    v1 = pol_v[:, 1, :] - pol_v[:, 0, :]
+    v2 = pol_v[:, 2, :] - pol_v[:, 0, :]
+    pols_normal = np.cross(v1, v2)
+    pols_normal_d = np.linalg.norm(pols_normal, axis=1)
+    return pols_normal / pols_normal_d[:, np.newaxis] * mag</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.prepare_output_data"><code class="name flex">
+<span>def <span class="ident">prepare_output_data</span></span>(<span>ps, gate)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare data to output</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_output_data(ps, gate):
+    &#39;&#39;&#39;prepare data to output&#39;&#39;&#39;
+    use_numpy_out = gate
+
+    if use_numpy_out:
+        return [ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;]]
+    else:
+        return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params[&#34;Pins Reactions&#34;].tolist()]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.pts_in_tris"><code class="name flex">
+<span>def <span class="ident">pts_in_tris</span></span>(<span>p_triang, edges, pol_v, coll_normals, rad_axis, coll_mask)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate if points are inside the triangles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pts_in_tris(p_triang, edges, pol_v, coll_normals, rad_axis, coll_mask):
+    &#39;&#39;&#39;calculate if points are inside the triangles&#39;&#39;&#39;
+    w = baricentric_mask(p_triang, edges, pol_v, coll_normals, 0, rad_axis)
+    u = baricentric_mask(p_triang, edges, pol_v, coll_normals, 1, rad_axis)
+    v = baricentric_mask(p_triang, edges, pol_v, coll_normals, 2, rad_axis)
+    return w * u * v * coll_mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.pulga_system_init"><code class="name flex">
+<span>def <span class="ident">pulga_system_init</span></span>(<span>params, parameters, gates, out_lists, cache)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>the main function of the engine</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pulga_system_init(params, parameters, gates, out_lists, cache):
+    &#39;&#39;&#39;the main function of the engine&#39;&#39;&#39;
+
+    dictionaries = [FUNC_DICT, gates, {}]
+    fill_params_dict(dictionaries[2], parameters, params)
+    force_map = []
+    force_parameters = []
+    forces_composite = [force_map, force_parameters]
+    ps = PulgaSystem(dictionaries[2][&#34;main&#34;])
+    for force in FORCE_CHAIN:
+        INIT_FUNC_DICT[force](ps, local_dict(dictionaries, force), forces_composite)
+
+    iterations = parameters[1]
+    iterations_max = max(iterations)
+    iterations_rec = [i-1 for i in iterations]
+    out_params = [iterations_rec, ps, dictionaries[1][&#34;output&#34;], out_lists]
+
+    if dictionaries[1][&#34;accumulate&#34;]:
+        if len(cache) &gt; 0:
+            ps.hard_update_list(cache, gates[&#34;self_react&#34;][2], gates[&#34;Pins&#34;])
+
+    iterate(iterations_max, force_map, force_parameters, out_params)
+
+    return ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.random_force_apply"><code class="name flex">
+<span>def <span class="ident">random_force_apply</span></span>(<span>params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply random vectors and change it</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def random_force_apply(params):
+    &#39;&#39;&#39;apply random vectors and change it&#39;&#39;&#39;
+    ps, random_force, random_variate, random_variation = params
+    if random_variate:
+        random_var = 2 * random_force * np.random.random((ps.v_len, 3)) - random_force
+        ps.random_v = ps.random_v * (1 - random_variation) + random_var * random_variation
+    ps.r += ps.random_v</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.random_setup"><code class="name flex">
+<span>def <span class="ident">random_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>initialize random force</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def random_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;initialize random force&#39;&#39;&#39;
+    local_func, local_gate, local_params = dicti
+    if local_gate:
+        random_seed, random_force, random_variation = local_params
+        np_random_force = np.array(random_force)
+        if any(np_random_force != 0):
+            np_random_variation = np.array(random_variation)
+            random_force = np_random_force[:, np.newaxis]
+            random_variation = np_random_variation[:, np.newaxis]
+            random_variate = any(random_variation != 0)
+            np.random.seed(random_seed[0])
+            ps.random_v = random_force * np.random.random((ps.v_len, 3)) - random_force / 2
+            random_params = [ps, random_force, random_variate, random_variation]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(random_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.record_data"><code class="name flex">
+<span>def <span class="ident">record_data</span></span>(<span>data_out, out_lists)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>save data to main list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def record_data(data_out, out_lists):
+    &#39;&#39;&#39;save data to main list&#39;&#39;&#39;
+    verts_out, rads_out, velocity_out, reactions_out = out_lists
+    new_verts, new_rad, new_vel, new_react = data_out
+    verts_out.append(new_verts)
+    rads_out.append(new_rad)
+    velocity_out.append(new_vel)
+    reactions_out.append(new_react)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.self_collision_force"><code class="name flex">
+<span>def <span class="ident">self_collision_force</span></span>(<span>result, dist, sum_rad, index_inter, mask, normal_v, self_collision)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply collision forces between particles</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def self_collision_force(result, dist, sum_rad, index_inter, mask, normal_v, self_collision):
+    &#39;&#39;&#39;apply collision forces between particles&#39;&#39;&#39;
+
+    id0 = index_inter[:, 0]
+    id1 = index_inter[:, 1]
+
+    le = dist[mask, np.newaxis] - sum_rad[mask, np.newaxis]
+    no = normal_v[mask]
+    variable_coll = len(self_collision) &gt; 1
+    sf = self_collision[:, np.newaxis]
+    len0, len1 = [sf[id1], sf[id0]] if variable_coll else [sf, sf]
+
+    result[id0, id1, :] = -no * le * len0
+    result[id1, id0, :] = no * le * len1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.self_react"><code class="name flex">
+<span>def <span class="ident">self_react</span></span>(<span>params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>behaviors between particles: collide, attract and fit</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def self_react(params):
+    &#39;&#39;&#39;behaviors between particles: collide, attract and fit&#39;&#39;&#39;
+    ps, collision, sum_rad, gates, att_params, fit_params = params
+    use_collide, use_attract, use_grow = gates
+    indexes = ps.params[&#39;indexes&#39;]
+    if use_grow:
+        sum_rad = ps.rads[indexes[:, 0]] + ps.rads[indexes[:, 1]]
+        if use_attract:
+            att_params[2] = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
+    dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+    dist = np.linalg.norm(dif_v, axis=1)
+    mask = sum_rad &gt; dist
+
+    index_inter = indexes[mask]
+    some_collisions = use_collide and len(index_inter) &gt; 0
+    some_attractions = use_attract and(len(index_inter) &lt; len(indexes))
+
+    if some_collisions or some_attractions:
+        result = np.zeros((ps.v_len, ps.v_len, 3), dtype=np.float64)
+        dist_cor = np.clip(dist, 1e-6, 1e4)
+        normal_v = dif_v/dist_cor[:, np.newaxis]
+
+        if some_collisions:
+            self_collision_force(result, dist, sum_rad, index_inter, mask, normal_v, collision)
+        if some_attractions:
+            antimask = np.invert(mask)
+            attract_force(result, dist_cor, antimask, indexes, normal_v, att_params)
+
+        ps.r += np.sum(result, axis=1)
+
+    if use_grow:
+        fit_force(ps, index_inter, fit_params)
+        ps.mass = ps.density * np.power(ps.rads, 3)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.self_react_setup"><code class="name flex">
+<span>def <span class="ident">self_react_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare self reacting data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def self_react_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare self reacting data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    collision, attract, att_decay, grow, min_rad, max_rad = local_params
+    use_self_collision, use_attract, use_grow = local_gates
+
+    np_collision = np.array(collision)
+    use_self_collision = use_self_collision and np.any(np_collision &gt; 0)
+    np_attract = np.array(attract)[:, np.newaxis]
+    use_attract = use_attract and np.any(np_attract != 0)
+    np_grow = np.array(grow)
+    use_grow = use_grow and np.any(np_grow != 0)
+
+    use_self_react = (use_attract or use_self_collision or use_grow)
+
+    if not use_self_react:
+        return
+
+    ps.params[&#39;indexes&#39;] = cross_indices3(ps.v_len)
+    sum_rad = ps.rads[ps.params[&#39;indexes&#39;][:, 0]] + ps.rads[ps.params[&#39;indexes&#39;][:, 1]]
+
+    att_params = att_setup(use_attract, ps, np_attract, att_decay)
+    fit_params = fit_setup(use_grow, np_grow, min_rad, max_rad)
+
+    gates = [use_self_collision, use_attract, use_grow]
+    params = [ps, np_collision, sum_rad, gates, att_params, fit_params]
+    forces_composite[0].append(local_func)
+    forces_composite[1].append(params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.spring_force"><code class="name flex">
+<span>def <span class="ident">spring_force</span></span>(<span>spring_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply spring forces related to edges resistance</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spring_force(spring_params):
+    &#39;&#39;&#39;apply spring forces related to edges resistance&#39;&#39;&#39;
+    ps, np_springs, dist_rest, spring_k = spring_params
+
+    pairs = ps.verts[np_springs, :]
+    dif_v = pairs[:, 0, :] - pairs[:, 1, :]
+    dist = np.linalg.norm(dif_v, axis=1)
+    dif_l = dist - dist_rest
+    dist[dist == 0] = 1
+    normal_v = dif_v / dist[:, np.newaxis]
+    x = dif_l[:, np.newaxis]
+    k = spring_k[:, np.newaxis]
+
+    result = np.zeros((ps.v_len, 3), dtype=np.float64)
+    np.add.at(result, np_springs[:, 0], -normal_v * x * k)
+    np.add.at(result, np_springs[:, 1], normal_v * x * k)
+
+    ps.r += result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.spring_setup"><code class="name flex">
+<span>def <span class="ident">spring_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare spring system and data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spring_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare spring system and data&#39;&#39;&#39;
+    local_func, local_gates, local_params = dicti
+    use_springs, use_fix_len = local_gates
+    if use_springs:
+        springs, fixed_len, spring_k = local_params
+        spring_k = np.array(spring_k)
+        if np.any(spring_k != 0):
+            springs = np.array(springs)
+
+            if use_fix_len or fixed_len[0] &gt; 0:
+                dist_rest = fixed_len
+            else:
+                dist_rest = calc_rest_length(ps.verts, springs)
+            spring_params = [ps, springs, dist_rest, spring_k]
+            forces_composite[0].append(local_func)
+            forces_composite[1].append(spring_params)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.world_forces_apply"><code class="name flex">
+<span>def <span class="ident">world_forces_apply</span></span>(<span>ps)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply constant forces</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def world_forces_apply(ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+    ps.r += ps.params[&#39;gravity&#39;] + ps.params[&#39;wind&#39;]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.world_forces_apply_var"><code class="name flex">
+<span>def <span class="ident">world_forces_apply_var</span></span>(<span>ps)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>apply constant forces</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def world_forces_apply_var(ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+
+    ps.r += ps.params[&#39;gravity&#39;]  * ps.mass[:, np.newaxis] + ps.params[&#39;wind&#39;]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.world_forces_setup"><code class="name flex">
+<span>def <span class="ident">world_forces_setup</span></span>(<span>ps, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare world forces data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def world_forces_setup(ps, dicti, forces_composite):
+    &#39;&#39;&#39;prepare world forces data&#39;&#39;&#39;
+    local_func, gates, params = dicti
+    use_world_f, size_change = gates
+    world_forces, wind = params
+    if use_world_f:
+        np_world_f = np.array(world_forces)
+        np_wind = np.array(wind)
+        if len(world_forces) &gt; 1:
+            np_world_f = numpy_fit_long_repeat([np_world_f], ps.v_len)[0]
+        if not size_change:
+            np_world_f = np_world_f * ps.mass[:, np.newaxis]
+            func = local_func[0]
+        else:
+            func = local_func[1]
+        if len(np_wind)&gt; 1:
+            np_wind = numpy_fit_long_repeat([np_wind], ps.v_len)[0]
+
+        ps.params[&#39;gravity&#39;] = np_world_f
+        ps.params[&#39;wind&#39;] = np_wind
+        forces_composite[0].append(func)
+        forces_composite[1].append(ps)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem"><code class="flex name class">
+<span>class <span class="ident">PulgaSystem</span></span>
+<span>(</span><span>init_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store states</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PulgaSystem():
+    &#39;&#39;&#39;Store states&#39;&#39;&#39;
+    verts, rads, vel, density = [[], [], [], []]
+    v_len = []
+    params = {}
+    def __init__(self, init_params):
+        self.main_setup(init_params)
+        self.mass = self.density * np.power(self.rads, 3)
+        self.random_v = []
+        self.r = np.zeros((self.v_len, 3), dtype=np.float64)
+        self.index = np.arange(self.v_len)
+
+    def main_setup(self, local_params):
+        &#39;&#39;&#39;prepare main data&#39;&#39;&#39;
+        p = self.params
+        initial_pos, rads_in, initial_vel, max_vel, density = local_params
+        self.verts = np.array(initial_pos)
+        self.rads = np.array(rads_in, dtype=np.float64)
+        self.vel = np.array(initial_vel, dtype=np.float64)
+        self.v_len = len(self.verts)
+        p[&#39;max_vel&#39;] = np.array(max_vel)
+        self.rads, self.vel = numpy_fit_long_repeat([self.rads, self.vel], self.v_len)
+
+        if len(p[&#39;max_vel&#39;]) &gt; 1:
+            p[&#39;max_vel&#39;] = numpy_fit_long_repeat([p[&#39;max_vel&#39;]], self.v_len)[0]
+
+        self.density = np.array(density)
+        if len(density) &gt; 1:
+            self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
+        p[&#34;Pins Reactions&#34;] = []
+
+    def hard_update(self, cache, size_change, pins_gates):
+        &#39;&#39;&#39;replace verts, rads and vel (in NumPy)&#39;&#39;&#39;
+        verts, rads, vel, react = cache
+        if len(verts) == self.v_len:
+            if pins_gates[0] and pins_gates[1]:
+                unpinned = self.params[&#39;unpinned&#39;]
+                self.verts[unpinned] = verts[unpinned]
+            else:
+                self.verts = verts
+            self.vel = vel
+            if not size_change:
+                self.rads = rads
+
+    def hard_update_list(self, cache, size_change, pins_gates):
+        &#39;&#39;&#39;replace verts, rads and velocity&#39;&#39;&#39;
+        verts, rads, vel, react = cache
+        if type(verts) == list:
+            if len(verts) == self.v_len:
+                if pins_gates[0] and pins_gates[1]:
+                    unpinned = self.params[&#39;unpinned&#39;]
+                    self.verts[unpinned] = np.array(verts)[unpinned]
+                else:
+                    self.verts = np.array(verts)
+                if not size_change:
+                    self.rads = np.array(rads)
+                self.vel = np.array(vel)
+        else:
+            self.hard_update(cache, size_change, pins_gates)
+
+    def apply_forces(self):
+        &#39;&#39;&#39;resultant --&gt; acceleration --&gt; speed --&gt; position&#39;&#39;&#39;
+        acc = self.r / self.mass[:, np.newaxis]
+        self.vel += acc
+
+        if np.any(self.params[&#39;max_vel&#39;]) &gt; 0:
+            limit_speed(self.vel, self.params[&#39;max_vel&#39;])
+
+        self.verts += self.vel
+        self.r[:] = 0
+
+    def pins_init(self, dicti, forces_composite):
+        local_func, local_gates, local_params = dicti
+        pins, pins_goal_pos = local_params
+        use_pins, use_pins_goal = local_gates
+        
+        if not use_pins:
+            self.params[&#34;Pins Reactions&#34;] = np.array([[]])
+            return
+
+        self.params[&#39;Pins&#39;] = np.array(pins)
+
+        if self.params[&#39;Pins&#39;].dtype == np.int32:
+            if len(self.params[&#39;Pins&#39;]) == len(self.verts):
+                self.params[&#39;Pins&#39;] = self.params[&#39;Pins&#39;] == 1
+                self.params[&#39;unpinned&#39;] = np.invert(self.params[&#39;Pins&#39;])
+            else:
+                self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool)
+                self.params[&#39;unpinned&#39;][self.params[&#39;Pins&#39;]] = False
+
+        self.vel[self.params[&#39;Pins&#39;], :] = 0
+
+        if use_pins_goal:
+            self.verts[self.params[&#39;Pins&#39;], :] = np.array(pins_goal_pos)
+        forces_composite[0].append(local_func)
+        forces_composite[1].append(self)
+        return
+
+
+    def apply_pins(self):
+        &#39;&#39;&#39;cancel forces on pins&#39;&#39;&#39;
+        self.params[&#34;Pins Reactions&#34;] = -self.r[self.params[&#34;Pins&#34;]]
+        self.r[self.params[&#34;Pins&#34;], :] = 0</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.density"><code class="name">var <span class="ident">density</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.rads"><code class="name">var <span class="ident">rads</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.v_len"><code class="name">var <span class="ident">v_len</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.vel"><code class="name">var <span class="ident">vel</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.verts"><code class="name">var <span class="ident">verts</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.apply_forces"><code class="name flex">
+<span>def <span class="ident">apply_forces</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>resultant &ndash;&gt; acceleration &ndash;&gt; speed &ndash;&gt; position</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_forces(self):
+    &#39;&#39;&#39;resultant --&gt; acceleration --&gt; speed --&gt; position&#39;&#39;&#39;
+    acc = self.r / self.mass[:, np.newaxis]
+    self.vel += acc
+
+    if np.any(self.params[&#39;max_vel&#39;]) &gt; 0:
+        limit_speed(self.vel, self.params[&#39;max_vel&#39;])
+
+    self.verts += self.vel
+    self.r[:] = 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.apply_pins"><code class="name flex">
+<span>def <span class="ident">apply_pins</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>cancel forces on pins</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_pins(self):
+    &#39;&#39;&#39;cancel forces on pins&#39;&#39;&#39;
+    self.params[&#34;Pins Reactions&#34;] = -self.r[self.params[&#34;Pins&#34;]]
+    self.r[self.params[&#34;Pins&#34;], :] = 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.hard_update"><code class="name flex">
+<span>def <span class="ident">hard_update</span></span>(<span>self, cache, size_change, pins_gates)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>replace verts, rads and vel (in NumPy)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hard_update(self, cache, size_change, pins_gates):
+    &#39;&#39;&#39;replace verts, rads and vel (in NumPy)&#39;&#39;&#39;
+    verts, rads, vel, react = cache
+    if len(verts) == self.v_len:
+        if pins_gates[0] and pins_gates[1]:
+            unpinned = self.params[&#39;unpinned&#39;]
+            self.verts[unpinned] = verts[unpinned]
+        else:
+            self.verts = verts
+        self.vel = vel
+        if not size_change:
+            self.rads = rads</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.hard_update_list"><code class="name flex">
+<span>def <span class="ident">hard_update_list</span></span>(<span>self, cache, size_change, pins_gates)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>replace verts, rads and velocity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hard_update_list(self, cache, size_change, pins_gates):
+    &#39;&#39;&#39;replace verts, rads and velocity&#39;&#39;&#39;
+    verts, rads, vel, react = cache
+    if type(verts) == list:
+        if len(verts) == self.v_len:
+            if pins_gates[0] and pins_gates[1]:
+                unpinned = self.params[&#39;unpinned&#39;]
+                self.verts[unpinned] = np.array(verts)[unpinned]
+            else:
+                self.verts = np.array(verts)
+            if not size_change:
+                self.rads = np.array(rads)
+            self.vel = np.array(vel)
+    else:
+        self.hard_update(cache, size_change, pins_gates)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.main_setup"><code class="name flex">
+<span>def <span class="ident">main_setup</span></span>(<span>self, local_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prepare main data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main_setup(self, local_params):
+    &#39;&#39;&#39;prepare main data&#39;&#39;&#39;
+    p = self.params
+    initial_pos, rads_in, initial_vel, max_vel, density = local_params
+    self.verts = np.array(initial_pos)
+    self.rads = np.array(rads_in, dtype=np.float64)
+    self.vel = np.array(initial_vel, dtype=np.float64)
+    self.v_len = len(self.verts)
+    p[&#39;max_vel&#39;] = np.array(max_vel)
+    self.rads, self.vel = numpy_fit_long_repeat([self.rads, self.vel], self.v_len)
+
+    if len(p[&#39;max_vel&#39;]) &gt; 1:
+        p[&#39;max_vel&#39;] = numpy_fit_long_repeat([p[&#39;max_vel&#39;]], self.v_len)[0]
+
+    self.density = np.array(density)
+    if len(density) &gt; 1:
+        self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
+    p[&#34;Pins Reactions&#34;] = []</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.pulga_physics_core.PulgaSystem.pins_init"><code class="name flex">
+<span>def <span class="ident">pins_init</span></span>(<span>self, dicti, forces_composite)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pins_init(self, dicti, forces_composite):
+    local_func, local_gates, local_params = dicti
+    pins, pins_goal_pos = local_params
+    use_pins, use_pins_goal = local_gates
+    
+    if not use_pins:
+        self.params[&#34;Pins Reactions&#34;] = np.array([[]])
+        return
+
+    self.params[&#39;Pins&#39;] = np.array(pins)
+
+    if self.params[&#39;Pins&#39;].dtype == np.int32:
+        if len(self.params[&#39;Pins&#39;]) == len(self.verts):
+            self.params[&#39;Pins&#39;] = self.params[&#39;Pins&#39;] == 1
+            self.params[&#39;unpinned&#39;] = np.invert(self.params[&#39;Pins&#39;])
+        else:
+            self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool)
+            self.params[&#39;unpinned&#39;][self.params[&#39;Pins&#39;]] = False
+
+    self.vel[self.params[&#39;Pins&#39;], :] = 0
+
+    if use_pins_goal:
+        self.verts[self.params[&#39;Pins&#39;], :] = np.array(pins_goal_pos)
+    forces_composite[0].append(local_func)
+    forces_composite[1].append(self)
+    return</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.pulga_physics_core.apply_all_forces" href="#sverchok.utils.pulga_physics_core.apply_all_forces">apply_all_forces</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.apply_forces_setup" href="#sverchok.utils.pulga_physics_core.apply_forces_setup">apply_forces_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.att_setup" href="#sverchok.utils.pulga_physics_core.att_setup">att_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.attract_force" href="#sverchok.utils.pulga_physics_core.attract_force">attract_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.attractors_force" href="#sverchok.utils.pulga_physics_core.attractors_force">attractors_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.attractors_setup" href="#sverchok.utils.pulga_physics_core.attractors_setup">attractors_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.b_box_apply" href="#sverchok.utils.pulga_physics_core.b_box_apply">b_box_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.b_box_coll_filter" href="#sverchok.utils.pulga_physics_core.b_box_coll_filter">b_box_coll_filter</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.b_box_setup" href="#sverchok.utils.pulga_physics_core.b_box_setup">b_box_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.baricentric_mask" href="#sverchok.utils.pulga_physics_core.baricentric_mask">baricentric_mask</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.calc_area" href="#sverchok.utils.pulga_physics_core.calc_area">calc_area</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.calc_area_var_sides" href="#sverchok.utils.pulga_physics_core.calc_area_var_sides">calc_area_var_sides</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.calc_rest_length" href="#sverchok.utils.pulga_physics_core.calc_rest_length">calc_rest_length</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.coll_displace" href="#sverchok.utils.pulga_physics_core.coll_displace">coll_displace</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.coll_vel" href="#sverchok.utils.pulga_physics_core.coll_vel">coll_vel</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.collide_normals_get" href="#sverchok.utils.pulga_physics_core.collide_normals_get">collide_normals_get</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.collision_dist" href="#sverchok.utils.pulga_physics_core.collision_dist">collision_dist</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.collisions_apply" href="#sverchok.utils.pulga_physics_core.collisions_apply">collisions_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.collisions_setup" href="#sverchok.utils.pulga_physics_core.collisions_setup">collisions_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.cross_indices3" href="#sverchok.utils.pulga_physics_core.cross_indices3">cross_indices3</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.drag_force_apply" href="#sverchok.utils.pulga_physics_core.drag_force_apply">drag_force_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.drag_setup" href="#sverchok.utils.pulga_physics_core.drag_setup">drag_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.expand_pols_numpy" href="#sverchok.utils.pulga_physics_core.expand_pols_numpy">expand_pols_numpy</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.fill_params_dict" href="#sverchok.utils.pulga_physics_core.fill_params_dict">fill_params_dict</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.fit_force" href="#sverchok.utils.pulga_physics_core.fit_force">fit_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.fit_setup" href="#sverchok.utils.pulga_physics_core.fit_setup">fit_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.inflate_force" href="#sverchok.utils.pulga_physics_core.inflate_force">inflate_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.inflate_setup" href="#sverchok.utils.pulga_physics_core.inflate_setup">inflate_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.iterate" href="#sverchok.utils.pulga_physics_core.iterate">iterate</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.limit_speed" href="#sverchok.utils.pulga_physics_core.limit_speed">limit_speed</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.local_dict" href="#sverchok.utils.pulga_physics_core.local_dict">local_dict</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.match_cylce" href="#sverchok.utils.pulga_physics_core.match_cylce">match_cylce</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.numpy_fit_long_repeat" href="#sverchok.utils.pulga_physics_core.numpy_fit_long_repeat">numpy_fit_long_repeat</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.numpy_match_long_repeat" href="#sverchok.utils.pulga_physics_core.numpy_match_long_repeat">numpy_match_long_repeat</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.output_data" href="#sverchok.utils.pulga_physics_core.output_data">output_data</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.pins_apply" href="#sverchok.utils.pulga_physics_core.pins_apply">pins_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.pins_setup" href="#sverchok.utils.pulga_physics_core.pins_setup">pins_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.pols_normals" href="#sverchok.utils.pulga_physics_core.pols_normals">pols_normals</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.prepare_output_data" href="#sverchok.utils.pulga_physics_core.prepare_output_data">prepare_output_data</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.pts_in_tris" href="#sverchok.utils.pulga_physics_core.pts_in_tris">pts_in_tris</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.pulga_system_init" href="#sverchok.utils.pulga_physics_core.pulga_system_init">pulga_system_init</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.random_force_apply" href="#sverchok.utils.pulga_physics_core.random_force_apply">random_force_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.random_setup" href="#sverchok.utils.pulga_physics_core.random_setup">random_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.record_data" href="#sverchok.utils.pulga_physics_core.record_data">record_data</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.self_collision_force" href="#sverchok.utils.pulga_physics_core.self_collision_force">self_collision_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.self_react" href="#sverchok.utils.pulga_physics_core.self_react">self_react</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.self_react_setup" href="#sverchok.utils.pulga_physics_core.self_react_setup">self_react_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.spring_force" href="#sverchok.utils.pulga_physics_core.spring_force">spring_force</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.spring_setup" href="#sverchok.utils.pulga_physics_core.spring_setup">spring_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.world_forces_apply" href="#sverchok.utils.pulga_physics_core.world_forces_apply">world_forces_apply</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.world_forces_apply_var" href="#sverchok.utils.pulga_physics_core.world_forces_apply_var">world_forces_apply_var</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.world_forces_setup" href="#sverchok.utils.pulga_physics_core.world_forces_setup">world_forces_setup</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem" href="#sverchok.utils.pulga_physics_core.PulgaSystem">PulgaSystem</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.apply_forces" href="#sverchok.utils.pulga_physics_core.PulgaSystem.apply_forces">apply_forces</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.apply_pins" href="#sverchok.utils.pulga_physics_core.PulgaSystem.apply_pins">apply_pins</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.density" href="#sverchok.utils.pulga_physics_core.PulgaSystem.density">density</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.hard_update" href="#sverchok.utils.pulga_physics_core.PulgaSystem.hard_update">hard_update</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.hard_update_list" href="#sverchok.utils.pulga_physics_core.PulgaSystem.hard_update_list">hard_update_list</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.main_setup" href="#sverchok.utils.pulga_physics_core.PulgaSystem.main_setup">main_setup</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.params" href="#sverchok.utils.pulga_physics_core.PulgaSystem.params">params</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.pins_init" href="#sverchok.utils.pulga_physics_core.PulgaSystem.pins_init">pins_init</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.rads" href="#sverchok.utils.pulga_physics_core.PulgaSystem.rads">rads</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.v_len" href="#sverchok.utils.pulga_physics_core.PulgaSystem.v_len">v_len</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.vel" href="#sverchok.utils.pulga_physics_core.PulgaSystem.vel">vel</a></code></li>
+<li><code><a title="sverchok.utils.pulga_physics_core.PulgaSystem.verts" href="#sverchok.utils.pulga_physics_core.PulgaSystem.verts">verts</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

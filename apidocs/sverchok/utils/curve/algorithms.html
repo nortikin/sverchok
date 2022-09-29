@@ -1,0 +1,3650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.curve.algorithms API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.curve.algorithms</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+import itertools
+
+from mathutils import Vector, Matrix
+from sverchok.utils.curve.core import (
+        SvCurve, ZeroCurvatureException,
+        SvCurveSegment, SvReparametrizedCurve,
+        SvFlipCurve, SvConcatCurve,
+        UnsupportedCurveTypeException
+    )
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
+from sverchok.utils.math import (
+    ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+    NORMAL_DIR, NONE
+)
+from sverchok.utils.logging import info
+
+def make_euclidean_ts(pts):
+    tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
+    tknots = np.insert(tmp, 0, 0).cumsum()
+    tknots = tknots / tknots[-1]
+    return tknots
+
+class SvCurveLengthSolver(object):
+    def __init__(self, curve):
+        self.curve = curve
+        self._reverse_spline = None
+        self._prime_spline = None
+
+    def calc_length_segments(self, tknots):
+        vectors = self.curve.evaluate_array(tknots)
+        dvs = vectors[1:] - vectors[:-1]
+        lengths = np.linalg.norm(dvs, axis=1)
+        return lengths
+
+    def get_total_length(self):
+        if self._reverse_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        return self._length_params[-1]
+
+    def _calc_tknots_fixed(self, resolution):
+        t_min, t_max = self.curve.get_u_bounds()
+        tknots = np.linspace(t_min, t_max, num=resolution)
+        return tknots
+
+    def _prepare_find(self, resolution, tolerance, tknots=None, lengths=None, length_params=None):
+        if tknots is None:
+            tknots = self._calc_tknots_fixed(resolution)
+        if lengths is None:
+            lengths = self.calc_length_segments(tknots)
+        if length_params is None:
+            length_params = np.cumsum(np.insert(lengths, 0, 0))
+
+        resolution2 = resolution * 2 - 1
+        tknots2 = self._calc_tknots_fixed(resolution2)
+        lengths2 = self.calc_length_segments(tknots2)
+        length_params2 = np.cumsum(np.insert(lengths2, 0, 0))
+        
+        dl = abs(length_params2[::2] - length_params)
+        if (dl &lt; tolerance).all():
+            return tknots2, length_params2
+        else:
+            return self._prepare_find(resolution2, tolerance, tknots2, lengths2, length_params2)
+
+    def prepare(self, mode, resolution=50, tolerance=None):
+        if tolerance is None:
+            tknots = self._calc_tknots_fixed(resolution)
+            lengths = self.calc_length_segments(tknots)
+            self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        else:
+            tknots, self._length_params = self._prepare_find(resolution, tolerance)
+        self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+        self._prime_spline = self._make_spline(mode, self._length_params, tknots)
+
+
+    def _make_spline(self, mode, tknots, values):
+        zeros = np.zeros(len(tknots))
+        control_points = np.vstack((values, tknots, zeros)).T
+        if mode == &#39;LIN&#39;:
+            spline = LinearSpline(control_points, tknots = values, is_cyclic = False)
+        elif mode == &#39;SPL&#39;:
+            spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
+        else:
+            raise Exception(&#34;Unsupported mode; supported are LIN and SPL.&#34;)
+        return spline
+
+    def calc_length(self, t_min, t_max):
+        if self._prime_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        lengths = self._prime_spline.eval(np.array([t_min, t_max]))
+        return lengths[1][1] - lengths[0][1]
+
+    def calc_length_params(self, ts):
+        if self._prime_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        spline_verts = self._prime_spline.eval(ts)
+        return spline_verts[:,1]
+
+    def solve(self, input_lengths):
+        if self._reverse_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        spline_verts = self._reverse_spline.eval(input_lengths)
+        return spline_verts[:,1]
+
+class SvNormalTrack(object):
+    def __init__(self, curve, resolution):
+        self.curve = curve
+        self.resolution = resolution
+        self._pre_calc()
+
+    def _make_quats(self, points, tangents, normals, binormals):
+        matrices = np.dstack((normals, binormals, tangents))
+        matrices = np.transpose(matrices, axes=(0,2,1))
+        matrices = np.linalg.inv(matrices)
+        return [Matrix(m).to_quaternion() for m in matrices]
+
+    def _pre_calc(self):
+        curve = self.curve
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=self.resolution)
+
+        points = curve.evaluate_array(ts)
+        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        normal = normals[0]
+        if np.linalg.norm(normal) &gt; 1e-4:
+            binormal = binormals[0]
+            binormal /= np.linalg.norm(binormal)
+        else:
+            tangent = tangents[0]
+            normal = Vector(tangent).orthogonal()
+            normal = np.array(normal)
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+
+        out_normals = [normal]
+        out_binormals = [binormal]
+
+        for point, tangent in zip(points[1:], tangents[1:]):
+            plane = PlaneEquation.from_normal_and_point(Vector(tangent), Vector(point))
+            normal = plane.projection_of_vector(Vector(point), Vector(point + normal))
+            normal = np.array(normal.normalized())
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+            out_normals.append(normal)
+            out_binormals.append(binormal)
+
+        self.quats = self._make_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
+        self.tknots = ts
+
+    def evaluate_array(self, ts):
+        &#34;&#34;&#34;
+        input: ts - np.array of snape (n,) or list of floats
+        output: np.array of shape (n, 3, 3)
+        &#34;&#34;&#34;
+        ts = np.array(ts)
+        tknots, quats = self.tknots, self.quats
+        base_indexes = tknots.searchsorted(ts, side=&#39;left&#39;)-1
+        t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
+        dts = (ts - t1s) / (t2s - t1s)
+        #dts = np.clip(dts, 0.0, 1.0) # Just in case...
+        matrix_out = []
+        # TODO: ideally this should be vectorized with numpy;
+        # but that would require implementation of quaternion
+        # interpolation in numpy.
+        for dt, base_index in zip(dts, base_indexes):
+            q1, q2 = quats[base_index], quats[base_index+1]
+            # spherical linear interpolation.
+            # TODO: implement `squad`.
+            if dt &lt; 0:
+                q = q1
+            elif dt &gt; 1.0:
+                q = q2
+            else:
+                q = q1.slerp(q2, dt)
+            matrix = np.array(q.to_matrix())
+            matrix_out.append(matrix)
+        return np.array(matrix_out)
+
+class MathutilsRotationCalculator(object):
+
+    @classmethod
+    def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
+        &#34;&#34;&#34;
+        Calculate matrix required to rotate object according to `tangent` vector.
+        inputs:
+            * tangent - np.array of shape (3,)
+            * scale - float
+            * axis - int, 0 - X, 1 - Y, 2 - Z
+            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
+            * scale_all - True to scale along all axes, False to scale along tangent only
+            * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+        output:
+            np.array of shape (3,3).
+        &#34;&#34;&#34;
+        x = Vector((1.0, 0.0, 0.0))
+        y = Vector((0.0, 1.0, 0.0))
+        z = Vector((0.0, 0.0, 1.0))
+
+        if axis == 0:
+            ax1, ax2, ax3 = x, y, z
+        elif axis == 1:
+            ax1, ax2, ax3 = y, x, z
+        else:
+            ax1, ax2, ax3 = z, x, y
+
+        if scale_all:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
+        else:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1)
+        scale_matrix = np.array(scale_matrix.to_3x3())
+
+        tangent = Vector(tangent)
+        if algorithm == HOUSEHOLDER:
+            rot = autorotate_householder(ax1, tangent).inverted()
+        elif algorithm == TRACK:
+            axis = &#34;XYZ&#34;[axis]
+            rot = autorotate_track(axis, tangent, up_axis)
+        elif algorithm == DIFF:
+            rot = autorotate_diff(tangent, ax1)
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+        rot = np.array(rot.to_3x3())
+
+        return np.matmul(rot, scale_matrix)
+
+class DifferentialRotationCalculator(object):
+
+    def __init__(self, curve, algorithm, resolution=50):
+        self.curve = curve
+        self.algorithm = algorithm
+        if algorithm == TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
+        elif algorithm == ZERO:
+            self.curve.pre_calc_torsion_integral(resolution)
+
+    def get_matrices(self, ts):
+        n = len(ts)
+        if self.algorithm == FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            return frenet
+        elif self.algorithm == ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            angles = - self.curve.torsion_integral(ts)
+            zeros = np.zeros((n,))
+            ones = np.ones((n,))
+            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+            rotation_matrices = np.dstack((row1, row2, row3))
+            return frenet @ rotation_matrices
+        elif self.algorithm == TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+
+class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        self.normal = normal
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+
+class SvDeformedByFieldCurve(SvCurve):
+    def __init__(self, curve, field, coefficient=1.0):
+        self.curve = curve
+        self.field = field
+        self.coefficient = coefficient
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{}({})&#34;.format(field, curve)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        v = self.curve.evaluate(t)
+        vec = self.field.evaluate(*tuple(v))
+        return v + self.coefficient * vec
+
+    def evaluate_array(self, ts):
+        vs = self.curve.evaluate_array(ts)
+        xs, ys, zs = vs[:,0], vs[:,1], vs[:,2]
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vecs = np.stack((vxs, vys, vzs)).T
+        return vs + self.coefficient * vecs
+
+class SvCastCurveToPlane(SvCurve):
+    def __init__(self, curve, point, normal, coefficient):
+        self.curve = curve
+        self.point = point
+        self.normal = normal
+        self.coefficient = coefficient
+        self.plane = PlaneEquation.from_normal_and_point(normal, point)
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Plane&#34;.format(curve)
+
+    def evaluate(self, t):
+        point = self.curve.evaluate(t)
+        target = np.array(self.plane.projection_of_point(point))
+        k = self.coefficient
+        return (1 - k) * point + k * target
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        targets = self.plane.projection_of_points(points)
+        k = self.coefficient
+        return (1 - k) * points + k * targets
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+class SvCastCurveToSphere(SvCurve):
+    def __init__(self, curve, center, radius, coefficient):
+        self.curve = curve
+        self.center = center
+        self.radius = radius
+        self.coefficient = coefficient
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Sphere&#34;.format(curve)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        centered_points = points - self.center
+        norms = np.linalg.norm(centered_points, axis=1)[np.newaxis].T
+        normalized = centered_points / norms
+        targets = self.radius * normalized + self.center
+        k = self.coefficient
+        return (1 - k) * points + k * targets
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+class SvCastCurveToCylinder(SvCurve):
+    def __init__(self, curve, center, direction, radius, coefficient):
+        self.curve = curve
+        self.center = center
+        self.direction = direction
+        self.radius = radius
+        self.coefficient = coefficient
+        self.line = LineEquation.from_direction_and_point(direction, center)
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Cylinder&#34;.format(curve)
+
+    def evaluate(self, t):
+        point = self.curve.evaluate(t)
+        projection_to_line = self.line.projection_of_point(point)
+        projection_to_line = np.array(projection_to_line)
+        radial = point - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial)
+        projection = projection_to_line + radius
+        k = self.coefficient
+        return (1 - k) * point + k * projection
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        projection_to_line = self.line.projection_of_points(points)
+        radial = points - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
+        projections = projection_to_line + radius
+        k = self.coefficient
+        return (1 - k) * points + k * projections
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+class SvCurveLerpCurve(SvCurve):
+    __description__ = &#34;Lerp&#34;
+
+    def __init__(self, curve1, curve2, coefficient):
+        self.curve1 = curve1
+        self.curve2 = curve2
+        self.coefficient = coefficient
+        self.u_bounds = (0.0, 1.0)
+        self.c1_min, self.c1_max = curve1.get_u_bounds()
+        self.c2_min, self.c2_max = curve2.get_u_bounds()
+        self.tangent_delta = 0.001
+
+    @staticmethod
+    def build(curve1, curve2, coefficient):
+        if hasattr(curve1, &#39;lerp_to&#39;):
+            try:
+                return curve1.lerp_to(curve2, coefficient)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvCurveLerpCurve(curve1, curve2, coefficient)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        us1 = (self.c1_max - self.c1_min) * ts + self.c1_min
+        us2 = (self.c2_max - self.c2_min) * ts + self.c2_min
+        c1_points = self.curve1.evaluate_array(us1)
+        c2_points = self.curve2.evaluate_array(us2)
+        k = self.coefficient
+        return (1.0 - k) * c1_points + k * c2_points
+
+class SvOffsetCurve(SvCurve):
+
+    BY_PARAMETER = &#39;T&#39;
+    BY_LENGTH = &#39;L&#39;
+
+    def __init__(self, curve, offset_vector,
+                    offset_amount=None,
+                    offset_curve = None, offset_curve_type = BY_PARAMETER,
+                    algorithm=FRENET, resolution=50):
+        self.curve = curve
+        if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
+            raise Exception(&#34;offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR&#34;)
+        self.offset_amount = offset_amount
+        self.offset_vector = offset_vector
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.algorithm = algorithm
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+        if offset_curve_type == SvOffsetCurve.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare(&#39;SPL&#39;, resolution)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=2,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve is None:
+            if self.offset_amount is not None:
+                return self.offset_amount
+            else:
+                return np.linalg.norm(self.offset_vector)
+        elif self.offset_curve_type == SvOffsetCurve.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        t_min, t_max = self.curve.get_u_bounds()
+        extrusion_start = self.curve.evaluate(t_min)
+        extrusion_points = self.curve.evaluate_array(ts)
+        extrusion_vectors = extrusion_points - extrusion_start
+        offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
+        if self.algorithm == NORMAL_DIR:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
+            tangents = self.curve.tangent_array(ts)
+            offset_vectors = np.cross(tangents, offset_vectors)
+            offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * offset_vectors / offset_norm
+        else:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
+            matrices = self.get_matrices(ts)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
+        result = extrusion_vectors + offset_vectors
+        result = result + extrusion_start
+        return result
+
+class SvCurveOnSurface(SvCurve):
+    def __init__(self, curve, surface, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.axis = axis
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} on {}&#34;.format(curve, surface)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+        if self.axis == 0:
+            us = ys
+            vs = zs
+        elif self.axis == 1:
+            us = xs
+            vs = zs
+        elif self.axis == 2:
+            us = xs
+            vs = ys
+        else:
+            raise Exception(&#34;Unsupported orientation axis&#34;)
+        return self.surface.evaluate_array(us, vs)
+
+class SvCurveOffsetOnSurface(SvCurve):
+
+    BY_PARAMETER = &#39;T&#39;
+    BY_LENGTH = &#39;L&#39;
+
+    def __init__(self, curve, surface, offset = None, offset_curve = None,
+                    offset_curve_type = BY_PARAMETER, len_resolution = 50,
+                    uv_space=False, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.offset = offset
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.uv_space = uv_space
+        self.z_axis = axis
+        self.tangent_delta = 0.001
+        if offset_curve_type == SvCurveOffsetOnSurface.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare(&#39;SPL&#39;, len_resolution)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+
+    def evaluate_array(self, ts):
+        if self.z_axis == 2:
+            U, V = 0, 1
+        elif self.z_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+
+        uv_points = self.curve.evaluate_array(ts)
+        us, vs = uv_points[:,U], uv_points[:,V]
+        # Tangents of the curve in surface&#39;s UV space
+        uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
+        tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
+        derivs = self.surface.derivatives_data_array(us, vs)
+        su, sv = derivs.du, derivs.dv
+
+        # Take surface&#39;s normals as N = [su, sv];
+        # Take curve&#39;s tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
+        # Take a vector in surface&#39;s tangent plane, which is perpendicular to curve&#39;s
+        # tangent, as Nc = [N, T] (call it &#34;curve&#39;s normal on a surface&#34;);
+        # Calculate Nc&#39;s decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
+        # Interpret Ncu and Ncv as coordinates of Nc in surface&#39;s UV space.
+
+        # If you write down all above in formulas, you will have
+        #
+        # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
+
+        # We could&#39;ve calculate the offset as (Curve on a surface) + (offset*Nc),
+        # but there is no guarantee that these points will lie on the surface again
+        # (especially with not-so-small values of offset).
+        # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
+        # map all that into 3D space.
+
+        su2 = (su*su).sum(axis=1) # (n,)
+        sv2 = (sv*sv).sum(axis=1) # (n,)
+        suv = (su*sv).sum(axis=1) # (n,)
+
+        su_norm, sv_norm = derivs.tangent_lens()
+        su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
+
+        delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
+        delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
+
+        delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
+        delta_s = np.linalg.norm(delta_s, axis=1)
+
+        if self.offset_curve is None:
+            offset = self.offset
+        else:
+            offset = self.get_offset(ts)
+
+        res_us = us + delta_u * offset / delta_s
+        res_vs = vs + delta_v * offset / delta_s
+
+        if self.uv_space:
+            zs = np.zeros_like(us)
+            if self.z_axis == 2:
+                result = np.stack((res_us, res_vs, zs)).T
+            elif self.z_axis == 1:
+                result = np.stack((res_us, zs, res_vs)).T
+            else:
+                result = np.stack((zs, res_us, res_vs)).T
+            return result
+        else:
+            result = self.surface.evaluate_array(res_us, res_vs)
+            # Just for testing
+            # on_curve = self.surface.evaluate_array(us, vs)
+            # dvs = result - on_curve
+            # print(np.linalg.norm(dvs, axis=1))
+            return result
+
+class SvIsoUvCurve(SvCurve):
+    def __init__(self, surface, fixed_axis, value, flip=False):
+        self.surface = surface
+        self.fixed_axis = fixed_axis
+        self.value = value
+        self.flip = flip
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} at {} = {}&#34;.format(surface, fixed_axis, value)
+
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, &#39;iso_curve&#39;):
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+
+    def get_u_bounds(self):
+        if self.fixed_axis == &#39;U&#39;:
+            return self.surface.get_v_min(), self.surface.get_v_max()
+        else:
+            return self.surface.get_u_min(), self.surface.get_u_max()
+
+    def evaluate(self, t):
+        if self.fixed_axis == &#39;U&#39;:
+            if self.flip:
+                t = self.surface.get_v_max() - t + self.surface.get_v_min()
+            return self.surface.evaluate(self.value, t)
+        else:
+            if self.flip:
+                t = self.surface.get_u_max() - t + self.surface.get_u_min()
+            return self.surface.evaluate(t, self.value)
+
+    def evaluate_array(self, ts):
+        if self.fixed_axis == &#39;U&#39;:
+            if self.flip:
+                ts = self.surface.get_v_max() - ts + self.surface.get_v_min()
+            return self.surface.evaluate_array(np.repeat(self.value, len(ts)), ts)
+        else:
+            if self.flip:
+                ts = self.surface.get_u_max() - ts + self.surface.get_u_min()
+            return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))
+
+class SvLengthRebuiltCurve(SvCurve):
+    def __init__(self, curve, resolution, mode=&#39;SPL&#39;, tolerance=None):
+        self.curve = curve
+        self.resolution = resolution
+        if hasattr(curve, &#39;tangent_delta&#39;):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+        self.mode = mode
+        self.solver = SvCurveLengthSolver(curve)
+        self.solver.prepare(self.mode, resolution, tolerance=tolerance)
+        self.u_bounds = (0.0, self.solver.get_total_length())
+        self.__description__ = &#34;{} rebuilt&#34;.format(curve)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        c_ts = self.solver.solve(np.array([t]))
+        return self.curve.evaluate(c_ts[0])
+
+    def evaluate_array(self, ts):
+        c_ts = self.solver.solve(ts)
+        return self.curve.evaluate_array(c_ts)
+
+def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+    &#34;&#34;&#34;
+    Curve frame which is lying in the surface.
+
+    Frame is oriented as follows:
+        * X is pointing along surface normal
+        * Z is pointing along curve tangent
+        * Y is perpendicular to both X and Z.
+
+    input:
+        * surface
+        * uv_curve - uv_curve in the surface&#39;s UV space
+        * us - values of curve&#39;s T parameter; type: np.array of shape (n,)
+        * w_axis - defines which axis of the curve is surface&#39;s normal (two
+          other axes are surface&#39;s U and V). Default of 2 means X is U and Y is V.
+
+    output: tuple:
+        * matrices: np.array of shape (n, 3, 3)
+        * points: np.array of shape (n, 3) - points on the surface
+        * tangents: np.array of shape (n, 3)
+        * normals: np.array of shape (n, 3)
+        * binormals: np.array of shape (n, 3)
+    &#34;&#34;&#34;
+
+    if w_axis == 2:
+        U, V = 0, 1
+    elif w_axis == 1:
+        U, V = 0, 2
+    else:
+        U, V = 1, 2
+
+    uv_points = uv_curve.evaluate_array(us)
+    curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
+    surf_points = curve.evaluate_array(us)
+    tangents = curve.tangent_array(us)
+    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+
+    us, vs = uv_points[:,U], uv_points[:,V]
+    normals = surface.normal_array(us, vs)
+    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+
+    if on_zero_curvature != SvCurve.ASIS:
+        zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
+        if zero_normal.any():
+            if on_zero_curvature == SvCurve.FAIL:
+                raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+            elif on_zero_curvature == SvCurve.RETURN_NONE:
+                return None
+
+    binormals = - np.cross(normals, tangents)
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    return matrices_np, surf_points, tangents, normals, binormals
+
+def unify_curves_degree(curves):
+    &#34;&#34;&#34;
+    Make sure that all curves have the same degree, by
+    elevating degree where necessary.
+    Assumes all curves have get_degree() and elevate_degree() methods.
+    Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
+
+    input: list of SvCurve
+    output: list of SvCurve
+    &#34;&#34;&#34;
+
+    max_degree = max(curve.get_degree() for curve in curves)
+    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+    return curves
+
+def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+    &#34;&#34;&#34;
+    Concatenate a list of curves. When possible, use `concatenate` method of
+    curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
+    several Nurbs.
+
+    inputs:
+    * curves: list of SvCurve
+    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+    * allow_generic: what to do if it is not possible to concatenate curves natively:
+        True - use generic SvConcatCurve
+        False - raise an Exception.
+
+    output: SvCurve.
+    &#34;&#34;&#34;
+    if not curves:
+        raise Exception(&#34;List of curves must be not empty&#34;)
+    result = [curves[0]]
+    some_native = False
+    exceptions = []
+    for idx, curve in enumerate(curves[1:]):
+        new_curve = None
+        ok = False
+        if hasattr(result[-1], &#39;concatenate&#39;):
+            try:
+                if scale_to_unit:
+                    # P.1: try to join with rescaled curve
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                else:
+                    new_curve = result[-1].concatenate(curve)
+                some_native = True
+                ok = True
+            except UnsupportedCurveTypeException as e:
+                exceptions.append(e)
+                # &#34;concatenate&#34; method can&#39;t work with this type of curve
+                info(&#34;Can&#39;t natively join curve #%s (%s), will use generic method: %s&#34;, idx+1, curve, e)
+                # P.2: if some curves were already joined natively,
+                # then we have to rescale each of other curves separately
+                if some_native and scale_to_unit:
+                    curve = reparametrize_curve(curve)
+
+        #print(f&#34;C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}&#34;)
+
+        if ok:
+            result[-1] = new_curve
+        else:
+            result.append(curve)
+
+    if len(result) == 1:
+        return result[0]
+    else:
+        if allow_generic:
+            # if any of curves were scaled while joining natively (at P.1),
+            # then all other were scaled at P.2;
+            # if no successful joins were made, then we can rescale all curves
+            # at once.
+            return SvConcatCurve(result, scale_to_unit and not some_native)
+        else:
+            err_msg = &#34;\n&#34;.join([str(e) for e in exceptions])
+            raise Exception(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)
+
+class SvCurvesSortResult(object):
+    def __init__(self):
+        self.curves = []
+        self.indexes = []
+        self.flips = []
+        self.sum_error = 0
+
+def sort_curves_for_concat(curves, allow_flip=False):
+    if not curves:
+        return curves
+
+    def calc_error(c1, c2):
+        c1end = c1[1]
+        c2begin = c2[0]
+
+        dc = c1end - c2begin
+        d = (dc * dc).sum()
+        return d
+
+    def select_next(last_pair, pairs, other_idxs):
+        min_error = None
+        best_idx = None
+        best_flip = False
+
+        if allow_flip:
+            combinations = [(flip, idx) for idx in other_idxs for flip in [False, True]]
+        else:
+            combinations = [(False, idx) for idx in other_idxs]
+
+        for flip, idx in combinations:
+            start, end = pairs[idx]
+            if flip:
+                start, end = end, start
+            error = calc_error(last_pair, (start, end))
+            if min_error is None or error &lt; min_error:
+                min_error = error
+                best_idx = idx
+                best_flip = flip
+        return min_error, best_idx, best_flip
+
+    pairs = []
+    for curve in curves:
+        u_min, u_max = curve.get_u_bounds()
+        begin = curve.evaluate(u_min)
+        end = curve.evaluate(u_max)
+        pairs.append((begin, end))
+
+    all_idxs = list(range(len(curves)))
+    result_idxs = [0]
+    result_flips = [False]
+    last_pair = pairs[0]
+    rest_idxs = all_idxs[1:]
+
+    result = SvCurvesSortResult()
+
+    while rest_idxs:
+        error, next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
+        rest_idxs.remove(next_idx)
+        result_idxs.append(next_idx)
+        result_flips.append(next_flip)
+        last_pair = pairs[next_idx]
+        result.sum_error += error
+        if next_flip:
+            last_pair = last_pair[1], last_pair[0]
+
+    for idx, flip in zip(result_idxs, result_flips):
+        result.indexes.append(idx)
+        result.flips.append(flip)
+        curve = curves[idx]
+        if flip:
+            curve = reverse_curve(curve)
+        result.curves.append(curve)
+
+    return result
+
+def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    t_min, t_max = curve.get_u_bounds()
+    if t_min == new_t_min and t_max == new_t_max:
+        return curve
+    if hasattr(curve, &#39;reparametrize&#39;):
+        return curve.reparametrize(new_t_min, new_t_max)
+    else:
+        return SvReparametrizedCurve(curve, new_t_min, new_t_max)
+
+def reverse_curve(curve):
+    if hasattr(curve, &#39;reverse&#39;):
+        return curve.reverse()
+    else:
+        return SvFlipCurve(curve)
+
+def split_curve(curve, splits, rescale=False):
+    if hasattr(curve, &#39;split_at&#39;):
+        result = []
+        for split in splits:
+            head, tail = curve.split_at(split)
+            if rescale:
+                head = reparametrize_curve(head, 0, 1)
+            result.append(head)
+            curve = tail
+        if rescale:
+            tail = reparametrize_curve(tail, 0, 1)
+        result.append(tail)
+        return result
+    else:
+        t_min, t_max = curve.get_u_bounds()
+        if splits[0] != t_min:
+            splits.insert(0, t_min)
+        if splits[-1] != t_max:
+            splits.append(t_max)
+        pairs = zip(splits, splits[1:])
+        result = []
+        for start, end in pairs:
+            segment = SvCurveSegment(curve, start, end, rescale)
+            result.append(segment)
+        return result
+
+def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    t_min, t_max = curve.get_u_bounds()
+    if hasattr(curve, &#39;cut_segment&#39;):
+        return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
+    elif hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
+        if new_t_min &gt; t_min:
+            start, curve = curve.split_at(new_t_min)
+        if new_t_max &lt; t_max:
+            curve, end = curve.split_at(new_t_max)
+        if rescale:
+            curve = reparametrize_curve(curve, 0, 1)
+        return curve
+    else:
+        return SvCurveSegment(curve, new_t_min, new_t_max, rescale)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.concatenate_curves"><code class="name flex">
+<span>def <span class="ident">concatenate_curves</span></span>(<span>curves, scale_to_unit=False, allow_generic=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Concatenate a list of curves. When possible, use <code>concatenate</code> method of
+curves to make a "native" concatenation - for example, make one Nurbs out of
+several Nurbs.</p>
+<p>inputs:
+* curves: list of SvCurve
+* scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+* allow_generic: what to do if it is not possible to concatenate curves natively:
+True - use generic SvConcatCurve
+False - raise an Exception.</p>
+<p>output: SvCurve.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+    &#34;&#34;&#34;
+    Concatenate a list of curves. When possible, use `concatenate` method of
+    curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
+    several Nurbs.
+
+    inputs:
+    * curves: list of SvCurve
+    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+    * allow_generic: what to do if it is not possible to concatenate curves natively:
+        True - use generic SvConcatCurve
+        False - raise an Exception.
+
+    output: SvCurve.
+    &#34;&#34;&#34;
+    if not curves:
+        raise Exception(&#34;List of curves must be not empty&#34;)
+    result = [curves[0]]
+    some_native = False
+    exceptions = []
+    for idx, curve in enumerate(curves[1:]):
+        new_curve = None
+        ok = False
+        if hasattr(result[-1], &#39;concatenate&#39;):
+            try:
+                if scale_to_unit:
+                    # P.1: try to join with rescaled curve
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                else:
+                    new_curve = result[-1].concatenate(curve)
+                some_native = True
+                ok = True
+            except UnsupportedCurveTypeException as e:
+                exceptions.append(e)
+                # &#34;concatenate&#34; method can&#39;t work with this type of curve
+                info(&#34;Can&#39;t natively join curve #%s (%s), will use generic method: %s&#34;, idx+1, curve, e)
+                # P.2: if some curves were already joined natively,
+                # then we have to rescale each of other curves separately
+                if some_native and scale_to_unit:
+                    curve = reparametrize_curve(curve)
+
+        #print(f&#34;C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}&#34;)
+
+        if ok:
+            result[-1] = new_curve
+        else:
+            result.append(curve)
+
+    if len(result) == 1:
+        return result[0]
+    else:
+        if allow_generic:
+            # if any of curves were scaled while joining natively (at P.1),
+            # then all other were scaled at P.2;
+            # if no successful joins were made, then we can rescale all curves
+            # at once.
+            return SvConcatCurve(result, scale_to_unit and not some_native)
+        else:
+            err_msg = &#34;\n&#34;.join([str(e) for e in exceptions])
+            raise Exception(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.curve_frame_on_surface_array"><code class="name flex">
+<span>def <span class="ident">curve_frame_on_surface_array</span></span>(<span>surface, uv_curve, us, w_axis=2, on_zero_curvature='asis')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Curve frame which is lying in the surface.</p>
+<p>Frame is oriented as follows:
+* X is pointing along surface normal
+* Z is pointing along curve tangent
+* Y is perpendicular to both X and Z.</p>
+<p>input:
+* surface
+* uv_curve - uv_curve in the surface's UV space
+* us - values of curve's T parameter; type: np.array of shape (n,)
+* w_axis - defines which axis of the curve is surface's normal (two
+other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
+<p>output: tuple:
+* matrices: np.array of shape (n, 3, 3)
+* points: np.array of shape (n, 3) - points on the surface
+* tangents: np.array of shape (n, 3)
+* normals: np.array of shape (n, 3)
+* binormals: np.array of shape (n, 3)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+    &#34;&#34;&#34;
+    Curve frame which is lying in the surface.
+
+    Frame is oriented as follows:
+        * X is pointing along surface normal
+        * Z is pointing along curve tangent
+        * Y is perpendicular to both X and Z.
+
+    input:
+        * surface
+        * uv_curve - uv_curve in the surface&#39;s UV space
+        * us - values of curve&#39;s T parameter; type: np.array of shape (n,)
+        * w_axis - defines which axis of the curve is surface&#39;s normal (two
+          other axes are surface&#39;s U and V). Default of 2 means X is U and Y is V.
+
+    output: tuple:
+        * matrices: np.array of shape (n, 3, 3)
+        * points: np.array of shape (n, 3) - points on the surface
+        * tangents: np.array of shape (n, 3)
+        * normals: np.array of shape (n, 3)
+        * binormals: np.array of shape (n, 3)
+    &#34;&#34;&#34;
+
+    if w_axis == 2:
+        U, V = 0, 1
+    elif w_axis == 1:
+        U, V = 0, 2
+    else:
+        U, V = 1, 2
+
+    uv_points = uv_curve.evaluate_array(us)
+    curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
+    surf_points = curve.evaluate_array(us)
+    tangents = curve.tangent_array(us)
+    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+
+    us, vs = uv_points[:,U], uv_points[:,V]
+    normals = surface.normal_array(us, vs)
+    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+
+    if on_zero_curvature != SvCurve.ASIS:
+        zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
+        if zero_normal.any():
+            if on_zero_curvature == SvCurve.FAIL:
+                raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+            elif on_zero_curvature == SvCurve.RETURN_NONE:
+                return None
+
+    binormals = - np.cross(normals, tangents)
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    return matrices_np, surf_points, tangents, normals, binormals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.curve_segment"><code class="name flex">
+<span>def <span class="ident">curve_segment</span></span>(<span>curve, new_t_min, new_t_max, rescale=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    t_min, t_max = curve.get_u_bounds()
+    if hasattr(curve, &#39;cut_segment&#39;):
+        return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
+    elif hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
+        if new_t_min &gt; t_min:
+            start, curve = curve.split_at(new_t_min)
+        if new_t_max &lt; t_max:
+            curve, end = curve.split_at(new_t_max)
+        if rescale:
+            curve = reparametrize_curve(curve, 0, 1)
+        return curve
+    else:
+        return SvCurveSegment(curve, new_t_min, new_t_max, rescale)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.make_euclidean_ts"><code class="name flex">
+<span>def <span class="ident">make_euclidean_ts</span></span>(<span>pts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_euclidean_ts(pts):
+    tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
+    tknots = np.insert(tmp, 0, 0).cumsum()
+    tknots = tknots / tknots[-1]
+    return tknots</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.reparametrize_curve"><code class="name flex">
+<span>def <span class="ident">reparametrize_curve</span></span>(<span>curve, new_t_min=0.0, new_t_max=1.0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    t_min, t_max = curve.get_u_bounds()
+    if t_min == new_t_min and t_max == new_t_max:
+        return curve
+    if hasattr(curve, &#39;reparametrize&#39;):
+        return curve.reparametrize(new_t_min, new_t_max)
+    else:
+        return SvReparametrizedCurve(curve, new_t_min, new_t_max)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.reverse_curve"><code class="name flex">
+<span>def <span class="ident">reverse_curve</span></span>(<span>curve)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse_curve(curve):
+    if hasattr(curve, &#39;reverse&#39;):
+        return curve.reverse()
+    else:
+        return SvFlipCurve(curve)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.sort_curves_for_concat"><code class="name flex">
+<span>def <span class="ident">sort_curves_for_concat</span></span>(<span>curves, allow_flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort_curves_for_concat(curves, allow_flip=False):
+    if not curves:
+        return curves
+
+    def calc_error(c1, c2):
+        c1end = c1[1]
+        c2begin = c2[0]
+
+        dc = c1end - c2begin
+        d = (dc * dc).sum()
+        return d
+
+    def select_next(last_pair, pairs, other_idxs):
+        min_error = None
+        best_idx = None
+        best_flip = False
+
+        if allow_flip:
+            combinations = [(flip, idx) for idx in other_idxs for flip in [False, True]]
+        else:
+            combinations = [(False, idx) for idx in other_idxs]
+
+        for flip, idx in combinations:
+            start, end = pairs[idx]
+            if flip:
+                start, end = end, start
+            error = calc_error(last_pair, (start, end))
+            if min_error is None or error &lt; min_error:
+                min_error = error
+                best_idx = idx
+                best_flip = flip
+        return min_error, best_idx, best_flip
+
+    pairs = []
+    for curve in curves:
+        u_min, u_max = curve.get_u_bounds()
+        begin = curve.evaluate(u_min)
+        end = curve.evaluate(u_max)
+        pairs.append((begin, end))
+
+    all_idxs = list(range(len(curves)))
+    result_idxs = [0]
+    result_flips = [False]
+    last_pair = pairs[0]
+    rest_idxs = all_idxs[1:]
+
+    result = SvCurvesSortResult()
+
+    while rest_idxs:
+        error, next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
+        rest_idxs.remove(next_idx)
+        result_idxs.append(next_idx)
+        result_flips.append(next_flip)
+        last_pair = pairs[next_idx]
+        result.sum_error += error
+        if next_flip:
+            last_pair = last_pair[1], last_pair[0]
+
+    for idx, flip in zip(result_idxs, result_flips):
+        result.indexes.append(idx)
+        result.flips.append(flip)
+        curve = curves[idx]
+        if flip:
+            curve = reverse_curve(curve)
+        result.curves.append(curve)
+
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.split_curve"><code class="name flex">
+<span>def <span class="ident">split_curve</span></span>(<span>curve, splits, rescale=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_curve(curve, splits, rescale=False):
+    if hasattr(curve, &#39;split_at&#39;):
+        result = []
+        for split in splits:
+            head, tail = curve.split_at(split)
+            if rescale:
+                head = reparametrize_curve(head, 0, 1)
+            result.append(head)
+            curve = tail
+        if rescale:
+            tail = reparametrize_curve(tail, 0, 1)
+        result.append(tail)
+        return result
+    else:
+        t_min, t_max = curve.get_u_bounds()
+        if splits[0] != t_min:
+            splits.insert(0, t_min)
+        if splits[-1] != t_max:
+            splits.append(t_max)
+        pairs = zip(splits, splits[1:])
+        result = []
+        for start, end in pairs:
+            segment = SvCurveSegment(curve, start, end, rescale)
+            result.append(segment)
+        return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.unify_curves_degree"><code class="name flex">
+<span>def <span class="ident">unify_curves_degree</span></span>(<span>curves)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Make sure that all curves have the same degree, by
+elevating degree where necessary.
+Assumes all curves have get_degree() and elevate_degree() methods.
+Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
+<p>input: list of SvCurve
+output: list of SvCurve</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unify_curves_degree(curves):
+    &#34;&#34;&#34;
+    Make sure that all curves have the same degree, by
+    elevating degree where necessary.
+    Assumes all curves have get_degree() and elevate_degree() methods.
+    Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
+
+    input: list of SvCurve
+    output: list of SvCurve
+    &#34;&#34;&#34;
+
+    max_degree = max(curve.get_degree() for curve in curves)
+    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+    return curves</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.DifferentialRotationCalculator"><code class="flex name class">
+<span>class <span class="ident">DifferentialRotationCalculator</span></span>
+<span>(</span><span>curve, algorithm, resolution=50)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DifferentialRotationCalculator(object):
+
+    def __init__(self, curve, algorithm, resolution=50):
+        self.curve = curve
+        self.algorithm = algorithm
+        if algorithm == TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
+        elif algorithm == ZERO:
+            self.curve.pre_calc_torsion_integral(resolution)
+
+    def get_matrices(self, ts):
+        n = len(ts)
+        if self.algorithm == FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            return frenet
+        elif self.algorithm == ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            angles = - self.curve.torsion_integral(ts)
+            zeros = np.zeros((n,))
+            ones = np.ones((n,))
+            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+            rotation_matrices = np.dstack((row1, row2, row3))
+            return frenet @ rotation_matrices
+        elif self.algorithm == TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.DifferentialRotationCalculator.get_matrices"><code class="name flex">
+<span>def <span class="ident">get_matrices</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrices(self, ts):
+    n = len(ts)
+    if self.algorithm == FRENET:
+        frenet, _ , _ = self.curve.frame_array(ts)
+        return frenet
+    elif self.algorithm == ZERO:
+        frenet, _ , _ = self.curve.frame_array(ts)
+        angles = - self.curve.torsion_integral(ts)
+        zeros = np.zeros((n,))
+        ones = np.ones((n,))
+        row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+        row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+        row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+        rotation_matrices = np.dstack((row1, row2, row3))
+        return frenet @ rotation_matrices
+    elif self.algorithm == TRACK_NORMAL:
+        matrices = self.normal_tracker.evaluate_array(ts)
+        return matrices
+    else:
+        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.MathutilsRotationCalculator"><code class="flex name class">
+<span>class <span class="ident">MathutilsRotationCalculator</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MathutilsRotationCalculator(object):
+
+    @classmethod
+    def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
+        &#34;&#34;&#34;
+        Calculate matrix required to rotate object according to `tangent` vector.
+        inputs:
+            * tangent - np.array of shape (3,)
+            * scale - float
+            * axis - int, 0 - X, 1 - Y, 2 - Z
+            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
+            * scale_all - True to scale along all axes, False to scale along tangent only
+            * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+        output:
+            np.array of shape (3,3).
+        &#34;&#34;&#34;
+        x = Vector((1.0, 0.0, 0.0))
+        y = Vector((0.0, 1.0, 0.0))
+        z = Vector((0.0, 0.0, 1.0))
+
+        if axis == 0:
+            ax1, ax2, ax3 = x, y, z
+        elif axis == 1:
+            ax1, ax2, ax3 = y, x, z
+        else:
+            ax1, ax2, ax3 = z, x, y
+
+        if scale_all:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
+        else:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1)
+        scale_matrix = np.array(scale_matrix.to_3x3())
+
+        tangent = Vector(tangent)
+        if algorithm == HOUSEHOLDER:
+            rot = autorotate_householder(ax1, tangent).inverted()
+        elif algorithm == TRACK:
+            axis = &#34;XYZ&#34;[axis]
+            rot = autorotate_track(axis, tangent, up_axis)
+        elif algorithm == DIFF:
+            rot = autorotate_diff(tangent, ax1)
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+        rot = np.array(rot.to_3x3())
+
+        return np.matmul(rot, scale_matrix)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.MathutilsRotationCalculator.get_matrix"><code class="name flex">
+<span>def <span class="ident">get_matrix</span></span>(<span>tangent, scale, axis, algorithm, scale_all=True, up_axis='X')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate matrix required to rotate object according to <code>tangent</code> vector.
+inputs:
+* tangent - np.array of shape (3,)
+* scale - float
+* axis - int, 0 - X, 1 - Y, 2 - Z
+* algorithm - one of HOUSEHOLDER, TRACK, DIFF
+* scale_all - True to scale along all axes, False to scale along tangent only
+* up_axis - string, "X", "Y" or "Z", for algorithm == TRACK only.
+output:
+np.array of shape (3,3).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
+    &#34;&#34;&#34;
+    Calculate matrix required to rotate object according to `tangent` vector.
+    inputs:
+        * tangent - np.array of shape (3,)
+        * scale - float
+        * axis - int, 0 - X, 1 - Y, 2 - Z
+        * algorithm - one of HOUSEHOLDER, TRACK, DIFF
+        * scale_all - True to scale along all axes, False to scale along tangent only
+        * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+    output:
+        np.array of shape (3,3).
+    &#34;&#34;&#34;
+    x = Vector((1.0, 0.0, 0.0))
+    y = Vector((0.0, 1.0, 0.0))
+    z = Vector((0.0, 0.0, 1.0))
+
+    if axis == 0:
+        ax1, ax2, ax3 = x, y, z
+    elif axis == 1:
+        ax1, ax2, ax3 = y, x, z
+    else:
+        ax1, ax2, ax3 = z, x, y
+
+    if scale_all:
+        scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
+    else:
+        scale_matrix = Matrix.Scale(1/scale, 4, ax1)
+    scale_matrix = np.array(scale_matrix.to_3x3())
+
+    tangent = Vector(tangent)
+    if algorithm == HOUSEHOLDER:
+        rot = autorotate_householder(ax1, tangent).inverted()
+    elif algorithm == TRACK:
+        axis = &#34;XYZ&#34;[axis]
+        rot = autorotate_track(axis, tangent, up_axis)
+    elif algorithm == DIFF:
+        rot = autorotate_diff(tangent, ax1)
+    else:
+        raise Exception(&#34;Unsupported algorithm&#34;)
+    rot = np.array(rot.to_3x3())
+
+    return np.matmul(rot, scale_matrix)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder"><code class="flex name class">
+<span>class <span class="ident">SvCastCurveToCylinder</span></span>
+<span>(</span><span>curve, center, direction, radius, coefficient)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCastCurveToCylinder(SvCurve):
+    def __init__(self, curve, center, direction, radius, coefficient):
+        self.curve = curve
+        self.center = center
+        self.direction = direction
+        self.radius = radius
+        self.coefficient = coefficient
+        self.line = LineEquation.from_direction_and_point(direction, center)
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Cylinder&#34;.format(curve)
+
+    def evaluate(self, t):
+        point = self.curve.evaluate(t)
+        projection_to_line = self.line.projection_of_point(point)
+        projection_to_line = np.array(projection_to_line)
+        radial = point - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial)
+        projection = projection_to_line + radius
+        k = self.coefficient
+        return (1 - k) * point + k * projection
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        projection_to_line = self.line.projection_of_points(points)
+        radial = points - projection_to_line
+        radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
+        projections = projection_to_line + radius
+        k = self.coefficient
+        return (1 - k) * points + k * projections
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    point = self.curve.evaluate(t)
+    projection_to_line = self.line.projection_of_point(point)
+    projection_to_line = np.array(projection_to_line)
+    radial = point - projection_to_line
+    radius = self.radius * radial / np.linalg.norm(radial)
+    projection = projection_to_line + radius
+    k = self.coefficient
+    return (1 - k) * point + k * projection</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    points = self.curve.evaluate_array(ts)
+    projection_to_line = self.line.projection_of_points(points)
+    radial = points - projection_to_line
+    radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
+    projections = projection_to_line + radius
+    k = self.coefficient
+    return (1 - k) * points + k * projections</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane"><code class="flex name class">
+<span>class <span class="ident">SvCastCurveToPlane</span></span>
+<span>(</span><span>curve, point, normal, coefficient)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCastCurveToPlane(SvCurve):
+    def __init__(self, curve, point, normal, coefficient):
+        self.curve = curve
+        self.point = point
+        self.normal = normal
+        self.coefficient = coefficient
+        self.plane = PlaneEquation.from_normal_and_point(normal, point)
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Plane&#34;.format(curve)
+
+    def evaluate(self, t):
+        point = self.curve.evaluate(t)
+        target = np.array(self.plane.projection_of_point(point))
+        k = self.coefficient
+        return (1 - k) * point + k * target
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        targets = self.plane.projection_of_points(points)
+        k = self.coefficient
+        return (1 - k) * points + k * targets
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    point = self.curve.evaluate(t)
+    target = np.array(self.plane.projection_of_point(point))
+    k = self.coefficient
+    return (1 - k) * point + k * target</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    points = self.curve.evaluate_array(ts)
+    targets = self.plane.projection_of_points(points)
+    k = self.coefficient
+    return (1 - k) * points + k * targets</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere"><code class="flex name class">
+<span>class <span class="ident">SvCastCurveToSphere</span></span>
+<span>(</span><span>curve, center, radius, coefficient)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCastCurveToSphere(SvCurve):
+    def __init__(self, curve, center, radius, coefficient):
+        self.curve = curve
+        self.center = center
+        self.radius = radius
+        self.coefficient = coefficient
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} casted to Sphere&#34;.format(curve)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        centered_points = points - self.center
+        norms = np.linalg.norm(centered_points, axis=1)[np.newaxis].T
+        normalized = centered_points / norms
+        targets = self.radius * normalized + self.center
+        k = self.coefficient
+        return (1 - k) * points + k * targets
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    return self.evaluate_array(np.array([t]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    points = self.curve.evaluate_array(ts)
+    centered_points = points - self.center
+    norms = np.linalg.norm(centered_points, axis=1)[np.newaxis].T
+    normalized = centered_points / norms
+    targets = self.radius * normalized + self.center
+    k = self.coefficient
+    return (1 - k) * points + k * targets</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveFrameCalculator"><code class="flex name class">
+<span>class <span class="ident">SvCurveFrameCalculator</span></span>
+<span>(</span><span>curve, algorithm, z_axis=2, resolution=50, normal=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        self.normal = normal
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrices"><code class="name flex">
+<span>def <span class="ident">get_matrices</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrices(self, ts):
+    if self.algorithm == NONE:
+        identity = np.eye(3)
+        n = len(ts)
+        return np.broadcast_to(identity, (n, 3,3))
+    elif self.algorithm == NORMAL_DIR:
+        matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+        return matrices
+    elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+        return self.calculator.get_matrices(ts)
+    elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+        tangents = self.curve.tangent_array(ts)
+        matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+        return matrices
+    else:
+        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrix"><code class="name flex">
+<span>def <span class="ident">get_matrix</span></span>(<span>self, tangent)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrix(self, tangent):
+    return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+            axis=self.z_axis,
+            algorithm = self.algorithm,
+            scale_all=False)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver"><code class="flex name class">
+<span>class <span class="ident">SvCurveLengthSolver</span></span>
+<span>(</span><span>curve)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveLengthSolver(object):
+    def __init__(self, curve):
+        self.curve = curve
+        self._reverse_spline = None
+        self._prime_spline = None
+
+    def calc_length_segments(self, tknots):
+        vectors = self.curve.evaluate_array(tknots)
+        dvs = vectors[1:] - vectors[:-1]
+        lengths = np.linalg.norm(dvs, axis=1)
+        return lengths
+
+    def get_total_length(self):
+        if self._reverse_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        return self._length_params[-1]
+
+    def _calc_tknots_fixed(self, resolution):
+        t_min, t_max = self.curve.get_u_bounds()
+        tknots = np.linspace(t_min, t_max, num=resolution)
+        return tknots
+
+    def _prepare_find(self, resolution, tolerance, tknots=None, lengths=None, length_params=None):
+        if tknots is None:
+            tknots = self._calc_tknots_fixed(resolution)
+        if lengths is None:
+            lengths = self.calc_length_segments(tknots)
+        if length_params is None:
+            length_params = np.cumsum(np.insert(lengths, 0, 0))
+
+        resolution2 = resolution * 2 - 1
+        tknots2 = self._calc_tknots_fixed(resolution2)
+        lengths2 = self.calc_length_segments(tknots2)
+        length_params2 = np.cumsum(np.insert(lengths2, 0, 0))
+        
+        dl = abs(length_params2[::2] - length_params)
+        if (dl &lt; tolerance).all():
+            return tknots2, length_params2
+        else:
+            return self._prepare_find(resolution2, tolerance, tknots2, lengths2, length_params2)
+
+    def prepare(self, mode, resolution=50, tolerance=None):
+        if tolerance is None:
+            tknots = self._calc_tknots_fixed(resolution)
+            lengths = self.calc_length_segments(tknots)
+            self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+        else:
+            tknots, self._length_params = self._prepare_find(resolution, tolerance)
+        self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+        self._prime_spline = self._make_spline(mode, self._length_params, tknots)
+
+
+    def _make_spline(self, mode, tknots, values):
+        zeros = np.zeros(len(tknots))
+        control_points = np.vstack((values, tknots, zeros)).T
+        if mode == &#39;LIN&#39;:
+            spline = LinearSpline(control_points, tknots = values, is_cyclic = False)
+        elif mode == &#39;SPL&#39;:
+            spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
+        else:
+            raise Exception(&#34;Unsupported mode; supported are LIN and SPL.&#34;)
+        return spline
+
+    def calc_length(self, t_min, t_max):
+        if self._prime_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        lengths = self._prime_spline.eval(np.array([t_min, t_max]))
+        return lengths[1][1] - lengths[0][1]
+
+    def calc_length_params(self, ts):
+        if self._prime_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        spline_verts = self._prime_spline.eval(ts)
+        return spline_verts[:,1]
+
+    def solve(self, input_lengths):
+        if self._reverse_spline is None:
+            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        spline_verts = self._reverse_spline.eval(input_lengths)
+        return spline_verts[:,1]</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.nurbs_algorithms.SvNurbsCurveLengthSolver" href="nurbs_algorithms.html#sverchok.utils.curve.nurbs_algorithms.SvNurbsCurveLengthSolver">SvNurbsCurveLengthSolver</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length"><code class="name flex">
+<span>def <span class="ident">calc_length</span></span>(<span>self, t_min, t_max)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_length(self, t_min, t_max):
+    if self._prime_spline is None:
+        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+    lengths = self._prime_spline.eval(np.array([t_min, t_max]))
+    return lengths[1][1] - lengths[0][1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_params"><code class="name flex">
+<span>def <span class="ident">calc_length_params</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_length_params(self, ts):
+    if self._prime_spline is None:
+        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+    spline_verts = self._prime_spline.eval(ts)
+    return spline_verts[:,1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_segments"><code class="name flex">
+<span>def <span class="ident">calc_length_segments</span></span>(<span>self, tknots)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_length_segments(self, tknots):
+    vectors = self.curve.evaluate_array(tknots)
+    dvs = vectors[1:] - vectors[:-1]
+    lengths = np.linalg.norm(dvs, axis=1)
+    return lengths</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.get_total_length"><code class="name flex">
+<span>def <span class="ident">get_total_length</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_total_length(self):
+    if self._reverse_spline is None:
+        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+    return self._length_params[-1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>self, mode, resolution=50, tolerance=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare(self, mode, resolution=50, tolerance=None):
+    if tolerance is None:
+        tknots = self._calc_tknots_fixed(resolution)
+        lengths = self.calc_length_segments(tknots)
+        self._length_params = np.cumsum(np.insert(lengths, 0, 0))
+    else:
+        tknots, self._length_params = self._prepare_find(resolution, tolerance)
+    self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
+    self._prime_spline = self._make_spline(mode, self._length_params, tknots)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLengthSolver.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>self, input_lengths)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self, input_lengths):
+    if self._reverse_spline is None:
+        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+    spline_verts = self._reverse_spline.eval(input_lengths)
+    return spline_verts[:,1]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve"><code class="flex name class">
+<span>class <span class="ident">SvCurveLerpCurve</span></span>
+<span>(</span><span>curve1, curve2, coefficient)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveLerpCurve(SvCurve):
+    __description__ = &#34;Lerp&#34;
+
+    def __init__(self, curve1, curve2, coefficient):
+        self.curve1 = curve1
+        self.curve2 = curve2
+        self.coefficient = coefficient
+        self.u_bounds = (0.0, 1.0)
+        self.c1_min, self.c1_max = curve1.get_u_bounds()
+        self.c2_min, self.c2_max = curve2.get_u_bounds()
+        self.tangent_delta = 0.001
+
+    @staticmethod
+    def build(curve1, curve2, coefficient):
+        if hasattr(curve1, &#39;lerp_to&#39;):
+            try:
+                return curve1.lerp_to(curve2, coefficient)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvCurveLerpCurve(curve1, curve2, coefficient)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        us1 = (self.c1_max - self.c1_min) * ts + self.c1_min
+        us2 = (self.c2_max - self.c2_min) * ts + self.c2_min
+        c1_points = self.curve1.evaluate_array(us1)
+        c2_points = self.curve2.evaluate_array(us2)
+        k = self.coefficient
+        return (1.0 - k) * c1_points + k * c2_points</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>curve1, curve2, coefficient)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def build(curve1, curve2, coefficient):
+    if hasattr(curve1, &#39;lerp_to&#39;):
+        try:
+            return curve1.lerp_to(curve2, coefficient)
+        except UnsupportedCurveTypeException:
+            pass
+    return SvCurveLerpCurve(curve1, curve2, coefficient)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    return self.evaluate_array(np.array([t]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    us1 = (self.c1_max - self.c1_min) * ts + self.c1_min
+    us2 = (self.c2_max - self.c2_min) * ts + self.c2_min
+    c1_points = self.curve1.evaluate_array(us1)
+    c2_points = self.curve2.evaluate_array(us2)
+    k = self.coefficient
+    return (1.0 - k) * c1_points + k * c2_points</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.u_bounds</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface"><code class="flex name class">
+<span>class <span class="ident">SvCurveOffsetOnSurface</span></span>
+<span>(</span><span>curve, surface, offset=None, offset_curve=None, offset_curve_type='T', len_resolution=50, uv_space=False, axis=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveOffsetOnSurface(SvCurve):
+
+    BY_PARAMETER = &#39;T&#39;
+    BY_LENGTH = &#39;L&#39;
+
+    def __init__(self, curve, surface, offset = None, offset_curve = None,
+                    offset_curve_type = BY_PARAMETER, len_resolution = 50,
+                    uv_space=False, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.offset = offset
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.uv_space = uv_space
+        self.z_axis = axis
+        self.tangent_delta = 0.001
+        if offset_curve_type == SvCurveOffsetOnSurface.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare(&#39;SPL&#39;, len_resolution)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+
+    def evaluate_array(self, ts):
+        if self.z_axis == 2:
+            U, V = 0, 1
+        elif self.z_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+
+        uv_points = self.curve.evaluate_array(ts)
+        us, vs = uv_points[:,U], uv_points[:,V]
+        # Tangents of the curve in surface&#39;s UV space
+        uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
+        tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
+        derivs = self.surface.derivatives_data_array(us, vs)
+        su, sv = derivs.du, derivs.dv
+
+        # Take surface&#39;s normals as N = [su, sv];
+        # Take curve&#39;s tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
+        # Take a vector in surface&#39;s tangent plane, which is perpendicular to curve&#39;s
+        # tangent, as Nc = [N, T] (call it &#34;curve&#39;s normal on a surface&#34;);
+        # Calculate Nc&#39;s decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
+        # Interpret Ncu and Ncv as coordinates of Nc in surface&#39;s UV space.
+
+        # If you write down all above in formulas, you will have
+        #
+        # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
+
+        # We could&#39;ve calculate the offset as (Curve on a surface) + (offset*Nc),
+        # but there is no guarantee that these points will lie on the surface again
+        # (especially with not-so-small values of offset).
+        # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
+        # map all that into 3D space.
+
+        su2 = (su*su).sum(axis=1) # (n,)
+        sv2 = (sv*sv).sum(axis=1) # (n,)
+        suv = (su*sv).sum(axis=1) # (n,)
+
+        su_norm, sv_norm = derivs.tangent_lens()
+        su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
+
+        delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
+        delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
+
+        delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
+        delta_s = np.linalg.norm(delta_s, axis=1)
+
+        if self.offset_curve is None:
+            offset = self.offset
+        else:
+            offset = self.get_offset(ts)
+
+        res_us = us + delta_u * offset / delta_s
+        res_vs = vs + delta_v * offset / delta_s
+
+        if self.uv_space:
+            zs = np.zeros_like(us)
+            if self.z_axis == 2:
+                result = np.stack((res_us, res_vs, zs)).T
+            elif self.z_axis == 1:
+                result = np.stack((res_us, zs, res_vs)).T
+            else:
+                result = np.stack((zs, res_us, res_vs)).T
+            return result
+        else:
+            result = self.surface.evaluate_array(res_us, res_vs)
+            # Just for testing
+            # on_curve = self.surface.evaluate_array(us, vs)
+            # dvs = result - on_curve
+            # print(np.linalg.norm(dvs, axis=1))
+            return result</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_LENGTH"><code class="name">var <span class="ident">BY_LENGTH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_PARAMETER"><code class="name">var <span class="ident">BY_PARAMETER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    return self.evaluate_array(np.array([t]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    if self.z_axis == 2:
+        U, V = 0, 1
+    elif self.z_axis == 1:
+        U, V = 0, 2
+    else:
+        U, V = 1, 2
+
+    uv_points = self.curve.evaluate_array(ts)
+    us, vs = uv_points[:,U], uv_points[:,V]
+    # Tangents of the curve in surface&#39;s UV space
+    uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
+    tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
+    derivs = self.surface.derivatives_data_array(us, vs)
+    su, sv = derivs.du, derivs.dv
+
+    # Take surface&#39;s normals as N = [su, sv];
+    # Take curve&#39;s tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
+    # Take a vector in surface&#39;s tangent plane, which is perpendicular to curve&#39;s
+    # tangent, as Nc = [N, T] (call it &#34;curve&#39;s normal on a surface&#34;);
+    # Calculate Nc&#39;s decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
+    # Interpret Ncu and Ncv as coordinates of Nc in surface&#39;s UV space.
+
+    # If you write down all above in formulas, you will have
+    #
+    # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
+
+    # We could&#39;ve calculate the offset as (Curve on a surface) + (offset*Nc),
+    # but there is no guarantee that these points will lie on the surface again
+    # (especially with not-so-small values of offset).
+    # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
+    # map all that into 3D space.
+
+    su2 = (su*su).sum(axis=1) # (n,)
+    sv2 = (sv*sv).sum(axis=1) # (n,)
+    suv = (su*sv).sum(axis=1) # (n,)
+
+    su_norm, sv_norm = derivs.tangent_lens()
+    su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
+
+    delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
+    delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
+
+    delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
+    delta_s = np.linalg.norm(delta_s, axis=1)
+
+    if self.offset_curve is None:
+        offset = self.offset
+    else:
+        offset = self.get_offset(ts)
+
+    res_us = us + delta_u * offset / delta_s
+    res_vs = vs + delta_v * offset / delta_s
+
+    if self.uv_space:
+        zs = np.zeros_like(us)
+        if self.z_axis == 2:
+            result = np.stack((res_us, res_vs, zs)).T
+        elif self.z_axis == 1:
+            result = np.stack((res_us, zs, res_vs)).T
+        else:
+            result = np.stack((zs, res_us, res_vs)).T
+        return result
+    else:
+        result = self.surface.evaluate_array(res_us, res_vs)
+        # Just for testing
+        # on_curve = self.surface.evaluate_array(us, vs)
+        # dvs = result - on_curve
+        # print(np.linalg.norm(dvs, axis=1))
+        return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset"><code class="name flex">
+<span>def <span class="ident">get_offset</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_offset(self, ts):
+    u_min, u_max = self.curve.get_u_bounds()
+    if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+        off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+        ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+        ps = self.offset_curve.evaluate_array(ts)
+        return ps[:,1]
+    else:
+        off_u_max = self.len_solver.get_total_length()
+        ts = off_u_max * (ts - u_min) / (u_max - u_min)
+        ts = self.len_solver.solve(ts)
+        ps = self.offset_curve.evaluate_array(ts)
+        return ps[:,1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface"><code class="flex name class">
+<span>class <span class="ident">SvCurveOnSurface</span></span>
+<span>(</span><span>curve, surface, axis=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveOnSurface(SvCurve):
+    def __init__(self, curve, surface, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.axis = axis
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} on {}&#34;.format(curve, surface)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        points = self.curve.evaluate_array(ts)
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+        if self.axis == 0:
+            us = ys
+            vs = zs
+        elif self.axis == 1:
+            us = xs
+            vs = zs
+        elif self.axis == 2:
+            us = xs
+            vs = ys
+        else:
+            raise Exception(&#34;Unsupported orientation axis&#34;)
+        return self.surface.evaluate_array(us, vs)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    return self.evaluate_array(np.array([t]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    points = self.curve.evaluate_array(ts)
+    xs = points[:,0]
+    ys = points[:,1]
+    zs = points[:,2]
+    if self.axis == 0:
+        us = ys
+        vs = zs
+    elif self.axis == 1:
+        us = xs
+        vs = zs
+    elif self.axis == 2:
+        us = xs
+        vs = ys
+    else:
+        raise Exception(&#34;Unsupported orientation axis&#34;)
+    return self.surface.evaluate_array(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurvesSortResult"><code class="flex name class">
+<span>class <span class="ident">SvCurvesSortResult</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurvesSortResult(object):
+    def __init__(self):
+        self.curves = []
+        self.indexes = []
+        self.flips = []
+        self.sum_error = 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve"><code class="flex name class">
+<span>class <span class="ident">SvDeformedByFieldCurve</span></span>
+<span>(</span><span>curve, field, coefficient=1.0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvDeformedByFieldCurve(SvCurve):
+    def __init__(self, curve, field, coefficient=1.0):
+        self.curve = curve
+        self.field = field
+        self.coefficient = coefficient
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{}({})&#34;.format(field, curve)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        v = self.curve.evaluate(t)
+        vec = self.field.evaluate(*tuple(v))
+        return v + self.coefficient * vec
+
+    def evaluate_array(self, ts):
+        vs = self.curve.evaluate_array(ts)
+        xs, ys, zs = vs[:,0], vs[:,1], vs[:,2]
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vecs = np.stack((vxs, vys, vzs)).T
+        return vs + self.coefficient * vecs</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    v = self.curve.evaluate(t)
+    vec = self.field.evaluate(*tuple(v))
+    return v + self.coefficient * vec</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    vs = self.curve.evaluate_array(ts)
+    xs, ys, zs = vs[:,0], vs[:,1], vs[:,2]
+    vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+    vecs = np.stack((vxs, vys, vzs)).T
+    return vs + self.coefficient * vecs</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve"><code class="flex name class">
+<span>class <span class="ident">SvIsoUvCurve</span></span>
+<span>(</span><span>surface, fixed_axis, value, flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvIsoUvCurve(SvCurve):
+    def __init__(self, surface, fixed_axis, value, flip=False):
+        self.surface = surface
+        self.fixed_axis = fixed_axis
+        self.value = value
+        self.flip = flip
+        self.tangent_delta = 0.001
+        self.__description__ = &#34;{} at {} = {}&#34;.format(surface, fixed_axis, value)
+
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, &#39;iso_curve&#39;):
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+
+    def get_u_bounds(self):
+        if self.fixed_axis == &#39;U&#39;:
+            return self.surface.get_v_min(), self.surface.get_v_max()
+        else:
+            return self.surface.get_u_min(), self.surface.get_u_max()
+
+    def evaluate(self, t):
+        if self.fixed_axis == &#39;U&#39;:
+            if self.flip:
+                t = self.surface.get_v_max() - t + self.surface.get_v_min()
+            return self.surface.evaluate(self.value, t)
+        else:
+            if self.flip:
+                t = self.surface.get_u_max() - t + self.surface.get_u_min()
+            return self.surface.evaluate(t, self.value)
+
+    def evaluate_array(self, ts):
+        if self.fixed_axis == &#39;U&#39;:
+            if self.flip:
+                ts = self.surface.get_v_max() - ts + self.surface.get_v_min()
+            return self.surface.evaluate_array(np.repeat(self.value, len(ts)), ts)
+        else:
+            if self.flip:
+                ts = self.surface.get_u_max() - ts + self.surface.get_u_min()
+            return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.take"><code class="name flex">
+<span>def <span class="ident">take</span></span>(<span>surface, fixed_axis, value, flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def take(surface, fixed_axis, value, flip=False):
+    if hasattr(surface, &#39;iso_curve&#39;):
+        try:
+            return surface.iso_curve(fixed_axis, value, flip=flip)
+        except UnsupportedSurfaceTypeException:
+            pass
+    return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    if self.fixed_axis == &#39;U&#39;:
+        if self.flip:
+            t = self.surface.get_v_max() - t + self.surface.get_v_min()
+        return self.surface.evaluate(self.value, t)
+    else:
+        if self.flip:
+            t = self.surface.get_u_max() - t + self.surface.get_u_min()
+        return self.surface.evaluate(t, self.value)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    if self.fixed_axis == &#39;U&#39;:
+        if self.flip:
+            ts = self.surface.get_v_max() - ts + self.surface.get_v_min()
+        return self.surface.evaluate_array(np.repeat(self.value, len(ts)), ts)
+    else:
+        if self.flip:
+            ts = self.surface.get_u_max() - ts + self.surface.get_u_min()
+        return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    if self.fixed_axis == &#39;U&#39;:
+        return self.surface.get_v_min(), self.surface.get_v_max()
+    else:
+        return self.surface.get_u_min(), self.surface.get_u_max()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve"><code class="flex name class">
+<span>class <span class="ident">SvLengthRebuiltCurve</span></span>
+<span>(</span><span>curve, resolution, mode='SPL', tolerance=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvLengthRebuiltCurve(SvCurve):
+    def __init__(self, curve, resolution, mode=&#39;SPL&#39;, tolerance=None):
+        self.curve = curve
+        self.resolution = resolution
+        if hasattr(curve, &#39;tangent_delta&#39;):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+        self.mode = mode
+        self.solver = SvCurveLengthSolver(curve)
+        self.solver.prepare(self.mode, resolution, tolerance=tolerance)
+        self.u_bounds = (0.0, self.solver.get_total_length())
+        self.__description__ = &#34;{} rebuilt&#34;.format(curve)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        c_ts = self.solver.solve(np.array([t]))
+        return self.curve.evaluate(c_ts[0])
+
+    def evaluate_array(self, ts):
+        c_ts = self.solver.solve(ts)
+        return self.curve.evaluate_array(c_ts)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    c_ts = self.solver.solve(np.array([t]))
+    return self.curve.evaluate(c_ts[0])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    c_ts = self.solver.solve(ts)
+    return self.curve.evaluate_array(c_ts)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.u_bounds</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvNormalTrack"><code class="flex name class">
+<span>class <span class="ident">SvNormalTrack</span></span>
+<span>(</span><span>curve, resolution)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNormalTrack(object):
+    def __init__(self, curve, resolution):
+        self.curve = curve
+        self.resolution = resolution
+        self._pre_calc()
+
+    def _make_quats(self, points, tangents, normals, binormals):
+        matrices = np.dstack((normals, binormals, tangents))
+        matrices = np.transpose(matrices, axes=(0,2,1))
+        matrices = np.linalg.inv(matrices)
+        return [Matrix(m).to_quaternion() for m in matrices]
+
+    def _pre_calc(self):
+        curve = self.curve
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=self.resolution)
+
+        points = curve.evaluate_array(ts)
+        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        normal = normals[0]
+        if np.linalg.norm(normal) &gt; 1e-4:
+            binormal = binormals[0]
+            binormal /= np.linalg.norm(binormal)
+        else:
+            tangent = tangents[0]
+            normal = Vector(tangent).orthogonal()
+            normal = np.array(normal)
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+
+        out_normals = [normal]
+        out_binormals = [binormal]
+
+        for point, tangent in zip(points[1:], tangents[1:]):
+            plane = PlaneEquation.from_normal_and_point(Vector(tangent), Vector(point))
+            normal = plane.projection_of_vector(Vector(point), Vector(point + normal))
+            normal = np.array(normal.normalized())
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+            out_normals.append(normal)
+            out_binormals.append(binormal)
+
+        self.quats = self._make_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
+        self.tknots = ts
+
+    def evaluate_array(self, ts):
+        &#34;&#34;&#34;
+        input: ts - np.array of snape (n,) or list of floats
+        output: np.array of shape (n, 3, 3)
+        &#34;&#34;&#34;
+        ts = np.array(ts)
+        tknots, quats = self.tknots, self.quats
+        base_indexes = tknots.searchsorted(ts, side=&#39;left&#39;)-1
+        t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
+        dts = (ts - t1s) / (t2s - t1s)
+        #dts = np.clip(dts, 0.0, 1.0) # Just in case...
+        matrix_out = []
+        # TODO: ideally this should be vectorized with numpy;
+        # but that would require implementation of quaternion
+        # interpolation in numpy.
+        for dt, base_index in zip(dts, base_indexes):
+            q1, q2 = quats[base_index], quats[base_index+1]
+            # spherical linear interpolation.
+            # TODO: implement `squad`.
+            if dt &lt; 0:
+                q = q1
+            elif dt &gt; 1.0:
+                q = q2
+            else:
+                q = q1.slerp(q2, dt)
+            matrix = np.array(q.to_matrix())
+            matrix_out.append(matrix)
+        return np.array(matrix_out)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvNormalTrack.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>input: ts - np.array of snape (n,) or list of floats
+output: np.array of shape (n, 3, 3)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    &#34;&#34;&#34;
+    input: ts - np.array of snape (n,) or list of floats
+    output: np.array of shape (n, 3, 3)
+    &#34;&#34;&#34;
+    ts = np.array(ts)
+    tknots, quats = self.tknots, self.quats
+    base_indexes = tknots.searchsorted(ts, side=&#39;left&#39;)-1
+    t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
+    dts = (ts - t1s) / (t2s - t1s)
+    #dts = np.clip(dts, 0.0, 1.0) # Just in case...
+    matrix_out = []
+    # TODO: ideally this should be vectorized with numpy;
+    # but that would require implementation of quaternion
+    # interpolation in numpy.
+    for dt, base_index in zip(dts, base_indexes):
+        q1, q2 = quats[base_index], quats[base_index+1]
+        # spherical linear interpolation.
+        # TODO: implement `squad`.
+        if dt &lt; 0:
+            q = q1
+        elif dt &gt; 1.0:
+            q = q2
+        else:
+            q = q1.slerp(q2, dt)
+        matrix = np.array(q.to_matrix())
+        matrix_out.append(matrix)
+    return np.array(matrix_out)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve"><code class="flex name class">
+<span>class <span class="ident">SvOffsetCurve</span></span>
+<span>(</span><span>curve, offset_vector, offset_amount=None, offset_curve=None, offset_curve_type='T', algorithm='FRENET', resolution=50)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvOffsetCurve(SvCurve):
+
+    BY_PARAMETER = &#39;T&#39;
+    BY_LENGTH = &#39;L&#39;
+
+    def __init__(self, curve, offset_vector,
+                    offset_amount=None,
+                    offset_curve = None, offset_curve_type = BY_PARAMETER,
+                    algorithm=FRENET, resolution=50):
+        self.curve = curve
+        if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
+            raise Exception(&#34;offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR&#34;)
+        self.offset_amount = offset_amount
+        self.offset_vector = offset_vector
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.algorithm = algorithm
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+        if offset_curve_type == SvOffsetCurve.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare(&#39;SPL&#39;, resolution)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=2,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+            return matrices
+        else:
+            raise Exception(&#34;Unsupported algorithm&#34;)
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve is None:
+            if self.offset_amount is not None:
+                return self.offset_amount
+            else:
+                return np.linalg.norm(self.offset_vector)
+        elif self.offset_curve_type == SvOffsetCurve.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        t_min, t_max = self.curve.get_u_bounds()
+        extrusion_start = self.curve.evaluate(t_min)
+        extrusion_points = self.curve.evaluate_array(ts)
+        extrusion_vectors = extrusion_points - extrusion_start
+        offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
+        if self.algorithm == NORMAL_DIR:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
+            tangents = self.curve.tangent_array(ts)
+            offset_vectors = np.cross(tangents, offset_vectors)
+            offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * offset_vectors / offset_norm
+        else:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
+            matrices = self.get_matrices(ts)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
+        result = extrusion_vectors + offset_vectors
+        result = result + extrusion_start
+        return result</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_LENGTH"><code class="name">var <span class="ident">BY_LENGTH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_PARAMETER"><code class="name">var <span class="ident">BY_PARAMETER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    return self.evaluate_array(np.array([t]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    n = len(ts)
+    t_min, t_max = self.curve.get_u_bounds()
+    extrusion_start = self.curve.evaluate(t_min)
+    extrusion_points = self.curve.evaluate_array(ts)
+    extrusion_vectors = extrusion_points - extrusion_start
+    offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
+    if self.algorithm == NORMAL_DIR:
+        offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
+        tangents = self.curve.tangent_array(ts)
+        offset_vectors = np.cross(tangents, offset_vectors)
+        offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+        offset_amounts = self.get_offset(ts)
+        offset_vectors = offset_amounts * offset_vectors / offset_norm
+    else:
+        offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
+        matrices = self.get_matrices(ts)
+        offset_amounts = self.get_offset(ts)
+        offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
+    result = extrusion_vectors + offset_vectors
+    result = result + extrusion_start
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices"><code class="name flex">
+<span>def <span class="ident">get_matrices</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrices(self, ts):
+    if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+        return self.calculator.get_matrices(ts)
+    elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+        tangents = self.curve.tangent_array(ts)
+        matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
+        return matrices
+    else:
+        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrix"><code class="name flex">
+<span>def <span class="ident">get_matrix</span></span>(<span>self, tangent)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_matrix(self, tangent):
+    return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+            axis=2,
+            algorithm = self.algorithm,
+            scale_all=False)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_offset"><code class="name flex">
+<span>def <span class="ident">get_offset</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_offset(self, ts):
+    u_min, u_max = self.curve.get_u_bounds()
+    if self.offset_curve is None:
+        if self.offset_amount is not None:
+            return self.offset_amount
+        else:
+            return np.linalg.norm(self.offset_vector)
+    elif self.offset_curve_type == SvOffsetCurve.BY_PARAMETER:
+        off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+        ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+        ps = self.offset_curve.evaluate_array(ts)
+        return ps[:,1][np.newaxis].T
+    else:
+        off_u_max = self.len_solver.get_total_length()
+        ts = off_u_max * (ts - u_min) / (u_max - u_min)
+        ts = self.len_solver.solve(ts)
+        ps = self.offset_curve.evaluate_array(ts)
+        return ps[:,1][np.newaxis].T</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return self.curve.get_u_bounds()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.curve" href="index.html">sverchok.utils.curve</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.concatenate_curves" href="#sverchok.utils.curve.algorithms.concatenate_curves">concatenate_curves</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.curve_frame_on_surface_array" href="#sverchok.utils.curve.algorithms.curve_frame_on_surface_array">curve_frame_on_surface_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.curve_segment" href="#sverchok.utils.curve.algorithms.curve_segment">curve_segment</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.make_euclidean_ts" href="#sverchok.utils.curve.algorithms.make_euclidean_ts">make_euclidean_ts</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.reparametrize_curve" href="#sverchok.utils.curve.algorithms.reparametrize_curve">reparametrize_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.reverse_curve" href="#sverchok.utils.curve.algorithms.reverse_curve">reverse_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.sort_curves_for_concat" href="#sverchok.utils.curve.algorithms.sort_curves_for_concat">sort_curves_for_concat</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.split_curve" href="#sverchok.utils.curve.algorithms.split_curve">split_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.unify_curves_degree" href="#sverchok.utils.curve.algorithms.unify_curves_degree">unify_curves_degree</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.DifferentialRotationCalculator" href="#sverchok.utils.curve.algorithms.DifferentialRotationCalculator">DifferentialRotationCalculator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.DifferentialRotationCalculator.get_matrices" href="#sverchok.utils.curve.algorithms.DifferentialRotationCalculator.get_matrices">get_matrices</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.MathutilsRotationCalculator" href="#sverchok.utils.curve.algorithms.MathutilsRotationCalculator">MathutilsRotationCalculator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.MathutilsRotationCalculator.get_matrix" href="#sverchok.utils.curve.algorithms.MathutilsRotationCalculator.get_matrix">get_matrix</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder">SvCastCurveToCylinder</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane">SvCastCurveToPlane</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere">SvCastCurveToSphere</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveFrameCalculator" href="#sverchok.utils.curve.algorithms.SvCurveFrameCalculator">SvCurveFrameCalculator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrices" href="#sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrices">get_matrices</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrix" href="#sverchok.utils.curve.algorithms.SvCurveFrameCalculator.get_matrix">get_matrix</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver">SvCurveLengthSolver</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_params" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_params">calc_length_params</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_segments" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.calc_length_segments">calc_length_segments</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.get_total_length" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.get_total_length">get_total_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.prepare" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.prepare">prepare</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLengthSolver.solve" href="#sverchok.utils.curve.algorithms.SvCurveLengthSolver.solve">solve</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve">SvCurveLerpCurve</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.build" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.build">build</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface">SvCurveOffsetOnSurface</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_LENGTH" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_LENGTH">BY_LENGTH</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_PARAMETER" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_PARAMETER">BY_PARAMETER</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset">get_offset</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface">SvCurveOnSurface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurvesSortResult" href="#sverchok.utils.curve.algorithms.SvCurvesSortResult">SvCurvesSortResult</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve">SvDeformedByFieldCurve</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve">SvIsoUvCurve</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.take" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.take">take</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve">SvLengthRebuiltCurve</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvNormalTrack" href="#sverchok.utils.curve.algorithms.SvNormalTrack">SvNormalTrack</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvNormalTrack.evaluate_array" href="#sverchok.utils.curve.algorithms.SvNormalTrack.evaluate_array">evaluate_array</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve" href="#sverchok.utils.curve.algorithms.SvOffsetCurve">SvOffsetCurve</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_LENGTH" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.BY_LENGTH">BY_LENGTH</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_PARAMETER" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.BY_PARAMETER">BY_PARAMETER</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices">get_matrices</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrix" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrix">get_matrix</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_offset" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_offset">get_offset</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds">get_u_bounds</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.intersect_edges API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.intersect_edges</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import itertools
+from collections import defaultdict
+
+import bmesh
+from mathutils import Vector
+
+from mathutils.geometry import (
+    intersect_line_line,
+    intersect_line_line_2d)
+
+from sverchok.data_structure import cross_indices_np
+from sverchok.utils.cad_module_class import CAD_ops
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.math import np_dot
+
+import numpy as np
+
+def order_points(edge, point_list):
+    &#39;&#39;&#39; order these edges from distance to v1, then
+    sandwich the sorted list with v1, v2 &#39;&#39;&#39;
+    v1, v2 = edge
+    dist = lambda co: (v1-co).length
+    point_list = sorted(point_list, key=dist)
+    return [v1] + point_list + [v2]
+
+def remove_permutations_that_share_a_vertex(cm, bm, permutations):
+    &#39;&#39;&#39; Get useful Permutations &#39;&#39;&#39;
+
+    final_permutations = []
+    for edges in permutations:
+        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
+        if cm.duplicates(raw_vert_indices):
+            continue
+
+        # reaches this point if they do not share.
+        final_permutations.append(edges)
+
+    return final_permutations
+
+def get_valid_permutations(cm, bm, edge_indices):
+    raw_permutations = itertools.permutations(edge_indices, 2)
+    permutations = [r for r in raw_permutations if r[0] &lt; r[1]]
+    return remove_permutations_that_share_a_vertex(cm, bm, permutations)
+
+def can_skip(cm, closest_points, vert_vectors):
+    &#39;&#39;&#39;this checks if the intersection lies on both edges, returns True
+    when criteria are not met, and thus this point can be skipped&#39;&#39;&#39;
+    if not closest_points:
+        return True
+    if not isinstance(closest_points[0].x, float):
+        return True
+    if cm.num_edges_point_lies_on(closest_points[0], vert_vectors) &lt; 2:
+        return True
+
+    # if this distance is larger than than VTX_PRECISION, we can skip it.
+    cpa, cpb = closest_points
+    return (cpa-cpb).length &gt; cm.VTX_PRECISION
+
+def get_intersection_dictionary(cm, bm, edge_indices):
+
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+
+    permutations = get_valid_permutations(cm, bm, edge_indices)
+
+    k = defaultdict(list)
+    d = defaultdict(list)
+
+    for edges in permutations:
+        vert_vectors = cm.vectors_from_edges_tuple(bm, edges)
+        v1, v2, v3, v4 = vert_vectors
+
+        # Edges obviously can not intersect if their bounding
+        # boxes do not intersect
+        if (max(v1.x, v2.x) &lt; min(v3.x, v4.x) or
+            max(v1.y, v2.y) &lt; min(v3.y, v4.y) or
+            max(v1.z, v2.z) &lt; min(v3.z, v4.z)):
+                continue
+        if (max(v3.x, v4.x) &lt; min(v1.x, v2.x) or
+            max(v3.y, v4.y) &lt; min(v1.y, v2.y) or
+            max(v3.z, v4.z) &lt; min(v1.z, v2.z)):
+                continue
+
+        # Edges can not intersect if they do not lie in
+        # the same plane
+        if not cm.is_coplanar(vert_vectors):
+            continue
+
+        points = intersect_line_line(*vert_vectors)
+
+        # some can be skipped.    (NaN, None, not on both edges)
+        if can_skip(cm, points, vert_vectors):
+            continue
+
+        # reaches this point only when an intersection happens on both edges.
+        [k[edge].append(points[0]) for edge in edges]
+
+    # k will contain a dict of edge indices and points found on those edges.
+    for edge_idx, unordered_points in k.items():
+        tv1, tv2 = bm.edges[edge_idx].verts
+        v1 = bm.verts[tv1.index].co
+        v2 = bm.verts[tv2.index].co
+        ordered_points = order_points((v1, v2), unordered_points)
+        d[edge_idx].extend(ordered_points)
+
+    return d
+
+def update_mesh(bm, d):
+    &#39;&#39;&#39; Make new geometry &#39;&#39;&#39;
+
+    oe = bm.edges
+    ov = bm.verts
+
+    for old_edge, point_list in d.items():
+        num_edges_to_add = len(point_list)-1
+        for i in range(num_edges_to_add):
+            a = ov.new(point_list[i])
+            b = ov.new(point_list[i+1])
+            oe.new((a, b))
+    bm.normal_update()
+
+def unselect_nonintersecting(bm, d_edges, edge_indices):
+    # print(d_edges, edge_indices)
+    if len(edge_indices) &gt; len(d_edges):
+        reserved_edges = set(edge_indices) - set(d_edges)
+        for edge in reserved_edges:
+            bm.edges[edge].select = False
+        # print(&#34;unselected {}, non intersecting edges&#34;.format(reserved_edges))
+
+def bmesh_intersect_edges_3d(bm, s_epsilon):
+    edge_indices = [e.index for e in bm.edges]
+    trim_indices = len(edge_indices)
+    for edge in bm.edges:
+        edge.select = True
+
+    cm = CAD_ops(epsilon=s_epsilon)
+
+    d = get_intersection_dictionary(cm, bm, edge_indices)
+    unselect_nonintersecting(bm, d.keys(), edge_indices)
+
+    # store non_intersecting edge sequencer
+    add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
+
+    update_mesh(bm, d)
+    return add_back
+
+def intersect_edges_3d(verts_in, edges_in, s_epsilon):
+    bm = bmesh_from_pydata(verts_in, edges_in, [])
+
+    trim_indices = len(bm.edges[:])
+
+    add_back = bmesh_intersect_edges_3d(bm, s_epsilon)
+
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+    # optional correction, remove originals, add back those that are not intersecting.
+    edges_out = edges_out[trim_indices:]
+    edges_out.extend(add_back)
+    bm.free()
+    return verts_out, edges_out
+
+# adapted from
+# https://stackoverflow.com/a/18994296
+# distance point line https://stackoverflow.com/a/39840218
+def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections&#39;&#39;&#39;
+    indices = cross_indices_np(len(edges))
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    eds = np_edges[indices].reshape(-1, 4)
+    mask = np.invert(np.any([eds[:, 0] == eds[:, 2],
+                             eds[:, 0] == eds[:, 3],
+                             eds[:, 1] == eds[:, 2],
+                             eds[:, 1] == eds[:, 3]],
+                            axis=0))
+    eds2 = eds[mask]
+    indices_m = indices[mask]
+
+    seg_v = np_verts[eds2]
+
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
+    dp = seg_v[:, 2] - seg_v[:, 0]
+    perp = np.cross(direc_a, direc_b, axis=1)
+    perp_magnitude = np.linalg.norm(perp, axis=1)
+    non_parallel = perp_magnitude &gt; 0
+    perp[non_parallel] /= perp_magnitude[non_parallel, np.newaxis]
+    dist = np_dot(perp[non_parallel], dp[non_parallel])
+    co_planar = np.abs(dist) &lt; s_epsilon
+    seg_v = seg_v[non_parallel][co_planar]
+    # Calculate denominator
+    A = direc_a[non_parallel][co_planar]
+    B = direc_b[non_parallel][co_planar]
+    magA = np.linalg.norm(A, axis=1)
+    magB = np.linalg.norm(B, axis=1)
+
+    _A = A / magA[:, np.newaxis]
+    _B = B / magB[:, np.newaxis]
+
+    cross = np.cross(_A, _B, axis=1)
+    denom = np.linalg.norm(cross, axis=1)**2
+    t = dp[non_parallel][co_planar]
+    detA = np.linalg.det(np.array([t.T, _B.T, cross.T]).T)
+    detB = np.linalg.det(np.array([t.T, _A.T, cross.T]).T)
+    t0 = detA / denom
+    t1 = detB / denom
+    if only_touching:
+        valid_inter = np.all([t0 &gt; -s_epsilon, t0 &lt; magA + s_epsilon, t1 &gt; -s_epsilon, t1 &lt; magB + s_epsilon], axis=0)
+    else:
+        valid_inter = np.all([t0 &gt; 0, t0 &lt; magA , t1 &gt; 0, t1 &lt; magB], axis=0)
+    pA = seg_v[:, 0] + (_A * t0[:, np.newaxis]) # Projected closest point on segment A
+    # pB = seg_v[:,2] + (_B * t1[:, np.newaxis]) # Projected closest point on segment B
+    inters = pA[valid_inter]
+
+    n_a_m = t0[valid_inter]
+    n_b_m = t1[valid_inter]
+    all_coefs = np.concatenate([[n_a_m], [n_b_m]], axis=0).T.ravel()
+
+    indices_m2 = indices_m[non_parallel][co_planar][valid_inter]
+    i_ravel = indices_m2.ravel()
+    new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1,2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()
+
+def edges_from_ed_inter_double_removal(ed_inter):
+    &#39;&#39;&#39;create edges from intersections library&#39;&#39;&#39;
+    edges_out = []
+    for e in ed_inter:
+        # sort by first element of tuple (distances)
+        e_s = sorted(e)
+        e_s = [e for i, e in enumerate(e_s) if e[1] != e_s[i-1][1]]
+        for i in range(1, len(e_s)):
+            # if e_s[i-1][1] != e_s[i][1]:
+            if(e_s[i-1][1], e_s[i][1]) not in edges_out:
+                edges_out.append((e_s[i-1][1], e_s[i][1]))
+    return edges_out
+
+def edges_from_ed_inter(ed_inter):
+    &#39;&#39;&#39;create edges from intersections library&#39;&#39;&#39;
+    edges_out = []
+    for e in ed_inter:
+        # sort by first element of tuple (distances)
+        e_s = sorted(e)
+        e_s = [e for i, e in enumerate(e_s) if e[1] != e_s[i-1][1]]
+        for i in range(1, len(e_s)):
+            edges_out.append((e_s[i-1][1], e_s[i][1]))
+    return edges_out
+
+def intersect_edges_2d(verts, edges, epsilon):
+    &#39;&#39;&#39;Iterate through edges  and expose them to intersect_line_line_2d&#39;&#39;&#39;
+    verts_in = [Vector(v) for v in verts]
+    ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
+    verts_out = verts
+    edges_out = []
+    ed_inter = [[] for e in edges]
+    e_idx = range(len(edges))
+    for e, d, i in zip(edges, ed_lengths, e_idx):
+        # if there is no intersections this will create a normal edge
+        ed_inter[i].append([0.0, e[0]])
+        ed_inter[i].append([d, e[1]])
+        v1 = verts_in[e[0]]
+        v2 = verts_in[e[1]]
+        if d == 0:
+            continue
+
+        for e2, d2, j in zip(edges[:i], ed_lengths[:i], e_idx[:i]):
+
+            if d2 &lt; epsilon:
+                continue
+            if (e2[0] in e) or (e2[1] in e):
+                continue
+
+            v3 = verts_in[e2[0]]
+            v4 = verts_in[e2[1]]
+            vx = intersect_line_line_2d(v1, v2, v3, v4)
+            if vx:
+                d_to_1 = (vx - v1.to_2d()).length
+                d_to_2 = (vx - v3.to_2d()).length
+
+                new_id = len(verts_out)
+
+                if d_to_1 &lt; epsilon:
+                    new_id = e[0]
+                elif d_to_1 &gt; d - epsilon:
+                    new_id = e[1]
+                elif d_to_2 &lt; epsilon:
+                    new_id = e2[0]
+                elif d_to_2 &gt; d2 - epsilon:
+                    new_id = e2[1]
+                if new_id == len(verts_out):
+                    verts_out.append((vx.x, vx.y, v1.z))
+
+                # first item stores distance to origin, second the vertex id
+                ed_inter[i].append([d_to_1, new_id])
+                ed_inter[j].append([d_to_2, new_id])
+
+
+    edges_out = edges_from_ed_inter(ed_inter)
+
+    return verts_out, edges_out
+
+def intersect_edges_2d_double_removal(verts, edges, epsilon):
+    &#39;&#39;&#39;Iterate through edges  and expose them to intersect_line_line_2d&#39;&#39;&#39;
+    verts_in = [Vector(v) for v in verts]
+    ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
+    verts_out = verts
+    edges_out = []
+    ed_inter = [[] for e in edges]
+    for e, d, i in zip(edges, ed_lengths, range(len(edges))):
+        # if there is no intersections this will create a normal edge
+        ed_inter[i].append([0.0, e[0]])
+        ed_inter[i].append([d, e[1]])
+        v1 = verts_in[e[0]]
+        v2 = verts_in[e[1]]
+        if d == 0:
+            continue
+
+        for e2, d2, j in zip(edges, ed_lengths, range(len(edges))):
+
+            if i &lt;= j or d2 == 0:
+                continue
+            if (e2[0] in e) or (e2[1] in e):
+                continue
+
+            v3 = verts_in[e2[0]]
+            v4 = verts_in[e2[1]]
+            vx = intersect_line_line_2d(v1, v2, v3, v4)
+            if vx:
+                d_to_1 = (vx - v1.to_2d()).length
+                d_to_2 = (vx - v3.to_2d()).length
+
+                new_id = len(verts_out)
+                if (vx.x, vx.y, v1.z) in verts_out:
+                    new_id = verts_out.index((vx.x, vx.y, v1.z))
+                else:
+                    if d_to_1 &lt; epsilon:
+                        new_id = e[0]
+                    elif d_to_1 &gt; d - epsilon:
+                        new_id = e[1]
+                    elif d_to_2 &lt; epsilon:
+                        new_id = e2[0]
+                    elif d_to_2 &gt; d2 - epsilon:
+                        new_id = e2[1]
+                    if new_id == len(verts_out):
+                        verts_out.append((vx.x, vx.y, v1.z))
+
+                # first item stores distance to origin, second the vertex id
+                ed_inter[i].append([d_to_1, new_id])
+                ed_inter[j].append([d_to_2, new_id])
+
+
+    edges_out = edges_from_ed_inter_double_removal(ed_inter)
+
+    return verts_out, edges_out
+
+# adapted from https://stackoverflow.com/a/3252222/16039380
+def perp(a):
+    b = np.empty_like(a)
+    b[:, 0] = -a[:,1]
+    b[:, 1] = a[:,0]
+    return b
+
+def perp_single(a):
+    b = np.empty_like(a)
+    b[0] = -a[1]
+    b[1] = a[0]
+    return b
+
+def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections&#39;&#39;&#39;
+    indices = cross_indices_np(len(edges))
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    eds = np_edges[indices].reshape(-1, 4)
+    mask = np.invert(np.any([eds[:, 0] == eds[:, 2],
+                             eds[:, 0] == eds[:, 3],
+                             eds[:, 1] == eds[:, 2],
+                             eds[:, 1] == eds[:, 3]],
+                            axis=0))
+    eds2 = eds[mask]
+    indices_m = indices[mask]
+
+    seg_v = np_verts[eds2]
+
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
+    dp = seg_v[:, 0] - seg_v[:, 2]
+
+    perp_direc_a = perp(direc_a)
+    denom_a = np_dot(perp_direc_a, direc_b)
+    num_a = np_dot(perp_direc_a, dp )
+    n_a = (num_a / denom_a.astype(float))
+    perp_direc_b = perp(direc_b)
+    denom_b = np_dot(perp_direc_b, direc_a)
+    num_b = np_dot(perp_direc_b, -dp)
+    n_b = (num_b / denom_b.astype(float))
+    inter = n_a[:, np.newaxis] * direc_b + seg_v[:, 2]
+
+    if only_touching:
+        valid_inter = np.all([n_a &gt; -epsilon, n_a &lt; 1+epsilon, n_b &gt; -epsilon, n_b &lt; 1+epsilon], axis=0)
+    else:
+        valid_inter = np.all([n_a &gt; 0, n_a &lt; 1, n_b &gt; 0, n_b &lt; 1], axis=0)
+
+    n_a_m = n_a[valid_inter]
+    n_b_m = n_b[valid_inter]
+    all_coefs = np.concatenate([[n_b_m], [n_a_m]], axis=0).T.ravel()
+
+    indices_m2 = indices_m[valid_inter]
+    i_ravel = indices_m2.ravel()
+
+    inters = inter[valid_inter]
+    new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()
+
+def intersect_edges_2d_np_big(verts, edges, epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections. Avoids to do to it all at once to prevent stack overflow&#39;&#39;&#39;
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    n = len(edges)
+    n_as, n_bs, indices_m2s, inters_s = [], [], [], []
+    for i in range(n-1):
+
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        edgs_i = np_edges[i]
+        eds_j = np_edges[np_j]
+        mask = np.invert(np.any([edgs_i[np.newaxis, 0] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 0] == eds_j[:, 1],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 1]],
+                                axis=0))
+        eds_j2 = eds_j[mask]
+        indices_j_m = np_j[mask]
+        seg_j = np_verts[eds_j2]
+        direc_b = seg_j[:, 1] - seg_j[:, 0]
+
+
+        np_i = np.full(len(indices_j_m), i, dtype=np.int32)
+        indices_m = np.stack((np_i, indices_j_m), axis=-1)
+
+        seg_a = np_verts[edgs_i]
+        direc_a = seg_a[1, :]- seg_a[0, :]
+        perp_direc_a = perp_single(direc_a)
+
+        dp = seg_a[np.newaxis, 0, :] - seg_j[:, 0]
+
+        denom_a = np_dot(perp_direc_a[np.newaxis, :], direc_b)
+        perp_direc_b = perp(direc_b)
+        denom_b = np_dot(perp_direc_b, direc_a[np.newaxis, :])
+        parallel_mask = np.all([denom_a != 0, denom_b != 0], axis=0)
+
+        dp = dp[parallel_mask]
+        denom_a = denom_a[parallel_mask]
+        direc_b = direc_b[parallel_mask]
+        num_a = np_dot(perp_direc_a[np.newaxis, :], dp)
+
+        n_a = (num_a / denom_a.astype(float))
+        perp_direc_b = perp_direc_b[parallel_mask]
+        denom_b = denom_b[parallel_mask]
+        num_b = np_dot(perp_direc_b, -dp)
+        n_b = (num_b / denom_b.astype(float))
+        inter = n_a[:, np.newaxis] * direc_b + seg_j[parallel_mask, 0]
+        if only_touching:
+            valid_inter = np.all([n_a &gt; -epsilon, n_a &lt; 1+epsilon, n_b &gt; -epsilon, n_b &lt; 1+epsilon], axis=0)
+        else:
+            valid_inter = np.all([n_a &gt; 0, n_a &lt; 1, n_b &gt; 0, n_b &lt; 1], axis=0)
+        n_a_m = n_a[valid_inter]
+        n_b_m = n_b[valid_inter]
+        indices_m2 = indices_m[parallel_mask][valid_inter]
+        inters = inter[valid_inter]
+        n_as.append(n_a_m)
+        n_bs.append(n_b_m)
+        indices_m2s.append(indices_m2)
+        inters_s.append(inters)
+
+    c_n_as = np.concatenate(n_as)
+    c_n_bs = np.concatenate(n_bs)
+    c_indices_m2s = np.concatenate(indices_m2s)
+    c_inters_s = np.concatenate(inters_s)
+    all_coefs = np.concatenate([[c_n_bs], [c_n_as]], axis=0).T.ravel()
+    i_ravel = c_indices_m2s.ravel()
+
+    new_idx = np.repeat(np.arange(len(c_inters_s)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, c_inters_s]).tolist(), np.concatenate(new_edges).tolist()
+
+
+def remove_doubles_from_edgenet(verts_in, edges_in, distance):
+    bm = bmesh_from_pydata(verts_in, edges_in, [])
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+
+    return verts_out, edges_out</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.intersect_edges.bmesh_intersect_edges_3d"><code class="name flex">
+<span>def <span class="ident">bmesh_intersect_edges_3d</span></span>(<span>bm, s_epsilon)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bmesh_intersect_edges_3d(bm, s_epsilon):
+    edge_indices = [e.index for e in bm.edges]
+    trim_indices = len(edge_indices)
+    for edge in bm.edges:
+        edge.select = True
+
+    cm = CAD_ops(epsilon=s_epsilon)
+
+    d = get_intersection_dictionary(cm, bm, edge_indices)
+    unselect_nonintersecting(bm, d.keys(), edge_indices)
+
+    # store non_intersecting edge sequencer
+    add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
+
+    update_mesh(bm, d)
+    return add_back</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.can_skip"><code class="name flex">
+<span>def <span class="ident">can_skip</span></span>(<span>cm, closest_points, vert_vectors)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>this checks if the intersection lies on both edges, returns True
+when criteria are not met, and thus this point can be skipped</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_skip(cm, closest_points, vert_vectors):
+    &#39;&#39;&#39;this checks if the intersection lies on both edges, returns True
+    when criteria are not met, and thus this point can be skipped&#39;&#39;&#39;
+    if not closest_points:
+        return True
+    if not isinstance(closest_points[0].x, float):
+        return True
+    if cm.num_edges_point_lies_on(closest_points[0], vert_vectors) &lt; 2:
+        return True
+
+    # if this distance is larger than than VTX_PRECISION, we can skip it.
+    cpa, cpb = closest_points
+    return (cpa-cpb).length &gt; cm.VTX_PRECISION</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.edges_from_ed_inter"><code class="name flex">
+<span>def <span class="ident">edges_from_ed_inter</span></span>(<span>ed_inter)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>create edges from intersections library</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_from_ed_inter(ed_inter):
+    &#39;&#39;&#39;create edges from intersections library&#39;&#39;&#39;
+    edges_out = []
+    for e in ed_inter:
+        # sort by first element of tuple (distances)
+        e_s = sorted(e)
+        e_s = [e for i, e in enumerate(e_s) if e[1] != e_s[i-1][1]]
+        for i in range(1, len(e_s)):
+            edges_out.append((e_s[i-1][1], e_s[i][1]))
+    return edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.edges_from_ed_inter_double_removal"><code class="name flex">
+<span>def <span class="ident">edges_from_ed_inter_double_removal</span></span>(<span>ed_inter)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>create edges from intersections library</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_from_ed_inter_double_removal(ed_inter):
+    &#39;&#39;&#39;create edges from intersections library&#39;&#39;&#39;
+    edges_out = []
+    for e in ed_inter:
+        # sort by first element of tuple (distances)
+        e_s = sorted(e)
+        e_s = [e for i, e in enumerate(e_s) if e[1] != e_s[i-1][1]]
+        for i in range(1, len(e_s)):
+            # if e_s[i-1][1] != e_s[i][1]:
+            if(e_s[i-1][1], e_s[i][1]) not in edges_out:
+                edges_out.append((e_s[i-1][1], e_s[i][1]))
+    return edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.get_intersection_dictionary"><code class="name flex">
+<span>def <span class="ident">get_intersection_dictionary</span></span>(<span>cm, bm, edge_indices)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_intersection_dictionary(cm, bm, edge_indices):
+
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+
+    permutations = get_valid_permutations(cm, bm, edge_indices)
+
+    k = defaultdict(list)
+    d = defaultdict(list)
+
+    for edges in permutations:
+        vert_vectors = cm.vectors_from_edges_tuple(bm, edges)
+        v1, v2, v3, v4 = vert_vectors
+
+        # Edges obviously can not intersect if their bounding
+        # boxes do not intersect
+        if (max(v1.x, v2.x) &lt; min(v3.x, v4.x) or
+            max(v1.y, v2.y) &lt; min(v3.y, v4.y) or
+            max(v1.z, v2.z) &lt; min(v3.z, v4.z)):
+                continue
+        if (max(v3.x, v4.x) &lt; min(v1.x, v2.x) or
+            max(v3.y, v4.y) &lt; min(v1.y, v2.y) or
+            max(v3.z, v4.z) &lt; min(v1.z, v2.z)):
+                continue
+
+        # Edges can not intersect if they do not lie in
+        # the same plane
+        if not cm.is_coplanar(vert_vectors):
+            continue
+
+        points = intersect_line_line(*vert_vectors)
+
+        # some can be skipped.    (NaN, None, not on both edges)
+        if can_skip(cm, points, vert_vectors):
+            continue
+
+        # reaches this point only when an intersection happens on both edges.
+        [k[edge].append(points[0]) for edge in edges]
+
+    # k will contain a dict of edge indices and points found on those edges.
+    for edge_idx, unordered_points in k.items():
+        tv1, tv2 = bm.edges[edge_idx].verts
+        v1 = bm.verts[tv1.index].co
+        v2 = bm.verts[tv2.index].co
+        ordered_points = order_points((v1, v2), unordered_points)
+        d[edge_idx].extend(ordered_points)
+
+    return d</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.get_valid_permutations"><code class="name flex">
+<span>def <span class="ident">get_valid_permutations</span></span>(<span>cm, bm, edge_indices)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_valid_permutations(cm, bm, edge_indices):
+    raw_permutations = itertools.permutations(edge_indices, 2)
+    permutations = [r for r in raw_permutations if r[0] &lt; r[1]]
+    return remove_permutations_that_share_a_vertex(cm, bm, permutations)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_2d"><code class="name flex">
+<span>def <span class="ident">intersect_edges_2d</span></span>(<span>verts, edges, epsilon)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterate through edges
+and expose them to intersect_line_line_2d</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_2d(verts, edges, epsilon):
+    &#39;&#39;&#39;Iterate through edges  and expose them to intersect_line_line_2d&#39;&#39;&#39;
+    verts_in = [Vector(v) for v in verts]
+    ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
+    verts_out = verts
+    edges_out = []
+    ed_inter = [[] for e in edges]
+    e_idx = range(len(edges))
+    for e, d, i in zip(edges, ed_lengths, e_idx):
+        # if there is no intersections this will create a normal edge
+        ed_inter[i].append([0.0, e[0]])
+        ed_inter[i].append([d, e[1]])
+        v1 = verts_in[e[0]]
+        v2 = verts_in[e[1]]
+        if d == 0:
+            continue
+
+        for e2, d2, j in zip(edges[:i], ed_lengths[:i], e_idx[:i]):
+
+            if d2 &lt; epsilon:
+                continue
+            if (e2[0] in e) or (e2[1] in e):
+                continue
+
+            v3 = verts_in[e2[0]]
+            v4 = verts_in[e2[1]]
+            vx = intersect_line_line_2d(v1, v2, v3, v4)
+            if vx:
+                d_to_1 = (vx - v1.to_2d()).length
+                d_to_2 = (vx - v3.to_2d()).length
+
+                new_id = len(verts_out)
+
+                if d_to_1 &lt; epsilon:
+                    new_id = e[0]
+                elif d_to_1 &gt; d - epsilon:
+                    new_id = e[1]
+                elif d_to_2 &lt; epsilon:
+                    new_id = e2[0]
+                elif d_to_2 &gt; d2 - epsilon:
+                    new_id = e2[1]
+                if new_id == len(verts_out):
+                    verts_out.append((vx.x, vx.y, v1.z))
+
+                # first item stores distance to origin, second the vertex id
+                ed_inter[i].append([d_to_1, new_id])
+                ed_inter[j].append([d_to_2, new_id])
+
+
+    edges_out = edges_from_ed_inter(ed_inter)
+
+    return verts_out, edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_2d_double_removal"><code class="name flex">
+<span>def <span class="ident">intersect_edges_2d_double_removal</span></span>(<span>verts, edges, epsilon)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Iterate through edges
+and expose them to intersect_line_line_2d</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_2d_double_removal(verts, edges, epsilon):
+    &#39;&#39;&#39;Iterate through edges  and expose them to intersect_line_line_2d&#39;&#39;&#39;
+    verts_in = [Vector(v) for v in verts]
+    ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
+    verts_out = verts
+    edges_out = []
+    ed_inter = [[] for e in edges]
+    for e, d, i in zip(edges, ed_lengths, range(len(edges))):
+        # if there is no intersections this will create a normal edge
+        ed_inter[i].append([0.0, e[0]])
+        ed_inter[i].append([d, e[1]])
+        v1 = verts_in[e[0]]
+        v2 = verts_in[e[1]]
+        if d == 0:
+            continue
+
+        for e2, d2, j in zip(edges, ed_lengths, range(len(edges))):
+
+            if i &lt;= j or d2 == 0:
+                continue
+            if (e2[0] in e) or (e2[1] in e):
+                continue
+
+            v3 = verts_in[e2[0]]
+            v4 = verts_in[e2[1]]
+            vx = intersect_line_line_2d(v1, v2, v3, v4)
+            if vx:
+                d_to_1 = (vx - v1.to_2d()).length
+                d_to_2 = (vx - v3.to_2d()).length
+
+                new_id = len(verts_out)
+                if (vx.x, vx.y, v1.z) in verts_out:
+                    new_id = verts_out.index((vx.x, vx.y, v1.z))
+                else:
+                    if d_to_1 &lt; epsilon:
+                        new_id = e[0]
+                    elif d_to_1 &gt; d - epsilon:
+                        new_id = e[1]
+                    elif d_to_2 &lt; epsilon:
+                        new_id = e2[0]
+                    elif d_to_2 &gt; d2 - epsilon:
+                        new_id = e2[1]
+                    if new_id == len(verts_out):
+                        verts_out.append((vx.x, vx.y, v1.z))
+
+                # first item stores distance to origin, second the vertex id
+                ed_inter[i].append([d_to_1, new_id])
+                ed_inter[j].append([d_to_2, new_id])
+
+
+    edges_out = edges_from_ed_inter_double_removal(ed_inter)
+
+    return verts_out, edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_2d_np"><code class="name flex">
+<span>def <span class="ident">intersect_edges_2d_np</span></span>(<span>verts, edges, epsilon, only_touching=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Brute force Numpy implementation of edges intersections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections&#39;&#39;&#39;
+    indices = cross_indices_np(len(edges))
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    eds = np_edges[indices].reshape(-1, 4)
+    mask = np.invert(np.any([eds[:, 0] == eds[:, 2],
+                             eds[:, 0] == eds[:, 3],
+                             eds[:, 1] == eds[:, 2],
+                             eds[:, 1] == eds[:, 3]],
+                            axis=0))
+    eds2 = eds[mask]
+    indices_m = indices[mask]
+
+    seg_v = np_verts[eds2]
+
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
+    dp = seg_v[:, 0] - seg_v[:, 2]
+
+    perp_direc_a = perp(direc_a)
+    denom_a = np_dot(perp_direc_a, direc_b)
+    num_a = np_dot(perp_direc_a, dp )
+    n_a = (num_a / denom_a.astype(float))
+    perp_direc_b = perp(direc_b)
+    denom_b = np_dot(perp_direc_b, direc_a)
+    num_b = np_dot(perp_direc_b, -dp)
+    n_b = (num_b / denom_b.astype(float))
+    inter = n_a[:, np.newaxis] * direc_b + seg_v[:, 2]
+
+    if only_touching:
+        valid_inter = np.all([n_a &gt; -epsilon, n_a &lt; 1+epsilon, n_b &gt; -epsilon, n_b &lt; 1+epsilon], axis=0)
+    else:
+        valid_inter = np.all([n_a &gt; 0, n_a &lt; 1, n_b &gt; 0, n_b &lt; 1], axis=0)
+
+    n_a_m = n_a[valid_inter]
+    n_b_m = n_b[valid_inter]
+    all_coefs = np.concatenate([[n_b_m], [n_a_m]], axis=0).T.ravel()
+
+    indices_m2 = indices_m[valid_inter]
+    i_ravel = indices_m2.ravel()
+
+    inters = inter[valid_inter]
+    new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_2d_np_big"><code class="name flex">
+<span>def <span class="ident">intersect_edges_2d_np_big</span></span>(<span>verts, edges, epsilon, only_touching=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Brute force Numpy implementation of edges intersections. Avoids to do to it all at once to prevent stack overflow</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_2d_np_big(verts, edges, epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections. Avoids to do to it all at once to prevent stack overflow&#39;&#39;&#39;
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    n = len(edges)
+    n_as, n_bs, indices_m2s, inters_s = [], [], [], []
+    for i in range(n-1):
+
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        edgs_i = np_edges[i]
+        eds_j = np_edges[np_j]
+        mask = np.invert(np.any([edgs_i[np.newaxis, 0] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 0] == eds_j[:, 1],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 1]],
+                                axis=0))
+        eds_j2 = eds_j[mask]
+        indices_j_m = np_j[mask]
+        seg_j = np_verts[eds_j2]
+        direc_b = seg_j[:, 1] - seg_j[:, 0]
+
+
+        np_i = np.full(len(indices_j_m), i, dtype=np.int32)
+        indices_m = np.stack((np_i, indices_j_m), axis=-1)
+
+        seg_a = np_verts[edgs_i]
+        direc_a = seg_a[1, :]- seg_a[0, :]
+        perp_direc_a = perp_single(direc_a)
+
+        dp = seg_a[np.newaxis, 0, :] - seg_j[:, 0]
+
+        denom_a = np_dot(perp_direc_a[np.newaxis, :], direc_b)
+        perp_direc_b = perp(direc_b)
+        denom_b = np_dot(perp_direc_b, direc_a[np.newaxis, :])
+        parallel_mask = np.all([denom_a != 0, denom_b != 0], axis=0)
+
+        dp = dp[parallel_mask]
+        denom_a = denom_a[parallel_mask]
+        direc_b = direc_b[parallel_mask]
+        num_a = np_dot(perp_direc_a[np.newaxis, :], dp)
+
+        n_a = (num_a / denom_a.astype(float))
+        perp_direc_b = perp_direc_b[parallel_mask]
+        denom_b = denom_b[parallel_mask]
+        num_b = np_dot(perp_direc_b, -dp)
+        n_b = (num_b / denom_b.astype(float))
+        inter = n_a[:, np.newaxis] * direc_b + seg_j[parallel_mask, 0]
+        if only_touching:
+            valid_inter = np.all([n_a &gt; -epsilon, n_a &lt; 1+epsilon, n_b &gt; -epsilon, n_b &lt; 1+epsilon], axis=0)
+        else:
+            valid_inter = np.all([n_a &gt; 0, n_a &lt; 1, n_b &gt; 0, n_b &lt; 1], axis=0)
+        n_a_m = n_a[valid_inter]
+        n_b_m = n_b[valid_inter]
+        indices_m2 = indices_m[parallel_mask][valid_inter]
+        inters = inter[valid_inter]
+        n_as.append(n_a_m)
+        n_bs.append(n_b_m)
+        indices_m2s.append(indices_m2)
+        inters_s.append(inters)
+
+    c_n_as = np.concatenate(n_as)
+    c_n_bs = np.concatenate(n_bs)
+    c_indices_m2s = np.concatenate(indices_m2s)
+    c_inters_s = np.concatenate(inters_s)
+    all_coefs = np.concatenate([[c_n_bs], [c_n_as]], axis=0).T.ravel()
+    i_ravel = c_indices_m2s.ravel()
+
+    new_idx = np.repeat(np.arange(len(c_inters_s)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, c_inters_s]).tolist(), np.concatenate(new_edges).tolist()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_3d"><code class="name flex">
+<span>def <span class="ident">intersect_edges_3d</span></span>(<span>verts_in, edges_in, s_epsilon)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_3d(verts_in, edges_in, s_epsilon):
+    bm = bmesh_from_pydata(verts_in, edges_in, [])
+
+    trim_indices = len(bm.edges[:])
+
+    add_back = bmesh_intersect_edges_3d(bm, s_epsilon)
+
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+    # optional correction, remove originals, add back those that are not intersecting.
+    edges_out = edges_out[trim_indices:]
+    edges_out.extend(add_back)
+    bm.free()
+    return verts_out, edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.intersect_edges_3d_np"><code class="name flex">
+<span>def <span class="ident">intersect_edges_3d_np</span></span>(<span>verts, edges, s_epsilon, only_touching=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Brute force Numpy implementation of edges intersections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
+    &#39;&#39;&#39;Brute force Numpy implementation of edges intersections&#39;&#39;&#39;
+    indices = cross_indices_np(len(edges))
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    eds = np_edges[indices].reshape(-1, 4)
+    mask = np.invert(np.any([eds[:, 0] == eds[:, 2],
+                             eds[:, 0] == eds[:, 3],
+                             eds[:, 1] == eds[:, 2],
+                             eds[:, 1] == eds[:, 3]],
+                            axis=0))
+    eds2 = eds[mask]
+    indices_m = indices[mask]
+
+    seg_v = np_verts[eds2]
+
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
+    dp = seg_v[:, 2] - seg_v[:, 0]
+    perp = np.cross(direc_a, direc_b, axis=1)
+    perp_magnitude = np.linalg.norm(perp, axis=1)
+    non_parallel = perp_magnitude &gt; 0
+    perp[non_parallel] /= perp_magnitude[non_parallel, np.newaxis]
+    dist = np_dot(perp[non_parallel], dp[non_parallel])
+    co_planar = np.abs(dist) &lt; s_epsilon
+    seg_v = seg_v[non_parallel][co_planar]
+    # Calculate denominator
+    A = direc_a[non_parallel][co_planar]
+    B = direc_b[non_parallel][co_planar]
+    magA = np.linalg.norm(A, axis=1)
+    magB = np.linalg.norm(B, axis=1)
+
+    _A = A / magA[:, np.newaxis]
+    _B = B / magB[:, np.newaxis]
+
+    cross = np.cross(_A, _B, axis=1)
+    denom = np.linalg.norm(cross, axis=1)**2
+    t = dp[non_parallel][co_planar]
+    detA = np.linalg.det(np.array([t.T, _B.T, cross.T]).T)
+    detB = np.linalg.det(np.array([t.T, _A.T, cross.T]).T)
+    t0 = detA / denom
+    t1 = detB / denom
+    if only_touching:
+        valid_inter = np.all([t0 &gt; -s_epsilon, t0 &lt; magA + s_epsilon, t1 &gt; -s_epsilon, t1 &lt; magB + s_epsilon], axis=0)
+    else:
+        valid_inter = np.all([t0 &gt; 0, t0 &lt; magA , t1 &gt; 0, t1 &lt; magB], axis=0)
+    pA = seg_v[:, 0] + (_A * t0[:, np.newaxis]) # Projected closest point on segment A
+    # pB = seg_v[:,2] + (_B * t1[:, np.newaxis]) # Projected closest point on segment B
+    inters = pA[valid_inter]
+
+    n_a_m = t0[valid_inter]
+    n_b_m = t1[valid_inter]
+    all_coefs = np.concatenate([[n_a_m], [n_b_m]], axis=0).T.ravel()
+
+    indices_m2 = indices_m[non_parallel][co_planar][valid_inter]
+    i_ravel = indices_m2.ravel()
+    new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1,2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.order_points"><code class="name flex">
+<span>def <span class="ident">order_points</span></span>(<span>edge, point_list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>order these edges from distance to v1, then
+sandwich the sorted list with v1, v2</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def order_points(edge, point_list):
+    &#39;&#39;&#39; order these edges from distance to v1, then
+    sandwich the sorted list with v1, v2 &#39;&#39;&#39;
+    v1, v2 = edge
+    dist = lambda co: (v1-co).length
+    point_list = sorted(point_list, key=dist)
+    return [v1] + point_list + [v2]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.perp"><code class="name flex">
+<span>def <span class="ident">perp</span></span>(<span>a)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def perp(a):
+    b = np.empty_like(a)
+    b[:, 0] = -a[:,1]
+    b[:, 1] = a[:,0]
+    return b</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.perp_single"><code class="name flex">
+<span>def <span class="ident">perp_single</span></span>(<span>a)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def perp_single(a):
+    b = np.empty_like(a)
+    b[0] = -a[1]
+    b[1] = a[0]
+    return b</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.remove_doubles_from_edgenet"><code class="name flex">
+<span>def <span class="ident">remove_doubles_from_edgenet</span></span>(<span>verts_in, edges_in, distance)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_doubles_from_edgenet(verts_in, edges_in, distance):
+    bm = bmesh_from_pydata(verts_in, edges_in, [])
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+
+    return verts_out, edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.remove_permutations_that_share_a_vertex"><code class="name flex">
+<span>def <span class="ident">remove_permutations_that_share_a_vertex</span></span>(<span>cm, bm, permutations)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get useful Permutations</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_permutations_that_share_a_vertex(cm, bm, permutations):
+    &#39;&#39;&#39; Get useful Permutations &#39;&#39;&#39;
+
+    final_permutations = []
+    for edges in permutations:
+        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
+        if cm.duplicates(raw_vert_indices):
+            continue
+
+        # reaches this point if they do not share.
+        final_permutations.append(edges)
+
+    return final_permutations</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.unselect_nonintersecting"><code class="name flex">
+<span>def <span class="ident">unselect_nonintersecting</span></span>(<span>bm, d_edges, edge_indices)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unselect_nonintersecting(bm, d_edges, edge_indices):
+    # print(d_edges, edge_indices)
+    if len(edge_indices) &gt; len(d_edges):
+        reserved_edges = set(edge_indices) - set(d_edges)
+        for edge in reserved_edges:
+            bm.edges[edge].select = False
+        # print(&#34;unselected {}, non intersecting edges&#34;.format(reserved_edges))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.intersect_edges.update_mesh"><code class="name flex">
+<span>def <span class="ident">update_mesh</span></span>(<span>bm, d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Make new geometry</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_mesh(bm, d):
+    &#39;&#39;&#39; Make new geometry &#39;&#39;&#39;
+
+    oe = bm.edges
+    ov = bm.verts
+
+    for old_edge, point_list in d.items():
+        num_edges_to_add = len(point_list)-1
+        for i in range(num_edges_to_add):
+            a = ov.new(point_list[i])
+            b = ov.new(point_list[i+1])
+            oe.new((a, b))
+    bm.normal_update()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.intersect_edges.bmesh_intersect_edges_3d" href="#sverchok.utils.intersect_edges.bmesh_intersect_edges_3d">bmesh_intersect_edges_3d</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.can_skip" href="#sverchok.utils.intersect_edges.can_skip">can_skip</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.edges_from_ed_inter" href="#sverchok.utils.intersect_edges.edges_from_ed_inter">edges_from_ed_inter</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.edges_from_ed_inter_double_removal" href="#sverchok.utils.intersect_edges.edges_from_ed_inter_double_removal">edges_from_ed_inter_double_removal</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.get_intersection_dictionary" href="#sverchok.utils.intersect_edges.get_intersection_dictionary">get_intersection_dictionary</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.get_valid_permutations" href="#sverchok.utils.intersect_edges.get_valid_permutations">get_valid_permutations</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_2d" href="#sverchok.utils.intersect_edges.intersect_edges_2d">intersect_edges_2d</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_2d_double_removal" href="#sverchok.utils.intersect_edges.intersect_edges_2d_double_removal">intersect_edges_2d_double_removal</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_2d_np" href="#sverchok.utils.intersect_edges.intersect_edges_2d_np">intersect_edges_2d_np</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_2d_np_big" href="#sverchok.utils.intersect_edges.intersect_edges_2d_np_big">intersect_edges_2d_np_big</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_3d" href="#sverchok.utils.intersect_edges.intersect_edges_3d">intersect_edges_3d</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.intersect_edges_3d_np" href="#sverchok.utils.intersect_edges.intersect_edges_3d_np">intersect_edges_3d_np</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.order_points" href="#sverchok.utils.intersect_edges.order_points">order_points</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.perp" href="#sverchok.utils.intersect_edges.perp">perp</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.perp_single" href="#sverchok.utils.intersect_edges.perp_single">perp_single</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.remove_doubles_from_edgenet" href="#sverchok.utils.intersect_edges.remove_doubles_from_edgenet">remove_doubles_from_edgenet</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.remove_permutations_that_share_a_vertex" href="#sverchok.utils.intersect_edges.remove_permutations_that_share_a_vertex">remove_permutations_that_share_a_vertex</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.unselect_nonintersecting" href="#sverchok.utils.intersect_edges.unselect_nonintersecting">unselect_nonintersecting</a></code></li>
+<li><code><a title="sverchok.utils.intersect_edges.update_mesh" href="#sverchok.utils.intersect_edges.update_mesh">update_mesh</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

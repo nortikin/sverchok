@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_obj_baker API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_obj_baker</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
+import bpy
+from bpy.props import StringProperty
+from mathutils import Vector, Matrix
+
+from sverchok.data_structure import node_id, dataCorrect, dataCorrect_np
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+
+cache_viewer_baker = {}
+
+def fill_cache_from_node_reference(node):
+    n_id = node_id(node)
+    data = node.get_data()
+
+    vertex_ref = n_id + &#39;v&#39;
+    edg_ref = n_id + &#39;e&#39;
+    pol_ref = n_id + &#39;p&#39;
+    matrix_ref = n_id + &#39;m&#39;
+    cache_viewer_baker[vertex_ref] = data[3]
+    cache_viewer_baker[edg_ref] = data[1]
+    cache_viewer_baker[pol_ref] = data[2]
+    cache_viewer_baker[matrix_ref] = data[4]
+
+
+class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
+    &#34;&#34;&#34; B A K E   OBJECTS &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_mesh_baker_mk3&#34;
+    bl_label = &#34;Sverchok mesh baker mk3&#34;
+    bl_options = {&#39;REGISTER&#39;, &#39;UNDO&#39;}
+
+    def sv_execute(self, context, node):
+
+        nid = node_id(node)
+        if not node.inputs[0].is_linked:
+            self.report({&#34;WARNING&#34;}, &#34;Vertex socket of Draw node must be connected&#34;)
+            return {&#39;CANCELLED&#39;}
+
+        fill_cache_from_node_reference(node)
+        matrix_cache = cache_viewer_baker[nid + &#39;m&#39;]
+        vertex_cache = cache_viewer_baker[nid + &#39;v&#39;]
+        edg_cache = cache_viewer_baker[nid + &#39;e&#39;]
+        pol_cache = cache_viewer_baker[nid + &#39;p&#39;]
+
+        if matrix_cache and not vertex_cache:
+            return {&#39;CANCELLED&#39;}
+
+        v = dataCorrect_np(vertex_cache)
+        e = self.dataCorrect3(edg_cache)
+        p = self.dataCorrect3(pol_cache)
+        m = self.dataCorrect2(matrix_cache, v)
+        self.config = node
+        self.makeobjects(v, e, p, m)
+
+
+    def dataCorrect2(self, destination, obj):
+        if destination:
+            return destination
+        return [Matrix() for v in obj]
+
+    def dataCorrect3(self, destination, fallback=[]):
+        if destination:
+            return dataCorrect(destination)
+        return fallback
+
+    def makeobjects(self, vers, edg, pol, mats):
+        objects = {}
+        for i, m in enumerate(mats):
+            v, e, p = vers[i], edg[i], pol[i]
+            objects[str(i)] = self.makemesh(i, v, e, p, m)
+
+        for ob, me in objects.values():
+            bpy.context.scene.collection.objects.link(ob)
+
+    def validate_indices(self, ident_num, v, idx_list, kind_list):
+        outlist = []
+        n = len(v)
+        for idx, sublist in enumerate(idx_list):
+            tlist = sublist
+            if min(sublist) &lt; 0:
+                tlist = [(i if i &gt;= 0 else n + i) for i in sublist]
+                print(&#39;vdmk3 input fixing, converted negative indices to positive&#39;)
+                print(sublist, &#39; ---&gt; &#39;, tlist)
+
+            outlist.append(tlist)
+        return outlist
+
+    def makemesh(self, i, v, e, p, m):
+        name = &#39;Sv_&#39; + str(i)
+        me = bpy.data.meshes.new(name)
+        e = self.validate_indices(i, v, e, &#34;edges&#34;)
+        p = self.validate_indices(i, v, p, &#34;polygons&#34;)
+        me.from_pydata(v, e, p)
+        me.update(calc_edges = True)
+        ob = bpy.data.objects.new(name, me)
+        if self.config.extended_matrix:
+            ob.data.transform(m)
+        else:
+            ob.matrix_world = m
+        ob.show_name = False
+        ob.hide_select = False
+        return ob, me
+
+
+from sverchok.dependencies import FreeCAD
+
+if FreeCAD is not None:
+    from sverchok.utils.solid import standard_mesher, mefisto_mesher
+    def fill_cache_from_solid_node_reference(node):
+        n_id = node_id(node)
+        solids = node.inputs[0].sv_get()
+        mode = node.tesselate_mode
+        if mode == &#34;Standard&#34;:
+            verts, faces = standard_mesher(solids, [node.surface_deviation], [node.angle_deviation], node.relative_surface_deviation)
+        else:
+            verts, faces = mefisto_mesher(solids, [node.max_edge_length])
+
+        vertex_ref = n_id + &#39;v&#39;
+        pol_ref = n_id + &#39;p&#39;
+        matrix_ref = n_id + &#39;m&#39;
+        cache_viewer_baker[vertex_ref] = verts
+        cache_viewer_baker[pol_ref] = faces
+        cache_viewer_baker[matrix_ref] = []
+
+
+    class SvSolidBake(bpy.types.Operator, SvGenericNodeLocator):
+        &#34;&#34;&#34; B A K E   OBJECTS &#34;&#34;&#34;
+        bl_idname = &#34;node.sverchok_solid_baker_mk3&#34;
+        bl_label = &#34;Sverchok solid baker mk3&#34;
+        bl_options = {&#39;REGISTER&#39;, &#39;UNDO&#39;}
+
+        def sv_execute(self, context, node):
+            nid = node_id(node)
+            if not node.inputs[0].is_linked:
+                self.report({&#34;WARNING&#34;}, &#34;Solid socket of Viewer node must be connected&#34;)
+                return {&#39;CANCELLED&#39;}
+
+            fill_cache_from_solid_node_reference(node)
+            matrix_cache = cache_viewer_baker[nid + &#39;m&#39;]
+            vertex_cache = cache_viewer_baker[nid + &#39;v&#39;]
+            pol_cache = cache_viewer_baker[nid + &#39;p&#39;]
+
+            if matrix_cache and not vertex_cache:
+                return {&#39;CANCELLED&#39;}
+
+            v = vertex_cache
+            p = pol_cache
+            m = self.dataCorrect2(matrix_cache, v)
+            self.config = node
+            self.makeobjects(v, p, m)
+
+
+        def dataCorrect2(self, destination, obj):
+            if destination:
+                return destination
+            return [Matrix() for v in obj]
+
+        def dataCorrect3(self, destination, fallback=[]):
+            if destination:
+                return dataCorrect(destination)
+            return fallback
+
+        def makeobjects(self, vers, pol, mats):
+            objects = {}
+            for i, m in enumerate(mats):
+                v, p = vers[i], pol[i]
+                objects[str(i)] = self.makemesh(i, v, p, m)
+
+            for ob, me in objects.values():
+                bpy.context.scene.collection.objects.link(ob)
+
+        def makemesh(self, i, v, p, m):
+            name = &#39;Sv_&#39; + str(i)
+            me = bpy.data.meshes.new(name)
+
+            me.from_pydata(v, [], p)
+            me.update(calc_edges=True)
+            ob = bpy.data.objects.new(name, me)
+            if self.config.extended_matrix:
+                ob.data.transform(m)
+            else:
+                ob.matrix_world = m
+            ob.show_name = False
+            ob.hide_select = False
+            return ob, me
+
+classes = [SvObjBakeMK3]
+
+if FreeCAD is not None:
+    classes.append(SvSolidBake)
+
+register, unregister = bpy.utils.register_classes_factory(classes)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_obj_baker.fill_cache_from_node_reference"><code class="name flex">
+<span>def <span class="ident">fill_cache_from_node_reference</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_cache_from_node_reference(node):
+    n_id = node_id(node)
+    data = node.get_data()
+
+    vertex_ref = n_id + &#39;v&#39;
+    edg_ref = n_id + &#39;e&#39;
+    pol_ref = n_id + &#39;p&#39;
+    matrix_ref = n_id + &#39;m&#39;
+    cache_viewer_baker[vertex_ref] = data[3]
+    cache_viewer_baker[edg_ref] = data[1]
+    cache_viewer_baker[pol_ref] = data[2]
+    cache_viewer_baker[matrix_ref] = data[4]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3"><code class="flex name class">
+<span>class <span class="ident">SvObjBakeMK3</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B A K E
+OBJECTS</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
+    &#34;&#34;&#34; B A K E   OBJECTS &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_mesh_baker_mk3&#34;
+    bl_label = &#34;Sverchok mesh baker mk3&#34;
+    bl_options = {&#39;REGISTER&#39;, &#39;UNDO&#39;}
+
+    def sv_execute(self, context, node):
+
+        nid = node_id(node)
+        if not node.inputs[0].is_linked:
+            self.report({&#34;WARNING&#34;}, &#34;Vertex socket of Draw node must be connected&#34;)
+            return {&#39;CANCELLED&#39;}
+
+        fill_cache_from_node_reference(node)
+        matrix_cache = cache_viewer_baker[nid + &#39;m&#39;]
+        vertex_cache = cache_viewer_baker[nid + &#39;v&#39;]
+        edg_cache = cache_viewer_baker[nid + &#39;e&#39;]
+        pol_cache = cache_viewer_baker[nid + &#39;p&#39;]
+
+        if matrix_cache and not vertex_cache:
+            return {&#39;CANCELLED&#39;}
+
+        v = dataCorrect_np(vertex_cache)
+        e = self.dataCorrect3(edg_cache)
+        p = self.dataCorrect3(pol_cache)
+        m = self.dataCorrect2(matrix_cache, v)
+        self.config = node
+        self.makeobjects(v, e, p, m)
+
+
+    def dataCorrect2(self, destination, obj):
+        if destination:
+            return destination
+        return [Matrix() for v in obj]
+
+    def dataCorrect3(self, destination, fallback=[]):
+        if destination:
+            return dataCorrect(destination)
+        return fallback
+
+    def makeobjects(self, vers, edg, pol, mats):
+        objects = {}
+        for i, m in enumerate(mats):
+            v, e, p = vers[i], edg[i], pol[i]
+            objects[str(i)] = self.makemesh(i, v, e, p, m)
+
+        for ob, me in objects.values():
+            bpy.context.scene.collection.objects.link(ob)
+
+    def validate_indices(self, ident_num, v, idx_list, kind_list):
+        outlist = []
+        n = len(v)
+        for idx, sublist in enumerate(idx_list):
+            tlist = sublist
+            if min(sublist) &lt; 0:
+                tlist = [(i if i &gt;= 0 else n + i) for i in sublist]
+                print(&#39;vdmk3 input fixing, converted negative indices to positive&#39;)
+                print(sublist, &#39; ---&gt; &#39;, tlist)
+
+            outlist.append(tlist)
+        return outlist
+
+    def makemesh(self, i, v, e, p, m):
+        name = &#39;Sv_&#39; + str(i)
+        me = bpy.data.meshes.new(name)
+        e = self.validate_indices(i, v, e, &#34;edges&#34;)
+        p = self.validate_indices(i, v, p, &#34;polygons&#34;)
+        me.from_pydata(v, e, p)
+        me.update(calc_edges = True)
+        ob = bpy.data.objects.new(name, me)
+        if self.config.extended_matrix:
+            ob.data.transform(m)
+        else:
+            ob.matrix_world = m
+        ob.show_name = False
+        ob.hide_select = False
+        return ob, me</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+<li><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator">SvGenericNodeLocator</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.node_name"><code class="name">var <span class="ident">node_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': '', 'description': 'name of the node', 'attr': 'node_name'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': '', 'description': 'name of the node tree', 'attr': 'tree_name'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect2"><code class="name flex">
+<span>def <span class="ident">dataCorrect2</span></span>(<span>self, destination, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataCorrect2(self, destination, obj):
+    if destination:
+        return destination
+    return [Matrix() for v in obj]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect3"><code class="name flex">
+<span>def <span class="ident">dataCorrect3</span></span>(<span>self, destination, fallback=[])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataCorrect3(self, destination, fallback=[]):
+    if destination:
+        return dataCorrect(destination)
+    return fallback</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.makemesh"><code class="name flex">
+<span>def <span class="ident">makemesh</span></span>(<span>self, i, v, e, p, m)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makemesh(self, i, v, e, p, m):
+    name = &#39;Sv_&#39; + str(i)
+    me = bpy.data.meshes.new(name)
+    e = self.validate_indices(i, v, e, &#34;edges&#34;)
+    p = self.validate_indices(i, v, p, &#34;polygons&#34;)
+    me.from_pydata(v, e, p)
+    me.update(calc_edges = True)
+    ob = bpy.data.objects.new(name, me)
+    if self.config.extended_matrix:
+        ob.data.transform(m)
+    else:
+        ob.matrix_world = m
+    ob.show_name = False
+    ob.hide_select = False
+    return ob, me</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.makeobjects"><code class="name flex">
+<span>def <span class="ident">makeobjects</span></span>(<span>self, vers, edg, pol, mats)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makeobjects(self, vers, edg, pol, mats):
+    objects = {}
+    for i, m in enumerate(mats):
+        v, e, p = vers[i], edg[i], pol[i]
+        objects[str(i)] = self.makemesh(i, v, e, p, m)
+
+    for ob, me in objects.values():
+        bpy.context.scene.collection.objects.link(ob)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_obj_baker.SvObjBakeMK3.validate_indices"><code class="name flex">
+<span>def <span class="ident">validate_indices</span></span>(<span>self, ident_num, v, idx_list, kind_list)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate_indices(self, ident_num, v, idx_list, kind_list):
+    outlist = []
+    n = len(v)
+    for idx, sublist in enumerate(idx_list):
+        tlist = sublist
+        if min(sublist) &lt; 0:
+            tlist = [(i if i &gt;= 0 else n + i) for i in sublist]
+            print(&#39;vdmk3 input fixing, converted negative indices to positive&#39;)
+            print(sublist, &#39; ---&gt; &#39;, tlist)
+
+        outlist.append(tlist)
+    return outlist</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator">SvGenericNodeLocator</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_node" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_node">get_node</a></code></li>
+<li><code><a title="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.sv_execute" href="sv_operator_mixins.html#sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.sv_execute">sv_execute</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_obj_baker.fill_cache_from_node_reference" href="#sverchok.utils.sv_obj_baker.fill_cache_from_node_reference">fill_cache_from_node_reference</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3">SvObjBakeMK3</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_idname" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_label" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_options" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_rna" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect2" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect2">dataCorrect2</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect3" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.dataCorrect3">dataCorrect3</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.makemesh" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.makemesh">makemesh</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.makeobjects" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.makeobjects">makeobjects</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.node_name" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.node_name">node_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.tree_name" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.tree_name">tree_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_obj_baker.SvObjBakeMK3.validate_indices" href="#sverchok.utils.sv_obj_baker.SvObjBakeMK3.validate_indices">validate_indices</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

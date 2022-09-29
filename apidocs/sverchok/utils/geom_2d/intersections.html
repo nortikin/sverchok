@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.geom_2d.intersections API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.geom_2d.intersections</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
+from .dcel import DCELMesh as DCELMesh_template, Point as Point_template, HalfEdge as HalfEdge_template
+from .lin_alg import almost_equal, is_edges_intersect, intersect_edges
+from .sort_mesh import SortPointsUpDown, SortEdgeSweepingAlgorithm
+from sverchok.utils.avl_tree import AVLTree
+
+from .dcel_debugger import Debugger
+
+
+def intersect_sv_edges(sv_verts, sv_edges, accuracy=1e-5):
+    &#34;&#34;&#34;
+    Merge several Sverchok mesh objects into one with finding self intersections
+    :param sv_verts: [[[x1, y1, z1], [x2, y2, z2], ...]-obj_1, [[x1, y1, z1], [x2, y2, z2], ...]-obj_2, ..., obj_n]
+    :param sv_edges: [[[i1, i2], edge2, .., edge n]-obj_1, [[i1, i2], edge2, .., edge n]-obj_2, .., obj_n]
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: vertices in SV format, edges in SV format
+    &#34;&#34;&#34;
+    mesh = DCELMesh(accuracy)
+    mesh.from_sv_edges(sv_verts, sv_edges)
+    find_intersections(mesh, accuracy)
+    return mesh.to_sv_mesh(faces=False)
+
+
+# #############################################################################
+# ###########________find intersections algorithm_________#####################
+# #############################################################################
+
+
+x, y, z = 0, 1, 2
+
+
+class Point(Point_template, SortPointsUpDown):
+
+    def __init__(self, mesh, co, accuracy=1e-6):
+        super().__init__(mesh, co)
+        self.accuracy = accuracy
+        self.up_edges = []  # edges below event point
+
+
+class HalfEdge(HalfEdge_template):
+    def __init__(self,  mesh, point, face=None):
+        super().__init__(mesh, point, face)
+
+        # This need for find intersection algorithm for detection unused half edges
+        # Also this need for make monotone algorithm, don&#39;t remember how
+        self.edge = None
+
+        # faces from overlapping edges, for keeping status of overlapping edges
+        self.lap_faces = {face} if face else set()
+        self.in_faces = {face} if face else set()  # in which faces new face is located
+
+
+class DCELMesh(DCELMesh_template):
+    Point = Point
+    HalfEdge = HalfEdge
+
+
+class Edge(SortEdgeSweepingAlgorithm):
+    # Special class for storing in status data structure
+
+    def __init__(self, up_p, low_p):
+        super().__init__(up_p, low_p)
+
+        self.low_hedge = None  # half edge which origin is lower then origin of twin
+        self.up_hedge = None  # half edge which origin is upper then origin of twin
+        self.coincidence = []  # just a list of overlapping edges
+
+    @property
+    def is_c(self):
+        # returns True if current event point is intersection point of current edge
+        return self.low_p != self.event_point
+
+    @property
+    def low_dot_length(self):
+        # returns length of edge from event point to low point of the edge
+        return (self.low_p - self.event_point).length()
+
+    @property
+    def inner_hedge(self):
+        # returns half edge with origin in event point
+        return self.low_hedge if self.low_hedge.origin == self.event_point else self.up_hedge
+
+    @property
+    def outer_hedge(self):
+        # returns half edge pointing to event point
+        return self.low_hedge if self.low_hedge.origin != self.event_point else self.up_hedge
+
+
+def find_intersections(dcel_mesh, accuracy=1e-6, face_overlapping=False):
+    &#34;&#34;&#34;
+    Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
+    Only half edges have correct data after the algorithm.
+    Use build faces from half edges method for updating faces if necessary.
+    :param dcel_mesh: inner DCELMesh data structure
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :param face_overlapping: if True detect in which faces new face is inside
+    &#34;&#34;&#34;
+    status = AVLTree()
+    event_queue = AVLTree()
+    accuracy = accuracy if isinstance(accuracy, float) else 1 / 10 ** accuracy
+    Edge.set_accuracy(accuracy)
+    init_event_queue(event_queue, dcel_mesh)
+    while event_queue:
+        event_node = event_queue.find_smallest()
+        handle_event_point(status, event_queue, event_node.key, dcel_mesh, accuracy, face_overlapping)
+        event_queue.remove_node(event_node)
+    dcel_mesh.hedges = [hedge for hedge in dcel_mesh.hedges if hedge.edge]
+
+
+def init_event_queue(event_queue, dcel_mesh):
+    # preparation to finding intersection algorithm
+    Edge.global_event_point = None
+    used = set()
+    for hedge in dcel_mesh.hedges:
+        if hedge.twin in used:
+            continue
+        up_h, low_h = (hedge, hedge.twin) if hedge.origin &lt; hedge.twin.origin else (hedge.twin, hedge)
+        edge = Edge(up_h.origin, low_h.origin)
+        edge.up_hedge, edge.low_hedge = up_h, low_h
+        hedge.edge, hedge.twin.edge = edge, edge
+        # The trick here is that AVL tree does not create new node if node with such value already exist
+        # It just returns existing node without any warnings
+        up_node = event_queue.insert(up_h.origin)
+        up_node.key.up_edges += [edge]
+        event_queue.insert(low_h.origin)
+        used.add(hedge)
+
+
+def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-6, face_overlapping=False):
+    # Read Computational Geometry by Mark de Berg
+    Edge.global_event_point = event_point
+    left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
+    c = [node for node in coincidence if node.key.is_c]
+    l = [node for node in coincidence if not node.key.is_c]
+    [status.remove_node(node) for node in c]
+    [status.remove_node(node) for node in l]
+
+    lc, uc_edges, is_lapp_1 = split_crossed_edge(coincidence, event_point, dcel_mesh, face_overlapping)
+    up_overlapping, is_lapp_2 = extract_overlapping_edges(coincidence, event_point, face_overlapping)
+    u, is_lapp_3 = insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping)
+    is_overlapping = any([is_lapp_1, is_lapp_2, is_lapp_3])
+
+    # After new up edges (created be dividing intersected event point edges) was insert in status
+    # The order of edges should be taken from status again
+    # Don&#39;t remember why left and right neighbour should be recheck :/
+    left_u_candidate, uc, right_u_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
+    left_neighbor = left_l_candidate if left_l_candidate else left_u_candidate
+    right_neighbor = right_l_candidate if right_l_candidate else right_u_candidate
+
+    relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping)
+
+    if not uc:
+        if left_neighbor and right_neighbor:
+            find_new_event(left_neighbor, right_neighbor, event_queue, event_point, dcel_mesh, accuracy)
+    else:
+        leftmost_node = uc[0]
+        rightmost_node = uc[-1]
+        if left_neighbor:
+            find_new_event(leftmost_node.key, left_neighbor, event_queue, event_point, dcel_mesh, accuracy)
+        if right_neighbor:
+            find_new_event(rightmost_node.key, right_neighbor, event_queue, event_point, dcel_mesh, accuracy)
+
+
+def get_coincidence_edges(tree, x_position, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Get from status all edges and their neighbours which go through event point
+    :param tree: status data structure - AVLTree
+    :param x_position: x position of event point
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: tuple(left neighbour, adjacent edges, right neighbour) - (AVL node, [AVL node, ...], AVL node)
+    &#34;&#34;&#34;
+    start_node = tree.find(x_position)
+    tree_max_length = tree.max_len()
+    right_part = [start_node] if start_node else []
+    left_part = []
+    adjacent_right = None
+    adjacent_left = None
+
+    counter = 0
+    next_node = start_node
+    while next_node:
+        next_node = next_node.next
+        if next_node and almost_equal(next_node.key.intersection, x_position, accuracy):
+            right_part.append(next_node)
+        elif next_node:
+            adjacent_right = next_node.key
+            break
+        if counter &gt; tree_max_length:
+            raise TimeoutError(&#34;Can&#39;t find exit from status tree, start node -&#34;, start_node)
+        counter += 1
+
+    counter = 0
+    last_node = start_node
+    while last_node:
+        last_node = last_node.last
+        if last_node and almost_equal(last_node.key.intersection, x_position, accuracy):
+            left_part.append(last_node)
+        elif last_node:
+            adjacent_left = last_node.key
+            break
+        if counter &gt; tree_max_length:
+            raise TimeoutError(&#34;Can&#39;t find exit from status tree, start node -&#34;, start_node)
+        counter += 1
+
+    return adjacent_left, left_part[::-1] + right_part, adjacent_right
+
+
+def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, face_overlapping):
+    &#34;&#34;&#34;
+    In this bloke of code  edges which go through event point are splitting in to edges upper and lower of event point
+    Also in this bloke of code coincidence of ends of edges are detected
+    Also there is need in checking has &#34;l&#34; edges overlapping or not
+    if so the overlapping edges should be carefully repack
+    :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
+    :param event_point: event point of intersection algorithm, Point
+    :param dcel_mesh: for new half edges recording, DCELMesh
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of nodes with edges above event point, list of edges below event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    lc = []  # is ordered in cw direction low edges
+    uc_edges = []
+    is_overlapping = False
+    for node in coincidence_nodes:
+        edge = node.key
+        if edge.is_c:
+            # split edge on low und up sides
+            low_edge = Edge(edge.up_hedge.origin, event_point)  # above event point
+            up_edge = Edge(event_point, edge.low_hedge.origin)  # below event point
+            # Add information about overlapping edges
+            up_edge.coincidence = list(edge.coincidence)
+            # assign to new edges existing half edges of initial edge
+            low_edge.up_hedge = edge.up_hedge
+            up_edge.low_hedge = edge.low_hedge
+            low_edge.up_hedge.edge = low_edge  # new &#34;user&#34; of half edge should be replace
+            up_edge.low_hedge.edge = up_edge  # the same
+            # copy pare of half edges from existing half edges and create appropriate links
+            low_edge.low_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.low_hedge.face)
+            dcel_mesh.hedges.append(low_edge.low_hedge)
+            low_edge.low_hedge.next = edge.low_hedge.next
+            edge.low_hedge.next.last = low_edge.low_hedge
+            up_edge.up_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.up_hedge.face)
+            dcel_mesh.hedges.append(up_edge.up_hedge)
+            up_edge.up_hedge.next = edge.up_hedge.next
+            edge.up_hedge.next.last = up_edge.up_hedge
+            if not event_point.hedge:
+                # assign half edges for new points which was created by edges intersection
+                # this need for monotone algorithm at this moment
+                # if assign to every event point the half edge, the monotone became broken
+                # if there are overlapping edges
+                event_point.hedge = up_edge.up_hedge
+            if face_overlapping:
+                # &#34;This is for marking faces algorithm for future implementation
+                # add information about belonging to other faces only for new half edge of low edge
+                # https://github.com/nortikin/sverchok/issues/2497#issuecomment-536862680
+                # and delete outdate information about belonging for low half edge of up edge
+                low_edge.low_hedge.in_faces = set(edge.low_hedge.in_faces)
+                up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+                up_edge.up_hedge.in_faces = set(low_edge.up_hedge.lap_faces)
+                up_edge.up_hedge.lap_faces = set(low_edge.up_hedge.lap_faces)
+            up_edge.low_hedge.left = None  # for hole detection
+            low_edge.low_hedge.edge = low_edge  # &#34;user&#34; of half edge should be set
+            up_edge.up_hedge.edge = up_edge  # the same
+            # link half edges to each other
+            low_edge.up_hedge.twin = low_edge.low_hedge
+            low_edge.low_hedge.twin = low_edge.up_hedge
+            up_edge.up_hedge.twin = up_edge.low_hedge
+            up_edge.low_hedge.twin = up_edge.up_hedge
+            node.key = low_edge
+            uc_edges.append(up_edge)
+        else:
+            # check overlapping points
+            if id(edge.low_p) != id(event_point):
+                edge.low_p = event_point
+                edge.low_hedge.origin = event_point
+                is_overlapping = True
+        lc.append(node)
+    return lc, uc_edges, is_overlapping
+
+
+def extract_overlapping_edges(coincidence_nodes, event_point, face_overlapping):
+    &#34;&#34;&#34;
+    As sooner low edges keeps overlapping edges inside itself
+    the overlapping edges should be extract before handling up edges
+    :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
+    :param event_point: event point of intersection algorithm, Point
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of extracted edges below event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    up_overlapping = []
+    is_overlapping = False
+    for node in coincidence_nodes:
+        if not node.key.is_c and node.key.coincidence:
+            is_overlapping = True  # just enabled relinking half edges of edges around event point
+            while node.key.coincidence:
+                # only shortest edge (between event point and low end of an edge) should be extracted
+                # it will be better to use some another data structure for keeping overlapping edges instead of list
+                i_min_edge = min([(edge.low_dot_length, i) for i, edge in enumerate(node.key.coincidence)])[1]
+                min_edge = node.key.coincidence.pop(i_min_edge)
+                if min_edge.low_p == event_point:
+                    # it means the end point of the overlapping edge coincident with end point of main edge
+                    # in this case the status of overlapping faces should updated
+                    # and next overlapping edge should be founded if such edge exists
+                    # also there is need in deleting half edges of such overlapping edges
+                    min_edge.up_hedge.edge = None  # this means that the hedge does not use any more...
+                    min_edge.low_hedge.edge = None  # and should be deleted
+                    if face_overlapping:
+                        # this part for marking faces algorithm
+                        node.key.low_hedge.lap_faces -= {min_edge.low_hedge.face}
+                        node.key.up_hedge.lap_faces -= {min_edge.up_hedge.face}
+                else:
+                    # All part of nested edge upper event point should be removed
+                    # according this part was already calculated
+                    # It looks like instead of editing existing edge it is better to create new one
+                    up_edge = Edge(event_point, min_edge.low_p)
+                    # Newer the less new half edges for new edge can&#39;t be created
+                    # because all half edges are stored in the list and deleting old half edges will take linear time
+                    # instead of that more appropriate to modify old half edges
+                    # actually there is way to delete them after the algorithm is finish
+                    # but it works any way at this view
+                    up_edge.low_hedge = min_edge.low_hedge
+                    up_edge.up_hedge = min_edge.up_hedge
+                    up_edge.up_hedge.origin = event_point
+                    up_edge.up_hedge.edge = up_edge
+                    up_edge.low_hedge.edge = up_edge
+                    if face_overlapping:
+                        # this part for marking faces algorithm
+                        # Add in_faces status, also faces of half edges of low edge should be remove from in_faces
+                        up_edge.low_hedge.lap_faces = node.key.low_hedge.lap_faces - {node.key.low_hedge.face}
+                        up_edge.up_hedge.lap_faces = node.key.up_hedge.lap_faces - {node.key.up_hedge.face}
+                        up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+                        up_edge.up_hedge.in_faces = set(up_edge.up_hedge.lap_faces)
+                    # there is no need in relinking last hedge for up_hedge and next hedge for low_hedge
+                    # because this will be done father
+                    up_edge.coincidence = list(node.key.coincidence)
+                    up_overlapping.append(up_edge)
+                    break
+    return up_overlapping, is_overlapping
+
+
+def insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping):
+    &#34;&#34;&#34;
+    Here the edges below of the event point are inserted in status tree
+    Also it detects overlapping of points in case if two edges has two different start points
+    Also it store overlapping edges to each other
+    :param status: list of edges intersection sweep line, AVLTree
+    :param event_point: event point of intersection algorithm, Point
+    :param uc_edges: list of edges below event point which was created by splitting by sweeping line edges
+    :param up_overlapping: list of extracted edges from overlapping list of edges above event point
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of nodes with edges below an event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    u = []
+    is_overlapping = False
+    for edge in event_point.up_edges + uc_edges + up_overlapping:
+        if id(edge.up_p) != id(event_point):
+            # check overlapping points
+            edge.up_p = event_point
+            edge.up_hedge.origin = event_point
+            is_overlapping = True
+        node = status.insert(edge)
+        # actually it does not insert new edge if status already has edge with the same slap
+        # and returns node with edge which was already insert before
+        if edge != node.key:
+            # Store overlapping edges
+            if edge.low_dot_length &lt; node.key.low_dot_length:
+                # if tow overlapping edges are detected then edge with shortest distance between event point and its end
+                # include other overlapping edges inside itself
+                edge.coincidence.extend(node.key.coincidence)
+                node.key.coincidence.clear()
+                edge.coincidence.append(node.key)
+                node.key, edge = edge, node.key
+            else:
+                # This also mean that edges can be equal but there is no difference
+                node.key.coincidence.extend(edge.coincidence)
+                node.key.coincidence.append(edge)
+            if face_overlapping:
+                # This part for marking face mode
+                # Combine information about relations half edges with faces
+                # Only current edge can keep actual information about in_faces status
+                node.key.low_hedge.in_faces |= edge.low_hedge.in_faces
+                node.key.up_hedge.in_faces |= edge.up_hedge.in_faces
+                node.key.low_hedge.lap_faces |= edge.low_hedge.lap_faces
+                node.key.up_hedge.lap_faces |= edge.up_hedge.lap_faces
+        else:
+            # store only unique nodes with upper edges
+            u.append(node)
+    return u, is_overlapping
+
+
+def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping):
+    &#34;&#34;&#34;
+    Here new connections between intersected edges are creating
+    Also half edges are marked in which faces they located if need
+    :param uc: list of node with edges below event point ordered from left ro right along X coordinate
+    :param lc: list of nodes with edges above event point which was born by splitting edges intersecting sweep line
+    :param c: list of nodes with edges intersection sweep line, just for knowing if such exist for current event point
+    :param left_neighbor: nearest left edge to event point which intersects sweep line
+    :param is_overlapping: flag of overlapping detection
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: None
+    &#34;&#34;&#34;
+    rotation_nodes = uc + lc[::-1]
+    if left_neighbor:
+        for node in rotation_nodes:
+            # for hole detection
+            # In this case for all half edges left neighbour will lay regarding origin
+            node.key.inner_hedge.left = left_neighbor.up_hedge
+    if c or is_overlapping:
+        for i in range(len(rotation_nodes)):
+            edge = rotation_nodes[i].key
+            next_i = (i + 1) % len(rotation_nodes)
+            last_i = (i - 1) % len(rotation_nodes)
+            edge.outer_hedge.next = rotation_nodes[last_i].key.inner_hedge
+            edge.inner_hedge.last = rotation_nodes[next_i].key.outer_hedge
+
+        if face_overlapping:
+            # this part for marking faces mode
+            sub_status = set(rotation_nodes[-1].key.inner_hedge.in_faces)
+            for i in range(len(rotation_nodes)):
+                edge = rotation_nodes[i].key
+                sub_status -= edge.outer_hedge.in_faces
+                edge.outer_hedge.in_faces |= sub_status
+                sub_status |= edge.inner_hedge.in_faces
+                edge.inner_hedge.in_faces |= sub_status
+
+    else:
+        if face_overlapping:
+            # and this part for marking faces mode
+            sub_status = set(left_neighbor.up_hedge.in_faces) if left_neighbor else set()
+            for node in uc:
+                edge = node.key
+                sub_status -= edge.outer_hedge.in_faces
+                edge.outer_hedge.in_faces |= sub_status
+                sub_status |= edge.inner_hedge.in_faces
+                edge.inner_hedge.in_faces |= sub_status
+
+
+def find_new_event(edge1, edge2, event_queue, event_point, dcel_mesh, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Tet if there is an intersections and if there is add new event point to event queue
+    :param edge1: Edge data structure
+    :param edge2: Edge data structure
+    :param event_queue: AVLTree
+    :param event_point: event point of intersection algorithm, Point
+    :param dcel_mesh: for new points recording, DCELMesh
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: None
+    &#34;&#34;&#34;
+    if is_edges_intersect(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co):
+        intersection = intersect_edges(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co, to_project=True,
+                                       accuracy=accuracy)
+        if intersection:  # strange checking
+            new_event_point = dcel_mesh.Point(dcel_mesh, intersection, accuracy)
+            if new_event_point &gt; event_point:
+                event_queue.insert(new_event_point)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.geom_2d.intersections.extract_overlapping_edges"><code class="name flex">
+<span>def <span class="ident">extract_overlapping_edges</span></span>(<span>coincidence_nodes, event_point, face_overlapping)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>As sooner low edges keeps overlapping edges inside itself
+the overlapping edges should be extract before handling up edges
+:param coincidence_nodes: list of nodes which intersects with event point, [Node1, &hellip;, Node_n]
+:param event_point: event point of intersection algorithm, Point
+:param face_overlapping: if True detect in which faces new face is inside
+:return: list of extracted edges below event point, flag of overlapping detection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_overlapping_edges(coincidence_nodes, event_point, face_overlapping):
+    &#34;&#34;&#34;
+    As sooner low edges keeps overlapping edges inside itself
+    the overlapping edges should be extract before handling up edges
+    :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
+    :param event_point: event point of intersection algorithm, Point
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of extracted edges below event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    up_overlapping = []
+    is_overlapping = False
+    for node in coincidence_nodes:
+        if not node.key.is_c and node.key.coincidence:
+            is_overlapping = True  # just enabled relinking half edges of edges around event point
+            while node.key.coincidence:
+                # only shortest edge (between event point and low end of an edge) should be extracted
+                # it will be better to use some another data structure for keeping overlapping edges instead of list
+                i_min_edge = min([(edge.low_dot_length, i) for i, edge in enumerate(node.key.coincidence)])[1]
+                min_edge = node.key.coincidence.pop(i_min_edge)
+                if min_edge.low_p == event_point:
+                    # it means the end point of the overlapping edge coincident with end point of main edge
+                    # in this case the status of overlapping faces should updated
+                    # and next overlapping edge should be founded if such edge exists
+                    # also there is need in deleting half edges of such overlapping edges
+                    min_edge.up_hedge.edge = None  # this means that the hedge does not use any more...
+                    min_edge.low_hedge.edge = None  # and should be deleted
+                    if face_overlapping:
+                        # this part for marking faces algorithm
+                        node.key.low_hedge.lap_faces -= {min_edge.low_hedge.face}
+                        node.key.up_hedge.lap_faces -= {min_edge.up_hedge.face}
+                else:
+                    # All part of nested edge upper event point should be removed
+                    # according this part was already calculated
+                    # It looks like instead of editing existing edge it is better to create new one
+                    up_edge = Edge(event_point, min_edge.low_p)
+                    # Newer the less new half edges for new edge can&#39;t be created
+                    # because all half edges are stored in the list and deleting old half edges will take linear time
+                    # instead of that more appropriate to modify old half edges
+                    # actually there is way to delete them after the algorithm is finish
+                    # but it works any way at this view
+                    up_edge.low_hedge = min_edge.low_hedge
+                    up_edge.up_hedge = min_edge.up_hedge
+                    up_edge.up_hedge.origin = event_point
+                    up_edge.up_hedge.edge = up_edge
+                    up_edge.low_hedge.edge = up_edge
+                    if face_overlapping:
+                        # this part for marking faces algorithm
+                        # Add in_faces status, also faces of half edges of low edge should be remove from in_faces
+                        up_edge.low_hedge.lap_faces = node.key.low_hedge.lap_faces - {node.key.low_hedge.face}
+                        up_edge.up_hedge.lap_faces = node.key.up_hedge.lap_faces - {node.key.up_hedge.face}
+                        up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+                        up_edge.up_hedge.in_faces = set(up_edge.up_hedge.lap_faces)
+                    # there is no need in relinking last hedge for up_hedge and next hedge for low_hedge
+                    # because this will be done father
+                    up_edge.coincidence = list(node.key.coincidence)
+                    up_overlapping.append(up_edge)
+                    break
+    return up_overlapping, is_overlapping</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.find_intersections"><code class="name flex">
+<span>def <span class="ident">find_intersections</span></span>(<span>dcel_mesh, accuracy=1e-06, face_overlapping=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
+Only half edges have correct data after the algorithm.
+Use build faces from half edges method for updating faces if necessary.
+:param dcel_mesh: inner DCELMesh data structure
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:param face_overlapping: if True detect in which faces new face is inside</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_intersections(dcel_mesh, accuracy=1e-6, face_overlapping=False):
+    &#34;&#34;&#34;
+    Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
+    Only half edges have correct data after the algorithm.
+    Use build faces from half edges method for updating faces if necessary.
+    :param dcel_mesh: inner DCELMesh data structure
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :param face_overlapping: if True detect in which faces new face is inside
+    &#34;&#34;&#34;
+    status = AVLTree()
+    event_queue = AVLTree()
+    accuracy = accuracy if isinstance(accuracy, float) else 1 / 10 ** accuracy
+    Edge.set_accuracy(accuracy)
+    init_event_queue(event_queue, dcel_mesh)
+    while event_queue:
+        event_node = event_queue.find_smallest()
+        handle_event_point(status, event_queue, event_node.key, dcel_mesh, accuracy, face_overlapping)
+        event_queue.remove_node(event_node)
+    dcel_mesh.hedges = [hedge for hedge in dcel_mesh.hedges if hedge.edge]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.find_new_event"><code class="name flex">
+<span>def <span class="ident">find_new_event</span></span>(<span>edge1, edge2, event_queue, event_point, dcel_mesh, accuracy=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tet if there is an intersections and if there is add new event point to event queue
+:param edge1: Edge data structure
+:param edge2: Edge data structure
+:param event_queue: AVLTree
+:param event_point: event point of intersection algorithm, Point
+:param dcel_mesh: for new points recording, DCELMesh
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_new_event(edge1, edge2, event_queue, event_point, dcel_mesh, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Tet if there is an intersections and if there is add new event point to event queue
+    :param edge1: Edge data structure
+    :param edge2: Edge data structure
+    :param event_queue: AVLTree
+    :param event_point: event point of intersection algorithm, Point
+    :param dcel_mesh: for new points recording, DCELMesh
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: None
+    &#34;&#34;&#34;
+    if is_edges_intersect(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co):
+        intersection = intersect_edges(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co, to_project=True,
+                                       accuracy=accuracy)
+        if intersection:  # strange checking
+            new_event_point = dcel_mesh.Point(dcel_mesh, intersection, accuracy)
+            if new_event_point &gt; event_point:
+                event_queue.insert(new_event_point)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.get_coincidence_edges"><code class="name flex">
+<span>def <span class="ident">get_coincidence_edges</span></span>(<span>tree, x_position, accuracy=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get from status all edges and their neighbours which go through event point
+:param tree: status data structure - AVLTree
+:param x_position: x position of event point
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: tuple(left neighbour, adjacent edges, right neighbour) - (AVL node, [AVL node, &hellip;], AVL node)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_coincidence_edges(tree, x_position, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Get from status all edges and their neighbours which go through event point
+    :param tree: status data structure - AVLTree
+    :param x_position: x position of event point
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: tuple(left neighbour, adjacent edges, right neighbour) - (AVL node, [AVL node, ...], AVL node)
+    &#34;&#34;&#34;
+    start_node = tree.find(x_position)
+    tree_max_length = tree.max_len()
+    right_part = [start_node] if start_node else []
+    left_part = []
+    adjacent_right = None
+    adjacent_left = None
+
+    counter = 0
+    next_node = start_node
+    while next_node:
+        next_node = next_node.next
+        if next_node and almost_equal(next_node.key.intersection, x_position, accuracy):
+            right_part.append(next_node)
+        elif next_node:
+            adjacent_right = next_node.key
+            break
+        if counter &gt; tree_max_length:
+            raise TimeoutError(&#34;Can&#39;t find exit from status tree, start node -&#34;, start_node)
+        counter += 1
+
+    counter = 0
+    last_node = start_node
+    while last_node:
+        last_node = last_node.last
+        if last_node and almost_equal(last_node.key.intersection, x_position, accuracy):
+            left_part.append(last_node)
+        elif last_node:
+            adjacent_left = last_node.key
+            break
+        if counter &gt; tree_max_length:
+            raise TimeoutError(&#34;Can&#39;t find exit from status tree, start node -&#34;, start_node)
+        counter += 1
+
+    return adjacent_left, left_part[::-1] + right_part, adjacent_right</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.handle_event_point"><code class="name flex">
+<span>def <span class="ident">handle_event_point</span></span>(<span>status, event_queue, event_point, dcel_mesh, accuracy=1e-06, face_overlapping=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-6, face_overlapping=False):
+    # Read Computational Geometry by Mark de Berg
+    Edge.global_event_point = event_point
+    left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
+    c = [node for node in coincidence if node.key.is_c]
+    l = [node for node in coincidence if not node.key.is_c]
+    [status.remove_node(node) for node in c]
+    [status.remove_node(node) for node in l]
+
+    lc, uc_edges, is_lapp_1 = split_crossed_edge(coincidence, event_point, dcel_mesh, face_overlapping)
+    up_overlapping, is_lapp_2 = extract_overlapping_edges(coincidence, event_point, face_overlapping)
+    u, is_lapp_3 = insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping)
+    is_overlapping = any([is_lapp_1, is_lapp_2, is_lapp_3])
+
+    # After new up edges (created be dividing intersected event point edges) was insert in status
+    # The order of edges should be taken from status again
+    # Don&#39;t remember why left and right neighbour should be recheck :/
+    left_u_candidate, uc, right_u_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
+    left_neighbor = left_l_candidate if left_l_candidate else left_u_candidate
+    right_neighbor = right_l_candidate if right_l_candidate else right_u_candidate
+
+    relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping)
+
+    if not uc:
+        if left_neighbor and right_neighbor:
+            find_new_event(left_neighbor, right_neighbor, event_queue, event_point, dcel_mesh, accuracy)
+    else:
+        leftmost_node = uc[0]
+        rightmost_node = uc[-1]
+        if left_neighbor:
+            find_new_event(leftmost_node.key, left_neighbor, event_queue, event_point, dcel_mesh, accuracy)
+        if right_neighbor:
+            find_new_event(rightmost_node.key, right_neighbor, event_queue, event_point, dcel_mesh, accuracy)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.init_event_queue"><code class="name flex">
+<span>def <span class="ident">init_event_queue</span></span>(<span>event_queue, dcel_mesh)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_event_queue(event_queue, dcel_mesh):
+    # preparation to finding intersection algorithm
+    Edge.global_event_point = None
+    used = set()
+    for hedge in dcel_mesh.hedges:
+        if hedge.twin in used:
+            continue
+        up_h, low_h = (hedge, hedge.twin) if hedge.origin &lt; hedge.twin.origin else (hedge.twin, hedge)
+        edge = Edge(up_h.origin, low_h.origin)
+        edge.up_hedge, edge.low_hedge = up_h, low_h
+        hedge.edge, hedge.twin.edge = edge, edge
+        # The trick here is that AVL tree does not create new node if node with such value already exist
+        # It just returns existing node without any warnings
+        up_node = event_queue.insert(up_h.origin)
+        up_node.key.up_edges += [edge]
+        event_queue.insert(low_h.origin)
+        used.add(hedge)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.insert_edges_in_status"><code class="name flex">
+<span>def <span class="ident">insert_edges_in_status</span></span>(<span>status, event_point, uc_edges, up_overlapping, face_overlapping)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Here the edges below of the event point are inserted in status tree
+Also it detects overlapping of points in case if two edges has two different start points
+Also it store overlapping edges to each other
+:param status: list of edges intersection sweep line, AVLTree
+:param event_point: event point of intersection algorithm, Point
+:param uc_edges: list of edges below event point which was created by splitting by sweeping line edges
+:param up_overlapping: list of extracted edges from overlapping list of edges above event point
+:param face_overlapping: if True detect in which faces new face is inside
+:return: list of nodes with edges below an event point, flag of overlapping detection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping):
+    &#34;&#34;&#34;
+    Here the edges below of the event point are inserted in status tree
+    Also it detects overlapping of points in case if two edges has two different start points
+    Also it store overlapping edges to each other
+    :param status: list of edges intersection sweep line, AVLTree
+    :param event_point: event point of intersection algorithm, Point
+    :param uc_edges: list of edges below event point which was created by splitting by sweeping line edges
+    :param up_overlapping: list of extracted edges from overlapping list of edges above event point
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of nodes with edges below an event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    u = []
+    is_overlapping = False
+    for edge in event_point.up_edges + uc_edges + up_overlapping:
+        if id(edge.up_p) != id(event_point):
+            # check overlapping points
+            edge.up_p = event_point
+            edge.up_hedge.origin = event_point
+            is_overlapping = True
+        node = status.insert(edge)
+        # actually it does not insert new edge if status already has edge with the same slap
+        # and returns node with edge which was already insert before
+        if edge != node.key:
+            # Store overlapping edges
+            if edge.low_dot_length &lt; node.key.low_dot_length:
+                # if tow overlapping edges are detected then edge with shortest distance between event point and its end
+                # include other overlapping edges inside itself
+                edge.coincidence.extend(node.key.coincidence)
+                node.key.coincidence.clear()
+                edge.coincidence.append(node.key)
+                node.key, edge = edge, node.key
+            else:
+                # This also mean that edges can be equal but there is no difference
+                node.key.coincidence.extend(edge.coincidence)
+                node.key.coincidence.append(edge)
+            if face_overlapping:
+                # This part for marking face mode
+                # Combine information about relations half edges with faces
+                # Only current edge can keep actual information about in_faces status
+                node.key.low_hedge.in_faces |= edge.low_hedge.in_faces
+                node.key.up_hedge.in_faces |= edge.up_hedge.in_faces
+                node.key.low_hedge.lap_faces |= edge.low_hedge.lap_faces
+                node.key.up_hedge.lap_faces |= edge.up_hedge.lap_faces
+        else:
+            # store only unique nodes with upper edges
+            u.append(node)
+    return u, is_overlapping</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.intersect_sv_edges"><code class="name flex">
+<span>def <span class="ident">intersect_sv_edges</span></span>(<span>sv_verts, sv_edges, accuracy=1e-05)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Merge several Sverchok mesh objects into one with finding self intersections
+:param sv_verts: [[[x1, y1, z1], [x2, y2, z2], &hellip;]-obj_1, [[x1, y1, z1], [x2, y2, z2], &hellip;]-obj_2, &hellip;, obj_n]
+:param sv_edges: [[[i1, i2], edge2, .., edge n]-obj_1, [[i1, i2], edge2, .., edge n]-obj_2, .., obj_n]
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: vertices in SV format, edges in SV format</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_sv_edges(sv_verts, sv_edges, accuracy=1e-5):
+    &#34;&#34;&#34;
+    Merge several Sverchok mesh objects into one with finding self intersections
+    :param sv_verts: [[[x1, y1, z1], [x2, y2, z2], ...]-obj_1, [[x1, y1, z1], [x2, y2, z2], ...]-obj_2, ..., obj_n]
+    :param sv_edges: [[[i1, i2], edge2, .., edge n]-obj_1, [[i1, i2], edge2, .., edge n]-obj_2, .., obj_n]
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: vertices in SV format, edges in SV format
+    &#34;&#34;&#34;
+    mesh = DCELMesh(accuracy)
+    mesh.from_sv_edges(sv_verts, sv_edges)
+    find_intersections(mesh, accuracy)
+    return mesh.to_sv_mesh(faces=False)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.relink_half_edges"><code class="name flex">
+<span>def <span class="ident">relink_half_edges</span></span>(<span>uc, lc, c, left_neighbor, is_overlapping, face_overlapping)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Here new connections between intersected edges are creating
+Also half edges are marked in which faces they located if need
+:param uc: list of node with edges below event point ordered from left ro right along X coordinate
+:param lc: list of nodes with edges above event point which was born by splitting edges intersecting sweep line
+:param c: list of nodes with edges intersection sweep line, just for knowing if such exist for current event point
+:param left_neighbor: nearest left edge to event point which intersects sweep line
+:param is_overlapping: flag of overlapping detection
+:param face_overlapping: if True detect in which faces new face is inside
+:return: None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping):
+    &#34;&#34;&#34;
+    Here new connections between intersected edges are creating
+    Also half edges are marked in which faces they located if need
+    :param uc: list of node with edges below event point ordered from left ro right along X coordinate
+    :param lc: list of nodes with edges above event point which was born by splitting edges intersecting sweep line
+    :param c: list of nodes with edges intersection sweep line, just for knowing if such exist for current event point
+    :param left_neighbor: nearest left edge to event point which intersects sweep line
+    :param is_overlapping: flag of overlapping detection
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: None
+    &#34;&#34;&#34;
+    rotation_nodes = uc + lc[::-1]
+    if left_neighbor:
+        for node in rotation_nodes:
+            # for hole detection
+            # In this case for all half edges left neighbour will lay regarding origin
+            node.key.inner_hedge.left = left_neighbor.up_hedge
+    if c or is_overlapping:
+        for i in range(len(rotation_nodes)):
+            edge = rotation_nodes[i].key
+            next_i = (i + 1) % len(rotation_nodes)
+            last_i = (i - 1) % len(rotation_nodes)
+            edge.outer_hedge.next = rotation_nodes[last_i].key.inner_hedge
+            edge.inner_hedge.last = rotation_nodes[next_i].key.outer_hedge
+
+        if face_overlapping:
+            # this part for marking faces mode
+            sub_status = set(rotation_nodes[-1].key.inner_hedge.in_faces)
+            for i in range(len(rotation_nodes)):
+                edge = rotation_nodes[i].key
+                sub_status -= edge.outer_hedge.in_faces
+                edge.outer_hedge.in_faces |= sub_status
+                sub_status |= edge.inner_hedge.in_faces
+                edge.inner_hedge.in_faces |= sub_status
+
+    else:
+        if face_overlapping:
+            # and this part for marking faces mode
+            sub_status = set(left_neighbor.up_hedge.in_faces) if left_neighbor else set()
+            for node in uc:
+                edge = node.key
+                sub_status -= edge.outer_hedge.in_faces
+                edge.outer_hedge.in_faces |= sub_status
+                sub_status |= edge.inner_hedge.in_faces
+                edge.inner_hedge.in_faces |= sub_status</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.split_crossed_edge"><code class="name flex">
+<span>def <span class="ident">split_crossed_edge</span></span>(<span>coincidence_nodes, event_point, dcel_mesh, face_overlapping)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>In this bloke of code
+edges which go through event point are splitting in to edges upper and lower of event point
+Also in this bloke of code coincidence of ends of edges are detected
+Also there is need in checking has "l" edges overlapping or not
+if so the overlapping edges should be carefully repack
+:param coincidence_nodes: list of nodes which intersects with event point, [Node1, &hellip;, Node_n]
+:param event_point: event point of intersection algorithm, Point
+:param dcel_mesh: for new half edges recording, DCELMesh
+:param face_overlapping: if True detect in which faces new face is inside
+:return: list of nodes with edges above event point, list of edges below event point, flag of overlapping detection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, face_overlapping):
+    &#34;&#34;&#34;
+    In this bloke of code  edges which go through event point are splitting in to edges upper and lower of event point
+    Also in this bloke of code coincidence of ends of edges are detected
+    Also there is need in checking has &#34;l&#34; edges overlapping or not
+    if so the overlapping edges should be carefully repack
+    :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
+    :param event_point: event point of intersection algorithm, Point
+    :param dcel_mesh: for new half edges recording, DCELMesh
+    :param face_overlapping: if True detect in which faces new face is inside
+    :return: list of nodes with edges above event point, list of edges below event point, flag of overlapping detection
+    &#34;&#34;&#34;
+    lc = []  # is ordered in cw direction low edges
+    uc_edges = []
+    is_overlapping = False
+    for node in coincidence_nodes:
+        edge = node.key
+        if edge.is_c:
+            # split edge on low und up sides
+            low_edge = Edge(edge.up_hedge.origin, event_point)  # above event point
+            up_edge = Edge(event_point, edge.low_hedge.origin)  # below event point
+            # Add information about overlapping edges
+            up_edge.coincidence = list(edge.coincidence)
+            # assign to new edges existing half edges of initial edge
+            low_edge.up_hedge = edge.up_hedge
+            up_edge.low_hedge = edge.low_hedge
+            low_edge.up_hedge.edge = low_edge  # new &#34;user&#34; of half edge should be replace
+            up_edge.low_hedge.edge = up_edge  # the same
+            # copy pare of half edges from existing half edges and create appropriate links
+            low_edge.low_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.low_hedge.face)
+            dcel_mesh.hedges.append(low_edge.low_hedge)
+            low_edge.low_hedge.next = edge.low_hedge.next
+            edge.low_hedge.next.last = low_edge.low_hedge
+            up_edge.up_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.up_hedge.face)
+            dcel_mesh.hedges.append(up_edge.up_hedge)
+            up_edge.up_hedge.next = edge.up_hedge.next
+            edge.up_hedge.next.last = up_edge.up_hedge
+            if not event_point.hedge:
+                # assign half edges for new points which was created by edges intersection
+                # this need for monotone algorithm at this moment
+                # if assign to every event point the half edge, the monotone became broken
+                # if there are overlapping edges
+                event_point.hedge = up_edge.up_hedge
+            if face_overlapping:
+                # &#34;This is for marking faces algorithm for future implementation
+                # add information about belonging to other faces only for new half edge of low edge
+                # https://github.com/nortikin/sverchok/issues/2497#issuecomment-536862680
+                # and delete outdate information about belonging for low half edge of up edge
+                low_edge.low_hedge.in_faces = set(edge.low_hedge.in_faces)
+                up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+                up_edge.up_hedge.in_faces = set(low_edge.up_hedge.lap_faces)
+                up_edge.up_hedge.lap_faces = set(low_edge.up_hedge.lap_faces)
+            up_edge.low_hedge.left = None  # for hole detection
+            low_edge.low_hedge.edge = low_edge  # &#34;user&#34; of half edge should be set
+            up_edge.up_hedge.edge = up_edge  # the same
+            # link half edges to each other
+            low_edge.up_hedge.twin = low_edge.low_hedge
+            low_edge.low_hedge.twin = low_edge.up_hedge
+            up_edge.up_hedge.twin = up_edge.low_hedge
+            up_edge.low_hedge.twin = up_edge.up_hedge
+            node.key = low_edge
+            uc_edges.append(up_edge)
+        else:
+            # check overlapping points
+            if id(edge.low_p) != id(event_point):
+                edge.low_p = event_point
+                edge.low_hedge.origin = event_point
+                is_overlapping = True
+        lc.append(node)
+    return lc, uc_edges, is_overlapping</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.geom_2d.intersections.DCELMesh"><code class="flex name class">
+<span>class <span class="ident">DCELMesh</span></span>
+<span>(</span><span>accuracy=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DCELMesh(DCELMesh_template):
+    Point = Point
+    HalfEdge = HalfEdge</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.dcel.DCELMesh" href="dcel.html#sverchok.utils.geom_2d.dcel.DCELMesh">DCELMesh</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.merge_mesh.DCELMesh" href="merge_mesh.html#sverchok.utils.geom_2d.merge_mesh.DCELMesh">DCELMesh</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.geom_2d.intersections.DCELMesh.HalfEdge"><code class="name">var <span class="ident">HalfEdge</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.DCELMesh.Point"><code class="name">var <span class="ident">Point</span></code></dt>
+<dd>
+<div class="desc"><p>This allowed sort points from upward to downward direction.
+Besides points with equal Y coordinate are sorted from left to right.
+(0, 1, 0) &lt; (0, 0, 0)
+(0, 1, 0) &lt; (1, 1, 0)
+(0, 1.001, 0) == (0, 1.002, 0) if accuracy &lt;= 1e-3</p>
+<p>Should be used with another class with "co" - (x, y, z) and "accuracy" - (float) attributes</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.Edge"><code class="flex name class">
+<span>class <span class="ident">Edge</span></span>
+<span>(</span><span>up_p, low_p)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sorting edges for sweeping line algorithm.
+Edges are sorted along horizontal sweeping line from left to right according their intersection with sweep line.
+If Edges intersects in one points they are sorted in cww order from -X direction.</p>
+<p>There is global event point parameter determining position of sweep line.
+It should be updated each time when sweep line is changing its position.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Edge(SortEdgeSweepingAlgorithm):
+    # Special class for storing in status data structure
+
+    def __init__(self, up_p, low_p):
+        super().__init__(up_p, low_p)
+
+        self.low_hedge = None  # half edge which origin is lower then origin of twin
+        self.up_hedge = None  # half edge which origin is upper then origin of twin
+        self.coincidence = []  # just a list of overlapping edges
+
+    @property
+    def is_c(self):
+        # returns True if current event point is intersection point of current edge
+        return self.low_p != self.event_point
+
+    @property
+    def low_dot_length(self):
+        # returns length of edge from event point to low point of the edge
+        return (self.low_p - self.event_point).length()
+
+    @property
+    def inner_hedge(self):
+        # returns half edge with origin in event point
+        return self.low_hedge if self.low_hedge.origin == self.event_point else self.up_hedge
+
+    @property
+    def outer_hedge(self):
+        # returns half edge pointing to event point
+        return self.low_hedge if self.low_hedge.origin != self.event_point else self.up_hedge</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.sort_mesh.SortEdgeSweepingAlgorithm" href="sort_mesh.html#sverchok.utils.geom_2d.sort_mesh.SortEdgeSweepingAlgorithm">SortEdgeSweepingAlgorithm</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.geom_2d.intersections.Edge.inner_hedge"><code class="name">var <span class="ident">inner_hedge</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def inner_hedge(self):
+    # returns half edge with origin in event point
+    return self.low_hedge if self.low_hedge.origin == self.event_point else self.up_hedge</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.Edge.is_c"><code class="name">var <span class="ident">is_c</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_c(self):
+    # returns True if current event point is intersection point of current edge
+    return self.low_p != self.event_point</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.Edge.low_dot_length"><code class="name">var <span class="ident">low_dot_length</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def low_dot_length(self):
+    # returns length of edge from event point to low point of the edge
+    return (self.low_p - self.event_point).length()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.Edge.outer_hedge"><code class="name">var <span class="ident">outer_hedge</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def outer_hedge(self):
+    # returns half edge pointing to event point
+    return self.low_hedge if self.low_hedge.origin != self.event_point else self.up_hedge</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.HalfEdge"><code class="flex name class">
+<span>class <span class="ident">HalfEdge</span></span>
+<span>(</span><span>mesh, point, face=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HalfEdge(HalfEdge_template):
+    def __init__(self,  mesh, point, face=None):
+        super().__init__(mesh, point, face)
+
+        # This need for find intersection algorithm for detection unused half edges
+        # Also this need for make monotone algorithm, don&#39;t remember how
+        self.edge = None
+
+        # faces from overlapping edges, for keeping status of overlapping edges
+        self.lap_faces = {face} if face else set()
+        self.in_faces = {face} if face else set()  # in which faces new face is located</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.dcel.HalfEdge" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge">HalfEdge</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.merge_mesh.HalfEdge" href="merge_mesh.html#sverchok.utils.geom_2d.merge_mesh.HalfEdge">HalfEdge</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.geom_2d.dcel.HalfEdge" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge">HalfEdge</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.geom_2d.dcel.HalfEdge.slop" href="dcel.html#sverchok.utils.geom_2d.dcel.HalfEdge.slop">slop</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.geom_2d.intersections.Point"><code class="flex name class">
+<span>class <span class="ident">Point</span></span>
+<span>(</span><span>mesh, co, accuracy=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This allowed sort points from upward to downward direction.
+Besides points with equal Y coordinate are sorted from left to right.
+(0, 1, 0) &lt; (0, 0, 0)
+(0, 1, 0) &lt; (1, 1, 0)
+(0, 1.001, 0) == (0, 1.002, 0) if accuracy &lt;= 1e-3</p>
+<p>Should be used with another class with "co" - (x, y, z) and "accuracy" - (float) attributes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Point(Point_template, SortPointsUpDown):
+
+    def __init__(self, mesh, co, accuracy=1e-6):
+        super().__init__(mesh, co)
+        self.accuracy = accuracy
+        self.up_edges = []  # edges below event point</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.dcel.Point" href="dcel.html#sverchok.utils.geom_2d.dcel.Point">Point</a></li>
+<li><a title="sverchok.utils.geom_2d.sort_mesh.SortPointsUpDown" href="sort_mesh.html#sverchok.utils.geom_2d.sort_mesh.SortPointsUpDown">SortPointsUpDown</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.geom_2d.merge_mesh.Point" href="merge_mesh.html#sverchok.utils.geom_2d.merge_mesh.Point">Point</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.geom_2d" href="index.html">sverchok.utils.geom_2d</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.intersections.extract_overlapping_edges" href="#sverchok.utils.geom_2d.intersections.extract_overlapping_edges">extract_overlapping_edges</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.find_intersections" href="#sverchok.utils.geom_2d.intersections.find_intersections">find_intersections</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.find_new_event" href="#sverchok.utils.geom_2d.intersections.find_new_event">find_new_event</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.get_coincidence_edges" href="#sverchok.utils.geom_2d.intersections.get_coincidence_edges">get_coincidence_edges</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.handle_event_point" href="#sverchok.utils.geom_2d.intersections.handle_event_point">handle_event_point</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.init_event_queue" href="#sverchok.utils.geom_2d.intersections.init_event_queue">init_event_queue</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.insert_edges_in_status" href="#sverchok.utils.geom_2d.intersections.insert_edges_in_status">insert_edges_in_status</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.intersect_sv_edges" href="#sverchok.utils.geom_2d.intersections.intersect_sv_edges">intersect_sv_edges</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.relink_half_edges" href="#sverchok.utils.geom_2d.intersections.relink_half_edges">relink_half_edges</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.split_crossed_edge" href="#sverchok.utils.geom_2d.intersections.split_crossed_edge">split_crossed_edge</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.intersections.DCELMesh" href="#sverchok.utils.geom_2d.intersections.DCELMesh">DCELMesh</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.intersections.DCELMesh.HalfEdge" href="#sverchok.utils.geom_2d.intersections.DCELMesh.HalfEdge">HalfEdge</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.DCELMesh.Point" href="#sverchok.utils.geom_2d.intersections.DCELMesh.Point">Point</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.intersections.Edge" href="#sverchok.utils.geom_2d.intersections.Edge">Edge</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.intersections.Edge.inner_hedge" href="#sverchok.utils.geom_2d.intersections.Edge.inner_hedge">inner_hedge</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.Edge.is_c" href="#sverchok.utils.geom_2d.intersections.Edge.is_c">is_c</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.Edge.low_dot_length" href="#sverchok.utils.geom_2d.intersections.Edge.low_dot_length">low_dot_length</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.intersections.Edge.outer_hedge" href="#sverchok.utils.geom_2d.intersections.Edge.outer_hedge">outer_hedge</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.intersections.HalfEdge" href="#sverchok.utils.geom_2d.intersections.HalfEdge">HalfEdge</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.geom_2d.intersections.Point" href="#sverchok.utils.geom_2d.intersections.Point">Point</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

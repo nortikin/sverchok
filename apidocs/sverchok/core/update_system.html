@@ -1,0 +1,2003 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.core.update_system API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.core.update_system</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from collections import defaultdict
+from copy import copy
+from functools import lru_cache
+from graphlib import TopologicalSorter
+from itertools import chain
+from time import perf_counter
+from typing import TYPE_CHECKING, Optional, Generator, Iterable
+
+from bpy.types import Node, NodeSocket, NodeTree, NodeLink
+import sverchok.core.events as ev
+import sverchok.core.tasks as ts
+from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
+from sverchok.core.socket_conversions import conversions
+from sverchok.utils.profile import profile
+from sverchok.utils.logging import log_error
+from sverchok.utils.tree_walk import bfs_walk
+
+if TYPE_CHECKING:
+    from sverchok.node_tree import (SverchCustomTreeNode as SvNode,
+                                    SverchCustomTree as SvTree)
+
+UPDATE_KEY = &#34;US_is_updated&#34;
+ERROR_KEY = &#34;US_error&#34;
+TIME_KEY = &#34;US_time&#34;
+
+
+def control_center(event):
+    &#34;&#34;&#34;
+    1. Update tree model lazily
+    2. Check whether the event should be processed
+    3. Process event or create task to process via timer&#34;&#34;&#34;
+    was_executed = True
+
+    # frame update
+    # This event can&#39;t be handled via NodesUpdater during animation rendering
+    # because new frame change event can arrive before timer finishes its tusk.
+    # Or timer can start working before frame change is handled.
+    if type(event) is ev.AnimationEvent:
+        if event.tree.sv_animate:
+            UpdateTree.get(event.tree).is_animation_updated = False
+            UpdateTree.update_animation(event)
+
+    # something changed in the scene
+    elif type(event) is ev.SceneEvent:
+        if event.tree.sv_scene_update and event.tree.sv_process:
+            UpdateTree.get(event.tree).is_scene_updated = False
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=True))
+
+    # nodes changed properties
+    elif type(event) is ev.PropertyEvent:
+        tree = UpdateTree.get(event.tree)
+        tree.add_outdated(event.updated_nodes)
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # update the whole tree anyway
+    elif type(event) is ev.ForceEvent:
+        UpdateTree.reset_tree(event.tree)
+        ts.tasks.add(ts.Task(event.tree,
+                             UpdateTree.main_update(event.tree),
+                             is_scene_update=False))
+
+    # mark that the tree topology has changed
+    # also this can be called (by Blender) during undo event in this case all
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won&#39;t be able to detect changes, and will update all
+    elif type(event) is ev.TreeEvent:
+        UpdateTree.get(event.tree).is_updated = False
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # new file opened
+    elif type(event) is ev.FileEvent:
+        UpdateTree.reset_tree()
+
+    else:
+        was_executed = False
+    return was_executed
+
+
+class SearchTree:
+    &#34;&#34;&#34;Data structure which represents Blender node trees but with ability
+    of efficient search tree elements. Also it keeps tree state so it can be
+    compared with new one to define differences.&#34;&#34;&#34;
+
+    _from_nodes: dict[&#39;SvNode&#39;, set[&#39;SvNode&#39;]]
+    _to_nodes: dict[&#39;SvNode&#39;, set[&#39;SvNode&#39;]]
+    _from_sock: dict[NodeSocket, NodeSocket]
+    _to_socks: dict[NodeSocket, set[NodeSocket]]
+    _links: set[tuple[NodeSocket, NodeSocket]]
+    _sock_node: dict[NodeSocket, Node]
+
+    def __init__(self, tree: NodeTree):
+        self._tree = tree
+        self._from_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != &#39;NodeFrame&#39;}
+        self._to_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != &#39;NodeFrame&#39;}
+        self._from_sock = dict()  # only connected
+        self._to_socks = defaultdict(set)  # only connected
+        self._links = set()  # from to socket
+        self._sock_node = dict()
+
+        for link in (li for li in tree.links if not li.is_muted):
+            self._from_nodes[link.to_node].add(link.from_node)
+            self._to_nodes[link.from_node].add(link.to_node)
+            self._from_sock[link.to_socket] = link.from_socket
+            self._to_socks[link.from_socket].add(link.to_socket)
+            self._links.add((link.from_socket, link.to_socket))
+
+        for node in tree.nodes:
+            for sock in chain(node.inputs, node.outputs):
+                self._sock_node[sock] = node
+
+        self._remove_reroutes()
+        self._remove_wifi_nodes()
+        self._remove_muted_nodes()
+
+    def nodes_from(self, from_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns all next nodes from given ones&#34;&#34;&#34;
+        def node_walker_to(node_: &#39;SvNode&#39;):
+            for nn in self._to_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(from_nodes, node_walker_to))
+
+    def node_from_input(self, in_socket: NodeSocket) -&gt; Optional[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;It expects input socket and returns connected node to it.
+        If socket is not connected it returns None&#34;&#34;&#34;
+        prev_sock = self._from_sock.get(in_socket)
+        return prev_sock and self._sock_node[prev_sock]
+
+    def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns linked to the given socket nodes.
+        The list will be empy if the socket is not connected.
+        Connected input socket will always return list with one node&#34;&#34;&#34;
+        if socket.is_output:
+            next_socks = self._to_socks.get(socket, [])
+            return [self._sock_node[s] for s in next_socks]
+        else:
+            prev_sock = self._from_sock.get(socket)
+            return [self._sock_node[s] for s in [prev_sock] if s is not None]
+
+    def nodes_to(self, to_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns all previous nodes from given ones&#34;&#34;&#34;
+        def node_walker_from(node_: &#39;SvNode&#39;):
+            for nn in self._from_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(to_nodes, node_walker_from))
+
+    def sort_nodes(self, nodes: Iterable[&#39;SvNode&#39;]) -&gt; list[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes in order of their correct execution&#34;&#34;&#34;
+        walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+        for n in nodes:
+            if n in self._from_nodes:
+                walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                     if _n in nodes}
+        nodes = []
+        for node in TopologicalSorter(walk_structure).static_order():
+            nodes.append(node)
+        return nodes
+
+    def previous_sockets(self, node: &#39;SvNode&#39;) -&gt; list[Optional[NodeSocket]]:
+        &#34;&#34;&#34;Return output sockets connected to input ones of given node
+        If input socket is not linked the output socket will be None&#34;&#34;&#34;
+        return [self._from_sock.get(s) for s in node.inputs]
+
+    def socket_from_input(self, in_socket: NodeSocket) -&gt; Optional[NodeSocket]:
+        &#34;&#34;&#34;It expects input socket and returns opposite connected socket to it.
+        If socket is not connected it returns None&#34;&#34;&#34;
+        return self._from_sock.get(in_socket)
+
+    def update_node(self, node: &#39;SvNode&#39;, suppress=True):
+        &#34;&#34;&#34;Fetches data from previous node, makes data conversion if connected
+        sockets have different types, calls process method of the given node
+        records nodes statistics
+        If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
+        with AddStatistic(node, suppress):
+            prepare_input_data(self.previous_sockets(node), node.inputs)
+            node.process()
+
+    def _remove_reroutes(self):
+        for r in self._tree.nodes:
+            if r.bl_idname != &#34;NodeReroute&#34;:
+                continue
+
+            # relink nodes
+            from_n = None
+            if self._from_nodes[r]:
+                from_n = self._from_nodes[r].pop()
+                self._to_nodes[from_n].remove(r)  # remove from
+            del self._from_nodes[r]
+
+            to_ns = self._to_nodes[r]
+            for to_n in to_ns:
+                self._from_nodes[to_n].remove(r)  # remove to
+                if from_n:
+                    self._from_nodes[to_n].add(from_n)  # add link from
+                    self._to_nodes[from_n].add(to_n)  # add link to
+            del self._to_nodes[r]
+
+            # relink sockets
+            if from_s := self._from_sock.get(r.inputs[0]):
+                self._links.discard((from_s, r.inputs[0]))
+                self._to_socks[from_s].remove(r.inputs[0])
+                del self._from_sock[r.inputs[0]]
+
+            if to_ss := self._to_socks.get(r.outputs[0]):
+                for to_s in to_ss:
+                    self._links.discard((r.outputs[0], to_s))
+                    if from_s is not None:
+                        self._links.add((from_s, to_s))
+                        self._from_sock[to_s] = from_s
+                        self._to_socks[from_s].add(to_s)
+                    else:
+                        del self._from_sock[to_s]
+                del self._to_socks[r.outputs[0]]
+
+    def _remove_wifi_nodes(self):
+        wifi_in: dict[str, &#39;SvNode&#39;] = dict()
+        wifi_out: dict[str, set[&#39;SvNode&#39;]] = defaultdict(set)
+        disconnected = []
+        for node in self._tree.nodes:
+            if (var := getattr(node, &#39;var_name&#39;, None)) is not None:
+                if not var:
+                    disconnected.append(node)
+                elif node.bl_idname == &#39;WifiInNode&#39;:
+                    wifi_in[var] = node
+                elif node.bl_idname == &#39;WifiOutNode&#39;:
+                    wifi_out[var].add(node)
+
+        for n in disconnected:
+            self._remove_node(n)
+
+        for var, in_ in wifi_in.items():
+            for out in wifi_out[var]:
+                for in_sock, out_sock in zip(in_.inputs, out.outputs):
+                    if from_s := self._from_sock.get(in_sock):
+                        from_n = self._sock_node[from_s]
+                        self._to_nodes[from_n].discard(in_)
+                        self._to_socks[from_s].discard(in_sock)
+                        self._links.discard((from_s, in_sock))
+                    if to_ss := self._to_socks.get(out_sock):
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].discard(out)
+                            del self._from_sock[to_s]
+                            self._links.discard((out_sock, to_s))
+                    if from_s and to_ss:
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].add(from_n)
+                            self._to_nodes[from_n].add(to_n)
+                            self._from_sock[to_s] = from_s
+                            self._to_socks[from_s].add(to_s)
+                            self._links.add((from_s, to_s))
+
+                for out_s in out.outputs:
+                    if out_s in self._to_socks:
+                        del self._to_socks[out_s]
+                del self._from_nodes[out]
+                del self._to_nodes[out]
+
+            for in_s in in_.inputs:
+                if in_s in self._from_sock:
+                    del self._from_sock[in_s]
+            del self._from_nodes[in_]
+            del self._to_nodes[in_]
+
+    def _remove_muted_nodes(self):
+        util_nodes = {&#39;NodeFrame&#39;, &#39;NodeReroute&#39;, &#39;NodeGroupInput&#39;}
+        for node in self._tree.nodes:
+            if node.bl_idname in util_nodes:
+                continue
+            if not node.mute:
+                continue
+            for in_s, out_s in node.sv_internal_links:
+                from_s = self._from_sock.get(in_s)
+                to_ss = self._to_socks.get(out_s)
+                if from_s and to_ss:
+                    for to_s in to_ss.copy():
+                        self._add_link(from_s, to_s)
+            self._remove_node(node)
+
+    def _add_link(self, from_s, to_s):
+        &#34;&#34;&#34;If to_s is already connected the link will be removed and new one
+        will be added&#34;&#34;&#34;
+        if f_s := self._from_sock.get(to_s):
+            self._remove_link(f_s, to_s)
+        self._to_socks[from_s].add(to_s)
+        self._from_sock[to_s] = from_s
+        self._links.add((from_s, to_s))
+        from_node = self._sock_node[from_s]
+        to_node = self._sock_node[to_s]
+        self._to_nodes[from_node].add(to_node)
+        self._from_nodes[to_node].add(from_node)
+
+    def _remove_link(self, from_s, to_s):
+        del self._from_sock[to_s]
+        if len(self._to_socks[from_s]) == 1:
+            del self._to_socks[from_s]
+        else:
+            self._to_socks[from_s].discard(to_s)
+        self._links.discard((from_s, to_s))
+
+        to_node = self._sock_node[to_s]
+        from_node = self._sock_node[from_s]
+        for in_s in to_node.inputs:
+            if f_s := self._from_sock.get(in_s):
+                if self._sock_node[f_s] == from_node:
+                    break
+        else:
+            self._from_nodes[to_node].discard(from_node)
+            self._to_nodes[from_node].discard(to_node)
+
+    def _remove_node(self, node: Node):
+        &#34;&#34;&#34;Remove node with all its links&#34;&#34;&#34;
+        for in_s in node.inputs:
+            if from_s := self._from_sock.get(in_s):
+                self._to_socks[from_s].discard(in_s)
+                if not self._to_socks[from_s]:
+                    del self._to_socks[from_s]
+                self._links.discard((from_s, in_s))
+                del self._from_sock[in_s]
+        for from_n in self._from_nodes[node]:
+            self._to_nodes[from_n].discard(node)
+        del self._from_nodes[node]
+
+        for out_s in node.outputs:
+            if to_ss := self._to_socks.get(out_s):
+                for to_s in to_ss:
+                    del self._from_sock[to_s]
+                    self._links.discard((out_s, to_s))
+                del self._to_socks[out_s]
+        for to_n in self._to_nodes[node]:
+            self._from_nodes[to_n].discard(node)
+        del self._to_nodes[node]
+
+    def __repr__(self):
+        def from_nodes_str():
+            for tn, fns in self._from_nodes.items():
+                yield f&#34;   {tn.name}&#34;
+                for fn in fns:
+                    yield f&#34;      {fn.name}&#34;
+
+        def to_nodes_str():
+            for fn, tns in self._to_nodes.items():
+                yield f&#34;   {fn.name}&#34;
+                for tn in tns:
+                    yield f&#34;      {tn.name}&#34;
+
+        def from_sock_str():
+            for tso, fso in self._from_sock.items():
+                yield f&#34;   From=&#39;{fso.node.name}|{fso.name}&#39;&#34; \
+                      f&#34; to=&#39;{tso.node.name}|{tso.name}&#39;&#34;
+
+        def links_str():
+            for from_, to in self._links:
+                yield f&#34;   From=&#39;{from_.node.name}|{from_.name}&#39;&#34; \
+                      f&#34; to=&#39;{to.node.name}|{to.name}&#39;&#34;
+
+        from_nodes = &#34;\n&#34;.join(from_nodes_str())
+        to_nodes = &#34;\n&#34;.join(to_nodes_str())
+        from_sock = &#34;\n&#34;.join(from_sock_str())
+        links = &#34;\n&#34;.join(links_str())
+        msg = f&#34;&lt;{type(self).__name__}\n&#34; \
+              f&#34;from_nodes:\n&#34; \
+              f&#34;{from_nodes}\n&#34; \
+              f&#34;to_nodes:\n&#34; \
+              f&#34;{to_nodes}\n&#34; \
+              f&#34;from sockets:\n&#34; \
+              f&#34;{from_sock}\n&#34; \
+              f&#34;links:\n&#34; \
+              f&#34;{links}&#34;
+        return msg
+
+
+class UpdateTree(SearchTree):
+    &#34;&#34;&#34;It caches the trees to keep outdated nodes and to perform tree updating
+    efficiently.&#34;&#34;&#34;
+    _tree_catch: dict[str, &#39;UpdateTree&#39;] = dict()  # the module should be auto-reloaded to prevent crashes
+
+    @classmethod
+    def get(cls, tree: &#34;SvTree&#34;, refresh_tree=False) -&gt; &#34;UpdateTree&#34;:
+        &#34;&#34;&#34;
+        Get cached tree. If tree was not cached it will be.
+        :refresh_tree: if True it will convert update flags into outdated
+        nodes. This can be expensive, so it should be called only before tree
+        reevaluation
+        &#34;&#34;&#34;
+        if tree.tree_id not in cls._tree_catch:
+            _tree = cls(tree)
+        else:
+            _tree = cls._tree_catch[tree.tree_id]
+
+            if refresh_tree:
+                # update topology
+                if not _tree.is_updated:
+                    old = _tree
+                    _tree = old.copy(tree)
+
+                # update outdated nodes list
+                if _tree._outdated_nodes is not None:
+                    if not _tree.is_updated:
+                        changed_nodes = _tree._update_difference(old)
+
+                        # disconnected input sockets can remember previous data
+                        # a node can be laizy and don&#39;t recalculate output
+                        util_nodes = {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}
+                        for node in changed_nodes:
+                            if node.bl_idname in util_nodes:
+                                continue
+                            for s in chain(node.inputs, node.outputs):
+                                s.sv_forget()
+
+                        _tree._outdated_nodes.update(changed_nodes)
+                    if not _tree.is_animation_updated:
+                        _tree._outdated_nodes.update(_tree._animation_nodes())
+                    if not _tree.is_scene_updated:
+                        _tree._outdated_nodes.update(_tree._scene_nodes())
+
+                _tree.is_updated = True
+                _tree.is_animation_updated = True
+                _tree.is_scene_updated = True
+
+        return _tree
+
+    @classmethod
+    @profile(section=&#34;UPDATE&#34;)
+    def update_animation(cls, event: ev.AnimationEvent):
+        &#34;&#34;&#34;Should be called to updated animated nodes&#34;&#34;&#34;
+        try:
+            g = cls.main_update(event.tree, event.is_frame_changed, not event.is_animation_playing)
+            while True:
+                next(g)
+        except StopIteration:
+            pass
+
+    @classmethod
+    def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -&gt; Generator[&#39;SvNode&#39;, None, None]:
+        &#34;&#34;&#34;This generator is for the triggers. It can update outdated nodes and
+        update UI. Should be used only with main trees, the group trees should
+        use different method to separate profiling statistics. When it&#39;s called
+        the tree should have information of what is outdated&#34;&#34;&#34;
+
+        # print(f&#34;UPDATE NODES {event.type=}, {event.tree.name=}&#34;)
+        up_tree = cls.get(tree, refresh_tree=True)
+        if update_nodes:
+            walker = up_tree._walk()
+            # walker = up_tree._debug_color(walker)
+            try:
+                for node, prev_socks in walker:
+                    with AddStatistic(node):
+                        yield node
+                        prepare_input_data(prev_socks, node.inputs)
+                        node.process()
+            except CancelError:
+                pass
+
+        if update_interface:
+            if up_tree._tree.show_time_mode == &#34;Cumulative&#34;:
+                times = up_tree._calc_cam_update_time()
+            else:
+                times = None
+            update_ui(tree, times)
+
+    @classmethod
+    def reset_tree(cls, tree: NodeTree = None):
+        &#34;&#34;&#34;Remove tree data or data of all trees from the cache&#34;&#34;&#34;
+        if tree is not None and tree.tree_id in cls._tree_catch:
+            del cls._tree_catch[tree.tree_id]
+
+            # reset nested trees too
+            for group in (n for n in tree.nodes if hasattr(n, &#39;node_tree&#39;)):
+                UpdateTree.reset_tree(group.node_tree)
+        else:
+            cls._tree_catch.clear()
+
+    def copy(self, new_tree: NodeTree) -&gt; &#39;UpdateTree&#39;:
+        &#34;&#34;&#34;They copy will be with new topology if original tree was changed
+        since instancing of the first tree. Other attributes copied as is.
+        :new_tree: it&#39;s import to pass fresh tree object because during undo
+        events all previous tree objects invalidates&#34;&#34;&#34;
+        copy_ = type(self)(new_tree)
+        for attr in self._copy_attrs:
+            setattr(copy_, attr, copy(getattr(self, attr)))
+        return copy_
+
+    def add_outdated(self, nodes: Iterable):
+        &#34;&#34;&#34;Add outdated nodes explicitly. Animation and scene dependent nodes
+        can be marked as outdated via dedicated flags for performance.&#34;&#34;&#34;
+        if self._outdated_nodes is not None:
+            self._outdated_nodes.update(nodes)
+
+    def __init__(self, tree: NodeTree):
+        &#34;&#34;&#34;Should not use be used directly, only via the get class method
+        :is_updated: Should be False if topology of the tree was changed
+        :is_animation_updated: Should be False animation dependent nodes should
+        be updated
+        :is_scene_updated: Should be False if scene dependent nodes should be
+        updated
+        :_outdated_nodes: Keeps nodes which properties were changed or which
+        have errors. Can be None when what means that all nodes are outdated
+        :_copy_attrs: list of attributes which should be copied by the copy
+        method&#34;&#34;&#34;
+        super().__init__(tree)
+        self._tree_catch[tree.tree_id] = self
+
+        self.is_updated = True  # False if topology was changed
+        self.is_animation_updated = True
+        self.is_scene_updated = True
+        self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
+
+        # https://stackoverflow.com/a/68550238
+        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
+
+        self._copy_attrs = [
+            &#39;is_updated&#39;,
+            &#39;is_animation_updated&#39;,
+            &#39;is_scene_updated&#39;,
+            &#39;_outdated_nodes&#39;,
+        ]
+
+    def _animation_nodes(self) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which are animation dependent&#34;&#34;&#34;
+        an_nodes = set()
+        if not self.is_animation_updated:
+            for node in self._tree.nodes:
+                if getattr(node, &#39;is_animation_dependent&#39;, False) \
+                        and getattr(node, &#39;is_animatable&#39;, False):
+                    an_nodes.add(node)
+        return an_nodes
+
+    def _scene_nodes(self) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which are scene dependent&#34;&#34;&#34;
+        sc_nodes = set()
+        if not self.is_scene_updated:
+            for node in self._tree.nodes:
+                if getattr(node, &#39;is_scene_dependent&#39;, False) \
+                        and getattr(node, &#39;is_interactive&#39;, False):
+                    sc_nodes.add(node)
+        return sc_nodes
+
+    def _walk(self) -&gt; tuple[Node, list[NodeSocket]]:
+        &#34;&#34;&#34;Yields nodes in order of their proper execution. It starts yielding
+        from outdated nodes. It keeps the outdated_nodes storage in proper
+        state. It checks after yielding the error status of the node. If the
+        node has error it goes into outdated_nodes. It uses cached walker, so
+        it works more efficient when outdated nodes are the same between the
+        method calls.&#34;&#34;&#34;
+
+        # walk all nodes in the tree
+        if self._outdated_nodes is None:
+            outdated = None
+            self._outdated_nodes = set()
+        # walk triggered nodes and error nodes from previous updates
+        else:
+            outdated = frozenset(self._outdated_nodes)
+            self._outdated_nodes.clear()
+
+        for node, other_socks in self._sort_nodes(outdated):
+            # execute node only if all previous nodes are updated
+            if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
+                yield node, other_socks
+                if node.get(ERROR_KEY, False):
+                    self._outdated_nodes.add(node)
+            else:
+                node[UPDATE_KEY] = False
+
+    def __sort_nodes(self,
+                     from_nodes: frozenset[&#39;SvNode&#39;] = None,
+                     to_nodes: frozenset[&#39;SvNode&#39;] = None)\
+                     -&gt; list[tuple[&#39;SvNode&#39;, list[NodeSocket]]]:
+        &#34;&#34;&#34;Sort nodes of the tree in proper execution order. When all given
+        parameters are None it uses all tree nodes
+        :from_nodes: if given it sorts only next nodes from given ones
+        :to_nodes: if given it sorts only previous nodes from given
+        If from_nodes and to_nodes are given it uses only intersection of next
+        nodes from from_nodes and previous nodes from to_nodes&#34;&#34;&#34;
+        nodes_to_walk = set()
+        walk_structure = None
+        if from_nodes is None and to_nodes is None:
+            walk_structure = self._from_nodes
+        elif from_nodes and to_nodes:
+            from_ = self.nodes_from(from_nodes)
+            to_ = self.nodes_to(to_nodes)
+            nodes_to_walk = from_.intersection(to_)
+        elif from_nodes:
+            nodes_to_walk = self.nodes_from(from_nodes)
+        else:
+            nodes_to_walk = self.nodes_to(from_nodes)
+
+        if nodes_to_walk:
+            walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+            for n in nodes_to_walk:
+                if n in self._from_nodes:
+                    walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                         if _n in nodes_to_walk}
+
+        nodes = []
+        if walk_structure:
+            for node in TopologicalSorter(walk_structure).static_order():
+                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
+        return nodes
+
+    def _update_difference(self, old: &#39;UpdateTree&#39;) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which should be updated according to changes in the
+        tree topology
+        :old: previous state of the tree to compare with&#34;&#34;&#34;
+        nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
+        new_links = self._links - old._links
+        for from_sock, to_sock in new_links:
+            if from_sock not in old._from_sock:  # socket was not connected
+                # protect from if not self.outputs[0].is_linked: return
+                nodes_to_update.add(self._sock_node[from_sock])
+            else:
+                nodes_to_update.add(self._sock_node[to_sock])
+        removed_links = old._links - self._links
+        for from_sock, to_sock in removed_links:
+            if to_sock not in self._sock_node:
+                continue  # the link was removed together with the node
+            nodes_to_update.add(self._sock_node[to_sock])
+        return nodes_to_update
+
+    def _calc_cam_update_time(self) -&gt; Iterable[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Return cumulative update time in order of node_group.nodes collection&#34;&#34;&#34;
+        cum_time_nodes = dict()  # don&#39;t have frame nodes
+        for node, prev_socks in self.__sort_nodes():
+            prev_nodes = self._from_nodes[node]
+            if len(prev_nodes) &gt; 1:
+                cum_time = sum(n.get(TIME_KEY, 0) for n in self.nodes_to([node]))
+            else:
+                cum_time = sum(cum_time_nodes.get(n, 0) for n in prev_nodes)
+                cum_time += node.get(TIME_KEY, 0)
+            cum_time_nodes[node] = cum_time
+        return (cum_time_nodes.get(n) for n in self._tree.nodes)
+
+    def _debug_color(self, walker: Generator, use_color: bool = True):
+        &#34;&#34;&#34;Colorize nodes which were previously executed. Before execution, it
+        resets all dbug colors&#34;&#34;&#34;
+        def _set_color(node: &#39;SvNode&#39;, _use_color: bool):
+            use_key = &#34;DEBUG_use_user_color&#34;
+            color_key = &#34;DEBUG_user_color&#34;
+
+            # set temporary color
+            if _use_color:
+                # save overridden color (only once)
+                if color_key not in node:
+                    node[use_key] = node.use_custom_color
+                    node[color_key] = node.color
+                node.use_custom_color = True
+                node.color = (1, 1, 1)
+
+            else:
+                if color_key in node:
+                    node.use_custom_color = node[use_key]
+                    del node[use_key]
+                    node.color = node[color_key]
+                    del node[color_key]
+
+        for n in self._tree.nodes:
+            _set_color(n, False)
+
+        for node, *args in walker:
+            _set_color(node, use_color)
+            yield node, *args
+
+
+class AddStatistic:
+    &#34;&#34;&#34;It caches errors during execution of process method of a node and saves
+    update time, update status and error&#34;&#34;&#34;
+
+    # this probably can be inside the Node class as an update method
+    # using context manager from contextlib has big overhead
+    # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
+    def __init__(self, node: &#39;SvNode&#39;, supress=True):
+        &#34;&#34;&#34;:supress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
+        self._node = node
+        self._start = perf_counter()
+        self._supress = supress
+
+    def __enter__(self):
+        return None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self._node[UPDATE_KEY] = True
+            self._node[ERROR_KEY] = None
+            self._node[TIME_KEY] = perf_counter() - self._start
+        else:
+            log_error(exc_val)
+            self._node[UPDATE_KEY] = False
+            self._node[ERROR_KEY] = repr(exc_val)
+
+        if self._supress and exc_type is not None:
+            if issubclass(exc_type, CancelError):
+                return False
+            return issubclass(exc_type, Exception)
+
+
+def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
+                       input_socks: list[NodeSocket]):
+    &#34;&#34;&#34;Reads data from given outputs socket make it conversion if necessary and
+    put data into input given socket&#34;&#34;&#34;
+    # this can be a socket method
+    for ps, ns in zip(prev_socks, input_socks):
+        if ps is None:
+            continue
+        try:
+            data = ps.sv_get()
+        except SvNoDataError:
+            # let to the node handle No Data error
+            ns.sv_forget()
+        else:
+            # cast data
+            if ps.bl_idname != ns.bl_idname:
+                implicit_conversion = conversions[ns.default_conversion_name]
+                data = implicit_conversion.convert(ns, ps, data)
+
+            ns.sv_set(data)
+
+
+def update_ui(tree: NodeTree, times: Iterable[float] = None):
+    &#34;&#34;&#34;Updates UI of the given tree
+    :times: optional node timing in order of group_tree.nodes collection&#34;&#34;&#34;
+    # probably this can be moved to tree.update_ui method
+    errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
+    times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
+    tree.update_ui(errors, times)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.core.update_system.control_center"><code class="name flex">
+<span>def <span class="ident">control_center</span></span>(<span>event)</span>
+</code></dt>
+<dd>
+<div class="desc"><ol>
+<li>Update tree model lazily</li>
+<li>Check whether the event should be processed</li>
+<li>Process event or create task to process via timer</li>
+</ol></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def control_center(event):
+    &#34;&#34;&#34;
+    1. Update tree model lazily
+    2. Check whether the event should be processed
+    3. Process event or create task to process via timer&#34;&#34;&#34;
+    was_executed = True
+
+    # frame update
+    # This event can&#39;t be handled via NodesUpdater during animation rendering
+    # because new frame change event can arrive before timer finishes its tusk.
+    # Or timer can start working before frame change is handled.
+    if type(event) is ev.AnimationEvent:
+        if event.tree.sv_animate:
+            UpdateTree.get(event.tree).is_animation_updated = False
+            UpdateTree.update_animation(event)
+
+    # something changed in the scene
+    elif type(event) is ev.SceneEvent:
+        if event.tree.sv_scene_update and event.tree.sv_process:
+            UpdateTree.get(event.tree).is_scene_updated = False
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=True))
+
+    # nodes changed properties
+    elif type(event) is ev.PropertyEvent:
+        tree = UpdateTree.get(event.tree)
+        tree.add_outdated(event.updated_nodes)
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # update the whole tree anyway
+    elif type(event) is ev.ForceEvent:
+        UpdateTree.reset_tree(event.tree)
+        ts.tasks.add(ts.Task(event.tree,
+                             UpdateTree.main_update(event.tree),
+                             is_scene_update=False))
+
+    # mark that the tree topology has changed
+    # also this can be called (by Blender) during undo event in this case all
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won&#39;t be able to detect changes, and will update all
+    elif type(event) is ev.TreeEvent:
+        UpdateTree.get(event.tree).is_updated = False
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # new file opened
+    elif type(event) is ev.FileEvent:
+        UpdateTree.reset_tree()
+
+    else:
+        was_executed = False
+    return was_executed</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.prepare_input_data"><code class="name flex">
+<span>def <span class="ident">prepare_input_data</span></span>(<span>prev_socks: list, input_socks: list)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads data from given outputs socket make it conversion if necessary and
+put data into input given socket</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
+                       input_socks: list[NodeSocket]):
+    &#34;&#34;&#34;Reads data from given outputs socket make it conversion if necessary and
+    put data into input given socket&#34;&#34;&#34;
+    # this can be a socket method
+    for ps, ns in zip(prev_socks, input_socks):
+        if ps is None:
+            continue
+        try:
+            data = ps.sv_get()
+        except SvNoDataError:
+            # let to the node handle No Data error
+            ns.sv_forget()
+        else:
+            # cast data
+            if ps.bl_idname != ns.bl_idname:
+                implicit_conversion = conversions[ns.default_conversion_name]
+                data = implicit_conversion.convert(ns, ps, data)
+
+            ns.sv_set(data)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.update_ui"><code class="name flex">
+<span>def <span class="ident">update_ui</span></span>(<span>tree: bpy_types.NodeTree, times: Iterable[float] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Updates UI of the given tree
+:times: optional node timing in order of group_tree.nodes collection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_ui(tree: NodeTree, times: Iterable[float] = None):
+    &#34;&#34;&#34;Updates UI of the given tree
+    :times: optional node timing in order of group_tree.nodes collection&#34;&#34;&#34;
+    # probably this can be moved to tree.update_ui method
+    errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
+    times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
+    tree.update_ui(errors, times)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.core.update_system.AddStatistic"><code class="flex name class">
+<span>class <span class="ident">AddStatistic</span></span>
+<span>(</span><span>node: SvNode, supress=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It caches errors during execution of process method of a node and saves
+update time, update status and error</p>
+<p>:supress: if True any errors during node execution will be suppressed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AddStatistic:
+    &#34;&#34;&#34;It caches errors during execution of process method of a node and saves
+    update time, update status and error&#34;&#34;&#34;
+
+    # this probably can be inside the Node class as an update method
+    # using context manager from contextlib has big overhead
+    # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
+    def __init__(self, node: &#39;SvNode&#39;, supress=True):
+        &#34;&#34;&#34;:supress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
+        self._node = node
+        self._start = perf_counter()
+        self._supress = supress
+
+    def __enter__(self):
+        return None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self._node[UPDATE_KEY] = True
+            self._node[ERROR_KEY] = None
+            self._node[TIME_KEY] = perf_counter() - self._start
+        else:
+            log_error(exc_val)
+            self._node[UPDATE_KEY] = False
+            self._node[ERROR_KEY] = repr(exc_val)
+
+        if self._supress and exc_type is not None:
+            if issubclass(exc_type, CancelError):
+                return False
+            return issubclass(exc_type, Exception)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree"><code class="flex name class">
+<span>class <span class="ident">SearchTree</span></span>
+<span>(</span><span>tree: bpy_types.NodeTree)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data structure which represents Blender node trees but with ability
+of efficient search tree elements. Also it keeps tree state so it can be
+compared with new one to define differences.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SearchTree:
+    &#34;&#34;&#34;Data structure which represents Blender node trees but with ability
+    of efficient search tree elements. Also it keeps tree state so it can be
+    compared with new one to define differences.&#34;&#34;&#34;
+
+    _from_nodes: dict[&#39;SvNode&#39;, set[&#39;SvNode&#39;]]
+    _to_nodes: dict[&#39;SvNode&#39;, set[&#39;SvNode&#39;]]
+    _from_sock: dict[NodeSocket, NodeSocket]
+    _to_socks: dict[NodeSocket, set[NodeSocket]]
+    _links: set[tuple[NodeSocket, NodeSocket]]
+    _sock_node: dict[NodeSocket, Node]
+
+    def __init__(self, tree: NodeTree):
+        self._tree = tree
+        self._from_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != &#39;NodeFrame&#39;}
+        self._to_nodes = {
+            n: set() for n in tree.nodes if n.bl_idname != &#39;NodeFrame&#39;}
+        self._from_sock = dict()  # only connected
+        self._to_socks = defaultdict(set)  # only connected
+        self._links = set()  # from to socket
+        self._sock_node = dict()
+
+        for link in (li for li in tree.links if not li.is_muted):
+            self._from_nodes[link.to_node].add(link.from_node)
+            self._to_nodes[link.from_node].add(link.to_node)
+            self._from_sock[link.to_socket] = link.from_socket
+            self._to_socks[link.from_socket].add(link.to_socket)
+            self._links.add((link.from_socket, link.to_socket))
+
+        for node in tree.nodes:
+            for sock in chain(node.inputs, node.outputs):
+                self._sock_node[sock] = node
+
+        self._remove_reroutes()
+        self._remove_wifi_nodes()
+        self._remove_muted_nodes()
+
+    def nodes_from(self, from_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns all next nodes from given ones&#34;&#34;&#34;
+        def node_walker_to(node_: &#39;SvNode&#39;):
+            for nn in self._to_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(from_nodes, node_walker_to))
+
+    def node_from_input(self, in_socket: NodeSocket) -&gt; Optional[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;It expects input socket and returns connected node to it.
+        If socket is not connected it returns None&#34;&#34;&#34;
+        prev_sock = self._from_sock.get(in_socket)
+        return prev_sock and self._sock_node[prev_sock]
+
+    def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns linked to the given socket nodes.
+        The list will be empy if the socket is not connected.
+        Connected input socket will always return list with one node&#34;&#34;&#34;
+        if socket.is_output:
+            next_socks = self._to_socks.get(socket, [])
+            return [self._sock_node[s] for s in next_socks]
+        else:
+            prev_sock = self._from_sock.get(socket)
+            return [self._sock_node[s] for s in [prev_sock] if s is not None]
+
+    def nodes_to(self, to_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns all previous nodes from given ones&#34;&#34;&#34;
+        def node_walker_from(node_: &#39;SvNode&#39;):
+            for nn in self._from_nodes.get(node_, []):
+                yield nn
+
+        return set(bfs_walk(to_nodes, node_walker_from))
+
+    def sort_nodes(self, nodes: Iterable[&#39;SvNode&#39;]) -&gt; list[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes in order of their correct execution&#34;&#34;&#34;
+        walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+        for n in nodes:
+            if n in self._from_nodes:
+                walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                     if _n in nodes}
+        nodes = []
+        for node in TopologicalSorter(walk_structure).static_order():
+            nodes.append(node)
+        return nodes
+
+    def previous_sockets(self, node: &#39;SvNode&#39;) -&gt; list[Optional[NodeSocket]]:
+        &#34;&#34;&#34;Return output sockets connected to input ones of given node
+        If input socket is not linked the output socket will be None&#34;&#34;&#34;
+        return [self._from_sock.get(s) for s in node.inputs]
+
+    def socket_from_input(self, in_socket: NodeSocket) -&gt; Optional[NodeSocket]:
+        &#34;&#34;&#34;It expects input socket and returns opposite connected socket to it.
+        If socket is not connected it returns None&#34;&#34;&#34;
+        return self._from_sock.get(in_socket)
+
+    def update_node(self, node: &#39;SvNode&#39;, suppress=True):
+        &#34;&#34;&#34;Fetches data from previous node, makes data conversion if connected
+        sockets have different types, calls process method of the given node
+        records nodes statistics
+        If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
+        with AddStatistic(node, suppress):
+            prepare_input_data(self.previous_sockets(node), node.inputs)
+            node.process()
+
+    def _remove_reroutes(self):
+        for r in self._tree.nodes:
+            if r.bl_idname != &#34;NodeReroute&#34;:
+                continue
+
+            # relink nodes
+            from_n = None
+            if self._from_nodes[r]:
+                from_n = self._from_nodes[r].pop()
+                self._to_nodes[from_n].remove(r)  # remove from
+            del self._from_nodes[r]
+
+            to_ns = self._to_nodes[r]
+            for to_n in to_ns:
+                self._from_nodes[to_n].remove(r)  # remove to
+                if from_n:
+                    self._from_nodes[to_n].add(from_n)  # add link from
+                    self._to_nodes[from_n].add(to_n)  # add link to
+            del self._to_nodes[r]
+
+            # relink sockets
+            if from_s := self._from_sock.get(r.inputs[0]):
+                self._links.discard((from_s, r.inputs[0]))
+                self._to_socks[from_s].remove(r.inputs[0])
+                del self._from_sock[r.inputs[0]]
+
+            if to_ss := self._to_socks.get(r.outputs[0]):
+                for to_s in to_ss:
+                    self._links.discard((r.outputs[0], to_s))
+                    if from_s is not None:
+                        self._links.add((from_s, to_s))
+                        self._from_sock[to_s] = from_s
+                        self._to_socks[from_s].add(to_s)
+                    else:
+                        del self._from_sock[to_s]
+                del self._to_socks[r.outputs[0]]
+
+    def _remove_wifi_nodes(self):
+        wifi_in: dict[str, &#39;SvNode&#39;] = dict()
+        wifi_out: dict[str, set[&#39;SvNode&#39;]] = defaultdict(set)
+        disconnected = []
+        for node in self._tree.nodes:
+            if (var := getattr(node, &#39;var_name&#39;, None)) is not None:
+                if not var:
+                    disconnected.append(node)
+                elif node.bl_idname == &#39;WifiInNode&#39;:
+                    wifi_in[var] = node
+                elif node.bl_idname == &#39;WifiOutNode&#39;:
+                    wifi_out[var].add(node)
+
+        for n in disconnected:
+            self._remove_node(n)
+
+        for var, in_ in wifi_in.items():
+            for out in wifi_out[var]:
+                for in_sock, out_sock in zip(in_.inputs, out.outputs):
+                    if from_s := self._from_sock.get(in_sock):
+                        from_n = self._sock_node[from_s]
+                        self._to_nodes[from_n].discard(in_)
+                        self._to_socks[from_s].discard(in_sock)
+                        self._links.discard((from_s, in_sock))
+                    if to_ss := self._to_socks.get(out_sock):
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].discard(out)
+                            del self._from_sock[to_s]
+                            self._links.discard((out_sock, to_s))
+                    if from_s and to_ss:
+                        for to_s in to_ss:
+                            to_n = self._sock_node[to_s]
+                            self._from_nodes[to_n].add(from_n)
+                            self._to_nodes[from_n].add(to_n)
+                            self._from_sock[to_s] = from_s
+                            self._to_socks[from_s].add(to_s)
+                            self._links.add((from_s, to_s))
+
+                for out_s in out.outputs:
+                    if out_s in self._to_socks:
+                        del self._to_socks[out_s]
+                del self._from_nodes[out]
+                del self._to_nodes[out]
+
+            for in_s in in_.inputs:
+                if in_s in self._from_sock:
+                    del self._from_sock[in_s]
+            del self._from_nodes[in_]
+            del self._to_nodes[in_]
+
+    def _remove_muted_nodes(self):
+        util_nodes = {&#39;NodeFrame&#39;, &#39;NodeReroute&#39;, &#39;NodeGroupInput&#39;}
+        for node in self._tree.nodes:
+            if node.bl_idname in util_nodes:
+                continue
+            if not node.mute:
+                continue
+            for in_s, out_s in node.sv_internal_links:
+                from_s = self._from_sock.get(in_s)
+                to_ss = self._to_socks.get(out_s)
+                if from_s and to_ss:
+                    for to_s in to_ss.copy():
+                        self._add_link(from_s, to_s)
+            self._remove_node(node)
+
+    def _add_link(self, from_s, to_s):
+        &#34;&#34;&#34;If to_s is already connected the link will be removed and new one
+        will be added&#34;&#34;&#34;
+        if f_s := self._from_sock.get(to_s):
+            self._remove_link(f_s, to_s)
+        self._to_socks[from_s].add(to_s)
+        self._from_sock[to_s] = from_s
+        self._links.add((from_s, to_s))
+        from_node = self._sock_node[from_s]
+        to_node = self._sock_node[to_s]
+        self._to_nodes[from_node].add(to_node)
+        self._from_nodes[to_node].add(from_node)
+
+    def _remove_link(self, from_s, to_s):
+        del self._from_sock[to_s]
+        if len(self._to_socks[from_s]) == 1:
+            del self._to_socks[from_s]
+        else:
+            self._to_socks[from_s].discard(to_s)
+        self._links.discard((from_s, to_s))
+
+        to_node = self._sock_node[to_s]
+        from_node = self._sock_node[from_s]
+        for in_s in to_node.inputs:
+            if f_s := self._from_sock.get(in_s):
+                if self._sock_node[f_s] == from_node:
+                    break
+        else:
+            self._from_nodes[to_node].discard(from_node)
+            self._to_nodes[from_node].discard(to_node)
+
+    def _remove_node(self, node: Node):
+        &#34;&#34;&#34;Remove node with all its links&#34;&#34;&#34;
+        for in_s in node.inputs:
+            if from_s := self._from_sock.get(in_s):
+                self._to_socks[from_s].discard(in_s)
+                if not self._to_socks[from_s]:
+                    del self._to_socks[from_s]
+                self._links.discard((from_s, in_s))
+                del self._from_sock[in_s]
+        for from_n in self._from_nodes[node]:
+            self._to_nodes[from_n].discard(node)
+        del self._from_nodes[node]
+
+        for out_s in node.outputs:
+            if to_ss := self._to_socks.get(out_s):
+                for to_s in to_ss:
+                    del self._from_sock[to_s]
+                    self._links.discard((out_s, to_s))
+                del self._to_socks[out_s]
+        for to_n in self._to_nodes[node]:
+            self._from_nodes[to_n].discard(node)
+        del self._to_nodes[node]
+
+    def __repr__(self):
+        def from_nodes_str():
+            for tn, fns in self._from_nodes.items():
+                yield f&#34;   {tn.name}&#34;
+                for fn in fns:
+                    yield f&#34;      {fn.name}&#34;
+
+        def to_nodes_str():
+            for fn, tns in self._to_nodes.items():
+                yield f&#34;   {fn.name}&#34;
+                for tn in tns:
+                    yield f&#34;      {tn.name}&#34;
+
+        def from_sock_str():
+            for tso, fso in self._from_sock.items():
+                yield f&#34;   From=&#39;{fso.node.name}|{fso.name}&#39;&#34; \
+                      f&#34; to=&#39;{tso.node.name}|{tso.name}&#39;&#34;
+
+        def links_str():
+            for from_, to in self._links:
+                yield f&#34;   From=&#39;{from_.node.name}|{from_.name}&#39;&#34; \
+                      f&#34; to=&#39;{to.node.name}|{to.name}&#39;&#34;
+
+        from_nodes = &#34;\n&#34;.join(from_nodes_str())
+        to_nodes = &#34;\n&#34;.join(to_nodes_str())
+        from_sock = &#34;\n&#34;.join(from_sock_str())
+        links = &#34;\n&#34;.join(links_str())
+        msg = f&#34;&lt;{type(self).__name__}\n&#34; \
+              f&#34;from_nodes:\n&#34; \
+              f&#34;{from_nodes}\n&#34; \
+              f&#34;to_nodes:\n&#34; \
+              f&#34;{to_nodes}\n&#34; \
+              f&#34;from sockets:\n&#34; \
+              f&#34;{from_sock}\n&#34; \
+              f&#34;links:\n&#34; \
+              f&#34;{links}&#34;
+        return msg</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.core.update_system.SearchTree.node_from_input"><code class="name flex">
+<span>def <span class="ident">node_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket) ‑> Optional[SvNode]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It expects input socket and returns connected node to it.
+If socket is not connected it returns None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_from_input(self, in_socket: NodeSocket) -&gt; Optional[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;It expects input socket and returns connected node to it.
+    If socket is not connected it returns None&#34;&#34;&#34;
+    prev_sock = self._from_sock.get(in_socket)
+    return prev_sock and self._sock_node[prev_sock]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.nodes_from"><code class="name flex">
+<span>def <span class="ident">nodes_from</span></span>(<span>self, from_nodes: Iterable[ForwardRef('SvNode')]) ‑> set</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns all next nodes from given ones</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_from(self, from_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns all next nodes from given ones&#34;&#34;&#34;
+    def node_walker_to(node_: &#39;SvNode&#39;):
+        for nn in self._to_nodes.get(node_, []):
+            yield nn
+
+    return set(bfs_walk(from_nodes, node_walker_to))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.nodes_from_socket"><code class="name flex">
+<span>def <span class="ident">nodes_from_socket</span></span>(<span>self, socket: bpy_types.NodeSocket) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns linked to the given socket nodes.
+The list will be empy if the socket is not connected.
+Connected input socket will always return list with one node</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns linked to the given socket nodes.
+    The list will be empy if the socket is not connected.
+    Connected input socket will always return list with one node&#34;&#34;&#34;
+    if socket.is_output:
+        next_socks = self._to_socks.get(socket, [])
+        return [self._sock_node[s] for s in next_socks]
+    else:
+        prev_sock = self._from_sock.get(socket)
+        return [self._sock_node[s] for s in [prev_sock] if s is not None]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.nodes_to"><code class="name flex">
+<span>def <span class="ident">nodes_to</span></span>(<span>self, to_nodes: Iterable[ForwardRef('SvNode')]) ‑> set</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns all previous nodes from given ones</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_to(self, to_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns all previous nodes from given ones&#34;&#34;&#34;
+    def node_walker_from(node_: &#39;SvNode&#39;):
+        for nn in self._from_nodes.get(node_, []):
+            yield nn
+
+    return set(bfs_walk(to_nodes, node_walker_from))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.previous_sockets"><code class="name flex">
+<span>def <span class="ident">previous_sockets</span></span>(<span>self, node: SvNode) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return output sockets connected to input ones of given node
+If input socket is not linked the output socket will be None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def previous_sockets(self, node: &#39;SvNode&#39;) -&gt; list[Optional[NodeSocket]]:
+    &#34;&#34;&#34;Return output sockets connected to input ones of given node
+    If input socket is not linked the output socket will be None&#34;&#34;&#34;
+    return [self._from_sock.get(s) for s in node.inputs]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.socket_from_input"><code class="name flex">
+<span>def <span class="ident">socket_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket) ‑> Optional[bpy_types.NodeSocket]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It expects input socket and returns opposite connected socket to it.
+If socket is not connected it returns None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_from_input(self, in_socket: NodeSocket) -&gt; Optional[NodeSocket]:
+    &#34;&#34;&#34;It expects input socket and returns opposite connected socket to it.
+    If socket is not connected it returns None&#34;&#34;&#34;
+    return self._from_sock.get(in_socket)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.sort_nodes"><code class="name flex">
+<span>def <span class="ident">sort_nodes</span></span>(<span>self, nodes: Iterable[ForwardRef('SvNode')]) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns nodes in order of their correct execution</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort_nodes(self, nodes: Iterable[&#39;SvNode&#39;]) -&gt; list[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns nodes in order of their correct execution&#34;&#34;&#34;
+    walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+    for n in nodes:
+        if n in self._from_nodes:
+            walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                 if _n in nodes}
+    nodes = []
+    for node in TopologicalSorter(walk_structure).static_order():
+        nodes.append(node)
+    return nodes</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.SearchTree.update_node"><code class="name flex">
+<span>def <span class="ident">update_node</span></span>(<span>self, node: SvNode, suppress=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches data from previous node, makes data conversion if connected
+sockets have different types, calls process method of the given node
+records nodes statistics
+If suppress is True an error during node execution will be suppressed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_node(self, node: &#39;SvNode&#39;, suppress=True):
+    &#34;&#34;&#34;Fetches data from previous node, makes data conversion if connected
+    sockets have different types, calls process method of the given node
+    records nodes statistics
+    If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
+    with AddStatistic(node, suppress):
+        prepare_input_data(self.previous_sockets(node), node.inputs)
+        node.process()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.core.update_system.UpdateTree"><code class="flex name class">
+<span>class <span class="ident">UpdateTree</span></span>
+<span>(</span><span>tree: bpy_types.NodeTree)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It caches the trees to keep outdated nodes and to perform tree updating
+efficiently.</p>
+<p>Should not use be used directly, only via the get class method
+:is_updated: Should be False if topology of the tree was changed
+:is_animation_updated: Should be False animation dependent nodes should
+be updated
+:is_scene_updated: Should be False if scene dependent nodes should be
+updated
+:_outdated_nodes: Keeps nodes which properties were changed or which
+have errors. Can be None when what means that all nodes are outdated
+:_copy_attrs: list of attributes which should be copied by the copy
+method</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UpdateTree(SearchTree):
+    &#34;&#34;&#34;It caches the trees to keep outdated nodes and to perform tree updating
+    efficiently.&#34;&#34;&#34;
+    _tree_catch: dict[str, &#39;UpdateTree&#39;] = dict()  # the module should be auto-reloaded to prevent crashes
+
+    @classmethod
+    def get(cls, tree: &#34;SvTree&#34;, refresh_tree=False) -&gt; &#34;UpdateTree&#34;:
+        &#34;&#34;&#34;
+        Get cached tree. If tree was not cached it will be.
+        :refresh_tree: if True it will convert update flags into outdated
+        nodes. This can be expensive, so it should be called only before tree
+        reevaluation
+        &#34;&#34;&#34;
+        if tree.tree_id not in cls._tree_catch:
+            _tree = cls(tree)
+        else:
+            _tree = cls._tree_catch[tree.tree_id]
+
+            if refresh_tree:
+                # update topology
+                if not _tree.is_updated:
+                    old = _tree
+                    _tree = old.copy(tree)
+
+                # update outdated nodes list
+                if _tree._outdated_nodes is not None:
+                    if not _tree.is_updated:
+                        changed_nodes = _tree._update_difference(old)
+
+                        # disconnected input sockets can remember previous data
+                        # a node can be laizy and don&#39;t recalculate output
+                        util_nodes = {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}
+                        for node in changed_nodes:
+                            if node.bl_idname in util_nodes:
+                                continue
+                            for s in chain(node.inputs, node.outputs):
+                                s.sv_forget()
+
+                        _tree._outdated_nodes.update(changed_nodes)
+                    if not _tree.is_animation_updated:
+                        _tree._outdated_nodes.update(_tree._animation_nodes())
+                    if not _tree.is_scene_updated:
+                        _tree._outdated_nodes.update(_tree._scene_nodes())
+
+                _tree.is_updated = True
+                _tree.is_animation_updated = True
+                _tree.is_scene_updated = True
+
+        return _tree
+
+    @classmethod
+    @profile(section=&#34;UPDATE&#34;)
+    def update_animation(cls, event: ev.AnimationEvent):
+        &#34;&#34;&#34;Should be called to updated animated nodes&#34;&#34;&#34;
+        try:
+            g = cls.main_update(event.tree, event.is_frame_changed, not event.is_animation_playing)
+            while True:
+                next(g)
+        except StopIteration:
+            pass
+
+    @classmethod
+    def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -&gt; Generator[&#39;SvNode&#39;, None, None]:
+        &#34;&#34;&#34;This generator is for the triggers. It can update outdated nodes and
+        update UI. Should be used only with main trees, the group trees should
+        use different method to separate profiling statistics. When it&#39;s called
+        the tree should have information of what is outdated&#34;&#34;&#34;
+
+        # print(f&#34;UPDATE NODES {event.type=}, {event.tree.name=}&#34;)
+        up_tree = cls.get(tree, refresh_tree=True)
+        if update_nodes:
+            walker = up_tree._walk()
+            # walker = up_tree._debug_color(walker)
+            try:
+                for node, prev_socks in walker:
+                    with AddStatistic(node):
+                        yield node
+                        prepare_input_data(prev_socks, node.inputs)
+                        node.process()
+            except CancelError:
+                pass
+
+        if update_interface:
+            if up_tree._tree.show_time_mode == &#34;Cumulative&#34;:
+                times = up_tree._calc_cam_update_time()
+            else:
+                times = None
+            update_ui(tree, times)
+
+    @classmethod
+    def reset_tree(cls, tree: NodeTree = None):
+        &#34;&#34;&#34;Remove tree data or data of all trees from the cache&#34;&#34;&#34;
+        if tree is not None and tree.tree_id in cls._tree_catch:
+            del cls._tree_catch[tree.tree_id]
+
+            # reset nested trees too
+            for group in (n for n in tree.nodes if hasattr(n, &#39;node_tree&#39;)):
+                UpdateTree.reset_tree(group.node_tree)
+        else:
+            cls._tree_catch.clear()
+
+    def copy(self, new_tree: NodeTree) -&gt; &#39;UpdateTree&#39;:
+        &#34;&#34;&#34;They copy will be with new topology if original tree was changed
+        since instancing of the first tree. Other attributes copied as is.
+        :new_tree: it&#39;s import to pass fresh tree object because during undo
+        events all previous tree objects invalidates&#34;&#34;&#34;
+        copy_ = type(self)(new_tree)
+        for attr in self._copy_attrs:
+            setattr(copy_, attr, copy(getattr(self, attr)))
+        return copy_
+
+    def add_outdated(self, nodes: Iterable):
+        &#34;&#34;&#34;Add outdated nodes explicitly. Animation and scene dependent nodes
+        can be marked as outdated via dedicated flags for performance.&#34;&#34;&#34;
+        if self._outdated_nodes is not None:
+            self._outdated_nodes.update(nodes)
+
+    def __init__(self, tree: NodeTree):
+        &#34;&#34;&#34;Should not use be used directly, only via the get class method
+        :is_updated: Should be False if topology of the tree was changed
+        :is_animation_updated: Should be False animation dependent nodes should
+        be updated
+        :is_scene_updated: Should be False if scene dependent nodes should be
+        updated
+        :_outdated_nodes: Keeps nodes which properties were changed or which
+        have errors. Can be None when what means that all nodes are outdated
+        :_copy_attrs: list of attributes which should be copied by the copy
+        method&#34;&#34;&#34;
+        super().__init__(tree)
+        self._tree_catch[tree.tree_id] = self
+
+        self.is_updated = True  # False if topology was changed
+        self.is_animation_updated = True
+        self.is_scene_updated = True
+        self._outdated_nodes: Optional[set[SvNode]] = None  # None means outdated all
+
+        # https://stackoverflow.com/a/68550238
+        self._sort_nodes = lru_cache(maxsize=1)(self.__sort_nodes)
+
+        self._copy_attrs = [
+            &#39;is_updated&#39;,
+            &#39;is_animation_updated&#39;,
+            &#39;is_scene_updated&#39;,
+            &#39;_outdated_nodes&#39;,
+        ]
+
+    def _animation_nodes(self) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which are animation dependent&#34;&#34;&#34;
+        an_nodes = set()
+        if not self.is_animation_updated:
+            for node in self._tree.nodes:
+                if getattr(node, &#39;is_animation_dependent&#39;, False) \
+                        and getattr(node, &#39;is_animatable&#39;, False):
+                    an_nodes.add(node)
+        return an_nodes
+
+    def _scene_nodes(self) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which are scene dependent&#34;&#34;&#34;
+        sc_nodes = set()
+        if not self.is_scene_updated:
+            for node in self._tree.nodes:
+                if getattr(node, &#39;is_scene_dependent&#39;, False) \
+                        and getattr(node, &#39;is_interactive&#39;, False):
+                    sc_nodes.add(node)
+        return sc_nodes
+
+    def _walk(self) -&gt; tuple[Node, list[NodeSocket]]:
+        &#34;&#34;&#34;Yields nodes in order of their proper execution. It starts yielding
+        from outdated nodes. It keeps the outdated_nodes storage in proper
+        state. It checks after yielding the error status of the node. If the
+        node has error it goes into outdated_nodes. It uses cached walker, so
+        it works more efficient when outdated nodes are the same between the
+        method calls.&#34;&#34;&#34;
+
+        # walk all nodes in the tree
+        if self._outdated_nodes is None:
+            outdated = None
+            self._outdated_nodes = set()
+        # walk triggered nodes and error nodes from previous updates
+        else:
+            outdated = frozenset(self._outdated_nodes)
+            self._outdated_nodes.clear()
+
+        for node, other_socks in self._sort_nodes(outdated):
+            # execute node only if all previous nodes are updated
+            if all(n.get(UPDATE_KEY, True) for sock in other_socks if (n := self._sock_node.get(sock))):
+                yield node, other_socks
+                if node.get(ERROR_KEY, False):
+                    self._outdated_nodes.add(node)
+            else:
+                node[UPDATE_KEY] = False
+
+    def __sort_nodes(self,
+                     from_nodes: frozenset[&#39;SvNode&#39;] = None,
+                     to_nodes: frozenset[&#39;SvNode&#39;] = None)\
+                     -&gt; list[tuple[&#39;SvNode&#39;, list[NodeSocket]]]:
+        &#34;&#34;&#34;Sort nodes of the tree in proper execution order. When all given
+        parameters are None it uses all tree nodes
+        :from_nodes: if given it sorts only next nodes from given ones
+        :to_nodes: if given it sorts only previous nodes from given
+        If from_nodes and to_nodes are given it uses only intersection of next
+        nodes from from_nodes and previous nodes from to_nodes&#34;&#34;&#34;
+        nodes_to_walk = set()
+        walk_structure = None
+        if from_nodes is None and to_nodes is None:
+            walk_structure = self._from_nodes
+        elif from_nodes and to_nodes:
+            from_ = self.nodes_from(from_nodes)
+            to_ = self.nodes_to(to_nodes)
+            nodes_to_walk = from_.intersection(to_)
+        elif from_nodes:
+            nodes_to_walk = self.nodes_from(from_nodes)
+        else:
+            nodes_to_walk = self.nodes_to(from_nodes)
+
+        if nodes_to_walk:
+            walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+            for n in nodes_to_walk:
+                if n in self._from_nodes:
+                    walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                         if _n in nodes_to_walk}
+
+        nodes = []
+        if walk_structure:
+            for node in TopologicalSorter(walk_structure).static_order():
+                nodes.append((node, [self._from_sock.get(s) for s in node.inputs]))
+        return nodes
+
+    def _update_difference(self, old: &#39;UpdateTree&#39;) -&gt; set[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Returns nodes which should be updated according to changes in the
+        tree topology
+        :old: previous state of the tree to compare with&#34;&#34;&#34;
+        nodes_to_update = self._from_nodes.keys() - old._from_nodes.keys()
+        new_links = self._links - old._links
+        for from_sock, to_sock in new_links:
+            if from_sock not in old._from_sock:  # socket was not connected
+                # protect from if not self.outputs[0].is_linked: return
+                nodes_to_update.add(self._sock_node[from_sock])
+            else:
+                nodes_to_update.add(self._sock_node[to_sock])
+        removed_links = old._links - self._links
+        for from_sock, to_sock in removed_links:
+            if to_sock not in self._sock_node:
+                continue  # the link was removed together with the node
+            nodes_to_update.add(self._sock_node[to_sock])
+        return nodes_to_update
+
+    def _calc_cam_update_time(self) -&gt; Iterable[&#39;SvNode&#39;]:
+        &#34;&#34;&#34;Return cumulative update time in order of node_group.nodes collection&#34;&#34;&#34;
+        cum_time_nodes = dict()  # don&#39;t have frame nodes
+        for node, prev_socks in self.__sort_nodes():
+            prev_nodes = self._from_nodes[node]
+            if len(prev_nodes) &gt; 1:
+                cum_time = sum(n.get(TIME_KEY, 0) for n in self.nodes_to([node]))
+            else:
+                cum_time = sum(cum_time_nodes.get(n, 0) for n in prev_nodes)
+                cum_time += node.get(TIME_KEY, 0)
+            cum_time_nodes[node] = cum_time
+        return (cum_time_nodes.get(n) for n in self._tree.nodes)
+
+    def _debug_color(self, walker: Generator, use_color: bool = True):
+        &#34;&#34;&#34;Colorize nodes which were previously executed. Before execution, it
+        resets all dbug colors&#34;&#34;&#34;
+        def _set_color(node: &#39;SvNode&#39;, _use_color: bool):
+            use_key = &#34;DEBUG_use_user_color&#34;
+            color_key = &#34;DEBUG_user_color&#34;
+
+            # set temporary color
+            if _use_color:
+                # save overridden color (only once)
+                if color_key not in node:
+                    node[use_key] = node.use_custom_color
+                    node[color_key] = node.color
+                node.use_custom_color = True
+                node.color = (1, 1, 1)
+
+            else:
+                if color_key in node:
+                    node.use_custom_color = node[use_key]
+                    del node[use_key]
+                    node.color = node[color_key]
+                    del node[color_key]
+
+        for n in self._tree.nodes:
+            _set_color(n, False)
+
+        for node, *args in walker:
+            _set_color(node, use_color)
+            yield node, *args</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.update_system.SearchTree" href="#sverchok.core.update_system.SearchTree">SearchTree</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.group_update_system.GroupUpdateTree" href="group_update_system.html#sverchok.core.group_update_system.GroupUpdateTree">GroupUpdateTree</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.core.update_system.UpdateTree.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>tree: SvTree, refresh_tree=False) ‑> <a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get cached tree. If tree was not cached it will be.
+:refresh_tree: if True it will convert update flags into outdated
+nodes. This can be expensive, so it should be called only before tree
+reevaluation</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get(cls, tree: &#34;SvTree&#34;, refresh_tree=False) -&gt; &#34;UpdateTree&#34;:
+    &#34;&#34;&#34;
+    Get cached tree. If tree was not cached it will be.
+    :refresh_tree: if True it will convert update flags into outdated
+    nodes. This can be expensive, so it should be called only before tree
+    reevaluation
+    &#34;&#34;&#34;
+    if tree.tree_id not in cls._tree_catch:
+        _tree = cls(tree)
+    else:
+        _tree = cls._tree_catch[tree.tree_id]
+
+        if refresh_tree:
+            # update topology
+            if not _tree.is_updated:
+                old = _tree
+                _tree = old.copy(tree)
+
+            # update outdated nodes list
+            if _tree._outdated_nodes is not None:
+                if not _tree.is_updated:
+                    changed_nodes = _tree._update_difference(old)
+
+                    # disconnected input sockets can remember previous data
+                    # a node can be laizy and don&#39;t recalculate output
+                    util_nodes = {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}
+                    for node in changed_nodes:
+                        if node.bl_idname in util_nodes:
+                            continue
+                        for s in chain(node.inputs, node.outputs):
+                            s.sv_forget()
+
+                    _tree._outdated_nodes.update(changed_nodes)
+                if not _tree.is_animation_updated:
+                    _tree._outdated_nodes.update(_tree._animation_nodes())
+                if not _tree.is_scene_updated:
+                    _tree._outdated_nodes.update(_tree._scene_nodes())
+
+            _tree.is_updated = True
+            _tree.is_animation_updated = True
+            _tree.is_scene_updated = True
+
+    return _tree</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.UpdateTree.main_update"><code class="name flex">
+<span>def <span class="ident">main_update</span></span>(<span>tree: bpy_types.NodeTree, update_nodes=True, update_interface=True) ‑> Generator[SvNode, None, None]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This generator is for the triggers. It can update outdated nodes and
+update UI. Should be used only with main trees, the group trees should
+use different method to separate profiling statistics. When it's called
+the tree should have information of what is outdated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -&gt; Generator[&#39;SvNode&#39;, None, None]:
+    &#34;&#34;&#34;This generator is for the triggers. It can update outdated nodes and
+    update UI. Should be used only with main trees, the group trees should
+    use different method to separate profiling statistics. When it&#39;s called
+    the tree should have information of what is outdated&#34;&#34;&#34;
+
+    # print(f&#34;UPDATE NODES {event.type=}, {event.tree.name=}&#34;)
+    up_tree = cls.get(tree, refresh_tree=True)
+    if update_nodes:
+        walker = up_tree._walk()
+        # walker = up_tree._debug_color(walker)
+        try:
+            for node, prev_socks in walker:
+                with AddStatistic(node):
+                    yield node
+                    prepare_input_data(prev_socks, node.inputs)
+                    node.process()
+        except CancelError:
+            pass
+
+    if update_interface:
+        if up_tree._tree.show_time_mode == &#34;Cumulative&#34;:
+            times = up_tree._calc_cam_update_time()
+        else:
+            times = None
+        update_ui(tree, times)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.UpdateTree.reset_tree"><code class="name flex">
+<span>def <span class="ident">reset_tree</span></span>(<span>tree: bpy_types.NodeTree = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove tree data or data of all trees from the cache</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def reset_tree(cls, tree: NodeTree = None):
+    &#34;&#34;&#34;Remove tree data or data of all trees from the cache&#34;&#34;&#34;
+    if tree is not None and tree.tree_id in cls._tree_catch:
+        del cls._tree_catch[tree.tree_id]
+
+        # reset nested trees too
+        for group in (n for n in tree.nodes if hasattr(n, &#39;node_tree&#39;)):
+            UpdateTree.reset_tree(group.node_tree)
+    else:
+        cls._tree_catch.clear()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.UpdateTree.update_animation"><code class="name flex">
+<span>def <span class="ident">update_animation</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Should be called to updated animated nodes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrapper(*args, **kwargs):
+    if is_profiling_enabled(section):
+        global _profile_nesting
+
+        profile = get_global_profile()
+        _profile_nesting += 1
+        if _profile_nesting == 1:
+            profile.enable()
+        result = func(*args, **kwargs)
+        _profile_nesting -= 1
+        if _profile_nesting == 0:
+            profile.disable()
+        return result
+    else:
+        return func(*args, **kwargs)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.core.update_system.UpdateTree.add_outdated"><code class="name flex">
+<span>def <span class="ident">add_outdated</span></span>(<span>self, nodes: Iterable)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add outdated nodes explicitly. Animation and scene dependent nodes
+can be marked as outdated via dedicated flags for performance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_outdated(self, nodes: Iterable):
+    &#34;&#34;&#34;Add outdated nodes explicitly. Animation and scene dependent nodes
+    can be marked as outdated via dedicated flags for performance.&#34;&#34;&#34;
+    if self._outdated_nodes is not None:
+        self._outdated_nodes.update(nodes)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.update_system.UpdateTree.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self, new_tree: bpy_types.NodeTree) ‑> <a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>They copy will be with new topology if original tree was changed
+since instancing of the first tree. Other attributes copied as is.
+:new_tree: it's import to pass fresh tree object because during undo
+events all previous tree objects invalidates</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, new_tree: NodeTree) -&gt; &#39;UpdateTree&#39;:
+    &#34;&#34;&#34;They copy will be with new topology if original tree was changed
+    since instancing of the first tree. Other attributes copied as is.
+    :new_tree: it&#39;s import to pass fresh tree object because during undo
+    events all previous tree objects invalidates&#34;&#34;&#34;
+    copy_ = type(self)(new_tree)
+    for attr in self._copy_attrs:
+        setattr(copy_, attr, copy(getattr(self, attr)))
+    return copy_</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.core.update_system.SearchTree" href="#sverchok.core.update_system.SearchTree">SearchTree</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.core.update_system.SearchTree.node_from_input" href="#sverchok.core.update_system.SearchTree.node_from_input">node_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_from" href="#sverchok.core.update_system.SearchTree.nodes_from">nodes_from</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_from_socket" href="#sverchok.core.update_system.SearchTree.nodes_from_socket">nodes_from_socket</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_to" href="#sverchok.core.update_system.SearchTree.nodes_to">nodes_to</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.previous_sockets" href="#sverchok.core.update_system.SearchTree.previous_sockets">previous_sockets</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.socket_from_input" href="#sverchok.core.update_system.SearchTree.socket_from_input">socket_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.sort_nodes" href="#sverchok.core.update_system.SearchTree.sort_nodes">sort_nodes</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.update_node" href="#sverchok.core.update_system.SearchTree.update_node">update_node</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.core" href="index.html">sverchok.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.core.update_system.control_center" href="#sverchok.core.update_system.control_center">control_center</a></code></li>
+<li><code><a title="sverchok.core.update_system.prepare_input_data" href="#sverchok.core.update_system.prepare_input_data">prepare_input_data</a></code></li>
+<li><code><a title="sverchok.core.update_system.update_ui" href="#sverchok.core.update_system.update_ui">update_ui</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.core.update_system.AddStatistic" href="#sverchok.core.update_system.AddStatistic">AddStatistic</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.update_system.SearchTree" href="#sverchok.core.update_system.SearchTree">SearchTree</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.core.update_system.SearchTree.node_from_input" href="#sverchok.core.update_system.SearchTree.node_from_input">node_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_from" href="#sverchok.core.update_system.SearchTree.nodes_from">nodes_from</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_from_socket" href="#sverchok.core.update_system.SearchTree.nodes_from_socket">nodes_from_socket</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.nodes_to" href="#sverchok.core.update_system.SearchTree.nodes_to">nodes_to</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.previous_sockets" href="#sverchok.core.update_system.SearchTree.previous_sockets">previous_sockets</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.socket_from_input" href="#sverchok.core.update_system.SearchTree.socket_from_input">socket_from_input</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.sort_nodes" href="#sverchok.core.update_system.SearchTree.sort_nodes">sort_nodes</a></code></li>
+<li><code><a title="sverchok.core.update_system.SearchTree.update_node" href="#sverchok.core.update_system.SearchTree.update_node">update_node</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.core.update_system.UpdateTree.add_outdated" href="#sverchok.core.update_system.UpdateTree.add_outdated">add_outdated</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.copy" href="#sverchok.core.update_system.UpdateTree.copy">copy</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.get" href="#sverchok.core.update_system.UpdateTree.get">get</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.main_update" href="#sverchok.core.update_system.UpdateTree.main_update">main_update</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.reset_tree" href="#sverchok.core.update_system.UpdateTree.reset_tree">reset_tree</a></code></li>
+<li><code><a title="sverchok.core.update_system.UpdateTree.update_animation" href="#sverchok.core.update_system.UpdateTree.update_animation">update_animation</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

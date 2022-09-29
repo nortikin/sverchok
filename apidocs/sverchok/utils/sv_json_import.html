@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_json_import API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_json_import</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+from __future__ import annotations
+
+import json
+import traceback
+from collections import defaultdict
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Union, Generator, ContextManager
+
+import bpy
+from sverchok import old_nodes
+from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
+from sverchok.utils.logging import info, warning, getLogger, logging
+from sverchok.utils.handle_blender_data import BPYProperty, BlNode
+from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
+
+if TYPE_CHECKING:
+    from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
+    SverchCustomTree = Union[SverchCustomTree, bpy.types.NodeTree]
+    SverchCustomTreeNode = Union[SverchCustomTreeNode, bpy.types.Node]
+
+
+class JSONImporter:
+    &#34;&#34;&#34;Read given structure, generate tree and log errors during the whole importing process&#34;&#34;&#34;
+    def __init__(self, structure: dict):
+        self._structure = structure
+        self._fails_log = FailsLog()
+
+    @classmethod
+    def init_from_path(cls, path: str) -&gt; JSONImporter:
+        &#34;&#34;&#34;It will decode json from given path and initialize importer&#34;&#34;&#34;
+        if path.endswith(&#39;.zip&#39;):
+            structure = get_file_obj_from_zip(path)
+            return cls(structure)
+        elif path.endswith(&#39;.json&#39;):
+            with open(path) as fp:
+                structure = json.load(fp)
+                return cls(structure)
+        else:
+            warning(f&#39;File should have .zip or .json extension, got &#34;.{path.rsplit(&#34;.&#34;)[-1]}&#34; instead&#39;)
+
+    def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
+        &#34;&#34;&#34;Import json structure into given tree and update it&#34;&#34;&#34;
+        if self.structure_version &lt; 0.1001:
+            root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+            root_tree_builder.import_tree()
+        else:
+            importer = FileStruct(logger=self._fails_log, struct=self._structure)
+            importer.build_into_tree(tree)
+
+        if print_log:
+            self._fails_log.report_log_result()
+
+        tree.update()
+
+    def import_node_settings(self, node: SverchCustomTreeNode):
+        if self.structure_version &lt; 1.0:
+            return self._old_import_node_settings(node)
+        else:
+            return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
+
+    def _old_import_node_settings(self, node: SverchCustomTreeNode):
+        &#34;&#34;&#34;
+        It takes first node from file and apply its settings to given node
+        It is strange but it is how it was originally implemented
+        &#34;&#34;&#34;
+        node = BlNode(node)
+        for prop in node.properties:
+            if prop.is_to_save:
+                prop.unset()
+
+        tree_importer = TreeImporter01(node.data.id_data, self._structure, self._fails_log)
+        for node_name, node_type, node_structure in tree_importer.nodes():
+            node_importer = NodeImporter01(node.data, node_structure, self._fails_log, tree_importer.file_version)
+            return node_importer.import_node(apply_attributes=False)
+
+    @property
+    def has_fails(self) -&gt; bool:
+        &#34;&#34;&#34;True if there was at least one fail during importing process&#34;&#34;&#34;
+        return self._fails_log.has_fails
+
+    @property
+    def fail_massage(self) -&gt; str:
+        &#34;&#34;&#34;Brief information about fails if their was&#34;&#34;&#34;
+        return self._fails_log.fail_message
+
+    @property
+    def structure_version(self):
+        return float(self._structure[&#34;export_version&#34;])
+
+
+class TreeImporter01:
+    &#34;&#34;&#34;
+    It reads given structure, regenerate it into given tree and logs fails
+    It expects to read files with version 0.1 and earlier
+    &#34;&#34;&#34;
+    def __init__(self, tree: SverchCustomTree, structure: dict, log: FailsLog):
+        self._tree = tree
+        self._structure = structure
+        self._fails_log = log
+        self._new_node_names = dict()  # map(old_node_name, new_node_name)
+
+    def import_tree(self):
+        &#34;&#34;&#34;Reads and generates nodes, frames, links&#34;&#34;&#34;
+        with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
+            for node_name, node_type, node_structure in self.nodes():
+                node = tree_builder.add_node(node_type, node_name)
+                if node:
+                    self._new_node_names[node_name] = node.name
+                    NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
+
+            for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
+                with self._fails_log.add_fail(&#34;Search node to link&#34;):
+                    from_node_name = self._get_new_node_name(from_node_name)
+                    to_node_name = self._get_new_node_name(to_node_name)
+                tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+
+            for node_name, parent_name in self._parent_nodes():
+                with self._fails_log.add_fail(
+                        &#34;Assign node parent&#34;,
+                        f&#39;Tree: {self._tree.name}, Node: {node_name}, Parent node: {parent_name}&#39;):
+                    node_name = self._get_new_node_name(node_name)
+                    parent_name = self._get_new_node_name(parent_name)
+                    self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+            # mark old nodes
+            for node in self._tree.nodes:
+                if old_nodes.is_old(node):
+                    old_nodes.mark_old(node)
+
+    @property
+    def file_version(self) -&gt; float:
+        &#34;&#34;&#34;json structure version&#34;&#34;&#34;
+        return float(self._structure[&#39;export_version&#39;])
+
+    def nodes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node names and their structure from tree structure&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for node_name, node_structure in self._structure.get(&#34;nodes&#34;, dict()).items():
+                with self._fails_log.add_fail(&#34;Reading node&#34;):
+                    yield node_name, node_structure[&#39;bl_idname&#39;], node_structure
+
+    def _get_new_node_name(self, old_name):
+        &#34;&#34;&#34;
+        Created nodes during import can get different name cause of not to overlap with names of existing nodes
+        So this method will find new name by given old name, if name was not changed it will return old name
+        &#34;&#34;&#34;
+        return self._new_node_names[old_name]
+
+    def _links(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;
+        Read list of links and return them in next format
+        (from_node_name, from_node_index(or name), to_node_name, to_node_index(or name))
+        socket will have name if socket was reroute or other socket was reroute
+        &#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading links&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for from_node_name, form_socket_index, to_node_name, to_socket_index in \
+                    self._structure.get(&#39;update_lists&#39;, []):
+                yield from_node_name, form_socket_index, to_node_name, to_socket_index
+
+    def _parent_nodes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;returns (node name, frame name)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading parent nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for node, parent in self._structure.get(&#34;framed_nodes&#34;, dict()).items():
+                yield node, parent
+
+
+class NodeImporter01:
+    &#34;&#34;&#34;Apply attributes and node/sockets properties to given node, log fails&#34;&#34;&#34;
+    def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog, import_version: float):
+        self._node = node
+        self._structure = structure
+        self._fails_log = log
+        self._import_version = import_version
+
+    def import_node(self, apply_attributes: bool = True):
+        &#34;&#34;&#34;Reads node structure and apply settings to node&#34;&#34;&#34;
+        if apply_attributes:
+            for attr_name, attr_value in self._node_attributes():
+                with self._fails_log.add_fail(
+                        &#34;Setting node attribute&#34;,
+                        f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}&#39;):
+                    setattr(self._node, attr_name, attr_value)
+
+        for prop_name, prop_value in self._node_properties():
+            with self._fails_log.add_fail(
+                    &#34;Setting node property&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+                prop = BPYProperty(self._node, prop_name)
+                if prop.is_valid:  # some files can have outdated properties which should be filtered
+                    prop.value = prop_value
+
+        # this block is before applying socket properties because some nodes can generate them in load method
+        if hasattr(self._node, &#39;load_from_json&#39;):
+            with self._fails_log.add_fail(
+                    &#34;Setting advance node properties&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}&#39;):
+                self._node.load_from_json(self._structure, self._import_version)
+
+        for sock_index, prop_name, prop_value in self._input_socket_properties():
+            with self._fails_log.add_fail(
+                    &#34;Setting socket property&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+                socket = self._node.inputs[sock_index]
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value
+        return self._node
+
+    def _node_attributes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node attributes from node structure, returns (attr_name, value)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading node location&#34;, f&#39;Node: {self._node.name}&#39;):
+            yield &#34;location&#34;, self._structure[&#34;location&#34;]
+
+        required_attributes = [&#34;height&#34;, &#34;width&#34;, &#34;label&#34;, &#34;hide&#34;, &#34;color&#34;, &#34;use_custom_color&#34;]
+        for attr in required_attributes:
+            if attr in self._structure:
+                yield attr, self._structure[attr]
+
+    def _node_properties(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node properties, returns (prop_name, prop_value)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading node properties&#34;, f&#39;Node: {self._node.name}&#39;):
+            for prop_name, prop_value in self._structure.get(&#39;params&#39;, dict()).items():
+                yield prop_name, prop_value
+
+    def _input_socket_properties(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads input socket properties&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading sockets properties&#34;, f&#39;Node: {self._node.name}&#39;):
+            for str_index, sock_props in self._structure.get(&#39;custom_socket_props&#39;, dict()).items():
+                with self._fails_log.add_fail(&#34;Reading socket properties&#34;, 
+                                              f&#39;Node: {self._node.name}, Socket: {str_index}&#39;):
+                    sock_index = int(str_index)
+                    for prop_name, prop_value in sock_props.items():
+                        yield sock_index, prop_name, prop_value
+
+
+class TreeGenerator:
+    &#34;&#34;&#34;Adds nodes and links to given tree, also logs fails&#34;&#34;&#34;
+    def __init__(self, tree_name: str, log: FailsLog):
+        self._tree_name: str = tree_name
+        self._fails_log: FailsLog = log
+
+    @classmethod
+    @contextmanager
+    def start_from_tree(cls, tree: SverchCustomTree, log: FailsLog) -&gt; ContextManager[TreeGenerator]:
+        &#34;&#34;&#34;
+        Returns itself and freezing tree what should prevent tree from updating
+        but actually often tree can unfreeze itself in during importing
+        &#34;&#34;&#34;
+        builder = cls(tree.name, log)
+        yield builder
+
+    def add_node(self, bl_type: str, node_name: str) -&gt; Union[SverchCustomTreeNode, None]:
+        &#34;&#34;&#34;
+        Trying to add node with given bl_idname into given tree
+        Also it can register dummy and old nodes and register fails
+        &#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Creating node&#34;, f&#39;Tree: {self._tree_name}, Node: {node_name}&#39;):
+            if old_nodes.is_old(bl_type):  # old node classes are registered only by request
+                old_nodes.register_old(bl_type)
+            # import only here to do not create a cyclic import
+            from sverchok.utils import dummy_nodes
+            if dummy_nodes.is_dependent(bl_type):
+                # some node types are not registered if dependencies are not installed
+                # in this case such nodes are registered as dummies
+                dummy_nodes.register_dummy(bl_type)
+            node = self._tree.nodes.new(bl_type)
+            node.name = node_name
+            return node
+
+    def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+        &#34;&#34;&#34;Searching sockets and trying to connect them by link&#34;&#34;&#34;
+        with self._fails_log.add_fail(
+                &#34;Creating link&#34;, f&#39;Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, &#39;
+                                 f&#39;to: {to_node_name, to_socket_index}&#39;):
+            from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
+            to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
+            self._tree.links.new(from_socket, to_socket)
+
+    @property
+    def _tree(self) -&gt; SverchCustomTree:
+        &#34;&#34;&#34;Given tree&#34;&#34;&#34;
+        return bpy.data.node_groups[self._tree_name]
+
+
+class FailsLog:
+    &#34;&#34;&#34;Keen register fails messages and count them, for example {&#39;add_node&#39;: 4} &#34;&#34;&#34;
+    def __init__(self):
+        self._log = defaultdict(int)
+
+    @contextmanager
+    def add_fail(self, fail_name, source=None):
+        &#34;&#34;&#34;Increase counter of given fail message, also printing error message in debug mode&#34;&#34;&#34;
+        try:
+            yield
+        except Exception as e:
+            self._log[fail_name] += 1
+            logger = getLogger()
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f&#39;FAIL: &#34;{fail_name}&#34;, {&#34;SOURCE: &#34; if source else &#34;&#34;}{source or &#34;&#34;}, {e}&#39;)
+                traceback.print_exc()
+
+    @property
+    def has_fails(self) -&gt; bool:
+        &#34;&#34;&#34;True if at least one fail was added&#34;&#34;&#34;
+        return bool(self._log)
+
+    def report_log_result(self):
+        &#34;&#34;&#34;Prints fails if their was or that they did not happen&#34;&#34;&#34;
+        if self.has_fails:
+            warning(f&#39;During import next fails has happened:&#39;)
+            print(self.fail_message)
+        else:
+            info(f&#39;Import done with no fails&#39;)
+
+    @property
+    def fail_message(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns fail message in such format:
+        FAIL add node - 4
+        FAIL read property - 10
+        &#34;&#34;&#34;
+        return &#39;\n&#39;.join([f&#39;FAIL: {msg} - {number}&#39; for msg, number in self._log.items()])</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_json_import.FailsLog"><code class="flex name class">
+<span>class <span class="ident">FailsLog</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Keen register fails messages and count them, for example {'add_node': 4}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FailsLog:
+    &#34;&#34;&#34;Keen register fails messages and count them, for example {&#39;add_node&#39;: 4} &#34;&#34;&#34;
+    def __init__(self):
+        self._log = defaultdict(int)
+
+    @contextmanager
+    def add_fail(self, fail_name, source=None):
+        &#34;&#34;&#34;Increase counter of given fail message, also printing error message in debug mode&#34;&#34;&#34;
+        try:
+            yield
+        except Exception as e:
+            self._log[fail_name] += 1
+            logger = getLogger()
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f&#39;FAIL: &#34;{fail_name}&#34;, {&#34;SOURCE: &#34; if source else &#34;&#34;}{source or &#34;&#34;}, {e}&#39;)
+                traceback.print_exc()
+
+    @property
+    def has_fails(self) -&gt; bool:
+        &#34;&#34;&#34;True if at least one fail was added&#34;&#34;&#34;
+        return bool(self._log)
+
+    def report_log_result(self):
+        &#34;&#34;&#34;Prints fails if their was or that they did not happen&#34;&#34;&#34;
+        if self.has_fails:
+            warning(f&#39;During import next fails has happened:&#39;)
+            print(self.fail_message)
+        else:
+            info(f&#39;Import done with no fails&#39;)
+
+    @property
+    def fail_message(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns fail message in such format:
+        FAIL add node - 4
+        FAIL read property - 10
+        &#34;&#34;&#34;
+        return &#39;\n&#39;.join([f&#39;FAIL: {msg} - {number}&#39; for msg, number in self._log.items()])</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.FailsLog.fail_message"><code class="name">var <span class="ident">fail_message</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Returns fail message in such format:
+FAIL add node - 4
+FAIL read property - 10</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fail_message(self) -&gt; str:
+    &#34;&#34;&#34;
+    Returns fail message in such format:
+    FAIL add node - 4
+    FAIL read property - 10
+    &#34;&#34;&#34;
+    return &#39;\n&#39;.join([f&#39;FAIL: {msg} - {number}&#39; for msg, number in self._log.items()])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.FailsLog.has_fails"><code class="name">var <span class="ident">has_fails</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>True if at least one fail was added</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def has_fails(self) -&gt; bool:
+    &#34;&#34;&#34;True if at least one fail was added&#34;&#34;&#34;
+    return bool(self._log)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.FailsLog.add_fail"><code class="name flex">
+<span>def <span class="ident">add_fail</span></span>(<span>self, fail_name, source=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Increase counter of given fail message, also printing error message in debug mode</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def add_fail(self, fail_name, source=None):
+    &#34;&#34;&#34;Increase counter of given fail message, also printing error message in debug mode&#34;&#34;&#34;
+    try:
+        yield
+    except Exception as e:
+        self._log[fail_name] += 1
+        logger = getLogger()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f&#39;FAIL: &#34;{fail_name}&#34;, {&#34;SOURCE: &#34; if source else &#34;&#34;}{source or &#34;&#34;}, {e}&#39;)
+            traceback.print_exc()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.FailsLog.report_log_result"><code class="name flex">
+<span>def <span class="ident">report_log_result</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints fails if their was or that they did not happen</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def report_log_result(self):
+    &#34;&#34;&#34;Prints fails if their was or that they did not happen&#34;&#34;&#34;
+    if self.has_fails:
+        warning(f&#39;During import next fails has happened:&#39;)
+        print(self.fail_message)
+    else:
+        info(f&#39;Import done with no fails&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_import.JSONImporter"><code class="flex name class">
+<span>class <span class="ident">JSONImporter</span></span>
+<span>(</span><span>structure: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read given structure, generate tree and log errors during the whole importing process</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class JSONImporter:
+    &#34;&#34;&#34;Read given structure, generate tree and log errors during the whole importing process&#34;&#34;&#34;
+    def __init__(self, structure: dict):
+        self._structure = structure
+        self._fails_log = FailsLog()
+
+    @classmethod
+    def init_from_path(cls, path: str) -&gt; JSONImporter:
+        &#34;&#34;&#34;It will decode json from given path and initialize importer&#34;&#34;&#34;
+        if path.endswith(&#39;.zip&#39;):
+            structure = get_file_obj_from_zip(path)
+            return cls(structure)
+        elif path.endswith(&#39;.json&#39;):
+            with open(path) as fp:
+                structure = json.load(fp)
+                return cls(structure)
+        else:
+            warning(f&#39;File should have .zip or .json extension, got &#34;.{path.rsplit(&#34;.&#34;)[-1]}&#34; instead&#39;)
+
+    def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
+        &#34;&#34;&#34;Import json structure into given tree and update it&#34;&#34;&#34;
+        if self.structure_version &lt; 0.1001:
+            root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+            root_tree_builder.import_tree()
+        else:
+            importer = FileStruct(logger=self._fails_log, struct=self._structure)
+            importer.build_into_tree(tree)
+
+        if print_log:
+            self._fails_log.report_log_result()
+
+        tree.update()
+
+    def import_node_settings(self, node: SverchCustomTreeNode):
+        if self.structure_version &lt; 1.0:
+            return self._old_import_node_settings(node)
+        else:
+            return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
+
+    def _old_import_node_settings(self, node: SverchCustomTreeNode):
+        &#34;&#34;&#34;
+        It takes first node from file and apply its settings to given node
+        It is strange but it is how it was originally implemented
+        &#34;&#34;&#34;
+        node = BlNode(node)
+        for prop in node.properties:
+            if prop.is_to_save:
+                prop.unset()
+
+        tree_importer = TreeImporter01(node.data.id_data, self._structure, self._fails_log)
+        for node_name, node_type, node_structure in tree_importer.nodes():
+            node_importer = NodeImporter01(node.data, node_structure, self._fails_log, tree_importer.file_version)
+            return node_importer.import_node(apply_attributes=False)
+
+    @property
+    def has_fails(self) -&gt; bool:
+        &#34;&#34;&#34;True if there was at least one fail during importing process&#34;&#34;&#34;
+        return self._fails_log.has_fails
+
+    @property
+    def fail_massage(self) -&gt; str:
+        &#34;&#34;&#34;Brief information about fails if their was&#34;&#34;&#34;
+        return self._fails_log.fail_message
+
+    @property
+    def structure_version(self):
+        return float(self._structure[&#34;export_version&#34;])</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.init_from_path"><code class="name flex">
+<span>def <span class="ident">init_from_path</span></span>(<span>path: str) ‑> <a title="sverchok.utils.sv_json_import.JSONImporter" href="#sverchok.utils.sv_json_import.JSONImporter">JSONImporter</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>It will decode json from given path and initialize importer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def init_from_path(cls, path: str) -&gt; JSONImporter:
+    &#34;&#34;&#34;It will decode json from given path and initialize importer&#34;&#34;&#34;
+    if path.endswith(&#39;.zip&#39;):
+        structure = get_file_obj_from_zip(path)
+        return cls(structure)
+    elif path.endswith(&#39;.json&#39;):
+        with open(path) as fp:
+            structure = json.load(fp)
+            return cls(structure)
+    else:
+        warning(f&#39;File should have .zip or .json extension, got &#34;.{path.rsplit(&#34;.&#34;)[-1]}&#34; instead&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.fail_massage"><code class="name">var <span class="ident">fail_massage</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Brief information about fails if their was</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fail_massage(self) -&gt; str:
+    &#34;&#34;&#34;Brief information about fails if their was&#34;&#34;&#34;
+    return self._fails_log.fail_message</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.has_fails"><code class="name">var <span class="ident">has_fails</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>True if there was at least one fail during importing process</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def has_fails(self) -&gt; bool:
+    &#34;&#34;&#34;True if there was at least one fail during importing process&#34;&#34;&#34;
+    return self._fails_log.has_fails</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.structure_version"><code class="name">var <span class="ident">structure_version</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def structure_version(self):
+    return float(self._structure[&#34;export_version&#34;])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.import_into_tree"><code class="name flex">
+<span>def <span class="ident">import_into_tree</span></span>(<span>self, tree: SverchCustomTree, print_log: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Import json structure into given tree and update it</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
+    &#34;&#34;&#34;Import json structure into given tree and update it&#34;&#34;&#34;
+    if self.structure_version &lt; 0.1001:
+        root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+        root_tree_builder.import_tree()
+    else:
+        importer = FileStruct(logger=self._fails_log, struct=self._structure)
+        importer.build_into_tree(tree)
+
+    if print_log:
+        self._fails_log.report_log_result()
+
+    tree.update()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.JSONImporter.import_node_settings"><code class="name flex">
+<span>def <span class="ident">import_node_settings</span></span>(<span>self, node: SverchCustomTreeNode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_node_settings(self, node: SverchCustomTreeNode):
+    if self.structure_version &lt; 1.0:
+        return self._old_import_node_settings(node)
+    else:
+        return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_import.NodeImporter01"><code class="flex name class">
+<span>class <span class="ident">NodeImporter01</span></span>
+<span>(</span><span>node: SverchCustomTreeNode, structure: dict, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>, import_version: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply attributes and node/sockets properties to given node, log fails</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NodeImporter01:
+    &#34;&#34;&#34;Apply attributes and node/sockets properties to given node, log fails&#34;&#34;&#34;
+    def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog, import_version: float):
+        self._node = node
+        self._structure = structure
+        self._fails_log = log
+        self._import_version = import_version
+
+    def import_node(self, apply_attributes: bool = True):
+        &#34;&#34;&#34;Reads node structure and apply settings to node&#34;&#34;&#34;
+        if apply_attributes:
+            for attr_name, attr_value in self._node_attributes():
+                with self._fails_log.add_fail(
+                        &#34;Setting node attribute&#34;,
+                        f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}&#39;):
+                    setattr(self._node, attr_name, attr_value)
+
+        for prop_name, prop_value in self._node_properties():
+            with self._fails_log.add_fail(
+                    &#34;Setting node property&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+                prop = BPYProperty(self._node, prop_name)
+                if prop.is_valid:  # some files can have outdated properties which should be filtered
+                    prop.value = prop_value
+
+        # this block is before applying socket properties because some nodes can generate them in load method
+        if hasattr(self._node, &#39;load_from_json&#39;):
+            with self._fails_log.add_fail(
+                    &#34;Setting advance node properties&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}&#39;):
+                self._node.load_from_json(self._structure, self._import_version)
+
+        for sock_index, prop_name, prop_value in self._input_socket_properties():
+            with self._fails_log.add_fail(
+                    &#34;Setting socket property&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+                socket = self._node.inputs[sock_index]
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value
+        return self._node
+
+    def _node_attributes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node attributes from node structure, returns (attr_name, value)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading node location&#34;, f&#39;Node: {self._node.name}&#39;):
+            yield &#34;location&#34;, self._structure[&#34;location&#34;]
+
+        required_attributes = [&#34;height&#34;, &#34;width&#34;, &#34;label&#34;, &#34;hide&#34;, &#34;color&#34;, &#34;use_custom_color&#34;]
+        for attr in required_attributes:
+            if attr in self._structure:
+                yield attr, self._structure[attr]
+
+    def _node_properties(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node properties, returns (prop_name, prop_value)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading node properties&#34;, f&#39;Node: {self._node.name}&#39;):
+            for prop_name, prop_value in self._structure.get(&#39;params&#39;, dict()).items():
+                yield prop_name, prop_value
+
+    def _input_socket_properties(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads input socket properties&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading sockets properties&#34;, f&#39;Node: {self._node.name}&#39;):
+            for str_index, sock_props in self._structure.get(&#39;custom_socket_props&#39;, dict()).items():
+                with self._fails_log.add_fail(&#34;Reading socket properties&#34;, 
+                                              f&#39;Node: {self._node.name}, Socket: {str_index}&#39;):
+                    sock_index = int(str_index)
+                    for prop_name, prop_value in sock_props.items():
+                        yield sock_index, prop_name, prop_value</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.NodeImporter01.import_node"><code class="name flex">
+<span>def <span class="ident">import_node</span></span>(<span>self, apply_attributes: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads node structure and apply settings to node</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_node(self, apply_attributes: bool = True):
+    &#34;&#34;&#34;Reads node structure and apply settings to node&#34;&#34;&#34;
+    if apply_attributes:
+        for attr_name, attr_value in self._node_attributes():
+            with self._fails_log.add_fail(
+                    &#34;Setting node attribute&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}&#39;):
+                setattr(self._node, attr_name, attr_value)
+
+    for prop_name, prop_value in self._node_properties():
+        with self._fails_log.add_fail(
+                &#34;Setting node property&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+            prop = BPYProperty(self._node, prop_name)
+            if prop.is_valid:  # some files can have outdated properties which should be filtered
+                prop.value = prop_value
+
+    # this block is before applying socket properties because some nodes can generate them in load method
+    if hasattr(self._node, &#39;load_from_json&#39;):
+        with self._fails_log.add_fail(
+                &#34;Setting advance node properties&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}&#39;):
+            self._node.load_from_json(self._structure, self._import_version)
+
+    for sock_index, prop_name, prop_value in self._input_socket_properties():
+        with self._fails_log.add_fail(
+                &#34;Setting socket property&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+            socket = self._node.inputs[sock_index]
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid:
+                prop.value = prop_value
+    return self._node</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_import.TreeGenerator"><code class="flex name class">
+<span>class <span class="ident">TreeGenerator</span></span>
+<span>(</span><span>tree_name: str, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds nodes and links to given tree, also logs fails</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeGenerator:
+    &#34;&#34;&#34;Adds nodes and links to given tree, also logs fails&#34;&#34;&#34;
+    def __init__(self, tree_name: str, log: FailsLog):
+        self._tree_name: str = tree_name
+        self._fails_log: FailsLog = log
+
+    @classmethod
+    @contextmanager
+    def start_from_tree(cls, tree: SverchCustomTree, log: FailsLog) -&gt; ContextManager[TreeGenerator]:
+        &#34;&#34;&#34;
+        Returns itself and freezing tree what should prevent tree from updating
+        but actually often tree can unfreeze itself in during importing
+        &#34;&#34;&#34;
+        builder = cls(tree.name, log)
+        yield builder
+
+    def add_node(self, bl_type: str, node_name: str) -&gt; Union[SverchCustomTreeNode, None]:
+        &#34;&#34;&#34;
+        Trying to add node with given bl_idname into given tree
+        Also it can register dummy and old nodes and register fails
+        &#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Creating node&#34;, f&#39;Tree: {self._tree_name}, Node: {node_name}&#39;):
+            if old_nodes.is_old(bl_type):  # old node classes are registered only by request
+                old_nodes.register_old(bl_type)
+            # import only here to do not create a cyclic import
+            from sverchok.utils import dummy_nodes
+            if dummy_nodes.is_dependent(bl_type):
+                # some node types are not registered if dependencies are not installed
+                # in this case such nodes are registered as dummies
+                dummy_nodes.register_dummy(bl_type)
+            node = self._tree.nodes.new(bl_type)
+            node.name = node_name
+            return node
+
+    def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+        &#34;&#34;&#34;Searching sockets and trying to connect them by link&#34;&#34;&#34;
+        with self._fails_log.add_fail(
+                &#34;Creating link&#34;, f&#39;Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, &#39;
+                                 f&#39;to: {to_node_name, to_socket_index}&#39;):
+            from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
+            to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
+            self._tree.links.new(from_socket, to_socket)
+
+    @property
+    def _tree(self) -&gt; SverchCustomTree:
+        &#34;&#34;&#34;Given tree&#34;&#34;&#34;
+        return bpy.data.node_groups[self._tree_name]</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.TreeGenerator.start_from_tree"><code class="name flex">
+<span>def <span class="ident">start_from_tree</span></span>(<span>cls, tree: SverchCustomTree, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>) ‑> ContextManager[<a title="sverchok.utils.sv_json_import.TreeGenerator" href="#sverchok.utils.sv_json_import.TreeGenerator">TreeGenerator</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns itself and freezing tree what should prevent tree from updating
+but actually often tree can unfreeze itself in during importing</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+@contextmanager
+def start_from_tree(cls, tree: SverchCustomTree, log: FailsLog) -&gt; ContextManager[TreeGenerator]:
+    &#34;&#34;&#34;
+    Returns itself and freezing tree what should prevent tree from updating
+    but actually often tree can unfreeze itself in during importing
+    &#34;&#34;&#34;
+    builder = cls(tree.name, log)
+    yield builder</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.TreeGenerator.add_link"><code class="name flex">
+<span>def <span class="ident">add_link</span></span>(<span>self, from_node_name, from_socket_index, to_node_name, to_socket_index)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Searching sockets and trying to connect them by link</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+    &#34;&#34;&#34;Searching sockets and trying to connect them by link&#34;&#34;&#34;
+    with self._fails_log.add_fail(
+            &#34;Creating link&#34;, f&#39;Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, &#39;
+                             f&#39;to: {to_node_name, to_socket_index}&#39;):
+        from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
+        to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
+        self._tree.links.new(from_socket, to_socket)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.TreeGenerator.add_node"><code class="name flex">
+<span>def <span class="ident">add_node</span></span>(<span>self, bl_type: str, node_name: str) ‑> Union[SverchCustomTreeNode, None]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Trying to add node with given bl_idname into given tree
+Also it can register dummy and old nodes and register fails</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_node(self, bl_type: str, node_name: str) -&gt; Union[SverchCustomTreeNode, None]:
+    &#34;&#34;&#34;
+    Trying to add node with given bl_idname into given tree
+    Also it can register dummy and old nodes and register fails
+    &#34;&#34;&#34;
+    with self._fails_log.add_fail(&#34;Creating node&#34;, f&#39;Tree: {self._tree_name}, Node: {node_name}&#39;):
+        if old_nodes.is_old(bl_type):  # old node classes are registered only by request
+            old_nodes.register_old(bl_type)
+        # import only here to do not create a cyclic import
+        from sverchok.utils import dummy_nodes
+        if dummy_nodes.is_dependent(bl_type):
+            # some node types are not registered if dependencies are not installed
+            # in this case such nodes are registered as dummies
+            dummy_nodes.register_dummy(bl_type)
+        node = self._tree.nodes.new(bl_type)
+        node.name = node_name
+        return node</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_import.TreeImporter01"><code class="flex name class">
+<span>class <span class="ident">TreeImporter01</span></span>
+<span>(</span><span>tree: SverchCustomTree, structure: dict, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It reads given structure, regenerate it into given tree and logs fails
+It expects to read files with version 0.1 and earlier</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeImporter01:
+    &#34;&#34;&#34;
+    It reads given structure, regenerate it into given tree and logs fails
+    It expects to read files with version 0.1 and earlier
+    &#34;&#34;&#34;
+    def __init__(self, tree: SverchCustomTree, structure: dict, log: FailsLog):
+        self._tree = tree
+        self._structure = structure
+        self._fails_log = log
+        self._new_node_names = dict()  # map(old_node_name, new_node_name)
+
+    def import_tree(self):
+        &#34;&#34;&#34;Reads and generates nodes, frames, links&#34;&#34;&#34;
+        with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
+            for node_name, node_type, node_structure in self.nodes():
+                node = tree_builder.add_node(node_type, node_name)
+                if node:
+                    self._new_node_names[node_name] = node.name
+                    NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
+
+            for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
+                with self._fails_log.add_fail(&#34;Search node to link&#34;):
+                    from_node_name = self._get_new_node_name(from_node_name)
+                    to_node_name = self._get_new_node_name(to_node_name)
+                tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+
+            for node_name, parent_name in self._parent_nodes():
+                with self._fails_log.add_fail(
+                        &#34;Assign node parent&#34;,
+                        f&#39;Tree: {self._tree.name}, Node: {node_name}, Parent node: {parent_name}&#39;):
+                    node_name = self._get_new_node_name(node_name)
+                    parent_name = self._get_new_node_name(parent_name)
+                    self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+            # mark old nodes
+            for node in self._tree.nodes:
+                if old_nodes.is_old(node):
+                    old_nodes.mark_old(node)
+
+    @property
+    def file_version(self) -&gt; float:
+        &#34;&#34;&#34;json structure version&#34;&#34;&#34;
+        return float(self._structure[&#39;export_version&#39;])
+
+    def nodes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;Reads node names and their structure from tree structure&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for node_name, node_structure in self._structure.get(&#34;nodes&#34;, dict()).items():
+                with self._fails_log.add_fail(&#34;Reading node&#34;):
+                    yield node_name, node_structure[&#39;bl_idname&#39;], node_structure
+
+    def _get_new_node_name(self, old_name):
+        &#34;&#34;&#34;
+        Created nodes during import can get different name cause of not to overlap with names of existing nodes
+        So this method will find new name by given old name, if name was not changed it will return old name
+        &#34;&#34;&#34;
+        return self._new_node_names[old_name]
+
+    def _links(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;
+        Read list of links and return them in next format
+        (from_node_name, from_node_index(or name), to_node_name, to_node_index(or name))
+        socket will have name if socket was reroute or other socket was reroute
+        &#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading links&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for from_node_name, form_socket_index, to_node_name, to_socket_index in \
+                    self._structure.get(&#39;update_lists&#39;, []):
+                yield from_node_name, form_socket_index, to_node_name, to_socket_index
+
+    def _parent_nodes(self) -&gt; Generator[tuple]:
+        &#34;&#34;&#34;returns (node name, frame name)&#34;&#34;&#34;
+        with self._fails_log.add_fail(&#34;Reading parent nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+            for node, parent in self._structure.get(&#34;framed_nodes&#34;, dict()).items():
+                yield node, parent</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.TreeImporter01.file_version"><code class="name">var <span class="ident">file_version</span> : float</code></dt>
+<dd>
+<div class="desc"><p>json structure version</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def file_version(self) -&gt; float:
+    &#34;&#34;&#34;json structure version&#34;&#34;&#34;
+    return float(self._structure[&#39;export_version&#39;])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_import.TreeImporter01.import_tree"><code class="name flex">
+<span>def <span class="ident">import_tree</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads and generates nodes, frames, links</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_tree(self):
+    &#34;&#34;&#34;Reads and generates nodes, frames, links&#34;&#34;&#34;
+    with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
+        for node_name, node_type, node_structure in self.nodes():
+            node = tree_builder.add_node(node_type, node_name)
+            if node:
+                self._new_node_names[node_name] = node.name
+                NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
+
+        for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
+            with self._fails_log.add_fail(&#34;Search node to link&#34;):
+                from_node_name = self._get_new_node_name(from_node_name)
+                to_node_name = self._get_new_node_name(to_node_name)
+            tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+
+        for node_name, parent_name in self._parent_nodes():
+            with self._fails_log.add_fail(
+                    &#34;Assign node parent&#34;,
+                    f&#39;Tree: {self._tree.name}, Node: {node_name}, Parent node: {parent_name}&#39;):
+                node_name = self._get_new_node_name(node_name)
+                parent_name = self._get_new_node_name(parent_name)
+                self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+        # mark old nodes
+        for node in self._tree.nodes:
+            if old_nodes.is_old(node):
+                old_nodes.mark_old(node)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_import.TreeImporter01.nodes"><code class="name flex">
+<span>def <span class="ident">nodes</span></span>(<span>self) ‑> Generator[tuple]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads node names and their structure from tree structure</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes(self) -&gt; Generator[tuple]:
+    &#34;&#34;&#34;Reads node names and their structure from tree structure&#34;&#34;&#34;
+    with self._fails_log.add_fail(&#34;Reading nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+        for node_name, node_structure in self._structure.get(&#34;nodes&#34;, dict()).items():
+            with self._fails_log.add_fail(&#34;Reading node&#34;):
+                yield node_name, node_structure[&#39;bl_idname&#39;], node_structure</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_import.FailsLog.add_fail" href="#sverchok.utils.sv_json_import.FailsLog.add_fail">add_fail</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.FailsLog.fail_message" href="#sverchok.utils.sv_json_import.FailsLog.fail_message">fail_message</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.FailsLog.has_fails" href="#sverchok.utils.sv_json_import.FailsLog.has_fails">has_fails</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.FailsLog.report_log_result" href="#sverchok.utils.sv_json_import.FailsLog.report_log_result">report_log_result</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_import.JSONImporter" href="#sverchok.utils.sv_json_import.JSONImporter">JSONImporter</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.fail_massage" href="#sverchok.utils.sv_json_import.JSONImporter.fail_massage">fail_massage</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.has_fails" href="#sverchok.utils.sv_json_import.JSONImporter.has_fails">has_fails</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.import_into_tree" href="#sverchok.utils.sv_json_import.JSONImporter.import_into_tree">import_into_tree</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.import_node_settings" href="#sverchok.utils.sv_json_import.JSONImporter.import_node_settings">import_node_settings</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.init_from_path" href="#sverchok.utils.sv_json_import.JSONImporter.init_from_path">init_from_path</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.JSONImporter.structure_version" href="#sverchok.utils.sv_json_import.JSONImporter.structure_version">structure_version</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_import.NodeImporter01" href="#sverchok.utils.sv_json_import.NodeImporter01">NodeImporter01</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_import.NodeImporter01.import_node" href="#sverchok.utils.sv_json_import.NodeImporter01.import_node">import_node</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_import.TreeGenerator" href="#sverchok.utils.sv_json_import.TreeGenerator">TreeGenerator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_import.TreeGenerator.add_link" href="#sverchok.utils.sv_json_import.TreeGenerator.add_link">add_link</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.TreeGenerator.add_node" href="#sverchok.utils.sv_json_import.TreeGenerator.add_node">add_node</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.TreeGenerator.start_from_tree" href="#sverchok.utils.sv_json_import.TreeGenerator.start_from_tree">start_from_tree</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_import.TreeImporter01" href="#sverchok.utils.sv_json_import.TreeImporter01">TreeImporter01</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_import.TreeImporter01.file_version" href="#sverchok.utils.sv_json_import.TreeImporter01.file_version">file_version</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.TreeImporter01.import_tree" href="#sverchok.utils.sv_json_import.TreeImporter01.import_tree">import_tree</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_import.TreeImporter01.nodes" href="#sverchok.utils.sv_json_import.TreeImporter01.nodes">nodes</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

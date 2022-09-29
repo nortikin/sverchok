@@ -1,0 +1,4028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.data_structure API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.data_structure</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+from contextlib import contextmanager
+from collections import defaultdict
+from functools import wraps
+from math import radians, ceil
+import itertools
+import copy
+from itertools import zip_longest, chain, cycle, islice
+import bpy
+from mathutils import Vector, Matrix
+from numpy import (
+    array as np_array,
+    newaxis as np_newaxis,
+    ndarray,
+    ones as np_ones,
+    arange as np_arange,
+    repeat as np_repeat,
+    concatenate as np_concatenate,
+    tile as np_tile,
+    float64,
+    int32, int64)
+from sverchok.utils.logging import debug
+import numpy as np
+
+
+DEBUG_MODE = False
+RELOAD_EVENT = False
+
+# this is set correctly later.
+SVERCHOK_NAME = &#34;sverchok&#34;
+
+cache_viewer_baker = {}
+
+sentinel = object()
+
+
+
+#####################################################
+################### cache magic #####################
+#####################################################
+
+#handle for object in node and neuro node
+temp_handle = {}
+
+def handle_delete(handle):
+    if handle in temp_handle:
+        del temp_handle[handle]
+
+def handle_read(handle):
+    if not (handle in temp_handle):
+        return (False, [])
+    return (True, temp_handle[handle][&#39;prop&#39;])
+
+def handle_write(handle, prop):
+    handle_delete(handle)
+
+    temp_handle[handle] = {&#34;prop&#34; : prop}
+
+def handle_check(handle, prop):
+    if handle in handle_check and \
+            prop == handle_check[handle][&#39;prop&#39;]:
+        return True
+    return False
+
+
+#####################################################
+################ list matching magic ################
+#####################################################
+
+
+def repeat_last(lst):
+    &#34;&#34;&#34;
+    creates an infinite iterator the first each element in lst
+    and then keep repeating the last element,
+    use with terminating input
+    &#34;&#34;&#34;
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
+    yield from chain(lst, cycle(last))
+
+
+def fixed_iter(data, iter_number, fill_value=0):
+    &#34;&#34;&#34;
+    Creates iterator for given data which will be yielded iter_number times
+    If data is shorter then iter_number last element will be cycled
+    If data is empty [fill_value] list will be used instead
+    &#34;&#34;&#34;
+    last_index = -1
+    for i, item in zip(range(iter_number), data):
+        yield item
+        last_index = i
+        fill_value = item
+
+    if last_index + 1 &lt; iter_number:
+        for i, item in zip(range(iter_number - (last_index + 1)), cycle([fill_value])):
+            yield item
+
+
+def flat_iter(data):
+    &#34;&#34;&#34;[1, [2, 3, [4]], 5] -&gt; 1, 2, 3, 4, 5 &#34;&#34;&#34;
+    if isinstance(data, str):
+        yield data
+        return
+    try:
+        for v in data:
+            yield from flat_iter(v)
+    except TypeError:
+        yield data
+
+
+def match_long_repeat(lsts):
+    &#34;&#34;&#34;return matched list, using the last value to fill lists as needed
+    longest list matching [[1,2,3,4,5], [10,11]] -&gt; [[1,2,3,4,5], [10,11,11,11,11]]
+    
+    lists passed into this function are not modified, it produces non-deep copies and extends those.
+    &#34;&#34;&#34;
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        if not hasattr(l, &#39;__len__&#39;):
+            raise TypeError(f&#34;Cannot perform data matching: input of type {type(l)} is not a list or tuple, but an atomic object&#34;)
+        max_l = max(max_l, len(l))
+    for l in lsts:
+        if len(l) == max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+    return list(map(list, zip(*zip(*tmp))))
+
+def zip_long_repeat(*lists):
+    objects = match_long_repeat(lists)
+    return zip(*objects)
+
+def match_long_cycle(lsts):
+    &#34;&#34;&#34;return matched list, cycling the shorter lists
+    longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]
+    &#34;&#34;&#34;
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l, len(l))
+    for l in lsts:
+        if len(l) == max_l:
+            tmp.append(l)
+        else:
+            tmp.append(itertools.cycle(l))
+    return list(map(list, zip(*zip(*tmp))))
+
+
+# when you intent to use length of first list to control WHILE loop duration
+# and you do not want to change the length of the first list, but you want the second list
+# length to by not less than the length of the first
+def second_as_first_cycle(F, S):
+    if len(F) &gt; len(S):
+        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))[1]
+    else:
+        return S
+
+def match_cross(lsts):
+    &#34;&#34;&#34; return cross matched lists
+    [[1,2], [5,6,7]] -&gt; [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*itertools.product(*lsts))))
+
+
+def match_cross2(lsts):
+    &#34;&#34;&#34; return cross matched lists
+    [[1,2], [5,6,7]] -&gt;[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
+    &#34;&#34;&#34;
+    return list(reversed(list(map(list, zip(*itertools.product(*reversed(lsts)))))))
+
+
+# Shortest list decides output length [[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]
+def match_short(lsts):
+    &#34;&#34;&#34;return lists of equal length using the Shortest list to decides length
+    Shortest list decides output length [[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*zip(*lsts))))
+
+
+def fullList(l, count):
+    &#34;&#34;&#34;extends list l so len is at least count if needed with the
+    last element of l&#34;&#34;&#34;
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
+    if d &gt; 0:
+        l.extend([l[-1] for a in range(d)])
+    return
+
+def fullList_np(l, count):
+    &#34;&#34;&#34;extends list l so len is at least count if needed with the
+    last element of l&#34;&#34;&#34;
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
+    if d &gt; 0:
+        try:
+            l.extend([l[-1] for a in range(d)])
+        except:
+            l = numpy_full_list(l, n)
+    else:
+        l = l[:count]
+
+
+def fullList_deep_copy(l, count):
+    &#34;&#34;&#34;the same that full list function but
+    it have correct work with objects such as lists.&#34;&#34;&#34;
+    d = count - len(l)
+    if d &gt; 0:
+        l.extend([copy.deepcopy(l[-1]) for _ in range(d)])
+    return
+
+def cycle_for_length(lst, count):
+    result = []
+    n = len(lst)
+    for i in range(count):
+        result.append(lst[i % n])
+    return result
+
+def repeat_last_for_length(lst, count, deepcopy=False):
+    &#34;&#34;&#34;
+    Repeat last item of the list enough times
+    for result&#39;s length to be equal to `count`.
+
+    repeat_last_for_length(None, n) = None
+    repeat_last_for_length([], n) = []
+    repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
+    &#34;&#34;&#34;
+    if not lst:
+        return lst
+    if len(lst) &gt;= count:
+        return lst[:count]
+    n = len(lst)
+    x = lst[-1]
+    result = lst[:]
+    if deepcopy:
+        for i in range(count - n):
+            result.append(copy.deepcopy(x))
+    else:
+        for i in range(count - n):
+            result.append(x)
+
+    return result
+
+def cycle_for_length(lst, count):
+    return list(islice(cycle(lst), count))
+
+def sv_zip(*iterables):
+    &#34;&#34;&#34;zip(&#39;ABCD&#39;, &#39;xy&#39;) --&gt; Ax By
+    like standard zip but list instead of tuple
+    &#34;&#34;&#34;
+    iterators = [iter(it) for it in iterables]
+    sentinel = object() # use internal sentinel
+    while iterators:
+        result = []
+        for it in iterators:
+            elem = next(it, sentinel)
+            if elem is sentinel:
+                return
+            result.append(elem)
+        yield result
+
+list_match_modes = [
+    (&#34;SHORT&#34;,  &#34;Short&#34;,  &#34;Match shortest List&#34;,    1),
+    (&#34;CYCLE&#34;,  &#34;Cycle&#34;,  &#34;Match longest List by cycling&#34;,     2),
+    (&#34;REPEAT&#34;, &#34;Repeat Last&#34;, &#34;Match longest List by repeating last item&#34;,     3),
+    (&#34;XREF&#34;,   &#34;X-Ref&#34;,  &#34;Cross reference (fast cycle of long)&#34;,  4),
+    (&#34;XREF2&#34;,  &#34;X-Ref 2&#34;, &#34;Cross reference (fast cycle of short)&#34;,  5),
+    ]
+
+list_match_func = {
+    &#34;SHORT&#34;:  match_short,
+    &#34;CYCLE&#34;:  match_long_cycle,
+    &#34;REPEAT&#34;: match_long_repeat,
+    &#34;XREF&#34;:   match_cross,
+    &#34;XREF2&#34;:  match_cross2
+    }
+numpy_list_match_modes =  list_match_modes[:3]
+# numpy_list_match_modes = [
+#     (&#34;SHORT&#34;,  &#34;Match Short&#34;,  &#34;Match shortest List&#34;,    1),
+#     (&#34;CYCLE&#34;,  &#34;Cycle&#34;,  &#34;Match longest List by cycling&#34;,     2),
+#     (&#34;REPEAT&#34;, &#34;Repeat Last&#34;, &#34;Match longest List by repeating last item&#34;,     3),
+#     ]
+
+def numpy_full_list(array, desired_length):
+    &#39;&#39;&#39;retuns array with desired length by repeating last item&#39;&#39;&#39;
+    if not isinstance(array, ndarray):
+        array = np_array(array)
+
+    length_diff = desired_length - array.shape[0]
+
+    if length_diff &gt; 0:
+        new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+        return np_concatenate((array, new_part))[:desired_length]
+    return array[:desired_length]
+
+def numpy_full_list_cycle(array, desired_length):
+    &#39;&#39;&#39;retuns array with desired length by cycling&#39;&#39;&#39;
+
+    length_diff = desired_length - array.shape[0]
+    if length_diff &gt; 0:
+        if length_diff &lt; array.shape[0]:
+
+            return np_concatenate((array, array[:length_diff]))
+
+        new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+        if len(array.shape) &gt; 1:
+            shape = (ceil(length_diff / array.shape[0]), 1)
+        else:
+            shape = ceil(length_diff / array.shape[0])
+        new_part = np_tile(array, shape)
+        return np_concatenate((array, new_part[:length_diff]))
+
+    return array[:desired_length]
+
+numpy_full_list_func = {
+    &#34;SHORT&#34;:  lambda x,l: x[:l],
+    &#34;CYCLE&#34;:  numpy_full_list_cycle,
+    &#34;REPEAT&#34;: numpy_full_list,
+    }
+
+def numpy_match_long_repeat(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by repeating last one&#39;&#39;&#39;
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = maxl - array.shape[0]
+        if length_diff &gt; 0:
+            new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+            array = np_concatenate((array, new_part))
+        out.append(array)
+    return out
+
+def numpy_match_long_cycle(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by cycling over the array&#39;&#39;&#39;
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = maxl - array.shape[0]
+        if length_diff &gt; 0:
+            if length_diff &lt; array.shape[0]:
+
+                array = np_concatenate((array, array[:length_diff]))
+            else:
+                new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+                if len(array.shape) &gt; 1:
+                    shape = (ceil(length_diff / array.shape[0]), 1)
+                else:
+                    shape = ceil(length_diff / array.shape[0])
+                new_part = np_tile(array, shape)
+                array = np_concatenate((array, new_part[:length_diff]))
+        out.append(array)
+    return out
+
+def numpy_match_short(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by cutting the longer arrays&#39;&#39;&#39;
+    out = []
+    minl = list_of_arrays[0].shape[0]
+    for array in list_of_arrays:
+        minl = min(minl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = array.shape[0] - minl
+        if length_diff &gt; 0:
+            array = array[:minl]
+        out.append(array)
+    return out
+
+numpy_list_match_func = {
+    &#34;SHORT&#34;:  numpy_match_short,
+    &#34;CYCLE&#34;:  numpy_match_long_cycle,
+    &#34;REPEAT&#34;: numpy_match_long_repeat,
+    }
+
+def make_repeaters(lists):
+    chain = itertools.chain
+    repeat = itertools.repeat
+    out =[]
+    for l in lists:
+        out.append(chain(l, repeat(l[-1])))
+
+    return out
+
+def make_cyclers(lists):
+
+    cycle = itertools.cycle
+    out =[]
+    for l in lists:
+        out.append(cycle(l))
+    return out
+
+iter_list_match_func = {
+    &#34;SHORT&#34;:  lambda x: x,
+    &#34;CYCLE&#34;:  make_cyclers,
+    &#34;REPEAT&#34;: make_repeaters,
+    }
+#####################################################
+################# list levels magic #################
+#####################################################
+
+# working with nesting levels
+# define data floor
+# NOTE, these function cannot possibly work in all scenarios, use with care
+
+def dataCorrect(data, nominal_dept=2):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )
+    &#34;&#34;&#34;
+    dept = levelsOflist(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept &lt; 2:
+        return data #[dept, data]
+    else:
+        output = data_standard(data, dept, nominal_dept)
+        return output
+
+def dataCorrect_np(data, nominal_dept=2):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )
+    &#34;&#34;&#34;
+    dept = levels_of_list_or_np(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept &lt; 2:
+        return data #[dept, data]
+    else:
+        output = data_standard(data, dept, nominal_dept)
+        return output
+
+def dataSpoil(data, dept):
+    &#34;&#34;&#34;from standard data to initial levels: to nested lists
+     container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
+    &#34;&#34;&#34;
+    __doc__ = &#39;preparing and making spoil&#39;
+
+    def Spoil(dat, dep):
+        __doc__ = &#39;making spoil&#39;
+        out = []
+        if dep:
+            for d in dat:
+                out.append([Spoil(d, dep-1)])
+        else:
+            out = dat
+        return out
+    lol = levelsOflist(data)
+    if dept &gt; lol:
+        out = Spoil(data, dept-lol)
+    else:
+        out = data
+    return out
+
+
+def data_standard(data, dept, nominal_dept):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )&#34;&#34;&#34;
+    deptl = dept - 1
+    output = []
+    for object in data:
+        if deptl &gt;= nominal_dept:
+            output.extend(data_standard(object, deptl, nominal_dept))
+        else:
+            output.append(data)
+            return output
+    return output
+
+
+def levelsOflist(lst):
+    &#34;&#34;&#34;calc list nesting only in countainment level integer&#34;&#34;&#34;
+    level = 1
+    for n in lst:
+        if n and isinstance(n, (list, tuple)):
+            level += levelsOflist(n)
+        return level
+    return 0
+
+def levels_of_list_or_np(lst):
+    &#34;&#34;&#34;calc list nesting only in countainment level integer&#34;&#34;&#34;
+    level = 1
+    for n in lst:
+        if isinstance(n, (list, tuple)):
+            level += levels_of_list_or_np(n)
+        elif isinstance(n, (ndarray)):
+            level += len(n.shape)
+
+        return level
+    return 0
+
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
+
+
+def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    data_types: list or tuple of types.
+
+    Detect nesting level of actual data.
+    &#34;Actual&#34; data is detected by belonging to one of data_types.
+    This method searches only for first instance of &#34;actual data&#34;,
+    so it does not support cases when different elements of source
+    list have different nesting.
+    Returns integer.
+    Raises an exception if at some point it encounters element
+    which is not a tuple, list, or one of data_types.
+
+    get_data_nesting_level(1) == 0
+    get_data_nesting_level([]) == 1
+    get_data_nesting_level([1]) == 1
+    get_data_nesting_level([[(1,2,3)]]) == 3
+    &#34;&#34;&#34;
+
+    def helper(data, recursion_depth):
+        &#34;&#34;&#34; Needed only for better error reporting. &#34;&#34;&#34;
+        if isinstance(data, data_types):
+            return 0
+        elif isinstance(data, (list, tuple, ndarray)):
+            if len(data) == 0:
+                return 1
+            else:
+                return helper(data[0], recursion_depth+1) + 1
+        elif data is None:
+            raise TypeError(&#34;get_data_nesting_level: encountered None at nesting level {}&#34;.format(recursion_depth))
+        else:
+            #unknown class. Return 0 level
+            return 0
+
+    return helper(data, 0)
+
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    Raises an exception, if data already has too high nesting level.
+
+    ensure_nesting_level(17, 0) == 17
+    ensure_nesting_level(17, 1) == [17]
+    ensure_nesting_level([17], 1) == [17]
+    ensure_nesting_level([17], 2) == [[17]]
+    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_nesting_level([[[17]]], 1) =&gt; exception
+    &#34;&#34;&#34;
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &gt; target_level:
+        if input_name is None:
+            raise TypeError(&#34;ensure_nesting_level: input data already has nesting level of {}. Required level was {}.&#34;.format(current_level, target_level))
+        else:
+            raise TypeError(&#34;Input data in socket {} already has nesting level of {}. Required level was {}.&#34;.format(input_name, current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
+def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: minimum data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    If data already has too high nesting level the same data will be returned
+
+    ensure_min_nesting(17, 0) == 17
+    ensure_min_nesting(17, 1) == [17]
+    ensure_min_nesting([17], 1) == [17]
+    ensure_min_nesting([17], 2) == [[17]]
+    ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_min_nesting([[[17]]], 1) =&gt; [[[17]]]
+    &#34;&#34;&#34;
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &gt;= target_level:
+        return data
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
+def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &lt; target_level:
+        raise TypeError(f&#34;Can&#39;t flatten data to level {target_level}: data already have level {current_level}&#34;)
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
+        return result
+
+def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    For each nested item of the list, which has it&#39;s own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)
+
+def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data
+
+def unwrap_data(data, unwrap_level=1, socket=None):
+    socket_msg = &#34;&#34; if socket is None else f&#34; in socket {socket.label or socket.name}&#34;
+
+    def unwrap(lst, level):
+        if not isinstance(lst, (list, tuple, ndarray)):
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} is an atomic object, not a list {socket_msg}&#34;)
+        n = len(lst)
+        if n == 0:
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} is an empty list {socket_msg}&#34;)
+        elif n &gt; 1:
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} contains {n} objects instead of one {socket_msg}&#34;)
+        else:
+            return lst[0]
+
+    for level in range(unwrap_level):
+        data = unwrap(data, level)
+    return data
+
+class SvListLevelAdjustment(object):
+    def __init__(self, flatten=False, wrap=False):
+        self.flatten = flatten
+        self.wrap = wrap
+
+    def __repr__(self):
+        return f&#34;&lt;Flatten={self.flatten}, Wrap={self.wrap}&gt;&#34;
+
+def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
+    data_level = get_data_nesting_level(data, data_types + (ndarray,))
+    if len(instructions) &lt; data_level+1:
+        raise Exception(f&#34;Number of instructions ({len(instructions)}) is less than data nesting level {data_level} + 1&#34;)
+
+    def process(data, instruction, level):
+        result = data
+        if level + 1 &lt; data_level and instruction.flatten:
+            result = sum(result, [])
+        if instruction.wrap:
+            result = [result]
+        #print(f&#34;II: {level}/{data_level}, {instruction}, {data} =&gt; {result}&#34;)
+        return result
+
+    def helper(data, instructions, level):
+        if level == data_level:
+            items = process(data, instructions[0], level)
+        else:
+            sub_items = [helper(item, instructions[1:], level+1) for item in data]
+            items = process(sub_items, instructions[0], level)
+            #print(f&#34;?? {level}/{data_level}, {data} =&gt; {sub_items} =&gt; {items}&#34;)
+        return items
+
+    return helper(data, instructions, 0)
+
+def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of object, apply `function` to each sub-list of items.
+    Nesting structure of the result will be simpler than such of the input:
+    most nested levels (`item_level` of them) will be eliminated.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level == item_level:
+        return function(data)
+    else:
+        return [map_at_level(function, item, item_level, data_types) for item in data]
+
+def transpose_list(lst):
+    &#34;&#34;&#34;
+    Transpose a list of lists.
+
+    transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*lst)))
+
+# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
+def split_by_count(iterable, n, fillvalue=None):
+    &#34;Collect data into fixed-length chunks or blocks&#34;
+    # grouper(&#39;ABCDEFG&#39;, 3, &#39;x&#39;) --&gt; ABC DEF Gxx&#34;
+    args = [iter(iterable)] * n
+    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
+
+def describe_data_shape_by_level(data, include_numpy_nesting=True):
+    &#34;&#34;&#34;
+    Describe shape of data in human-readable form.
+    Returns tuple:
+    * data nesting level
+    * list of descriptions of data shapes at each nesting level
+    &#34;&#34;&#34;
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            if isinstance(data, ndarray):
+                if include_numpy_nesting:
+                    nesting = len(data.shape)
+                else:
+                    nesting = 0
+                return nesting, [type(data).__name__ + &#34; of &#34; + str(data.dtype) + &#34; with shape &#34; + str(data.shape)]
+            return 0, [type(data).__name__]
+        else:
+            result = [f&#34;{type(data).__name__} [{len(data)}]&#34;]
+            if len(data) &gt; 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result = result + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return nesting, result
+
+def describe_data_shape(data):
+    &#34;&#34;&#34;
+    Describe shape of data in human-readable form.
+    Returns string.
+    Can be used for debugging or for displaying information to user.
+    Note: this method inspects only first element of each list/tuple,
+    expecting they are all homogeneous (that is usually true in Sverchok).
+
+    describe_data_shape(None) == &#39;Level 0: NoneType&#39;
+    describe_data_shape(1) == &#39;Level 0: int&#39;
+    describe_data_shape([]) == &#39;Level 1: list [0]&#39;
+    describe_data_shape([1]) == &#39;Level 1: list [1] of int&#39;
+    describe_data_shape([[(1,2,3)]]) == &#39;Level 3: list [1] of list [1] of tuple [3] of int&#39;
+    &#34;&#34;&#34;
+
+    nesting, descriptions = describe_data_shape_by_level(data)
+    result = &#34; of &#34;.join(descriptions)
+    return &#34;Level {}: {}&#34;.format(nesting, result)
+
+def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
+    if isinstance(data, data_types):
+        return &#34;*&#34;
+    elif isinstance(data, (list, tuple)):
+        if isinstance(data[0], data_types):
+            return str(len(data)) + &#34;*&#34;
+        else:
+            rs = []
+            for item in data:
+                r = describe_data_structure(item, data_types)
+                rs.append(str(r))
+            rs = str(len(data)) + &#34;[&#34; + &#34;, &#34;.join(rs) + &#34;]&#34;
+            return rs
+    else:
+        raise TypeError(f&#34;Unexpected data type: {type(data)}&#34;)
+
+def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
+    &#34;&#34;&#34;
+    Calculate mask: for each item in set_data, return True if it is present in subset_data.
+    The function can work at any specified level.
+
+    subset_data: subset, for example [1]
+    set_data: set, for example [1, 2, 3]
+    level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+    negate: if True, then result will be negated (True if item of set is not present in subset).
+    ignore_order: when comparing lists, ignore items order.
+
+    Raises an exception if nesting level of input sets is less than specified level parameter.
+
+    calc_mask([1], [1,2,3]) == [True, False, False])
+    calc_mask([1], [1,2,3], negate=True) == [False, True, True]
+    &#34;&#34;&#34;
+    if level == 0:
+        if not isinstance(subset_data, (tuple, list)):
+            raise Exception(&#34;Specified level is too high for given Subset&#34;)
+        if not isinstance(set_data, (tuple, list)):
+            raise Exception(&#34;Specified level is too high for given Set&#34;)
+
+        if ignore_order and get_data_nesting_level(subset_data) &gt; 1:
+            if negate:
+                return [set(item) not in map(set, subset_data) for item in set_data]
+            else:
+                return [set(item) in map(set, subset_data) for item in set_data]
+        else:
+            if negate:
+                return [item not in subset_data for item in set_data]
+            else:
+                return [item in subset_data for item in set_data]
+    else:
+        sub_objects = match_long_repeat([subset_data, set_data])
+        return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
+
+def apply_mask(mask, lst):
+    good, bad = [], []
+    for m, item in zip(mask, lst):
+        if m:
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
+
+def invert_index_list(indexes, length):
+    &#39;&#39;&#39;
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    &#39;&#39;&#39;
+    mask = np_ones(length, dtype=&#39;bool&#39;)
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes
+
+def rotate_list(l, y=1):
+    &#34;&#34;&#34;
+    &#34;Rotate&#34; list by shifting it&#39;s items towards the end and putting last items to the beginning.
+    For example,
+
+    rotate_list([1, 2, 3]) = [2, 3, 1]
+    rotate_list([1, 2, 3], y=2) = [3, 1, 2]
+    &#34;&#34;&#34;
+    if len(l) == 0:
+        return l
+    if y == 0:
+        return l
+    y = y % len(l)
+    return list(l[y:]) + list(l[:y])
+
+def partition(p, lst):
+    good, bad = [], []
+    for item in lst:
+        if p(item):
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
+
+def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of items, apply `fn` to each of these items.
+    Nesting structure of the result will be the same as in the input.
+    &#34;&#34;&#34;
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f&#34;Encountered unknown data of type {type(data)} at nesting level #{level}&#34;)
+    return helper(data, 0)
+
+def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of items, apply `fn` to each of these items.
+    This method expects that `fn` will return a tuple (or list) of results.
+    After applying `fn` to each of items of data, &#34;unzip&#34; the result, so that
+    each item of result of `fn` would be in a separate nested list.
+    Nesting structure of each of items of the result of this method will be
+    the same as nesting structure of input data.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            results = [helper(item, level+1) for item in data]
+            return transpose_list(results)
+        else:
+            raise TypeError(f&#34;Encountered unknown data of type {type(data)} at nesting level #{level}&#34;)
+    return helper(data, 0)
+
+def unzip_dict_recursive(data, item_type=dict, to_dict=None):
+    &#34;&#34;&#34;
+    Given a nested list of dictionaries, return a dictionary of nested lists.
+    Nesting structure of each of values of resulting dictionary will be similar to
+    nesting structure of input data, only at the deepest level, instead of dictionaries
+    you will have their values.
+
+    inputs:
+    * data: nested list of dictionaries.
+    * item_type: allows to use arbitrary class instead of standard python&#39;s dict.
+    * to_dict: a function which translates data item into python&#39;s dict (or
+      another class with the same interface). Identity by default.
+
+    output: dictionary of nested lists.
+
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+
+    if to_dict is None:
+        to_dict = lambda d: d
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types=(item_type,))
+        if current_level == 0:
+            return to_dict(data)
+        elif current_level == 1:
+            result = defaultdict(list)
+            for dct in data:
+                dct = to_dict(dct)
+                for key, value in dct.items():
+                    result[key].append(value)
+            return result
+        else:
+            result = defaultdict(list)
+            for item in data:
+                sub_result = helper(item)
+                for key, value in sub_result.items():
+                    result[key].append(value)
+            return result
+
+    return helper(data)
+
+def is_ultimately(data, data_types):
+    &#34;&#34;&#34;
+    Check if data is a nested list / tuple / array
+    which ultimately consists of items of data_types.
+    &#34;&#34;&#34;
+    if isinstance(data, (list, tuple, ndarray)):
+        return is_ultimately(data[0], data_types)
+    return isinstance(data, data_types)
+
+#####################################################
+################### matrix magic ####################
+#####################################################
+
+# tools that makes easier to convert data
+# from string to matrixes, vertices,
+# lists, other and vice versa
+
+
+def Matrix_listing(prop):
+    &#34;&#34;&#34;Convert Matrix() into Sverchok data&#34;&#34;&#34;
+    mat_out = []
+    for matrix in prop:
+        unit = []
+        for m in matrix:
+            # [Matrix0, Matrix1, ... ]
+            unit.append(m[:])
+        mat_out.append((unit))
+    return mat_out
+
+
+def Matrix_generate(prop):
+    &#34;&#34;&#34;Generate Matrix() data from Sverchok data&#34;&#34;&#34;
+    mat_out = []
+    for matrix in prop:
+        unit = Matrix()
+        for k, m in enumerate(matrix):
+            # [Matrix0, Matrix1, ... ]
+            unit[k] = Vector(m)
+        mat_out.append(unit)
+    return mat_out
+
+
+def Matrix_location(prop, to_list=False):
+    &#34;&#34;&#34;return a list of locations representing the translation of the matrices&#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        if to_list:
+            Vectors.append(p.translation[:])
+        else:
+            Vectors.append(p.translation)
+    return [Vectors]
+
+
+def Matrix_scale(prop, to_list=False):
+    &#34;&#34;&#34;return a Vector()/list representing the scale factor of the matrices&#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        if to_list:
+            Vectors.append(p.to_scale()[:])
+        else:
+            Vectors.append(p.to_scale())
+    return [Vectors]
+
+
+def Matrix_rotation(prop, to_list=False):
+    &#34;&#34;&#34;return (Vector, rotation) utility function for Matrix Destructor.
+    if list is true the Vector() is decomposed into tuple format.
+    &#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        q = p.to_quaternion()
+        if to_list:
+            vec, angle = q.to_axis_angle()
+            Vectors.append((vec[:], angle))
+        else:
+            Vectors.append(q.to_axis_angle())
+    return [Vectors]
+
+
+def Vector_generate(prop):
+    &#34;&#34;&#34;return a list of Vector() objects from a standard Sverchok data&#34;&#34;&#34;
+    return [[Vector(v) for v in obj] for obj in prop]
+
+
+def Vector_degenerate(prop):
+    &#34;&#34;&#34;return a simple list of values instead of Vector() objects&#34;&#34;&#34;
+    return [[v[0:3] for v in obj] for obj in prop]
+
+
+def Edg_pol_generate(prop):
+    edg_pol_out = []
+    if len(prop[0][0]) == 2:
+        e_type = &#39;edg&#39;
+    elif len(prop[0]) &gt; 2:
+        e_type = &#39;pol&#39;
+    for ob in prop:
+        list_out = []
+        for p in ob:
+            list_out.append(p)
+        edg_pol_out.append(list_out)
+    # [ [(n1,n2,n3), (n1,n7,n9), p, p, p, p...], [...],... ] n = vertexindex
+    return e_type, edg_pol_out
+
+
+def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
+    modif = []
+    for i, de in enumerate(orig):
+        ma = de.copy()
+
+        if loc[0]:
+            k = min(len(loc[0])-1, i)
+            mat_tran = de.Translation(loc[0][k])
+            ma = ma @ mat_tran
+
+        if vec_angle[0] and rot[0]:
+            k = min(len(rot[0])-1, i)
+            a = min(len(vec_angle[0])-1, i)
+
+            vec_a = vec_angle[0][a].normalized()
+            vec_b = rot[0][k].normalized()
+
+            mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
+            ma = ma @ mat_rot
+
+        elif rot[0]:
+            k = min(len(rot[0])-1, i)
+            a = min(len(angle[0])-1, i)
+            mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
+            ma = ma @ mat_rot
+
+        if scale[0]:
+            k = min(len(scale[0])-1, i)
+            scale2 = scale[0][k]
+            id_m = Matrix.Identity(4)
+            for j in range(3):
+                id_m[j][j] = scale2[j]
+            ma = ma @ id_m
+
+        modif.append(ma)
+    return modif
+
+
+####
+#### random stuff
+####
+
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) &gt; 0 and hasattr(pol_edge[0], &#39;__len__&#39;) and len(pol_edge[0]) &gt; 0:
+        return True
+    return False
+
+
+def cross_indices_np(n):
+    &#39;&#39;&#39;
+    create list with all the indices pairs
+    for n=3 outputs a numpy array with:
+        [0,1]
+        [0,2]
+        [1,2]
+
+    &#39;&#39;&#39;
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind
+
+def no_space(s):
+    return s.replace(&#39; &#39;, &#39;_&#39;)
+
+def enum_item(s):
+    &#34;&#34;&#34;return a list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(i), i, &#34;&#34;) for i in s]
+
+def enum_item_4(s):
+    &#34;&#34;&#34;return a 4*n list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(n), n, &#39;&#39;, i) for i, n in enumerate(s)]
+
+def enum_item_5(s, icons):
+    &#34;&#34;&#34;return a 4*n list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(n), n, &#39;&#39;, icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
+
+def sv_lambda(**kwargs):
+    &#34;&#34;&#34;üsage: (like a named tuple)
+
+    structure = sv_lambda(keys=20, color=(1,0,0,0))
+
+    print(structure.keys)
+    print(structure.color)
+
+    useful for passing a parameter to a function that expects to be able to do a dot lookup
+    on the parameter, for instance a function that normally accepts &#34;self&#34; or &#34;node&#34;, but the
+    function only really looks up one or two..etc parameters.
+    &#34;&#34;&#34;
+    dummy = lambda: None
+    for k, v in kwargs.items():
+        setattr(dummy, k, v)
+    return dummy
+
+
+class classproperty:
+    &#34;&#34;&#34;https://stackoverflow.com/a/13624858/10032221&#34;&#34;&#34;
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)
+
+
+def post_load_call(function):  # better place would be in handlers module but import cyclic error
+    &#34;&#34;&#34;
+    Usage: if you need function which should be called each time when blender is lunched
+    or new file is opened use this decorator
+    Limitation: the function should not get any properties because it will be called by handler
+    &#34;&#34;&#34;
+    post_load_call.registered_functions.append(function)
+
+    @wraps(function)
+    def wrapper():
+        return function()
+
+    return wrapper
+
+
+post_load_call.registered_functions = []
+
+
+def extend_blender_class(cls):
+    &#34;&#34;&#34;
+    It is class decorator for adding extra logic into base Blender classes
+    Decorated class should have the same name as Blender class
+    Take into account that this decorator does not delete anything onto reload event
+    &#34;&#34;&#34;
+    bl_class = getattr(bpy.types, cls.__name__)
+    for base_cls in chain([cls], cls.__bases__):
+        # https://docs.python.org/3/howto/annotations.html#accessing-the-annotations-dict-of-an-object-in-python-3-9-and-older
+        # avoiding getting inherited annotations
+        if &#39;__annotations__&#39; in base_cls.__dict__:
+            for name, prop in base_cls.__dict__[&#39;__annotations__&#39;].items():
+                setattr(bl_class, name, prop)
+        for key in (key for key in dir(base_cls) if not key.startswith(&#39;_&#39;)):
+            setattr(bl_class, key, getattr(base_cls, key))
+    return cls
+
+
+#####################################################
+############### debug settings magic ################
+#####################################################
+
+
+def sverchok_debug(mode):
+    &#34;&#34;&#34;
+    set debug mode to mode
+    &#34;&#34;&#34;
+    global DEBUG_MODE
+    DEBUG_MODE = mode
+    return DEBUG_MODE
+
+
+def setup_init():
+    &#34;&#34;&#34;
+    setup variables needed for sverchok to function
+    &#34;&#34;&#34;
+    global DEBUG_MODE
+    global SVERCHOK_NAME
+    import sverchok
+    SVERCHOK_NAME = sverchok.__name__
+    addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
+    if addon:
+        DEBUG_MODE = addon.preferences.show_debug
+    else:
+        print(&#34;Setup of preferences failed&#34;)
+
+
+#####################################################
+############### update system magic! ################
+#####################################################
+
+
+def updateNode(self, context):
+    &#34;&#34;&#34;
+    When a node has changed state and need to call a partial update.
+    For example a user exposed bpy.prop
+    &#34;&#34;&#34;
+    self.process_node(context)
+
+
+def update_with_kwargs(update_function, **kwargs):
+    &#34;&#34;&#34;
+    You can wrap property update function for adding extra key arguments to it, like this:
+
+    def update_prop(self, context, extra_arg=None):
+        print(extra_arg)
+
+    node_prop_name: bpy.props.BoolProperty(update=update_with_kwargs(update_prop, extra_arg=&#39;node_prop_name&#39;))
+    &#34;&#34;&#34;
+
+    # https://docs.python.org/3/library/functools.html#functools.partial
+    @wraps(update_function)
+    def handel_update_call(node, context):
+        update_function(node, context, **handel_update_call.extra_args)
+
+    handel_update_call.extra_args = dict()
+    for attr_name, data in kwargs.items():
+        handel_update_call.extra_args[attr_name] = data
+
+    return handel_update_call
+
+
+##############################################################
+##############################################################
+############## changeable type of socket magic ###############
+########### if you have separate socket solution #############
+#################### welcome to provide ######################
+##############################################################
+##############################################################
+
+
+def changable_sockets(node, inputsocketname, outputsocketname):
+    &#34;&#34;&#34;
+    It changes types of output sockets according to type of socket (other)
+    connected to given input socket name
+    !!! It does not work if the node have outputs with the same names !!!
+    If input socket is not connected or its type is equal to type of
+    first output socket it does nothing
+    arguments: node, name of socket to follow, list of socket to change
+    &#34;&#34;&#34;
+    if not inputsocketname in node.inputs:
+        # - node not initialized in sv_init yet,
+        # - or socketname incorrect
+        debug(f&#34;changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist&#34;)
+        return
+
+    in_socket = node.inputs[inputsocketname]
+    ng = node.id_data
+    if in_socket.links:
+        in_other = get_other_socket(in_socket)
+        if not in_other:
+            return
+        outputs = node.outputs
+        s_type = in_other.bl_idname
+        if s_type == &#39;SvDummySocket&#39;:
+            return #
+        if outputs[outputsocketname[0]].bl_idname != s_type:
+            to_links = {}
+            idx = {}
+            # gather info
+            for n in outputsocketname:
+                out_socket = outputs[n]
+                idx[n] = out_socket.index
+                to_links[n] = [l.to_socket for l in out_socket.links]
+            # add sockets and copy options
+            for n in outputsocketname:
+                out_socket = outputs[n]
+                new_out_socket = outputs.new(s_type, n)
+                new_out_socket.copy_options(out_socket)
+            # remove sockets
+            for n in outputsocketname[::-1]:
+                old_sock_ind = idx[n]
+                outputs.remove(outputs[old_sock_ind])
+            # place sockets and return links
+            for i, n in enumerate(outputsocketname):
+                static_num = len(outputs) - len(outputsocketname)
+                new_sock_ind = static_num + i
+                outputs.move(new_sock_ind, idx[n])
+                for to_socket in to_links[n]:
+                    ng.links.new(to_socket, outputs[n])
+
+
+def replace_socket(socket, new_type, new_name=None, new_pos=None):
+    &#34;&#34;&#34;
+    Replace a socket with a socket of new_type and keep links
+
+    is_linked attribute of replaced socket will be False
+    whether it is connected or not - https://developer.blender.org/T82318
+    &#34;&#34;&#34;
+    # note: it seems impossible to replace one socket more efficient
+
+    socket_name = new_name or socket.name
+    socket_pos = new_pos or socket.index
+    ng = socket.id_data
+
+    if socket.is_output:
+        outputs = socket.node.outputs
+        to_sockets = [l.to_socket for l in socket.links]
+
+        new_socket = outputs.new(new_type, socket_name)
+        new_socket.copy_options(socket)
+        outputs.remove(socket)
+        outputs.move(len(outputs)-1, socket_pos)
+
+        for to_socket in to_sockets:
+            link = ng.links.new(new_socket, to_socket)
+            link.is_valid = True
+
+    else:
+        inputs = socket.node.inputs
+        from_socket = socket.links[0].from_socket if socket.is_linked else None
+
+        inputs.remove(socket)
+        new_socket = inputs.new(new_type, socket_name)
+        inputs.move(len(inputs)-1, socket_pos)
+
+        if from_socket:
+            link = ng.links.new(from_socket, new_socket)
+            link.is_valid = True
+
+    return new_socket
+
+
+def get_other_socket(socket):
+    &#34;&#34;&#34;
+    Get next real upstream socket.
+    This should be expanded to support wifi nodes also.
+    Will return None if there isn&#39;t a another socket connect
+    so no need to check socket.links
+    &#34;&#34;&#34;
+    if not socket.is_linked:
+        return None
+    if not socket.is_output:
+        if socket.links:
+            other = socket.links[0].from_socket
+        else:
+            return None
+    else:
+        other = socket.links[0].to_socket
+
+    if other.node.bl_idname == &#39;NodeReroute&#39;:
+        if not socket.is_output:
+            return get_other_socket(other.node.inputs[0])
+        else:
+            return get_other_socket(other.node.outputs[0])
+    else:  #other.node.bl_idname == &#39;WifiInputNode&#39;:
+        return other
+
+
+###########################################
+# Multisocket magic / множественный сокет #
+###########################################
+
+#     utility function for handling n-inputs, for usage see Test1.py
+#     for examples see ListJoin2, LineConnect, ListZip
+#     min parameter sets minimum number of sockets
+#     setup two variables in Node class
+#     create Fixed inputs socket, the multi socket will not change anything
+#     below min
+#     base_name = StringProperty(default=&#39;Data &#39;)
+#     multi_socket_type = StringProperty(default=&#39;SvStringsSocket&#39;)
+
+# the named argument min will be replaced soonish.
+
+
+def multi_socket(node, min=1, start=0, breck=False, out_count=None):
+    &#39;&#39;&#39;
+     min - integer, minimal number of sockets, at list 1 needed
+     start - integer, starting socket.
+     breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
+     output - integer, deal with output, if&gt;0 counts number of outputs multi sockets
+     base name added in separated node in self.base_name = &#39;some_name&#39;, i.e. &#39;x&#39;, &#39;data&#39;
+     node.multi_socket_type - type of socket, as .bl_idname
+
+    &#39;&#39;&#39;
+    #probably incorrect state due or init or change of inputs
+    # do nothing
+    ng = node.id_data
+
+    if min &lt; 1:
+        min = 1
+    if out_count is None:
+        if not node.inputs:
+            return
+        if node.inputs[-1].links:
+            length = start + len(node.inputs)
+            if breck:
+                name = node.base_name + &#39;[&#39; + str(length) + &#39;]&#39;
+            else:
+                name = node.base_name + str(length)
+            node.inputs.new(node.multi_socket_type, name)
+        else:
+            while len(node.inputs) &gt; min and not node.inputs[-2].links:
+                node.inputs.remove(node.inputs[-1])
+    elif isinstance(out_count, int):
+        lenod = len(node.outputs)
+        if out_count &gt; 30:
+            out_count = 30
+        if lenod &lt; out_count:
+            while len(node.outputs) &lt; out_count:
+                length = start + len(node.outputs)
+                if breck:
+                    name = node.base_name + &#39;[&#39; + str(length)+ &#39;]&#39;
+                else:
+                    name = node.base_name + str(length)
+                node.outputs.new(node.multi_socket_type, name)
+        else:
+            while len(node.outputs) &gt; out_count:
+                node.outputs.remove(node.outputs[-1])
+
+
+#####################################
+# socket data cache                 #
+#####################################
+
+
+def socket_id(socket):
+    &#34;&#34;&#34;return an usable and semi stable hash&#34;&#34;&#34;
+    return socket.socket_id
+
+def node_id(node):
+    &#34;&#34;&#34;return a stable hash for the lifetime of the node
+    needs StringProperty called n_id in the node
+    &#34;&#34;&#34;
+    return node.node_id
+
+
+# EDGE CACHE settings : used to accelerate the (linear) edge list generation
+_edgeCache = {}
+_edgeCache[&#34;main&#34;] = []  # e.g. [[0, 1], [1, 2], ... , [N-1, N]] (extended as needed)
+
+
+def update_edge_cache(n):
+    &#34;&#34;&#34;
+    Extend the edge list cache to contain at least n edges.
+
+    NOTE: This is called by the get_edge_list to make sure the edge cache is large
+    enough, but it can also be called preemptively by the nodes prior to making
+    multiple calls to get_edge_list in order to pre-augment the cache to a known
+    size and thus accellearate the subsequent calls to get_edge_list as they
+    will not have to augment the cache with every call.
+    &#34;&#34;&#34;
+    m = len(_edgeCache[&#34;main&#34;])  # current number of edges in the edge cache
+    if n &gt; m: # requested #edges &lt; cached #edges ? =&gt; extend the cache
+        _edgeCache[&#34;main&#34;].extend([[m + i, m + i + 1] for i in range(n - m)])
+
+
+def get_edge_list(n):
+    &#34;&#34;&#34;
+    Get the list of n edges connecting n+1 vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-1, n]]
+
+    NOTE: This uses an &#34;edge cache&#34; to accelerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    &#34;&#34;&#34;
+    update_edge_cache(n) # make sure the edge cache is large enough
+    return _edgeCache[&#34;main&#34;][:n] # return a subset list of the edge cache
+
+
+def get_edge_loop(n):
+    &#34;&#34;&#34;
+    Get the loop list of n edges connecting n vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
+
+    NOTE: This uses an &#34;edge cache&#34; to accelerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    &#34;&#34;&#34;
+    nn = n - 1
+    update_edge_cache(nn) # make sure the edge cache is large enough
+    return _edgeCache[&#34;main&#34;][:nn] + [[nn, 0]]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.data_structure.Edg_pol_generate"><code class="name flex">
+<span>def <span class="ident">Edg_pol_generate</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Edg_pol_generate(prop):
+    edg_pol_out = []
+    if len(prop[0][0]) == 2:
+        e_type = &#39;edg&#39;
+    elif len(prop[0]) &gt; 2:
+        e_type = &#39;pol&#39;
+    for ob in prop:
+        list_out = []
+        for p in ob:
+            list_out.append(p)
+        edg_pol_out.append(list_out)
+    # [ [(n1,n2,n3), (n1,n7,n9), p, p, p, p...], [...],... ] n = vertexindex
+    return e_type, edg_pol_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Matrix_generate"><code class="name flex">
+<span>def <span class="ident">Matrix_generate</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate Matrix() data from Sverchok data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Matrix_generate(prop):
+    &#34;&#34;&#34;Generate Matrix() data from Sverchok data&#34;&#34;&#34;
+    mat_out = []
+    for matrix in prop:
+        unit = Matrix()
+        for k, m in enumerate(matrix):
+            # [Matrix0, Matrix1, ... ]
+            unit[k] = Vector(m)
+        mat_out.append(unit)
+    return mat_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Matrix_listing"><code class="name flex">
+<span>def <span class="ident">Matrix_listing</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert Matrix() into Sverchok data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Matrix_listing(prop):
+    &#34;&#34;&#34;Convert Matrix() into Sverchok data&#34;&#34;&#34;
+    mat_out = []
+    for matrix in prop:
+        unit = []
+        for m in matrix:
+            # [Matrix0, Matrix1, ... ]
+            unit.append(m[:])
+        mat_out.append((unit))
+    return mat_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Matrix_location"><code class="name flex">
+<span>def <span class="ident">Matrix_location</span></span>(<span>prop, to_list=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a list of locations representing the translation of the matrices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Matrix_location(prop, to_list=False):
+    &#34;&#34;&#34;return a list of locations representing the translation of the matrices&#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        if to_list:
+            Vectors.append(p.translation[:])
+        else:
+            Vectors.append(p.translation)
+    return [Vectors]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Matrix_rotation"><code class="name flex">
+<span>def <span class="ident">Matrix_rotation</span></span>(<span>prop, to_list=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return (Vector, rotation) utility function for Matrix Destructor.
+if list is true the Vector() is decomposed into tuple format.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Matrix_rotation(prop, to_list=False):
+    &#34;&#34;&#34;return (Vector, rotation) utility function for Matrix Destructor.
+    if list is true the Vector() is decomposed into tuple format.
+    &#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        q = p.to_quaternion()
+        if to_list:
+            vec, angle = q.to_axis_angle()
+            Vectors.append((vec[:], angle))
+        else:
+            Vectors.append(q.to_axis_angle())
+    return [Vectors]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Matrix_scale"><code class="name flex">
+<span>def <span class="ident">Matrix_scale</span></span>(<span>prop, to_list=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a Vector()/list representing the scale factor of the matrices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Matrix_scale(prop, to_list=False):
+    &#34;&#34;&#34;return a Vector()/list representing the scale factor of the matrices&#34;&#34;&#34;
+    Vectors = []
+    for p in prop:
+        if to_list:
+            Vectors.append(p.to_scale()[:])
+        else:
+            Vectors.append(p.to_scale())
+    return [Vectors]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Vector_degenerate"><code class="name flex">
+<span>def <span class="ident">Vector_degenerate</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a simple list of values instead of Vector() objects</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Vector_degenerate(prop):
+    &#34;&#34;&#34;return a simple list of values instead of Vector() objects&#34;&#34;&#34;
+    return [[v[0:3] for v in obj] for obj in prop]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.Vector_generate"><code class="name flex">
+<span>def <span class="ident">Vector_generate</span></span>(<span>prop)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a list of Vector() objects from a standard Sverchok data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Vector_generate(prop):
+    &#34;&#34;&#34;return a list of Vector() objects from a standard Sverchok data&#34;&#34;&#34;
+    return [[Vector(v) for v in obj] for obj in prop]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.apply_mask"><code class="name flex">
+<span>def <span class="ident">apply_mask</span></span>(<span>mask, lst)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_mask(mask, lst):
+    good, bad = [], []
+    for m, item in zip(mask, lst):
+        if m:
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.calc_mask"><code class="name flex">
+<span>def <span class="ident">calc_mask</span></span>(<span>subset_data, set_data, level=0, negate=False, ignore_order=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate mask: for each item in set_data, return True if it is present in subset_data.
+The function can work at any specified level.</p>
+<p>subset_data: subset, for example [1]
+set_data: set, for example [1, 2, 3]
+level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+negate: if True, then result will be negated (True if item of set is not present in subset).
+ignore_order: when comparing lists, ignore items order.</p>
+<p>Raises an exception if nesting level of input sets is less than specified level parameter.</p>
+<p>calc_mask([1], [1,2,3]) == [True, False, False])
+calc_mask([1], [1,2,3], negate=True) == [False, True, True]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
+    &#34;&#34;&#34;
+    Calculate mask: for each item in set_data, return True if it is present in subset_data.
+    The function can work at any specified level.
+
+    subset_data: subset, for example [1]
+    set_data: set, for example [1, 2, 3]
+    level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+    negate: if True, then result will be negated (True if item of set is not present in subset).
+    ignore_order: when comparing lists, ignore items order.
+
+    Raises an exception if nesting level of input sets is less than specified level parameter.
+
+    calc_mask([1], [1,2,3]) == [True, False, False])
+    calc_mask([1], [1,2,3], negate=True) == [False, True, True]
+    &#34;&#34;&#34;
+    if level == 0:
+        if not isinstance(subset_data, (tuple, list)):
+            raise Exception(&#34;Specified level is too high for given Subset&#34;)
+        if not isinstance(set_data, (tuple, list)):
+            raise Exception(&#34;Specified level is too high for given Set&#34;)
+
+        if ignore_order and get_data_nesting_level(subset_data) &gt; 1:
+            if negate:
+                return [set(item) not in map(set, subset_data) for item in set_data]
+            else:
+                return [set(item) in map(set, subset_data) for item in set_data]
+        else:
+            if negate:
+                return [item not in subset_data for item in set_data]
+            else:
+                return [item in subset_data for item in set_data]
+    else:
+        sub_objects = match_long_repeat([subset_data, set_data])
+        return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.changable_sockets"><code class="name flex">
+<span>def <span class="ident">changable_sockets</span></span>(<span>node, inputsocketname, outputsocketname)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It changes types of output sockets according to type of socket (other)
+connected to given input socket name
+!!! It does not work if the node have outputs with the same names !!!
+If input socket is not connected or its type is equal to type of
+first output socket it does nothing
+arguments: node, name of socket to follow, list of socket to change</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def changable_sockets(node, inputsocketname, outputsocketname):
+    &#34;&#34;&#34;
+    It changes types of output sockets according to type of socket (other)
+    connected to given input socket name
+    !!! It does not work if the node have outputs with the same names !!!
+    If input socket is not connected or its type is equal to type of
+    first output socket it does nothing
+    arguments: node, name of socket to follow, list of socket to change
+    &#34;&#34;&#34;
+    if not inputsocketname in node.inputs:
+        # - node not initialized in sv_init yet,
+        # - or socketname incorrect
+        debug(f&#34;changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist&#34;)
+        return
+
+    in_socket = node.inputs[inputsocketname]
+    ng = node.id_data
+    if in_socket.links:
+        in_other = get_other_socket(in_socket)
+        if not in_other:
+            return
+        outputs = node.outputs
+        s_type = in_other.bl_idname
+        if s_type == &#39;SvDummySocket&#39;:
+            return #
+        if outputs[outputsocketname[0]].bl_idname != s_type:
+            to_links = {}
+            idx = {}
+            # gather info
+            for n in outputsocketname:
+                out_socket = outputs[n]
+                idx[n] = out_socket.index
+                to_links[n] = [l.to_socket for l in out_socket.links]
+            # add sockets and copy options
+            for n in outputsocketname:
+                out_socket = outputs[n]
+                new_out_socket = outputs.new(s_type, n)
+                new_out_socket.copy_options(out_socket)
+            # remove sockets
+            for n in outputsocketname[::-1]:
+                old_sock_ind = idx[n]
+                outputs.remove(outputs[old_sock_ind])
+            # place sockets and return links
+            for i, n in enumerate(outputsocketname):
+                static_num = len(outputs) - len(outputsocketname)
+                new_sock_ind = static_num + i
+                outputs.move(new_sock_ind, idx[n])
+                for to_socket in to_links[n]:
+                    ng.links.new(to_socket, outputs[n])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.cross_indices_np"><code class="name flex">
+<span>def <span class="ident">cross_indices_np</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>create list with all the indices pairs
+for n=3 outputs a numpy array with:
+[0,1]
+[0,2]
+[1,2]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cross_indices_np(n):
+    &#39;&#39;&#39;
+    create list with all the indices pairs
+    for n=3 outputs a numpy array with:
+        [0,1]
+        [0,2]
+        [1,2]
+
+    &#39;&#39;&#39;
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.cycle_for_length"><code class="name flex">
+<span>def <span class="ident">cycle_for_length</span></span>(<span>lst, count)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cycle_for_length(lst, count):
+    return list(islice(cycle(lst), count))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.dataCorrect"><code class="name flex">
+<span>def <span class="ident">dataCorrect</span></span>(<span>data, nominal_dept=2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data from nesting to standard: TO container( objects( lists( floats, ), ), )</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataCorrect(data, nominal_dept=2):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )
+    &#34;&#34;&#34;
+    dept = levelsOflist(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept &lt; 2:
+        return data #[dept, data]
+    else:
+        output = data_standard(data, dept, nominal_dept)
+        return output</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.dataCorrect_np"><code class="name flex">
+<span>def <span class="ident">dataCorrect_np</span></span>(<span>data, nominal_dept=2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data from nesting to standard: TO container( objects( lists( floats, ), ), )</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataCorrect_np(data, nominal_dept=2):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )
+    &#34;&#34;&#34;
+    dept = levels_of_list_or_np(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept &lt; 2:
+        return data #[dept, data]
+    else:
+        output = data_standard(data, dept, nominal_dept)
+        return output</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.dataSpoil"><code class="name flex">
+<span>def <span class="ident">dataSpoil</span></span>(<span>data, dept)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>from standard data to initial levels: to nested lists
+container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataSpoil(data, dept):
+    &#34;&#34;&#34;from standard data to initial levels: to nested lists
+     container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
+    &#34;&#34;&#34;
+    __doc__ = &#39;preparing and making spoil&#39;
+
+    def Spoil(dat, dep):
+        __doc__ = &#39;making spoil&#39;
+        out = []
+        if dep:
+            for d in dat:
+                out.append([Spoil(d, dep-1)])
+        else:
+            out = dat
+        return out
+    lol = levelsOflist(data)
+    if dept &gt; lol:
+        out = Spoil(data, dept-lol)
+    else:
+        out = data
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.data_standard"><code class="name flex">
+<span>def <span class="ident">data_standard</span></span>(<span>data, dept, nominal_dept)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data from nesting to standard: TO container( objects( lists( floats, ), ), )</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def data_standard(data, dept, nominal_dept):
+    &#34;&#34;&#34;data from nesting to standard: TO container( objects( lists( floats, ), ), )&#34;&#34;&#34;
+    deptl = dept - 1
+    output = []
+    for object in data:
+        if deptl &gt;= nominal_dept:
+            output.extend(data_standard(object, deptl, nominal_dept))
+        else:
+            output.append(data)
+            return output
+    return output</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.describe_data_shape"><code class="name flex">
+<span>def <span class="ident">describe_data_shape</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Describe shape of data in human-readable form.
+Returns string.
+Can be used for debugging or for displaying information to user.
+Note: this method inspects only first element of each list/tuple,
+expecting they are all homogeneous (that is usually true in Sverchok).</p>
+<p>describe_data_shape(None) == 'Level 0: NoneType'
+describe_data_shape(1) == 'Level 0: int'
+describe_data_shape([]) == 'Level 1: list [0]'
+describe_data_shape([1]) == 'Level 1: list [1] of int'
+describe_data_shape([[(1,2,3)]]) == 'Level 3: list [1] of list [1] of tuple [3] of int'</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe_data_shape(data):
+    &#34;&#34;&#34;
+    Describe shape of data in human-readable form.
+    Returns string.
+    Can be used for debugging or for displaying information to user.
+    Note: this method inspects only first element of each list/tuple,
+    expecting they are all homogeneous (that is usually true in Sverchok).
+
+    describe_data_shape(None) == &#39;Level 0: NoneType&#39;
+    describe_data_shape(1) == &#39;Level 0: int&#39;
+    describe_data_shape([]) == &#39;Level 1: list [0]&#39;
+    describe_data_shape([1]) == &#39;Level 1: list [1] of int&#39;
+    describe_data_shape([[(1,2,3)]]) == &#39;Level 3: list [1] of list [1] of tuple [3] of int&#39;
+    &#34;&#34;&#34;
+
+    nesting, descriptions = describe_data_shape_by_level(data)
+    result = &#34; of &#34;.join(descriptions)
+    return &#34;Level {}: {}&#34;.format(nesting, result)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.describe_data_shape_by_level"><code class="name flex">
+<span>def <span class="ident">describe_data_shape_by_level</span></span>(<span>data, include_numpy_nesting=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Describe shape of data in human-readable form.
+Returns tuple:
+* data nesting level
+* list of descriptions of data shapes at each nesting level</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe_data_shape_by_level(data, include_numpy_nesting=True):
+    &#34;&#34;&#34;
+    Describe shape of data in human-readable form.
+    Returns tuple:
+    * data nesting level
+    * list of descriptions of data shapes at each nesting level
+    &#34;&#34;&#34;
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            if isinstance(data, ndarray):
+                if include_numpy_nesting:
+                    nesting = len(data.shape)
+                else:
+                    nesting = 0
+                return nesting, [type(data).__name__ + &#34; of &#34; + str(data.dtype) + &#34; with shape &#34; + str(data.shape)]
+            return 0, [type(data).__name__]
+        else:
+            result = [f&#34;{type(data).__name__} [{len(data)}]&#34;]
+            if len(data) &gt; 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result = result + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return nesting, result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.describe_data_structure"><code class="name flex">
+<span>def <span class="ident">describe_data_structure</span></span>(<span>data, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
+    if isinstance(data, data_types):
+        return &#34;*&#34;
+    elif isinstance(data, (list, tuple)):
+        if isinstance(data[0], data_types):
+            return str(len(data)) + &#34;*&#34;
+        else:
+            rs = []
+            for item in data:
+                r = describe_data_structure(item, data_types)
+                rs.append(str(r))
+            rs = str(len(data)) + &#34;[&#34; + &#34;, &#34;.join(rs) + &#34;]&#34;
+            return rs
+    else:
+        raise TypeError(f&#34;Unexpected data type: {type(data)}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.ensure_min_nesting"><code class="name flex">
+<span>def <span class="ident">ensure_min_nesting</span></span>(<span>data, target_level, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;), input_name=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data: number, or list of numbers, or list of lists, etc.
+target_level: minimum data nesting level required for further processing.
+data_types: list or tuple of types.
+input_name: name of input socket data was taken from. Optional. If specified,
+used for error reporting.</p>
+<p>Wraps data in so many [] as required to achieve target nesting level.
+If data already has too high nesting level the same data will be returned</p>
+<p>ensure_min_nesting(17, 0) == 17
+ensure_min_nesting(17, 1) == [17]
+ensure_min_nesting([17], 1) == [17]
+ensure_min_nesting([17], 2) == [[17]]
+ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+ensure_min_nesting([[[17]]], 1) =&gt; [[[17]]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: minimum data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    If data already has too high nesting level the same data will be returned
+
+    ensure_min_nesting(17, 0) == 17
+    ensure_min_nesting(17, 1) == [17]
+    ensure_min_nesting([17], 1) == [17]
+    ensure_min_nesting([17], 2) == [[17]]
+    ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_min_nesting([[[17]]], 1) =&gt; [[[17]]]
+    &#34;&#34;&#34;
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &gt;= target_level:
+        return data
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.ensure_nesting_level"><code class="name flex">
+<span>def <span class="ident">ensure_nesting_level</span></span>(<span>data, target_level, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;), input_name=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data: number, or list of numbers, or list of lists, etc.
+target_level: data nesting level required for further processing.
+data_types: list or tuple of types.
+input_name: name of input socket data was taken from. Optional. If specified,
+used for error reporting.</p>
+<p>Wraps data in so many [] as required to achieve target nesting level.
+Raises an exception, if data already has too high nesting level.</p>
+<p>ensure_nesting_level(17, 0) == 17
+ensure_nesting_level(17, 1) == [17]
+ensure_nesting_level([17], 1) == [17]
+ensure_nesting_level([17], 2) == [[17]]
+ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+ensure_nesting_level([[[17]]], 1) =&gt; exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    Raises an exception, if data already has too high nesting level.
+
+    ensure_nesting_level(17, 0) == 17
+    ensure_nesting_level(17, 1) == [17]
+    ensure_nesting_level([17], 1) == [17]
+    ensure_nesting_level([17], 2) == [[17]]
+    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_nesting_level([[[17]]], 1) =&gt; exception
+    &#34;&#34;&#34;
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &gt; target_level:
+        if input_name is None:
+            raise TypeError(&#34;ensure_nesting_level: input data already has nesting level of {}. Required level was {}.&#34;.format(current_level, target_level))
+        else:
+            raise TypeError(&#34;Input data in socket {} already has nesting level of {}. Required level was {}.&#34;.format(input_name, current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.enum_item"><code class="name flex">
+<span>def <span class="ident">enum_item</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a list usable in enum property from a list with one value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enum_item(s):
+    &#34;&#34;&#34;return a list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(i), i, &#34;&#34;) for i in s]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.enum_item_4"><code class="name flex">
+<span>def <span class="ident">enum_item_4</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a 4*n list usable in enum property from a list with one value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enum_item_4(s):
+    &#34;&#34;&#34;return a 4*n list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(n), n, &#39;&#39;, i) for i, n in enumerate(s)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.enum_item_5"><code class="name flex">
+<span>def <span class="ident">enum_item_5</span></span>(<span>s, icons)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a 4*n list usable in enum property from a list with one value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enum_item_5(s, icons):
+    &#34;&#34;&#34;return a 4*n list usable in enum property from a list with one value&#34;&#34;&#34;
+    return [(no_space(n), n, &#39;&#39;, icon, i) for i, (n, icon) in enumerate(zip(s, icons))]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.extend_blender_class"><code class="name flex">
+<span>def <span class="ident">extend_blender_class</span></span>(<span>cls)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It is class decorator for adding extra logic into base Blender classes
+Decorated class should have the same name as Blender class
+Take into account that this decorator does not delete anything onto reload event</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extend_blender_class(cls):
+    &#34;&#34;&#34;
+    It is class decorator for adding extra logic into base Blender classes
+    Decorated class should have the same name as Blender class
+    Take into account that this decorator does not delete anything onto reload event
+    &#34;&#34;&#34;
+    bl_class = getattr(bpy.types, cls.__name__)
+    for base_cls in chain([cls], cls.__bases__):
+        # https://docs.python.org/3/howto/annotations.html#accessing-the-annotations-dict-of-an-object-in-python-3-9-and-older
+        # avoiding getting inherited annotations
+        if &#39;__annotations__&#39; in base_cls.__dict__:
+            for name, prop in base_cls.__dict__[&#39;__annotations__&#39;].items():
+                setattr(bl_class, name, prop)
+        for key in (key for key in dir(base_cls) if not key.startswith(&#39;_&#39;)):
+            setattr(bl_class, key, getattr(base_cls, key))
+    return cls</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.fixed_iter"><code class="name flex">
+<span>def <span class="ident">fixed_iter</span></span>(<span>data, iter_number, fill_value=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates iterator for given data which will be yielded iter_number times
+If data is shorter then iter_number last element will be cycled
+If data is empty [fill_value] list will be used instead</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fixed_iter(data, iter_number, fill_value=0):
+    &#34;&#34;&#34;
+    Creates iterator for given data which will be yielded iter_number times
+    If data is shorter then iter_number last element will be cycled
+    If data is empty [fill_value] list will be used instead
+    &#34;&#34;&#34;
+    last_index = -1
+    for i, item in zip(range(iter_number), data):
+        yield item
+        last_index = i
+        fill_value = item
+
+    if last_index + 1 &lt; iter_number:
+        for i, item in zip(range(iter_number - (last_index + 1)), cycle([fill_value])):
+            yield item</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.flat_iter"><code class="name flex">
+<span>def <span class="ident">flat_iter</span></span>(<span>data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>[1, [2, 3, [4]], 5] -&gt; 1, 2, 3, 4, 5</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flat_iter(data):
+    &#34;&#34;&#34;[1, [2, 3, [4]], 5] -&gt; 1, 2, 3, 4, 5 &#34;&#34;&#34;
+    if isinstance(data, str):
+        yield data
+        return
+    try:
+        for v in data:
+            yield from flat_iter(v)
+    except TypeError:
+        yield data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.flatten_data"><code class="name flex">
+<span>def <span class="ident">flatten_data</span></span>(<span>data, target_level=1, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce nesting level of <code>data</code> to <code>target_level</code>, by concatenating nested sub-lists.
+Raises an exception if nesting level is already less than <code>target_level</code>.
+Refer to data_structure_tests.py for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level &lt; target_level:
+        raise TypeError(f&#34;Can&#39;t flatten data to level {target_level}: data already have level {current_level}&#34;)
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
+        return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.fullList"><code class="name flex">
+<span>def <span class="ident">fullList</span></span>(<span>l, count)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extends list l so len is at least count if needed with the
+last element of l</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fullList(l, count):
+    &#34;&#34;&#34;extends list l so len is at least count if needed with the
+    last element of l&#34;&#34;&#34;
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
+    if d &gt; 0:
+        l.extend([l[-1] for a in range(d)])
+    return</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.fullList_deep_copy"><code class="name flex">
+<span>def <span class="ident">fullList_deep_copy</span></span>(<span>l, count)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>the same that full list function but
+it have correct work with objects such as lists.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fullList_deep_copy(l, count):
+    &#34;&#34;&#34;the same that full list function but
+    it have correct work with objects such as lists.&#34;&#34;&#34;
+    d = count - len(l)
+    if d &gt; 0:
+        l.extend([copy.deepcopy(l[-1]) for _ in range(d)])
+    return</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.fullList_np"><code class="name flex">
+<span>def <span class="ident">fullList_np</span></span>(<span>l, count)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>extends list l so len is at least count if needed with the
+last element of l</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fullList_np(l, count):
+    &#34;&#34;&#34;extends list l so len is at least count if needed with the
+    last element of l&#34;&#34;&#34;
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
+    if d &gt; 0:
+        try:
+            l.extend([l[-1] for a in range(d)])
+        except:
+            l = numpy_full_list(l, n)
+    else:
+        l = l[:count]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.get_data_nesting_level"><code class="name flex">
+<span>def <span class="ident">get_data_nesting_level</span></span>(<span>data, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>data: number, or list of numbers, or list of lists, etc.
+data_types: list or tuple of types.</p>
+<p>Detect nesting level of actual data.
+"Actual" data is detected by belonging to one of data_types.
+This method searches only for first instance of "actual data",
+so it does not support cases when different elements of source
+list have different nesting.
+Returns integer.
+Raises an exception if at some point it encounters element
+which is not a tuple, list, or one of data_types.</p>
+<p>get_data_nesting_level(1) == 0
+get_data_nesting_level([]) == 1
+get_data_nesting_level([1]) == 1
+get_data_nesting_level([[(1,2,3)]]) == 3</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    data: number, or list of numbers, or list of lists, etc.
+    data_types: list or tuple of types.
+
+    Detect nesting level of actual data.
+    &#34;Actual&#34; data is detected by belonging to one of data_types.
+    This method searches only for first instance of &#34;actual data&#34;,
+    so it does not support cases when different elements of source
+    list have different nesting.
+    Returns integer.
+    Raises an exception if at some point it encounters element
+    which is not a tuple, list, or one of data_types.
+
+    get_data_nesting_level(1) == 0
+    get_data_nesting_level([]) == 1
+    get_data_nesting_level([1]) == 1
+    get_data_nesting_level([[(1,2,3)]]) == 3
+    &#34;&#34;&#34;
+
+    def helper(data, recursion_depth):
+        &#34;&#34;&#34; Needed only for better error reporting. &#34;&#34;&#34;
+        if isinstance(data, data_types):
+            return 0
+        elif isinstance(data, (list, tuple, ndarray)):
+            if len(data) == 0:
+                return 1
+            else:
+                return helper(data[0], recursion_depth+1) + 1
+        elif data is None:
+            raise TypeError(&#34;get_data_nesting_level: encountered None at nesting level {}&#34;.format(recursion_depth))
+        else:
+            #unknown class. Return 0 level
+            return 0
+
+    return helper(data, 0)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.get_edge_list"><code class="name flex">
+<span>def <span class="ident">get_edge_list</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the list of n edges connecting n+1 vertices.</p>
+<p>e.g. [[0, 1], [1, 2], &hellip; , [n-1, n]]</p>
+<p>NOTE: This uses an "edge cache" to accelerate the edge list generation.
+The cache is extended automatically as needed to satisfy the largest number
+of edges within the node tree and it is shared by all nodes using this method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edge_list(n):
+    &#34;&#34;&#34;
+    Get the list of n edges connecting n+1 vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-1, n]]
+
+    NOTE: This uses an &#34;edge cache&#34; to accelerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    &#34;&#34;&#34;
+    update_edge_cache(n) # make sure the edge cache is large enough
+    return _edgeCache[&#34;main&#34;][:n] # return a subset list of the edge cache</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.get_edge_loop"><code class="name flex">
+<span>def <span class="ident">get_edge_loop</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the loop list of n edges connecting n vertices.</p>
+<p>e.g. [[0, 1], [1, 2], &hellip; , [n-2, n-1], [n-1, 0]]</p>
+<p>NOTE: This uses an "edge cache" to accelerate the edge list generation.
+The cache is extended automatically as needed to satisfy the largest number
+of edges within the node tree and it is shared by all nodes using this method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edge_loop(n):
+    &#34;&#34;&#34;
+    Get the loop list of n edges connecting n vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
+
+    NOTE: This uses an &#34;edge cache&#34; to accelerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    &#34;&#34;&#34;
+    nn = n - 1
+    update_edge_cache(nn) # make sure the edge cache is large enough
+    return _edgeCache[&#34;main&#34;][:nn] + [[nn, 0]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.get_other_socket"><code class="name flex">
+<span>def <span class="ident">get_other_socket</span></span>(<span>socket)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get next real upstream socket.
+This should be expanded to support wifi nodes also.
+Will return None if there isn't a another socket connect
+so no need to check socket.links</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_other_socket(socket):
+    &#34;&#34;&#34;
+    Get next real upstream socket.
+    This should be expanded to support wifi nodes also.
+    Will return None if there isn&#39;t a another socket connect
+    so no need to check socket.links
+    &#34;&#34;&#34;
+    if not socket.is_linked:
+        return None
+    if not socket.is_output:
+        if socket.links:
+            other = socket.links[0].from_socket
+        else:
+            return None
+    else:
+        other = socket.links[0].to_socket
+
+    if other.node.bl_idname == &#39;NodeReroute&#39;:
+        if not socket.is_output:
+            return get_other_socket(other.node.inputs[0])
+        else:
+            return get_other_socket(other.node.outputs[0])
+    else:  #other.node.bl_idname == &#39;WifiInputNode&#39;:
+        return other</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.graft_data"><code class="name flex">
+<span>def <span class="ident">graft_data</span></span>(<span>data, item_level=1, wrap_level=1, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>For each nested item of the list, which has it's own nesting level of <code>target_level</code>,
+wrap that item into a pair of [].
+For example, with item_level==0, this means wrap each number in the nested list
+(however deep this number is nested) into pair of [].
+Refer to data_structure_tests.py for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    For each nested item of the list, which has it&#39;s own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.handle_check"><code class="name flex">
+<span>def <span class="ident">handle_check</span></span>(<span>handle, prop)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_check(handle, prop):
+    if handle in handle_check and \
+            prop == handle_check[handle][&#39;prop&#39;]:
+        return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.handle_delete"><code class="name flex">
+<span>def <span class="ident">handle_delete</span></span>(<span>handle)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_delete(handle):
+    if handle in temp_handle:
+        del temp_handle[handle]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.handle_read"><code class="name flex">
+<span>def <span class="ident">handle_read</span></span>(<span>handle)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_read(handle):
+    if not (handle in temp_handle):
+        return (False, [])
+    return (True, temp_handle[handle][&#39;prop&#39;])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.handle_write"><code class="name flex">
+<span>def <span class="ident">handle_write</span></span>(<span>handle, prop)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_write(handle, prop):
+    handle_delete(handle)
+
+    temp_handle[handle] = {&#34;prop&#34; : prop}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.has_element"><code class="name flex">
+<span>def <span class="ident">has_element</span></span>(<span>pol_edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) &gt; 0 and hasattr(pol_edge[0], &#39;__len__&#39;) and len(pol_edge[0]) &gt; 0:
+        return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.invert_index_list"><code class="name flex">
+<span>def <span class="ident">invert_index_list</span></span>(<span>indexes, length)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inverts indexes list
+indexes: List[Int] of Ndarray flat numpy array
+length: Int. Length of the base list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invert_index_list(indexes, length):
+    &#39;&#39;&#39;
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    &#39;&#39;&#39;
+    mask = np_ones(length, dtype=&#39;bool&#39;)
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.is_ultimately"><code class="name flex">
+<span>def <span class="ident">is_ultimately</span></span>(<span>data, data_types)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if data is a nested list / tuple / array
+which ultimately consists of items of data_types.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_ultimately(data, data_types):
+    &#34;&#34;&#34;
+    Check if data is a nested list / tuple / array
+    which ultimately consists of items of data_types.
+    &#34;&#34;&#34;
+    if isinstance(data, (list, tuple, ndarray)):
+        return is_ultimately(data[0], data_types)
+    return isinstance(data, data_types)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.levelsOflist"><code class="name flex">
+<span>def <span class="ident">levelsOflist</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calc list nesting only in countainment level integer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def levelsOflist(lst):
+    &#34;&#34;&#34;calc list nesting only in countainment level integer&#34;&#34;&#34;
+    level = 1
+    for n in lst:
+        if n and isinstance(n, (list, tuple)):
+            level += levelsOflist(n)
+        return level
+    return 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.levels_of_list_or_np"><code class="name flex">
+<span>def <span class="ident">levels_of_list_or_np</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calc list nesting only in countainment level integer</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def levels_of_list_or_np(lst):
+    &#34;&#34;&#34;calc list nesting only in countainment level integer&#34;&#34;&#34;
+    level = 1
+    for n in lst:
+        if isinstance(n, (list, tuple)):
+            level += levels_of_list_or_np(n)
+        elif isinstance(n, (ndarray)):
+            level += len(n.shape)
+
+        return level
+    return 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.list_levels_adjust"><code class="name flex">
+<span>def <span class="ident">list_levels_adjust</span></span>(<span>data, instructions, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
+    data_level = get_data_nesting_level(data, data_types + (ndarray,))
+    if len(instructions) &lt; data_level+1:
+        raise Exception(f&#34;Number of instructions ({len(instructions)}) is less than data nesting level {data_level} + 1&#34;)
+
+    def process(data, instruction, level):
+        result = data
+        if level + 1 &lt; data_level and instruction.flatten:
+            result = sum(result, [])
+        if instruction.wrap:
+            result = [result]
+        #print(f&#34;II: {level}/{data_level}, {instruction}, {data} =&gt; {result}&#34;)
+        return result
+
+    def helper(data, instructions, level):
+        if level == data_level:
+            items = process(data, instructions[0], level)
+        else:
+            sub_items = [helper(item, instructions[1:], level+1) for item in data]
+            items = process(sub_items, instructions[0], level)
+            #print(f&#34;?? {level}/{data_level}, {data} =&gt; {sub_items} =&gt; {items}&#34;)
+        return items
+
+    return helper(data, instructions, 0)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.make_cyclers"><code class="name flex">
+<span>def <span class="ident">make_cyclers</span></span>(<span>lists)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_cyclers(lists):
+
+    cycle = itertools.cycle
+    out =[]
+    for l in lists:
+        out.append(cycle(l))
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.make_repeaters"><code class="name flex">
+<span>def <span class="ident">make_repeaters</span></span>(<span>lists)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_repeaters(lists):
+    chain = itertools.chain
+    repeat = itertools.repeat
+    out =[]
+    for l in lists:
+        out.append(chain(l, repeat(l[-1])))
+
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.map_at_level"><code class="name flex">
+<span>def <span class="ident">map_at_level</span></span>(<span>function, data, item_level=0, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a nested list of object, apply <code>function</code> to each sub-list of items.
+Nesting structure of the result will be simpler than such of the input:
+most nested levels (<code>item_level</code> of them) will be eliminated.
+Refer to data_structure_tests.py for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of object, apply `function` to each sub-list of items.
+    Nesting structure of the result will be simpler than such of the input:
+    most nested levels (`item_level` of them) will be eliminated.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level == item_level:
+        return function(data)
+    else:
+        return [map_at_level(function, item, item_level, data_types) for item in data]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.map_recursive"><code class="name flex">
+<span>def <span class="ident">map_recursive</span></span>(<span>fn, data, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a nested list of items, apply <code>fn</code> to each of these items.
+Nesting structure of the result will be the same as in the input.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of items, apply `fn` to each of these items.
+    Nesting structure of the result will be the same as in the input.
+    &#34;&#34;&#34;
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f&#34;Encountered unknown data of type {type(data)} at nesting level #{level}&#34;)
+    return helper(data, 0)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.map_unzip_recursirve"><code class="name flex">
+<span>def <span class="ident">map_unzip_recursirve</span></span>(<span>fn, data, data_types=(&lt;class &#x27;float&#x27;&gt;, &lt;class &#x27;int&#x27;&gt;, &lt;class &#x27;numpy.float64&#x27;&gt;, &lt;class &#x27;numpy.int32&#x27;&gt;, &lt;class &#x27;numpy.int64&#x27;&gt;, &lt;class &#x27;str&#x27;&gt;, &lt;class &#x27;Matrix&#x27;&gt;))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a nested list of items, apply <code>fn</code> to each of these items.
+This method expects that <code>fn</code> will return a tuple (or list) of results.
+After applying <code>fn</code> to each of items of data, "unzip" the result, so that
+each item of result of <code>fn</code> would be in a separate nested list.
+Nesting structure of each of items of the result of this method will be
+the same as nesting structure of input data.
+Refer to data_structure_tests.py for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
+    &#34;&#34;&#34;
+    Given a nested list of items, apply `fn` to each of these items.
+    This method expects that `fn` will return a tuple (or list) of results.
+    After applying `fn` to each of items of data, &#34;unzip&#34; the result, so that
+    each item of result of `fn` would be in a separate nested list.
+    Nesting structure of each of items of the result of this method will be
+    the same as nesting structure of input data.
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            results = [helper(item, level+1) for item in data]
+            return transpose_list(results)
+        else:
+            raise TypeError(f&#34;Encountered unknown data of type {type(data)} at nesting level #{level}&#34;)
+    return helper(data, 0)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.match_cross"><code class="name flex">
+<span>def <span class="ident">match_cross</span></span>(<span>lsts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return cross matched lists
+[[1,2], [5,6,7]] -&gt; [[1,1,1,2,2,2], [5,6,7,5,6,7]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_cross(lsts):
+    &#34;&#34;&#34; return cross matched lists
+    [[1,2], [5,6,7]] -&gt; [[1,1,1,2,2,2], [5,6,7,5,6,7]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*itertools.product(*lsts))))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.match_cross2"><code class="name flex">
+<span>def <span class="ident">match_cross2</span></span>(<span>lsts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return cross matched lists
+[[1,2], [5,6,7]] -&gt;[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_cross2(lsts):
+    &#34;&#34;&#34; return cross matched lists
+    [[1,2], [5,6,7]] -&gt;[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]
+    &#34;&#34;&#34;
+    return list(reversed(list(map(list, zip(*itertools.product(*reversed(lsts)))))))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.match_long_cycle"><code class="name flex">
+<span>def <span class="ident">match_long_cycle</span></span>(<span>lsts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return matched list, cycling the shorter lists
+longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_long_cycle(lsts):
+    &#34;&#34;&#34;return matched list, cycling the shorter lists
+    longest list matching, cycle [[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]
+    &#34;&#34;&#34;
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        max_l = max(max_l, len(l))
+    for l in lsts:
+        if len(l) == max_l:
+            tmp.append(l)
+        else:
+            tmp.append(itertools.cycle(l))
+    return list(map(list, zip(*zip(*tmp))))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.match_long_repeat"><code class="name flex">
+<span>def <span class="ident">match_long_repeat</span></span>(<span>lsts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return matched list, using the last value to fill lists as needed
+longest list matching [[1,2,3,4,5], [10,11]] -&gt; [[1,2,3,4,5], [10,11,11,11,11]]</p>
+<p>lists passed into this function are not modified, it produces non-deep copies and extends those.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_long_repeat(lsts):
+    &#34;&#34;&#34;return matched list, using the last value to fill lists as needed
+    longest list matching [[1,2,3,4,5], [10,11]] -&gt; [[1,2,3,4,5], [10,11,11,11,11]]
+    
+    lists passed into this function are not modified, it produces non-deep copies and extends those.
+    &#34;&#34;&#34;
+    max_l = 0
+    tmp = []
+    for l in lsts:
+        if not hasattr(l, &#39;__len__&#39;):
+            raise TypeError(f&#34;Cannot perform data matching: input of type {type(l)} is not a list or tuple, but an atomic object&#34;)
+        max_l = max(max_l, len(l))
+    for l in lsts:
+        if len(l) == max_l:
+            tmp.append(l)
+        else:
+            tmp.append(repeat_last(l))
+    return list(map(list, zip(*zip(*tmp))))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.match_short"><code class="name flex">
+<span>def <span class="ident">match_short</span></span>(<span>lsts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return lists of equal length using the Shortest list to decides length
+Shortest list decides output length [[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_short(lsts):
+    &#34;&#34;&#34;return lists of equal length using the Shortest list to decides length
+    Shortest list decides output length [[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*zip(*lsts))))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.matrixdef"><code class="name flex">
+<span>def <span class="ident">matrixdef</span></span>(<span>orig, loc, scale, rot, angle, vec_angle=[[]])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
+    modif = []
+    for i, de in enumerate(orig):
+        ma = de.copy()
+
+        if loc[0]:
+            k = min(len(loc[0])-1, i)
+            mat_tran = de.Translation(loc[0][k])
+            ma = ma @ mat_tran
+
+        if vec_angle[0] and rot[0]:
+            k = min(len(rot[0])-1, i)
+            a = min(len(vec_angle[0])-1, i)
+
+            vec_a = vec_angle[0][a].normalized()
+            vec_b = rot[0][k].normalized()
+
+            mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
+            ma = ma @ mat_rot
+
+        elif rot[0]:
+            k = min(len(rot[0])-1, i)
+            a = min(len(angle[0])-1, i)
+            mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
+            ma = ma @ mat_rot
+
+        if scale[0]:
+            k = min(len(scale[0])-1, i)
+            scale2 = scale[0][k]
+            id_m = Matrix.Identity(4)
+            for j in range(3):
+                id_m[j][j] = scale2[j]
+            ma = ma @ id_m
+
+        modif.append(ma)
+    return modif</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.multi_socket"><code class="name flex">
+<span>def <span class="ident">multi_socket</span></span>(<span>node, min=1, start=0, breck=False, out_count=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>min - integer, minimal number of sockets, at list 1 needed
+start - integer, starting socket.
+breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
+output - integer, deal with output, if&gt;0 counts number of outputs multi sockets
+base name added in separated node in self.base_name = 'some_name', i.e. 'x', 'data'
+node.multi_socket_type - type of socket, as .bl_idname</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def multi_socket(node, min=1, start=0, breck=False, out_count=None):
+    &#39;&#39;&#39;
+     min - integer, minimal number of sockets, at list 1 needed
+     start - integer, starting socket.
+     breck - boolean, adding bracket to name of socket x[0] x[1] x[2] etc
+     output - integer, deal with output, if&gt;0 counts number of outputs multi sockets
+     base name added in separated node in self.base_name = &#39;some_name&#39;, i.e. &#39;x&#39;, &#39;data&#39;
+     node.multi_socket_type - type of socket, as .bl_idname
+
+    &#39;&#39;&#39;
+    #probably incorrect state due or init or change of inputs
+    # do nothing
+    ng = node.id_data
+
+    if min &lt; 1:
+        min = 1
+    if out_count is None:
+        if not node.inputs:
+            return
+        if node.inputs[-1].links:
+            length = start + len(node.inputs)
+            if breck:
+                name = node.base_name + &#39;[&#39; + str(length) + &#39;]&#39;
+            else:
+                name = node.base_name + str(length)
+            node.inputs.new(node.multi_socket_type, name)
+        else:
+            while len(node.inputs) &gt; min and not node.inputs[-2].links:
+                node.inputs.remove(node.inputs[-1])
+    elif isinstance(out_count, int):
+        lenod = len(node.outputs)
+        if out_count &gt; 30:
+            out_count = 30
+        if lenod &lt; out_count:
+            while len(node.outputs) &lt; out_count:
+                length = start + len(node.outputs)
+                if breck:
+                    name = node.base_name + &#39;[&#39; + str(length)+ &#39;]&#39;
+                else:
+                    name = node.base_name + str(length)
+                node.outputs.new(node.multi_socket_type, name)
+        else:
+            while len(node.outputs) &gt; out_count:
+                node.outputs.remove(node.outputs[-1])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.no_space"><code class="name flex">
+<span>def <span class="ident">no_space</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def no_space(s):
+    return s.replace(&#39; &#39;, &#39;_&#39;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.node_id"><code class="name flex">
+<span>def <span class="ident">node_id</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return a stable hash for the lifetime of the node
+needs StringProperty called n_id in the node</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_id(node):
+    &#34;&#34;&#34;return a stable hash for the lifetime of the node
+    needs StringProperty called n_id in the node
+    &#34;&#34;&#34;
+    return node.node_id</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.numpy_full_list"><code class="name flex">
+<span>def <span class="ident">numpy_full_list</span></span>(<span>array, desired_length)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>retuns array with desired length by repeating last item</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_full_list(array, desired_length):
+    &#39;&#39;&#39;retuns array with desired length by repeating last item&#39;&#39;&#39;
+    if not isinstance(array, ndarray):
+        array = np_array(array)
+
+    length_diff = desired_length - array.shape[0]
+
+    if length_diff &gt; 0:
+        new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+        return np_concatenate((array, new_part))[:desired_length]
+    return array[:desired_length]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.numpy_full_list_cycle"><code class="name flex">
+<span>def <span class="ident">numpy_full_list_cycle</span></span>(<span>array, desired_length)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>retuns array with desired length by cycling</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_full_list_cycle(array, desired_length):
+    &#39;&#39;&#39;retuns array with desired length by cycling&#39;&#39;&#39;
+
+    length_diff = desired_length - array.shape[0]
+    if length_diff &gt; 0:
+        if length_diff &lt; array.shape[0]:
+
+            return np_concatenate((array, array[:length_diff]))
+
+        new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+        if len(array.shape) &gt; 1:
+            shape = (ceil(length_diff / array.shape[0]), 1)
+        else:
+            shape = ceil(length_diff / array.shape[0])
+        new_part = np_tile(array, shape)
+        return np_concatenate((array, new_part[:length_diff]))
+
+    return array[:desired_length]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.numpy_match_long_cycle"><code class="name flex">
+<span>def <span class="ident">numpy_match_long_cycle</span></span>(<span>list_of_arrays)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>match numpy arrays length by cycling over the array</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_match_long_cycle(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by cycling over the array&#39;&#39;&#39;
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = maxl - array.shape[0]
+        if length_diff &gt; 0:
+            if length_diff &lt; array.shape[0]:
+
+                array = np_concatenate((array, array[:length_diff]))
+            else:
+                new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+                if len(array.shape) &gt; 1:
+                    shape = (ceil(length_diff / array.shape[0]), 1)
+                else:
+                    shape = ceil(length_diff / array.shape[0])
+                new_part = np_tile(array, shape)
+                array = np_concatenate((array, new_part[:length_diff]))
+        out.append(array)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.numpy_match_long_repeat"><code class="name flex">
+<span>def <span class="ident">numpy_match_long_repeat</span></span>(<span>list_of_arrays)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>match numpy arrays length by repeating last one</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_match_long_repeat(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by repeating last one&#39;&#39;&#39;
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = maxl - array.shape[0]
+        if length_diff &gt; 0:
+            new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+            array = np_concatenate((array, new_part))
+        out.append(array)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.numpy_match_short"><code class="name flex">
+<span>def <span class="ident">numpy_match_short</span></span>(<span>list_of_arrays)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>match numpy arrays length by cutting the longer arrays</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_match_short(list_of_arrays):
+    &#39;&#39;&#39;match numpy arrays length by cutting the longer arrays&#39;&#39;&#39;
+    out = []
+    minl = list_of_arrays[0].shape[0]
+    for array in list_of_arrays:
+        minl = min(minl, array.shape[0])
+    for array in list_of_arrays:
+        length_diff = array.shape[0] - minl
+        if length_diff &gt; 0:
+            array = array[:minl]
+        out.append(array)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.partition"><code class="name flex">
+<span>def <span class="ident">partition</span></span>(<span>p, lst)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def partition(p, lst):
+    good, bad = [], []
+    for item in lst:
+        if p(item):
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.post_load_call"><code class="name flex">
+<span>def <span class="ident">post_load_call</span></span>(<span>function)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Usage: if you need function which should be called each time when blender is lunched
+or new file is opened use this decorator
+Limitation: the function should not get any properties because it will be called by handler</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def post_load_call(function):  # better place would be in handlers module but import cyclic error
+    &#34;&#34;&#34;
+    Usage: if you need function which should be called each time when blender is lunched
+    or new file is opened use this decorator
+    Limitation: the function should not get any properties because it will be called by handler
+    &#34;&#34;&#34;
+    post_load_call.registered_functions.append(function)
+
+    @wraps(function)
+    def wrapper():
+        return function()
+
+    return wrapper</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.repeat_last"><code class="name flex">
+<span>def <span class="ident">repeat_last</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>creates an infinite iterator the first each element in lst
+and then keep repeating the last element,
+use with terminating input</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def repeat_last(lst):
+    &#34;&#34;&#34;
+    creates an infinite iterator the first each element in lst
+    and then keep repeating the last element,
+    use with terminating input
+    &#34;&#34;&#34;
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
+    yield from chain(lst, cycle(last))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.repeat_last_for_length"><code class="name flex">
+<span>def <span class="ident">repeat_last_for_length</span></span>(<span>lst, count, deepcopy=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Repeat last item of the list enough times
+for result's length to be equal to <code>count</code>.</p>
+<p>repeat_last_for_length(None, n) = None
+repeat_last_for_length([], n) = []
+repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def repeat_last_for_length(lst, count, deepcopy=False):
+    &#34;&#34;&#34;
+    Repeat last item of the list enough times
+    for result&#39;s length to be equal to `count`.
+
+    repeat_last_for_length(None, n) = None
+    repeat_last_for_length([], n) = []
+    repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
+    &#34;&#34;&#34;
+    if not lst:
+        return lst
+    if len(lst) &gt;= count:
+        return lst[:count]
+    n = len(lst)
+    x = lst[-1]
+    result = lst[:]
+    if deepcopy:
+        for i in range(count - n):
+            result.append(copy.deepcopy(x))
+    else:
+        for i in range(count - n):
+            result.append(x)
+
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.replace_socket"><code class="name flex">
+<span>def <span class="ident">replace_socket</span></span>(<span>socket, new_type, new_name=None, new_pos=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Replace a socket with a socket of new_type and keep links</p>
+<p>is_linked attribute of replaced socket will be False
+whether it is connected or not - <a href="https://developer.blender.org/T82318">https://developer.blender.org/T82318</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replace_socket(socket, new_type, new_name=None, new_pos=None):
+    &#34;&#34;&#34;
+    Replace a socket with a socket of new_type and keep links
+
+    is_linked attribute of replaced socket will be False
+    whether it is connected or not - https://developer.blender.org/T82318
+    &#34;&#34;&#34;
+    # note: it seems impossible to replace one socket more efficient
+
+    socket_name = new_name or socket.name
+    socket_pos = new_pos or socket.index
+    ng = socket.id_data
+
+    if socket.is_output:
+        outputs = socket.node.outputs
+        to_sockets = [l.to_socket for l in socket.links]
+
+        new_socket = outputs.new(new_type, socket_name)
+        new_socket.copy_options(socket)
+        outputs.remove(socket)
+        outputs.move(len(outputs)-1, socket_pos)
+
+        for to_socket in to_sockets:
+            link = ng.links.new(new_socket, to_socket)
+            link.is_valid = True
+
+    else:
+        inputs = socket.node.inputs
+        from_socket = socket.links[0].from_socket if socket.is_linked else None
+
+        inputs.remove(socket)
+        new_socket = inputs.new(new_type, socket_name)
+        inputs.move(len(inputs)-1, socket_pos)
+
+        if from_socket:
+            link = ng.links.new(from_socket, new_socket)
+            link.is_valid = True
+
+    return new_socket</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.rotate_list"><code class="name flex">
+<span>def <span class="ident">rotate_list</span></span>(<span>l, y=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>"Rotate" list by shifting it's items towards the end and putting last items to the beginning.
+For example,</p>
+<p>rotate_list([1, 2, 3]) = [2, 3, 1]
+rotate_list([1, 2, 3], y=2) = [3, 1, 2]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rotate_list(l, y=1):
+    &#34;&#34;&#34;
+    &#34;Rotate&#34; list by shifting it&#39;s items towards the end and putting last items to the beginning.
+    For example,
+
+    rotate_list([1, 2, 3]) = [2, 3, 1]
+    rotate_list([1, 2, 3], y=2) = [3, 1, 2]
+    &#34;&#34;&#34;
+    if len(l) == 0:
+        return l
+    if y == 0:
+        return l
+    y = y % len(l)
+    return list(l[y:]) + list(l[:y])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.second_as_first_cycle"><code class="name flex">
+<span>def <span class="ident">second_as_first_cycle</span></span>(<span>F, S)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_as_first_cycle(F, S):
+    if len(F) &gt; len(S):
+        return list(map(list, zip(*zip(*[F, itertools.cycle(S)]))))[1]
+    else:
+        return S</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.setup_init"><code class="name flex">
+<span>def <span class="ident">setup_init</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setup variables needed for sverchok to function</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_init():
+    &#34;&#34;&#34;
+    setup variables needed for sverchok to function
+    &#34;&#34;&#34;
+    global DEBUG_MODE
+    global SVERCHOK_NAME
+    import sverchok
+    SVERCHOK_NAME = sverchok.__name__
+    addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
+    if addon:
+        DEBUG_MODE = addon.preferences.show_debug
+    else:
+        print(&#34;Setup of preferences failed&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.socket_id"><code class="name flex">
+<span>def <span class="ident">socket_id</span></span>(<span>socket)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>return an usable and semi stable hash</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_id(socket):
+    &#34;&#34;&#34;return an usable and semi stable hash&#34;&#34;&#34;
+    return socket.socket_id</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.split_by_count"><code class="name flex">
+<span>def <span class="ident">split_by_count</span></span>(<span>iterable, n, fillvalue=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Collect data into fixed-length chunks or blocks</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_by_count(iterable, n, fillvalue=None):
+    &#34;Collect data into fixed-length chunks or blocks&#34;
+    # grouper(&#39;ABCDEFG&#39;, 3, &#39;x&#39;) --&gt; ABC DEF Gxx&#34;
+    args = [iter(iterable)] * n
+    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.sv_lambda"><code class="name flex">
+<span>def <span class="ident">sv_lambda</span></span>(<span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>üsage: (like a named tuple)</p>
+<p>structure = sv_lambda(keys=20, color=(1,0,0,0))</p>
+<p>print(structure.keys)
+print(structure.color)</p>
+<p>useful for passing a parameter to a function that expects to be able to do a dot lookup
+on the parameter, for instance a function that normally accepts "self" or "node", but the
+function only really looks up one or two..etc parameters.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_lambda(**kwargs):
+    &#34;&#34;&#34;üsage: (like a named tuple)
+
+    structure = sv_lambda(keys=20, color=(1,0,0,0))
+
+    print(structure.keys)
+    print(structure.color)
+
+    useful for passing a parameter to a function that expects to be able to do a dot lookup
+    on the parameter, for instance a function that normally accepts &#34;self&#34; or &#34;node&#34;, but the
+    function only really looks up one or two..etc parameters.
+    &#34;&#34;&#34;
+    dummy = lambda: None
+    for k, v in kwargs.items():
+        setattr(dummy, k, v)
+    return dummy</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.sv_zip"><code class="name flex">
+<span>def <span class="ident">sv_zip</span></span>(<span>*iterables)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>zip('ABCD', 'xy') &ndash;&gt; Ax By
+like standard zip but list instead of tuple</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_zip(*iterables):
+    &#34;&#34;&#34;zip(&#39;ABCD&#39;, &#39;xy&#39;) --&gt; Ax By
+    like standard zip but list instead of tuple
+    &#34;&#34;&#34;
+    iterators = [iter(it) for it in iterables]
+    sentinel = object() # use internal sentinel
+    while iterators:
+        result = []
+        for it in iterators:
+            elem = next(it, sentinel)
+            if elem is sentinel:
+                return
+            result.append(elem)
+        yield result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.sverchok_debug"><code class="name flex">
+<span>def <span class="ident">sverchok_debug</span></span>(<span>mode)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>set debug mode to mode</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sverchok_debug(mode):
+    &#34;&#34;&#34;
+    set debug mode to mode
+    &#34;&#34;&#34;
+    global DEBUG_MODE
+    DEBUG_MODE = mode
+    return DEBUG_MODE</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.transpose_list"><code class="name flex">
+<span>def <span class="ident">transpose_list</span></span>(<span>lst)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transpose a list of lists.</p>
+<p>transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def transpose_list(lst):
+    &#34;&#34;&#34;
+    Transpose a list of lists.
+
+    transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
+    &#34;&#34;&#34;
+    return list(map(list, zip(*lst)))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.unwrap_data"><code class="name flex">
+<span>def <span class="ident">unwrap_data</span></span>(<span>data, unwrap_level=1, socket=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unwrap_data(data, unwrap_level=1, socket=None):
+    socket_msg = &#34;&#34; if socket is None else f&#34; in socket {socket.label or socket.name}&#34;
+
+    def unwrap(lst, level):
+        if not isinstance(lst, (list, tuple, ndarray)):
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} is an atomic object, not a list {socket_msg}&#34;)
+        n = len(lst)
+        if n == 0:
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} is an empty list {socket_msg}&#34;)
+        elif n &gt; 1:
+            raise Exception(f&#34;Cannot unwrap data: Data at level {level} contains {n} objects instead of one {socket_msg}&#34;)
+        else:
+            return lst[0]
+
+    for level in range(unwrap_level):
+        data = unwrap(data, level)
+    return data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.unzip_dict_recursive"><code class="name flex">
+<span>def <span class="ident">unzip_dict_recursive</span></span>(<span>data, item_type=builtins.dict, to_dict=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a nested list of dictionaries, return a dictionary of nested lists.
+Nesting structure of each of values of resulting dictionary will be similar to
+nesting structure of input data, only at the deepest level, instead of dictionaries
+you will have their values.</p>
+<p>inputs:
+* data: nested list of dictionaries.
+* item_type: allows to use arbitrary class instead of standard python's dict.
+* to_dict: a function which translates data item into python's dict (or
+another class with the same interface). Identity by default.</p>
+<p>output: dictionary of nested lists.</p>
+<p>Refer to data_structure_tests.py for examples.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unzip_dict_recursive(data, item_type=dict, to_dict=None):
+    &#34;&#34;&#34;
+    Given a nested list of dictionaries, return a dictionary of nested lists.
+    Nesting structure of each of values of resulting dictionary will be similar to
+    nesting structure of input data, only at the deepest level, instead of dictionaries
+    you will have their values.
+
+    inputs:
+    * data: nested list of dictionaries.
+    * item_type: allows to use arbitrary class instead of standard python&#39;s dict.
+    * to_dict: a function which translates data item into python&#39;s dict (or
+      another class with the same interface). Identity by default.
+
+    output: dictionary of nested lists.
+
+    Refer to data_structure_tests.py for examples.
+    &#34;&#34;&#34;
+
+    if to_dict is None:
+        to_dict = lambda d: d
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types=(item_type,))
+        if current_level == 0:
+            return to_dict(data)
+        elif current_level == 1:
+            result = defaultdict(list)
+            for dct in data:
+                dct = to_dict(dct)
+                for key, value in dct.items():
+                    result[key].append(value)
+            return result
+        else:
+            result = defaultdict(list)
+            for item in data:
+                sub_result = helper(item)
+                for key, value in sub_result.items():
+                    result[key].append(value)
+            return result
+
+    return helper(data)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.updateNode"><code class="name flex">
+<span>def <span class="ident">updateNode</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>When a node has changed state and need to call a partial update.
+For example a user exposed bpy.prop</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateNode(self, context):
+    &#34;&#34;&#34;
+    When a node has changed state and need to call a partial update.
+    For example a user exposed bpy.prop
+    &#34;&#34;&#34;
+    self.process_node(context)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.update_edge_cache"><code class="name flex">
+<span>def <span class="ident">update_edge_cache</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extend the edge list cache to contain at least n edges.</p>
+<p>NOTE: This is called by the get_edge_list to make sure the edge cache is large
+enough, but it can also be called preemptively by the nodes prior to making
+multiple calls to get_edge_list in order to pre-augment the cache to a known
+size and thus accellearate the subsequent calls to get_edge_list as they
+will not have to augment the cache with every call.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_edge_cache(n):
+    &#34;&#34;&#34;
+    Extend the edge list cache to contain at least n edges.
+
+    NOTE: This is called by the get_edge_list to make sure the edge cache is large
+    enough, but it can also be called preemptively by the nodes prior to making
+    multiple calls to get_edge_list in order to pre-augment the cache to a known
+    size and thus accellearate the subsequent calls to get_edge_list as they
+    will not have to augment the cache with every call.
+    &#34;&#34;&#34;
+    m = len(_edgeCache[&#34;main&#34;])  # current number of edges in the edge cache
+    if n &gt; m: # requested #edges &lt; cached #edges ? =&gt; extend the cache
+        _edgeCache[&#34;main&#34;].extend([[m + i, m + i + 1] for i in range(n - m)])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.update_with_kwargs"><code class="name flex">
+<span>def <span class="ident">update_with_kwargs</span></span>(<span>update_function, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>You can wrap property update function for adding extra key arguments to it, like this:</p>
+<p>def update_prop(self, context, extra_arg=None):
+print(extra_arg)</p>
+<p>node_prop_name: bpy.props.BoolProperty(update=update_with_kwargs(update_prop, extra_arg='node_prop_name'))</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_with_kwargs(update_function, **kwargs):
+    &#34;&#34;&#34;
+    You can wrap property update function for adding extra key arguments to it, like this:
+
+    def update_prop(self, context, extra_arg=None):
+        print(extra_arg)
+
+    node_prop_name: bpy.props.BoolProperty(update=update_with_kwargs(update_prop, extra_arg=&#39;node_prop_name&#39;))
+    &#34;&#34;&#34;
+
+    # https://docs.python.org/3/library/functools.html#functools.partial
+    @wraps(update_function)
+    def handel_update_call(node, context):
+        update_function(node, context, **handel_update_call.extra_args)
+
+    handel_update_call.extra_args = dict()
+    for attr_name, data in kwargs.items():
+        handel_update_call.extra_args[attr_name] = data
+
+    return handel_update_call</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.wrap_data"><code class="name flex">
+<span>def <span class="ident">wrap_data</span></span>(<span>data, wrap_level=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.zip_long_repeat"><code class="name flex">
+<span>def <span class="ident">zip_long_repeat</span></span>(<span>*lists)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def zip_long_repeat(*lists):
+    objects = match_long_repeat(lists)
+    return zip(*objects)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.data_structure.SvListLevelAdjustment"><code class="flex name class">
+<span>class <span class="ident">SvListLevelAdjustment</span></span>
+<span>(</span><span>flatten=False, wrap=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvListLevelAdjustment(object):
+    def __init__(self, flatten=False, wrap=False):
+        self.flatten = flatten
+        self.wrap = wrap
+
+    def __repr__(self):
+        return f&#34;&lt;Flatten={self.flatten}, Wrap={self.wrap}&gt;&#34;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.data_structure.classproperty"><code class="flex name class">
+<span>class <span class="ident">classproperty</span></span>
+<span>(</span><span>fget)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><a href="https://stackoverflow.com/a/13624858/10032221">https://stackoverflow.com/a/13624858/10032221</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class classproperty:
+    &#34;&#34;&#34;https://stackoverflow.com/a/13624858/10032221&#34;&#34;&#34;
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.data_structure.Edg_pol_generate" href="#sverchok.data_structure.Edg_pol_generate">Edg_pol_generate</a></code></li>
+<li><code><a title="sverchok.data_structure.Matrix_generate" href="#sverchok.data_structure.Matrix_generate">Matrix_generate</a></code></li>
+<li><code><a title="sverchok.data_structure.Matrix_listing" href="#sverchok.data_structure.Matrix_listing">Matrix_listing</a></code></li>
+<li><code><a title="sverchok.data_structure.Matrix_location" href="#sverchok.data_structure.Matrix_location">Matrix_location</a></code></li>
+<li><code><a title="sverchok.data_structure.Matrix_rotation" href="#sverchok.data_structure.Matrix_rotation">Matrix_rotation</a></code></li>
+<li><code><a title="sverchok.data_structure.Matrix_scale" href="#sverchok.data_structure.Matrix_scale">Matrix_scale</a></code></li>
+<li><code><a title="sverchok.data_structure.Vector_degenerate" href="#sverchok.data_structure.Vector_degenerate">Vector_degenerate</a></code></li>
+<li><code><a title="sverchok.data_structure.Vector_generate" href="#sverchok.data_structure.Vector_generate">Vector_generate</a></code></li>
+<li><code><a title="sverchok.data_structure.apply_mask" href="#sverchok.data_structure.apply_mask">apply_mask</a></code></li>
+<li><code><a title="sverchok.data_structure.calc_mask" href="#sverchok.data_structure.calc_mask">calc_mask</a></code></li>
+<li><code><a title="sverchok.data_structure.changable_sockets" href="#sverchok.data_structure.changable_sockets">changable_sockets</a></code></li>
+<li><code><a title="sverchok.data_structure.cross_indices_np" href="#sverchok.data_structure.cross_indices_np">cross_indices_np</a></code></li>
+<li><code><a title="sverchok.data_structure.cycle_for_length" href="#sverchok.data_structure.cycle_for_length">cycle_for_length</a></code></li>
+<li><code><a title="sverchok.data_structure.dataCorrect" href="#sverchok.data_structure.dataCorrect">dataCorrect</a></code></li>
+<li><code><a title="sverchok.data_structure.dataCorrect_np" href="#sverchok.data_structure.dataCorrect_np">dataCorrect_np</a></code></li>
+<li><code><a title="sverchok.data_structure.dataSpoil" href="#sverchok.data_structure.dataSpoil">dataSpoil</a></code></li>
+<li><code><a title="sverchok.data_structure.data_standard" href="#sverchok.data_structure.data_standard">data_standard</a></code></li>
+<li><code><a title="sverchok.data_structure.describe_data_shape" href="#sverchok.data_structure.describe_data_shape">describe_data_shape</a></code></li>
+<li><code><a title="sverchok.data_structure.describe_data_shape_by_level" href="#sverchok.data_structure.describe_data_shape_by_level">describe_data_shape_by_level</a></code></li>
+<li><code><a title="sverchok.data_structure.describe_data_structure" href="#sverchok.data_structure.describe_data_structure">describe_data_structure</a></code></li>
+<li><code><a title="sverchok.data_structure.ensure_min_nesting" href="#sverchok.data_structure.ensure_min_nesting">ensure_min_nesting</a></code></li>
+<li><code><a title="sverchok.data_structure.ensure_nesting_level" href="#sverchok.data_structure.ensure_nesting_level">ensure_nesting_level</a></code></li>
+<li><code><a title="sverchok.data_structure.enum_item" href="#sverchok.data_structure.enum_item">enum_item</a></code></li>
+<li><code><a title="sverchok.data_structure.enum_item_4" href="#sverchok.data_structure.enum_item_4">enum_item_4</a></code></li>
+<li><code><a title="sverchok.data_structure.enum_item_5" href="#sverchok.data_structure.enum_item_5">enum_item_5</a></code></li>
+<li><code><a title="sverchok.data_structure.extend_blender_class" href="#sverchok.data_structure.extend_blender_class">extend_blender_class</a></code></li>
+<li><code><a title="sverchok.data_structure.fixed_iter" href="#sverchok.data_structure.fixed_iter">fixed_iter</a></code></li>
+<li><code><a title="sverchok.data_structure.flat_iter" href="#sverchok.data_structure.flat_iter">flat_iter</a></code></li>
+<li><code><a title="sverchok.data_structure.flatten_data" href="#sverchok.data_structure.flatten_data">flatten_data</a></code></li>
+<li><code><a title="sverchok.data_structure.fullList" href="#sverchok.data_structure.fullList">fullList</a></code></li>
+<li><code><a title="sverchok.data_structure.fullList_deep_copy" href="#sverchok.data_structure.fullList_deep_copy">fullList_deep_copy</a></code></li>
+<li><code><a title="sverchok.data_structure.fullList_np" href="#sverchok.data_structure.fullList_np">fullList_np</a></code></li>
+<li><code><a title="sverchok.data_structure.get_data_nesting_level" href="#sverchok.data_structure.get_data_nesting_level">get_data_nesting_level</a></code></li>
+<li><code><a title="sverchok.data_structure.get_edge_list" href="#sverchok.data_structure.get_edge_list">get_edge_list</a></code></li>
+<li><code><a title="sverchok.data_structure.get_edge_loop" href="#sverchok.data_structure.get_edge_loop">get_edge_loop</a></code></li>
+<li><code><a title="sverchok.data_structure.get_other_socket" href="#sverchok.data_structure.get_other_socket">get_other_socket</a></code></li>
+<li><code><a title="sverchok.data_structure.graft_data" href="#sverchok.data_structure.graft_data">graft_data</a></code></li>
+<li><code><a title="sverchok.data_structure.handle_check" href="#sverchok.data_structure.handle_check">handle_check</a></code></li>
+<li><code><a title="sverchok.data_structure.handle_delete" href="#sverchok.data_structure.handle_delete">handle_delete</a></code></li>
+<li><code><a title="sverchok.data_structure.handle_read" href="#sverchok.data_structure.handle_read">handle_read</a></code></li>
+<li><code><a title="sverchok.data_structure.handle_write" href="#sverchok.data_structure.handle_write">handle_write</a></code></li>
+<li><code><a title="sverchok.data_structure.has_element" href="#sverchok.data_structure.has_element">has_element</a></code></li>
+<li><code><a title="sverchok.data_structure.invert_index_list" href="#sverchok.data_structure.invert_index_list">invert_index_list</a></code></li>
+<li><code><a title="sverchok.data_structure.is_ultimately" href="#sverchok.data_structure.is_ultimately">is_ultimately</a></code></li>
+<li><code><a title="sverchok.data_structure.levelsOflist" href="#sverchok.data_structure.levelsOflist">levelsOflist</a></code></li>
+<li><code><a title="sverchok.data_structure.levels_of_list_or_np" href="#sverchok.data_structure.levels_of_list_or_np">levels_of_list_or_np</a></code></li>
+<li><code><a title="sverchok.data_structure.list_levels_adjust" href="#sverchok.data_structure.list_levels_adjust">list_levels_adjust</a></code></li>
+<li><code><a title="sverchok.data_structure.make_cyclers" href="#sverchok.data_structure.make_cyclers">make_cyclers</a></code></li>
+<li><code><a title="sverchok.data_structure.make_repeaters" href="#sverchok.data_structure.make_repeaters">make_repeaters</a></code></li>
+<li><code><a title="sverchok.data_structure.map_at_level" href="#sverchok.data_structure.map_at_level">map_at_level</a></code></li>
+<li><code><a title="sverchok.data_structure.map_recursive" href="#sverchok.data_structure.map_recursive">map_recursive</a></code></li>
+<li><code><a title="sverchok.data_structure.map_unzip_recursirve" href="#sverchok.data_structure.map_unzip_recursirve">map_unzip_recursirve</a></code></li>
+<li><code><a title="sverchok.data_structure.match_cross" href="#sverchok.data_structure.match_cross">match_cross</a></code></li>
+<li><code><a title="sverchok.data_structure.match_cross2" href="#sverchok.data_structure.match_cross2">match_cross2</a></code></li>
+<li><code><a title="sverchok.data_structure.match_long_cycle" href="#sverchok.data_structure.match_long_cycle">match_long_cycle</a></code></li>
+<li><code><a title="sverchok.data_structure.match_long_repeat" href="#sverchok.data_structure.match_long_repeat">match_long_repeat</a></code></li>
+<li><code><a title="sverchok.data_structure.match_short" href="#sverchok.data_structure.match_short">match_short</a></code></li>
+<li><code><a title="sverchok.data_structure.matrixdef" href="#sverchok.data_structure.matrixdef">matrixdef</a></code></li>
+<li><code><a title="sverchok.data_structure.multi_socket" href="#sverchok.data_structure.multi_socket">multi_socket</a></code></li>
+<li><code><a title="sverchok.data_structure.no_space" href="#sverchok.data_structure.no_space">no_space</a></code></li>
+<li><code><a title="sverchok.data_structure.node_id" href="#sverchok.data_structure.node_id">node_id</a></code></li>
+<li><code><a title="sverchok.data_structure.numpy_full_list" href="#sverchok.data_structure.numpy_full_list">numpy_full_list</a></code></li>
+<li><code><a title="sverchok.data_structure.numpy_full_list_cycle" href="#sverchok.data_structure.numpy_full_list_cycle">numpy_full_list_cycle</a></code></li>
+<li><code><a title="sverchok.data_structure.numpy_match_long_cycle" href="#sverchok.data_structure.numpy_match_long_cycle">numpy_match_long_cycle</a></code></li>
+<li><code><a title="sverchok.data_structure.numpy_match_long_repeat" href="#sverchok.data_structure.numpy_match_long_repeat">numpy_match_long_repeat</a></code></li>
+<li><code><a title="sverchok.data_structure.numpy_match_short" href="#sverchok.data_structure.numpy_match_short">numpy_match_short</a></code></li>
+<li><code><a title="sverchok.data_structure.partition" href="#sverchok.data_structure.partition">partition</a></code></li>
+<li><code><a title="sverchok.data_structure.post_load_call" href="#sverchok.data_structure.post_load_call">post_load_call</a></code></li>
+<li><code><a title="sverchok.data_structure.repeat_last" href="#sverchok.data_structure.repeat_last">repeat_last</a></code></li>
+<li><code><a title="sverchok.data_structure.repeat_last_for_length" href="#sverchok.data_structure.repeat_last_for_length">repeat_last_for_length</a></code></li>
+<li><code><a title="sverchok.data_structure.replace_socket" href="#sverchok.data_structure.replace_socket">replace_socket</a></code></li>
+<li><code><a title="sverchok.data_structure.rotate_list" href="#sverchok.data_structure.rotate_list">rotate_list</a></code></li>
+<li><code><a title="sverchok.data_structure.second_as_first_cycle" href="#sverchok.data_structure.second_as_first_cycle">second_as_first_cycle</a></code></li>
+<li><code><a title="sverchok.data_structure.setup_init" href="#sverchok.data_structure.setup_init">setup_init</a></code></li>
+<li><code><a title="sverchok.data_structure.socket_id" href="#sverchok.data_structure.socket_id">socket_id</a></code></li>
+<li><code><a title="sverchok.data_structure.split_by_count" href="#sverchok.data_structure.split_by_count">split_by_count</a></code></li>
+<li><code><a title="sverchok.data_structure.sv_lambda" href="#sverchok.data_structure.sv_lambda">sv_lambda</a></code></li>
+<li><code><a title="sverchok.data_structure.sv_zip" href="#sverchok.data_structure.sv_zip">sv_zip</a></code></li>
+<li><code><a title="sverchok.data_structure.sverchok_debug" href="#sverchok.data_structure.sverchok_debug">sverchok_debug</a></code></li>
+<li><code><a title="sverchok.data_structure.transpose_list" href="#sverchok.data_structure.transpose_list">transpose_list</a></code></li>
+<li><code><a title="sverchok.data_structure.unwrap_data" href="#sverchok.data_structure.unwrap_data">unwrap_data</a></code></li>
+<li><code><a title="sverchok.data_structure.unzip_dict_recursive" href="#sverchok.data_structure.unzip_dict_recursive">unzip_dict_recursive</a></code></li>
+<li><code><a title="sverchok.data_structure.updateNode" href="#sverchok.data_structure.updateNode">updateNode</a></code></li>
+<li><code><a title="sverchok.data_structure.update_edge_cache" href="#sverchok.data_structure.update_edge_cache">update_edge_cache</a></code></li>
+<li><code><a title="sverchok.data_structure.update_with_kwargs" href="#sverchok.data_structure.update_with_kwargs">update_with_kwargs</a></code></li>
+<li><code><a title="sverchok.data_structure.wrap_data" href="#sverchok.data_structure.wrap_data">wrap_data</a></code></li>
+<li><code><a title="sverchok.data_structure.zip_long_repeat" href="#sverchok.data_structure.zip_long_repeat">zip_long_repeat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.data_structure.SvListLevelAdjustment" href="#sverchok.data_structure.SvListLevelAdjustment">SvListLevelAdjustment</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.data_structure.classproperty" href="#sverchok.data_structure.classproperty">classproperty</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

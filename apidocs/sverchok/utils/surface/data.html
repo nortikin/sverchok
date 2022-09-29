@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.surface.data API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.data</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+
+from mathutils import Matrix, Vector
+
+class SurfaceCurvatureData(object):
+    &#34;&#34;&#34;Container class for calculated curvature values&#34;&#34;&#34;
+    def __init__(self):
+        self.principal_value_1 = self.principal_value_2 = None
+        self.principal_direction_1 = self.principal_direction_2 = None
+        self.principal_direction_1_uv = self.principal_direction_2_uv = None
+        self.mean = self.gauss = None
+        self.matrix = None
+
+class SurfaceDerivativesData(object):
+    def __init__(self, points, du, dv):
+        self.points = points
+        self.du = du
+        self.dv = dv
+        self._normals = None
+        self._normals_len = None
+        self._unit_normals = None
+        self._unit_du = None
+        self._unit_dv = None
+        self._du_len = self._dv_len = None
+
+    def normals(self):
+        if self._normals is None:
+            self._normals = np.cross(self.du, self.dv)
+        return self._normals
+
+    def normals_len(self):
+        if self._normals_len is None:
+            normals = self.normals()
+            self._normals_len = np.linalg.norm(normals, axis=1)[np.newaxis].T
+        return self._normals_len
+
+    def unit_normals(self):
+        if self._unit_normals is None:
+            normals = self.normals()
+            norm = self.normals_len()
+            self._unit_normals = normals / norm
+        return self._unit_normals
+
+    def tangent_lens(self, keepdims=True):
+        if self._du_len is None:
+            self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
+            self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
+        return self._du_len, self._dv_len
+
+    def unit_tangents(self):
+        if self._unit_du is None:
+            du_norm, dv_norm = self.tangent_lens()
+            self._unit_du = self.du / du_norm
+            self._unit_dv = self.dv / dv_norm
+        return self._unit_du, self._unit_dv
+
+    def matrices(self, as_mathutils = False):
+        normals = self.unit_normals()
+        du, dv = self.unit_tangents()
+        matrices_np = np.dstack((du, dv, normals))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        if as_mathutils:
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for m, p in zip(matrices, self.points):
+                m.translation = Vector(p)
+            return matrices
+        else:
+            return matrices_np
+
+class SurfaceCurvatureCalculator(object):
+    &#34;&#34;&#34;
+    This class contains pre-calculated first and second surface derivatives,
+    and calculates any curvature information from them.
+    &#34;&#34;&#34;
+    def __init__(self, us, vs, order=True):
+        self.us = us
+        self.vs = vs
+        self.order = order
+        self.fu = self.fv = None
+        self.duu = self.dvv = self.duv = None
+        self.nuu = self.nvv = self.nuv = None
+        self.points = None
+        self.normals = None
+
+    def set(self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv):
+        &#34;&#34;&#34;Set derivatives information&#34;&#34;&#34;
+        self.points = points
+        self.normals = normals
+        self.fu = fu   # df/du
+        self.fv = fv   # df/dv
+        self.duu = duu # (fu, fv), a.k.a. E
+        self.dvv = dvv # (fv, fv), a.k.a. G
+        self.duv = duv # (fu, fv), a.k.a F
+        self.nuu = nuu # (fuu, normal), a.k.a l
+        self.nvv = nvv # (fvv, normal), a.k.a n
+        self.nuv = nuv # (fuv, normal), a.k.a m
+
+    def mean(self):
+        &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        return -B / (2*A)
+
+    def gauss(self):
+        &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        numerator = nuu * nvv - nuv*nuv
+        denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def values(self):
+        &#34;&#34;&#34;
+        Calculate two principal curvature values.
+        If &#34;order&#34; parameter is set to True, then it will be guaranteed,
+        that C1 value is always less than C2.
+        &#34;&#34;&#34;
+        # It is possible to calculate principal curvature values
+        # as solutions of quadratic equation, without calculating
+        # corresponding principal curvature directions.
+
+        # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
+
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        C = nuu*nvv - nuv*nuv
+        D = B*B - 4*A*C
+        c1 = (-B - np.sqrt(D))/(2*A)
+        c2 = (-B + np.sqrt(D))/(2*A)
+
+        c1[np.isnan(c1)] = 0
+        c2[np.isnan(c2)] = 0
+
+        c1mask = (c1 &lt; c2)
+        c2mask = np.logical_not(c1mask)
+
+        c1_r = np.where(c1mask, c1, c2)
+        c2_r = np.where(c2mask, c1, c2)
+
+        return c1_r, c2_r
+
+    def values_and_directions(self):
+        &#34;&#34;&#34;
+        Calculate principal curvature values together with principal curvature directions.
+        If &#34;order&#34; parameter is set to True, then it will be guaranteed, that C1 value
+        is always less than C2. Curvature directions are always output correspondingly,
+        i.e. principal_direction_1 corresponds to principal_value_1 and principal_direction_2
+        corresponds to principal_value_2.
+        &#34;&#34;&#34;
+        # If we need not only curvature values, but principal curvature directions as well,
+        # we have to solve an eigenvalue problem to find values and directions at once.
+
+        # L p = lambda G p
+
+        fu, fv = self.fu, self.fv
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        n = len(self.us)
+
+        L = np.empty((n,2,2))
+        L[:,0,0] = nuu
+        L[:,0,1] = nuv
+        L[:,1,0] = nuv
+        L[:,1,1] = nvv
+
+        G = np.empty((n,2,2))
+        G[:,0,0] = duu
+        G[:,0,1] = duv
+        G[:,1,0] = duv
+        G[:,1,1] = dvv
+
+        M = np.matmul(np.linalg.inv(G), L)
+        eigvals, eigvecs = np.linalg.eig(M)
+        # Values of first and second principal curvatures
+        c1 = eigvals[:,0]
+        c2 = eigvals[:,1]
+
+        if self.order:
+            c1mask = (c1 &lt; c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+        else:
+            c1_r = c1
+            c2_r = c2
+
+        # dir_1 corresponds to c1, dir_2 corresponds to c2
+        dir_1_x = eigvecs[:,0,0][np.newaxis].T
+        dir_2_x = eigvecs[:,0,1][np.newaxis].T
+        dir_1_y = eigvecs[:,1,0][np.newaxis].T
+        dir_2_y = eigvecs[:,1,1][np.newaxis].T
+
+        # another possible approach
+#         A = duv * nvv - dvv*nuv 
+#         B = duu * nvv - dvv*nuu
+#         C = duu*nuv - duv*nuu
+#         D = B*B - 4*A*C
+#         t1 = (-B - np.sqrt(D)) / (2*A)
+#         t2 = (-B + np.sqrt(D)) / (2*A)
+
+        dir_1 = dir_1_x * fu + dir_1_y * fv
+        dir_2 = dir_2_x * fu + dir_2_y * fv
+
+        dir_1 = dir_1 / np.linalg.norm(dir_1, axis=1, keepdims=True)
+        dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
+
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1maskT, dir_1, -dir_2)
+            dir_2_r = np.where(c2maskT, dir_1, dir_2)
+        else:
+            dir_1_r = dir_1
+            dir_2_r = dir_2
+        #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
+        #print(r)
+
+        dir1_uv = eigvecs[:,:,0]
+        dir2_uv = eigvecs[:,:,1]
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir1_uv_r = np.where(c1maskT, dir1_uv, -dir2_uv)
+            dir2_uv_r = np.where(c2maskT, dir1_uv, dir2_uv)
+        else:
+            dir1_uv_r = dir1_uv
+            dir2_uv_r = dir2_uv
+            
+        return c1_r, c2_r, dir1_uv_r, dir2_uv_r, dir_1_r, dir_2_r
+
+    def calc(self, need_values=True, need_directions=True, need_uv_directions = False, need_gauss=True, need_mean=True, need_matrix = True):
+        &#34;&#34;&#34;
+        Calculate curvature information.
+        Return value: SurfaceCurvatureData instance.
+        &#34;&#34;&#34;
+        # We try to do as less calculations as possible,
+        # by not doing complex computations if not required
+        # and reusing results of other computations if possible.
+        data = SurfaceCurvatureData()
+        if need_matrix:
+            need_directions = True
+        if need_uv_directions:
+            need_directions = True
+        if need_directions:
+            # If we need principal curvature directions, then the method
+            # being used will calculate us curvature values for free.
+            c1, c2, dir1_uv, dir2_uv, dir1, dir2 = self.values_and_directions()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+            data.principal_direction_1_uv = dir1_uv
+            data.principal_direction_2_uv = dir2_uv
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_matrix:
+            matrices_np = np.dstack((data.principal_direction_2, data.principal_direction_1, self.normals))
+            matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+            matrices_np = np.linalg.inv(matrices_np)
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for matrix, point in zip(matrices, self.points):
+                matrix.translation = Vector(point)
+            data.matrix = matrices
+        if need_values and not need_directions:
+            c1, c2 = self.values()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_gauss and not need_directions and not need_values:
+            data.gauss = self.gauss()
+        if need_mean and not need_directions and not need_values:
+            data.mean = self.mean()
+        return data</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator"><code class="flex name class">
+<span>class <span class="ident">SurfaceCurvatureCalculator</span></span>
+<span>(</span><span>us, vs, order=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class contains pre-calculated first and second surface derivatives,
+and calculates any curvature information from them.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceCurvatureCalculator(object):
+    &#34;&#34;&#34;
+    This class contains pre-calculated first and second surface derivatives,
+    and calculates any curvature information from them.
+    &#34;&#34;&#34;
+    def __init__(self, us, vs, order=True):
+        self.us = us
+        self.vs = vs
+        self.order = order
+        self.fu = self.fv = None
+        self.duu = self.dvv = self.duv = None
+        self.nuu = self.nvv = self.nuv = None
+        self.points = None
+        self.normals = None
+
+    def set(self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv):
+        &#34;&#34;&#34;Set derivatives information&#34;&#34;&#34;
+        self.points = points
+        self.normals = normals
+        self.fu = fu   # df/du
+        self.fv = fv   # df/dv
+        self.duu = duu # (fu, fv), a.k.a. E
+        self.dvv = dvv # (fv, fv), a.k.a. G
+        self.duv = duv # (fu, fv), a.k.a F
+        self.nuu = nuu # (fuu, normal), a.k.a l
+        self.nvv = nvv # (fvv, normal), a.k.a n
+        self.nuv = nuv # (fuv, normal), a.k.a m
+
+    def mean(self):
+        &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        return -B / (2*A)
+
+    def gauss(self):
+        &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        numerator = nuu * nvv - nuv*nuv
+        denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def values(self):
+        &#34;&#34;&#34;
+        Calculate two principal curvature values.
+        If &#34;order&#34; parameter is set to True, then it will be guaranteed,
+        that C1 value is always less than C2.
+        &#34;&#34;&#34;
+        # It is possible to calculate principal curvature values
+        # as solutions of quadratic equation, without calculating
+        # corresponding principal curvature directions.
+
+        # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
+
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        C = nuu*nvv - nuv*nuv
+        D = B*B - 4*A*C
+        c1 = (-B - np.sqrt(D))/(2*A)
+        c2 = (-B + np.sqrt(D))/(2*A)
+
+        c1[np.isnan(c1)] = 0
+        c2[np.isnan(c2)] = 0
+
+        c1mask = (c1 &lt; c2)
+        c2mask = np.logical_not(c1mask)
+
+        c1_r = np.where(c1mask, c1, c2)
+        c2_r = np.where(c2mask, c1, c2)
+
+        return c1_r, c2_r
+
+    def values_and_directions(self):
+        &#34;&#34;&#34;
+        Calculate principal curvature values together with principal curvature directions.
+        If &#34;order&#34; parameter is set to True, then it will be guaranteed, that C1 value
+        is always less than C2. Curvature directions are always output correspondingly,
+        i.e. principal_direction_1 corresponds to principal_value_1 and principal_direction_2
+        corresponds to principal_value_2.
+        &#34;&#34;&#34;
+        # If we need not only curvature values, but principal curvature directions as well,
+        # we have to solve an eigenvalue problem to find values and directions at once.
+
+        # L p = lambda G p
+
+        fu, fv = self.fu, self.fv
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        n = len(self.us)
+
+        L = np.empty((n,2,2))
+        L[:,0,0] = nuu
+        L[:,0,1] = nuv
+        L[:,1,0] = nuv
+        L[:,1,1] = nvv
+
+        G = np.empty((n,2,2))
+        G[:,0,0] = duu
+        G[:,0,1] = duv
+        G[:,1,0] = duv
+        G[:,1,1] = dvv
+
+        M = np.matmul(np.linalg.inv(G), L)
+        eigvals, eigvecs = np.linalg.eig(M)
+        # Values of first and second principal curvatures
+        c1 = eigvals[:,0]
+        c2 = eigvals[:,1]
+
+        if self.order:
+            c1mask = (c1 &lt; c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+        else:
+            c1_r = c1
+            c2_r = c2
+
+        # dir_1 corresponds to c1, dir_2 corresponds to c2
+        dir_1_x = eigvecs[:,0,0][np.newaxis].T
+        dir_2_x = eigvecs[:,0,1][np.newaxis].T
+        dir_1_y = eigvecs[:,1,0][np.newaxis].T
+        dir_2_y = eigvecs[:,1,1][np.newaxis].T
+
+        # another possible approach
+#         A = duv * nvv - dvv*nuv 
+#         B = duu * nvv - dvv*nuu
+#         C = duu*nuv - duv*nuu
+#         D = B*B - 4*A*C
+#         t1 = (-B - np.sqrt(D)) / (2*A)
+#         t2 = (-B + np.sqrt(D)) / (2*A)
+
+        dir_1 = dir_1_x * fu + dir_1_y * fv
+        dir_2 = dir_2_x * fu + dir_2_y * fv
+
+        dir_1 = dir_1 / np.linalg.norm(dir_1, axis=1, keepdims=True)
+        dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
+
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1maskT, dir_1, -dir_2)
+            dir_2_r = np.where(c2maskT, dir_1, dir_2)
+        else:
+            dir_1_r = dir_1
+            dir_2_r = dir_2
+        #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
+        #print(r)
+
+        dir1_uv = eigvecs[:,:,0]
+        dir2_uv = eigvecs[:,:,1]
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir1_uv_r = np.where(c1maskT, dir1_uv, -dir2_uv)
+            dir2_uv_r = np.where(c2maskT, dir1_uv, dir2_uv)
+        else:
+            dir1_uv_r = dir1_uv
+            dir2_uv_r = dir2_uv
+            
+        return c1_r, c2_r, dir1_uv_r, dir2_uv_r, dir_1_r, dir_2_r
+
+    def calc(self, need_values=True, need_directions=True, need_uv_directions = False, need_gauss=True, need_mean=True, need_matrix = True):
+        &#34;&#34;&#34;
+        Calculate curvature information.
+        Return value: SurfaceCurvatureData instance.
+        &#34;&#34;&#34;
+        # We try to do as less calculations as possible,
+        # by not doing complex computations if not required
+        # and reusing results of other computations if possible.
+        data = SurfaceCurvatureData()
+        if need_matrix:
+            need_directions = True
+        if need_uv_directions:
+            need_directions = True
+        if need_directions:
+            # If we need principal curvature directions, then the method
+            # being used will calculate us curvature values for free.
+            c1, c2, dir1_uv, dir2_uv, dir1, dir2 = self.values_and_directions()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+            data.principal_direction_1_uv = dir1_uv
+            data.principal_direction_2_uv = dir2_uv
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_matrix:
+            matrices_np = np.dstack((data.principal_direction_2, data.principal_direction_1, self.normals))
+            matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+            matrices_np = np.linalg.inv(matrices_np)
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for matrix, point in zip(matrices, self.points):
+                matrix.translation = Vector(point)
+            data.matrix = matrices
+        if need_values and not need_directions:
+            c1, c2 = self.values()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_gauss and not need_directions and not need_values:
+            data.gauss = self.gauss()
+        if need_mean and not need_directions and not need_values:
+            data.mean = self.mean()
+        return data</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc"><code class="name flex">
+<span>def <span class="ident">calc</span></span>(<span>self, need_values=True, need_directions=True, need_uv_directions=False, need_gauss=True, need_mean=True, need_matrix=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate curvature information.
+Return value: SurfaceCurvatureData instance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc(self, need_values=True, need_directions=True, need_uv_directions = False, need_gauss=True, need_mean=True, need_matrix = True):
+    &#34;&#34;&#34;
+    Calculate curvature information.
+    Return value: SurfaceCurvatureData instance.
+    &#34;&#34;&#34;
+    # We try to do as less calculations as possible,
+    # by not doing complex computations if not required
+    # and reusing results of other computations if possible.
+    data = SurfaceCurvatureData()
+    if need_matrix:
+        need_directions = True
+    if need_uv_directions:
+        need_directions = True
+    if need_directions:
+        # If we need principal curvature directions, then the method
+        # being used will calculate us curvature values for free.
+        c1, c2, dir1_uv, dir2_uv, dir1, dir2 = self.values_and_directions()
+        data.principal_value_1, data.principal_value_2 = c1, c2
+        data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+        data.principal_direction_1_uv = dir1_uv
+        data.principal_direction_2_uv = dir2_uv
+        if need_gauss:
+            data.gauss = c1 * c2
+        if need_mean:
+            data.mean = (c1 + c2)/2.0
+    if need_matrix:
+        matrices_np = np.dstack((data.principal_direction_2, data.principal_direction_1, self.normals))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+        for matrix, point in zip(matrices, self.points):
+            matrix.translation = Vector(point)
+        data.matrix = matrices
+    if need_values and not need_directions:
+        c1, c2 = self.values()
+        data.principal_value_1, data.principal_value_2 = c1, c2
+        if need_gauss:
+            data.gauss = c1 * c2
+        if need_mean:
+            data.mean = (c1 + c2)/2.0
+    if need_gauss and not need_directions and not need_values:
+        data.gauss = self.gauss()
+    if need_mean and not need_directions and not need_values:
+        data.mean = self.mean()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss"><code class="name flex">
+<span>def <span class="ident">gauss</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate Gaussian curvature</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gauss(self):
+    &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+    duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+    numerator = nuu * nvv - nuv*nuv
+    denominator = duu * dvv - duv*duv
+    return numerator / denominator</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean"><code class="name flex">
+<span>def <span class="ident">mean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate mean curvature</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean(self):
+    &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+    duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+    A = duu*dvv - duv*duv
+    B = duu*nvv - 2*duv*nuv + dvv*nuu
+    return -B / (2*A)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set derivatives information</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set(self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv):
+    &#34;&#34;&#34;Set derivatives information&#34;&#34;&#34;
+    self.points = points
+    self.normals = normals
+    self.fu = fu   # df/du
+    self.fv = fv   # df/dv
+    self.duu = duu # (fu, fv), a.k.a. E
+    self.dvv = dvv # (fv, fv), a.k.a. G
+    self.duv = duv # (fu, fv), a.k.a F
+    self.nuu = nuu # (fuu, normal), a.k.a l
+    self.nvv = nvv # (fvv, normal), a.k.a n
+    self.nuv = nuv # (fuv, normal), a.k.a m</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.values"><code class="name flex">
+<span>def <span class="ident">values</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate two principal curvature values.
+If "order" parameter is set to True, then it will be guaranteed,
+that C1 value is always less than C2.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def values(self):
+    &#34;&#34;&#34;
+    Calculate two principal curvature values.
+    If &#34;order&#34; parameter is set to True, then it will be guaranteed,
+    that C1 value is always less than C2.
+    &#34;&#34;&#34;
+    # It is possible to calculate principal curvature values
+    # as solutions of quadratic equation, without calculating
+    # corresponding principal curvature directions.
+
+    # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
+
+    duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+    A = duu*dvv - duv*duv
+    B = duu*nvv - 2*duv*nuv + dvv*nuu
+    C = nuu*nvv - nuv*nuv
+    D = B*B - 4*A*C
+    c1 = (-B - np.sqrt(D))/(2*A)
+    c2 = (-B + np.sqrt(D))/(2*A)
+
+    c1[np.isnan(c1)] = 0
+    c2[np.isnan(c2)] = 0
+
+    c1mask = (c1 &lt; c2)
+    c2mask = np.logical_not(c1mask)
+
+    c1_r = np.where(c1mask, c1, c2)
+    c2_r = np.where(c2mask, c1, c2)
+
+    return c1_r, c2_r</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.values_and_directions"><code class="name flex">
+<span>def <span class="ident">values_and_directions</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate principal curvature values together with principal curvature directions.
+If "order" parameter is set to True, then it will be guaranteed, that C1 value
+is always less than C2. Curvature directions are always output correspondingly,
+i.e. principal_direction_1 corresponds to principal_value_1 and principal_direction_2
+corresponds to principal_value_2.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">    def values_and_directions(self):
+        &#34;&#34;&#34;
+        Calculate principal curvature values together with principal curvature directions.
+        If &#34;order&#34; parameter is set to True, then it will be guaranteed, that C1 value
+        is always less than C2. Curvature directions are always output correspondingly,
+        i.e. principal_direction_1 corresponds to principal_value_1 and principal_direction_2
+        corresponds to principal_value_2.
+        &#34;&#34;&#34;
+        # If we need not only curvature values, but principal curvature directions as well,
+        # we have to solve an eigenvalue problem to find values and directions at once.
+
+        # L p = lambda G p
+
+        fu, fv = self.fu, self.fv
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        n = len(self.us)
+
+        L = np.empty((n,2,2))
+        L[:,0,0] = nuu
+        L[:,0,1] = nuv
+        L[:,1,0] = nuv
+        L[:,1,1] = nvv
+
+        G = np.empty((n,2,2))
+        G[:,0,0] = duu
+        G[:,0,1] = duv
+        G[:,1,0] = duv
+        G[:,1,1] = dvv
+
+        M = np.matmul(np.linalg.inv(G), L)
+        eigvals, eigvecs = np.linalg.eig(M)
+        # Values of first and second principal curvatures
+        c1 = eigvals[:,0]
+        c2 = eigvals[:,1]
+
+        if self.order:
+            c1mask = (c1 &lt; c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+        else:
+            c1_r = c1
+            c2_r = c2
+
+        # dir_1 corresponds to c1, dir_2 corresponds to c2
+        dir_1_x = eigvecs[:,0,0][np.newaxis].T
+        dir_2_x = eigvecs[:,0,1][np.newaxis].T
+        dir_1_y = eigvecs[:,1,0][np.newaxis].T
+        dir_2_y = eigvecs[:,1,1][np.newaxis].T
+
+        # another possible approach
+#         A = duv * nvv - dvv*nuv 
+#         B = duu * nvv - dvv*nuu
+#         C = duu*nuv - duv*nuu
+#         D = B*B - 4*A*C
+#         t1 = (-B - np.sqrt(D)) / (2*A)
+#         t2 = (-B + np.sqrt(D)) / (2*A)
+
+        dir_1 = dir_1_x * fu + dir_1_y * fv
+        dir_2 = dir_2_x * fu + dir_2_y * fv
+
+        dir_1 = dir_1 / np.linalg.norm(dir_1, axis=1, keepdims=True)
+        dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
+
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1maskT, dir_1, -dir_2)
+            dir_2_r = np.where(c2maskT, dir_1, dir_2)
+        else:
+            dir_1_r = dir_1
+            dir_2_r = dir_2
+        #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
+        #print(r)
+
+        dir1_uv = eigvecs[:,:,0]
+        dir2_uv = eigvecs[:,:,1]
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir1_uv_r = np.where(c1maskT, dir1_uv, -dir2_uv)
+            dir2_uv_r = np.where(c2maskT, dir1_uv, dir2_uv)
+        else:
+            dir1_uv_r = dir1_uv
+            dir2_uv_r = dir2_uv
+            
+        return c1_r, c2_r, dir1_uv_r, dir2_uv_r, dir_1_r, dir_2_r</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureData"><code class="flex name class">
+<span>class <span class="ident">SurfaceCurvatureData</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Container class for calculated curvature values</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceCurvatureData(object):
+    &#34;&#34;&#34;Container class for calculated curvature values&#34;&#34;&#34;
+    def __init__(self):
+        self.principal_value_1 = self.principal_value_2 = None
+        self.principal_direction_1 = self.principal_direction_2 = None
+        self.principal_direction_1_uv = self.principal_direction_2_uv = None
+        self.mean = self.gauss = None
+        self.matrix = None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData"><code class="flex name class">
+<span>class <span class="ident">SurfaceDerivativesData</span></span>
+<span>(</span><span>points, du, dv)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SurfaceDerivativesData(object):
+    def __init__(self, points, du, dv):
+        self.points = points
+        self.du = du
+        self.dv = dv
+        self._normals = None
+        self._normals_len = None
+        self._unit_normals = None
+        self._unit_du = None
+        self._unit_dv = None
+        self._du_len = self._dv_len = None
+
+    def normals(self):
+        if self._normals is None:
+            self._normals = np.cross(self.du, self.dv)
+        return self._normals
+
+    def normals_len(self):
+        if self._normals_len is None:
+            normals = self.normals()
+            self._normals_len = np.linalg.norm(normals, axis=1)[np.newaxis].T
+        return self._normals_len
+
+    def unit_normals(self):
+        if self._unit_normals is None:
+            normals = self.normals()
+            norm = self.normals_len()
+            self._unit_normals = normals / norm
+        return self._unit_normals
+
+    def tangent_lens(self, keepdims=True):
+        if self._du_len is None:
+            self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
+            self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
+        return self._du_len, self._dv_len
+
+    def unit_tangents(self):
+        if self._unit_du is None:
+            du_norm, dv_norm = self.tangent_lens()
+            self._unit_du = self.du / du_norm
+            self._unit_dv = self.dv / dv_norm
+        return self._unit_du, self._unit_dv
+
+    def matrices(self, as_mathutils = False):
+        normals = self.unit_normals()
+        du, dv = self.unit_tangents()
+        matrices_np = np.dstack((du, dv, normals))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        if as_mathutils:
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for m, p in zip(matrices, self.points):
+                m.translation = Vector(p)
+            return matrices
+        else:
+            return matrices_np</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.matrices"><code class="name flex">
+<span>def <span class="ident">matrices</span></span>(<span>self, as_mathutils=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrices(self, as_mathutils = False):
+    normals = self.unit_normals()
+    du, dv = self.unit_tangents()
+    matrices_np = np.dstack((du, dv, normals))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    if as_mathutils:
+        matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+        for m, p in zip(matrices, self.points):
+            m.translation = Vector(p)
+        return matrices
+    else:
+        return matrices_np</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.normals"><code class="name flex">
+<span>def <span class="ident">normals</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normals(self):
+    if self._normals is None:
+        self._normals = np.cross(self.du, self.dv)
+    return self._normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.normals_len"><code class="name flex">
+<span>def <span class="ident">normals_len</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normals_len(self):
+    if self._normals_len is None:
+        normals = self.normals()
+        self._normals_len = np.linalg.norm(normals, axis=1)[np.newaxis].T
+    return self._normals_len</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.tangent_lens"><code class="name flex">
+<span>def <span class="ident">tangent_lens</span></span>(<span>self, keepdims=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tangent_lens(self, keepdims=True):
+    if self._du_len is None:
+        self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
+        self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
+    return self._du_len, self._dv_len</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.unit_normals"><code class="name flex">
+<span>def <span class="ident">unit_normals</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unit_normals(self):
+    if self._unit_normals is None:
+        normals = self.normals()
+        norm = self.normals_len()
+        self._unit_normals = normals / norm
+    return self._unit_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceDerivativesData.unit_tangents"><code class="name flex">
+<span>def <span class="ident">unit_tangents</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unit_tangents(self):
+    if self._unit_du is None:
+        du_norm, dv_norm = self.tangent_lens()
+        self._unit_du = self.du / du_norm
+        self._unit_dv = self.dv / dv_norm
+    return self._unit_du, self._unit_dv</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator">SurfaceCurvatureCalculator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc">calc</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss">gauss</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean">mean</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.set" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.set">set</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.values" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.values">values</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.values_and_directions" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.values_and_directions">values_and_directions</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.data.SurfaceCurvatureData" href="#sverchok.utils.surface.data.SurfaceCurvatureData">SurfaceCurvatureData</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData" href="#sverchok.utils.surface.data.SurfaceDerivativesData">SurfaceDerivativesData</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.matrices" href="#sverchok.utils.surface.data.SurfaceDerivativesData.matrices">matrices</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.normals" href="#sverchok.utils.surface.data.SurfaceDerivativesData.normals">normals</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.normals_len" href="#sverchok.utils.surface.data.SurfaceDerivativesData.normals_len">normals_len</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.tangent_lens" href="#sverchok.utils.surface.data.SurfaceDerivativesData.tangent_lens">tangent_lens</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.unit_normals" href="#sverchok.utils.surface.data.SurfaceDerivativesData.unit_normals">unit_normals</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceDerivativesData.unit_tangents" href="#sverchok.utils.surface.data.SurfaceDerivativesData.unit_tangents">unit_tangents</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

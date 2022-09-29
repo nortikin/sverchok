@@ -1,0 +1,3805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_json_struct API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_json_struct</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+from __future__ import annotations
+
+import inspect
+import sys
+from abc import abstractmethod, ABC
+from enum import Enum, auto
+from itertools import chain
+from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
+
+import bpy
+from sverchok import old_nodes
+from sverchok.utils import dummy_nodes
+from sverchok.utils.handle_blender_data import BPYPointers, BPYProperty
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+
+if TYPE_CHECKING:
+    from sverchok.utils.sv_json_import import FailsLog
+
+
+&#34;&#34;&#34;
+Terminology:
+
+Structure - anything more complex than just a value,
+for example pointer type can keep several values like its type and name.
+Also structures can include other ones.
+Similar to Blender struct object
+https://docs.blender.org/api/current/bpy.types.bpy_struct.html#bpy.types.bpy_struct
+
+Data block ro block - this is top structures in their hierarchy,
+for example a node tree is a data block but all inner structures (nodes, links, sockets) are not.
+https://docs.blender.org/api/current/bpy.types.ID.html#bpy.types.ID.copy
+&#34;&#34;&#34;
+
+
+class StructFactory:
+    &#34;&#34;&#34;This is collection of struct classes
+    The idea is to put all structs into the class which should be used during import/export of a tree
+    other structures can use other ones to include their in the process
+    For example there could be several classes which can build a node differently
+    before starting of the serialization process we should choose which node struct to use
+    then a tree structure can use the node structure that we chose&#34;&#34;&#34;
+
+    # it&#39;s possible to use version factory in the code to make the code more specific
+    # if struct_factories.link.version == 0.2:
+    def __init__(self, factories: List[Type[Struct]]):
+        self._factory_names = {
+            StrTypes.TREE: &#39;tree&#39;,
+            StrTypes.NODE: &#39;node&#39;,
+            StrTypes.SOCK: &#39;sock&#39;,
+            StrTypes.INTERFACE: &#39;interface&#39;,
+            StrTypes.LINK: &#39;link&#39;,
+            StrTypes.PROP: &#39;prop&#39;,
+            StrTypes.MATERIAL: &#39;material&#39;,
+            StrTypes.COLLECTION: &#39;collection&#39;,
+            StrTypes.IMAGE: &#39;image&#39;,
+            StrTypes.TEXTURE: &#39;texture&#39;,
+        }
+
+        self.tree: Optional[Type[Struct]] = None
+        self.node: Optional[Type[Struct]] = None
+        self.sock: Optional[Type[Struct]] = None
+        self.interface: Optional[Type[Struct]] = None
+        self.link: Optional[Type[Struct]] = None
+        self.prop: Optional[Type[Struct]] = None
+        self.material: Optional[Type[Struct]] = None
+        self.collection: Optional[Type[Struct]] = None
+        self.image: Optional[Type[Struct]] = None
+        self.texture: Optional[Type[Struct]] = None
+
+        for factory in factories:
+            if factory.type in self._factory_names:
+                factory_name = self._factory_names[factory.type]
+                setattr(self, factory_name, factory)
+            else:
+                raise TypeError(f&#39;Factory with type: {factory.type}&#39;
+                                f&#39; is not among supported: {self._factory_names.keys()}&#39;)
+
+    def get_factory(self, struct_type: StrTypes) -&gt; Type[Struct]:
+        if struct_type in self._factory_names:
+            factory_name = self._factory_names[struct_type]
+            return getattr(self, factory_name)
+        else:
+            raise TypeError(f&#39;Given struct type: {struct_type} is not among supported {self._factory_names.keys()}&#39;)
+
+    @classmethod
+    def grab_from_module(cls) -&gt; StructFactory:
+        &#34;&#34;&#34;Grab all factories in the module&#34;&#34;&#34;
+        factory_classes = []
+        module_classes = inspect.getmembers(sys.modules[__name__],
+                                            lambda member: inspect.isclass(member) and member.__module__ == __name__)
+        for class_name, module_class in module_classes:
+            if hasattr(module_class, &#39;type&#39;) and isinstance(module_class.type, StrTypes):
+                factory_classes.append(module_class)
+        return cls(factory_classes)
+
+
+class StrTypes(Enum):
+    &#34;&#34;&#34;All structures should have their type (except file structures =D)
+    the type helps to identify their purpose
+    for example for exporting nodes only structures with NODE type can be used&#34;&#34;&#34;
+
+    TREE = auto()
+    NODE = auto()
+    SOCK = auto()
+    INTERFACE = auto()  # node groups sockets
+    LINK = auto()
+    PROP = auto()
+    MATERIAL = auto()
+    COLLECTION = auto()
+    IMAGE = auto()
+    TEXTURE = auto()
+
+    def get_bpy_pointer(self) -&gt; BPYPointers:
+        mapping = {
+            StrTypes.TREE: BPYPointers.NODE_TREE,
+            StrTypes.NODE: BPYPointers.NODE,
+            StrTypes.MATERIAL: BPYPointers.MATERIAL,
+            StrTypes.COLLECTION: BPYPointers.COLLECTION,
+            StrTypes.IMAGE: BPYPointers.IMAGE,
+            StrTypes.TEXTURE: BPYPointers.TEXTURE,
+        }
+        if self not in mapping:
+            raise TypeError(f&#39;Given StrType: {self} is not a data block&#39;)
+        return mapping[self]
+
+    @classmethod
+    def get_type(cls, block_type: BPYPointers) -&gt; StrTypes:
+        mapping = {
+            BPYPointers.NODE_TREE: StrTypes.TREE,
+            BPYPointers.NODE: StrTypes.NODE,
+            BPYPointers.MATERIAL: StrTypes.MATERIAL,
+            BPYPointers.COLLECTION: StrTypes.COLLECTION,
+            BPYPointers.IMAGE: StrTypes.IMAGE,
+            BPYPointers.TEXTURE: StrTypes.TEXTURE,
+        }
+        if block_type not in mapping:
+            raise TypeError(f&#39;Given block type: {block_type} is not among supported: {mapping.keys()}&#39;)
+        return mapping[block_type]
+
+    @classmethod
+    def is_supported_block(cls, block_type: BPYPointers) -&gt; bool:
+        try:
+            cls.get_type(block_type)
+            return True
+        except TypeError:
+            return False
+
+
+OldName, NewName, OwnerName = str, str, str
+OldNewNames = Dict[Tuple[StrTypes, OwnerName, OldName], NewName]
+
+
+class Struct(ABC):
+    &#34;&#34;&#34;All structures should include a dictionary with description of the structure organization,
+    methods for exporting and importing related to their purpose data
+    It&#39;s possible to override version inside children classes but
+    in this case its version should be kept in its dictionary
+    And the way to figure it out which structure should be used is not implemented for such case.
+    So if new version is required it should be changed in this class
+    this information can be used in a file structure to find appropriate other structures
+
+    Example:
+    class FileStruct:
+        def build(tree):
+            if self._struct[&#34;export_version&#34;] &lt; 1.1:
+                factories.node = NodeStruct
+            else:
+                factories.node = NewNodeStruct
+
+    Or version can be used like this:
+    class NodeStruct:
+        def build(node, factories, imported):
+            if self.version &lt; 1.1:
+                node.load_from_json(self._struct[&#34;advance_properties&#34;]
+            else:
+                pass
+    but in this case FileStruct should implement this - Struct.version = self._struct[&#34;export_version&#34;] (hmm... )
+    &#34;&#34;&#34;
+    # I was trying to make API of all abstract method the same between child classes but it looks it&#39;s not possible
+    # for example to build a node we can send to method a tree where the node should be duilded
+    version = 1.0
+    type: StrTypes = None  # should be overridden
+
+    @abstractmethod
+    def __init__(self, name: Optional[str], logger: FailsLog, struct: dict = None):
+        ...
+
+    @abstractmethod
+    def export(self, data_block, struct_factories: StructFactory, dependencies: List[Tuple[BPYPointers, str]]) -&gt; dict:
+        ...
+
+    @abstractmethod
+    def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+        ...
+
+    def read_bl_type(self) -&gt; str:
+        &#34;&#34;&#34;typically should return bl_idname of the structure&#34;&#34;&#34;
+        return None
+
+
+class FileStruct(Struct):
+    &#34;&#34;&#34;Export/import of all or only select nodes of a tree&#34;&#34;&#34;
+    def __init__(self, name=None, logger: FailsLog = None, struct: dict = None):
+        default_struct = {
+            &#34;export_version&#34;: str(self.version),
+            &#34;main_tree&#34;: {
+                &#34;nodes&#34;: dict(),
+                &#34;links&#34;: []
+            }
+        }
+        self._struct: Dict[str, Any] = struct or default_struct
+        self.logger: FailsLog = logger
+
+    def export(self):
+        # I would expect this method import the whole Sverchok data in a file
+        raise NotImplementedError
+
+    def export_tree(self, tree, use_selection=False):
+        if tree.bl_idname != &#39;SverchCustomTreeType&#39;:
+            raise TypeError(f&#39;Only exporting main trees is supported, {tree.bl_label} is given&#39;)
+
+        struct_factories = StructFactory.grab_from_module()  # todo to args?
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        # export main tree first
+        self._export_nodes(tree, struct_factories, dependencies, use_selection)
+
+        # it looks good place for exporting dependent data blocks because probably we do not always want to export them
+        # from this place we have more control over it
+        while dependencies:
+            block_type, block_name = dependencies.pop()
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = struct_factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, struct_factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
+
+        return self._struct
+
+    def _export_nodes(self, tree, factories, dependencies, use_selection=False):
+        &#34;&#34;&#34;Structure of main tree&#34;&#34;&#34;
+        nodes = tree.nodes if not use_selection else [n for n in tree.nodes if n.select]
+        for node in nodes:
+            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+            self._struct[&#34;main_tree&#34;][&#34;nodes&#34;][node.name] = raw_struct
+
+        input_node_names = {node.name for node in nodes}
+        for link in _ordered_links(tree):
+            if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
+                raw_struct = factories.link(None, self.logger).export(link, factories, dependencies)
+                self._struct[&#34;main_tree&#34;][&#34;links&#34;].append(raw_struct)
+
+    def build(self, *_):
+        raise NotImplementedError
+
+    def build_into_tree(self, tree):
+        # it looks that recursive import should be avoided by any cost, it&#39;s too difficult to pass data
+        # luckily it&#39;s possible to create all data block first
+        # and then they will be available for assigning to pointer properties
+        # with tree data blocks it can be a beat trickier,
+        # all trees should be created and only after that field with content
+
+        factories = StructFactory.grab_from_module()
+        imported_structs: OldNewNames = dict()
+        data_blocks = self._data_blocks_reader()
+
+        # initialize trees and build other data block types
+        trees_to_build = []
+        for struct_type, block_name, raw_struct in data_blocks:
+            with self.logger.add_fail(&#34;Initialize data block&#34;, f&#34;Type: {struct_type.name}, Name: {block_name}&#34;):
+                if struct_type == StrTypes.TREE:
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    # interface should be created before building all trees
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
+
+        # build main tree nodes
+        self._build_nodes(tree, factories, imported_structs)
+
+        # build group trees
+        for tree_struct in trees_to_build:
+            with self.logger.add_fail(&#34;Build node group&#34;, f&#34;Name: {tree_struct.name}&#34;):
+                new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
+
+        # mark old nodes
+        group_trees = []
+        for tree_name in [t.name for t in trees_to_build]:
+            new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_name]
+            gr_tree = bpy.data.node_groups[new_name]
+            group_trees.append(gr_tree)
+        for node in chain(tree.nodes, *(t.nodes for t in group_trees)):
+            if old_nodes.is_old(node):
+                old_nodes.mark_old(node)
+
+    def _build_nodes(self, tree, factories, imported_structs):
+        &#34;&#34;&#34;Build nodes of the main tree, other dependencies should be already initialized&#34;&#34;&#34;
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct[&#34;main_tree&#34;][&#34;nodes&#34;].items():
+                with self.logger.add_fail(&#34;Init node (main tree)&#34;, f&#34;Name: {node_name}&#34;):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
+
+            for node_struct in node_structs:
+                with self.logger.add_fail(&#34;Build node (main tree)&#34;, f&#34;Name {node_struct.name}&#34;):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
+
+            for raw_struct in self._struct[&#34;main_tree&#34;][&#34;links&#34;]:
+                with self.logger.add_fail(&#34;Build link (main tree)&#34;, f&#34;Struct: {raw_struct}&#34;):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
+    def _data_blocks_reader(self):
+        struct_type: StrTypes
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
+                with self.logger.add_fail(&#34;Reading data blocks&#34;, f&#34;Type: {struct_type_name}&#34;):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct
+
+
+class NodePresetFileStruct(Struct):
+    &#34;&#34;&#34;Export/import one node properties and sockets&#34;&#34;&#34;
+    def __init__(self, name=None, logger=None, structure=None):
+        default_struct = {
+            &#34;export_version&#34;: str(self.version),
+            &#34;node&#34;: dict(),
+        }
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, node):
+        factories = StructFactory.grab_from_module()
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        struct = factories.node(node.name, self.logger)
+        self._struct[&#34;node&#34;][node.name] = struct.export(node, factories, dependencies)
+
+        while dependencies:
+            block_type, block_name = dependencies.pop()
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
+
+        return self._struct
+
+    def build(self, node):
+        tree = node.id_data
+        with tree.init_tree():
+
+            factories = StructFactory.grab_from_module()
+            imported_structs: OldNewNames = dict()
+            trees_to_build = []
+
+            # initialize trees and build other data block types
+            for struct_type, block_name, raw_struct in self._data_blocks_reader():
+                if struct_type == StrTypes.TREE:  # in case it was group node
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    # all data block except node trees
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
+
+            for tree_struct in trees_to_build:
+                new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
+
+            # now it&#39;s time to update the node, we have to save its links first because they will be removed
+            links = []
+            for link in _ordered_links(tree):
+                if link.from_node.name == node.name or link.to_node.name == node.name:
+                    link_struct = factories.link(None, self.logger)
+                    link_struct.export(link, factories, [])
+                    links.append(link_struct)
+
+            # recreate node from scratch, this need for resetting all its properties to default
+            node_name, raw_struct = next(iter(self._struct[&#34;node&#34;].items()))
+            node_struct = factories.node(node_name, self.logger, raw_struct)
+            location = node.location[:]  # without copying it looks like gives straight references to memory
+            tree.nodes.remove(node)
+            node = tree.nodes.new(node_struct.read_bl_type())
+            node.name = node_name
+            node.select = True
+            tree.nodes.active = node
+            imported_structs[StrTypes.NODE, tree.name, node_name] = node.name
+
+            # all nodes should be as if they was imported with new names before linking
+            for node in tree.nodes:
+                imported_structs[StrTypes.NODE, tree.name, node.name] = node.name
+
+            # in case the node is inside group tree it should be also imported with its sockets
+            # to be able connect links to group out/in nodes
+            imported_structs[StrTypes.TREE, &#39;&#39;, tree.name] = tree.name
+            for sock in chain(tree.inputs, tree.outputs):
+                imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
+
+            # import the node and rebuild the links if possible
+            node_struct.build(node, factories, imported_structs)
+            node.location = location  # return to initial position, it has to be after node build
+            for link_struct in links:
+                try:
+                    link_struct.build(tree, factories, imported_structs)
+                except LookupError:  # the node seems has different sockets
+                    pass
+            # how it should work with group node links is not clear
+            # because they are bound to identifiers of the group tree input outputs
+            # for now breaking links will be considered as desired behaviour
+
+        node.process_node(bpy.context)
+        return node
+
+    def _data_blocks_reader(self):
+        struct_type: StrTypes
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
+                with self.logger.add_fail(&#34;Reading data blocks&#34;, f&#34;Type: {struct_type_name}&#34;):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct
+
+
+class TreeStruct(Struct):
+    &#34;&#34;&#34;Export/import node, links, tree properties, tree sockets&#34;&#34;&#34;
+    type = StrTypes.TREE
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_structure = {
+            &#34;nodes&#34;: dict(),
+            &#34;links&#34;: [],
+            &#34;inputs&#34;: dict(),
+            &#34;outputs&#34;: dict(),
+            &#34;properties&#34;: dict(),
+            &#34;bl_idname&#34;: &#34;&#34;,
+        }
+        self._struct = structure or default_structure
+        self.name = name
+        self.logger = logger
+
+    def export(self, tree, factories: StructFactory, dependencies) -&gt; dict:
+        for node in tree.nodes:
+            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+            self._struct[&#39;nodes&#39;][node.name] = raw_struct
+
+        for link in _ordered_links(tree):
+            self._struct[&#34;links&#34;].append(factories.link(None, self.logger).export(link, factories, dependencies))
+
+        for socket in tree.inputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+        for socket in tree.outputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+        for prop_name in tree.keys():
+            prop = BPYProperty(tree, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+        self._struct[&#34;bl_idname&#34;] = tree.bl_idname
+
+        if not self._struct[&#34;properties&#34;]:
+            del self._struct[&#34;properties&#34;]
+
+        return self._struct
+
+    def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+        &#34;&#34;&#34;Reads and generates nodes, links, dependent data blocks&#34;&#34;&#34;
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct[&#34;nodes&#34;].items():
+                with self.logger.add_fail(&#34;Init node&#34;, f&#34;Tree: {tree.name}, Node: {node_name}&#34;):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
+
+            for node_struct in node_structs:
+                with self.logger.add_fail(&#34;Build node&#34;, f&#34;Tree: {tree.name}, Node: {node_struct.name}&#34;):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
+
+            for raw_struct in self._struct[&#34;links&#34;]:
+                with self.logger.add_fail(&#34;Build link&#34;, f&#34;Tree: {tree.name}, Struct: {raw_struct}&#34;):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
+            for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+                with self.logger.add_fail(&#34;Setting tree property&#34;, f&#39;Tree: {node.id_data.name}, prop: {prop_name}&#39;):
+                    factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
+
+    def build_interface(self, tree, factories, imported_structs):
+        for sock_name, raw_struct in self._struct[&#34;inputs&#34;].items():
+            with self.logger.add_fail(&#34;Create tree in socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+                factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
+
+        for sock_name, raw_struct in self._struct[&#34;outputs&#34;].items():
+            with self.logger.add_fail(&#34;Create tree out socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+                factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)
+
+    def read_bl_type(self):
+        return self._struct[&#34;bl_idname&#34;]
+
+
+class NodeStruct(Struct):
+    &#34;&#34;&#34;Export/import node properties, attributes, sockets. 
+    It can call save_to_json and load_from_json methods of a node if one has them
+    The methods will get empty dictionary for storing advanced properties&#34;&#34;&#34;
+    type = StrTypes.NODE
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_structure = {
+            &#34;attributes&#34;: {
+                &#34;location&#34;: (0, 0),
+                &#34;height&#34;: None,
+                &#34;width&#34;: None,
+                &#34;label&#34;: &#39;&#39;,
+                &#34;hide&#34;: False,
+                &#34;color&#34;: (0, 0, 0),
+                &#34;use_custom_color&#34;: False,
+                &#34;parent&#34;: None,
+            },
+            &#34;properties&#34;: dict(),
+            &#34;advanced_properties&#34;: dict(),
+            &#34;inputs&#34;: dict(),
+            &#34;outputs&#34;: dict(),
+            &#34;bl_idname&#34;: &#34;&#34;
+        }
+        self._struct = structure or default_structure
+        self.name = name
+        self.logger = logger
+
+    def export(self, node, factories: StructFactory, dependencies) -&gt; dict:
+        # add_mandatory_attributes
+        self._struct[&#39;bl_idname&#39;] = node.bl_idname
+        self._struct[&#34;attributes&#34;][&#39;location&#39;] = recursive_framed_location_finder(node, node.location[:])
+
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;height&#39;, node.height, node.height != 100.0)
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;width&#39;, node.width, node.width != 140.0)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;label&#34;, node.label)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;hide&#34;, node.hide)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;use_custom_color&#34;, node.use_custom_color)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, node.color[:], node.use_custom_color)
+        if node.parent:  # the node is inside of a frame node
+            prop = BPYProperty(node, &#34;parent&#34;)
+            raw_struct = factories.prop(&#34;parent&#34;, self.logger).export(prop, factories, dependencies)
+            self._struct[&#34;attributes&#34;][&#34;parent&#34;] = raw_struct
+        else:
+            del self._struct[&#34;attributes&#34;][&#34;parent&#34;]
+
+        # add non default node properties
+        for prop_name in node.keys():
+            prop = BPYProperty(node, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        # all sockets should be kept in a file because it&#39;s possible to create UI
+        # where sockets would be defined by pressing buttons for example like in the node group interface.
+        # there is no sense of exporting information about sockets of group input and output nodes
+        # they are totally controlled by Blender update system.
+        if node.bl_idname not in [&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;]:
+            for socket in node.inputs:
+                raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+                self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+            for socket in node.outputs:
+                raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+                self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+        _set_optional(self._struct, &#34;inputs&#34;, self._struct[&#34;inputs&#34;])
+        _set_optional(self._struct, &#34;outputs&#34;, self._struct[&#34;outputs&#34;])
+
+        if hasattr(node, &#39;save_to_json&#39;):
+            node.save_to_json(self._struct[&#34;advanced_properties&#34;])
+
+        _set_optional(self._struct, &#34;advanced_properties&#34;, self._struct[&#34;advanced_properties&#34;])
+
+        return self._struct
+
+    def build(self, node, factories: StructFactory, imported_data: OldNewNames):
+        for attr_name, attr_value in self._struct[&#34;attributes&#34;].items():
+            with self.logger.add_fail(&#34;Setting node attribute&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(node, factories, imported_data)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Setting node property&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
+
+        # does not trust to correctness of socket collections created by an init method.
+        # clearing sockets calls update methods of the node and the tree.
+        # the methods are called again each time new socket is added.
+        # if group node has sockets with identifiers which are not the same as identifiers of group tree sockets
+        # then when first node will be added to the group tree (or any other changes in the group tree)
+        # it will cause replacing of all sockets with wrong identifiers in the group node.
+        # clearing and adding sockets of Group input and Group output nodes
+        # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
+        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+            node.inputs.clear()
+        for sock_identifier, raw_struct in self._struct.get(&#34;inputs&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Add in socket&#34;,
+                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+            node.outputs.clear()
+        for sock_identifier, raw_struct in self._struct.get(&#34;outputs&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Add out socket&#34;,
+                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
+        if hasattr(node, &#39;load_from_json&#39;):
+            with self.logger.add_fail(&#34;Setting advance node properties&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}&#39;):
+                node.load_from_json(self._struct.get(&#34;advanced_properties&#34;, dict()), self.version)
+
+    def read_bl_type(self):
+        return self._struct[&#39;bl_idname&#39;]
+
+
+class SocketStruct(Struct):
+    &#34;&#34;&#34;Export/import socket properties, attributes&#34;&#34;&#34;
+    type = StrTypes.SOCK
+
+    def __init__(self, identifier, logger: FailsLog, structure: dict = None):
+        # socket names can&#39;t be used here because sockets can have the same names (unlike trees or nodes)
+        default_struct = {
+            &#34;bl_idname&#34;: &#34;&#34;,
+            &#34;name&#34;: &#34;&#34;,
+            &#34;tree&#34;: &#34;&#34;,  # util information for group nodes about the name of their node tree
+            &#34;attributes&#34;: {
+                &#34;hide&#34;: False,
+            },
+            &#34;properties&#34;: dict(),
+        }
+        self.identifier = identifier
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, socket, factories, dependencies):
+        self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+        self._struct[&#39;name&#39;] = socket.name
+
+        _set_optional(self._struct, &#39;tree&#39;, socket.node.node_tree.name if hasattr(socket.node, &#39;node_tree&#39;) else &#39;&#39;)
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;hide&#39;, socket.hide)
+        _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        return self._struct
+
+    def build(self, sockets, factories, imported_structs):
+        name = self._struct[&#39;name&#39;]
+        group_tree_name = self._struct.get(&#39;tree&#39;)
+
+        # check whether the socket is of group tree
+        if group_tree_name is not None:
+            # identifier of the socket should be always the same as identifier of the interface socket of the group tree
+            # otherwise it will be recreated by Blender update system and its links (and properties?) will be lost
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, group_tree_name]
+            identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, self.identifier]
+        else:
+            identifier = self.identifier
+
+        # create the socket in the method because identifier(name) is hidden is shown only inside the class
+        socket = sockets.new(self.read_bl_type(), name, identifier=identifier)
+
+        for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting socket attribute&#34;,  # socket.node can be None sometimes 0_o
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(  # I think when socket is just created socket.node is None due Blender limitation
+                    &#34;Setting socket property&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
+
+    def read_bl_type(self) -&gt; str:
+        with self.logger.add_fail(&#34;Reading socket bl_idname&#34;):
+            return self._struct[&#39;bl_idname&#39;]
+
+
+class InterfaceStruct(Struct):
+    &#34;&#34;&#34;Export/import interface socket properties, attributes&#34;&#34;&#34;
+    type = StrTypes.INTERFACE
+
+    def __init__(self, identifier, logger: FailsLog, structure=None):
+        default_struct = {
+            &#34;bl_idname&#34;: &#34;&#34;,
+            &#34;name&#34;: &#34;&#34;,
+            &#34;attributes&#34;: {
+                &#34;hide_value&#34;: False,
+            },
+            &#34;properties&#34;: dict(),
+        }
+        self.identifier = identifier
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, socket, factories, dependencies):
+        self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+        self._struct[&#39;name&#39;] = socket.name
+
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
+        _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        return self._struct
+
+    def build(self, sockets, factories, imported_structs):
+        name = self._struct[&#34;name&#34;]
+        # create the socket in the method because identifier is hidden is shown only inside the class
+        interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+        socket_type = interface_class.bl_socket_idname
+        socket = sockets.new(socket_type, name)  # the method gives its own identifier
+        imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
+
+        for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting interface socket attribute&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting interface socket property&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
+
+    def read_bl_type(self) -&gt; str:
+        with self.logger.add_fail(&#34;Reading interface socket bl_idname&#34;):
+            return self._struct[&#39;bl_idname&#39;]
+
+
+class LinkStruct(Struct):
+    &#34;&#34;&#34;Export/import link relationships&#34;&#34;&#34;
+    type = StrTypes.LINK
+
+    def __init__(self, name=None, logger: FailsLog = None, structure: dict = None):
+        default_struct = {
+            &#34;from_node&#34;: &#34;&#34;,
+            &#34;from_socket&#34;: &#34;&#34;,  # identifier
+            &#34;from_tree&#34;: &#34;&#34;,
+            &#34;to_node&#34;: &#34;&#34;,
+            &#34;to_socket&#34;: &#34;&#34;,   # identifier
+            &#34;to_tree&#34;: &#34;&#34;,
+        }
+        self._struct = structure or default_struct
+        self.logger = logger
+
+    def export(self, link, *_):
+        self._struct[&#34;from_node&#34;] = link.from_node.name
+        self._struct[&#34;from_socket&#34;] = link.from_socket.identifier
+        if hasattr(link.from_node, &#39;node_tree&#39;):
+            _set_optional(self._struct, &#39;from_tree&#39;, link.from_node.node_tree.name)
+        elif link.from_node.bl_idname == &#39;NodeGroupInput&#39;:
+            _set_optional(self._struct, &#34;from_tree&#34;, link.id_data.name)
+        else:
+            _set_optional(self._struct, &#34;from_tree&#34;, &#34;&#34;)
+        self._struct[&#34;to_node&#34;] = link.to_node.name
+        self._struct[&#34;to_socket&#34;] = link.to_socket.identifier
+        if hasattr(link.to_node, &#39;node_tree&#39;):
+            _set_optional(self._struct, &#34;to_tree&#34;, link.to_node.node_tree.name)
+        elif link.to_node.bl_idname == &#39;NodeGroupOutput&#39;:
+            _set_optional(self._struct, &#34;to_tree&#34;, link.id_data.name)
+        else:
+            _set_optional(self._struct, &#34;to_tree&#34;, &#34;&#34;)
+        return self._struct
+
+    def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+        from_node_name = self._struct[&#34;from_node&#34;]
+        from_sock_identifier = self._struct[&#34;from_socket&#34;]
+        from_tree = self._struct.get(&#34;from_tree&#34;)
+        to_node_name = self._struct[&#34;to_node&#34;]
+        to_sock_identifier = self._struct[&#34;to_socket&#34;]
+        to_tree = self._struct.get(&#34;to_tree&#34;)
+
+        # all nodes can has different names
+        from_node_new_name = imported_structs[(factories.node.type, tree.name, from_node_name)]
+        to_node_new_name = imported_structs[(factories.node.type, tree.name, to_node_name)]
+        from_node = tree.nodes[from_node_new_name]
+        to_node = tree.nodes[to_node_new_name]
+
+        # sockets of group_nodes can have different identifiers, unlike other sockets
+        # this should certainly be called after nodes get their properties
+        if from_tree is not None:
+            # new identifiers are bound to group trees where they was born
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, from_tree]
+            from_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, from_sock_identifier]
+        if to_tree is not None:
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, to_tree]
+            to_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, to_sock_identifier]
+
+        from_socket = self._search_socket(from_node, from_sock_identifier, &#34;OUTPUT&#34;)
+        to_socket = self._search_socket(to_node, to_sock_identifier, &#34;INPUT&#34;)
+        if from_socket and to_socket:
+            tree.links.new(to_socket, from_socket)
+
+    def _search_socket(self, node, socket_identifier: str, sock_type):
+        with self.logger.add_fail(f&#34;Building link, trying to find socket {socket_identifier}&#34;):
+            for sock in node.inputs if sock_type == &#34;INPUT&#34; else node.outputs:
+                if sock.identifier == socket_identifier:
+                    return sock
+            raise LookupError
+
+
+class PropertyStruct(Struct):
+    &#34;&#34;&#34;Export/import properties. It includes specific about managing of Blender properties
+    All properties are supported.
+    Structure of the class can be just a value or usual dictionary (in case of a pointer property)&#34;&#34;&#34;
+    type = StrTypes.PROP
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_struct = {
+            &#34;type&#34;: &#34;&#34;,
+            &#34;value&#34;: &#34;&#34;
+        }
+        self._struct = structure if structure is not None else default_struct
+        self.name = name
+        self.logger = logger
+
+    def export(self, prop: BPYProperty, _, dependencies):
+        &#34;&#34;&#34;It can return just value like float, bool etc or a structure&#34;&#34;&#34;
+        if prop.is_valid and prop.is_to_save:
+            if prop.type == &#39;COLLECTION&#39;:
+                return self._export_collection_values(prop, dependencies)
+            if prop.type == &#39;POINTER&#39;:
+                # skip empty and unsupported pointers
+                if prop.value is not None and StrTypes.is_supported_block(prop.pointer_type):
+                    self._struct[&#34;type&#34;] = prop.pointer_type.name
+                    self._struct[&#34;value&#34;] = prop.value
+                    if prop.data_collection is not None:  # skipping nodes
+                        dependencies.append((prop.pointer_type, prop.value))
+                    return self._struct
+                else:
+                    return None
+            else:
+                # default values should be persistent per Sverchok releases - no need to save
+                if prop.value != prop.default_value:
+                    return prop.value
+                else:
+                    return None
+
+    def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+        prop = BPYProperty(obj, self.name)
+
+        # this is structure (pointer property)
+        if isinstance(self._struct, dict):
+            pointer_type = BPYPointers[self._struct[&#34;type&#34;]]
+            old_obj_name = self._struct[&#34;value&#34;]
+            if pointer_type == BPYPointers.NODE:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), obj.id_data.name, old_obj_name)]
+                # this should work in case obj is a node or socket
+                # but in other cases probably extra information should be kept in the property structure
+                data_block = obj.id_data.nodes[new_name]
+            else:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), &#39;&#39;, old_obj_name)]
+                data_block = pointer_type.collection[new_name]
+            setattr(obj, self.name, data_block)
+
+        # this is collection property
+        elif prop.type == &#39;COLLECTION&#39;:
+            self._set_collection_values(obj, factories, imported_structs)
+
+        # this is property
+        elif prop.is_valid:
+            prop.value = self._struct
+
+        # this is attribute
+        else:
+            setattr(obj, self.name, self._struct)
+
+    def _export_collection_values(self, col_prop, dependencies):
+        collection = []
+        for item in col_prop.collection_to_list():
+            item_props = dict()
+            for prop in item:
+                raw_struct = PropertyStruct(prop.name, self.logger).export(prop, None, dependencies)
+                if raw_struct is not None:
+                    item_props[prop.name] = raw_struct 
+            collection.append(item_props)
+        return collection
+
+    def _set_collection_values(self, obj, factories, imported_structs):
+        &#34;&#34;&#34;Assign Python data to collection property&#34;&#34;&#34;
+        collection = getattr(obj, self.name)
+        # it is possible that collection is not empty in case a node added something into it during initialization
+        # but the property always consider the collection property to be empty
+        collection.clear()
+        for item_index, item_values in enumerate(self._struct):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
+
+            for prop_name, prop_value in item_values.items():
+                factories.prop(prop_name, self.logger, prop_value).build(item, factories, imported_structs)
+
+
+class MaterialStruct(Struct):
+    &#34;&#34;&#34;Default structure for materials. Include only its name for now.
+    If a Blender file does not posses the material the empty material will be generated&#34;&#34;&#34;
+    # this structure can be more complex if we want to save state of the material tree
+    type = StrTypes.MATERIAL
+
+    def __init__(self, name, logger=None, structure=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, mat, factories, dependencies):
+        # probably something will be added here in the future
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        material = bpy.data.materials.get(self.name)
+        if material is None:
+            material = bpy.data.materials.new(self.name)
+        imported_structs[(StrTypes.MATERIAL, &#39;&#39;, self.name)] = material.name
+
+
+class CollectionStruct(Struct):
+    &#34;&#34;&#34;Default structure for collections. It includes only its name for now.
+    If a Blender file does not posses the collection the empty collection will be generated&#34;&#34;&#34;
+    type = StrTypes.COLLECTION
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, collection, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        collection = bpy.data.collections.get(self.name)
+        if collection is None:
+            collection = bpy.data.collections.new(self.name)
+            bpy.context.scene.collection.children.link(collection)
+        imported_structs[(StrTypes.COLLECTION, &#39;&#39;, self.name)] = collection.name
+
+
+class ImageStruct(Struct):
+    &#34;&#34;&#34;Default image structure. It will only try to find whether the image in a Blender file&#34;&#34;&#34;
+    type = StrTypes.IMAGE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, image, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # the file should have the image already
+        # it could be convenient if importer could generate empty images if necessary
+        image = bpy.data.images.get(self.name)
+        if image is not None:
+            imported_structs[(StrTypes.IMAGE, &#39;&#39;, self.name)] = image.name
+
+
+class TextureStruct(Struct):
+    &#34;&#34;&#34;Default texture structure. It will try to find existing texture in a Blender file&#34;&#34;&#34;
+    type = StrTypes.TEXTURE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, texture, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # it could be convenient if importer could generate empty textures if necessary
+        texture = bpy.data.textures.get(self.name)
+        if texture is not None:
+            imported_structs[(StrTypes.TEXTURE, &#39;&#39;, self.name)] = texture.name
+
+
+def _ordered_links(tree) -&gt; Generator[bpy.types.NodeLink]:
+    &#34;&#34;&#34;Returns all links in whole tree where links always are going in order from top input socket to bottom&#34;&#34;&#34;
+    for node in tree.nodes:
+        for input_socket in node.inputs:
+            for link in input_socket.links:
+                yield link
+
+
+def _set_optional(data: dict, key, value, condition=None):
+    if condition if condition is not None else value:
+        data[key] = value
+    else:
+        del data[key]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.CollectionStruct"><code class="flex name class">
+<span>class <span class="ident">CollectionStruct</span></span>
+<span>(</span><span>name, logger=None, struct=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Default structure for collections. It includes only its name for now.
+If a Blender file does not posses the collection the empty collection will be generated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CollectionStruct(Struct):
+    &#34;&#34;&#34;Default structure for collections. It includes only its name for now.
+    If a Blender file does not posses the collection the empty collection will be generated&#34;&#34;&#34;
+    type = StrTypes.COLLECTION
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, collection, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        collection = bpy.data.collections.get(self.name)
+        if collection is None:
+            collection = bpy.data.collections.new(self.name)
+            bpy.context.scene.collection.children.link(collection)
+        imported_structs[(StrTypes.COLLECTION, &#39;&#39;, self.name)] = collection.name</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.CollectionStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.CollectionStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, factories, imported_structs):
+    collection = bpy.data.collections.get(self.name)
+    if collection is None:
+        collection = bpy.data.collections.new(self.name)
+        bpy.context.scene.collection.children.link(collection)
+    imported_structs[(StrTypes.COLLECTION, &#39;&#39;, self.name)] = collection.name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.CollectionStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, collection, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, collection, factories, dependencies):
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.FileStruct"><code class="flex name class">
+<span>class <span class="ident">FileStruct</span></span>
+<span>(</span><span>name=None, logger: FailsLog = None, struct: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import of all or only select nodes of a tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FileStruct(Struct):
+    &#34;&#34;&#34;Export/import of all or only select nodes of a tree&#34;&#34;&#34;
+    def __init__(self, name=None, logger: FailsLog = None, struct: dict = None):
+        default_struct = {
+            &#34;export_version&#34;: str(self.version),
+            &#34;main_tree&#34;: {
+                &#34;nodes&#34;: dict(),
+                &#34;links&#34;: []
+            }
+        }
+        self._struct: Dict[str, Any] = struct or default_struct
+        self.logger: FailsLog = logger
+
+    def export(self):
+        # I would expect this method import the whole Sverchok data in a file
+        raise NotImplementedError
+
+    def export_tree(self, tree, use_selection=False):
+        if tree.bl_idname != &#39;SverchCustomTreeType&#39;:
+            raise TypeError(f&#39;Only exporting main trees is supported, {tree.bl_label} is given&#39;)
+
+        struct_factories = StructFactory.grab_from_module()  # todo to args?
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        # export main tree first
+        self._export_nodes(tree, struct_factories, dependencies, use_selection)
+
+        # it looks good place for exporting dependent data blocks because probably we do not always want to export them
+        # from this place we have more control over it
+        while dependencies:
+            block_type, block_name = dependencies.pop()
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = struct_factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, struct_factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
+
+        return self._struct
+
+    def _export_nodes(self, tree, factories, dependencies, use_selection=False):
+        &#34;&#34;&#34;Structure of main tree&#34;&#34;&#34;
+        nodes = tree.nodes if not use_selection else [n for n in tree.nodes if n.select]
+        for node in nodes:
+            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+            self._struct[&#34;main_tree&#34;][&#34;nodes&#34;][node.name] = raw_struct
+
+        input_node_names = {node.name for node in nodes}
+        for link in _ordered_links(tree):
+            if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
+                raw_struct = factories.link(None, self.logger).export(link, factories, dependencies)
+                self._struct[&#34;main_tree&#34;][&#34;links&#34;].append(raw_struct)
+
+    def build(self, *_):
+        raise NotImplementedError
+
+    def build_into_tree(self, tree):
+        # it looks that recursive import should be avoided by any cost, it&#39;s too difficult to pass data
+        # luckily it&#39;s possible to create all data block first
+        # and then they will be available for assigning to pointer properties
+        # with tree data blocks it can be a beat trickier,
+        # all trees should be created and only after that field with content
+
+        factories = StructFactory.grab_from_module()
+        imported_structs: OldNewNames = dict()
+        data_blocks = self._data_blocks_reader()
+
+        # initialize trees and build other data block types
+        trees_to_build = []
+        for struct_type, block_name, raw_struct in data_blocks:
+            with self.logger.add_fail(&#34;Initialize data block&#34;, f&#34;Type: {struct_type.name}, Name: {block_name}&#34;):
+                if struct_type == StrTypes.TREE:
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    # interface should be created before building all trees
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
+
+        # build main tree nodes
+        self._build_nodes(tree, factories, imported_structs)
+
+        # build group trees
+        for tree_struct in trees_to_build:
+            with self.logger.add_fail(&#34;Build node group&#34;, f&#34;Name: {tree_struct.name}&#34;):
+                new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
+
+        # mark old nodes
+        group_trees = []
+        for tree_name in [t.name for t in trees_to_build]:
+            new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_name]
+            gr_tree = bpy.data.node_groups[new_name]
+            group_trees.append(gr_tree)
+        for node in chain(tree.nodes, *(t.nodes for t in group_trees)):
+            if old_nodes.is_old(node):
+                old_nodes.mark_old(node)
+
+    def _build_nodes(self, tree, factories, imported_structs):
+        &#34;&#34;&#34;Build nodes of the main tree, other dependencies should be already initialized&#34;&#34;&#34;
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct[&#34;main_tree&#34;][&#34;nodes&#34;].items():
+                with self.logger.add_fail(&#34;Init node (main tree)&#34;, f&#34;Name: {node_name}&#34;):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
+
+            for node_struct in node_structs:
+                with self.logger.add_fail(&#34;Build node (main tree)&#34;, f&#34;Name {node_struct.name}&#34;):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
+
+            for raw_struct in self._struct[&#34;main_tree&#34;][&#34;links&#34;]:
+                with self.logger.add_fail(&#34;Build link (main tree)&#34;, f&#34;Struct: {raw_struct}&#34;):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
+    def _data_blocks_reader(self):
+        struct_type: StrTypes
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
+                with self.logger.add_fail(&#34;Reading data blocks&#34;, f&#34;Type: {struct_type_name}&#34;):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.FileStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.FileStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, *_)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, *_):
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.FileStruct.build_into_tree"><code class="name flex">
+<span>def <span class="ident">build_into_tree</span></span>(<span>self, tree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_into_tree(self, tree):
+    # it looks that recursive import should be avoided by any cost, it&#39;s too difficult to pass data
+    # luckily it&#39;s possible to create all data block first
+    # and then they will be available for assigning to pointer properties
+    # with tree data blocks it can be a beat trickier,
+    # all trees should be created and only after that field with content
+
+    factories = StructFactory.grab_from_module()
+    imported_structs: OldNewNames = dict()
+    data_blocks = self._data_blocks_reader()
+
+    # initialize trees and build other data block types
+    trees_to_build = []
+    for struct_type, block_name, raw_struct in data_blocks:
+        with self.logger.add_fail(&#34;Initialize data block&#34;, f&#34;Type: {struct_type.name}, Name: {block_name}&#34;):
+            if struct_type == StrTypes.TREE:
+                tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                # interface should be created before building all trees
+                tree_struct.build_interface(data_block, factories, imported_structs)
+                imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                trees_to_build.append(tree_struct)
+            else:
+                block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                block_struct.build(factories, imported_structs)
+
+    # build main tree nodes
+    self._build_nodes(tree, factories, imported_structs)
+
+    # build group trees
+    for tree_struct in trees_to_build:
+        with self.logger.add_fail(&#34;Build node group&#34;, f&#34;Name: {tree_struct.name}&#34;):
+            new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+            data_block = bpy.data.node_groups[new_name]
+            tree_struct.build(data_block, factories, imported_structs)
+
+    # mark old nodes
+    group_trees = []
+    for tree_name in [t.name for t in trees_to_build]:
+        new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_name]
+        gr_tree = bpy.data.node_groups[new_name]
+        group_trees.append(gr_tree)
+    for node in chain(tree.nodes, *(t.nodes for t in group_trees)):
+        if old_nodes.is_old(node):
+            old_nodes.mark_old(node)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.FileStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self):
+    # I would expect this method import the whole Sverchok data in a file
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.FileStruct.export_tree"><code class="name flex">
+<span>def <span class="ident">export_tree</span></span>(<span>self, tree, use_selection=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export_tree(self, tree, use_selection=False):
+    if tree.bl_idname != &#39;SverchCustomTreeType&#39;:
+        raise TypeError(f&#39;Only exporting main trees is supported, {tree.bl_label} is given&#39;)
+
+    struct_factories = StructFactory.grab_from_module()  # todo to args?
+    dependencies: List[Tuple[BPYPointers, str]] = []
+
+    # export main tree first
+    self._export_nodes(tree, struct_factories, dependencies, use_selection)
+
+    # it looks good place for exporting dependent data blocks because probably we do not always want to export them
+    # from this place we have more control over it
+    while dependencies:
+        block_type, block_name = dependencies.pop()
+        struct_type = StrTypes.get_type(block_type)
+        if struct_type.name not in self._struct:
+            self._struct[struct_type.name] = dict()
+        if block_name not in self._struct[struct_type.name]:
+            factory = struct_factories.get_factory(struct_type)
+            data_block = block_type.collection[block_name]
+            structure = factory(block_name, self.logger).export(data_block, struct_factories, dependencies)
+            self._struct[struct_type.name][block_name] = structure
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.ImageStruct"><code class="flex name class">
+<span>class <span class="ident">ImageStruct</span></span>
+<span>(</span><span>name, logger=None, struct=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Default image structure. It will only try to find whether the image in a Blender file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ImageStruct(Struct):
+    &#34;&#34;&#34;Default image structure. It will only try to find whether the image in a Blender file&#34;&#34;&#34;
+    type = StrTypes.IMAGE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, image, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # the file should have the image already
+        # it could be convenient if importer could generate empty images if necessary
+        image = bpy.data.images.get(self.name)
+        if image is not None:
+            imported_structs[(StrTypes.IMAGE, &#39;&#39;, self.name)] = image.name</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.ImageStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.ImageStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, factories, imported_structs):
+    # the file should have the image already
+    # it could be convenient if importer could generate empty images if necessary
+    image = bpy.data.images.get(self.name)
+    if image is not None:
+        imported_structs[(StrTypes.IMAGE, &#39;&#39;, self.name)] = image.name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.ImageStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, image, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, image, factories, dependencies):
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.InterfaceStruct"><code class="flex name class">
+<span>class <span class="ident">InterfaceStruct</span></span>
+<span>(</span><span>identifier, logger: FailsLog, structure=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import interface socket properties, attributes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InterfaceStruct(Struct):
+    &#34;&#34;&#34;Export/import interface socket properties, attributes&#34;&#34;&#34;
+    type = StrTypes.INTERFACE
+
+    def __init__(self, identifier, logger: FailsLog, structure=None):
+        default_struct = {
+            &#34;bl_idname&#34;: &#34;&#34;,
+            &#34;name&#34;: &#34;&#34;,
+            &#34;attributes&#34;: {
+                &#34;hide_value&#34;: False,
+            },
+            &#34;properties&#34;: dict(),
+        }
+        self.identifier = identifier
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, socket, factories, dependencies):
+        self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+        self._struct[&#39;name&#39;] = socket.name
+
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
+        _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        return self._struct
+
+    def build(self, sockets, factories, imported_structs):
+        name = self._struct[&#34;name&#34;]
+        # create the socket in the method because identifier is hidden is shown only inside the class
+        interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+        socket_type = interface_class.bl_socket_idname
+        socket = sockets.new(socket_type, name)  # the method gives its own identifier
+        imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
+
+        for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting interface socket attribute&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting interface socket property&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
+
+    def read_bl_type(self) -&gt; str:
+        with self.logger.add_fail(&#34;Reading interface socket bl_idname&#34;):
+            return self._struct[&#39;bl_idname&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.InterfaceStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.InterfaceStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, sockets, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, sockets, factories, imported_structs):
+    name = self._struct[&#34;name&#34;]
+    # create the socket in the method because identifier is hidden is shown only inside the class
+    interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+    socket_type = interface_class.bl_socket_idname
+    socket = sockets.new(socket_type, name)  # the method gives its own identifier
+    imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
+
+    for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+        with self.logger.add_fail(
+                &#34;Setting interface socket attribute&#34;,
+                f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+            factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+    for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+        with self.logger.add_fail(
+                &#34;Setting interface socket property&#34;,
+                f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+            factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.InterfaceStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, socket, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, socket, factories, dependencies):
+    self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+    self._struct[&#39;name&#39;] = socket.name
+
+    _set_optional(self._struct[&#34;attributes&#34;], &#39;hide_value&#39;, socket.hide_value)
+    _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+    for prop_name in socket.keys():
+        prop = BPYProperty(socket, prop_name)
+        if prop.is_valid and prop.is_to_save:
+            raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+            if raw_struct is not None:
+                self._struct[&#34;properties&#34;][prop.name] = raw_struct
+    _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.LinkStruct"><code class="flex name class">
+<span>class <span class="ident">LinkStruct</span></span>
+<span>(</span><span>name=None, logger: FailsLog = None, structure: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import link relationships</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LinkStruct(Struct):
+    &#34;&#34;&#34;Export/import link relationships&#34;&#34;&#34;
+    type = StrTypes.LINK
+
+    def __init__(self, name=None, logger: FailsLog = None, structure: dict = None):
+        default_struct = {
+            &#34;from_node&#34;: &#34;&#34;,
+            &#34;from_socket&#34;: &#34;&#34;,  # identifier
+            &#34;from_tree&#34;: &#34;&#34;,
+            &#34;to_node&#34;: &#34;&#34;,
+            &#34;to_socket&#34;: &#34;&#34;,   # identifier
+            &#34;to_tree&#34;: &#34;&#34;,
+        }
+        self._struct = structure or default_struct
+        self.logger = logger
+
+    def export(self, link, *_):
+        self._struct[&#34;from_node&#34;] = link.from_node.name
+        self._struct[&#34;from_socket&#34;] = link.from_socket.identifier
+        if hasattr(link.from_node, &#39;node_tree&#39;):
+            _set_optional(self._struct, &#39;from_tree&#39;, link.from_node.node_tree.name)
+        elif link.from_node.bl_idname == &#39;NodeGroupInput&#39;:
+            _set_optional(self._struct, &#34;from_tree&#34;, link.id_data.name)
+        else:
+            _set_optional(self._struct, &#34;from_tree&#34;, &#34;&#34;)
+        self._struct[&#34;to_node&#34;] = link.to_node.name
+        self._struct[&#34;to_socket&#34;] = link.to_socket.identifier
+        if hasattr(link.to_node, &#39;node_tree&#39;):
+            _set_optional(self._struct, &#34;to_tree&#34;, link.to_node.node_tree.name)
+        elif link.to_node.bl_idname == &#39;NodeGroupOutput&#39;:
+            _set_optional(self._struct, &#34;to_tree&#34;, link.id_data.name)
+        else:
+            _set_optional(self._struct, &#34;to_tree&#34;, &#34;&#34;)
+        return self._struct
+
+    def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+        from_node_name = self._struct[&#34;from_node&#34;]
+        from_sock_identifier = self._struct[&#34;from_socket&#34;]
+        from_tree = self._struct.get(&#34;from_tree&#34;)
+        to_node_name = self._struct[&#34;to_node&#34;]
+        to_sock_identifier = self._struct[&#34;to_socket&#34;]
+        to_tree = self._struct.get(&#34;to_tree&#34;)
+
+        # all nodes can has different names
+        from_node_new_name = imported_structs[(factories.node.type, tree.name, from_node_name)]
+        to_node_new_name = imported_structs[(factories.node.type, tree.name, to_node_name)]
+        from_node = tree.nodes[from_node_new_name]
+        to_node = tree.nodes[to_node_new_name]
+
+        # sockets of group_nodes can have different identifiers, unlike other sockets
+        # this should certainly be called after nodes get their properties
+        if from_tree is not None:
+            # new identifiers are bound to group trees where they was born
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, from_tree]
+            from_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, from_sock_identifier]
+        if to_tree is not None:
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, to_tree]
+            to_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, to_sock_identifier]
+
+        from_socket = self._search_socket(from_node, from_sock_identifier, &#34;OUTPUT&#34;)
+        to_socket = self._search_socket(to_node, to_sock_identifier, &#34;INPUT&#34;)
+        if from_socket and to_socket:
+            tree.links.new(to_socket, from_socket)
+
+    def _search_socket(self, node, socket_identifier: str, sock_type):
+        with self.logger.add_fail(f&#34;Building link, trying to find socket {socket_identifier}&#34;):
+            for sock in node.inputs if sock_type == &#34;INPUT&#34; else node.outputs:
+                if sock.identifier == socket_identifier:
+                    return sock
+            raise LookupError</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.LinkStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.LinkStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, tree, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, imported_structs: OldNewNames)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+    from_node_name = self._struct[&#34;from_node&#34;]
+    from_sock_identifier = self._struct[&#34;from_socket&#34;]
+    from_tree = self._struct.get(&#34;from_tree&#34;)
+    to_node_name = self._struct[&#34;to_node&#34;]
+    to_sock_identifier = self._struct[&#34;to_socket&#34;]
+    to_tree = self._struct.get(&#34;to_tree&#34;)
+
+    # all nodes can has different names
+    from_node_new_name = imported_structs[(factories.node.type, tree.name, from_node_name)]
+    to_node_new_name = imported_structs[(factories.node.type, tree.name, to_node_name)]
+    from_node = tree.nodes[from_node_new_name]
+    to_node = tree.nodes[to_node_new_name]
+
+    # sockets of group_nodes can have different identifiers, unlike other sockets
+    # this should certainly be called after nodes get their properties
+    if from_tree is not None:
+        # new identifiers are bound to group trees where they was born
+        new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, from_tree]
+        from_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, from_sock_identifier]
+    if to_tree is not None:
+        new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, to_tree]
+        to_sock_identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, to_sock_identifier]
+
+    from_socket = self._search_socket(from_node, from_sock_identifier, &#34;OUTPUT&#34;)
+    to_socket = self._search_socket(to_node, to_sock_identifier, &#34;INPUT&#34;)
+    if from_socket and to_socket:
+        tree.links.new(to_socket, from_socket)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.LinkStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, link, *_)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, link, *_):
+    self._struct[&#34;from_node&#34;] = link.from_node.name
+    self._struct[&#34;from_socket&#34;] = link.from_socket.identifier
+    if hasattr(link.from_node, &#39;node_tree&#39;):
+        _set_optional(self._struct, &#39;from_tree&#39;, link.from_node.node_tree.name)
+    elif link.from_node.bl_idname == &#39;NodeGroupInput&#39;:
+        _set_optional(self._struct, &#34;from_tree&#34;, link.id_data.name)
+    else:
+        _set_optional(self._struct, &#34;from_tree&#34;, &#34;&#34;)
+    self._struct[&#34;to_node&#34;] = link.to_node.name
+    self._struct[&#34;to_socket&#34;] = link.to_socket.identifier
+    if hasattr(link.to_node, &#39;node_tree&#39;):
+        _set_optional(self._struct, &#34;to_tree&#34;, link.to_node.node_tree.name)
+    elif link.to_node.bl_idname == &#39;NodeGroupOutput&#39;:
+        _set_optional(self._struct, &#34;to_tree&#34;, link.id_data.name)
+    else:
+        _set_optional(self._struct, &#34;to_tree&#34;, &#34;&#34;)
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.MaterialStruct"><code class="flex name class">
+<span>class <span class="ident">MaterialStruct</span></span>
+<span>(</span><span>name, logger=None, structure=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Default structure for materials. Include only its name for now.
+If a Blender file does not posses the material the empty material will be generated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaterialStruct(Struct):
+    &#34;&#34;&#34;Default structure for materials. Include only its name for now.
+    If a Blender file does not posses the material the empty material will be generated&#34;&#34;&#34;
+    # this structure can be more complex if we want to save state of the material tree
+    type = StrTypes.MATERIAL
+
+    def __init__(self, name, logger=None, structure=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, mat, factories, dependencies):
+        # probably something will be added here in the future
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        material = bpy.data.materials.get(self.name)
+        if material is None:
+            material = bpy.data.materials.new(self.name)
+        imported_structs[(StrTypes.MATERIAL, &#39;&#39;, self.name)] = material.name</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.MaterialStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.MaterialStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, factories, imported_structs):
+    material = bpy.data.materials.get(self.name)
+    if material is None:
+        material = bpy.data.materials.new(self.name)
+    imported_structs[(StrTypes.MATERIAL, &#39;&#39;, self.name)] = material.name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.MaterialStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, mat, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, mat, factories, dependencies):
+    # probably something will be added here in the future
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.NodePresetFileStruct"><code class="flex name class">
+<span>class <span class="ident">NodePresetFileStruct</span></span>
+<span>(</span><span>name=None, logger=None, structure=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import one node properties and sockets</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NodePresetFileStruct(Struct):
+    &#34;&#34;&#34;Export/import one node properties and sockets&#34;&#34;&#34;
+    def __init__(self, name=None, logger=None, structure=None):
+        default_struct = {
+            &#34;export_version&#34;: str(self.version),
+            &#34;node&#34;: dict(),
+        }
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, node):
+        factories = StructFactory.grab_from_module()
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        struct = factories.node(node.name, self.logger)
+        self._struct[&#34;node&#34;][node.name] = struct.export(node, factories, dependencies)
+
+        while dependencies:
+            block_type, block_name = dependencies.pop()
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
+
+        return self._struct
+
+    def build(self, node):
+        tree = node.id_data
+        with tree.init_tree():
+
+            factories = StructFactory.grab_from_module()
+            imported_structs: OldNewNames = dict()
+            trees_to_build = []
+
+            # initialize trees and build other data block types
+            for struct_type, block_name, raw_struct in self._data_blocks_reader():
+                if struct_type == StrTypes.TREE:  # in case it was group node
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    # all data block except node trees
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
+
+            for tree_struct in trees_to_build:
+                new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
+
+            # now it&#39;s time to update the node, we have to save its links first because they will be removed
+            links = []
+            for link in _ordered_links(tree):
+                if link.from_node.name == node.name or link.to_node.name == node.name:
+                    link_struct = factories.link(None, self.logger)
+                    link_struct.export(link, factories, [])
+                    links.append(link_struct)
+
+            # recreate node from scratch, this need for resetting all its properties to default
+            node_name, raw_struct = next(iter(self._struct[&#34;node&#34;].items()))
+            node_struct = factories.node(node_name, self.logger, raw_struct)
+            location = node.location[:]  # without copying it looks like gives straight references to memory
+            tree.nodes.remove(node)
+            node = tree.nodes.new(node_struct.read_bl_type())
+            node.name = node_name
+            node.select = True
+            tree.nodes.active = node
+            imported_structs[StrTypes.NODE, tree.name, node_name] = node.name
+
+            # all nodes should be as if they was imported with new names before linking
+            for node in tree.nodes:
+                imported_structs[StrTypes.NODE, tree.name, node.name] = node.name
+
+            # in case the node is inside group tree it should be also imported with its sockets
+            # to be able connect links to group out/in nodes
+            imported_structs[StrTypes.TREE, &#39;&#39;, tree.name] = tree.name
+            for sock in chain(tree.inputs, tree.outputs):
+                imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
+
+            # import the node and rebuild the links if possible
+            node_struct.build(node, factories, imported_structs)
+            node.location = location  # return to initial position, it has to be after node build
+            for link_struct in links:
+                try:
+                    link_struct.build(tree, factories, imported_structs)
+                except LookupError:  # the node seems has different sockets
+                    pass
+            # how it should work with group node links is not clear
+            # because they are bound to identifiers of the group tree input outputs
+            # for now breaking links will be considered as desired behaviour
+
+        node.process_node(bpy.context)
+        return node
+
+    def _data_blocks_reader(self):
+        struct_type: StrTypes
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
+                with self.logger.add_fail(&#34;Reading data blocks&#34;, f&#34;Type: {struct_type_name}&#34;):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.NodePresetFileStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.NodePresetFileStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, node):
+    tree = node.id_data
+    with tree.init_tree():
+
+        factories = StructFactory.grab_from_module()
+        imported_structs: OldNewNames = dict()
+        trees_to_build = []
+
+        # initialize trees and build other data block types
+        for struct_type, block_name, raw_struct in self._data_blocks_reader():
+            if struct_type == StrTypes.TREE:  # in case it was group node
+                tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                tree_struct.build_interface(data_block, factories, imported_structs)
+                imported_structs[(struct_type, &#39;&#39;, block_name)] = data_block.name
+                trees_to_build.append(tree_struct)
+            else:
+                # all data block except node trees
+                block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                block_struct.build(factories, imported_structs)
+
+        for tree_struct in trees_to_build:
+            new_name = imported_structs[StrTypes.TREE, &#39;&#39;, tree_struct.name]
+            data_block = bpy.data.node_groups[new_name]
+            tree_struct.build(data_block, factories, imported_structs)
+
+        # now it&#39;s time to update the node, we have to save its links first because they will be removed
+        links = []
+        for link in _ordered_links(tree):
+            if link.from_node.name == node.name or link.to_node.name == node.name:
+                link_struct = factories.link(None, self.logger)
+                link_struct.export(link, factories, [])
+                links.append(link_struct)
+
+        # recreate node from scratch, this need for resetting all its properties to default
+        node_name, raw_struct = next(iter(self._struct[&#34;node&#34;].items()))
+        node_struct = factories.node(node_name, self.logger, raw_struct)
+        location = node.location[:]  # without copying it looks like gives straight references to memory
+        tree.nodes.remove(node)
+        node = tree.nodes.new(node_struct.read_bl_type())
+        node.name = node_name
+        node.select = True
+        tree.nodes.active = node
+        imported_structs[StrTypes.NODE, tree.name, node_name] = node.name
+
+        # all nodes should be as if they was imported with new names before linking
+        for node in tree.nodes:
+            imported_structs[StrTypes.NODE, tree.name, node.name] = node.name
+
+        # in case the node is inside group tree it should be also imported with its sockets
+        # to be able connect links to group out/in nodes
+        imported_structs[StrTypes.TREE, &#39;&#39;, tree.name] = tree.name
+        for sock in chain(tree.inputs, tree.outputs):
+            imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
+
+        # import the node and rebuild the links if possible
+        node_struct.build(node, factories, imported_structs)
+        node.location = location  # return to initial position, it has to be after node build
+        for link_struct in links:
+            try:
+                link_struct.build(tree, factories, imported_structs)
+            except LookupError:  # the node seems has different sockets
+                pass
+        # how it should work with group node links is not clear
+        # because they are bound to identifiers of the group tree input outputs
+        # for now breaking links will be considered as desired behaviour
+
+    node.process_node(bpy.context)
+    return node</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.NodePresetFileStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, node):
+    factories = StructFactory.grab_from_module()
+    dependencies: List[Tuple[BPYPointers, str]] = []
+
+    struct = factories.node(node.name, self.logger)
+    self._struct[&#34;node&#34;][node.name] = struct.export(node, factories, dependencies)
+
+    while dependencies:
+        block_type, block_name = dependencies.pop()
+        struct_type = StrTypes.get_type(block_type)
+        if struct_type.name not in self._struct:
+            self._struct[struct_type.name] = dict()
+        if block_name not in self._struct[struct_type.name]:
+            factory = factories.get_factory(struct_type)
+            data_block = block_type.collection[block_name]
+            structure = factory(block_name, self.logger).export(data_block, factories, dependencies)
+            self._struct[struct_type.name][block_name] = structure
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.NodeStruct"><code class="flex name class">
+<span>class <span class="ident">NodeStruct</span></span>
+<span>(</span><span>name: str, logger: FailsLog, structure: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import node properties, attributes, sockets.
+It can call save_to_json and load_from_json methods of a node if one has them
+The methods will get empty dictionary for storing advanced properties</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NodeStruct(Struct):
+    &#34;&#34;&#34;Export/import node properties, attributes, sockets. 
+    It can call save_to_json and load_from_json methods of a node if one has them
+    The methods will get empty dictionary for storing advanced properties&#34;&#34;&#34;
+    type = StrTypes.NODE
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_structure = {
+            &#34;attributes&#34;: {
+                &#34;location&#34;: (0, 0),
+                &#34;height&#34;: None,
+                &#34;width&#34;: None,
+                &#34;label&#34;: &#39;&#39;,
+                &#34;hide&#34;: False,
+                &#34;color&#34;: (0, 0, 0),
+                &#34;use_custom_color&#34;: False,
+                &#34;parent&#34;: None,
+            },
+            &#34;properties&#34;: dict(),
+            &#34;advanced_properties&#34;: dict(),
+            &#34;inputs&#34;: dict(),
+            &#34;outputs&#34;: dict(),
+            &#34;bl_idname&#34;: &#34;&#34;
+        }
+        self._struct = structure or default_structure
+        self.name = name
+        self.logger = logger
+
+    def export(self, node, factories: StructFactory, dependencies) -&gt; dict:
+        # add_mandatory_attributes
+        self._struct[&#39;bl_idname&#39;] = node.bl_idname
+        self._struct[&#34;attributes&#34;][&#39;location&#39;] = recursive_framed_location_finder(node, node.location[:])
+
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;height&#39;, node.height, node.height != 100.0)
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;width&#39;, node.width, node.width != 140.0)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;label&#34;, node.label)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;hide&#34;, node.hide)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;use_custom_color&#34;, node.use_custom_color)
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, node.color[:], node.use_custom_color)
+        if node.parent:  # the node is inside of a frame node
+            prop = BPYProperty(node, &#34;parent&#34;)
+            raw_struct = factories.prop(&#34;parent&#34;, self.logger).export(prop, factories, dependencies)
+            self._struct[&#34;attributes&#34;][&#34;parent&#34;] = raw_struct
+        else:
+            del self._struct[&#34;attributes&#34;][&#34;parent&#34;]
+
+        # add non default node properties
+        for prop_name in node.keys():
+            prop = BPYProperty(node, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        # all sockets should be kept in a file because it&#39;s possible to create UI
+        # where sockets would be defined by pressing buttons for example like in the node group interface.
+        # there is no sense of exporting information about sockets of group input and output nodes
+        # they are totally controlled by Blender update system.
+        if node.bl_idname not in [&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;]:
+            for socket in node.inputs:
+                raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+                self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+            for socket in node.outputs:
+                raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+                self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+        _set_optional(self._struct, &#34;inputs&#34;, self._struct[&#34;inputs&#34;])
+        _set_optional(self._struct, &#34;outputs&#34;, self._struct[&#34;outputs&#34;])
+
+        if hasattr(node, &#39;save_to_json&#39;):
+            node.save_to_json(self._struct[&#34;advanced_properties&#34;])
+
+        _set_optional(self._struct, &#34;advanced_properties&#34;, self._struct[&#34;advanced_properties&#34;])
+
+        return self._struct
+
+    def build(self, node, factories: StructFactory, imported_data: OldNewNames):
+        for attr_name, attr_value in self._struct[&#34;attributes&#34;].items():
+            with self.logger.add_fail(&#34;Setting node attribute&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(node, factories, imported_data)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Setting node property&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
+
+        # does not trust to correctness of socket collections created by an init method.
+        # clearing sockets calls update methods of the node and the tree.
+        # the methods are called again each time new socket is added.
+        # if group node has sockets with identifiers which are not the same as identifiers of group tree sockets
+        # then when first node will be added to the group tree (or any other changes in the group tree)
+        # it will cause replacing of all sockets with wrong identifiers in the group node.
+        # clearing and adding sockets of Group input and Group output nodes
+        # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
+        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+            node.inputs.clear()
+        for sock_identifier, raw_struct in self._struct.get(&#34;inputs&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Add in socket&#34;,
+                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+            node.outputs.clear()
+        for sock_identifier, raw_struct in self._struct.get(&#34;outputs&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Add out socket&#34;,
+                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
+        if hasattr(node, &#39;load_from_json&#39;):
+            with self.logger.add_fail(&#34;Setting advance node properties&#34;,
+                                      f&#39;Tree: {node.id_data.name}, Node: {node.name}&#39;):
+                node.load_from_json(self._struct.get(&#34;advanced_properties&#34;, dict()), self.version)
+
+    def read_bl_type(self):
+        return self._struct[&#39;bl_idname&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.NodeStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.NodeStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, node, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, imported_data: OldNewNames)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, node, factories: StructFactory, imported_data: OldNewNames):
+    for attr_name, attr_value in self._struct[&#34;attributes&#34;].items():
+        with self.logger.add_fail(&#34;Setting node attribute&#34;,
+                                  f&#39;Tree: {node.id_data.name}, Node: {node.name}, attr: {attr_name}&#39;):
+            factories.prop(attr_name, self.logger, attr_value).build(node, factories, imported_data)
+
+    for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+        with self.logger.add_fail(&#34;Setting node property&#34;,
+                                  f&#39;Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}&#39;):
+            factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
+
+    # does not trust to correctness of socket collections created by an init method.
+    # clearing sockets calls update methods of the node and the tree.
+    # the methods are called again each time new socket is added.
+    # if group node has sockets with identifiers which are not the same as identifiers of group tree sockets
+    # then when first node will be added to the group tree (or any other changes in the group tree)
+    # it will cause replacing of all sockets with wrong identifiers in the group node.
+    # clearing and adding sockets of Group input and Group output nodes
+    # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
+    if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+        node.inputs.clear()
+    for sock_identifier, raw_struct in self._struct.get(&#34;inputs&#34;, dict()).items():
+        with self.logger.add_fail(&#34;Add in socket&#34;,
+                                  f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+            factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+    if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+        node.outputs.clear()
+    for sock_identifier, raw_struct in self._struct.get(&#34;outputs&#34;, dict()).items():
+        with self.logger.add_fail(&#34;Add out socket&#34;,
+                                  f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+            factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
+    if hasattr(node, &#39;load_from_json&#39;):
+        with self.logger.add_fail(&#34;Setting advance node properties&#34;,
+                                  f&#39;Tree: {node.id_data.name}, Node: {node.name}&#39;):
+            node.load_from_json(self._struct.get(&#34;advanced_properties&#34;, dict()), self.version)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.NodeStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, node, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, dependencies) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, node, factories: StructFactory, dependencies) -&gt; dict:
+    # add_mandatory_attributes
+    self._struct[&#39;bl_idname&#39;] = node.bl_idname
+    self._struct[&#34;attributes&#34;][&#39;location&#39;] = recursive_framed_location_finder(node, node.location[:])
+
+    _set_optional(self._struct[&#34;attributes&#34;], &#39;height&#39;, node.height, node.height != 100.0)
+    _set_optional(self._struct[&#34;attributes&#34;], &#39;width&#39;, node.width, node.width != 140.0)
+    _set_optional(self._struct[&#34;attributes&#34;], &#34;label&#34;, node.label)
+    _set_optional(self._struct[&#34;attributes&#34;], &#34;hide&#34;, node.hide)
+    _set_optional(self._struct[&#34;attributes&#34;], &#34;use_custom_color&#34;, node.use_custom_color)
+    _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, node.color[:], node.use_custom_color)
+    if node.parent:  # the node is inside of a frame node
+        prop = BPYProperty(node, &#34;parent&#34;)
+        raw_struct = factories.prop(&#34;parent&#34;, self.logger).export(prop, factories, dependencies)
+        self._struct[&#34;attributes&#34;][&#34;parent&#34;] = raw_struct
+    else:
+        del self._struct[&#34;attributes&#34;][&#34;parent&#34;]
+
+    # add non default node properties
+    for prop_name in node.keys():
+        prop = BPYProperty(node, prop_name)
+        if prop.is_valid and prop.is_to_save:
+            raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+            if raw_struct is not None:
+                self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+    _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+    # all sockets should be kept in a file because it&#39;s possible to create UI
+    # where sockets would be defined by pressing buttons for example like in the node group interface.
+    # there is no sense of exporting information about sockets of group input and output nodes
+    # they are totally controlled by Blender update system.
+    if node.bl_idname not in [&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;]:
+        for socket in node.inputs:
+            raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+        for socket in node.outputs:
+            raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+    _set_optional(self._struct, &#34;inputs&#34;, self._struct[&#34;inputs&#34;])
+    _set_optional(self._struct, &#34;outputs&#34;, self._struct[&#34;outputs&#34;])
+
+    if hasattr(node, &#39;save_to_json&#39;):
+        node.save_to_json(self._struct[&#34;advanced_properties&#34;])
+
+    _set_optional(self._struct, &#34;advanced_properties&#34;, self._struct[&#34;advanced_properties&#34;])
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.PropertyStruct"><code class="flex name class">
+<span>class <span class="ident">PropertyStruct</span></span>
+<span>(</span><span>name: str, logger: FailsLog, structure: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import properties. It includes specific about managing of Blender properties
+All properties are supported.
+Structure of the class can be just a value or usual dictionary (in case of a pointer property)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PropertyStruct(Struct):
+    &#34;&#34;&#34;Export/import properties. It includes specific about managing of Blender properties
+    All properties are supported.
+    Structure of the class can be just a value or usual dictionary (in case of a pointer property)&#34;&#34;&#34;
+    type = StrTypes.PROP
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_struct = {
+            &#34;type&#34;: &#34;&#34;,
+            &#34;value&#34;: &#34;&#34;
+        }
+        self._struct = structure if structure is not None else default_struct
+        self.name = name
+        self.logger = logger
+
+    def export(self, prop: BPYProperty, _, dependencies):
+        &#34;&#34;&#34;It can return just value like float, bool etc or a structure&#34;&#34;&#34;
+        if prop.is_valid and prop.is_to_save:
+            if prop.type == &#39;COLLECTION&#39;:
+                return self._export_collection_values(prop, dependencies)
+            if prop.type == &#39;POINTER&#39;:
+                # skip empty and unsupported pointers
+                if prop.value is not None and StrTypes.is_supported_block(prop.pointer_type):
+                    self._struct[&#34;type&#34;] = prop.pointer_type.name
+                    self._struct[&#34;value&#34;] = prop.value
+                    if prop.data_collection is not None:  # skipping nodes
+                        dependencies.append((prop.pointer_type, prop.value))
+                    return self._struct
+                else:
+                    return None
+            else:
+                # default values should be persistent per Sverchok releases - no need to save
+                if prop.value != prop.default_value:
+                    return prop.value
+                else:
+                    return None
+
+    def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+        prop = BPYProperty(obj, self.name)
+
+        # this is structure (pointer property)
+        if isinstance(self._struct, dict):
+            pointer_type = BPYPointers[self._struct[&#34;type&#34;]]
+            old_obj_name = self._struct[&#34;value&#34;]
+            if pointer_type == BPYPointers.NODE:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), obj.id_data.name, old_obj_name)]
+                # this should work in case obj is a node or socket
+                # but in other cases probably extra information should be kept in the property structure
+                data_block = obj.id_data.nodes[new_name]
+            else:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), &#39;&#39;, old_obj_name)]
+                data_block = pointer_type.collection[new_name]
+            setattr(obj, self.name, data_block)
+
+        # this is collection property
+        elif prop.type == &#39;COLLECTION&#39;:
+            self._set_collection_values(obj, factories, imported_structs)
+
+        # this is property
+        elif prop.is_valid:
+            prop.value = self._struct
+
+        # this is attribute
+        else:
+            setattr(obj, self.name, self._struct)
+
+    def _export_collection_values(self, col_prop, dependencies):
+        collection = []
+        for item in col_prop.collection_to_list():
+            item_props = dict()
+            for prop in item:
+                raw_struct = PropertyStruct(prop.name, self.logger).export(prop, None, dependencies)
+                if raw_struct is not None:
+                    item_props[prop.name] = raw_struct 
+            collection.append(item_props)
+        return collection
+
+    def _set_collection_values(self, obj, factories, imported_structs):
+        &#34;&#34;&#34;Assign Python data to collection property&#34;&#34;&#34;
+        collection = getattr(obj, self.name)
+        # it is possible that collection is not empty in case a node added something into it during initialization
+        # but the property always consider the collection property to be empty
+        collection.clear()
+        for item_index, item_values in enumerate(self._struct):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
+
+            for prop_name, prop_value in item_values.items():
+                factories.prop(prop_name, self.logger, prop_value).build(item, factories, imported_structs)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.PropertyStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.PropertyStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, obj, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, imported_structs: OldNewNames)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+    prop = BPYProperty(obj, self.name)
+
+    # this is structure (pointer property)
+    if isinstance(self._struct, dict):
+        pointer_type = BPYPointers[self._struct[&#34;type&#34;]]
+        old_obj_name = self._struct[&#34;value&#34;]
+        if pointer_type == BPYPointers.NODE:
+            new_name = imported_structs[(StrTypes.get_type(pointer_type), obj.id_data.name, old_obj_name)]
+            # this should work in case obj is a node or socket
+            # but in other cases probably extra information should be kept in the property structure
+            data_block = obj.id_data.nodes[new_name]
+        else:
+            new_name = imported_structs[(StrTypes.get_type(pointer_type), &#39;&#39;, old_obj_name)]
+            data_block = pointer_type.collection[new_name]
+        setattr(obj, self.name, data_block)
+
+    # this is collection property
+    elif prop.type == &#39;COLLECTION&#39;:
+        self._set_collection_values(obj, factories, imported_structs)
+
+    # this is property
+    elif prop.is_valid:
+        prop.value = self._struct
+
+    # this is attribute
+    else:
+        setattr(obj, self.name, self._struct)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.PropertyStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, prop: BPYProperty, _, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It can return just value like float, bool etc or a structure</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, prop: BPYProperty, _, dependencies):
+    &#34;&#34;&#34;It can return just value like float, bool etc or a structure&#34;&#34;&#34;
+    if prop.is_valid and prop.is_to_save:
+        if prop.type == &#39;COLLECTION&#39;:
+            return self._export_collection_values(prop, dependencies)
+        if prop.type == &#39;POINTER&#39;:
+            # skip empty and unsupported pointers
+            if prop.value is not None and StrTypes.is_supported_block(prop.pointer_type):
+                self._struct[&#34;type&#34;] = prop.pointer_type.name
+                self._struct[&#34;value&#34;] = prop.value
+                if prop.data_collection is not None:  # skipping nodes
+                    dependencies.append((prop.pointer_type, prop.value))
+                return self._struct
+            else:
+                return None
+        else:
+            # default values should be persistent per Sverchok releases - no need to save
+            if prop.value != prop.default_value:
+                return prop.value
+            else:
+                return None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.SocketStruct"><code class="flex name class">
+<span>class <span class="ident">SocketStruct</span></span>
+<span>(</span><span>identifier, logger: FailsLog, structure: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import socket properties, attributes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SocketStruct(Struct):
+    &#34;&#34;&#34;Export/import socket properties, attributes&#34;&#34;&#34;
+    type = StrTypes.SOCK
+
+    def __init__(self, identifier, logger: FailsLog, structure: dict = None):
+        # socket names can&#39;t be used here because sockets can have the same names (unlike trees or nodes)
+        default_struct = {
+            &#34;bl_idname&#34;: &#34;&#34;,
+            &#34;name&#34;: &#34;&#34;,
+            &#34;tree&#34;: &#34;&#34;,  # util information for group nodes about the name of their node tree
+            &#34;attributes&#34;: {
+                &#34;hide&#34;: False,
+            },
+            &#34;properties&#34;: dict(),
+        }
+        self.identifier = identifier
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, socket, factories, dependencies):
+        self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+        self._struct[&#39;name&#39;] = socket.name
+
+        _set_optional(self._struct, &#39;tree&#39;, socket.node.node_tree.name if hasattr(socket.node, &#39;node_tree&#39;) else &#39;&#39;)
+        _set_optional(self._struct[&#34;attributes&#34;], &#39;hide&#39;, socket.hide)
+        _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+        return self._struct
+
+    def build(self, sockets, factories, imported_structs):
+        name = self._struct[&#39;name&#39;]
+        group_tree_name = self._struct.get(&#39;tree&#39;)
+
+        # check whether the socket is of group tree
+        if group_tree_name is not None:
+            # identifier of the socket should be always the same as identifier of the interface socket of the group tree
+            # otherwise it will be recreated by Blender update system and its links (and properties?) will be lost
+            new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, group_tree_name]
+            identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, self.identifier]
+        else:
+            identifier = self.identifier
+
+        # create the socket in the method because identifier(name) is hidden is shown only inside the class
+        socket = sockets.new(self.read_bl_type(), name, identifier=identifier)
+
+        for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+            with self.logger.add_fail(
+                    &#34;Setting socket attribute&#34;,  # socket.node can be None sometimes 0_o
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(  # I think when socket is just created socket.node is None due Blender limitation
+                    &#34;Setting socket property&#34;,
+                    f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
+
+    def read_bl_type(self) -&gt; str:
+        with self.logger.add_fail(&#34;Reading socket bl_idname&#34;):
+            return self._struct[&#39;bl_idname&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.SocketStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.SocketStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, sockets, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, sockets, factories, imported_structs):
+    name = self._struct[&#39;name&#39;]
+    group_tree_name = self._struct.get(&#39;tree&#39;)
+
+    # check whether the socket is of group tree
+    if group_tree_name is not None:
+        # identifier of the socket should be always the same as identifier of the interface socket of the group tree
+        # otherwise it will be recreated by Blender update system and its links (and properties?) will be lost
+        new_node_tree_name = imported_structs[StrTypes.TREE, &#39;&#39;, group_tree_name]
+        identifier = imported_structs[StrTypes.INTERFACE, new_node_tree_name, self.identifier]
+    else:
+        identifier = self.identifier
+
+    # create the socket in the method because identifier(name) is hidden is shown only inside the class
+    socket = sockets.new(self.read_bl_type(), name, identifier=identifier)
+
+    for attr_name, attr_value in self._struct.get(&#34;attributes&#34;, dict()).items():
+        with self.logger.add_fail(
+                &#34;Setting socket attribute&#34;,  # socket.node can be None sometimes 0_o
+                f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}&#39;):
+            factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+    for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+        with self.logger.add_fail(  # I think when socket is just created socket.node is None due Blender limitation
+                &#34;Setting socket property&#34;,
+                f&#39;Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}&#39;):
+            factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.SocketStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, socket, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, socket, factories, dependencies):
+    self._struct[&#39;bl_idname&#39;] = socket.bl_idname
+    self._struct[&#39;name&#39;] = socket.name
+
+    _set_optional(self._struct, &#39;tree&#39;, socket.node.node_tree.name if hasattr(socket.node, &#39;node_tree&#39;) else &#39;&#39;)
+    _set_optional(self._struct[&#34;attributes&#34;], &#39;hide&#39;, socket.hide)
+    _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
+
+    for prop_name in socket.keys():
+        prop = BPYProperty(socket, prop_name)
+        if prop.is_valid and prop.is_to_save:
+            raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+            if raw_struct is not None:
+                self._struct[&#34;properties&#34;][prop.name] = raw_struct
+    _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes"><code class="flex name class">
+<span>class <span class="ident">StrTypes</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>All structures should have their type (except file structures =D)
+the type helps to identify their purpose
+for example for exporting nodes only structures with NODE type can be used</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StrTypes(Enum):
+    &#34;&#34;&#34;All structures should have their type (except file structures =D)
+    the type helps to identify their purpose
+    for example for exporting nodes only structures with NODE type can be used&#34;&#34;&#34;
+
+    TREE = auto()
+    NODE = auto()
+    SOCK = auto()
+    INTERFACE = auto()  # node groups sockets
+    LINK = auto()
+    PROP = auto()
+    MATERIAL = auto()
+    COLLECTION = auto()
+    IMAGE = auto()
+    TEXTURE = auto()
+
+    def get_bpy_pointer(self) -&gt; BPYPointers:
+        mapping = {
+            StrTypes.TREE: BPYPointers.NODE_TREE,
+            StrTypes.NODE: BPYPointers.NODE,
+            StrTypes.MATERIAL: BPYPointers.MATERIAL,
+            StrTypes.COLLECTION: BPYPointers.COLLECTION,
+            StrTypes.IMAGE: BPYPointers.IMAGE,
+            StrTypes.TEXTURE: BPYPointers.TEXTURE,
+        }
+        if self not in mapping:
+            raise TypeError(f&#39;Given StrType: {self} is not a data block&#39;)
+        return mapping[self]
+
+    @classmethod
+    def get_type(cls, block_type: BPYPointers) -&gt; StrTypes:
+        mapping = {
+            BPYPointers.NODE_TREE: StrTypes.TREE,
+            BPYPointers.NODE: StrTypes.NODE,
+            BPYPointers.MATERIAL: StrTypes.MATERIAL,
+            BPYPointers.COLLECTION: StrTypes.COLLECTION,
+            BPYPointers.IMAGE: StrTypes.IMAGE,
+            BPYPointers.TEXTURE: StrTypes.TEXTURE,
+        }
+        if block_type not in mapping:
+            raise TypeError(f&#39;Given block type: {block_type} is not among supported: {mapping.keys()}&#39;)
+        return mapping[block_type]
+
+    @classmethod
+    def is_supported_block(cls, block_type: BPYPointers) -&gt; bool:
+        try:
+            cls.get_type(block_type)
+            return True
+        except TypeError:
+            return False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.COLLECTION"><code class="name">var <span class="ident">COLLECTION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.IMAGE"><code class="name">var <span class="ident">IMAGE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.INTERFACE"><code class="name">var <span class="ident">INTERFACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.LINK"><code class="name">var <span class="ident">LINK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.MATERIAL"><code class="name">var <span class="ident">MATERIAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.NODE"><code class="name">var <span class="ident">NODE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.PROP"><code class="name">var <span class="ident">PROP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.SOCK"><code class="name">var <span class="ident">SOCK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.TEXTURE"><code class="name">var <span class="ident">TEXTURE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.TREE"><code class="name">var <span class="ident">TREE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.get_type"><code class="name flex">
+<span>def <span class="ident">get_type</span></span>(<span>block_type: BPYPointers) ‑> <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def get_type(cls, block_type: BPYPointers) -&gt; StrTypes:
+    mapping = {
+        BPYPointers.NODE_TREE: StrTypes.TREE,
+        BPYPointers.NODE: StrTypes.NODE,
+        BPYPointers.MATERIAL: StrTypes.MATERIAL,
+        BPYPointers.COLLECTION: StrTypes.COLLECTION,
+        BPYPointers.IMAGE: StrTypes.IMAGE,
+        BPYPointers.TEXTURE: StrTypes.TEXTURE,
+    }
+    if block_type not in mapping:
+        raise TypeError(f&#39;Given block type: {block_type} is not among supported: {mapping.keys()}&#39;)
+    return mapping[block_type]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.is_supported_block"><code class="name flex">
+<span>def <span class="ident">is_supported_block</span></span>(<span>block_type: BPYPointers) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def is_supported_block(cls, block_type: BPYPointers) -&gt; bool:
+    try:
+        cls.get_type(block_type)
+        return True
+    except TypeError:
+        return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.StrTypes.get_bpy_pointer"><code class="name flex">
+<span>def <span class="ident">get_bpy_pointer</span></span>(<span>self) ‑> <a title="sverchok.utils.handle_blender_data.BPYPointers" href="handle_blender_data.html#sverchok.utils.handle_blender_data.BPYPointers">BPYPointers</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bpy_pointer(self) -&gt; BPYPointers:
+    mapping = {
+        StrTypes.TREE: BPYPointers.NODE_TREE,
+        StrTypes.NODE: BPYPointers.NODE,
+        StrTypes.MATERIAL: BPYPointers.MATERIAL,
+        StrTypes.COLLECTION: BPYPointers.COLLECTION,
+        StrTypes.IMAGE: BPYPointers.IMAGE,
+        StrTypes.TEXTURE: BPYPointers.TEXTURE,
+    }
+    if self not in mapping:
+        raise TypeError(f&#39;Given StrType: {self} is not a data block&#39;)
+    return mapping[self]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.Struct"><code class="flex name class">
+<span>class <span class="ident">Struct</span></span>
+<span>(</span><span>name: Optional[str], logger: FailsLog, struct: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>All structures should include a dictionary with description of the structure organization,
+methods for exporting and importing related to their purpose data
+It's possible to override version inside children classes but
+in this case its version should be kept in its dictionary
+And the way to figure it out which structure should be used is not implemented for such case.
+So if new version is required it should be changed in this class
+this information can be used in a file structure to find appropriate other structures</p>
+<p>Example:
+class FileStruct:
+def build(tree):
+if self._struct["export_version"] &lt; 1.1:
+factories.node = NodeStruct
+else:
+factories.node = NewNodeStruct</p>
+<p>Or version can be used like this:
+class NodeStruct:
+def build(node, factories, imported):
+if self.version &lt; 1.1:
+node.load_from_json(self._struct["advance_properties"]
+else:
+pass
+but in this case FileStruct should implement this - Struct.version = self._struct["export_version"] (hmm&hellip; )</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Struct(ABC):
+    &#34;&#34;&#34;All structures should include a dictionary with description of the structure organization,
+    methods for exporting and importing related to their purpose data
+    It&#39;s possible to override version inside children classes but
+    in this case its version should be kept in its dictionary
+    And the way to figure it out which structure should be used is not implemented for such case.
+    So if new version is required it should be changed in this class
+    this information can be used in a file structure to find appropriate other structures
+
+    Example:
+    class FileStruct:
+        def build(tree):
+            if self._struct[&#34;export_version&#34;] &lt; 1.1:
+                factories.node = NodeStruct
+            else:
+                factories.node = NewNodeStruct
+
+    Or version can be used like this:
+    class NodeStruct:
+        def build(node, factories, imported):
+            if self.version &lt; 1.1:
+                node.load_from_json(self._struct[&#34;advance_properties&#34;]
+            else:
+                pass
+    but in this case FileStruct should implement this - Struct.version = self._struct[&#34;export_version&#34;] (hmm... )
+    &#34;&#34;&#34;
+    # I was trying to make API of all abstract method the same between child classes but it looks it&#39;s not possible
+    # for example to build a node we can send to method a tree where the node should be duilded
+    version = 1.0
+    type: StrTypes = None  # should be overridden
+
+    @abstractmethod
+    def __init__(self, name: Optional[str], logger: FailsLog, struct: dict = None):
+        ...
+
+    @abstractmethod
+    def export(self, data_block, struct_factories: StructFactory, dependencies: List[Tuple[BPYPointers, str]]) -&gt; dict:
+        ...
+
+    @abstractmethod
+    def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+        ...
+
+    def read_bl_type(self) -&gt; str:
+        &#34;&#34;&#34;typically should return bl_idname of the structure&#34;&#34;&#34;
+        return None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.CollectionStruct" href="#sverchok.utils.sv_json_struct.CollectionStruct">CollectionStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.FileStruct" href="#sverchok.utils.sv_json_struct.FileStruct">FileStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.ImageStruct" href="#sverchok.utils.sv_json_struct.ImageStruct">ImageStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.InterfaceStruct" href="#sverchok.utils.sv_json_struct.InterfaceStruct">InterfaceStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.LinkStruct" href="#sverchok.utils.sv_json_struct.LinkStruct">LinkStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.MaterialStruct" href="#sverchok.utils.sv_json_struct.MaterialStruct">MaterialStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.NodePresetFileStruct" href="#sverchok.utils.sv_json_struct.NodePresetFileStruct">NodePresetFileStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.NodeStruct" href="#sverchok.utils.sv_json_struct.NodeStruct">NodeStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.PropertyStruct" href="#sverchok.utils.sv_json_struct.PropertyStruct">PropertyStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.SocketStruct" href="#sverchok.utils.sv_json_struct.SocketStruct">SocketStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.TextureStruct" href="#sverchok.utils.sv_json_struct.TextureStruct">TextureStruct</a></li>
+<li><a title="sverchok.utils.sv_json_struct.TreeStruct" href="#sverchok.utils.sv_json_struct.TreeStruct">TreeStruct</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.Struct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.Struct.version"><code class="name">var <span class="ident">version</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.Struct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, obj, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, imported_structs: OldNewNames)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
+    ...</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.Struct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, data_block, struct_factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, dependencies: List[Tuple[BPYPointers, str]]) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def export(self, data_block, struct_factories: StructFactory, dependencies: List[Tuple[BPYPointers, str]]) -&gt; dict:
+    ...</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.Struct.read_bl_type"><code class="name flex">
+<span>def <span class="ident">read_bl_type</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>typically should return bl_idname of the structure</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_bl_type(self) -&gt; str:
+    &#34;&#34;&#34;typically should return bl_idname of the structure&#34;&#34;&#34;
+    return None</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.StructFactory"><code class="flex name class">
+<span>class <span class="ident">StructFactory</span></span>
+<span>(</span><span>factories: List[Type[<a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a>]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This is collection of struct classes
+The idea is to put all structs into the class which should be used during import/export of a tree
+other structures can use other ones to include their in the process
+For example there could be several classes which can build a node differently
+before starting of the serialization process we should choose which node struct to use
+then a tree structure can use the node structure that we chose</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StructFactory:
+    &#34;&#34;&#34;This is collection of struct classes
+    The idea is to put all structs into the class which should be used during import/export of a tree
+    other structures can use other ones to include their in the process
+    For example there could be several classes which can build a node differently
+    before starting of the serialization process we should choose which node struct to use
+    then a tree structure can use the node structure that we chose&#34;&#34;&#34;
+
+    # it&#39;s possible to use version factory in the code to make the code more specific
+    # if struct_factories.link.version == 0.2:
+    def __init__(self, factories: List[Type[Struct]]):
+        self._factory_names = {
+            StrTypes.TREE: &#39;tree&#39;,
+            StrTypes.NODE: &#39;node&#39;,
+            StrTypes.SOCK: &#39;sock&#39;,
+            StrTypes.INTERFACE: &#39;interface&#39;,
+            StrTypes.LINK: &#39;link&#39;,
+            StrTypes.PROP: &#39;prop&#39;,
+            StrTypes.MATERIAL: &#39;material&#39;,
+            StrTypes.COLLECTION: &#39;collection&#39;,
+            StrTypes.IMAGE: &#39;image&#39;,
+            StrTypes.TEXTURE: &#39;texture&#39;,
+        }
+
+        self.tree: Optional[Type[Struct]] = None
+        self.node: Optional[Type[Struct]] = None
+        self.sock: Optional[Type[Struct]] = None
+        self.interface: Optional[Type[Struct]] = None
+        self.link: Optional[Type[Struct]] = None
+        self.prop: Optional[Type[Struct]] = None
+        self.material: Optional[Type[Struct]] = None
+        self.collection: Optional[Type[Struct]] = None
+        self.image: Optional[Type[Struct]] = None
+        self.texture: Optional[Type[Struct]] = None
+
+        for factory in factories:
+            if factory.type in self._factory_names:
+                factory_name = self._factory_names[factory.type]
+                setattr(self, factory_name, factory)
+            else:
+                raise TypeError(f&#39;Factory with type: {factory.type}&#39;
+                                f&#39; is not among supported: {self._factory_names.keys()}&#39;)
+
+    def get_factory(self, struct_type: StrTypes) -&gt; Type[Struct]:
+        if struct_type in self._factory_names:
+            factory_name = self._factory_names[struct_type]
+            return getattr(self, factory_name)
+        else:
+            raise TypeError(f&#39;Given struct type: {struct_type} is not among supported {self._factory_names.keys()}&#39;)
+
+    @classmethod
+    def grab_from_module(cls) -&gt; StructFactory:
+        &#34;&#34;&#34;Grab all factories in the module&#34;&#34;&#34;
+        factory_classes = []
+        module_classes = inspect.getmembers(sys.modules[__name__],
+                                            lambda member: inspect.isclass(member) and member.__module__ == __name__)
+        for class_name, module_class in module_classes:
+            if hasattr(module_class, &#39;type&#39;) and isinstance(module_class.type, StrTypes):
+                factory_classes.append(module_class)
+        return cls(factory_classes)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.StructFactory.grab_from_module"><code class="name flex">
+<span>def <span class="ident">grab_from_module</span></span>(<span>) ‑> <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Grab all factories in the module</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def grab_from_module(cls) -&gt; StructFactory:
+    &#34;&#34;&#34;Grab all factories in the module&#34;&#34;&#34;
+    factory_classes = []
+    module_classes = inspect.getmembers(sys.modules[__name__],
+                                        lambda member: inspect.isclass(member) and member.__module__ == __name__)
+    for class_name, module_class in module_classes:
+        if hasattr(module_class, &#39;type&#39;) and isinstance(module_class.type, StrTypes):
+            factory_classes.append(module_class)
+    return cls(factory_classes)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.StructFactory.get_factory"><code class="name flex">
+<span>def <span class="ident">get_factory</span></span>(<span>self, struct_type: <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a>) ‑> Type[<a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_factory(self, struct_type: StrTypes) -&gt; Type[Struct]:
+    if struct_type in self._factory_names:
+        factory_name = self._factory_names[struct_type]
+        return getattr(self, factory_name)
+    else:
+        raise TypeError(f&#39;Given struct type: {struct_type} is not among supported {self._factory_names.keys()}&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.TextureStruct"><code class="flex name class">
+<span>class <span class="ident">TextureStruct</span></span>
+<span>(</span><span>name, logger=None, struct=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Default texture structure. It will try to find existing texture in a Blender file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TextureStruct(Struct):
+    &#34;&#34;&#34;Default texture structure. It will try to find existing texture in a Blender file&#34;&#34;&#34;
+    type = StrTypes.TEXTURE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, texture, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # it could be convenient if importer could generate empty textures if necessary
+        texture = bpy.data.textures.get(self.name)
+        if texture is not None:
+            imported_structs[(StrTypes.TEXTURE, &#39;&#39;, self.name)] = texture.name</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.TextureStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.TextureStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, factories, imported_structs):
+    # it could be convenient if importer could generate empty textures if necessary
+    texture = bpy.data.textures.get(self.name)
+    if texture is not None:
+        imported_structs[(StrTypes.TEXTURE, &#39;&#39;, self.name)] = texture.name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.TextureStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, texture, factories, dependencies)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, texture, factories, dependencies):
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.TreeStruct"><code class="flex name class">
+<span>class <span class="ident">TreeStruct</span></span>
+<span>(</span><span>name: str, logger: FailsLog, structure: dict = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Export/import node, links, tree properties, tree sockets</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeStruct(Struct):
+    &#34;&#34;&#34;Export/import node, links, tree properties, tree sockets&#34;&#34;&#34;
+    type = StrTypes.TREE
+
+    def __init__(self, name: str, logger: FailsLog, structure: dict = None):
+        default_structure = {
+            &#34;nodes&#34;: dict(),
+            &#34;links&#34;: [],
+            &#34;inputs&#34;: dict(),
+            &#34;outputs&#34;: dict(),
+            &#34;properties&#34;: dict(),
+            &#34;bl_idname&#34;: &#34;&#34;,
+        }
+        self._struct = structure or default_structure
+        self.name = name
+        self.logger = logger
+
+    def export(self, tree, factories: StructFactory, dependencies) -&gt; dict:
+        for node in tree.nodes:
+            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+            self._struct[&#39;nodes&#39;][node.name] = raw_struct
+
+        for link in _ordered_links(tree):
+            self._struct[&#34;links&#34;].append(factories.link(None, self.logger).export(link, factories, dependencies))
+
+        for socket in tree.inputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+        for socket in tree.outputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+        for prop_name in tree.keys():
+            prop = BPYProperty(tree, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+        self._struct[&#34;bl_idname&#34;] = tree.bl_idname
+
+        if not self._struct[&#34;properties&#34;]:
+            del self._struct[&#34;properties&#34;]
+
+        return self._struct
+
+    def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+        &#34;&#34;&#34;Reads and generates nodes, links, dependent data blocks&#34;&#34;&#34;
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct[&#34;nodes&#34;].items():
+                with self.logger.add_fail(&#34;Init node&#34;, f&#34;Tree: {tree.name}, Node: {node_name}&#34;):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
+
+            for node_struct in node_structs:
+                with self.logger.add_fail(&#34;Build node&#34;, f&#34;Tree: {tree.name}, Node: {node_struct.name}&#34;):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
+
+            for raw_struct in self._struct[&#34;links&#34;]:
+                with self.logger.add_fail(&#34;Build link&#34;, f&#34;Tree: {tree.name}, Struct: {raw_struct}&#34;):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
+            for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+                with self.logger.add_fail(&#34;Setting tree property&#34;, f&#39;Tree: {node.id_data.name}, prop: {prop_name}&#39;):
+                    factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
+
+    def build_interface(self, tree, factories, imported_structs):
+        for sock_name, raw_struct in self._struct[&#34;inputs&#34;].items():
+            with self.logger.add_fail(&#34;Create tree in socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+                factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
+
+        for sock_name, raw_struct in self._struct[&#34;outputs&#34;].items():
+            with self.logger.add_fail(&#34;Create tree out socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+                factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)
+
+    def read_bl_type(self):
+        return self._struct[&#34;bl_idname&#34;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.TreeStruct.type"><code class="name">var <span class="ident">type</span> : <a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.TreeStruct.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, tree, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, imported_structs: OldNewNames)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reads and generates nodes, links, dependent data blocks</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
+    &#34;&#34;&#34;Reads and generates nodes, links, dependent data blocks&#34;&#34;&#34;
+    with tree.init_tree():
+        # first all nodes should be created without applying their inner data
+        # because some nodes can have `parent` property which points into another node
+        node_structs = []
+        for node_name, raw_structure in self._struct[&#34;nodes&#34;].items():
+            with self.logger.add_fail(&#34;Init node&#34;, f&#34;Tree: {tree.name}, Node: {node_name}&#34;):
+                node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                # register optional node classes
+                if old_nodes.is_old(node_struct.read_bl_type()):
+                    old_nodes.register_old(node_struct.read_bl_type())
+                if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                    dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                # add node an save its new name
+                node = tree.nodes.new(node_struct.read_bl_type())
+                node.name = node_name
+                imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                node_structs.append(node_struct)
+
+        for node_struct in node_structs:
+            with self.logger.add_fail(&#34;Build node&#34;, f&#34;Tree: {tree.name}, Node: {node_struct.name}&#34;):
+                new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                node = tree.nodes[new_name]
+                node_struct.build(node, factories, imported_structs)
+
+        for raw_struct in self._struct[&#34;links&#34;]:
+            with self.logger.add_fail(&#34;Build link&#34;, f&#34;Tree: {tree.name}, Struct: {raw_struct}&#34;):
+                factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
+        for prop_name, prop_value in self._struct.get(&#34;properties&#34;, dict()).items():
+            with self.logger.add_fail(&#34;Setting tree property&#34;, f&#39;Tree: {node.id_data.name}, prop: {prop_name}&#39;):
+                factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.TreeStruct.build_interface"><code class="name flex">
+<span>def <span class="ident">build_interface</span></span>(<span>self, tree, factories, imported_structs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_interface(self, tree, factories, imported_structs):
+    for sock_name, raw_struct in self._struct[&#34;inputs&#34;].items():
+        with self.logger.add_fail(&#34;Create tree in socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+            factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
+
+    for sock_name, raw_struct in self._struct[&#34;outputs&#34;].items():
+        with self.logger.add_fail(&#34;Create tree out socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
+            factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.TreeStruct.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self, tree, factories: <a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a>, dependencies) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self, tree, factories: StructFactory, dependencies) -&gt; dict:
+    for node in tree.nodes:
+        raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+        self._struct[&#39;nodes&#39;][node.name] = raw_struct
+
+    for link in _ordered_links(tree):
+        self._struct[&#34;links&#34;].append(factories.link(None, self.logger).export(link, factories, dependencies))
+
+    for socket in tree.inputs:
+        raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+        self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
+
+    for socket in tree.outputs:
+        raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+        self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
+
+    for prop_name in tree.keys():
+        prop = BPYProperty(tree, prop_name)
+        if prop.is_valid and prop.is_to_save:
+            raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+            if raw_struct is not None:
+                self._struct[&#34;properties&#34;][prop.name] = raw_struct
+
+    self._struct[&#34;bl_idname&#34;] = tree.bl_idname
+
+    if not self._struct[&#34;properties&#34;]:
+        del self._struct[&#34;properties&#34;]
+
+    return self._struct</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.CollectionStruct" href="#sverchok.utils.sv_json_struct.CollectionStruct">CollectionStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.CollectionStruct.build" href="#sverchok.utils.sv_json_struct.CollectionStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.CollectionStruct.export" href="#sverchok.utils.sv_json_struct.CollectionStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.CollectionStruct.type" href="#sverchok.utils.sv_json_struct.CollectionStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.FileStruct" href="#sverchok.utils.sv_json_struct.FileStruct">FileStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.FileStruct.build" href="#sverchok.utils.sv_json_struct.FileStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.FileStruct.build_into_tree" href="#sverchok.utils.sv_json_struct.FileStruct.build_into_tree">build_into_tree</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.FileStruct.export" href="#sverchok.utils.sv_json_struct.FileStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.FileStruct.export_tree" href="#sverchok.utils.sv_json_struct.FileStruct.export_tree">export_tree</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.FileStruct.type" href="#sverchok.utils.sv_json_struct.FileStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.ImageStruct" href="#sverchok.utils.sv_json_struct.ImageStruct">ImageStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.ImageStruct.build" href="#sverchok.utils.sv_json_struct.ImageStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.ImageStruct.export" href="#sverchok.utils.sv_json_struct.ImageStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.ImageStruct.type" href="#sverchok.utils.sv_json_struct.ImageStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.InterfaceStruct" href="#sverchok.utils.sv_json_struct.InterfaceStruct">InterfaceStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.InterfaceStruct.build" href="#sverchok.utils.sv_json_struct.InterfaceStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.InterfaceStruct.export" href="#sverchok.utils.sv_json_struct.InterfaceStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.InterfaceStruct.type" href="#sverchok.utils.sv_json_struct.InterfaceStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.LinkStruct" href="#sverchok.utils.sv_json_struct.LinkStruct">LinkStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.LinkStruct.build" href="#sverchok.utils.sv_json_struct.LinkStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.LinkStruct.export" href="#sverchok.utils.sv_json_struct.LinkStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.LinkStruct.type" href="#sverchok.utils.sv_json_struct.LinkStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.MaterialStruct" href="#sverchok.utils.sv_json_struct.MaterialStruct">MaterialStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.MaterialStruct.build" href="#sverchok.utils.sv_json_struct.MaterialStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.MaterialStruct.export" href="#sverchok.utils.sv_json_struct.MaterialStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.MaterialStruct.type" href="#sverchok.utils.sv_json_struct.MaterialStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.NodePresetFileStruct" href="#sverchok.utils.sv_json_struct.NodePresetFileStruct">NodePresetFileStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.NodePresetFileStruct.build" href="#sverchok.utils.sv_json_struct.NodePresetFileStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.NodePresetFileStruct.export" href="#sverchok.utils.sv_json_struct.NodePresetFileStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.NodePresetFileStruct.type" href="#sverchok.utils.sv_json_struct.NodePresetFileStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.NodeStruct" href="#sverchok.utils.sv_json_struct.NodeStruct">NodeStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.NodeStruct.build" href="#sverchok.utils.sv_json_struct.NodeStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.NodeStruct.export" href="#sverchok.utils.sv_json_struct.NodeStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.NodeStruct.type" href="#sverchok.utils.sv_json_struct.NodeStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.PropertyStruct" href="#sverchok.utils.sv_json_struct.PropertyStruct">PropertyStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.PropertyStruct.build" href="#sverchok.utils.sv_json_struct.PropertyStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.PropertyStruct.export" href="#sverchok.utils.sv_json_struct.PropertyStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.PropertyStruct.type" href="#sverchok.utils.sv_json_struct.PropertyStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.SocketStruct" href="#sverchok.utils.sv_json_struct.SocketStruct">SocketStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.SocketStruct.build" href="#sverchok.utils.sv_json_struct.SocketStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.SocketStruct.export" href="#sverchok.utils.sv_json_struct.SocketStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.SocketStruct.type" href="#sverchok.utils.sv_json_struct.SocketStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.StrTypes" href="#sverchok.utils.sv_json_struct.StrTypes">StrTypes</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.COLLECTION" href="#sverchok.utils.sv_json_struct.StrTypes.COLLECTION">COLLECTION</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.IMAGE" href="#sverchok.utils.sv_json_struct.StrTypes.IMAGE">IMAGE</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.INTERFACE" href="#sverchok.utils.sv_json_struct.StrTypes.INTERFACE">INTERFACE</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.LINK" href="#sverchok.utils.sv_json_struct.StrTypes.LINK">LINK</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.MATERIAL" href="#sverchok.utils.sv_json_struct.StrTypes.MATERIAL">MATERIAL</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.NODE" href="#sverchok.utils.sv_json_struct.StrTypes.NODE">NODE</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.PROP" href="#sverchok.utils.sv_json_struct.StrTypes.PROP">PROP</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.SOCK" href="#sverchok.utils.sv_json_struct.StrTypes.SOCK">SOCK</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.TEXTURE" href="#sverchok.utils.sv_json_struct.StrTypes.TEXTURE">TEXTURE</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.TREE" href="#sverchok.utils.sv_json_struct.StrTypes.TREE">TREE</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.get_bpy_pointer" href="#sverchok.utils.sv_json_struct.StrTypes.get_bpy_pointer">get_bpy_pointer</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.get_type" href="#sverchok.utils.sv_json_struct.StrTypes.get_type">get_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StrTypes.is_supported_block" href="#sverchok.utils.sv_json_struct.StrTypes.is_supported_block">is_supported_block</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.Struct" href="#sverchok.utils.sv_json_struct.Struct">Struct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.build" href="#sverchok.utils.sv_json_struct.Struct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.export" href="#sverchok.utils.sv_json_struct.Struct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.read_bl_type" href="#sverchok.utils.sv_json_struct.Struct.read_bl_type">read_bl_type</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.type" href="#sverchok.utils.sv_json_struct.Struct.type">type</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.Struct.version" href="#sverchok.utils.sv_json_struct.Struct.version">version</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.StructFactory" href="#sverchok.utils.sv_json_struct.StructFactory">StructFactory</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.StructFactory.get_factory" href="#sverchok.utils.sv_json_struct.StructFactory.get_factory">get_factory</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.StructFactory.grab_from_module" href="#sverchok.utils.sv_json_struct.StructFactory.grab_from_module">grab_from_module</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.TextureStruct" href="#sverchok.utils.sv_json_struct.TextureStruct">TextureStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.TextureStruct.build" href="#sverchok.utils.sv_json_struct.TextureStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.TextureStruct.export" href="#sverchok.utils.sv_json_struct.TextureStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.TextureStruct.type" href="#sverchok.utils.sv_json_struct.TextureStruct.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.TreeStruct" href="#sverchok.utils.sv_json_struct.TreeStruct">TreeStruct</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.TreeStruct.build" href="#sverchok.utils.sv_json_struct.TreeStruct.build">build</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.TreeStruct.build_interface" href="#sverchok.utils.sv_json_struct.TreeStruct.build_interface">build_interface</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.TreeStruct.export" href="#sverchok.utils.sv_json_struct.TreeStruct.export">export</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.TreeStruct.type" href="#sverchok.utils.sv_json_struct.TreeStruct.type">type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

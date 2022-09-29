@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.modules.vertex_utils API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.modules.vertex_utils</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+import numpy as np
+from mathutils import Vector
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.modules.matrix_utils import matrix_normal
+from sverchok.utils.math import np_normalize_vectors
+
+def center(verts):
+    &#39;&#39;&#39;
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0]
+    &#39;&#39;&#39;
+    verts_out = []
+    for vec in verts:
+
+        avr = list(map(sum, zip(*vec)))
+        avr = [n/len(vec) for n in avr]
+        vec = [[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec]
+        verts_out.append(vec)
+    return verts_out
+
+def center_of_many(verts):
+    &#39;&#39;&#39;
+    verts: list as [[vertex, vertex, ...],[vertex,...]], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0] calculating the mean of all lists
+    &#39;&#39;&#39;
+    verts_out = []
+    verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
+
+    for vec_g, vec_ung in zip(verts, verts_ungrouped):
+        avr = list(map(sum, zip(*vec_ung)))
+        avr = [n/len(vec_ung) for n in avr]
+        vec = [[[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec] for vec in vec_g]
+        verts_out.append(vec)
+    return verts_out
+
+def adjacent_edg_pol(verts, edgs_pols):
+    &#39;&#39;&#39;
+    returns adjacent faces or edges as [[edge,edge,...], [edge, ...], ...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for ep in edgs_pols:
+        for v_id in ep:
+            adj_edgs_pols[v_id] += [ep]
+
+    return adj_edgs_pols
+
+
+def adjacent_edg_pol_num(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [0 for v in verts]
+    for edg_pol in edgs_pols:
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += 1
+
+    return adj_edgs_pols
+
+def adjacent_edg_pol_idx(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for idx, edg_pol in enumerate(edgs_pols):
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += [idx]
+
+    return adj_edgs_pols
+&#39;&#39;&#39;
+The functions below expect:
+vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+edges: list as [edge, edge,..], being each edge [int, int].
+faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+returns value of each vertex as [value, value,...]
+&#39;&#39;&#39;
+def vertex_normal(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=True):
+    if len(faces) == 0 or algorithm == &#39;BMESH&#39;:
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+        vals = [tuple(v.normal) for v in bm.verts]
+        bm.free()
+        return vals
+
+    return np_vertex_normals(vertices, faces, algorithm, output_numpy=output_numpy)
+
+def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides &gt; 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals
+# based in this article https://www.researchgate.net/publication/220067106_A_comparison_of_algorithms_for_vertex_normal_computation
+def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
+    if algorithm in (&#39;MWE&#39;, &#39;MWAT&#39;):
+        if algorithm == &#39;MWE&#39;: #weighted equally
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else: #weighted by area of triangle
+            f_normal_g = np_faces_normals(v_pols)
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
+    else:
+        if algorithm == &#39;MWELR&#39;:  #weighted edge length reciprocal
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else:  # algorithm == &#39;MWS&#39;: #weighted by sine
+            f_normal_g = np_faces_normals(v_pols)
+        edges_length = np.linalg.norm(v_pols - np.roll(v_pols, 1, axis=1), axis=2)
+        factor = edges_length * np.roll(edges_length, -1, axis=1)
+
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g * factor[:, i, np.newaxis])
+
+def np_vertex_normals(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=False):
+
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals)
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        add_faces_normals(v_pols, np_faces, algorithm, pol_sides, v_normals)
+
+
+    if output_numpy:
+        return np_normalize_vectors(v_normals)
+    return np_normalize_vectors(v_normals).tolist()
+
+
+def vertex_shell_factor(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.calc_shell_factor() for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_calc_angle(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    num_edges = adjacent_edg_pol_num(vertices, edges)
+
+
+    vals = [v.calc_edge_angle() if n == 2 else -1 for v, n in zip(bm.verts, num_edges) ]
+    bm.free()
+    return vals
+
+def vertex_is_boundary(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_is_interior(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold and not v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_is_manifold(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_is_wire(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_wire for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_matrix(vertices, edges, faces, track, up):
+    &#39;&#39;&#39;
+    orientation: contains origin track and up
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each vertex matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    loc = [Vector(v) for v in vertices]
+    normal = [v.normal for v in bm.verts]
+    vals = matrix_normal([loc, normal], track, up)
+    bm.free()
+    return vals
+
+# Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
+vertex_modes_dict = {
+    &#39;Normal&#39;:             (0,  &#39;vp&#39;, &#39;va&#39;,  &#39;&#39;,  vertex_normal,        &#39;v&#39;, &#39;Normal&#39;, &#39;Vertex normal&#39;),
+    &#39;Matrix&#39;:             (10, &#39;vep&#39;, &#39;mu&#39;, &#39;u&#39;, vertex_matrix,        &#39;m&#39;, &#39;Matrix&#39;, &#39;Matrix aligned with normal&#39;),
+    &#39;Sharpness&#39;:          (20, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_shell_factor,  &#39;s&#39;, &#39;Sharpness&#39;, &#39;Curvature of mesh in vertex&#39;),
+    &#39;Adjacent edges&#39;:     (30, &#39;ve&#39;,  &#39;&#39;,   &#39;u&#39;, adjacent_edg_pol,     &#39;s&#39;, &#39;Edges&#39;, &#39;Adjacent edges&#39;),
+    &#39;Adjacent faces &#39;:    (31, &#39;vp&#39;,  &#39;&#39;,   &#39;u&#39;, adjacent_edg_pol,     &#39;s&#39;, &#39;Faces &#39;, &#39;Adjacent faces&#39;),
+    &#39;Adjacent edges num&#39;: (40, &#39;ve&#39;,  &#39;&#39;,   &#39;&#39;,  adjacent_edg_pol_num, &#39;s&#39;, &#39;Number&#39;, &#39;Number of Adjacent edges&#39;),
+    &#39;Adjacent faces num&#39;: (41, &#39;vp&#39;,  &#39;&#39;,   &#39;&#39;,  adjacent_edg_pol_num, &#39;s&#39;, &#39;Number&#39;, &#39;Number of adjacent faces&#39;),
+    &#39;Adjacent edges Idx&#39;: (42, &#39;ve&#39;,  &#39;&#39;,   &#39;&#39;,  adjacent_edg_pol_idx, &#39;s&#39;, &#39;Edges Idx&#39;, &#39;Index of Adjacent edges&#39;),
+    &#39;Adjacent faces Idx&#39;: (43, &#39;vp&#39;,  &#39;&#39;,   &#39;&#39;,  adjacent_edg_pol_idx, &#39;s&#39;, &#39;Faces Idx&#39;, &#39;Index of adjacent faces&#39;),
+    &#39;Edges Angle&#39;:        (50, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_calc_angle,    &#39;s&#39;, &#39;Angle&#39;, &#39;angle between this vert’s two connected edges.&#39;),
+    &#39;Is Boundary &#39;:       (60, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_is_boundary,   &#39;s&#39;, &#39;Is Boundary &#39;, &#39;Is Vertex on mesh borders&#39;),
+    &#39;Is Interior &#39;:       (63, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_is_interior,   &#39;s&#39;, &#39;Is Interior &#39;, &#39;Is Vertex on mesh interiors&#39;),
+    &#39;Is Manifold&#39;:        (61, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_is_manifold,   &#39;s&#39;, &#39;Is Manifold&#39;, &#39;Is Vertex part of the Manifold&#39;),
+    &#39;Is Wire&#39;:            (62, &#39;vep&#39;, &#39;&#39;,   &#39;&#39;,  vertex_is_wire,       &#39;s&#39;, &#39;Is Wire&#39;, &#39;Is vertex only connected by edges&#39;),
+    }</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.modules.vertex_utils.add_faces_normals"><code class="name flex">
+<span>def <span class="ident">add_faces_normals</span></span>(<span>v_pols, np_faces_g, algorithm, pol_sides, v_normals)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
+    if algorithm in (&#39;MWE&#39;, &#39;MWAT&#39;):
+        if algorithm == &#39;MWE&#39;: #weighted equally
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else: #weighted by area of triangle
+            f_normal_g = np_faces_normals(v_pols)
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
+    else:
+        if algorithm == &#39;MWELR&#39;:  #weighted edge length reciprocal
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else:  # algorithm == &#39;MWS&#39;: #weighted by sine
+            f_normal_g = np_faces_normals(v_pols)
+        edges_length = np.linalg.norm(v_pols - np.roll(v_pols, 1, axis=1), axis=2)
+        factor = edges_length * np.roll(edges_length, -1, axis=1)
+
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g * factor[:, i, np.newaxis])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.adjacent_edg_pol"><code class="name flex">
+<span>def <span class="ident">adjacent_edg_pol</span></span>(<span>verts, edgs_pols)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>returns adjacent faces or edges as [[edge,edge,&hellip;], [edge, &hellip;], &hellip;]
+verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
+edg_pol: list as [edge, edge,..], being each edge [int, int].
+or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol(verts, edgs_pols):
+    &#39;&#39;&#39;
+    returns adjacent faces or edges as [[edge,edge,...], [edge, ...], ...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for ep in edgs_pols:
+        for v_id in ep:
+            adj_edgs_pols[v_id] += [ep]
+
+    return adj_edgs_pols</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.adjacent_edg_pol_idx"><code class="name flex">
+<span>def <span class="ident">adjacent_edg_pol_idx</span></span>(<span>verts, edgs_pols)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate the number of adjacent faces
+or edges as [int, int,&hellip;]
+verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
+edg_pol: list as [edge, edge,..], being each edge [int, int].
+or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol_idx(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for idx, edg_pol in enumerate(edgs_pols):
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += [idx]
+
+    return adj_edgs_pols</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.adjacent_edg_pol_num"><code class="name flex">
+<span>def <span class="ident">adjacent_edg_pol_num</span></span>(<span>verts, edgs_pols)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>calculate the number of adjacent faces
+or edges as [int, int,&hellip;]
+verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
+edg_pol: list as [edge, edge,..], being each edge [int, int].
+or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol_num(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [0 for v in verts]
+    for edg_pol in edgs_pols:
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += 1
+
+    return adj_edgs_pols</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.center"><code class="name flex">
+<span>def <span class="ident">center</span></span>(<span>verts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
+returns the verts centered around [0,0,0]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def center(verts):
+    &#39;&#39;&#39;
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0]
+    &#39;&#39;&#39;
+    verts_out = []
+    for vec in verts:
+
+        avr = list(map(sum, zip(*vec)))
+        avr = [n/len(vec) for n in avr]
+        vec = [[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec]
+        verts_out.append(vec)
+    return verts_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.center_of_many"><code class="name flex">
+<span>def <span class="ident">center_of_many</span></span>(<span>verts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>verts: list as [[vertex, vertex, &hellip;],[vertex,&hellip;]], being each vertex [float, float, float].
+returns the verts centered around [0,0,0] calculating the mean of all lists</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def center_of_many(verts):
+    &#39;&#39;&#39;
+    verts: list as [[vertex, vertex, ...],[vertex,...]], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0] calculating the mean of all lists
+    &#39;&#39;&#39;
+    verts_out = []
+    verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
+
+    for vec_g, vec_ung in zip(verts, verts_ungrouped):
+        avr = list(map(sum, zip(*vec_ung)))
+        avr = [n/len(vec_ung) for n in avr]
+        vec = [[[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec] for vec in vec_g]
+        verts_out.append(vec)
+    return verts_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.np_faces_normals"><code class="name flex">
+<span>def <span class="ident">np_faces_normals</span></span>(<span>v_pols)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides &gt; 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.np_vertex_normals"><code class="name flex">
+<span>def <span class="ident">np_vertex_normals</span></span>(<span>vertices, faces, algorithm='MWE', output_numpy=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_vertex_normals(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=False):
+
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals)
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        add_faces_normals(v_pols, np_faces, algorithm, pol_sides, v_normals)
+
+
+    if output_numpy:
+        return np_normalize_vectors(v_normals)
+    return np_normalize_vectors(v_normals).tolist()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_calc_angle"><code class="name flex">
+<span>def <span class="ident">vertex_calc_angle</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_calc_angle(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    num_edges = adjacent_edg_pol_num(vertices, edges)
+
+
+    vals = [v.calc_edge_angle() if n == 2 else -1 for v, n in zip(bm.verts, num_edges) ]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_is_boundary"><code class="name flex">
+<span>def <span class="ident">vertex_is_boundary</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_boundary(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_is_interior"><code class="name flex">
+<span>def <span class="ident">vertex_is_interior</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_interior(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold and not v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_is_manifold"><code class="name flex">
+<span>def <span class="ident">vertex_is_manifold</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_manifold(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_is_wire"><code class="name flex">
+<span>def <span class="ident">vertex_is_wire</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_wire(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_wire for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_matrix"><code class="name flex">
+<span>def <span class="ident">vertex_matrix</span></span>(<span>vertices, edges, faces, track, up)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>orientation: contains origin track and up
+origin: String
+that can be First, Center, Last
+track: String
+that can be X, Y, Z, -X, -Y or -Z
+up: String
+that can be X, Y, Z, -X, -Y or -Z
+outputs each vertex matrix [matrix, matrix, matrix]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_matrix(vertices, edges, faces, track, up):
+    &#39;&#39;&#39;
+    orientation: contains origin track and up
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each vertex matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    loc = [Vector(v) for v in vertices]
+    normal = [v.normal for v in bm.verts]
+    vals = matrix_normal([loc, normal], track, up)
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_normal"><code class="name flex">
+<span>def <span class="ident">vertex_normal</span></span>(<span>vertices, faces, algorithm='MWE', output_numpy=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_normal(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=True):
+    if len(faces) == 0 or algorithm == &#39;BMESH&#39;:
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+        vals = [tuple(v.normal) for v in bm.verts]
+        bm.free()
+        return vals
+
+    return np_vertex_normals(vertices, faces, algorithm, output_numpy=output_numpy)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.vertex_utils.vertex_shell_factor"><code class="name flex">
+<span>def <span class="ident">vertex_shell_factor</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_shell_factor(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.calc_shell_factor() for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.modules" href="index.html">sverchok.utils.modules</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.vertex_utils.add_faces_normals" href="#sverchok.utils.modules.vertex_utils.add_faces_normals">add_faces_normals</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.adjacent_edg_pol" href="#sverchok.utils.modules.vertex_utils.adjacent_edg_pol">adjacent_edg_pol</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.adjacent_edg_pol_idx" href="#sverchok.utils.modules.vertex_utils.adjacent_edg_pol_idx">adjacent_edg_pol_idx</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.adjacent_edg_pol_num" href="#sverchok.utils.modules.vertex_utils.adjacent_edg_pol_num">adjacent_edg_pol_num</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.center" href="#sverchok.utils.modules.vertex_utils.center">center</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.center_of_many" href="#sverchok.utils.modules.vertex_utils.center_of_many">center_of_many</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.np_faces_normals" href="#sverchok.utils.modules.vertex_utils.np_faces_normals">np_faces_normals</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.np_vertex_normals" href="#sverchok.utils.modules.vertex_utils.np_vertex_normals">np_vertex_normals</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_calc_angle" href="#sverchok.utils.modules.vertex_utils.vertex_calc_angle">vertex_calc_angle</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_is_boundary" href="#sverchok.utils.modules.vertex_utils.vertex_is_boundary">vertex_is_boundary</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_is_interior" href="#sverchok.utils.modules.vertex_utils.vertex_is_interior">vertex_is_interior</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_is_manifold" href="#sverchok.utils.modules.vertex_utils.vertex_is_manifold">vertex_is_manifold</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_is_wire" href="#sverchok.utils.modules.vertex_utils.vertex_is_wire">vertex_is_wire</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_matrix" href="#sverchok.utils.modules.vertex_utils.vertex_matrix">vertex_matrix</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_normal" href="#sverchok.utils.modules.vertex_utils.vertex_normal">vertex_normal</a></code></li>
+<li><code><a title="sverchok.utils.modules.vertex_utils.vertex_shell_factor" href="#sverchok.utils.modules.vertex_utils.vertex_shell_factor">vertex_shell_factor</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

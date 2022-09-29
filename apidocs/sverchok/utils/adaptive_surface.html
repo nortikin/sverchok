@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.adaptive_surface API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.adaptive_surface</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+import numpy.random
+from math import ceil, isnan
+
+try:
+    from mathutils.geometry import delaunay_2d_cdt
+except ImportError:
+    delaunay_2d_cdt = None
+
+from sverchok.utils.logging import info, exception
+from sverchok.utils.surface import SvSurface
+from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
+from sverchok.utils.voronoi import computeDelaunayTriangulation, Site
+
+GAUSS = &#39;gauss&#39;
+MAXIMUM = &#39;max&#39;
+MEAN = &#39;mean&#39;
+
+class PopulationData(object):
+    def __init__(self):
+        self.surface = None
+        self.u_min = self.u_max = None
+        self.v_min = self.v_max = None
+        self.new_us = self.new_vs = None
+        self._points = None
+        self.samples_u = self.samples_v = None
+
+    @property
+    def points(self):
+        if self._points is None:
+            self._points = self.surface.evaluate_array(self.us, self.vs).reshape((self.samples_u, self.samples_v, 3))
+        return self._points
+
+def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, min_ppf=1, max_ppf=5, seed=1):
+    u_min, u_max = surface.get_u_min(), surface.get_u_max()
+    v_min, v_max = surface.get_v_min(), surface.get_v_max()
+    us_range = np.linspace(u_min, u_max, num=samples_u)
+    vs_range = np.linspace(v_min, v_max, num=samples_v)
+    us, vs = np.meshgrid(us_range, vs_range, indexing=&#39;ij&#39;)
+    us = us.flatten()
+    vs = vs.flatten()
+
+    data = PopulationData()
+    data.surface = surface
+    data.us = us
+    data.vs = vs
+    data.u_min = u_min
+    data.v_min = v_min
+    data.u_max = u_max
+    data.v_max = v_max
+    data.samples_u = samples_u
+    data.samples_v = samples_v
+
+    if by_curvature:
+        if curvature_type == GAUSS:
+            curvatures = abs(surface.gauss_curvature_array(us, vs))
+        elif curvature_type == MAXIMUM:
+            curvatures_1, curvatures_2 = surface.principal_curvature_values_array(us, vs, order=False)
+            curvatures = abs(np.vstack((curvatures_1, curvatures_2))).max(axis=0)
+        elif curvature_type == MEAN:
+            curvatures = abs(surface.mean_curvature_array(us, vs))
+        else:
+            raise Exception(&#34;Unsupported curvature type:&#34; + curvature_type)
+        if curvature_clip:
+            curvatures = curvatures.clip(0, curvature_clip)
+        curvatures = curvatures.reshape((samples_u, samples_v))
+
+        curvatures_0 = curvatures[:-1, :-1]
+        curvatures_du = curvatures[1:, :-1]
+        curvatures_dv = curvatures[:-1, 1:]
+        curvatures_du_dv = curvatures[1:, 1:]
+
+        max_curvatures = np.max([curvatures_0, curvatures_du, curvatures_dv, curvatures_du_dv], axis=0)
+        max_curvatures[np.isnan(max_curvatures)] = 0
+        max_curvature = max_curvatures.max()
+        min_curvature = max_curvatures.min()
+        curvatures_range = max_curvature - min_curvature
+        info(&#34;Curvature range: %s - %s&#34;, min_curvature, max_curvature)
+        if curvatures_range == 0:
+            max_curvatures = np.zeros((samples_u-1, samples_v-1))
+        else:
+            max_curvatures = (max_curvatures - min_curvature) / curvatures_range
+    else:
+        max_curvatures = np.zeros((samples_u-1, samples_v-1))
+        curvatures_range = 0
+
+    if by_area:
+        surface_points = surface.evaluate_array(us, vs)
+        surface_points = surface_points.reshape((samples_u, samples_v, 3))
+        data._points = surface_points
+
+        points_0 = surface_points[:-1, :-1,:]
+        points_du = surface_points[1:, :-1,:]
+        points_dv = surface_points[:-1, 1:,:]
+        points_du_dv = surface_points[1:, 1:,:]
+
+        areas_1 = np.linalg.norm(np.cross(points_du_dv - points_0, points_du - points_0), axis=2)/2.0
+        areas_2 = np.linalg.norm(np.cross(points_dv - points_0, points_du_dv - points_0), axis=2)/2.0
+        areas = areas_1 + areas_2
+        h_u = us_range[1] - us_range[0]
+        h_v = vs_range[1] - vs_range[0]
+        areas = areas / (h_u * h_v)
+        min_area = areas.min()
+        max_area = areas.max()
+        areas_range = max_area - min_area
+        info(&#34;Areas range: %s - %s&#34;, min_area, max_area)
+        if areas_range == 0:
+            areas = np.zeros((samples_u-1, samples_v-1))
+        else:
+            areas = (areas - min_area) / areas_range
+    else:
+        areas = np.zeros((samples_u-1, samples_v-1))
+        areas_range = 0
+
+    factors = max_curvatures + areas
+    factor_range = areas_range + curvatures_range
+    if by_area and by_curvature:
+        factors = factors / 2.0
+        factor_range = factor_range / 2.0
+    max_factor = factors.max()
+    if max_factor != 0:
+        factors = factors / max_factor
+    #info(&#34;Factors: %s - %s (%s)&#34;, factors.min(), factors.max(), factor_range)
+    #info(&#34;Areas: %s - %s&#34;, areas.min(), areas.max())
+    #info(&#34;Curvatures: %s - %s&#34;, max_curvatures.min(), max_curvatures.max())
+
+    ppf_range = max_ppf - min_ppf
+
+    if not seed:
+        seed = 12345
+    numpy.random.seed(seed)
+    new_u = []
+    new_v = []
+    for i in range(samples_u-1):
+        u1 = us_range[i]
+        u2 = us_range[i+1]
+        for j in range(samples_v-1):
+            v1 = vs_range[j]
+            v2 = vs_range[j+1]
+            factor = factors[i,j]
+            if factor_range == 0 or isnan(factor):
+                ppf = (min_ppf + max_ppf)/2
+            else:
+                ppf = min_ppf + ppf_range * factor
+            #ppf = int(round(ppf))
+            ppf = ceil(ppf)
+#             if ppf &gt; 1:
+#                 info(&#34;I %s, J %s, factor %s, PPF %s&#34;, i, j, factor, ppf)
+#                 info(&#34;U %s - %s, V %s - %s&#34;, u1, u2, v1, v2)
+            u_r = numpy.random.uniform(u1, u2, size=ppf).tolist()
+            v_r = numpy.random.uniform(v1, v2, size=ppf).tolist()
+            new_u.extend(u_r)
+            new_v.extend(v_r)
+
+    data.new_us = new_u
+    data.new_vs = new_v
+    return data
+
+def tessellate_curve(curve, samples_t):
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples_t)
+    verts = curve.evaluate_array(ts).tolist()
+    n = len(ts)
+    edges = [[i, i + 1] for i in range(n - 1)]
+    edges.append([n-1, 0])
+    faces = [list(range(n))]
+    return verts, edges, faces
+
+def _calc_u_length(surface_points, v_idx):
+    dus = surface_points[1:, v_idx] - surface_points[:-1, v_idx]
+    u_lengths = np.linalg.norm(dus, axis=1)
+    return np.sum(u_lengths)
+
+def _calc_v_length(surface_points, u_idx):
+    dvs = surface_points[u_idx, 1:] - surface_points[u_idx, :-1]
+    v_lengths = np.linalg.norm(dvs, axis=1)
+    return np.sum(v_lengths)
+
+def calc_sizes(surface_points, samples_u, samples_v):
+    # TODO: we could check all U/V iso-parametric lines length and select maximums.
+
+    length_u_0 = _calc_u_length(surface_points, 0)
+    length_u_1 = _calc_u_length(surface_points, samples_v // 2)
+    length_u_2 = _calc_u_length(surface_points, samples_v -1)
+
+    length_v_0 = _calc_v_length(surface_points, 0)
+    length_v_1 = _calc_v_length(surface_points, samples_u // 2)
+    length_v_2 = _calc_v_length(surface_points, samples_u -1)
+
+    target_u_length = max(length_u_0, length_u_1, length_u_2)
+    target_v_length = max(length_v_0, length_v_1, length_v_2)
+
+    return target_u_length, target_v_length
+
+def make_outer_edges(samples_u, samples_v):
+    edges_1 = [(i, i+1) for i in range(samples_u-1)]
+    edges_2 = [(samples_u*(i+1) - 1, samples_u*(i+2) - 1) for i in range(samples_v-1)]
+    edges_3 = [(samples_u*(samples_v - 1) + i, samples_u*(samples_v - 1) + i + 1) for i in range(samples_u-1)]
+    edges_4 = [(samples_u*i, samples_u*(i+1)) for i in range(samples_v-1)]
+    edges = edges_1 + edges_2 + edges_3 + edges_4
+    return edges
+
+def delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon):
+    if delaunay_2d_cdt is None:
+        # Pure-python implementation
+        points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+        faces = computeDelaunayTriangulation(points_uv)
+        return faces
+    else:
+        points_scaled = [(u*u_coeff, v*v_coeff) for u,v in zip(us_list, vs_list)]
+        INNER = 1
+        # delaunay_2d_cdt function wont&#39; work if we do not provide neither edges nor faces.
+        # So let&#39;s just construct the outer faces of the rectangular grid
+        # (indices in `edges&#39; depend on the fact that in `adaptive_subdivide` we
+        # add randomly generated points to the end of us_list/vs_list).
+        edges = make_outer_edges(samples_v, samples_u)
+        vert_coords, edges, faces, orig_verts, orig_edges, orig_faces = delaunay_2d_cdt(points_scaled, edges, [], INNER, epsilon)
+        return faces
+
+def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = &#39;inner&#39;, epsilon = 1e-4, seed=1):
+    data = populate_surface_uv(surface, samples_u, samples_v,
+                            by_curvature = by_curvature,
+                            curvature_type = curvature_type,
+                            curvature_clip = curvature_clip,
+                            by_area = by_area,
+                            min_ppf = min_ppf, max_ppf = max_ppf, seed =seed)
+    us, vs, new_u, new_v = data.us, data.vs, data.new_us, data.new_vs
+    us_list = list(us) + new_u
+    vs_list = list(vs) + new_v
+    if add_points and len(add_points[0]) &gt; 0:
+        us_list.extend([p[0] for p in add_points])
+        vs_list.extend([p[1] for p in add_points])
+
+    surface_points = data.points
+
+    target_u_length, target_v_length = calc_sizes(surface_points, samples_u, samples_v)
+
+    src_u_length = data.u_max - data.u_min
+    src_v_length = data.v_max - data.v_min
+
+    u_coeff = target_u_length / src_u_length
+    v_coeff = target_v_length / src_v_length
+
+    faces = delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon)
+    #points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+    #faces = computeDelaunayTriangulation(points_uv)
+
+    if trim_curve is not None:
+        curve_verts, curve_edges, curve_faces = tessellate_curve(trim_curve, samples_t)
+        curve_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v, _ in curve_verts]
+        triangulation_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v in zip(us_list, vs_list)]
+        xy_verts, faces, _ = crop_mesh_delaunay(triangulation_verts_scaled, faces, curve_verts_scaled, curve_faces, trim_mode, epsilon)
+        us_list = [p[0] / u_coeff for p in xy_verts]
+        vs_list = [p[1] / v_coeff for p in xy_verts]
+
+    return np.array(us_list), np.array(vs_list), faces</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.adaptive_surface.adaptive_subdivide"><code class="name flex">
+<span>def <span class="ident">adaptive_subdivide</span></span>(<span>surface, samples_u, samples_v, by_curvature=True, curvature_type='max', curvature_clip=100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve=None, samples_t=100, trim_mode='inner', epsilon=0.0001, seed=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = &#39;inner&#39;, epsilon = 1e-4, seed=1):
+    data = populate_surface_uv(surface, samples_u, samples_v,
+                            by_curvature = by_curvature,
+                            curvature_type = curvature_type,
+                            curvature_clip = curvature_clip,
+                            by_area = by_area,
+                            min_ppf = min_ppf, max_ppf = max_ppf, seed =seed)
+    us, vs, new_u, new_v = data.us, data.vs, data.new_us, data.new_vs
+    us_list = list(us) + new_u
+    vs_list = list(vs) + new_v
+    if add_points and len(add_points[0]) &gt; 0:
+        us_list.extend([p[0] for p in add_points])
+        vs_list.extend([p[1] for p in add_points])
+
+    surface_points = data.points
+
+    target_u_length, target_v_length = calc_sizes(surface_points, samples_u, samples_v)
+
+    src_u_length = data.u_max - data.u_min
+    src_v_length = data.v_max - data.v_min
+
+    u_coeff = target_u_length / src_u_length
+    v_coeff = target_v_length / src_v_length
+
+    faces = delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon)
+    #points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+    #faces = computeDelaunayTriangulation(points_uv)
+
+    if trim_curve is not None:
+        curve_verts, curve_edges, curve_faces = tessellate_curve(trim_curve, samples_t)
+        curve_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v, _ in curve_verts]
+        triangulation_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v in zip(us_list, vs_list)]
+        xy_verts, faces, _ = crop_mesh_delaunay(triangulation_verts_scaled, faces, curve_verts_scaled, curve_faces, trim_mode, epsilon)
+        us_list = [p[0] / u_coeff for p in xy_verts]
+        vs_list = [p[1] / v_coeff for p in xy_verts]
+
+    return np.array(us_list), np.array(vs_list), faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.adaptive_surface.calc_sizes"><code class="name flex">
+<span>def <span class="ident">calc_sizes</span></span>(<span>surface_points, samples_u, samples_v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_sizes(surface_points, samples_u, samples_v):
+    # TODO: we could check all U/V iso-parametric lines length and select maximums.
+
+    length_u_0 = _calc_u_length(surface_points, 0)
+    length_u_1 = _calc_u_length(surface_points, samples_v // 2)
+    length_u_2 = _calc_u_length(surface_points, samples_v -1)
+
+    length_v_0 = _calc_v_length(surface_points, 0)
+    length_v_1 = _calc_v_length(surface_points, samples_u // 2)
+    length_v_2 = _calc_v_length(surface_points, samples_u -1)
+
+    target_u_length = max(length_u_0, length_u_1, length_u_2)
+    target_v_length = max(length_v_0, length_v_1, length_v_2)
+
+    return target_u_length, target_v_length</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.adaptive_surface.delaunay_triangulatrion"><code class="name flex">
+<span>def <span class="ident">delaunay_triangulatrion</span></span>(<span>samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon):
+    if delaunay_2d_cdt is None:
+        # Pure-python implementation
+        points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+        faces = computeDelaunayTriangulation(points_uv)
+        return faces
+    else:
+        points_scaled = [(u*u_coeff, v*v_coeff) for u,v in zip(us_list, vs_list)]
+        INNER = 1
+        # delaunay_2d_cdt function wont&#39; work if we do not provide neither edges nor faces.
+        # So let&#39;s just construct the outer faces of the rectangular grid
+        # (indices in `edges&#39; depend on the fact that in `adaptive_subdivide` we
+        # add randomly generated points to the end of us_list/vs_list).
+        edges = make_outer_edges(samples_v, samples_u)
+        vert_coords, edges, faces, orig_verts, orig_edges, orig_faces = delaunay_2d_cdt(points_scaled, edges, [], INNER, epsilon)
+        return faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.adaptive_surface.make_outer_edges"><code class="name flex">
+<span>def <span class="ident">make_outer_edges</span></span>(<span>samples_u, samples_v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_outer_edges(samples_u, samples_v):
+    edges_1 = [(i, i+1) for i in range(samples_u-1)]
+    edges_2 = [(samples_u*(i+1) - 1, samples_u*(i+2) - 1) for i in range(samples_v-1)]
+    edges_3 = [(samples_u*(samples_v - 1) + i, samples_u*(samples_v - 1) + i + 1) for i in range(samples_u-1)]
+    edges_4 = [(samples_u*i, samples_u*(i+1)) for i in range(samples_v-1)]
+    edges = edges_1 + edges_2 + edges_3 + edges_4
+    return edges</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.adaptive_surface.populate_surface_uv"><code class="name flex">
+<span>def <span class="ident">populate_surface_uv</span></span>(<span>surface, samples_u, samples_v, by_curvature=True, curvature_type='max', curvature_clip=100, by_area=True, min_ppf=1, max_ppf=5, seed=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, min_ppf=1, max_ppf=5, seed=1):
+    u_min, u_max = surface.get_u_min(), surface.get_u_max()
+    v_min, v_max = surface.get_v_min(), surface.get_v_max()
+    us_range = np.linspace(u_min, u_max, num=samples_u)
+    vs_range = np.linspace(v_min, v_max, num=samples_v)
+    us, vs = np.meshgrid(us_range, vs_range, indexing=&#39;ij&#39;)
+    us = us.flatten()
+    vs = vs.flatten()
+
+    data = PopulationData()
+    data.surface = surface
+    data.us = us
+    data.vs = vs
+    data.u_min = u_min
+    data.v_min = v_min
+    data.u_max = u_max
+    data.v_max = v_max
+    data.samples_u = samples_u
+    data.samples_v = samples_v
+
+    if by_curvature:
+        if curvature_type == GAUSS:
+            curvatures = abs(surface.gauss_curvature_array(us, vs))
+        elif curvature_type == MAXIMUM:
+            curvatures_1, curvatures_2 = surface.principal_curvature_values_array(us, vs, order=False)
+            curvatures = abs(np.vstack((curvatures_1, curvatures_2))).max(axis=0)
+        elif curvature_type == MEAN:
+            curvatures = abs(surface.mean_curvature_array(us, vs))
+        else:
+            raise Exception(&#34;Unsupported curvature type:&#34; + curvature_type)
+        if curvature_clip:
+            curvatures = curvatures.clip(0, curvature_clip)
+        curvatures = curvatures.reshape((samples_u, samples_v))
+
+        curvatures_0 = curvatures[:-1, :-1]
+        curvatures_du = curvatures[1:, :-1]
+        curvatures_dv = curvatures[:-1, 1:]
+        curvatures_du_dv = curvatures[1:, 1:]
+
+        max_curvatures = np.max([curvatures_0, curvatures_du, curvatures_dv, curvatures_du_dv], axis=0)
+        max_curvatures[np.isnan(max_curvatures)] = 0
+        max_curvature = max_curvatures.max()
+        min_curvature = max_curvatures.min()
+        curvatures_range = max_curvature - min_curvature
+        info(&#34;Curvature range: %s - %s&#34;, min_curvature, max_curvature)
+        if curvatures_range == 0:
+            max_curvatures = np.zeros((samples_u-1, samples_v-1))
+        else:
+            max_curvatures = (max_curvatures - min_curvature) / curvatures_range
+    else:
+        max_curvatures = np.zeros((samples_u-1, samples_v-1))
+        curvatures_range = 0
+
+    if by_area:
+        surface_points = surface.evaluate_array(us, vs)
+        surface_points = surface_points.reshape((samples_u, samples_v, 3))
+        data._points = surface_points
+
+        points_0 = surface_points[:-1, :-1,:]
+        points_du = surface_points[1:, :-1,:]
+        points_dv = surface_points[:-1, 1:,:]
+        points_du_dv = surface_points[1:, 1:,:]
+
+        areas_1 = np.linalg.norm(np.cross(points_du_dv - points_0, points_du - points_0), axis=2)/2.0
+        areas_2 = np.linalg.norm(np.cross(points_dv - points_0, points_du_dv - points_0), axis=2)/2.0
+        areas = areas_1 + areas_2
+        h_u = us_range[1] - us_range[0]
+        h_v = vs_range[1] - vs_range[0]
+        areas = areas / (h_u * h_v)
+        min_area = areas.min()
+        max_area = areas.max()
+        areas_range = max_area - min_area
+        info(&#34;Areas range: %s - %s&#34;, min_area, max_area)
+        if areas_range == 0:
+            areas = np.zeros((samples_u-1, samples_v-1))
+        else:
+            areas = (areas - min_area) / areas_range
+    else:
+        areas = np.zeros((samples_u-1, samples_v-1))
+        areas_range = 0
+
+    factors = max_curvatures + areas
+    factor_range = areas_range + curvatures_range
+    if by_area and by_curvature:
+        factors = factors / 2.0
+        factor_range = factor_range / 2.0
+    max_factor = factors.max()
+    if max_factor != 0:
+        factors = factors / max_factor
+    #info(&#34;Factors: %s - %s (%s)&#34;, factors.min(), factors.max(), factor_range)
+    #info(&#34;Areas: %s - %s&#34;, areas.min(), areas.max())
+    #info(&#34;Curvatures: %s - %s&#34;, max_curvatures.min(), max_curvatures.max())
+
+    ppf_range = max_ppf - min_ppf
+
+    if not seed:
+        seed = 12345
+    numpy.random.seed(seed)
+    new_u = []
+    new_v = []
+    for i in range(samples_u-1):
+        u1 = us_range[i]
+        u2 = us_range[i+1]
+        for j in range(samples_v-1):
+            v1 = vs_range[j]
+            v2 = vs_range[j+1]
+            factor = factors[i,j]
+            if factor_range == 0 or isnan(factor):
+                ppf = (min_ppf + max_ppf)/2
+            else:
+                ppf = min_ppf + ppf_range * factor
+            #ppf = int(round(ppf))
+            ppf = ceil(ppf)
+#             if ppf &gt; 1:
+#                 info(&#34;I %s, J %s, factor %s, PPF %s&#34;, i, j, factor, ppf)
+#                 info(&#34;U %s - %s, V %s - %s&#34;, u1, u2, v1, v2)
+            u_r = numpy.random.uniform(u1, u2, size=ppf).tolist()
+            v_r = numpy.random.uniform(v1, v2, size=ppf).tolist()
+            new_u.extend(u_r)
+            new_v.extend(v_r)
+
+    data.new_us = new_u
+    data.new_vs = new_v
+    return data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.adaptive_surface.tessellate_curve"><code class="name flex">
+<span>def <span class="ident">tessellate_curve</span></span>(<span>curve, samples_t)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tessellate_curve(curve, samples_t):
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples_t)
+    verts = curve.evaluate_array(ts).tolist()
+    n = len(ts)
+    edges = [[i, i + 1] for i in range(n - 1)]
+    edges.append([n-1, 0])
+    faces = [list(range(n))]
+    return verts, edges, faces</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.adaptive_surface.PopulationData"><code class="flex name class">
+<span>class <span class="ident">PopulationData</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PopulationData(object):
+    def __init__(self):
+        self.surface = None
+        self.u_min = self.u_max = None
+        self.v_min = self.v_max = None
+        self.new_us = self.new_vs = None
+        self._points = None
+        self.samples_u = self.samples_v = None
+
+    @property
+    def points(self):
+        if self._points is None:
+            self._points = self.surface.evaluate_array(self.us, self.vs).reshape((self.samples_u, self.samples_v, 3))
+        return self._points</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.adaptive_surface.PopulationData.points"><code class="name">var <span class="ident">points</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def points(self):
+    if self._points is None:
+        self._points = self.surface.evaluate_array(self.us, self.vs).reshape((self.samples_u, self.samples_v, 3))
+    return self._points</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.adaptive_surface.adaptive_subdivide" href="#sverchok.utils.adaptive_surface.adaptive_subdivide">adaptive_subdivide</a></code></li>
+<li><code><a title="sverchok.utils.adaptive_surface.calc_sizes" href="#sverchok.utils.adaptive_surface.calc_sizes">calc_sizes</a></code></li>
+<li><code><a title="sverchok.utils.adaptive_surface.delaunay_triangulatrion" href="#sverchok.utils.adaptive_surface.delaunay_triangulatrion">delaunay_triangulatrion</a></code></li>
+<li><code><a title="sverchok.utils.adaptive_surface.make_outer_edges" href="#sverchok.utils.adaptive_surface.make_outer_edges">make_outer_edges</a></code></li>
+<li><code><a title="sverchok.utils.adaptive_surface.populate_surface_uv" href="#sverchok.utils.adaptive_surface.populate_surface_uv">populate_surface_uv</a></code></li>
+<li><code><a title="sverchok.utils.adaptive_surface.tessellate_curve" href="#sverchok.utils.adaptive_surface.tessellate_curve">tessellate_curve</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.adaptive_surface.PopulationData" href="#sverchok.utils.adaptive_surface.PopulationData">PopulationData</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.adaptive_surface.PopulationData.points" href="#sverchok.utils.adaptive_surface.PopulationData.points">points</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

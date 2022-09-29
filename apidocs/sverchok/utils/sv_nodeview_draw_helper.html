@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_nodeview_draw_helper API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_nodeview_draw_helper</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import bpy
+import numpy as np
+from mathutils import Matrix
+
+from sverchok.utils.decorators_compilation import njit
+from sverchok.settings import get_params
+
+# pylint: disable=c0111
+# pylint: disable=c0103
+
+def get_xy_for_bgl_drawing(node):
+    # adjust proposed text location in case node is framed.
+    # take into consideration the hidden state
+    _x, _y = node.absolute_location
+    _x, _y = (_x + node.width + 20), _y
+
+    # this alters location based on DPI/Scale settings.
+    return _x * node.location_theta, _y * node.location_theta
+
+class SvNodeViewDrawMixin():
+
+    location_theta: bpy.props.FloatProperty(name=&#34;location theta&#34;)
+
+    @property
+    def xy_offset(self):
+        a = self.absolute_location
+        b = int(self.width) + 20
+        return int(a[0] + b), int(a[1])
+
+    @staticmethod
+    def get_preferences():
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            &#39;render_scale&#39;: 1.0,
+            &#39;render_location_xy_multiplier&#39;: 1.0})
+        return props.render_scale, props.render_location_xy_multiplier
+
+    def adjust_position_and_dimensions(self, x, y, width, height):
+        scale, multiplier = self.get_preferences()
+        self.location_theta = multiplier
+
+@njit(cache=True)
+def faces_from_xy(ncx, ncy):
+    r&#34;&#34;&#34;
+    this splits up the quad from geom.grid to triangles
+
+                (ABCD)                   (ABC, ACD)
+
+    go from:    A - - - D           to    A        A - D 
+                |       |                 | \       \  |
+                |       |                 |  \       \ |
+                B - - - C                 B - C        C
+
+    &#34;&#34;&#34;
+    faces = []
+    add = faces.extend
+    pattern = np.array([0, ncx+1, ncx+2, 1])
+    for row in range(ncy):
+        for col in range(ncx):
+            x_offset = ((ncx+1) * row) + col
+            quad = (pattern + x_offset)
+            add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
+    return faces
+
+@njit(cache=True)
+def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
+    num_verts_x = num_chars_x + 1
+    num_verts_y = num_chars_y + 1
+
+    # njit doesn&#39;t allow np.tile or np.meshgrid, requiring a short rewrite.
+    X = np.linspace(0, num_chars_x*char_width, num_verts_x)
+    Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
+    xdir = np.repeat(X, num_verts_y).reshape(-1, num_verts_y).T.flatten()
+    ydir = np.repeat(Y, num_verts_x).T
+    coords = np.vstack((xdir, ydir)).T
+
+    cfaces = faces_from_xy(num_chars_x, num_chars_y)
+    return coords, cfaces</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.faces_from_xy"><code class="name flex">
+<span>def <span class="ident">faces_from_xy</span></span>(<span>ncx, ncy)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>this splits up the quad from geom.grid to triangles</p>
+<pre><code>        (ABCD)                   (ABC, ACD)
+</code></pre>
+<p>go from:
+A - - - D
+to
+A
+A - D
+|
+|
+| \
+\
+|
+|
+|
+|
+\
+\ |
+B - - - C
+B - C
+C</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@njit(cache=True)
+def faces_from_xy(ncx, ncy):
+    r&#34;&#34;&#34;
+    this splits up the quad from geom.grid to triangles
+
+                (ABCD)                   (ABC, ACD)
+
+    go from:    A - - - D           to    A        A - D 
+                |       |                 | \       \  |
+                |       |                 |  \       \ |
+                B - - - C                 B - C        C
+
+    &#34;&#34;&#34;
+    faces = []
+    add = faces.extend
+    pattern = np.array([0, ncx+1, ncx+2, 1])
+    for row in range(ncy):
+        for col in range(ncx):
+            x_offset = ((ncx+1) * row) + col
+            quad = (pattern + x_offset)
+            add([(quad[0], quad[1], quad[2]), (quad[0], quad[2], quad[3])])
+    return faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.get_console_grid"><code class="name flex">
+<span>def <span class="ident">get_console_grid</span></span>(<span>char_width, char_height, num_chars_x, num_chars_y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@njit(cache=True)
+def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
+    num_verts_x = num_chars_x + 1
+    num_verts_y = num_chars_y + 1
+
+    # njit doesn&#39;t allow np.tile or np.meshgrid, requiring a short rewrite.
+    X = np.linspace(0, num_chars_x*char_width, num_verts_x)
+    Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
+    xdir = np.repeat(X, num_verts_y).reshape(-1, num_verts_y).T.flatten()
+    ydir = np.repeat(Y, num_verts_x).T
+    coords = np.vstack((xdir, ydir)).T
+
+    cfaces = faces_from_xy(num_chars_x, num_chars_y)
+    return coords, cfaces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.get_xy_for_bgl_drawing"><code class="name flex">
+<span>def <span class="ident">get_xy_for_bgl_drawing</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_xy_for_bgl_drawing(node):
+    # adjust proposed text location in case node is framed.
+    # take into consideration the hidden state
+    _x, _y = node.absolute_location
+    _x, _y = (_x + node.width + 20), _y
+
+    # this alters location based on DPI/Scale settings.
+    return _x * node.location_theta, _y * node.location_theta</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin"><code class="flex name class">
+<span>class <span class="ident">SvNodeViewDrawMixin</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNodeViewDrawMixin():
+
+    location_theta: bpy.props.FloatProperty(name=&#34;location theta&#34;)
+
+    @property
+    def xy_offset(self):
+        a = self.absolute_location
+        b = int(self.width) + 20
+        return int(a[0] + b), int(a[1])
+
+    @staticmethod
+    def get_preferences():
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            &#39;render_scale&#39;: 1.0,
+            &#39;render_location_xy_multiplier&#39;: 1.0})
+        return props.render_scale, props.render_location_xy_multiplier
+
+    def adjust_position_and_dimensions(self, x, y, width, height):
+        scale, multiplier = self.get_preferences()
+        self.location_theta = multiplier</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>sverchok.nodes.text.stethoscope_v28.SvStethoscopeNodeMK2</li>
+<li>sverchok.nodes.viz.console_node.SvConsoleNode</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.location_theta"><code class="name">var <span class="ident">location_theta</span> : <_PropertyDeferred, <built-in function FloatProperty>, {'name': 'location theta', 'attr': 'location_theta'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.get_preferences"><code class="name flex">
+<span>def <span class="ident">get_preferences</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_preferences():
+    # supplied with default, forces at least one value :)
+    props = get_params({
+        &#39;render_scale&#39;: 1.0,
+        &#39;render_location_xy_multiplier&#39;: 1.0})
+    return props.render_scale, props.render_location_xy_multiplier</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.xy_offset"><code class="name">var <span class="ident">xy_offset</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def xy_offset(self):
+    a = self.absolute_location
+    b = int(self.width) + 20
+    return int(a[0] + b), int(a[1])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.adjust_position_and_dimensions"><code class="name flex">
+<span>def <span class="ident">adjust_position_and_dimensions</span></span>(<span>self, x, y, width, height)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_position_and_dimensions(self, x, y, width, height):
+    scale, multiplier = self.get_preferences()
+    self.location_theta = multiplier</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.faces_from_xy" href="#sverchok.utils.sv_nodeview_draw_helper.faces_from_xy">faces_from_xy</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.get_console_grid" href="#sverchok.utils.sv_nodeview_draw_helper.get_console_grid">get_console_grid</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.get_xy_for_bgl_drawing" href="#sverchok.utils.sv_nodeview_draw_helper.get_xy_for_bgl_drawing">get_xy_for_bgl_drawing</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin">SvNodeViewDrawMixin</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.adjust_position_and_dimensions" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.adjust_position_and_dimensions">adjust_position_and_dimensions</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.get_preferences" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.get_preferences">get_preferences</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.location_theta" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.location_theta">location_theta</a></code></li>
+<li><code><a title="sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.xy_offset" href="#sverchok.utils.sv_nodeview_draw_helper.SvNodeViewDrawMixin.xy_offset">xy_offset</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

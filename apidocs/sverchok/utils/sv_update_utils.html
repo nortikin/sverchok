@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.sv_update_utils API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.sv_update_utils</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import os
+import urllib
+import urllib.request
+from zipfile import ZipFile
+
+import bpy
+import sverchok
+from sverchok.utils import sv_requests as requests
+from sverchok.utils.context_managers import sv_preferences, addon_preferences
+# pylint: disable=w0141
+ADDON_NAME = sverchok.__name__
+COMMITS_LINK = &#39;https://api.github.com/repos/nortikin/sverchok/commits&#39;
+
+SHA_FILE = &#39;sv_shafile.sv&#39;
+SHA_DOWNLOADED = &#39;sv_sha_downloaded.sv&#39;
+
+ARCHIVE_LINK = &#39;https://github.com/nortikin/sverchok/archive/&#39;
+MASTER_BRANCH_NAME = &#39;master&#39;
+
+def sv_get_local_path():
+    script_paths = os.path.normpath(os.path.dirname(__file__))
+    addons_path = os.path.split(os.path.dirname(script_paths))[0]
+    version_local = sverchok.VERSION
+    return script_paths, addons_path, version_local
+
+sv_script_paths, bl_addons_path, sv_version_local = sv_get_local_path()
+
+
+
+def get_sha_filepath(filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; the act if calling this function should produce a file called
+        ../datafiles/sverchok/sv_shafile.sv (or sv_sha_downloaded.sv)
+
+    the location of datafiles is common for Blender apps and defined internally for each OS.
+    returns: the path of this file
+
+    &#34;&#34;&#34;
+    dirpath = os.path.join(bpy.utils.user_resource(&#39;DATAFILES&#39;, path=addon_name, create=True))
+    fullpath = os.path.join(dirpath, filename)
+
+    # create fullpath if it doesn&#39;t exist
+    if not os.path.exists(fullpath):
+        with open(fullpath, &#39;w&#39;) as _:
+            pass
+
+    return fullpath
+
+def latest_github_sha(commits_link):
+    &#34;&#34;&#34; get sha produced by latest commit on github
+
+        sha = latest_github_sha()
+        print(sha)
+
+    &#34;&#34;&#34;
+    r = requests.get(commits_link)
+    json_obj = r.json()
+    return os.path.basename(json_obj[0][&#39;commit&#39;][&#39;url&#39;])
+
+
+def latest_local_sha(filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; get previously stored sha, if any. finding no local sha will return empty string
+
+        reads from  ../datafiles/sverchok/sv_shafile.sv
+
+    &#34;&#34;&#34;
+    filepath = get_sha_filepath(filename, addon_name=addon_name)
+    with open(filepath) as p:
+        return p.read()
+
+def write_latest_sha_to_local(sha_value=&#39;&#39;, filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; write the content of sha_value to
+
+        ../datafiles/sverchok/sv_shafile.sv
+
+    &#34;&#34;&#34;
+    filepath = get_sha_filepath(filename, addon_name=addon_name)
+    with open(filepath, &#39;w&#39;) as p:
+        p.write(sha_value)
+
+
+def make_version_sha(addon_name=ADDON_NAME):
+    &#34;&#34;&#34; Generate a string to represent sverchok version including sha if found
+
+        returns:   0.5.9.13 (a3bcd34)   (or something like that)
+    &#34;&#34;&#34;
+    sha_postfix = &#39;&#39;
+    sha = latest_local_sha(filename=SHA_DOWNLOADED, addon_name=addon_name)
+    if sha:
+        sha_postfix = &#34; (&#34; + sha[:7] + &#34;)&#34;
+
+    return sv_version_local + sha_postfix
+
+version_and_sha = make_version_sha()
+
+
+class SverchokCheckForUpgradesSHA(bpy.types.Operator):
+    &#34;&#34;&#34; Check if there new version on github (using sha) &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_check_for_upgrades_wsha&#34;
+    bl_label = &#34;Sverchok check for new minor version&#34;
+    bl_options = {&#39;REGISTER&#39;}
+    addon_name: bpy.props.StringProperty(default=ADDON_NAME)
+    commits_link: bpy.props.StringProperty(default=COMMITS_LINK)
+
+    def execute(self, context):
+        report = self.report
+
+        local_sha = latest_local_sha(addon_name=self.addon_name)
+        latest_sha = latest_github_sha(self.commits_link)
+
+        with addon_preferences(self.addon_name) as prefs:
+            prefs.available_new_version = False
+            if not local_sha:
+                prefs.available_new_version = True
+            else:
+                if not local_sha == latest_sha:
+                    prefs.available_new_version = True
+
+            write_latest_sha_to_local(sha_value=latest_sha, addon_name=self.addon_name)
+            downloaded_sha = latest_local_sha(filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+            if not downloaded_sha == latest_sha:
+                prefs.available_new_version = True
+
+            if prefs.available_new_version:
+                report({&#39;INFO&#39;}, &#34;New commits available, update at own risk ({0})&#34;.format(latest_sha[:7]))
+            else:
+                report({&#39;INFO&#39;}, &#34;No new commits to download&#34;)
+
+        return {&#39;FINISHED&#39;}
+
+
+def get_archive_path(addon_name):
+    with addon_preferences(addon_name) as prefs:
+        return prefs.dload_archive_path, prefs.dload_archive_name
+
+
+class SverchokUpdateAddon(bpy.types.Operator):
+    &#34;&#34;&#34; Update Sverchok addon. After completion press F8 to reload addons or restart Blender &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_update_addon&#34;
+    bl_label = &#34;Sverchok update addon&#34;
+    bl_options = {&#39;REGISTER&#39;}
+    addon_name: bpy.props.StringProperty(default=ADDON_NAME)
+    master_branch_name: bpy.props.StringProperty(default=MASTER_BRANCH_NAME)
+    archive_link: bpy.props.StringProperty(default=ARCHIVE_LINK)
+
+    def execute(self, context):
+
+        os.curdir = bl_addons_path
+        os.chdir(os.curdir)
+
+        # wm = bpy.context.window_manager  should be this i think....
+        wm = bpy.data.window_managers[0]
+        wm.progress_begin(0, 100)
+        wm.progress_update(20)
+
+        dload_archive_path, dload_archive_name = get_archive_path(self.addon_name)
+
+        try:
+            branch_name = dload_archive_name or self.master_branch_name
+            branch_origin = dload_archive_path or self.archive_link
+            zipname = &#39;{0}.zip&#39;.format(branch_name)
+            url = branch_origin + zipname
+
+            to_path = os.path.normpath(os.path.join(os.curdir, zipname))
+
+            print(&#39;&gt; obtaining: [{0}]\n&gt; sending to path: [{1}]&#39;.format(url, to_path))
+            # return {&#39;CANCELLED&#39;}
+
+            file = requests.urlretrieve(url, to_path)
+            wm.progress_update(50)
+        except Exception as err:
+            self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+            print(err)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        try:
+            err = 0
+            ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+            wm.progress_update(90)
+            err = 1
+            os.remove(file[0])
+            err = 2
+            with addon_preferences(self.addon_name) as prefs:
+                prefs.available_new_version = False
+            wm.progress_update(100)
+            wm.progress_end()
+            self.report({&#39;INFO&#39;}, &#34;Unzipped, reload addons with F8 button, maybe restart Blender&#34;)
+        except:
+            self.report({&#39;ERROR&#39;}, &#34;Cannot extract files errno {0}&#34;.format(str(err)))
+            wm.progress_end()
+            os.remove(file[0])
+            return {&#39;CANCELLED&#39;}
+
+        # write to both sv_sha_download and sv_shafile.sv
+        lastest_local_sha = latest_local_sha(addon_name=self.addon_name)
+        write_latest_sha_to_local(sha_value=lastest_local_sha, filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+        write_latest_sha_to_local(sha_value=lastest_local_sha, addon_name=self.addon_name)
+        return {&#39;FINISHED&#39;}
+
+
+class SvPrintCommits(bpy.types.Operator):
+    &#34;&#34;&#34; show latest commits in info panel, and terminal &#34;&#34;&#34;
+    bl_idname = &#34;node.sv_show_latest_commits&#34;
+    bl_label = &#34;Show latest commits&#34;
+    commits_link: bpy.props.StringProperty(default=COMMITS_LINK)
+    num_commits: bpy.props.IntProperty(default=30)
+
+    def execute(self, context):
+        r = requests.get(self.commits_link)
+        json_obj = r.json()
+
+        rewrite_date = lambda date: f&#39;{date[:10]}&#39; #  @ {date[11:16]}&#39;
+
+        # table boilerplate for github markdown
+        print(&#34;author | commit details\n--- | ---&#34;)
+
+        # intro message for Info printing
+        messages = [f&#34;The {self.num_commits} most recent commits to Sverchok (master)&#34;]
+
+        for i in range(self.num_commits):
+            commit = json_obj[i][&#39;commit&#39;]
+            sha = os.path.basename(commit[&#39;url&#39;])[:7]
+
+            author = commit[&#39;author&#39;][&#39;name&#39;]
+            date = commit[&#39;author&#39;][&#39;date&#39;] #  format : &#39;2021-04-03T10:44:59Z&#39;
+            comments = commit[&#39;message&#39;].split(&#39;\n&#39;)
+            comment = comments[0] + &#39;...&#39; if len(comments) else &#39;&#39;
+
+            message = f&#39;{author} | {comment} {sha} on {rewrite_date(date)}&#39;
+            print(message)
+            messages.append(message)
+
+        multiline_string_of_messages = &#34;\n&#34;.join(messages)
+        self.report({&#39;INFO&#39;}, multiline_string_of_messages)
+
+        return {&#39;FINISHED&#39;}
+
+
+
+
+def register():
+    bpy.utils.register_class(SverchokCheckForUpgradesSHA)
+    bpy.utils.register_class(SverchokUpdateAddon)
+    bpy.utils.register_class(SvPrintCommits)
+
+def unregister():
+    bpy.utils.unregister_class(SverchokCheckForUpgradesSHA)
+    bpy.utils.unregister_class(SverchokUpdateAddon)
+    bpy.utils.unregister_class(SvPrintCommits)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.get_archive_path"><code class="name flex">
+<span>def <span class="ident">get_archive_path</span></span>(<span>addon_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_archive_path(addon_name):
+    with addon_preferences(addon_name) as prefs:
+        return prefs.dload_archive_path, prefs.dload_archive_name</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.get_sha_filepath"><code class="name flex">
+<span>def <span class="ident">get_sha_filepath</span></span>(<span>filename='sv_shafile.sv', addon_name='sverchok')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>the act if calling this function should produce a file called
+../datafiles/sverchok/sv_shafile.sv (or sv_sha_downloaded.sv)</p>
+<p>the location of datafiles is common for Blender apps and defined internally for each OS.
+returns: the path of this file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sha_filepath(filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; the act if calling this function should produce a file called
+        ../datafiles/sverchok/sv_shafile.sv (or sv_sha_downloaded.sv)
+
+    the location of datafiles is common for Blender apps and defined internally for each OS.
+    returns: the path of this file
+
+    &#34;&#34;&#34;
+    dirpath = os.path.join(bpy.utils.user_resource(&#39;DATAFILES&#39;, path=addon_name, create=True))
+    fullpath = os.path.join(dirpath, filename)
+
+    # create fullpath if it doesn&#39;t exist
+    if not os.path.exists(fullpath):
+        with open(fullpath, &#39;w&#39;) as _:
+            pass
+
+    return fullpath</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.latest_github_sha"><code class="name flex">
+<span>def <span class="ident">latest_github_sha</span></span>(<span>commits_link)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get sha produced by latest commit on github</p>
+<p>sha = latest_github_sha()
+print(sha)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def latest_github_sha(commits_link):
+    &#34;&#34;&#34; get sha produced by latest commit on github
+
+        sha = latest_github_sha()
+        print(sha)
+
+    &#34;&#34;&#34;
+    r = requests.get(commits_link)
+    json_obj = r.json()
+    return os.path.basename(json_obj[0][&#39;commit&#39;][&#39;url&#39;])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.latest_local_sha"><code class="name flex">
+<span>def <span class="ident">latest_local_sha</span></span>(<span>filename='sv_shafile.sv', addon_name='sverchok')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get previously stored sha, if any. finding no local sha will return empty string</p>
+<p>reads from
+../datafiles/sverchok/sv_shafile.sv</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def latest_local_sha(filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; get previously stored sha, if any. finding no local sha will return empty string
+
+        reads from  ../datafiles/sverchok/sv_shafile.sv
+
+    &#34;&#34;&#34;
+    filepath = get_sha_filepath(filename, addon_name=addon_name)
+    with open(filepath) as p:
+        return p.read()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.make_version_sha"><code class="name flex">
+<span>def <span class="ident">make_version_sha</span></span>(<span>addon_name='sverchok')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate a string to represent sverchok version including sha if found</p>
+<p>returns:
+0.5.9.13 (a3bcd34)
+(or something like that)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_version_sha(addon_name=ADDON_NAME):
+    &#34;&#34;&#34; Generate a string to represent sverchok version including sha if found
+
+        returns:   0.5.9.13 (a3bcd34)   (or something like that)
+    &#34;&#34;&#34;
+    sha_postfix = &#39;&#39;
+    sha = latest_local_sha(filename=SHA_DOWNLOADED, addon_name=addon_name)
+    if sha:
+        sha_postfix = &#34; (&#34; + sha[:7] + &#34;)&#34;
+
+    return sv_version_local + sha_postfix</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    bpy.utils.register_class(SverchokCheckForUpgradesSHA)
+    bpy.utils.register_class(SverchokUpdateAddon)
+    bpy.utils.register_class(SvPrintCommits)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.sv_get_local_path"><code class="name flex">
+<span>def <span class="ident">sv_get_local_path</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_get_local_path():
+    script_paths = os.path.normpath(os.path.dirname(__file__))
+    addons_path = os.path.split(os.path.dirname(script_paths))[0]
+    version_local = sverchok.VERSION
+    return script_paths, addons_path, version_local</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    bpy.utils.unregister_class(SverchokCheckForUpgradesSHA)
+    bpy.utils.unregister_class(SverchokUpdateAddon)
+    bpy.utils.unregister_class(SvPrintCommits)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.write_latest_sha_to_local"><code class="name flex">
+<span>def <span class="ident">write_latest_sha_to_local</span></span>(<span>sha_value='', filename='sv_shafile.sv', addon_name='sverchok')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>write the content of sha_value to</p>
+<p>../datafiles/sverchok/sv_shafile.sv</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_latest_sha_to_local(sha_value=&#39;&#39;, filename=SHA_FILE, addon_name=ADDON_NAME):
+    &#34;&#34;&#34; write the content of sha_value to
+
+        ../datafiles/sverchok/sv_shafile.sv
+
+    &#34;&#34;&#34;
+    filepath = get_sha_filepath(filename, addon_name=addon_name)
+    with open(filepath, &#39;w&#39;) as p:
+        p.write(sha_value)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits"><code class="flex name class">
+<span>class <span class="ident">SvPrintCommits</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>show latest commits in info panel, and terminal</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPrintCommits(bpy.types.Operator):
+    &#34;&#34;&#34; show latest commits in info panel, and terminal &#34;&#34;&#34;
+    bl_idname = &#34;node.sv_show_latest_commits&#34;
+    bl_label = &#34;Show latest commits&#34;
+    commits_link: bpy.props.StringProperty(default=COMMITS_LINK)
+    num_commits: bpy.props.IntProperty(default=30)
+
+    def execute(self, context):
+        r = requests.get(self.commits_link)
+        json_obj = r.json()
+
+        rewrite_date = lambda date: f&#39;{date[:10]}&#39; #  @ {date[11:16]}&#39;
+
+        # table boilerplate for github markdown
+        print(&#34;author | commit details\n--- | ---&#34;)
+
+        # intro message for Info printing
+        messages = [f&#34;The {self.num_commits} most recent commits to Sverchok (master)&#34;]
+
+        for i in range(self.num_commits):
+            commit = json_obj[i][&#39;commit&#39;]
+            sha = os.path.basename(commit[&#39;url&#39;])[:7]
+
+            author = commit[&#39;author&#39;][&#39;name&#39;]
+            date = commit[&#39;author&#39;][&#39;date&#39;] #  format : &#39;2021-04-03T10:44:59Z&#39;
+            comments = commit[&#39;message&#39;].split(&#39;\n&#39;)
+            comment = comments[0] + &#39;...&#39; if len(comments) else &#39;&#39;
+
+            message = f&#39;{author} | {comment} {sha} on {rewrite_date(date)}&#39;
+            print(message)
+            messages.append(message)
+
+        multiline_string_of_messages = &#34;\n&#34;.join(messages)
+        self.report({&#39;INFO&#39;}, multiline_string_of_messages)
+
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.commits_link"><code class="name">var <span class="ident">commits_link</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'https://api.github.com/repos/nortikin/sverchok/commits', 'attr': 'commits_link'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.num_commits"><code class="name">var <span class="ident">num_commits</span> : <_PropertyDeferred, <built-in function IntProperty>, {'default': 30, 'attr': 'num_commits'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SvPrintCommits.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    r = requests.get(self.commits_link)
+    json_obj = r.json()
+
+    rewrite_date = lambda date: f&#39;{date[:10]}&#39; #  @ {date[11:16]}&#39;
+
+    # table boilerplate for github markdown
+    print(&#34;author | commit details\n--- | ---&#34;)
+
+    # intro message for Info printing
+    messages = [f&#34;The {self.num_commits} most recent commits to Sverchok (master)&#34;]
+
+    for i in range(self.num_commits):
+        commit = json_obj[i][&#39;commit&#39;]
+        sha = os.path.basename(commit[&#39;url&#39;])[:7]
+
+        author = commit[&#39;author&#39;][&#39;name&#39;]
+        date = commit[&#39;author&#39;][&#39;date&#39;] #  format : &#39;2021-04-03T10:44:59Z&#39;
+        comments = commit[&#39;message&#39;].split(&#39;\n&#39;)
+        comment = comments[0] + &#39;...&#39; if len(comments) else &#39;&#39;
+
+        message = f&#39;{author} | {comment} {sha} on {rewrite_date(date)}&#39;
+        print(message)
+        messages.append(message)
+
+    multiline_string_of_messages = &#34;\n&#34;.join(messages)
+    self.report({&#39;INFO&#39;}, multiline_string_of_messages)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA"><code class="flex name class">
+<span>class <span class="ident">SverchokCheckForUpgradesSHA</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if there new version on github (using sha)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SverchokCheckForUpgradesSHA(bpy.types.Operator):
+    &#34;&#34;&#34; Check if there new version on github (using sha) &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_check_for_upgrades_wsha&#34;
+    bl_label = &#34;Sverchok check for new minor version&#34;
+    bl_options = {&#39;REGISTER&#39;}
+    addon_name: bpy.props.StringProperty(default=ADDON_NAME)
+    commits_link: bpy.props.StringProperty(default=COMMITS_LINK)
+
+    def execute(self, context):
+        report = self.report
+
+        local_sha = latest_local_sha(addon_name=self.addon_name)
+        latest_sha = latest_github_sha(self.commits_link)
+
+        with addon_preferences(self.addon_name) as prefs:
+            prefs.available_new_version = False
+            if not local_sha:
+                prefs.available_new_version = True
+            else:
+                if not local_sha == latest_sha:
+                    prefs.available_new_version = True
+
+            write_latest_sha_to_local(sha_value=latest_sha, addon_name=self.addon_name)
+            downloaded_sha = latest_local_sha(filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+            if not downloaded_sha == latest_sha:
+                prefs.available_new_version = True
+
+            if prefs.available_new_version:
+                report({&#39;INFO&#39;}, &#34;New commits available, update at own risk ({0})&#34;.format(latest_sha[:7]))
+            else:
+                report({&#39;INFO&#39;}, &#34;No new commits to download&#34;)
+
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.addon_name"><code class="name">var <span class="ident">addon_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'sverchok', 'attr': 'addon_name'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.commits_link"><code class="name">var <span class="ident">commits_link</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'https://api.github.com/repos/nortikin/sverchok/commits', 'attr': 'commits_link'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    report = self.report
+
+    local_sha = latest_local_sha(addon_name=self.addon_name)
+    latest_sha = latest_github_sha(self.commits_link)
+
+    with addon_preferences(self.addon_name) as prefs:
+        prefs.available_new_version = False
+        if not local_sha:
+            prefs.available_new_version = True
+        else:
+            if not local_sha == latest_sha:
+                prefs.available_new_version = True
+
+        write_latest_sha_to_local(sha_value=latest_sha, addon_name=self.addon_name)
+        downloaded_sha = latest_local_sha(filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+        if not downloaded_sha == latest_sha:
+            prefs.available_new_version = True
+
+        if prefs.available_new_version:
+            report({&#39;INFO&#39;}, &#34;New commits available, update at own risk ({0})&#34;.format(latest_sha[:7]))
+        else:
+            report({&#39;INFO&#39;}, &#34;No new commits to download&#34;)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon"><code class="flex name class">
+<span>class <span class="ident">SverchokUpdateAddon</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update Sverchok addon. After completion press F8 to reload addons or restart Blender</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SverchokUpdateAddon(bpy.types.Operator):
+    &#34;&#34;&#34; Update Sverchok addon. After completion press F8 to reload addons or restart Blender &#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_update_addon&#34;
+    bl_label = &#34;Sverchok update addon&#34;
+    bl_options = {&#39;REGISTER&#39;}
+    addon_name: bpy.props.StringProperty(default=ADDON_NAME)
+    master_branch_name: bpy.props.StringProperty(default=MASTER_BRANCH_NAME)
+    archive_link: bpy.props.StringProperty(default=ARCHIVE_LINK)
+
+    def execute(self, context):
+
+        os.curdir = bl_addons_path
+        os.chdir(os.curdir)
+
+        # wm = bpy.context.window_manager  should be this i think....
+        wm = bpy.data.window_managers[0]
+        wm.progress_begin(0, 100)
+        wm.progress_update(20)
+
+        dload_archive_path, dload_archive_name = get_archive_path(self.addon_name)
+
+        try:
+            branch_name = dload_archive_name or self.master_branch_name
+            branch_origin = dload_archive_path or self.archive_link
+            zipname = &#39;{0}.zip&#39;.format(branch_name)
+            url = branch_origin + zipname
+
+            to_path = os.path.normpath(os.path.join(os.curdir, zipname))
+
+            print(&#39;&gt; obtaining: [{0}]\n&gt; sending to path: [{1}]&#39;.format(url, to_path))
+            # return {&#39;CANCELLED&#39;}
+
+            file = requests.urlretrieve(url, to_path)
+            wm.progress_update(50)
+        except Exception as err:
+            self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+            print(err)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        try:
+            err = 0
+            ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+            wm.progress_update(90)
+            err = 1
+            os.remove(file[0])
+            err = 2
+            with addon_preferences(self.addon_name) as prefs:
+                prefs.available_new_version = False
+            wm.progress_update(100)
+            wm.progress_end()
+            self.report({&#39;INFO&#39;}, &#34;Unzipped, reload addons with F8 button, maybe restart Blender&#34;)
+        except:
+            self.report({&#39;ERROR&#39;}, &#34;Cannot extract files errno {0}&#34;.format(str(err)))
+            wm.progress_end()
+            os.remove(file[0])
+            return {&#39;CANCELLED&#39;}
+
+        # write to both sv_sha_download and sv_shafile.sv
+        lastest_local_sha = latest_local_sha(addon_name=self.addon_name)
+        write_latest_sha_to_local(sha_value=lastest_local_sha, filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+        write_latest_sha_to_local(sha_value=lastest_local_sha, addon_name=self.addon_name)
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.addon_name"><code class="name">var <span class="ident">addon_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'sverchok', 'attr': 'addon_name'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.archive_link"><code class="name">var <span class="ident">archive_link</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'https://github.com/nortikin/sverchok/archive/', 'attr': 'archive_link'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.master_branch_name"><code class="name">var <span class="ident">master_branch_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'master', 'attr': 'master_branch_name'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_update_utils.SverchokUpdateAddon.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+
+    os.curdir = bl_addons_path
+    os.chdir(os.curdir)
+
+    # wm = bpy.context.window_manager  should be this i think....
+    wm = bpy.data.window_managers[0]
+    wm.progress_begin(0, 100)
+    wm.progress_update(20)
+
+    dload_archive_path, dload_archive_name = get_archive_path(self.addon_name)
+
+    try:
+        branch_name = dload_archive_name or self.master_branch_name
+        branch_origin = dload_archive_path or self.archive_link
+        zipname = &#39;{0}.zip&#39;.format(branch_name)
+        url = branch_origin + zipname
+
+        to_path = os.path.normpath(os.path.join(os.curdir, zipname))
+
+        print(&#39;&gt; obtaining: [{0}]\n&gt; sending to path: [{1}]&#39;.format(url, to_path))
+        # return {&#39;CANCELLED&#39;}
+
+        file = requests.urlretrieve(url, to_path)
+        wm.progress_update(50)
+    except Exception as err:
+        self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+        print(err)
+        wm.progress_end()
+        return {&#39;CANCELLED&#39;}
+
+    try:
+        err = 0
+        ZipFile(file[0]).extractall(path=os.curdir, members=None, pwd=None)
+        wm.progress_update(90)
+        err = 1
+        os.remove(file[0])
+        err = 2
+        with addon_preferences(self.addon_name) as prefs:
+            prefs.available_new_version = False
+        wm.progress_update(100)
+        wm.progress_end()
+        self.report({&#39;INFO&#39;}, &#34;Unzipped, reload addons with F8 button, maybe restart Blender&#34;)
+    except:
+        self.report({&#39;ERROR&#39;}, &#34;Cannot extract files errno {0}&#34;.format(str(err)))
+        wm.progress_end()
+        os.remove(file[0])
+        return {&#39;CANCELLED&#39;}
+
+    # write to both sv_sha_download and sv_shafile.sv
+    lastest_local_sha = latest_local_sha(addon_name=self.addon_name)
+    write_latest_sha_to_local(sha_value=lastest_local_sha, filename=SHA_DOWNLOADED, addon_name=self.addon_name)
+    write_latest_sha_to_local(sha_value=lastest_local_sha, addon_name=self.addon_name)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_update_utils.get_archive_path" href="#sverchok.utils.sv_update_utils.get_archive_path">get_archive_path</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.get_sha_filepath" href="#sverchok.utils.sv_update_utils.get_sha_filepath">get_sha_filepath</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.latest_github_sha" href="#sverchok.utils.sv_update_utils.latest_github_sha">latest_github_sha</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.latest_local_sha" href="#sverchok.utils.sv_update_utils.latest_local_sha">latest_local_sha</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.make_version_sha" href="#sverchok.utils.sv_update_utils.make_version_sha">make_version_sha</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.register" href="#sverchok.utils.sv_update_utils.register">register</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.sv_get_local_path" href="#sverchok.utils.sv_update_utils.sv_get_local_path">sv_get_local_path</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.unregister" href="#sverchok.utils.sv_update_utils.unregister">unregister</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.write_latest_sha_to_local" href="#sverchok.utils.sv_update_utils.write_latest_sha_to_local">write_latest_sha_to_local</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits" href="#sverchok.utils.sv_update_utils.SvPrintCommits">SvPrintCommits</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.bl_idname" href="#sverchok.utils.sv_update_utils.SvPrintCommits.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.bl_label" href="#sverchok.utils.sv_update_utils.SvPrintCommits.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.bl_rna" href="#sverchok.utils.sv_update_utils.SvPrintCommits.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.commits_link" href="#sverchok.utils.sv_update_utils.SvPrintCommits.commits_link">commits_link</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.execute" href="#sverchok.utils.sv_update_utils.SvPrintCommits.execute">execute</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SvPrintCommits.num_commits" href="#sverchok.utils.sv_update_utils.SvPrintCommits.num_commits">num_commits</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA">SverchokCheckForUpgradesSHA</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.addon_name" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.addon_name">addon_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_idname" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_label" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_options" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_rna" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.commits_link" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.commits_link">commits_link</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.execute" href="#sverchok.utils.sv_update_utils.SverchokCheckForUpgradesSHA.execute">execute</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon">SverchokUpdateAddon</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.addon_name" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.addon_name">addon_name</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.archive_link" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.archive_link">archive_link</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_idname" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_label" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_options" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_rna" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.execute" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.execute">execute</a></code></li>
+<li><code><a title="sverchok.utils.sv_update_utils.SverchokUpdateAddon.master_branch_name" href="#sverchok.utils.sv_update_utils.SverchokUpdateAddon.master_branch_name">master_branch_name</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

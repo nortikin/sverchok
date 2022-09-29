@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.geom_2d.lin_alg API documentation</title>
+<meta name="description" content="This module is for geometry functions handle meshes in 2D space (&#34;XY&#34; surface) mostly." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.geom_2d.lin_alg</code></h1>
+</header>
+<section id="section-intro">
+<p>This module is for geometry functions handle meshes in 2D space ("XY" surface) mostly.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+&#34;&#34;&#34;
+This module is for geometry functions handle meshes in 2D space (&#34;XY&#34; surface) mostly.
+&#34;&#34;&#34;
+
+
+x, y, z = 0, 1, 2
+
+
+def almost_equal(v1, v2, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if values are equal else False
+    &#34;&#34;&#34;
+    return abs(v1 - v2) &lt; accuracy
+
+
+def is_less(v1, v2, epsilon=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if v1 is less then v2
+    &#34;&#34;&#34;
+    return v2 - v1 &gt; epsilon
+
+
+def is_more(v1, v2, epsilon=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if v1 is more then v2
+    &#34;&#34;&#34;
+    return v1 - v2 &gt; epsilon
+
+
+def cross_product(v1, v2):
+    &#34;&#34;&#34;
+    Cross product of two any dimension vectors
+    :param v1: any massive
+    :param v2: any massive
+    :return: list
+    &#34;&#34;&#34;
+    out = []
+    length = len(v1)
+    for i in range(length):
+        out.append(v1[(i + 1) % length] * v2[(i + 2) % length] - v1[(i + 2) % length] * v2[(i + 1) % length])
+    return out
+
+
+def dot_product(v1, v2):
+    &#34;&#34;&#34;
+    Calculate dot product of two vectors
+    :param v1: massive of any length
+    :param v2: massive of any length
+    :return: float
+    &#34;&#34;&#34;
+    out = 0
+    for co1, co2 in zip(v1, v2):
+        out += co1 * co2
+    return out
+
+
+def convert_homogeneous_to_cartesian(v):
+    &#34;&#34;&#34;
+    Convert from homogeneous to cartesian system coordinate
+    :param v: massive of any length
+    :return: list
+    &#34;&#34;&#34;
+    w = v[-1]
+    out = []
+    for s in v[:-1]:
+        out.append(s / w)
+    return out
+
+
+def is_ccw(a, b, c):
+    &#34;&#34;&#34;
+    Tests whether the turn formed by A, B, and C is counter clockwise
+    :param a: 2d point - any massive
+    :param b: 2d point - any massive
+    :param c: 2d point - any massive
+    :return: True if turn is counter clockwise else False
+    &#34;&#34;&#34;
+    return (b[x] - a[x]) * (c[y] - a[y]) &gt; (b[y] - a[y]) * (c[x] - a[x])
+
+
+def is_ccw_polygon(all_verts=None, most_lefts=None, accuracy=1e-6):
+    &#34;&#34;&#34;
+    The function get either all points or most left point and its two neighbours of the polygon
+    and returns True if order of points are in counterclockwise
+    :param all_verts: [(x, y, z) or (x, y), ...]
+    :param most_lefts: [(x, y, z) or (x, y), ...]
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: bool
+    &#34;&#34;&#34;
+    def is_vertical(points, accuracy=1e-6):
+        # is 3 most left points vertical
+        if almost_equal(points[0][x], points[1][x], accuracy) and almost_equal(points[0][x], points[2][x], accuracy):
+            return True
+        else:
+            return False
+    if all([all_verts, most_lefts]) or not any([all_verts, most_lefts]):
+        raise ValueError(&#39;The function get either all points or most left point and its two neighbours of the polygon.&#39;)
+    if all_verts:
+        x_min = min(range(len(all_verts)), key=lambda i: all_verts[i][x])
+        most_lefts = [all_verts[(x_min - 1) % len(all_verts)], all_verts[x_min],
+                      all_verts[(x_min + 1) % len(all_verts)]]
+    if is_vertical(most_lefts, accuracy):
+        # here is handled corner case when most left points are vertical
+        return True if most_lefts[0][y] &gt; most_lefts[1][y] else False
+    else:
+        return True if is_ccw(*most_lefts) else False
+
+
+def is_edges_intersect(a1, b1, a2, b2):
+    &#34;&#34;&#34;
+    Returns True if line segments a1b1 and a2b2 intersect
+    If point of one edge lays on another edge this recognize like intersection
+    :param a1: first 2d point of fist segment - any massive
+    :param b1: second 2d point of fist segment - any massive
+    :param a2: first 2d point of second segment - any massive
+    :param b2: second 2d point of second segment - any massive
+    :return: True if edges are intersected else False
+    &#34;&#34;&#34;
+    return ((is_ccw(a1, b1, a2) != is_ccw(a1, b1, b2) or is_ccw(b1, a1, a2) != is_ccw(b1, a1, b2)) and
+            (is_ccw(a2, b2, a1) != is_ccw(a2, b2, b1) or is_ccw(b2, a2, a1) != is_ccw(b2, a2, b1)))
+
+
+def intersect_edges(a1, a2, b1, b2, to_project=False, accuracy=1e-5):
+    &#34;&#34;&#34;
+    Find intersection of two lines determined by two coordinates
+    :param a1: point 1 of line a - any massive
+    :param a2: point 2 of line a - any massive
+    :param b1: point 1 of line b - any massive
+    :param b2: point 2 of line b - any massive
+    :param to_project: to project intersection point back into first edge - bool
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: returns intersection point (list) if lines are not parallel else returns False
+    &#34;&#34;&#34;
+    def project_point(e1, e2, p, accuracy):
+        if almost_equal(e1[z], e2[z], accuracy):
+            return p[x], p[y], e1[z]
+        ev = [co1 - co2 for co1, co2 in zip(e1, e2)]
+        pv = [cop - co2 for cop, co2 in zip(p, e2)]
+        dz = ev[z]
+        ev = [ev[x], ev[y], 0]
+        pv = [pv[x], pv[y], 0]
+        pow_len_ev = sum([co ** 2 for co in ev]) ** 0.5
+        pow_len_pv = sum([co ** 2 for co in pv]) ** 0.5
+        pz = e2[z] + (dz * (pow_len_pv / pow_len_ev))
+        return p[x], p[y], pz
+
+    cross_a = cross_product((a1[x], a1[y], 1), (a2[x], a2[y], 1))
+    cross_b = cross_product((b1[x], b1[y], 1), (b2[x], b2[y], 1))
+    hom_v = cross_product(cross_a, cross_b)
+    if hom_v[2] != 0:
+        intersect = convert_homogeneous_to_cartesian(hom_v)
+        if to_project:
+            return project_point(a1, a2, intersect, accuracy)
+        else:
+            return intersect
+    elif not any(hom_v):
+        return False  # two lines ara overlapping
+    else:
+        return False  # two lines are parallel</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.geom_2d.lin_alg.almost_equal"><code class="name flex">
+<span>def <span class="ident">almost_equal</span></span>(<span>v1, v2, accuracy=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compare floating values
+:param v1: float
+:param v2: float
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: True if values are equal else False</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def almost_equal(v1, v2, accuracy=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if values are equal else False
+    &#34;&#34;&#34;
+    return abs(v1 - v2) &lt; accuracy</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.convert_homogeneous_to_cartesian"><code class="name flex">
+<span>def <span class="ident">convert_homogeneous_to_cartesian</span></span>(<span>v)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert from homogeneous to cartesian system coordinate
+:param v: massive of any length
+:return: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_homogeneous_to_cartesian(v):
+    &#34;&#34;&#34;
+    Convert from homogeneous to cartesian system coordinate
+    :param v: massive of any length
+    :return: list
+    &#34;&#34;&#34;
+    w = v[-1]
+    out = []
+    for s in v[:-1]:
+        out.append(s / w)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.cross_product"><code class="name flex">
+<span>def <span class="ident">cross_product</span></span>(<span>v1, v2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cross product of two any dimension vectors
+:param v1: any massive
+:param v2: any massive
+:return: list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cross_product(v1, v2):
+    &#34;&#34;&#34;
+    Cross product of two any dimension vectors
+    :param v1: any massive
+    :param v2: any massive
+    :return: list
+    &#34;&#34;&#34;
+    out = []
+    length = len(v1)
+    for i in range(length):
+        out.append(v1[(i + 1) % length] * v2[(i + 2) % length] - v1[(i + 2) % length] * v2[(i + 1) % length])
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.dot_product"><code class="name flex">
+<span>def <span class="ident">dot_product</span></span>(<span>v1, v2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate dot product of two vectors
+:param v1: massive of any length
+:param v2: massive of any length
+:return: float</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dot_product(v1, v2):
+    &#34;&#34;&#34;
+    Calculate dot product of two vectors
+    :param v1: massive of any length
+    :param v2: massive of any length
+    :return: float
+    &#34;&#34;&#34;
+    out = 0
+    for co1, co2 in zip(v1, v2):
+        out += co1 * co2
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.intersect_edges"><code class="name flex">
+<span>def <span class="ident">intersect_edges</span></span>(<span>a1, a2, b1, b2, to_project=False, accuracy=1e-05)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find intersection of two lines determined by two coordinates
+:param a1: point 1 of line a - any massive
+:param a2: point 2 of line a - any massive
+:param b1: point 1 of line b - any massive
+:param b2: point 2 of line b - any massive
+:param to_project: to project intersection point back into first edge - bool
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: returns intersection point (list) if lines are not parallel else returns False</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def intersect_edges(a1, a2, b1, b2, to_project=False, accuracy=1e-5):
+    &#34;&#34;&#34;
+    Find intersection of two lines determined by two coordinates
+    :param a1: point 1 of line a - any massive
+    :param a2: point 2 of line a - any massive
+    :param b1: point 1 of line b - any massive
+    :param b2: point 2 of line b - any massive
+    :param to_project: to project intersection point back into first edge - bool
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: returns intersection point (list) if lines are not parallel else returns False
+    &#34;&#34;&#34;
+    def project_point(e1, e2, p, accuracy):
+        if almost_equal(e1[z], e2[z], accuracy):
+            return p[x], p[y], e1[z]
+        ev = [co1 - co2 for co1, co2 in zip(e1, e2)]
+        pv = [cop - co2 for cop, co2 in zip(p, e2)]
+        dz = ev[z]
+        ev = [ev[x], ev[y], 0]
+        pv = [pv[x], pv[y], 0]
+        pow_len_ev = sum([co ** 2 for co in ev]) ** 0.5
+        pow_len_pv = sum([co ** 2 for co in pv]) ** 0.5
+        pz = e2[z] + (dz * (pow_len_pv / pow_len_ev))
+        return p[x], p[y], pz
+
+    cross_a = cross_product((a1[x], a1[y], 1), (a2[x], a2[y], 1))
+    cross_b = cross_product((b1[x], b1[y], 1), (b2[x], b2[y], 1))
+    hom_v = cross_product(cross_a, cross_b)
+    if hom_v[2] != 0:
+        intersect = convert_homogeneous_to_cartesian(hom_v)
+        if to_project:
+            return project_point(a1, a2, intersect, accuracy)
+        else:
+            return intersect
+    elif not any(hom_v):
+        return False  # two lines ara overlapping
+    else:
+        return False  # two lines are parallel</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.is_ccw"><code class="name flex">
+<span>def <span class="ident">is_ccw</span></span>(<span>a, b, c)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tests whether the turn formed by A, B, and C is counter clockwise
+:param a: 2d point - any massive
+:param b: 2d point - any massive
+:param c: 2d point - any massive
+:return: True if turn is counter clockwise else False</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_ccw(a, b, c):
+    &#34;&#34;&#34;
+    Tests whether the turn formed by A, B, and C is counter clockwise
+    :param a: 2d point - any massive
+    :param b: 2d point - any massive
+    :param c: 2d point - any massive
+    :return: True if turn is counter clockwise else False
+    &#34;&#34;&#34;
+    return (b[x] - a[x]) * (c[y] - a[y]) &gt; (b[y] - a[y]) * (c[x] - a[x])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.is_ccw_polygon"><code class="name flex">
+<span>def <span class="ident">is_ccw_polygon</span></span>(<span>all_verts=None, most_lefts=None, accuracy=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The function get either all points or most left point and its two neighbours of the polygon
+and returns True if order of points are in counterclockwise
+:param all_verts: [(x, y, z) or (x, y), &hellip;]
+:param most_lefts: [(x, y, z) or (x, y), &hellip;]
+:param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+:return: bool</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_ccw_polygon(all_verts=None, most_lefts=None, accuracy=1e-6):
+    &#34;&#34;&#34;
+    The function get either all points or most left point and its two neighbours of the polygon
+    and returns True if order of points are in counterclockwise
+    :param all_verts: [(x, y, z) or (x, y), ...]
+    :param most_lefts: [(x, y, z) or (x, y), ...]
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: bool
+    &#34;&#34;&#34;
+    def is_vertical(points, accuracy=1e-6):
+        # is 3 most left points vertical
+        if almost_equal(points[0][x], points[1][x], accuracy) and almost_equal(points[0][x], points[2][x], accuracy):
+            return True
+        else:
+            return False
+    if all([all_verts, most_lefts]) or not any([all_verts, most_lefts]):
+        raise ValueError(&#39;The function get either all points or most left point and its two neighbours of the polygon.&#39;)
+    if all_verts:
+        x_min = min(range(len(all_verts)), key=lambda i: all_verts[i][x])
+        most_lefts = [all_verts[(x_min - 1) % len(all_verts)], all_verts[x_min],
+                      all_verts[(x_min + 1) % len(all_verts)]]
+    if is_vertical(most_lefts, accuracy):
+        # here is handled corner case when most left points are vertical
+        return True if most_lefts[0][y] &gt; most_lefts[1][y] else False
+    else:
+        return True if is_ccw(*most_lefts) else False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.is_edges_intersect"><code class="name flex">
+<span>def <span class="ident">is_edges_intersect</span></span>(<span>a1, b1, a2, b2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if line segments a1b1 and a2b2 intersect
+If point of one edge lays on another edge this recognize like intersection
+:param a1: first 2d point of fist segment - any massive
+:param b1: second 2d point of fist segment - any massive
+:param a2: first 2d point of second segment - any massive
+:param b2: second 2d point of second segment - any massive
+:return: True if edges are intersected else False</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_edges_intersect(a1, b1, a2, b2):
+    &#34;&#34;&#34;
+    Returns True if line segments a1b1 and a2b2 intersect
+    If point of one edge lays on another edge this recognize like intersection
+    :param a1: first 2d point of fist segment - any massive
+    :param b1: second 2d point of fist segment - any massive
+    :param a2: first 2d point of second segment - any massive
+    :param b2: second 2d point of second segment - any massive
+    :return: True if edges are intersected else False
+    &#34;&#34;&#34;
+    return ((is_ccw(a1, b1, a2) != is_ccw(a1, b1, b2) or is_ccw(b1, a1, a2) != is_ccw(b1, a1, b2)) and
+            (is_ccw(a2, b2, a1) != is_ccw(a2, b2, b1) or is_ccw(b2, a2, a1) != is_ccw(b2, a2, b1)))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.is_less"><code class="name flex">
+<span>def <span class="ident">is_less</span></span>(<span>v1, v2, epsilon=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compare floating values
+:param v1: float
+:param v2: float
+:param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+:return: True if v1 is less then v2</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_less(v1, v2, epsilon=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if v1 is less then v2
+    &#34;&#34;&#34;
+    return v2 - v1 &gt; epsilon</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom_2d.lin_alg.is_more"><code class="name flex">
+<span>def <span class="ident">is_more</span></span>(<span>v1, v2, epsilon=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compare floating values
+:param v1: float
+:param v2: float
+:param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+:return: True if v1 is more then v2</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_more(v1, v2, epsilon=1e-6):
+    &#34;&#34;&#34;
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: True if v1 is more then v2
+    &#34;&#34;&#34;
+    return v1 - v2 &gt; epsilon</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.geom_2d" href="index.html">sverchok.utils.geom_2d</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.almost_equal" href="#sverchok.utils.geom_2d.lin_alg.almost_equal">almost_equal</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.convert_homogeneous_to_cartesian" href="#sverchok.utils.geom_2d.lin_alg.convert_homogeneous_to_cartesian">convert_homogeneous_to_cartesian</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.cross_product" href="#sverchok.utils.geom_2d.lin_alg.cross_product">cross_product</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.dot_product" href="#sverchok.utils.geom_2d.lin_alg.dot_product">dot_product</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.intersect_edges" href="#sverchok.utils.geom_2d.lin_alg.intersect_edges">intersect_edges</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.is_ccw" href="#sverchok.utils.geom_2d.lin_alg.is_ccw">is_ccw</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.is_ccw_polygon" href="#sverchok.utils.geom_2d.lin_alg.is_ccw_polygon">is_ccw_polygon</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.is_edges_intersect" href="#sverchok.utils.geom_2d.lin_alg.is_edges_intersect">is_edges_intersect</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.is_less" href="#sverchok.utils.geom_2d.lin_alg.is_less">is_less</a></code></li>
+<li><code><a title="sverchok.utils.geom_2d.lin_alg.is_more" href="#sverchok.utils.geom_2d.lin_alg.is_more">is_more</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

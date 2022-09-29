@@ -1,0 +1,2223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.surface.core API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.surface.core</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import numpy as np
+from math import pi, cos, sin, atan, sqrt
+from collections import defaultdict
+
+from sverchok.utils.logging import info, exception
+from sverchok.utils.surface.data import *
+
+class UnsupportedSurfaceTypeException(TypeError):
+    pass
+
+class SvSurface(object):
+    def __repr__(self):
+        if hasattr(self, &#39;__description__&#39;):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return &#34;&lt;{} surface&gt;&#34;.format(description)
+
+    def evaluate(self, u, v):
+        raise Exception(&#34;not implemented!&#34;)
+
+    def evaluate_array(self, us, vs):
+        raise Exception(&#34;not implemented!&#34;)
+
+    def normal(self, u, v):
+        h = self.normal_delta
+        p = self.evaluate(u, v)
+        p_u = self.evaluate(u+h, v)
+        p_v = self.evaluate(u, v+h)
+        du = (p_u - p) / h
+        dv = (p_v - p) / h
+        normal = np.cross(du, dv)
+        n = np.linalg.norm(normal)
+        normal = normal / n
+        return normal
+
+    def normal_array(self, us, vs):
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + self.normal_delta, vs)
+        v_plus = self.evaluate_array(us, vs + self.normal_delta)
+        du = u_plus - surf_vertices
+        dv = v_plus - surf_vertices
+        #self.info(&#34;Du: %s&#34;, du)
+        #self.info(&#34;Dv: %s&#34;, dv)
+        normal = np.cross(du, dv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        #if norm != 0:
+        normal = normal / norm
+        #self.info(&#34;Normals: %s&#34;, normal)
+        return normal
+
+    def derivatives_data_array(self, us, vs):
+        if hasattr(self, &#39;normal_delta&#39;):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        du = (u_plus - surf_vertices) / h
+        dv = (v_plus - surf_vertices) / h
+        return SurfaceDerivativesData(surf_vertices, du, dv)
+
+    def curvature_calculator(self, us, vs, order=True):
+        if hasattr(self, &#39;normal_delta&#39;):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        h2 = h*h
+
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        u_minus = self.evaluate_array(us - h, vs)
+        v_minus = self.evaluate_array(us, vs - h)
+        uv_plus = self.evaluate_array(us + h, vs + h)
+        uv_minus = self.evaluate_array(us - h, vs - h)
+
+        fu = (u_plus - surf_vertices)/h
+        fv = (v_plus - surf_vertices)/h
+        normal = np.cross(fu, fv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        normal = normal / norm
+
+        fuu = (u_plus - 2*surf_vertices + u_minus) / h2
+        fvv = (v_plus - 2*surf_vertices + v_minus) / h2
+        fuv = (uv_plus - u_plus - v_plus + surf_vertices) / h2
+
+        nuu = (fuu * normal).sum(axis=1)
+        nvv = (fvv * normal).sum(axis=1)
+        nuv = (fuv * normal).sum(axis=1)
+
+        duu = np.linalg.norm(fu, axis=1) **2
+        dvv = np.linalg.norm(fv, axis=1) **2
+        duv = (fu * fv).sum(axis=1)
+
+        calc = SurfaceCurvatureCalculator(us, vs, order=order)
+        calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+        return calc
+
+    def gauss_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.gauss()
+
+    def mean_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.mean()
+
+    def principal_curvature_values_array(self, us, vs, order=True):
+        calc = self.curvature_calculator(us, vs, order=order)
+        return calc.values()
+
+    def principal_curvatures_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.values_and_directions()
+
+    def get_coord_mode(self):
+        return &#39;UV&#39;
+
+    @property
+    def has_input_matrix(self):
+        return False
+
+    def get_input_matrix(self):
+        return None
+
+    def get_input_orientation(self):
+        return None
+
+    def get_u_min(self):
+        return 0.0
+
+    def get_u_max(self):
+        return 1.0
+
+    def get_v_min(self):
+        return 0.0
+
+    def get_v_max(self):
+        return 1.0
+
+    def get_domain(self):
+        return (self.get_u_min(), self.get_u_max(), self.get_v_min(), self.get_v_max())
+
+    def get_u_bounds(self):
+        return (self.get_u_min(), self.get_u_max())
+
+    def get_v_bounds(self):
+        return (self.get_v_min(), self.get_v_max())
+
+    @property
+    def u_size(self):
+        m,M = self.get_u_min(), self.get_u_max()
+        return M - m
+
+    @property
+    def v_size(self):
+        m,M = self.get_v_min(), self.get_v_max()
+        return M - m
+
+class SvSurfaceSubdomain(SvSurface):
+    def __init__(self, surface, u_bounds, v_bounds):
+        self.surface = surface
+        self.u_bounds = u_bounds
+        self.v_bounds = v_bounds
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;{}[{} .. {}][{} .. {}]&#34;.format(surface, u_bounds[0], u_bounds[1], v_bounds[0], v_bounds[1])
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(us, vs)
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+class SvFlipSurface(SvSurface):
+    def __init__(self, surface, flip_u, flip_v):
+        self.surface = surface
+        self.flip_u = flip_u
+        self.flip_v = flip_v
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;Flipped {}&#34;.format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_u_min()
+
+    def get_v_min(self):
+        return self.surface.get_v_min()
+
+    def get_u_max(self):
+        return self.surface.get_u_max()
+
+    def get_v_max(self):
+        return self.surface.get_v_max()
+
+    def flip(self, u, v):
+        min_u, max_u = self.get_u_min(), self.get_u_max()
+        min_v, max_v = self.get_v_min(), self.get_v_max()
+
+        if self.flip_u:
+            u = max_u - u + min_u
+        if self.flip_v:
+            v = max_v - v + max_v
+        return u, v
+
+    def evaluate(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.evaluate(u, v)
+    
+    def evaluate_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.normal_array(us, vs)
+
+class SvSwapSurface(SvSurface):
+    def __init__(self, surface):
+        self.surface = surface
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;Swapped {}&#34;.format(surface)
+
+    @staticmethod
+    def build(surface):
+        if hasattr(surface, &#39;swap_uv&#39;):
+            return surface.swap_uv()
+        return SvSwapSurface(surface)
+
+    def get_u_min(self):
+        return self.surface.get_v_min()
+
+    def get_v_min(self):
+        return self.surface.get_u_min()
+
+    def get_u_max(self):
+        return self.surface.get_v_max()
+
+    def get_v_max(self):
+        return self.surface.get_u_max()
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(v, u)
+    
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(vs, us)
+
+    def normal(self, u, v):
+        return self.surface.normal(v, u)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(vs, us)
+
+class SvReparametrizedSurface(SvSurface):
+    def __init__(self, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        self.surface = surface
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        self.new_v_min = new_v_min
+        self.new_v_max = new_v_max
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+
+    @classmethod
+    def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        if hasattr(surface, &#39;reparametrize&#39;):
+            return surface.reparametrize(new_u_min, new_u_max, new_v_min, new_v_max)
+
+        return SvReparametrizedSurface(surface, new_u_min, new_u_max, new_v_min, new_v_max)
+
+    def get_u_min(self):
+        return self.new_u_min
+
+    def get_v_min(self):
+        return self.new_v_min
+
+    def get_u_max(self):
+        return self.new_u_max
+
+    def get_v_max(self):
+        return self.new_v_max
+
+    def map_uv(self, u, v):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+
+        u = (u_max - u_min) * (u - new_u_min) / (new_u_max - new_u_min) + u_min
+        v = (v_max - v_min) * (v - new_v_min) / (new_v_max - new_v_min) + v_min
+
+        return u, v
+
+    def scale_u(self):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        return (u_max - u_min) / (new_u_max - new_u_min)
+
+    def scale_v(self):
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+        return (v_max - v_min) / (new_v_max - new_v_min)
+
+    def evaluate(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.normal_array(us, vs)
+
+    def derivatives_data_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        data = self.surface.derivatives_data_array(us, vs)
+        data.du *= self.scale_u()
+        data.dv *= self.scale_v()
+        return data
+
+
+class SvLambdaSurface(SvSurface):
+    __description__ = &#34;Formula&#34;
+
+    def __init__(self, function, function_numpy = None):
+        self.function = function
+        self.function_numpy = function_numpy
+        self.u_bounds = (0.0, 1.0)
+        self.v_bounds = (0.0, 1.0)
+        self.normal_delta = 0.001
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+    @property
+    def u_size(self):
+        return self.u_bounds[1] - self.u_bounds[0]
+
+    @property
+    def v_size(self):
+        return self.v_bounds[1] - self.v_bounds[0]
+
+    def evaluate(self, u, v):
+        return self.function(u, v)
+
+    def evaluate_array(self, us, vs):
+        if self.function_numpy is None:
+            return np.vectorize(self.function, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+        else:
+            return self.function_numpy(us, vs)
+
+    def normal(self, u, v):
+        return self.normal_array(np.array([u]), np.array([v]))[0]
+
+    def normal_array(self, us, vs):
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + self.normal_delta, vs)
+        v_plus = self.evaluate_array(us, vs + self.normal_delta)
+        du = u_plus - surf_vertices
+        dv = v_plus - surf_vertices
+        #self.info(&#34;Du: %s&#34;, du)
+        #self.info(&#34;Dv: %s&#34;, dv)
+        normal = np.cross(du, dv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        #if norm != 0:
+        normal = normal / norm
+        #self.info(&#34;Normals: %s&#34;, normal)
+        return normal</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.surface.core.SvFlipSurface"><code class="flex name class">
+<span>class <span class="ident">SvFlipSurface</span></span>
+<span>(</span><span>surface, flip_u, flip_v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvFlipSurface(SvSurface):
+    def __init__(self, surface, flip_u, flip_v):
+        self.surface = surface
+        self.flip_u = flip_u
+        self.flip_v = flip_v
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;Flipped {}&#34;.format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_u_min()
+
+    def get_v_min(self):
+        return self.surface.get_v_min()
+
+    def get_u_max(self):
+        return self.surface.get_u_max()
+
+    def get_v_max(self):
+        return self.surface.get_v_max()
+
+    def flip(self, u, v):
+        min_u, max_u = self.get_u_min(), self.get_u_max()
+        min_v, max_v = self.get_v_min(), self.get_v_max()
+
+        if self.flip_u:
+            u = max_u - u + min_u
+        if self.flip_v:
+            v = max_v - v + max_v
+        return u, v
+
+    def evaluate(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.evaluate(u, v)
+    
+    def evaluate_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.normal_array(us, vs)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    u, v = self.flip(u, v)
+    return self.surface.evaluate(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    us, vs = self.flip(us, vs)
+    return self.surface.evaluate_array(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.flip"><code class="name flex">
+<span>def <span class="ident">flip</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flip(self, u, v):
+    min_u, max_u = self.get_u_min(), self.get_u_max()
+    min_v, max_v = self.get_v_min(), self.get_v_max()
+
+    if self.flip_u:
+        u = max_u - u + min_u
+    if self.flip_v:
+        v = max_v - v + max_v
+    return u, v</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.surface.get_u_max()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.surface.get_u_min()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.surface.get_v_max()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.surface.get_v_min()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    u, v = self.flip(u, v)
+    return self.surface.normal(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvFlipSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    us, vs = self.flip(us, vs)
+    return self.surface.normal_array(us, vs)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface"><code class="flex name class">
+<span>class <span class="ident">SvLambdaSurface</span></span>
+<span>(</span><span>function, function_numpy=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvLambdaSurface(SvSurface):
+    __description__ = &#34;Formula&#34;
+
+    def __init__(self, function, function_numpy = None):
+        self.function = function
+        self.function_numpy = function_numpy
+        self.u_bounds = (0.0, 1.0)
+        self.v_bounds = (0.0, 1.0)
+        self.normal_delta = 0.001
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+    @property
+    def u_size(self):
+        return self.u_bounds[1] - self.u_bounds[0]
+
+    @property
+    def v_size(self):
+        return self.v_bounds[1] - self.v_bounds[0]
+
+    def evaluate(self, u, v):
+        return self.function(u, v)
+
+    def evaluate_array(self, us, vs):
+        if self.function_numpy is None:
+            return np.vectorize(self.function, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+        else:
+            return self.function_numpy(us, vs)
+
+    def normal(self, u, v):
+        return self.normal_array(np.array([u]), np.array([v]))[0]
+
+    def normal_array(self, us, vs):
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + self.normal_delta, vs)
+        v_plus = self.evaluate_array(us, vs + self.normal_delta)
+        du = u_plus - surf_vertices
+        dv = v_plus - surf_vertices
+        #self.info(&#34;Du: %s&#34;, du)
+        #self.info(&#34;Dv: %s&#34;, dv)
+        normal = np.cross(du, dv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        #if norm != 0:
+        normal = normal / norm
+        #self.info(&#34;Normals: %s&#34;, normal)
+        return normal</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.u_size"><code class="name">var <span class="ident">u_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def u_size(self):
+    return self.u_bounds[1] - self.u_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.v_size"><code class="name">var <span class="ident">v_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def v_size(self):
+    return self.v_bounds[1] - self.v_bounds[0]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    return self.function(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    if self.function_numpy is None:
+        return np.vectorize(self.function, signature=&#39;(),()-&gt;(3)&#39;)(us, vs)
+    else:
+        return self.function_numpy(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.u_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.u_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.v_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.v_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    return self.normal_array(np.array([u]), np.array([v]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    surf_vertices = self.evaluate_array(us, vs)
+    u_plus = self.evaluate_array(us + self.normal_delta, vs)
+    v_plus = self.evaluate_array(us, vs + self.normal_delta)
+    du = u_plus - surf_vertices
+    dv = v_plus - surf_vertices
+    #self.info(&#34;Du: %s&#34;, du)
+    #self.info(&#34;Dv: %s&#34;, dv)
+    normal = np.cross(du, dv)
+    norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+    #if norm != 0:
+    normal = normal / norm
+    #self.info(&#34;Normals: %s&#34;, normal)
+    return normal</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface"><code class="flex name class">
+<span>class <span class="ident">SvReparametrizedSurface</span></span>
+<span>(</span><span>surface, new_u_min, new_u_max, new_v_min, new_v_max)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvReparametrizedSurface(SvSurface):
+    def __init__(self, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        self.surface = surface
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        self.new_v_min = new_v_min
+        self.new_v_max = new_v_max
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+
+    @classmethod
+    def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        if hasattr(surface, &#39;reparametrize&#39;):
+            return surface.reparametrize(new_u_min, new_u_max, new_v_min, new_v_max)
+
+        return SvReparametrizedSurface(surface, new_u_min, new_u_max, new_v_min, new_v_max)
+
+    def get_u_min(self):
+        return self.new_u_min
+
+    def get_v_min(self):
+        return self.new_v_min
+
+    def get_u_max(self):
+        return self.new_u_max
+
+    def get_v_max(self):
+        return self.new_v_max
+
+    def map_uv(self, u, v):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+
+        u = (u_max - u_min) * (u - new_u_min) / (new_u_max - new_u_min) + u_min
+        v = (v_max - v_min) * (v - new_v_min) / (new_v_max - new_v_min) + v_min
+
+        return u, v
+
+    def scale_u(self):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        return (u_max - u_min) / (new_u_max - new_u_min)
+
+    def scale_v(self):
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+        return (v_max - v_min) / (new_v_max - new_v_min)
+
+    def evaluate(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.normal_array(us, vs)
+
+    def derivatives_data_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        data = self.surface.derivatives_data_array(us, vs)
+        data.du *= self.scale_u()
+        data.dv *= self.scale_v()
+        return data</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>surface, new_u_min, new_u_max, new_v_min, new_v_max)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+    if hasattr(surface, &#39;reparametrize&#39;):
+        return surface.reparametrize(new_u_min, new_u_max, new_v_min, new_v_max)
+
+    return SvReparametrizedSurface(surface, new_u_min, new_u_max, new_v_min, new_v_max)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.derivatives_data_array"><code class="name flex">
+<span>def <span class="ident">derivatives_data_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_data_array(self, us, vs):
+    us, vs = self.map_uv(us, vs)
+    data = self.surface.derivatives_data_array(us, vs)
+    data.du *= self.scale_u()
+    data.dv *= self.scale_v()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    u, v = self.map_uv(u, v)
+    return self.surface.evaluate(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    us, vs = self.map_uv(us, vs)
+    return self.surface.evaluate_array(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.new_u_max</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.new_u_min</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.new_v_max</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.new_v_min</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.map_uv"><code class="name flex">
+<span>def <span class="ident">map_uv</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_uv(self, u, v):
+    new_u_min, new_u_max = self.new_u_min, self.new_u_max
+    new_v_min, new_v_max = self.new_v_min, self.new_v_max
+
+    u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+    v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+
+    u = (u_max - u_min) * (u - new_u_min) / (new_u_max - new_u_min) + u_min
+    v = (v_max - v_min) * (v - new_v_min) / (new_v_max - new_v_min) + v_min
+
+    return u, v</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    u, v = self.map_uv(u, v)
+    return self.surface.normal(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    us, vs = self.map_uv(us, vs)
+    return self.surface.normal_array(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.scale_u"><code class="name flex">
+<span>def <span class="ident">scale_u</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scale_u(self):
+    new_u_min, new_u_max = self.new_u_min, self.new_u_max
+    u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+    return (u_max - u_min) / (new_u_max - new_u_min)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvReparametrizedSurface.scale_v"><code class="name flex">
+<span>def <span class="ident">scale_v</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scale_v(self):
+    new_v_min, new_v_max = self.new_v_min, self.new_v_max
+    v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+    return (v_max - v_min) / (new_v_max - new_v_min)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface"><code class="flex name class">
+<span>class <span class="ident">SvSurface</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSurface(object):
+    def __repr__(self):
+        if hasattr(self, &#39;__description__&#39;):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return &#34;&lt;{} surface&gt;&#34;.format(description)
+
+    def evaluate(self, u, v):
+        raise Exception(&#34;not implemented!&#34;)
+
+    def evaluate_array(self, us, vs):
+        raise Exception(&#34;not implemented!&#34;)
+
+    def normal(self, u, v):
+        h = self.normal_delta
+        p = self.evaluate(u, v)
+        p_u = self.evaluate(u+h, v)
+        p_v = self.evaluate(u, v+h)
+        du = (p_u - p) / h
+        dv = (p_v - p) / h
+        normal = np.cross(du, dv)
+        n = np.linalg.norm(normal)
+        normal = normal / n
+        return normal
+
+    def normal_array(self, us, vs):
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + self.normal_delta, vs)
+        v_plus = self.evaluate_array(us, vs + self.normal_delta)
+        du = u_plus - surf_vertices
+        dv = v_plus - surf_vertices
+        #self.info(&#34;Du: %s&#34;, du)
+        #self.info(&#34;Dv: %s&#34;, dv)
+        normal = np.cross(du, dv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        #if norm != 0:
+        normal = normal / norm
+        #self.info(&#34;Normals: %s&#34;, normal)
+        return normal
+
+    def derivatives_data_array(self, us, vs):
+        if hasattr(self, &#39;normal_delta&#39;):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        du = (u_plus - surf_vertices) / h
+        dv = (v_plus - surf_vertices) / h
+        return SurfaceDerivativesData(surf_vertices, du, dv)
+
+    def curvature_calculator(self, us, vs, order=True):
+        if hasattr(self, &#39;normal_delta&#39;):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        h2 = h*h
+
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        u_minus = self.evaluate_array(us - h, vs)
+        v_minus = self.evaluate_array(us, vs - h)
+        uv_plus = self.evaluate_array(us + h, vs + h)
+        uv_minus = self.evaluate_array(us - h, vs - h)
+
+        fu = (u_plus - surf_vertices)/h
+        fv = (v_plus - surf_vertices)/h
+        normal = np.cross(fu, fv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        normal = normal / norm
+
+        fuu = (u_plus - 2*surf_vertices + u_minus) / h2
+        fvv = (v_plus - 2*surf_vertices + v_minus) / h2
+        fuv = (uv_plus - u_plus - v_plus + surf_vertices) / h2
+
+        nuu = (fuu * normal).sum(axis=1)
+        nvv = (fvv * normal).sum(axis=1)
+        nuv = (fuv * normal).sum(axis=1)
+
+        duu = np.linalg.norm(fu, axis=1) **2
+        dvv = np.linalg.norm(fv, axis=1) **2
+        duv = (fu * fv).sum(axis=1)
+
+        calc = SurfaceCurvatureCalculator(us, vs, order=order)
+        calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+        return calc
+
+    def gauss_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.gauss()
+
+    def mean_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.mean()
+
+    def principal_curvature_values_array(self, us, vs, order=True):
+        calc = self.curvature_calculator(us, vs, order=order)
+        return calc.values()
+
+    def principal_curvatures_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.values_and_directions()
+
+    def get_coord_mode(self):
+        return &#39;UV&#39;
+
+    @property
+    def has_input_matrix(self):
+        return False
+
+    def get_input_matrix(self):
+        return None
+
+    def get_input_orientation(self):
+        return None
+
+    def get_u_min(self):
+        return 0.0
+
+    def get_u_max(self):
+        return 1.0
+
+    def get_v_min(self):
+        return 0.0
+
+    def get_v_max(self):
+        return 1.0
+
+    def get_domain(self):
+        return (self.get_u_min(), self.get_u_max(), self.get_v_min(), self.get_v_max())
+
+    def get_u_bounds(self):
+        return (self.get_u_min(), self.get_u_max())
+
+    def get_v_bounds(self):
+        return (self.get_v_min(), self.get_v_max())
+
+    @property
+    def u_size(self):
+        m,M = self.get_u_min(), self.get_u_max()
+        return M - m
+
+    @property
+    def v_size(self):
+        m,M = self.get_v_min(), self.get_v_max()
+        return M - m</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.algorithms.SvBlendSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvBlendSurface">SvBlendSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvConcatSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvConcatSurface">SvConcatSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvConstPipeSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvConstPipeSurface">SvConstPipeSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvCurveLerpSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvCurveLerpSurface">SvCurveLerpSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvDeformedByFieldSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvDeformedByFieldSurface">SvDeformedByFieldSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveCurveSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveCurveSurface">SvExtrudeCurveCurveSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveFrenetSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveFrenetSurface">SvExtrudeCurveFrenetSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveMathutilsSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveMathutilsSurface">SvExtrudeCurveMathutilsSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveNormalDirSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveNormalDirSurface">SvExtrudeCurveNormalDirSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurvePointSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurvePointSurface">SvExtrudeCurvePointSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveTrackNormalSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveTrackNormalSurface">SvExtrudeCurveTrackNormalSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveVectorSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveVectorSurface">SvExtrudeCurveVectorSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvExtrudeCurveZeroTwistSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvExtrudeCurveZeroTwistSurface">SvExtrudeCurveZeroTwistSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvInterpolatingSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvInterpolatingSurface">SvInterpolatingSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvRevolutionSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvRevolutionSurface">SvRevolutionSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvSurfaceLerpSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvSurfaceLerpSurface">SvSurfaceLerpSurface</a></li>
+<li><a title="sverchok.utils.surface.algorithms.SvTaperSweepSurface" href="algorithms.html#sverchok.utils.surface.algorithms.SvTaperSweepSurface">SvTaperSweepSurface</a></li>
+<li><a title="sverchok.utils.surface.coons.SvCoonsSurface" href="coons.html#sverchok.utils.surface.coons.SvCoonsSurface">SvCoonsSurface</a></li>
+<li><a title="sverchok.utils.surface.core.SvFlipSurface" href="#sverchok.utils.surface.core.SvFlipSurface">SvFlipSurface</a></li>
+<li><a title="sverchok.utils.surface.core.SvLambdaSurface" href="#sverchok.utils.surface.core.SvLambdaSurface">SvLambdaSurface</a></li>
+<li><a title="sverchok.utils.surface.core.SvReparametrizedSurface" href="#sverchok.utils.surface.core.SvReparametrizedSurface">SvReparametrizedSurface</a></li>
+<li><a title="sverchok.utils.surface.core.SvSurfaceSubdomain" href="#sverchok.utils.surface.core.SvSurfaceSubdomain">SvSurfaceSubdomain</a></li>
+<li><a title="sverchok.utils.surface.core.SvSwapSurface" href="#sverchok.utils.surface.core.SvSwapSurface">SvSwapSurface</a></li>
+<li><a title="sverchok.utils.surface.freecad.SvSolidFaceSurface" href="freecad.html#sverchok.utils.surface.freecad.SvSolidFaceSurface">SvSolidFaceSurface</a></li>
+<li><a title="sverchok.utils.surface.nurbs.SvNurbsSurface" href="nurbs.html#sverchok.utils.surface.nurbs.SvNurbsSurface">SvNurbsSurface</a></li>
+<li><a title="sverchok.utils.surface.primitives.SvPlane" href="primitives.html#sverchok.utils.surface.primitives.SvPlane">SvPlane</a></li>
+<li><a title="sverchok.utils.surface.rbf.SvRbfSurface" href="rbf.html#sverchok.utils.surface.rbf.SvRbfSurface">SvRbfSurface</a></li>
+<li><a title="sverchok.utils.surface.sphere.SvDefaultSphere" href="sphere.html#sverchok.utils.surface.sphere.SvDefaultSphere">SvDefaultSphere</a></li>
+<li><a title="sverchok.utils.surface.sphere.SvEquirectSphere" href="sphere.html#sverchok.utils.surface.sphere.SvEquirectSphere">SvEquirectSphere</a></li>
+<li><a title="sverchok.utils.surface.sphere.SvGallSphere" href="sphere.html#sverchok.utils.surface.sphere.SvGallSphere">SvGallSphere</a></li>
+<li><a title="sverchok.utils.surface.sphere.SvLambertSphere" href="sphere.html#sverchok.utils.surface.sphere.SvLambertSphere">SvLambertSphere</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvSurface.has_input_matrix"><code class="name">var <span class="ident">has_input_matrix</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def has_input_matrix(self):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.u_size"><code class="name">var <span class="ident">u_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def u_size(self):
+    m,M = self.get_u_min(), self.get_u_max()
+    return M - m</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.v_size"><code class="name">var <span class="ident">v_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def v_size(self):
+    m,M = self.get_v_min(), self.get_v_max()
+    return M - m</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvSurface.curvature_calculator"><code class="name flex">
+<span>def <span class="ident">curvature_calculator</span></span>(<span>self, us, vs, order=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curvature_calculator(self, us, vs, order=True):
+    if hasattr(self, &#39;normal_delta&#39;):
+        h = self.normal_delta
+    else:
+        h = 0.0001
+    h2 = h*h
+
+    surf_vertices = self.evaluate_array(us, vs)
+    u_plus = self.evaluate_array(us + h, vs)
+    v_plus = self.evaluate_array(us, vs + h)
+    u_minus = self.evaluate_array(us - h, vs)
+    v_minus = self.evaluate_array(us, vs - h)
+    uv_plus = self.evaluate_array(us + h, vs + h)
+    uv_minus = self.evaluate_array(us - h, vs - h)
+
+    fu = (u_plus - surf_vertices)/h
+    fv = (v_plus - surf_vertices)/h
+    normal = np.cross(fu, fv)
+    norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+    normal = normal / norm
+
+    fuu = (u_plus - 2*surf_vertices + u_minus) / h2
+    fvv = (v_plus - 2*surf_vertices + v_minus) / h2
+    fuv = (uv_plus - u_plus - v_plus + surf_vertices) / h2
+
+    nuu = (fuu * normal).sum(axis=1)
+    nvv = (fvv * normal).sum(axis=1)
+    nuv = (fuv * normal).sum(axis=1)
+
+    duu = np.linalg.norm(fu, axis=1) **2
+    dvv = np.linalg.norm(fv, axis=1) **2
+    duv = (fu * fv).sum(axis=1)
+
+    calc = SurfaceCurvatureCalculator(us, vs, order=order)
+    calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+    return calc</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.derivatives_data_array"><code class="name flex">
+<span>def <span class="ident">derivatives_data_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_data_array(self, us, vs):
+    if hasattr(self, &#39;normal_delta&#39;):
+        h = self.normal_delta
+    else:
+        h = 0.0001
+    surf_vertices = self.evaluate_array(us, vs)
+    u_plus = self.evaluate_array(us + h, vs)
+    v_plus = self.evaluate_array(us, vs + h)
+    du = (u_plus - surf_vertices) / h
+    dv = (v_plus - surf_vertices) / h
+    return SurfaceDerivativesData(surf_vertices, du, dv)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.gauss_curvature_array"><code class="name flex">
+<span>def <span class="ident">gauss_curvature_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gauss_curvature_array(self, us, vs):
+    calc = self.curvature_calculator(us, vs)
+    return calc.gauss()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_coord_mode"><code class="name flex">
+<span>def <span class="ident">get_coord_mode</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_coord_mode(self):
+    return &#39;UV&#39;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_domain"><code class="name flex">
+<span>def <span class="ident">get_domain</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_domain(self):
+    return (self.get_u_min(), self.get_u_max(), self.get_v_min(), self.get_v_max())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_input_matrix"><code class="name flex">
+<span>def <span class="ident">get_input_matrix</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_matrix(self):
+    return None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_input_orientation"><code class="name flex">
+<span>def <span class="ident">get_input_orientation</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_orientation(self):
+    return None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_u_bounds"><code class="name flex">
+<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    return (self.get_u_min(), self.get_u_max())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return 1.0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return 0.0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_v_bounds"><code class="name flex">
+<span>def <span class="ident">get_v_bounds</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_bounds(self):
+    return (self.get_v_min(), self.get_v_max())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return 1.0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return 0.0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.mean_curvature_array"><code class="name flex">
+<span>def <span class="ident">mean_curvature_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean_curvature_array(self, us, vs):
+    calc = self.curvature_calculator(us, vs)
+    return calc.mean()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    h = self.normal_delta
+    p = self.evaluate(u, v)
+    p_u = self.evaluate(u+h, v)
+    p_v = self.evaluate(u, v+h)
+    du = (p_u - p) / h
+    dv = (p_v - p) / h
+    normal = np.cross(du, dv)
+    n = np.linalg.norm(normal)
+    normal = normal / n
+    return normal</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    surf_vertices = self.evaluate_array(us, vs)
+    u_plus = self.evaluate_array(us + self.normal_delta, vs)
+    v_plus = self.evaluate_array(us, vs + self.normal_delta)
+    du = u_plus - surf_vertices
+    dv = v_plus - surf_vertices
+    #self.info(&#34;Du: %s&#34;, du)
+    #self.info(&#34;Dv: %s&#34;, dv)
+    normal = np.cross(du, dv)
+    norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+    #if norm != 0:
+    normal = normal / norm
+    #self.info(&#34;Normals: %s&#34;, normal)
+    return normal</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.principal_curvature_values_array"><code class="name flex">
+<span>def <span class="ident">principal_curvature_values_array</span></span>(<span>self, us, vs, order=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def principal_curvature_values_array(self, us, vs, order=True):
+    calc = self.curvature_calculator(us, vs, order=order)
+    return calc.values()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.principal_curvatures_array"><code class="name flex">
+<span>def <span class="ident">principal_curvatures_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def principal_curvatures_array(self, us, vs):
+    calc = self.curvature_calculator(us, vs)
+    return calc.values_and_directions()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain"><code class="flex name class">
+<span>class <span class="ident">SvSurfaceSubdomain</span></span>
+<span>(</span><span>surface, u_bounds, v_bounds)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSurfaceSubdomain(SvSurface):
+    def __init__(self, surface, u_bounds, v_bounds):
+        self.surface = surface
+        self.u_bounds = u_bounds
+        self.v_bounds = v_bounds
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;{}[{} .. {}][{} .. {}]&#34;.format(surface, u_bounds[0], u_bounds[1], v_bounds[0], v_bounds[1])
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(us, vs)
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    return self.surface.evaluate(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    return self.surface.evaluate_array(us, vs)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.u_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.u_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.v_bounds[1]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.v_bounds[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    return self.surface.normal(u, v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurfaceSubdomain.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    return self.surface.normal_array(us, vs)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface"><code class="flex name class">
+<span>class <span class="ident">SvSwapSurface</span></span>
+<span>(</span><span>surface)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSwapSurface(SvSurface):
+    def __init__(self, surface):
+        self.surface = surface
+        if hasattr(surface, &#34;normal_delta&#34;):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = &#34;Swapped {}&#34;.format(surface)
+
+    @staticmethod
+    def build(surface):
+        if hasattr(surface, &#39;swap_uv&#39;):
+            return surface.swap_uv()
+        return SvSwapSurface(surface)
+
+    def get_u_min(self):
+        return self.surface.get_v_min()
+
+    def get_v_min(self):
+        return self.surface.get_u_min()
+
+    def get_u_max(self):
+        return self.surface.get_v_max()
+
+    def get_v_max(self):
+        return self.surface.get_u_max()
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(v, u)
+    
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(vs, us)
+
+    def normal(self, u, v):
+        return self.surface.normal(v, u)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(vs, us)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>surface)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def build(surface):
+    if hasattr(surface, &#39;swap_uv&#39;):
+        return surface.swap_uv()
+    return SvSwapSurface(surface)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, u, v):
+    return self.surface.evaluate(v, u)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, us, vs):
+    return self.surface.evaluate_array(vs, us)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.get_u_max"><code class="name flex">
+<span>def <span class="ident">get_u_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_max(self):
+    return self.surface.get_v_max()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.get_u_min"><code class="name flex">
+<span>def <span class="ident">get_u_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_min(self):
+    return self.surface.get_v_min()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.get_v_max"><code class="name flex">
+<span>def <span class="ident">get_v_max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_max(self):
+    return self.surface.get_u_max()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.get_v_min"><code class="name flex">
+<span>def <span class="ident">get_v_min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_min(self):
+    return self.surface.get_u_min()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.normal"><code class="name flex">
+<span>def <span class="ident">normal</span></span>(<span>self, u, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal(self, u, v):
+    return self.surface.normal(v, u)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSwapSurface.normal_array"><code class="name flex">
+<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_array(self, us, vs):
+    return self.surface.normal_array(vs, us)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.surface.core.UnsupportedSurfaceTypeException"><code class="flex name class">
+<span>class <span class="ident">UnsupportedSurfaceTypeException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inappropriate argument type.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnsupportedSurfaceTypeException(TypeError):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.TypeError</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.surface" href="index.html">sverchok.utils.surface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvFlipSurface" href="#sverchok.utils.surface.core.SvFlipSurface">SvFlipSurface</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.evaluate" href="#sverchok.utils.surface.core.SvFlipSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.evaluate_array" href="#sverchok.utils.surface.core.SvFlipSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.flip" href="#sverchok.utils.surface.core.SvFlipSurface.flip">flip</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.get_u_max" href="#sverchok.utils.surface.core.SvFlipSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.get_u_min" href="#sverchok.utils.surface.core.SvFlipSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.get_v_max" href="#sverchok.utils.surface.core.SvFlipSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.get_v_min" href="#sverchok.utils.surface.core.SvFlipSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.normal" href="#sverchok.utils.surface.core.SvFlipSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvFlipSurface.normal_array" href="#sverchok.utils.surface.core.SvFlipSurface.normal_array">normal_array</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvLambdaSurface" href="#sverchok.utils.surface.core.SvLambdaSurface">SvLambdaSurface</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.evaluate" href="#sverchok.utils.surface.core.SvLambdaSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.evaluate_array" href="#sverchok.utils.surface.core.SvLambdaSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_u_max" href="#sverchok.utils.surface.core.SvLambdaSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_u_min" href="#sverchok.utils.surface.core.SvLambdaSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_v_max" href="#sverchok.utils.surface.core.SvLambdaSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_v_min" href="#sverchok.utils.surface.core.SvLambdaSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.normal" href="#sverchok.utils.surface.core.SvLambdaSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.normal_array" href="#sverchok.utils.surface.core.SvLambdaSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.u_size" href="#sverchok.utils.surface.core.SvLambdaSurface.u_size">u_size</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.v_size" href="#sverchok.utils.surface.core.SvLambdaSurface.v_size">v_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface" href="#sverchok.utils.surface.core.SvReparametrizedSurface">SvReparametrizedSurface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.build" href="#sverchok.utils.surface.core.SvReparametrizedSurface.build">build</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.derivatives_data_array" href="#sverchok.utils.surface.core.SvReparametrizedSurface.derivatives_data_array">derivatives_data_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.evaluate" href="#sverchok.utils.surface.core.SvReparametrizedSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.evaluate_array" href="#sverchok.utils.surface.core.SvReparametrizedSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.get_u_max" href="#sverchok.utils.surface.core.SvReparametrizedSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.get_u_min" href="#sverchok.utils.surface.core.SvReparametrizedSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.get_v_max" href="#sverchok.utils.surface.core.SvReparametrizedSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.get_v_min" href="#sverchok.utils.surface.core.SvReparametrizedSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.map_uv" href="#sverchok.utils.surface.core.SvReparametrizedSurface.map_uv">map_uv</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.normal" href="#sverchok.utils.surface.core.SvReparametrizedSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.normal_array" href="#sverchok.utils.surface.core.SvReparametrizedSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.scale_u" href="#sverchok.utils.surface.core.SvReparametrizedSurface.scale_u">scale_u</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvReparametrizedSurface.scale_v" href="#sverchok.utils.surface.core.SvReparametrizedSurface.scale_v">scale_v</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvSurface" href="#sverchok.utils.surface.core.SvSurface">SvSurface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.surface.core.SvSurface.curvature_calculator" href="#sverchok.utils.surface.core.SvSurface.curvature_calculator">curvature_calculator</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.derivatives_data_array" href="#sverchok.utils.surface.core.SvSurface.derivatives_data_array">derivatives_data_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.evaluate" href="#sverchok.utils.surface.core.SvSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.evaluate_array" href="#sverchok.utils.surface.core.SvSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.gauss_curvature_array" href="#sverchok.utils.surface.core.SvSurface.gauss_curvature_array">gauss_curvature_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_coord_mode" href="#sverchok.utils.surface.core.SvSurface.get_coord_mode">get_coord_mode</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_domain" href="#sverchok.utils.surface.core.SvSurface.get_domain">get_domain</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_input_matrix" href="#sverchok.utils.surface.core.SvSurface.get_input_matrix">get_input_matrix</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_input_orientation" href="#sverchok.utils.surface.core.SvSurface.get_input_orientation">get_input_orientation</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_u_bounds" href="#sverchok.utils.surface.core.SvSurface.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_u_max" href="#sverchok.utils.surface.core.SvSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_u_min" href="#sverchok.utils.surface.core.SvSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_v_bounds" href="#sverchok.utils.surface.core.SvSurface.get_v_bounds">get_v_bounds</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_v_max" href="#sverchok.utils.surface.core.SvSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.get_v_min" href="#sverchok.utils.surface.core.SvSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.has_input_matrix" href="#sverchok.utils.surface.core.SvSurface.has_input_matrix">has_input_matrix</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.mean_curvature_array" href="#sverchok.utils.surface.core.SvSurface.mean_curvature_array">mean_curvature_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.normal" href="#sverchok.utils.surface.core.SvSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.normal_array" href="#sverchok.utils.surface.core.SvSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.principal_curvature_values_array" href="#sverchok.utils.surface.core.SvSurface.principal_curvature_values_array">principal_curvature_values_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.principal_curvatures_array" href="#sverchok.utils.surface.core.SvSurface.principal_curvatures_array">principal_curvatures_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.u_size" href="#sverchok.utils.surface.core.SvSurface.u_size">u_size</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.v_size" href="#sverchok.utils.surface.core.SvSurface.v_size">v_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain" href="#sverchok.utils.surface.core.SvSurfaceSubdomain">SvSurfaceSubdomain</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate_array" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_max" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_min" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_max" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_min" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.normal" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurfaceSubdomain.normal_array" href="#sverchok.utils.surface.core.SvSurfaceSubdomain.normal_array">normal_array</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.SvSwapSurface" href="#sverchok.utils.surface.core.SvSwapSurface">SvSwapSurface</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.build" href="#sverchok.utils.surface.core.SvSwapSurface.build">build</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.evaluate" href="#sverchok.utils.surface.core.SvSwapSurface.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.evaluate_array" href="#sverchok.utils.surface.core.SvSwapSurface.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.get_u_max" href="#sverchok.utils.surface.core.SvSwapSurface.get_u_max">get_u_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.get_u_min" href="#sverchok.utils.surface.core.SvSwapSurface.get_u_min">get_u_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.get_v_max" href="#sverchok.utils.surface.core.SvSwapSurface.get_v_max">get_v_max</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.get_v_min" href="#sverchok.utils.surface.core.SvSwapSurface.get_v_min">get_v_min</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.normal" href="#sverchok.utils.surface.core.SvSwapSurface.normal">normal</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSwapSurface.normal_array" href="#sverchok.utils.surface.core.SvSwapSurface.normal_array">normal_array</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.surface.core.UnsupportedSurfaceTypeException" href="#sverchok.utils.surface.core.UnsupportedSurfaceTypeException">UnsupportedSurfaceTypeException</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

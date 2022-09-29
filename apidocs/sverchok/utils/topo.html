@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.topo API documentation</title>
+<meta name="description" content="Topological sorting …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.topo</code></h1>
+</header>
+<section id="section-intro">
+<p>Topological sorting.</p>
+<p>Performs stable "topological" sort of directed graphs (including graphs with cycles).
+Possible optimization: instead of counting sort just put vertices on rindex[v]
+positions if there were no SCCs detected.</p>
+<p>Ported from original implementation in Java by Marat Radchenko.</p>
+<p>original: <a href="https://github.com/slonopotamus/stable-topo-sort/blob/master/test/StableTopoSort.java#L16">https://github.com/slonopotamus/stable-topo-sort/blob/master/test/StableTopoSort.java#L16</a>
+algorithm description (russian): <a href="https://habr.com/ru/post/451208/">https://habr.com/ru/post/451208/</a></p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+&#34;&#34;&#34;
+Topological sorting.
+
+Performs stable &#34;topological&#34; sort of directed graphs (including graphs with cycles).
+Possible optimization: instead of counting sort just put vertices on rindex[v]
+positions if there were no SCCs detected.
+
+Ported from original implementation in Java by Marat Radchenko.
+
+original: https://github.com/slonopotamus/stable-topo-sort/blob/master/test/StableTopoSort.java#L16
+algorithm description (russian): https://habr.com/ru/post/451208/
+&#34;&#34;&#34;
+
+from collections import defaultdict
+
+class DoubleStack(object):
+    def __init__(self, capacity):
+        self.fp = 0 # front pointer
+        self.bp = capacity # back pointer
+        self.items = [0 for i in range(capacity)]
+
+    def is_empty_front(self):
+        return self.fp == 0
+
+    def top_front(self):
+        return self.items[self.fp - 1]
+
+    def pop_front(self):
+        self.fp -= 1
+        return self.items[self.fp]
+
+    def push_front(self, item):
+        self.items[self.fp] = item
+        self.fp += 1
+
+    def is_empty_back(self):
+        return self.bp == len(self.items)
+
+    def top_back(self):
+        return self.items[self.bp]
+
+    def pop_back(self):
+        value = self.items[self.bp]
+        self.bp += 1
+        return value
+    
+    def push_back(self, item):
+        self.bp -= 1
+        self.items[self.bp] = item
+
+class Node(object):
+    def __init__(self, value):
+        self.value = value
+        self.edges = []
+        self.unique_edges = set()
+        self.index = 0
+
+    def add_edge_to(self, node):
+        self.unique_edges.add(node)
+        self.edges.append(node)
+
+    def __str__(self):
+        return str(self.value)
+
+class PeaSCC(object):
+    def __init__(self, g):
+        self.graph = g
+        self.rindex = [0 for i in range(len(g))]
+        self.index = 1
+        self.c = len(g) - 1
+
+        self.vS = DoubleStack(len(g))
+        self.iS = DoubleStack(len(g))
+        self.root = [False for i in range(len(g))]
+
+    def visit(self, v=None):
+        if v is None:
+            # Attn! We&#39;re walking nodes in reverse
+            for i in range(len(self.graph)-1, -1, -1):
+                if self.rindex[i] == 0:
+                    self.visit(i)
+        else:
+            self.begin_visiting(v)
+            while not self.vS.is_empty_front():
+                self.visit_loop()
+
+    def visit_loop(self):
+        v = self.vS.top_front()
+        i = self.iS.top_front()
+
+        num_edges = len(self.graph[v].edges)
+
+        # Continue traversing out-edges until none left.
+        while i &lt;= num_edges:
+            # Continuation
+            if i &gt; 0:
+                # Update status for previously traversed out-edge
+                self.finish_edge(v, i - 1)
+            if i &lt; num_edges and self.begin_edge(v, i):
+                return
+            i += 1
+
+        # Finished traversing out edges, update component info
+        self.finish_visiting(v)
+
+    def begin_visiting(self, v):
+        self.vS.push_front(v)
+        self.iS.push_front(0)
+        self.root[v] = True
+        self.rindex[v] = self.index
+        self.index += 1
+
+    def finish_visiting(self, v):
+        # Take this vertex off the call stack
+        self.vS.pop_front()
+        self.iS.pop_front()
+        # Update component information
+        if self.root[v]:
+            self.index -= 1
+            while not self.vS.is_empty_back() and self.rindex[v] &lt;= self.rindex[self.vS.top_back()]:
+                w = self.vS.pop_back()
+                self.rindex[w] = self.c
+                self.index -= 1;
+
+            self.rindex[v] = self.c
+            self.c -= 1
+        else:
+            self.vS.push_back(v)
+
+    def begin_edge(self, v, k):
+        w = self.graph[v].edges[k].index
+
+        if self.rindex[w] == 0:
+            self.iS.pop_front()
+            self.iS.push_front(k+1)
+            self.begin_visiting(w)
+            return True
+        else:
+            return False
+
+    def finish_edge(self, v, k):
+        w = self.graph[v].edges[k].index
+
+        if self.rindex[w] &lt; self.rindex[v]:
+            self.rindex[v] = self.rindex[w]
+            self.root[v] = False
+
+class StableTopoSort(object):
+    @staticmethod
+    def reverse_counting_sort(nodes, rindex):
+        count = [0 for i in range(len(nodes))]
+
+        for i in range(len(rindex)):
+            cindex = len(nodes) - 1 - rindex[i]
+            count[cindex] += 1
+
+        for i in range(1, len(count)):
+            count[i] += count[i - 1]
+
+        output = [None for i in range(len(nodes))]
+        for i in range(len(output)):
+            cindex = len(nodes) - 1 - rindex[i]
+
+            # Attn! We&#39;re sorting in reverse
+            output_index = len(output) - count[cindex]
+
+            output[output_index] = nodes[i]
+            count[cindex] -= 1
+
+        return output
+
+    @staticmethod
+    def stable_topo_sort(nodes):
+        # 0. Remember where each node was
+        for i in range(len(nodes)):
+            nodes[i].index = i
+
+        # 1. Sort edges according to node indices
+        for i in range(len(nodes)):
+            nodes[i].edges.sort(key = lambda o: o.index)
+
+        # 2. Perform Tarjan SCC
+        scc = PeaSCC(nodes)
+        scc.visit()
+
+        # 3. Perform *reverse* counting sort
+        return StableTopoSort.reverse_counting_sort(nodes, scc.rindex)
+
+def sort_by_incidence(vertices, edges):
+    incidence = defaultdict(lambda: 0)
+    for i, j in edges:
+        incidence[i] += 1
+        incidence[j] += 1
+    
+    indicies = list(range(len(vertices)))
+    indicies.sort(key = lambda i: incidence[i])
+
+    reverse_index = dict()
+    vertices_out = []
+    for new_index, old_index in enumerate(indicies):
+        reverse_index[old_index] = new_index
+        vertices_out.append(vertices[old_index])
+
+    edges_out = []
+    for i, j in edges:
+        edges_out.append((reverse_index[i], reverse_index[j]))
+
+    return vertices_out, edges_out
+
+def stable_topo_sort(vertices, edges):
+    graph = []
+    nodes = dict()
+
+    #vertices, edges = sort_by_incidence(vertices, edges)
+
+    for i, vertex in enumerate(vertices):
+        node = Node(vertex)
+        graph.append(node)
+        nodes[i] = node
+
+    for i, j in edges:
+        from_node = nodes[i]
+        to_node = nodes[j]
+        from_node.add_edge_to(to_node)
+
+    graph = StableTopoSort.stable_topo_sort(graph)
+    return [node.value for node in graph]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.topo.sort_by_incidence"><code class="name flex">
+<span>def <span class="ident">sort_by_incidence</span></span>(<span>vertices, edges)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort_by_incidence(vertices, edges):
+    incidence = defaultdict(lambda: 0)
+    for i, j in edges:
+        incidence[i] += 1
+        incidence[j] += 1
+    
+    indicies = list(range(len(vertices)))
+    indicies.sort(key = lambda i: incidence[i])
+
+    reverse_index = dict()
+    vertices_out = []
+    for new_index, old_index in enumerate(indicies):
+        reverse_index[old_index] = new_index
+        vertices_out.append(vertices[old_index])
+
+    edges_out = []
+    for i, j in edges:
+        edges_out.append((reverse_index[i], reverse_index[j]))
+
+    return vertices_out, edges_out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.stable_topo_sort"><code class="name flex">
+<span>def <span class="ident">stable_topo_sort</span></span>(<span>vertices, edges)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stable_topo_sort(vertices, edges):
+    graph = []
+    nodes = dict()
+
+    #vertices, edges = sort_by_incidence(vertices, edges)
+
+    for i, vertex in enumerate(vertices):
+        node = Node(vertex)
+        graph.append(node)
+        nodes[i] = node
+
+    for i, j in edges:
+        from_node = nodes[i]
+        to_node = nodes[j]
+        from_node.add_edge_to(to_node)
+
+    graph = StableTopoSort.stable_topo_sort(graph)
+    return [node.value for node in graph]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.topo.DoubleStack"><code class="flex name class">
+<span>class <span class="ident">DoubleStack</span></span>
+<span>(</span><span>capacity)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DoubleStack(object):
+    def __init__(self, capacity):
+        self.fp = 0 # front pointer
+        self.bp = capacity # back pointer
+        self.items = [0 for i in range(capacity)]
+
+    def is_empty_front(self):
+        return self.fp == 0
+
+    def top_front(self):
+        return self.items[self.fp - 1]
+
+    def pop_front(self):
+        self.fp -= 1
+        return self.items[self.fp]
+
+    def push_front(self, item):
+        self.items[self.fp] = item
+        self.fp += 1
+
+    def is_empty_back(self):
+        return self.bp == len(self.items)
+
+    def top_back(self):
+        return self.items[self.bp]
+
+    def pop_back(self):
+        value = self.items[self.bp]
+        self.bp += 1
+        return value
+    
+    def push_back(self, item):
+        self.bp -= 1
+        self.items[self.bp] = item</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.topo.DoubleStack.is_empty_back"><code class="name flex">
+<span>def <span class="ident">is_empty_back</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_empty_back(self):
+    return self.bp == len(self.items)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.is_empty_front"><code class="name flex">
+<span>def <span class="ident">is_empty_front</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_empty_front(self):
+    return self.fp == 0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.pop_back"><code class="name flex">
+<span>def <span class="ident">pop_back</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pop_back(self):
+    value = self.items[self.bp]
+    self.bp += 1
+    return value</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.pop_front"><code class="name flex">
+<span>def <span class="ident">pop_front</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pop_front(self):
+    self.fp -= 1
+    return self.items[self.fp]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.push_back"><code class="name flex">
+<span>def <span class="ident">push_back</span></span>(<span>self, item)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def push_back(self, item):
+    self.bp -= 1
+    self.items[self.bp] = item</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.push_front"><code class="name flex">
+<span>def <span class="ident">push_front</span></span>(<span>self, item)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def push_front(self, item):
+    self.items[self.fp] = item
+    self.fp += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.top_back"><code class="name flex">
+<span>def <span class="ident">top_back</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def top_back(self):
+    return self.items[self.bp]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.DoubleStack.top_front"><code class="name flex">
+<span>def <span class="ident">top_front</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def top_front(self):
+    return self.items[self.fp - 1]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.topo.Node"><code class="flex name class">
+<span>class <span class="ident">Node</span></span>
+<span>(</span><span>value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Node(object):
+    def __init__(self, value):
+        self.value = value
+        self.edges = []
+        self.unique_edges = set()
+        self.index = 0
+
+    def add_edge_to(self, node):
+        self.unique_edges.add(node)
+        self.edges.append(node)
+
+    def __str__(self):
+        return str(self.value)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.topo.Node.add_edge_to"><code class="name flex">
+<span>def <span class="ident">add_edge_to</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_edge_to(self, node):
+    self.unique_edges.add(node)
+    self.edges.append(node)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC"><code class="flex name class">
+<span>class <span class="ident">PeaSCC</span></span>
+<span>(</span><span>g)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PeaSCC(object):
+    def __init__(self, g):
+        self.graph = g
+        self.rindex = [0 for i in range(len(g))]
+        self.index = 1
+        self.c = len(g) - 1
+
+        self.vS = DoubleStack(len(g))
+        self.iS = DoubleStack(len(g))
+        self.root = [False for i in range(len(g))]
+
+    def visit(self, v=None):
+        if v is None:
+            # Attn! We&#39;re walking nodes in reverse
+            for i in range(len(self.graph)-1, -1, -1):
+                if self.rindex[i] == 0:
+                    self.visit(i)
+        else:
+            self.begin_visiting(v)
+            while not self.vS.is_empty_front():
+                self.visit_loop()
+
+    def visit_loop(self):
+        v = self.vS.top_front()
+        i = self.iS.top_front()
+
+        num_edges = len(self.graph[v].edges)
+
+        # Continue traversing out-edges until none left.
+        while i &lt;= num_edges:
+            # Continuation
+            if i &gt; 0:
+                # Update status for previously traversed out-edge
+                self.finish_edge(v, i - 1)
+            if i &lt; num_edges and self.begin_edge(v, i):
+                return
+            i += 1
+
+        # Finished traversing out edges, update component info
+        self.finish_visiting(v)
+
+    def begin_visiting(self, v):
+        self.vS.push_front(v)
+        self.iS.push_front(0)
+        self.root[v] = True
+        self.rindex[v] = self.index
+        self.index += 1
+
+    def finish_visiting(self, v):
+        # Take this vertex off the call stack
+        self.vS.pop_front()
+        self.iS.pop_front()
+        # Update component information
+        if self.root[v]:
+            self.index -= 1
+            while not self.vS.is_empty_back() and self.rindex[v] &lt;= self.rindex[self.vS.top_back()]:
+                w = self.vS.pop_back()
+                self.rindex[w] = self.c
+                self.index -= 1;
+
+            self.rindex[v] = self.c
+            self.c -= 1
+        else:
+            self.vS.push_back(v)
+
+    def begin_edge(self, v, k):
+        w = self.graph[v].edges[k].index
+
+        if self.rindex[w] == 0:
+            self.iS.pop_front()
+            self.iS.push_front(k+1)
+            self.begin_visiting(w)
+            return True
+        else:
+            return False
+
+    def finish_edge(self, v, k):
+        w = self.graph[v].edges[k].index
+
+        if self.rindex[w] &lt; self.rindex[v]:
+            self.rindex[v] = self.rindex[w]
+            self.root[v] = False</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.topo.PeaSCC.begin_edge"><code class="name flex">
+<span>def <span class="ident">begin_edge</span></span>(<span>self, v, k)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def begin_edge(self, v, k):
+    w = self.graph[v].edges[k].index
+
+    if self.rindex[w] == 0:
+        self.iS.pop_front()
+        self.iS.push_front(k+1)
+        self.begin_visiting(w)
+        return True
+    else:
+        return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC.begin_visiting"><code class="name flex">
+<span>def <span class="ident">begin_visiting</span></span>(<span>self, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def begin_visiting(self, v):
+    self.vS.push_front(v)
+    self.iS.push_front(0)
+    self.root[v] = True
+    self.rindex[v] = self.index
+    self.index += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC.finish_edge"><code class="name flex">
+<span>def <span class="ident">finish_edge</span></span>(<span>self, v, k)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def finish_edge(self, v, k):
+    w = self.graph[v].edges[k].index
+
+    if self.rindex[w] &lt; self.rindex[v]:
+        self.rindex[v] = self.rindex[w]
+        self.root[v] = False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC.finish_visiting"><code class="name flex">
+<span>def <span class="ident">finish_visiting</span></span>(<span>self, v)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def finish_visiting(self, v):
+    # Take this vertex off the call stack
+    self.vS.pop_front()
+    self.iS.pop_front()
+    # Update component information
+    if self.root[v]:
+        self.index -= 1
+        while not self.vS.is_empty_back() and self.rindex[v] &lt;= self.rindex[self.vS.top_back()]:
+            w = self.vS.pop_back()
+            self.rindex[w] = self.c
+            self.index -= 1;
+
+        self.rindex[v] = self.c
+        self.c -= 1
+    else:
+        self.vS.push_back(v)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC.visit"><code class="name flex">
+<span>def <span class="ident">visit</span></span>(<span>self, v=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def visit(self, v=None):
+    if v is None:
+        # Attn! We&#39;re walking nodes in reverse
+        for i in range(len(self.graph)-1, -1, -1):
+            if self.rindex[i] == 0:
+                self.visit(i)
+    else:
+        self.begin_visiting(v)
+        while not self.vS.is_empty_front():
+            self.visit_loop()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.PeaSCC.visit_loop"><code class="name flex">
+<span>def <span class="ident">visit_loop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def visit_loop(self):
+    v = self.vS.top_front()
+    i = self.iS.top_front()
+
+    num_edges = len(self.graph[v].edges)
+
+    # Continue traversing out-edges until none left.
+    while i &lt;= num_edges:
+        # Continuation
+        if i &gt; 0:
+            # Update status for previously traversed out-edge
+            self.finish_edge(v, i - 1)
+        if i &lt; num_edges and self.begin_edge(v, i):
+            return
+        i += 1
+
+    # Finished traversing out edges, update component info
+    self.finish_visiting(v)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.topo.StableTopoSort"><code class="flex name class">
+<span>class <span class="ident">StableTopoSort</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StableTopoSort(object):
+    @staticmethod
+    def reverse_counting_sort(nodes, rindex):
+        count = [0 for i in range(len(nodes))]
+
+        for i in range(len(rindex)):
+            cindex = len(nodes) - 1 - rindex[i]
+            count[cindex] += 1
+
+        for i in range(1, len(count)):
+            count[i] += count[i - 1]
+
+        output = [None for i in range(len(nodes))]
+        for i in range(len(output)):
+            cindex = len(nodes) - 1 - rindex[i]
+
+            # Attn! We&#39;re sorting in reverse
+            output_index = len(output) - count[cindex]
+
+            output[output_index] = nodes[i]
+            count[cindex] -= 1
+
+        return output
+
+    @staticmethod
+    def stable_topo_sort(nodes):
+        # 0. Remember where each node was
+        for i in range(len(nodes)):
+            nodes[i].index = i
+
+        # 1. Sort edges according to node indices
+        for i in range(len(nodes)):
+            nodes[i].edges.sort(key = lambda o: o.index)
+
+        # 2. Perform Tarjan SCC
+        scc = PeaSCC(nodes)
+        scc.visit()
+
+        # 3. Perform *reverse* counting sort
+        return StableTopoSort.reverse_counting_sort(nodes, scc.rindex)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.topo.StableTopoSort.reverse_counting_sort"><code class="name flex">
+<span>def <span class="ident">reverse_counting_sort</span></span>(<span>nodes, rindex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def reverse_counting_sort(nodes, rindex):
+    count = [0 for i in range(len(nodes))]
+
+    for i in range(len(rindex)):
+        cindex = len(nodes) - 1 - rindex[i]
+        count[cindex] += 1
+
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
+
+    output = [None for i in range(len(nodes))]
+    for i in range(len(output)):
+        cindex = len(nodes) - 1 - rindex[i]
+
+        # Attn! We&#39;re sorting in reverse
+        output_index = len(output) - count[cindex]
+
+        output[output_index] = nodes[i]
+        count[cindex] -= 1
+
+    return output</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.topo.StableTopoSort.stable_topo_sort"><code class="name flex">
+<span>def <span class="ident">stable_topo_sort</span></span>(<span>nodes)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def stable_topo_sort(nodes):
+    # 0. Remember where each node was
+    for i in range(len(nodes)):
+        nodes[i].index = i
+
+    # 1. Sort edges according to node indices
+    for i in range(len(nodes)):
+        nodes[i].edges.sort(key = lambda o: o.index)
+
+    # 2. Perform Tarjan SCC
+    scc = PeaSCC(nodes)
+    scc.visit()
+
+    # 3. Perform *reverse* counting sort
+    return StableTopoSort.reverse_counting_sort(nodes, scc.rindex)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.topo.sort_by_incidence" href="#sverchok.utils.topo.sort_by_incidence">sort_by_incidence</a></code></li>
+<li><code><a title="sverchok.utils.topo.stable_topo_sort" href="#sverchok.utils.topo.stable_topo_sort">stable_topo_sort</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.topo.DoubleStack" href="#sverchok.utils.topo.DoubleStack">DoubleStack</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.topo.DoubleStack.is_empty_back" href="#sverchok.utils.topo.DoubleStack.is_empty_back">is_empty_back</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.is_empty_front" href="#sverchok.utils.topo.DoubleStack.is_empty_front">is_empty_front</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.pop_back" href="#sverchok.utils.topo.DoubleStack.pop_back">pop_back</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.pop_front" href="#sverchok.utils.topo.DoubleStack.pop_front">pop_front</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.push_back" href="#sverchok.utils.topo.DoubleStack.push_back">push_back</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.push_front" href="#sverchok.utils.topo.DoubleStack.push_front">push_front</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.top_back" href="#sverchok.utils.topo.DoubleStack.top_back">top_back</a></code></li>
+<li><code><a title="sverchok.utils.topo.DoubleStack.top_front" href="#sverchok.utils.topo.DoubleStack.top_front">top_front</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.topo.Node" href="#sverchok.utils.topo.Node">Node</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.topo.Node.add_edge_to" href="#sverchok.utils.topo.Node.add_edge_to">add_edge_to</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.topo.PeaSCC" href="#sverchok.utils.topo.PeaSCC">PeaSCC</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.topo.PeaSCC.begin_edge" href="#sverchok.utils.topo.PeaSCC.begin_edge">begin_edge</a></code></li>
+<li><code><a title="sverchok.utils.topo.PeaSCC.begin_visiting" href="#sverchok.utils.topo.PeaSCC.begin_visiting">begin_visiting</a></code></li>
+<li><code><a title="sverchok.utils.topo.PeaSCC.finish_edge" href="#sverchok.utils.topo.PeaSCC.finish_edge">finish_edge</a></code></li>
+<li><code><a title="sverchok.utils.topo.PeaSCC.finish_visiting" href="#sverchok.utils.topo.PeaSCC.finish_visiting">finish_visiting</a></code></li>
+<li><code><a title="sverchok.utils.topo.PeaSCC.visit" href="#sverchok.utils.topo.PeaSCC.visit">visit</a></code></li>
+<li><code><a title="sverchok.utils.topo.PeaSCC.visit_loop" href="#sverchok.utils.topo.PeaSCC.visit_loop">visit_loop</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.topo.StableTopoSort" href="#sverchok.utils.topo.StableTopoSort">StableTopoSort</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.topo.StableTopoSort.reverse_counting_sort" href="#sverchok.utils.topo.StableTopoSort.reverse_counting_sort">reverse_counting_sort</a></code></li>
+<li><code><a title="sverchok.utils.topo.StableTopoSort.stable_topo_sort" href="#sverchok.utils.topo.StableTopoSort.stable_topo_sort">stable_topo_sort</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

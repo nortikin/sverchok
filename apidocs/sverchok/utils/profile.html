@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.profile API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.profile</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import sys
+import cProfile
+import pstats
+from io import StringIO
+from contextlib import contextmanager
+
+import bpy
+from bpy.props import BoolProperty, EnumProperty
+
+from sverchok.utils.logging import info, debug
+from sverchok.utils.context_managers import sv_preferences
+
+# Global cProfile.Profile singleton
+_global_profile = None
+# Nesting level for @profile decorator
+_profile_nesting = 0
+# Whether the profiling is enabled by &#34;Start profiling&#34; toggle
+is_currently_enabled = False
+
+def get_global_profile():
+    &#34;&#34;&#34;
+    Get cProfile.Profile singleton object
+    &#34;&#34;&#34;
+    global _global_profile
+    if _global_profile is None:
+        _global_profile = cProfile.Profile()
+    return _global_profile
+
+def is_profiling_enabled(section):
+    &#34;&#34;&#34;
+    Check if profiling is enabled in general,
+    and if it is enabled for specified section.
+    &#34;&#34;&#34;
+    global is_currently_enabled
+    if not is_currently_enabled:
+        return False
+    with sv_preferences() as prefs:
+        return prefs.profile_mode == section
+
+def is_profiling_enabled_in_settings():
+    &#34;&#34;&#34;
+    Check if profiling is not set to NONE in addon preferences.
+    &#34;&#34;&#34;
+    with sv_preferences() as prefs:
+        if prefs is None:
+            return True
+        return prefs.profile_mode != &#34;NONE&#34;
+
+def profile(function = None, section = &#34;MANUAL&#34;):
+    &#34;&#34;&#34;
+    Decorator for profiling the specific methods.
+    It can be used in two ways:
+
+    @profile
+    def method(...):
+        ...
+
+    or
+
+    @profile(section=&#34;SECTION&#34;):
+    def method(...):
+        ...
+
+    The second form is equivalent to the first with section = &#34;MANUAL&#34;.
+    Profiling section is a named set of methods which should be profiled.
+    Supported values of section are listed in SverchokPreferences.profiling_sections.
+
+    The @profile(section) decorator does profile the method only if all following
+    conditions are met:
+    * profiling for specified section is enabled in settings (profile_mode option),
+    * profiling is currently active.
+    &#34;&#34;&#34;
+
+    def profiling_decorator(func):
+        def wrapper(*args, **kwargs):
+            if is_profiling_enabled(section):
+                global _profile_nesting
+
+                profile = get_global_profile()
+                _profile_nesting += 1
+                if _profile_nesting == 1:
+                    profile.enable()
+                result = func(*args, **kwargs)
+                _profile_nesting -= 1
+                if _profile_nesting == 0:
+                    profile.disable()
+                return result
+            else:
+                return func(*args, **kwargs)
+            
+        wrapper.__name__ = func.__name__
+        wrapper.__doc__ = func.__doc__
+        return wrapper
+
+    if callable(function):
+        return profiling_decorator(function)
+    else:
+        return profiling_decorator
+
+def dump_stats(sort = &#34;tottime&#34;, strip_dirs = False, file_path=None):
+    &#34;&#34;&#34;
+    Dump profiling statistics to the log.
+    &#34;&#34;&#34;
+    profile = get_global_profile()
+    if not profile.getstats():
+        info(&#34;There are no profiling results yet&#34;)
+        return
+
+    if file_path is None:
+        stream = StringIO()
+        stats = pstats.Stats(profile, stream=stream)
+        if strip_dirs:
+            stats.strip_dirs()
+        stats = stats.sort_stats(sort)
+        stats.print_stats()
+        info(&#34;Profiling results:\n&#34; + stream.getvalue())
+        info(&#34;---------------------------&#34;)
+    else:
+        with open(file_path, &#39;w&#39;) as stream:
+            stats = pstats.Stats(profile, stream=stream)
+            if strip_dirs:
+                stats.strip_dirs()
+            stats = stats.sort_stats(sort)
+            stats.print_stats()
+            info(&#34;Profiling results are written to %s&#34;, file_path)
+
+def save_stats(path):
+    &#34;&#34;&#34;
+    Dump profiling statistics to file in cProfile&#39;s binary format.
+    Such file can be parsed, for example, by gprof2dot utility.
+    &#34;&#34;&#34;
+    profile = get_global_profile()
+    if not profile.getstats():
+        info(&#34;There are no profiling results yet&#34;)
+        return
+    stats = pstats.Stats(profile)
+    stats.dump_stats(path)
+    info(&#34;Profiling statistics saved to %s.&#34;, path)
+
+def have_gathered_stats():
+    global _global_profile
+    if _global_profile is None:
+        return False
+    if _global_profile.getstats():
+        return True
+    else:
+        return False
+
+def reset_stats():
+    global _global_profile
+    _global_profile = None
+
+@contextmanager
+def profiling_enabled():
+    if is_profiling_enabled_in_settings():
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+    else:
+        yield None
+
+@contextmanager
+def profiling_startup():
+    if &#34;--profile-sverchok-startup&#34; in sys.argv:
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+            dump_stats(file_path=&#34;sverchok_profile.txt&#34;)
+            save_stats(&#34;sverchok_profile.prof&#34;)
+    else:
+        yield None
+
+########################
+#
+# GUI
+#
+#########################
+
+class SvProfilingToggle(bpy.types.Operator):
+    &#34;&#34;&#34;Toggle profiling on/off&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_toggle&#34;
+    bl_label = &#34;Toggle profiling&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    def execute(self, context):
+        global is_currently_enabled
+
+        is_currently_enabled = not is_currently_enabled
+        info(&#34;Profiling is set to %s&#34;, is_currently_enabled)
+
+        return {&#39;FINISHED&#39;}
+
+class SvProfileDump(bpy.types.Operator):
+    &#34;&#34;&#34;Dump profiling statistics to log&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_dump&#34;
+    bl_label = &#34;Dump profiling statistics to log&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    sort_methods = [
+            (&#34;tottime&#34;, &#34;Internal time&#34;, &#34;Internal time (excluding time made in calls to sub-functions)&#34;, 0),
+            (&#34;cumtime&#34;, &#34;Cumulative time&#34;, &#34;Cumulative time (including sub-functions)&#34;, 1),
+            (&#34;calls&#34;, &#34;Calls count&#34;, &#34;Count of calls of function&#34;, 2),
+            (&#34;nfl&#34;, &#34;Name, file, line&#34;, &#34;Function name, file name, line number&#34;, 3)
+        ]
+
+    sort: EnumProperty(name = &#34;Sort by&#34;,
+            description = &#34;How to sort dumped statistics&#34;,
+            items = sort_methods,
+            default = &#34;tottime&#34;)
+
+    strip_dirs: BoolProperty(name = &#34;Strip directories&#34;,
+            description = &#34;Strip directory path part of file name in the output&#34;,
+            default = True)
+
+    def execute(self, context):
+        dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
+        return {&#39;FINISHED&#39;}
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+class SvProfileSave(bpy.types.Operator):
+    &#34;&#34;&#34;Dump profiling statistics to binary file&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_save&#34;
+    bl_label = &#34;Dump profiling statistics to binary file&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    filepath: bpy.props.StringProperty(subtype=&#34;FILE_PATH&#34;)
+
+    def execute(self, context):
+        save_stats(self.filepath)
+        return {&#39;FINISHED&#39;}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {&#39;RUNNING_MODAL&#39;}
+
+class SvProfileReset(bpy.types.Operator):
+    &#34;&#34;&#34;Reset profiling statistics&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_reset&#34;
+    bl_label = &#34;Reset profiling statistics&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    def execute(self, context):
+        reset_stats()
+        info(&#34;Profiling statistics data cleared.&#34;)
+        return {&#39;FINISHED&#39;}
+    
+classes = [SvProfilingToggle, SvProfileDump, SvProfileSave, SvProfileReset]
+
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
+
+def unregister():
+    for class_name in reversed(classes):
+        bpy.utils.unregister_class(class_name)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.profile.dump_stats"><code class="name flex">
+<span>def <span class="ident">dump_stats</span></span>(<span>sort='tottime', strip_dirs=False, file_path=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dump profiling statistics to the log.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dump_stats(sort = &#34;tottime&#34;, strip_dirs = False, file_path=None):
+    &#34;&#34;&#34;
+    Dump profiling statistics to the log.
+    &#34;&#34;&#34;
+    profile = get_global_profile()
+    if not profile.getstats():
+        info(&#34;There are no profiling results yet&#34;)
+        return
+
+    if file_path is None:
+        stream = StringIO()
+        stats = pstats.Stats(profile, stream=stream)
+        if strip_dirs:
+            stats.strip_dirs()
+        stats = stats.sort_stats(sort)
+        stats.print_stats()
+        info(&#34;Profiling results:\n&#34; + stream.getvalue())
+        info(&#34;---------------------------&#34;)
+    else:
+        with open(file_path, &#39;w&#39;) as stream:
+            stats = pstats.Stats(profile, stream=stream)
+            if strip_dirs:
+                stats.strip_dirs()
+            stats = stats.sort_stats(sort)
+            stats.print_stats()
+            info(&#34;Profiling results are written to %s&#34;, file_path)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.get_global_profile"><code class="name flex">
+<span>def <span class="ident">get_global_profile</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get cProfile.Profile singleton object</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_global_profile():
+    &#34;&#34;&#34;
+    Get cProfile.Profile singleton object
+    &#34;&#34;&#34;
+    global _global_profile
+    if _global_profile is None:
+        _global_profile = cProfile.Profile()
+    return _global_profile</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.have_gathered_stats"><code class="name flex">
+<span>def <span class="ident">have_gathered_stats</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def have_gathered_stats():
+    global _global_profile
+    if _global_profile is None:
+        return False
+    if _global_profile.getstats():
+        return True
+    else:
+        return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.is_profiling_enabled"><code class="name flex">
+<span>def <span class="ident">is_profiling_enabled</span></span>(<span>section)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if profiling is enabled in general,
+and if it is enabled for specified section.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_profiling_enabled(section):
+    &#34;&#34;&#34;
+    Check if profiling is enabled in general,
+    and if it is enabled for specified section.
+    &#34;&#34;&#34;
+    global is_currently_enabled
+    if not is_currently_enabled:
+        return False
+    with sv_preferences() as prefs:
+        return prefs.profile_mode == section</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.is_profiling_enabled_in_settings"><code class="name flex">
+<span>def <span class="ident">is_profiling_enabled_in_settings</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if profiling is not set to NONE in addon preferences.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_profiling_enabled_in_settings():
+    &#34;&#34;&#34;
+    Check if profiling is not set to NONE in addon preferences.
+    &#34;&#34;&#34;
+    with sv_preferences() as prefs:
+        if prefs is None:
+            return True
+        return prefs.profile_mode != &#34;NONE&#34;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.profile"><code class="name flex">
+<span>def <span class="ident">profile</span></span>(<span>function=None, section='MANUAL')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decorator for profiling the specific methods.
+It can be used in two ways:</p>
+<p>@profile
+def method(&hellip;):
+&hellip;</p>
+<p>or</p>
+<p>@profile(section="SECTION"):
+def method(&hellip;):
+&hellip;</p>
+<p>The second form is equivalent to the first with section = "MANUAL".
+Profiling section is a named set of methods which should be profiled.
+Supported values of section are listed in SverchokPreferences.profiling_sections.</p>
+<p>The @profile(section) decorator does profile the method only if all following
+conditions are met:
+* profiling for specified section is enabled in settings (profile_mode option),
+* profiling is currently active.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def profile(function = None, section = &#34;MANUAL&#34;):
+    &#34;&#34;&#34;
+    Decorator for profiling the specific methods.
+    It can be used in two ways:
+
+    @profile
+    def method(...):
+        ...
+
+    or
+
+    @profile(section=&#34;SECTION&#34;):
+    def method(...):
+        ...
+
+    The second form is equivalent to the first with section = &#34;MANUAL&#34;.
+    Profiling section is a named set of methods which should be profiled.
+    Supported values of section are listed in SverchokPreferences.profiling_sections.
+
+    The @profile(section) decorator does profile the method only if all following
+    conditions are met:
+    * profiling for specified section is enabled in settings (profile_mode option),
+    * profiling is currently active.
+    &#34;&#34;&#34;
+
+    def profiling_decorator(func):
+        def wrapper(*args, **kwargs):
+            if is_profiling_enabled(section):
+                global _profile_nesting
+
+                profile = get_global_profile()
+                _profile_nesting += 1
+                if _profile_nesting == 1:
+                    profile.enable()
+                result = func(*args, **kwargs)
+                _profile_nesting -= 1
+                if _profile_nesting == 0:
+                    profile.disable()
+                return result
+            else:
+                return func(*args, **kwargs)
+            
+        wrapper.__name__ = func.__name__
+        wrapper.__doc__ = func.__doc__
+        return wrapper
+
+    if callable(function):
+        return profiling_decorator(function)
+    else:
+        return profiling_decorator</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.profiling_enabled"><code class="name flex">
+<span>def <span class="ident">profiling_enabled</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def profiling_enabled():
+    if is_profiling_enabled_in_settings():
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+    else:
+        yield None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.profiling_startup"><code class="name flex">
+<span>def <span class="ident">profiling_startup</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def profiling_startup():
+    if &#34;--profile-sverchok-startup&#34; in sys.argv:
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+            dump_stats(file_path=&#34;sverchok_profile.txt&#34;)
+            save_stats(&#34;sverchok_profile.prof&#34;)
+    else:
+        yield None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.reset_stats"><code class="name flex">
+<span>def <span class="ident">reset_stats</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_stats():
+    global _global_profile
+    _global_profile = None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.save_stats"><code class="name flex">
+<span>def <span class="ident">save_stats</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dump profiling statistics to file in cProfile's binary format.
+Such file can be parsed, for example, by gprof2dot utility.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_stats(path):
+    &#34;&#34;&#34;
+    Dump profiling statistics to file in cProfile&#39;s binary format.
+    Such file can be parsed, for example, by gprof2dot utility.
+    &#34;&#34;&#34;
+    profile = get_global_profile()
+    if not profile.getstats():
+        info(&#34;There are no profiling results yet&#34;)
+        return
+    stats = pstats.Stats(profile)
+    stats.dump_stats(path)
+    info(&#34;Profiling statistics saved to %s.&#34;, path)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    for class_name in reversed(classes):
+        bpy.utils.unregister_class(class_name)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileDump"><code class="flex name class">
+<span>class <span class="ident">SvProfileDump</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dump profiling statistics to log</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvProfileDump(bpy.types.Operator):
+    &#34;&#34;&#34;Dump profiling statistics to log&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_dump&#34;
+    bl_label = &#34;Dump profiling statistics to log&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    sort_methods = [
+            (&#34;tottime&#34;, &#34;Internal time&#34;, &#34;Internal time (excluding time made in calls to sub-functions)&#34;, 0),
+            (&#34;cumtime&#34;, &#34;Cumulative time&#34;, &#34;Cumulative time (including sub-functions)&#34;, 1),
+            (&#34;calls&#34;, &#34;Calls count&#34;, &#34;Count of calls of function&#34;, 2),
+            (&#34;nfl&#34;, &#34;Name, file, line&#34;, &#34;Function name, file name, line number&#34;, 3)
+        ]
+
+    sort: EnumProperty(name = &#34;Sort by&#34;,
+            description = &#34;How to sort dumped statistics&#34;,
+            items = sort_methods,
+            default = &#34;tottime&#34;)
+
+    strip_dirs: BoolProperty(name = &#34;Strip directories&#34;,
+            description = &#34;Strip directory path part of file name in the output&#34;,
+            default = True)
+
+    def execute(self, context):
+        dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
+        return {&#39;FINISHED&#39;}
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileDump.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.sort"><code class="name">var <span class="ident">sort</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Sort by', 'description': 'How to sort dumped statistics', 'items': [('tottime', 'Internal time', 'Internal time (excluding time made in calls to sub-functions)', 0), ('cumtime', 'Cumulative time', 'Cumulative time (including sub-functions)', 1), ('calls', 'Calls count', 'Count of calls of function', 2), ('nfl', 'Name, file, line', 'Function name, file name, line number', 3)], 'default': 'tottime', 'attr': 'sort'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.sort_methods"><code class="name">var <span class="ident">sort_methods</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.strip_dirs"><code class="name">var <span class="ident">strip_dirs</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Strip directories', 'description': 'Strip directory path part of file name in the output', 'default': True, 'attr': 'strip_dirs'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileDump.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileDump.invoke"><code class="name flex">
+<span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    wm = context.window_manager
+    return wm.invoke_props_dialog(self)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileReset"><code class="flex name class">
+<span>class <span class="ident">SvProfileReset</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset profiling statistics</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvProfileReset(bpy.types.Operator):
+    &#34;&#34;&#34;Reset profiling statistics&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_reset&#34;
+    bl_label = &#34;Reset profiling statistics&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    def execute(self, context):
+        reset_stats()
+        info(&#34;Profiling statistics data cleared.&#34;)
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileReset.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileReset.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileReset.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileReset.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileReset.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    reset_stats()
+    info(&#34;Profiling statistics data cleared.&#34;)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave"><code class="flex name class">
+<span>class <span class="ident">SvProfileSave</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dump profiling statistics to binary file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvProfileSave(bpy.types.Operator):
+    &#34;&#34;&#34;Dump profiling statistics to binary file&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_save&#34;
+    bl_label = &#34;Dump profiling statistics to binary file&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    filepath: bpy.props.StringProperty(subtype=&#34;FILE_PATH&#34;)
+
+    def execute(self, context):
+        save_stats(self.filepath)
+        return {&#39;FINISHED&#39;}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {&#39;RUNNING_MODAL&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileSave.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave.filepath"><code class="name">var <span class="ident">filepath</span> : <_PropertyDeferred, <built-in function StringProperty>, {'subtype': 'FILE_PATH', 'attr': 'filepath'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfileSave.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    save_stats(self.filepath)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.profile.SvProfileSave.invoke"><code class="name flex">
+<span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    context.window_manager.fileselect_add(self)
+    return {&#39;RUNNING_MODAL&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.profile.SvProfilingToggle"><code class="flex name class">
+<span>class <span class="ident">SvProfilingToggle</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Toggle profiling on/off</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvProfilingToggle(bpy.types.Operator):
+    &#34;&#34;&#34;Toggle profiling on/off&#34;&#34;&#34;
+    bl_idname = &#34;node.sverchok_profile_toggle&#34;
+    bl_label = &#34;Toggle profiling&#34;
+    bl_options = {&#39;INTERNAL&#39;}
+
+    def execute(self, context):
+        global is_currently_enabled
+
+        is_currently_enabled = not is_currently_enabled
+        info(&#34;Profiling is set to %s&#34;, is_currently_enabled)
+
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfilingToggle.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfilingToggle.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfilingToggle.bl_options"><code class="name">var <span class="ident">bl_options</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.profile.SvProfilingToggle.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.profile.SvProfilingToggle.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    global is_currently_enabled
+
+    is_currently_enabled = not is_currently_enabled
+    info(&#34;Profiling is set to %s&#34;, is_currently_enabled)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.profile.dump_stats" href="#sverchok.utils.profile.dump_stats">dump_stats</a></code></li>
+<li><code><a title="sverchok.utils.profile.get_global_profile" href="#sverchok.utils.profile.get_global_profile">get_global_profile</a></code></li>
+<li><code><a title="sverchok.utils.profile.have_gathered_stats" href="#sverchok.utils.profile.have_gathered_stats">have_gathered_stats</a></code></li>
+<li><code><a title="sverchok.utils.profile.is_profiling_enabled" href="#sverchok.utils.profile.is_profiling_enabled">is_profiling_enabled</a></code></li>
+<li><code><a title="sverchok.utils.profile.is_profiling_enabled_in_settings" href="#sverchok.utils.profile.is_profiling_enabled_in_settings">is_profiling_enabled_in_settings</a></code></li>
+<li><code><a title="sverchok.utils.profile.profile" href="#sverchok.utils.profile.profile">profile</a></code></li>
+<li><code><a title="sverchok.utils.profile.profiling_enabled" href="#sverchok.utils.profile.profiling_enabled">profiling_enabled</a></code></li>
+<li><code><a title="sverchok.utils.profile.profiling_startup" href="#sverchok.utils.profile.profiling_startup">profiling_startup</a></code></li>
+<li><code><a title="sverchok.utils.profile.register" href="#sverchok.utils.profile.register">register</a></code></li>
+<li><code><a title="sverchok.utils.profile.reset_stats" href="#sverchok.utils.profile.reset_stats">reset_stats</a></code></li>
+<li><code><a title="sverchok.utils.profile.save_stats" href="#sverchok.utils.profile.save_stats">save_stats</a></code></li>
+<li><code><a title="sverchok.utils.profile.unregister" href="#sverchok.utils.profile.unregister">unregister</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.profile.SvProfileDump" href="#sverchok.utils.profile.SvProfileDump">SvProfileDump</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.profile.SvProfileDump.bl_idname" href="#sverchok.utils.profile.SvProfileDump.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.bl_label" href="#sverchok.utils.profile.SvProfileDump.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.bl_options" href="#sverchok.utils.profile.SvProfileDump.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.bl_rna" href="#sverchok.utils.profile.SvProfileDump.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.execute" href="#sverchok.utils.profile.SvProfileDump.execute">execute</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.invoke" href="#sverchok.utils.profile.SvProfileDump.invoke">invoke</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.sort" href="#sverchok.utils.profile.SvProfileDump.sort">sort</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.sort_methods" href="#sverchok.utils.profile.SvProfileDump.sort_methods">sort_methods</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileDump.strip_dirs" href="#sverchok.utils.profile.SvProfileDump.strip_dirs">strip_dirs</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.profile.SvProfileReset" href="#sverchok.utils.profile.SvProfileReset">SvProfileReset</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.profile.SvProfileReset.bl_idname" href="#sverchok.utils.profile.SvProfileReset.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileReset.bl_label" href="#sverchok.utils.profile.SvProfileReset.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileReset.bl_options" href="#sverchok.utils.profile.SvProfileReset.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileReset.bl_rna" href="#sverchok.utils.profile.SvProfileReset.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileReset.execute" href="#sverchok.utils.profile.SvProfileReset.execute">execute</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.profile.SvProfileSave" href="#sverchok.utils.profile.SvProfileSave">SvProfileSave</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.profile.SvProfileSave.bl_idname" href="#sverchok.utils.profile.SvProfileSave.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.bl_label" href="#sverchok.utils.profile.SvProfileSave.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.bl_options" href="#sverchok.utils.profile.SvProfileSave.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.bl_rna" href="#sverchok.utils.profile.SvProfileSave.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.execute" href="#sverchok.utils.profile.SvProfileSave.execute">execute</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.filepath" href="#sverchok.utils.profile.SvProfileSave.filepath">filepath</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfileSave.invoke" href="#sverchok.utils.profile.SvProfileSave.invoke">invoke</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.profile.SvProfilingToggle" href="#sverchok.utils.profile.SvProfilingToggle">SvProfilingToggle</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.profile.SvProfilingToggle.bl_idname" href="#sverchok.utils.profile.SvProfilingToggle.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfilingToggle.bl_label" href="#sverchok.utils.profile.SvProfilingToggle.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfilingToggle.bl_options" href="#sverchok.utils.profile.SvProfilingToggle.bl_options">bl_options</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfilingToggle.bl_rna" href="#sverchok.utils.profile.SvProfilingToggle.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.profile.SvProfilingToggle.execute" href="#sverchok.utils.profile.SvProfilingToggle.execute">execute</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

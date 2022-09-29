@@ -1,0 +1,2130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.solid API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.solid</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+import math
+from collections import defaultdict
+import numpy as np
+
+from mathutils.kdtree import KDTree
+
+from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.surface.core import SvSurface
+from sverchok.dependencies import FreeCAD
+from sverchok.utils.solid_conversion import to_solid, to_solid_recursive
+
+if FreeCAD is not None:
+
+    import Part
+    import Mesh
+    import MeshPart
+    from FreeCAD import Base
+
+    from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
+    from sverchok.utils.curve.freecad import curve_to_freecad
+    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
+
+class SvSolidTopology(object):
+    class Item(object):
+        def __init__(self, item):
+            self.item = item
+
+        def __hash__(self):
+            return self.item.hashCode()
+
+        def __eq__(self, other):
+            return self.item.isSame(other.item)
+
+        def __repr__(self):
+            return f&#34;&lt;Item: {type(self.item).__name__} #{self.item.hashCode()}&gt;&#34;
+
+    def __init__(self, solid):
+        self.solid = solid
+        self._init()
+
+    def __repr__(self):
+        v = len(self.solid.Vertexes)
+        e = len(self.solid.Edges)
+        f = len(self.solid.Faces)
+        return f&#34;&lt;Solid topology: {v} vertices, {e} edges, {f} faces&gt;&#34;
+
+    def _init(self):
+        self._faces_by_vertex = defaultdict(set)
+        self._faces_by_edge = defaultdict(set)
+        self._edges_by_vertex = defaultdict(set)
+
+        for face in self.solid.Faces:
+            for vertex in face.Vertexes:
+                self._faces_by_vertex[SvSolidTopology.Item(vertex)].add(SvSolidTopology.Item(face))
+            for edge in face.Edges:
+                self._faces_by_edge[SvSolidTopology.Item(edge)].add(SvSolidTopology.Item(face))
+        
+        for edge in self.solid.Edges:
+            for vertex in edge.Vertexes:
+                self._edges_by_vertex[SvSolidTopology.Item(vertex)].add(SvSolidTopology.Item(edge))
+
+        self._tree = KDTree(len(self.solid.Vertexes))
+        for i, vertex in enumerate(self.solid.Vertexes):
+            co = (vertex.X, vertex.Y, vertex.Z)
+            self._tree.insert(co, i)
+        self._tree.balance()
+
+    def tessellate(self, precision):
+        self._points_by_edge = defaultdict(list)
+        self._points_by_face = defaultdict(list)
+
+        for edge in self.solid.Edges:
+            points = edge.discretize(Deflection=precision)
+            i_edge = SvSolidTopology.Item(edge)
+            for pt in points:
+                self._points_by_edge[i_edge].append((pt.x, pt.y, pt.z))
+
+        for face in self.solid.Faces:
+            data = face.tessellate(precision)
+            i_face = SvSolidTopology.Item(face)
+            for pt in data[0]:
+                self._points_by_face[i_face].append((pt.x, pt.y, pt.z))
+
+    def calc_normals(self):
+        self._normals_by_face = dict()
+        for face in self.solid.Faces:
+            #face.tessellate(precision)
+            #u_min, u_max, v_min, v_max = face.ParameterRange
+            sum_normal = Base.Vector(0,0,0)
+            for u, v in face.getUVNodes():
+                normal = face.normalAt(u,v)
+                sum_normal = sum_normal + normal
+            sum_normal = np.array([sum_normal.x, sum_normal.y, sum_normal.z])
+            sum_normal = sum_normal / np.linalg.norm(sum_normal)
+            self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal
+
+    def calc_face_centers(self):
+        self._centers_by_face = dict()
+        for face in self.solid.Faces:
+            sum_points = np.array([0.0,0.0,0.0])
+            for u,v in face.getUVNodes():
+                p = face.valueAt(u,v)
+                sum_points += np.array([p.x, p.y, p.z])
+            mean = sum_points / len(sum_points)
+            self._centers_by_face[SvSolidTopology.Item(face)] = mean
+
+    def get_normal_by_face(self, face):
+        return self._normals_by_face[SvSolidTopology.Item(face)]
+
+    def get_center_by_face(self, face):
+        return self._centers_by_face[SvSolidTopology.Item(face)]
+
+    def get_vertices_by_location(self, condition):
+        to_tuple = lambda v : (v.X, v.Y, v.Z)
+        return [to_tuple(v) for v in self.solid.Vertexes if condition(to_tuple(v))]
+
+    def get_vertices_by_location_mask(self, condition):
+        to_tuple = lambda v : (v.X, v.Y, v.Z)
+        return [condition(to_tuple(v)) for v in self.solid.Vertexes]
+
+    def get_points_by_edge(self, edge):
+        return self._points_by_edge[SvSolidTopology.Item(edge)]
+
+    def get_points_by_face(self, face):
+        return self._points_by_face[SvSolidTopology.Item(face)]
+
+    def get_edges_by_location_mask(self, condition, include_partial):
+        # condition is vectorized
+        check = any if include_partial else all
+        mask = []
+        for edge in self.solid.Edges:
+            test = condition(np.array(self._points_by_edge[SvSolidTopology.Item(edge)]))
+            mask.append(check(test))
+        return mask
+
+    def get_faces_by_location_mask(self, condition, include_partial):
+        # condition is vectorized
+        check = any if include_partial else all
+        mask = []
+        for face in self.solid.Faces:
+            test = condition(np.array(self._points_by_face[SvSolidTopology.Item(face)]))
+            mask.append(check(test))
+        return mask
+
+    def get_faces_by_vertex(self, vertex):
+        return [i.item for i in self._faces_by_vertex[SvSolidTopology.Item(vertex)]]
+
+    def get_faces_by_vertices_mask(self, vertices, include_partial=True):
+        if include_partial:
+            good = set()
+            for vertex in vertices:
+                new = self._faces_by_vertex[SvSolidTopology.Item(vertex)]
+                good.update(new)
+            return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+        else:
+            vertices = set([SvSolidTopology.Item(v) for v in vertices])
+            mask = []
+            for face in self.solid.Faces:
+                ok = all(SvSolidTopology.Item(v) in vertices for v in face.Vertexes)
+                mask.append(ok)
+            return mask
+
+    def get_faces_by_edge(self, edge):
+        return [i.item for i in self._faces_by_edge[SvSolidTopology.Item(edge)]]
+
+    def get_faces_by_edges_mask(self, edges, include_partial=True):
+        if include_partial:
+            good = set()
+            for edge in edges:
+                new = self._faces_by_edge[SvSolidTopology.Item(edge)]
+                good.update(new)
+            return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+        else:
+            edges = set([SvSolidTopology.Item(e) for e in edges])
+            mask = []
+            for face in self.solid.Faces:
+                ok = all(SvSolidTopology.Item(e) in edges for e in face.Edges)
+                mask.append(ok)
+            return mask
+
+    def get_edges_by_vertex(self, vertex):
+        return [i.item for i in self._edges_by_vertex[SvSolidTopology.Item(vertex)]]
+
+    def get_edges_by_vertices_mask(self, vertices, include_partial=True):
+        if include_partial:
+            good = set()
+            for vertex in vertices:
+                new = self._edges_by_vertex[SvSolidTopology.Item(vertex)]
+                good.update(new)
+            return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+        else:
+            vertices = set([SvSolidTopology.Item(v) for v in vertices])
+            mask = []
+            for edge in self.solid.Edges:
+                ok = all(SvSolidTopology.Item(v) in vertices for v in edge.Vertexes)
+                mask.append(ok)
+            return mask
+
+    def get_edges_by_faces_mask(self, faces):
+        good = set()
+        for face in faces:
+            new = set([SvSolidTopology.Item(e) for e in face.Edges])
+            good.update(new)
+        return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+
+    def get_vertices_by_faces_mask(self, faces):
+        good = set()
+        for face in faces:
+            new = set([SvSolidTopology.Item(v) for v in face.Vertexes])
+            good.update(new)
+        return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]
+
+    def get_vertices_by_edges_mask(self, edges):
+        good = set()
+        for edge in edges:
+            new = set([SvSolidTopology.Item(v) for v in edge.Vertexes])
+            good.update(new)
+        return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]
+
+    def get_vertices_within_range(self, origin, distance):
+        found = self._tree.find_range(tuple(origin), distance)
+        idxs = [item[1] for item in found]
+        vertices = [self.solid.Vertexes[i] for i in idxs]
+        return vertices
+
+    def get_vertices_within_range_mask(self, origin, distance):
+        found = self._tree.find_range(tuple(origin), distance)
+        idxs = set([item[1] for item in found])
+        return [i in idxs for i in range(len(self.solid.Vertexes))]
+
+class SvGeneralFuse(object):
+    def __init__(self, solids):
+        self.solids = solids
+        self.result, self.map = solids[0].generalFuse(solids[1:])
+        self._per_source = defaultdict(set)
+        self._per_source_idx = defaultdict(set)
+        self._sources_by_part = defaultdict(set)
+        self._source_idxs_by_part = defaultdict(set)
+        for src_idx, (source, parts) in enumerate(zip(solids, self.map)):
+            items = set(SvSolidTopology.Item(i) for i in parts)
+
+            src_key = SvSolidTopology.Item(source)
+            self._per_source[src_key] = items
+            self._per_source_idx[src_idx] = items
+
+            for item in items:
+                self._sources_by_part[item].add(src_key)
+                #print(f&#34;{src_idx}: P[{item}] := {src_key}&#34;)
+                self._source_idxs_by_part[item].add(src_idx)
+        
+        self._edge_indirect_source_idxs = defaultdict(set)
+        self._edge_indirect_sources = defaultdict(set)
+        self._face_indirect_source_idxs = defaultdict(set)
+        self._face_indirect_sources = defaultdict(set)
+        for part in self.result.Solids:
+            item = SvSolidTopology.Item(part)
+            sources = self._sources_by_part[item]
+            src_idxs = self._source_idxs_by_part[item]
+            #print(f&#34;P? {item} =&gt; {src_idxs}&#34;)
+
+            for edge in part.Edges:
+                edge_item = SvSolidTopology.Item(edge)
+                self._edge_indirect_sources[edge_item].update(sources)
+                self._edge_indirect_source_idxs[edge_item].update(src_idxs)
+
+            for face in part.Faces:
+                face_item = SvSolidTopology.Item(face)
+                self._face_indirect_source_idxs[face_item].update(src_idxs)
+                self._face_indirect_sources[face_item].update(sources)
+
+#         self._edge_direct_source_idxs = defaultdict(set)
+#         self._edge_direct_sources = defaultdict(set)
+#         for part in self.result.Solids:
+#             item = SvSolidTopology.Item(part)
+#             for edge in part.Edges:
+#                 edge_item = SvSolidTopology.Item(edge)
+#                 indirect_sources = self._edge_indirect_sources[edge_item]
+#                 indirect_source_idxs = self._edge_indirect_source_idxs[edge_item]
+#                 for src_idx, indirect_source in zip(indirect_source_idxs, indirect_sources):
+#                     src_edges = set(SvSolidTopology.Item(e) for e in indirect_source.item.Edges)
+#                     if edge_item in src_edges:
+#                         self._edge_direct_sources[edge_item].add(indirect_source)
+#                         self._edge_direct_source_idxs[edge_item].add(src_idx)
+    
+    def get_all_parts(self):
+        return self.result.Solids
+    
+    def get_union_all(self, refine=False):
+        solids = self.result.Solids
+        solid = solids[0].fuse(solids[1:])
+        if refine:
+            solid = solid.removeSplitter()
+        return solid
+
+    def get_intersect_all(self, refine=False):
+        result = None
+        for source, parts in self._per_source.items():
+            if result is None:
+                result = parts
+            else:
+                result.intersection_update(parts)
+        if not result:
+            return None
+        elif len(result) == 1:
+            return list(result)[0].item
+        else:
+            solids = [p.item for p in result]
+            solid = solids[0].fuse(solids[1:])
+            if refine:
+                solid = solid.removeSplitter()
+            return solid
+    
+    def get_edge_sources(self, edge):
+        return self._edge_indirect_sources[SvSolidTopology.Item(edge)]
+    
+    def get_edge_source_idxs(self, edge):
+        return self._edge_indirect_source_idxs[SvSolidTopology.Item(edge)]
+
+    def get_face_sources(self, face):
+        return self._face_indirect_sources[SvSolidTopology.Item(face)]
+    
+    def get_face_source_idxs(self, face):
+        return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]
+
+    def get_part_sources(self, part):
+        return self._sources_by_part[SvSolidTopology.Item(part)]
+
+    def get_part_source_idxs(self, part):
+        return self._source_idxs_by_part[SvSolidTopology.Item(part)]
+    
+    def get_by_source(self, solid):
+        return self._per_source[SvSolidTopology.Item(solid)]
+    
+    def get_by_source_idx(self, idx):
+        return self._per_source_idx[idx]
+    
+    def get_intersection(self, solid_a, solid_b):
+        result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+        result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+        return result_a.intersection(result_b)
+    
+    def get_intersection_by_idx(self, idx_a, idx_b):
+        result_a = self._per_source_idx[idx_a]
+        result_b = self._per_source_idx[idx_b]
+        return result_a.intersection(result_b)
+    
+    def get_difference(self, solid_a, solid_b):
+        result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+        result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+        return result_a.difference(result_b)
+    
+    def get_clean_part(self, solid):
+        item = SvSolidTopology.Item(solid)
+        result = self._per_source[item].copy()
+        for source, results in self._per_source.items():
+            if source != item:
+                result.difference_update(results)
+        return result
+    
+    def get_clean_part_by_idx(self, idx, refine=False):
+        result = self._per_source_idx[idx].copy()
+        for source_idx, results in self._per_source_idx.items():
+            if source_idx != idx:
+                result.difference_update(results)
+
+        parts = [part.item for part in result]
+        if not parts:
+            solid = None
+        elif len(parts) == 1:
+            solid = parts[0]
+        else:
+            solid = parts[0].fuse(parts[1:])
+            if do_refine:
+                solid = solid.removeSplitter()
+        return solid
+
+class SvBoolResult(object):
+    def __init__(self, solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None, solid_map=None):
+        self.solid = solid
+        if edge_mask is None:
+            edge_mask = []
+        self.edge_mask = edge_mask
+        if edge_map is None:
+            edge_map = []
+        self.edge_map = edge_map
+        if face_mask is None:
+            face_mask = []
+        self.face_mask = face_mask
+        if face_map is None:
+            face_map = []
+        self.face_map = face_map
+        if solid_map is None:
+            solid_map = []
+        self.solid_map = solid_map
+
+def transform_solid(matrix, solid):
+    &#34;&#34;&#34;
+    Utility function to apply mathutils.Matrix to a Solid object.
+    &#34;&#34;&#34;
+    mat = Base.Matrix(*[i for v in matrix for i in v])
+    return solid.transformGeometry(mat)
+
+def basic_mesher(solids, precisions):
+    verts = []
+    faces = []
+    for solid, precision in zip(*mlr([solids, precisions])):
+        rawdata = solid.tessellate(precision)
+        b_verts = []
+        b_faces = []
+        for v in rawdata[0]:
+            b_verts.append((v.x, v.y, v.z))
+        for f in rawdata[1]:
+            b_faces.append(f)
+        verts.append(b_verts)
+        faces.append(b_faces)
+
+    return verts, faces
+
+def standard_mesher(solids, surface_deviation, angle_deviation, relative_surface_deviation):
+    verts = []
+    faces = []
+    for solid, s_dev, ang_dev in zip(*mlr([solids, surface_deviation, angle_deviation])):
+        mesh = MeshPart.meshFromShape(
+            Shape=solid,
+            LinearDeflection=s_dev,
+            AngularDeflection=math.radians(ang_dev),
+            Relative=relative_surface_deviation)
+
+        verts.append([v[:] for v in mesh.Topology[0]])
+        faces.append(mesh.Topology[1])
+
+    return verts, faces
+
+def mefisto_mesher(solids, max_edge_length):
+
+    verts = []
+    faces = []
+    for solid, max_edge in zip(*mlr([solids, max_edge_length])):
+        mesh = MeshPart.meshFromShape(
+            Shape=solid,
+            MaxLength=max_edge
+            )
+
+        verts.append([v[:] for v in mesh.Topology[0]])
+        faces.append(mesh.Topology[1])
+
+    return verts, faces
+
+FCMESH = &#39;FCMESH&#39;
+BMESH = &#39;BMESH&#39;
+
+def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=FCMESH):
+    &#34;&#34;&#34;
+    input:
+        verts: list of 3element iterables, [vector, vector...]
+        faces: list of lists of face indices
+        precision: a conversion factor defined in makeShapeFromMesh (FreeCAD)
+        remove_splitter: default True, removes duplicate geometry (edges)
+    output:
+        a FreeCAD solid
+
+    &#34;&#34;&#34;
+    if method == FCMESH:
+        tri_faces = ensure_triangles(verts, faces, True)
+        faces_t = [[verts[c] for c in f] for f in tri_faces]
+        mesh = Mesh.Mesh(faces_t)
+        shape = Part.Shape()
+        shape.makeShapeFromMesh(mesh.Topology, precision)
+
+        if remove_splitter:
+            # may slow it down, or be totally necessary
+            shape = shape.removeSplitter() 
+
+        return Part.makeSolid(shape)
+    elif method == BMESH:
+        fc_faces = []
+        for face in faces:
+            face_i = list(face) + [face[0]]
+            face_verts = [Base.Vector(verts[i]) for i in face_i]
+            wire = Part.makePolygon(face_verts)
+            wire.fixTolerance(precision)
+            try:
+                fc_face = Part.Face(wire)
+                #fc_face = Part.makeFilledFace(wire.Edges)
+            except Exception as e:
+                print(f&#34;Face idxs: {face_i}, verts: {face_verts}&#34;)
+                raise Exception(&#34;Maybe face is not planar?&#34;) from e
+            fc_faces.append(fc_face)
+        shell = Part.makeShell(fc_faces)
+        solid = Part.makeSolid(shell)
+        if remove_splitter:
+            solid = solid.removeSplitter()
+        return solid
+    else:
+        raise Exception(&#34;Unsupported method&#34;)
+
+def mesh_from_solid_faces(solid):
+    verts = [(v.X, v.Y, v.Z) for v in solid.Vertexes]
+
+    all_fc_verts = {SvSolidTopology.Item(v) : i for i, v in enumerate(solid.Vertexes)}
+    def find_vertex(v):
+        #for i, fc_vert in enumerate(solid.Vertexes):
+        #    if v.isSame(fc_vert):
+        #        return i
+        #return None
+        return all_fc_verts[SvSolidTopology.Item(v)]
+
+    edges = []
+    for fc_edge in solid.Edges:
+        edge = [find_vertex(v) for v in fc_edge.Vertexes]
+        if len(edge) == 2:
+            edges.append(edge)
+
+    faces = []
+    for fc_face in solid.Faces:
+        incident_verts = defaultdict(set)
+        for fc_edge in fc_face.Edges:
+            edge = [find_vertex(v) for v in fc_edge.Vertexes]
+            if len(edge) == 2:
+                i, j = edge
+                incident_verts[i].add(j)
+                incident_verts[j].add(i)
+
+        face = [find_vertex(v) for v in fc_face.Vertexes]
+
+        vert_idx = face[0]
+        correct_face = [vert_idx]
+
+        for i in range(len(face)):
+            incident = list(incident_verts[vert_idx])
+            other_verts = [i for i in incident if i not in correct_face]
+            if not other_verts:
+                break
+            other_vert_idx = other_verts[0]
+            correct_face.append(other_vert_idx)
+            vert_idx = other_vert_idx
+
+        if len(correct_face) &gt; 2:
+            faces.append(correct_face)
+
+    return verts, edges, faces
+
+def hascurves(shape):
+    for e in shape.Edges:
+        if not isinstance(e.Curve, (Part.Line, Part.LineSegment)): return True
+    return False
+
+def drop_existing_faces(faces):
+    &#34;&#34;&#34;
+    this avoids the following bmesh exception:
+
+       faces.new(verts): face already exists
+
+    &#34;&#34;&#34;
+    faces_set = set()
+    new_faces = []
+    good_face = new_faces.append
+    for face in faces:
+        proposed_face = tuple(sorted(face))
+        if proposed_face in faces_set:
+            continue
+        else:
+            faces_set.add(proposed_face)
+            good_face(face)
+    return new_faces
+
+
+def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
+    &#34;&#34;&#34;
+    modified from yorik van havre&#39;s FreeCAD importer for Blender.
+    &#34;&#34;&#34;
+
+    vdict = {}
+    faces = []
+    add_face = faces.append # alias increase speed
+
+    # write FreeCAD faces as polygons when possible
+    for face in shape.Faces:
+        
+        if (len(face.Wires) &gt; 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face) or tessellate:
+            # face has holes or is curved, so we need to triangulate it
+            rawdata = face.tessellate(quality)
+            
+            for v in rawdata[0]:
+                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                    vdict[v1] = len(vdict)
+            
+            for f in rawdata[1]:
+                raw = rawdata[0]
+                nf = [vdict[(nv.x, nv.y, nv.z)] for nv in [raw[vi] for vi in f]]
+                add_face(nf)
+
+        else:
+        
+            f = []
+            ov = face.OuterWire.OrderedVertexes
+        
+            for v in ov:
+
+                if not (vec := (v.X, v.Y, v.Z)) in vdict:
+                    vdict[vec] = len(vdict)
+                    f.append(len(vdict) - 1)
+                else:
+                    f.append(vdict[(v.X, v.Y, v.Z)])
+        
+            # FreeCAD doesn&#39;t care about verts order. Make sure our loop goes clockwise
+            c = face.CenterOfMass
+            v1 = ov[0].Point.sub(c)
+            v2 = ov[1].Point.sub(c)
+            n = face.normalAt(0,0)
+            if (v1.cross(v2)).getAngle(n) &gt; 1.57:
+                f.reverse() # inverting verts order if the direction is couterclockwise
+            
+            add_face(f)
+
+    faces = drop_existing_faces(faces)
+    verts = list(vdict.keys())
+    return verts, faces</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.solid.basic_mesher"><code class="name flex">
+<span>def <span class="ident">basic_mesher</span></span>(<span>solids, precisions)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def basic_mesher(solids, precisions):
+    verts = []
+    faces = []
+    for solid, precision in zip(*mlr([solids, precisions])):
+        rawdata = solid.tessellate(precision)
+        b_verts = []
+        b_faces = []
+        for v in rawdata[0]:
+            b_verts.append((v.x, v.y, v.z))
+        for f in rawdata[1]:
+            b_faces.append(f)
+        verts.append(b_verts)
+        faces.append(b_faces)
+
+    return verts, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.drop_existing_faces"><code class="name flex">
+<span>def <span class="ident">drop_existing_faces</span></span>(<span>faces)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>this avoids the following bmesh exception:</p>
+<p>faces.new(verts): face already exists</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def drop_existing_faces(faces):
+    &#34;&#34;&#34;
+    this avoids the following bmesh exception:
+
+       faces.new(verts): face already exists
+
+    &#34;&#34;&#34;
+    faces_set = set()
+    new_faces = []
+    good_face = new_faces.append
+    for face in faces:
+        proposed_face = tuple(sorted(face))
+        if proposed_face in faces_set:
+            continue
+        else:
+            faces_set.add(proposed_face)
+            good_face(face)
+    return new_faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.hascurves"><code class="name flex">
+<span>def <span class="ident">hascurves</span></span>(<span>shape)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hascurves(shape):
+    for e in shape.Edges:
+        if not isinstance(e.Curve, (Part.Line, Part.LineSegment)): return True
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.mefisto_mesher"><code class="name flex">
+<span>def <span class="ident">mefisto_mesher</span></span>(<span>solids, max_edge_length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mefisto_mesher(solids, max_edge_length):
+
+    verts = []
+    faces = []
+    for solid, max_edge in zip(*mlr([solids, max_edge_length])):
+        mesh = MeshPart.meshFromShape(
+            Shape=solid,
+            MaxLength=max_edge
+            )
+
+        verts.append([v[:] for v in mesh.Topology[0]])
+        faces.append(mesh.Topology[1])
+
+    return verts, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.mesh_from_solid_faces"><code class="name flex">
+<span>def <span class="ident">mesh_from_solid_faces</span></span>(<span>solid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_from_solid_faces(solid):
+    verts = [(v.X, v.Y, v.Z) for v in solid.Vertexes]
+
+    all_fc_verts = {SvSolidTopology.Item(v) : i for i, v in enumerate(solid.Vertexes)}
+    def find_vertex(v):
+        #for i, fc_vert in enumerate(solid.Vertexes):
+        #    if v.isSame(fc_vert):
+        #        return i
+        #return None
+        return all_fc_verts[SvSolidTopology.Item(v)]
+
+    edges = []
+    for fc_edge in solid.Edges:
+        edge = [find_vertex(v) for v in fc_edge.Vertexes]
+        if len(edge) == 2:
+            edges.append(edge)
+
+    faces = []
+    for fc_face in solid.Faces:
+        incident_verts = defaultdict(set)
+        for fc_edge in fc_face.Edges:
+            edge = [find_vertex(v) for v in fc_edge.Vertexes]
+            if len(edge) == 2:
+                i, j = edge
+                incident_verts[i].add(j)
+                incident_verts[j].add(i)
+
+        face = [find_vertex(v) for v in fc_face.Vertexes]
+
+        vert_idx = face[0]
+        correct_face = [vert_idx]
+
+        for i in range(len(face)):
+            incident = list(incident_verts[vert_idx])
+            other_verts = [i for i in incident if i not in correct_face]
+            if not other_verts:
+                break
+            other_vert_idx = other_verts[0]
+            correct_face.append(other_vert_idx)
+            vert_idx = other_vert_idx
+
+        if len(correct_face) &gt; 2:
+            faces.append(correct_face)
+
+    return verts, edges, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.mesh_from_solid_faces_MOD"><code class="name flex">
+<span>def <span class="ident">mesh_from_solid_faces_MOD</span></span>(<span>shape, quality=1.0, tessellate=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>modified from yorik van havre's FreeCAD importer for Blender.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_from_solid_faces_MOD(shape, quality=1.0, tessellate=False):
+    &#34;&#34;&#34;
+    modified from yorik van havre&#39;s FreeCAD importer for Blender.
+    &#34;&#34;&#34;
+
+    vdict = {}
+    faces = []
+    add_face = faces.append # alias increase speed
+
+    # write FreeCAD faces as polygons when possible
+    for face in shape.Faces:
+        
+        if (len(face.Wires) &gt; 1) or (not isinstance(face.Surface, Part.Plane)) or hascurves(face) or tessellate:
+            # face has holes or is curved, so we need to triangulate it
+            rawdata = face.tessellate(quality)
+            
+            for v in rawdata[0]:
+                if not (v1 := (v.x, v.y, v.z)) in vdict:
+                    vdict[v1] = len(vdict)
+            
+            for f in rawdata[1]:
+                raw = rawdata[0]
+                nf = [vdict[(nv.x, nv.y, nv.z)] for nv in [raw[vi] for vi in f]]
+                add_face(nf)
+
+        else:
+        
+            f = []
+            ov = face.OuterWire.OrderedVertexes
+        
+            for v in ov:
+
+                if not (vec := (v.X, v.Y, v.Z)) in vdict:
+                    vdict[vec] = len(vdict)
+                    f.append(len(vdict) - 1)
+                else:
+                    f.append(vdict[(v.X, v.Y, v.Z)])
+        
+            # FreeCAD doesn&#39;t care about verts order. Make sure our loop goes clockwise
+            c = face.CenterOfMass
+            v1 = ov[0].Point.sub(c)
+            v2 = ov[1].Point.sub(c)
+            n = face.normalAt(0,0)
+            if (v1.cross(v2)).getAngle(n) &gt; 1.57:
+                f.reverse() # inverting verts order if the direction is couterclockwise
+            
+            add_face(f)
+
+    faces = drop_existing_faces(faces)
+    verts = list(vdict.keys())
+    return verts, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.standard_mesher"><code class="name flex">
+<span>def <span class="ident">standard_mesher</span></span>(<span>solids, surface_deviation, angle_deviation, relative_surface_deviation)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def standard_mesher(solids, surface_deviation, angle_deviation, relative_surface_deviation):
+    verts = []
+    faces = []
+    for solid, s_dev, ang_dev in zip(*mlr([solids, surface_deviation, angle_deviation])):
+        mesh = MeshPart.meshFromShape(
+            Shape=solid,
+            LinearDeflection=s_dev,
+            AngularDeflection=math.radians(ang_dev),
+            Relative=relative_surface_deviation)
+
+        verts.append([v[:] for v in mesh.Topology[0]])
+        faces.append(mesh.Topology[1])
+
+    return verts, faces</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.svmesh_to_solid"><code class="name flex">
+<span>def <span class="ident">svmesh_to_solid</span></span>(<span>verts, faces, precision=1e-06, remove_splitter=True, method='FCMESH')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>input:
+verts: list of 3element iterables, [vector, vector&hellip;]
+faces: list of lists of face indices
+precision: a conversion factor defined in makeShapeFromMesh (FreeCAD)
+remove_splitter: default True, removes duplicate geometry (edges)
+output:
+a FreeCAD solid</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=FCMESH):
+    &#34;&#34;&#34;
+    input:
+        verts: list of 3element iterables, [vector, vector...]
+        faces: list of lists of face indices
+        precision: a conversion factor defined in makeShapeFromMesh (FreeCAD)
+        remove_splitter: default True, removes duplicate geometry (edges)
+    output:
+        a FreeCAD solid
+
+    &#34;&#34;&#34;
+    if method == FCMESH:
+        tri_faces = ensure_triangles(verts, faces, True)
+        faces_t = [[verts[c] for c in f] for f in tri_faces]
+        mesh = Mesh.Mesh(faces_t)
+        shape = Part.Shape()
+        shape.makeShapeFromMesh(mesh.Topology, precision)
+
+        if remove_splitter:
+            # may slow it down, or be totally necessary
+            shape = shape.removeSplitter() 
+
+        return Part.makeSolid(shape)
+    elif method == BMESH:
+        fc_faces = []
+        for face in faces:
+            face_i = list(face) + [face[0]]
+            face_verts = [Base.Vector(verts[i]) for i in face_i]
+            wire = Part.makePolygon(face_verts)
+            wire.fixTolerance(precision)
+            try:
+                fc_face = Part.Face(wire)
+                #fc_face = Part.makeFilledFace(wire.Edges)
+            except Exception as e:
+                print(f&#34;Face idxs: {face_i}, verts: {face_verts}&#34;)
+                raise Exception(&#34;Maybe face is not planar?&#34;) from e
+            fc_faces.append(fc_face)
+        shell = Part.makeShell(fc_faces)
+        solid = Part.makeSolid(shell)
+        if remove_splitter:
+            solid = solid.removeSplitter()
+        return solid
+    else:
+        raise Exception(&#34;Unsupported method&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.transform_solid"><code class="name flex">
+<span>def <span class="ident">transform_solid</span></span>(<span>matrix, solid)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Utility function to apply mathutils.Matrix to a Solid object.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def transform_solid(matrix, solid):
+    &#34;&#34;&#34;
+    Utility function to apply mathutils.Matrix to a Solid object.
+    &#34;&#34;&#34;
+    mat = Base.Matrix(*[i for v in matrix for i in v])
+    return solid.transformGeometry(mat)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.solid.SvBoolResult"><code class="flex name class">
+<span>class <span class="ident">SvBoolResult</span></span>
+<span>(</span><span>solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None, solid_map=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBoolResult(object):
+    def __init__(self, solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None, solid_map=None):
+        self.solid = solid
+        if edge_mask is None:
+            edge_mask = []
+        self.edge_mask = edge_mask
+        if edge_map is None:
+            edge_map = []
+        self.edge_map = edge_map
+        if face_mask is None:
+            face_mask = []
+        self.face_mask = face_mask
+        if face_map is None:
+            face_map = []
+        self.face_map = face_map
+        if solid_map is None:
+            solid_map = []
+        self.solid_map = solid_map</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse"><code class="flex name class">
+<span>class <span class="ident">SvGeneralFuse</span></span>
+<span>(</span><span>solids)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvGeneralFuse(object):
+    def __init__(self, solids):
+        self.solids = solids
+        self.result, self.map = solids[0].generalFuse(solids[1:])
+        self._per_source = defaultdict(set)
+        self._per_source_idx = defaultdict(set)
+        self._sources_by_part = defaultdict(set)
+        self._source_idxs_by_part = defaultdict(set)
+        for src_idx, (source, parts) in enumerate(zip(solids, self.map)):
+            items = set(SvSolidTopology.Item(i) for i in parts)
+
+            src_key = SvSolidTopology.Item(source)
+            self._per_source[src_key] = items
+            self._per_source_idx[src_idx] = items
+
+            for item in items:
+                self._sources_by_part[item].add(src_key)
+                #print(f&#34;{src_idx}: P[{item}] := {src_key}&#34;)
+                self._source_idxs_by_part[item].add(src_idx)
+        
+        self._edge_indirect_source_idxs = defaultdict(set)
+        self._edge_indirect_sources = defaultdict(set)
+        self._face_indirect_source_idxs = defaultdict(set)
+        self._face_indirect_sources = defaultdict(set)
+        for part in self.result.Solids:
+            item = SvSolidTopology.Item(part)
+            sources = self._sources_by_part[item]
+            src_idxs = self._source_idxs_by_part[item]
+            #print(f&#34;P? {item} =&gt; {src_idxs}&#34;)
+
+            for edge in part.Edges:
+                edge_item = SvSolidTopology.Item(edge)
+                self._edge_indirect_sources[edge_item].update(sources)
+                self._edge_indirect_source_idxs[edge_item].update(src_idxs)
+
+            for face in part.Faces:
+                face_item = SvSolidTopology.Item(face)
+                self._face_indirect_source_idxs[face_item].update(src_idxs)
+                self._face_indirect_sources[face_item].update(sources)
+
+#         self._edge_direct_source_idxs = defaultdict(set)
+#         self._edge_direct_sources = defaultdict(set)
+#         for part in self.result.Solids:
+#             item = SvSolidTopology.Item(part)
+#             for edge in part.Edges:
+#                 edge_item = SvSolidTopology.Item(edge)
+#                 indirect_sources = self._edge_indirect_sources[edge_item]
+#                 indirect_source_idxs = self._edge_indirect_source_idxs[edge_item]
+#                 for src_idx, indirect_source in zip(indirect_source_idxs, indirect_sources):
+#                     src_edges = set(SvSolidTopology.Item(e) for e in indirect_source.item.Edges)
+#                     if edge_item in src_edges:
+#                         self._edge_direct_sources[edge_item].add(indirect_source)
+#                         self._edge_direct_source_idxs[edge_item].add(src_idx)
+    
+    def get_all_parts(self):
+        return self.result.Solids
+    
+    def get_union_all(self, refine=False):
+        solids = self.result.Solids
+        solid = solids[0].fuse(solids[1:])
+        if refine:
+            solid = solid.removeSplitter()
+        return solid
+
+    def get_intersect_all(self, refine=False):
+        result = None
+        for source, parts in self._per_source.items():
+            if result is None:
+                result = parts
+            else:
+                result.intersection_update(parts)
+        if not result:
+            return None
+        elif len(result) == 1:
+            return list(result)[0].item
+        else:
+            solids = [p.item for p in result]
+            solid = solids[0].fuse(solids[1:])
+            if refine:
+                solid = solid.removeSplitter()
+            return solid
+    
+    def get_edge_sources(self, edge):
+        return self._edge_indirect_sources[SvSolidTopology.Item(edge)]
+    
+    def get_edge_source_idxs(self, edge):
+        return self._edge_indirect_source_idxs[SvSolidTopology.Item(edge)]
+
+    def get_face_sources(self, face):
+        return self._face_indirect_sources[SvSolidTopology.Item(face)]
+    
+    def get_face_source_idxs(self, face):
+        return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]
+
+    def get_part_sources(self, part):
+        return self._sources_by_part[SvSolidTopology.Item(part)]
+
+    def get_part_source_idxs(self, part):
+        return self._source_idxs_by_part[SvSolidTopology.Item(part)]
+    
+    def get_by_source(self, solid):
+        return self._per_source[SvSolidTopology.Item(solid)]
+    
+    def get_by_source_idx(self, idx):
+        return self._per_source_idx[idx]
+    
+    def get_intersection(self, solid_a, solid_b):
+        result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+        result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+        return result_a.intersection(result_b)
+    
+    def get_intersection_by_idx(self, idx_a, idx_b):
+        result_a = self._per_source_idx[idx_a]
+        result_b = self._per_source_idx[idx_b]
+        return result_a.intersection(result_b)
+    
+    def get_difference(self, solid_a, solid_b):
+        result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+        result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+        return result_a.difference(result_b)
+    
+    def get_clean_part(self, solid):
+        item = SvSolidTopology.Item(solid)
+        result = self._per_source[item].copy()
+        for source, results in self._per_source.items():
+            if source != item:
+                result.difference_update(results)
+        return result
+    
+    def get_clean_part_by_idx(self, idx, refine=False):
+        result = self._per_source_idx[idx].copy()
+        for source_idx, results in self._per_source_idx.items():
+            if source_idx != idx:
+                result.difference_update(results)
+
+        parts = [part.item for part in result]
+        if not parts:
+            solid = None
+        elif len(parts) == 1:
+            solid = parts[0]
+        else:
+            solid = parts[0].fuse(parts[1:])
+            if do_refine:
+                solid = solid.removeSplitter()
+        return solid</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_all_parts"><code class="name flex">
+<span>def <span class="ident">get_all_parts</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_parts(self):
+    return self.result.Solids</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_by_source"><code class="name flex">
+<span>def <span class="ident">get_by_source</span></span>(<span>self, solid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_by_source(self, solid):
+    return self._per_source[SvSolidTopology.Item(solid)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_by_source_idx"><code class="name flex">
+<span>def <span class="ident">get_by_source_idx</span></span>(<span>self, idx)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_by_source_idx(self, idx):
+    return self._per_source_idx[idx]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_clean_part"><code class="name flex">
+<span>def <span class="ident">get_clean_part</span></span>(<span>self, solid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_clean_part(self, solid):
+    item = SvSolidTopology.Item(solid)
+    result = self._per_source[item].copy()
+    for source, results in self._per_source.items():
+        if source != item:
+            result.difference_update(results)
+    return result</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_clean_part_by_idx"><code class="name flex">
+<span>def <span class="ident">get_clean_part_by_idx</span></span>(<span>self, idx, refine=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_clean_part_by_idx(self, idx, refine=False):
+    result = self._per_source_idx[idx].copy()
+    for source_idx, results in self._per_source_idx.items():
+        if source_idx != idx:
+            result.difference_update(results)
+
+    parts = [part.item for part in result]
+    if not parts:
+        solid = None
+    elif len(parts) == 1:
+        solid = parts[0]
+    else:
+        solid = parts[0].fuse(parts[1:])
+        if do_refine:
+            solid = solid.removeSplitter()
+    return solid</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_difference"><code class="name flex">
+<span>def <span class="ident">get_difference</span></span>(<span>self, solid_a, solid_b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_difference(self, solid_a, solid_b):
+    result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+    result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+    return result_a.difference(result_b)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_edge_source_idxs"><code class="name flex">
+<span>def <span class="ident">get_edge_source_idxs</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edge_source_idxs(self, edge):
+    return self._edge_indirect_source_idxs[SvSolidTopology.Item(edge)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_edge_sources"><code class="name flex">
+<span>def <span class="ident">get_edge_sources</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edge_sources(self, edge):
+    return self._edge_indirect_sources[SvSolidTopology.Item(edge)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_face_source_idxs"><code class="name flex">
+<span>def <span class="ident">get_face_source_idxs</span></span>(<span>self, face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_face_source_idxs(self, face):
+    return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_face_sources"><code class="name flex">
+<span>def <span class="ident">get_face_sources</span></span>(<span>self, face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_face_sources(self, face):
+    return self._face_indirect_sources[SvSolidTopology.Item(face)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_intersect_all"><code class="name flex">
+<span>def <span class="ident">get_intersect_all</span></span>(<span>self, refine=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_intersect_all(self, refine=False):
+    result = None
+    for source, parts in self._per_source.items():
+        if result is None:
+            result = parts
+        else:
+            result.intersection_update(parts)
+    if not result:
+        return None
+    elif len(result) == 1:
+        return list(result)[0].item
+    else:
+        solids = [p.item for p in result]
+        solid = solids[0].fuse(solids[1:])
+        if refine:
+            solid = solid.removeSplitter()
+        return solid</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_intersection"><code class="name flex">
+<span>def <span class="ident">get_intersection</span></span>(<span>self, solid_a, solid_b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_intersection(self, solid_a, solid_b):
+    result_a = self._per_source[SvSolidTopology.Item(solid_a)]
+    result_b = self._per_source[SvSolidTopology.Item(solid_b)]
+    return result_a.intersection(result_b)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_intersection_by_idx"><code class="name flex">
+<span>def <span class="ident">get_intersection_by_idx</span></span>(<span>self, idx_a, idx_b)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_intersection_by_idx(self, idx_a, idx_b):
+    result_a = self._per_source_idx[idx_a]
+    result_b = self._per_source_idx[idx_b]
+    return result_a.intersection(result_b)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_part_source_idxs"><code class="name flex">
+<span>def <span class="ident">get_part_source_idxs</span></span>(<span>self, part)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_part_source_idxs(self, part):
+    return self._source_idxs_by_part[SvSolidTopology.Item(part)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_part_sources"><code class="name flex">
+<span>def <span class="ident">get_part_sources</span></span>(<span>self, part)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_part_sources(self, part):
+    return self._sources_by_part[SvSolidTopology.Item(part)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvGeneralFuse.get_union_all"><code class="name flex">
+<span>def <span class="ident">get_union_all</span></span>(<span>self, refine=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_union_all(self, refine=False):
+    solids = self.result.Solids
+    solid = solids[0].fuse(solids[1:])
+    if refine:
+        solid = solid.removeSplitter()
+    return solid</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology"><code class="flex name class">
+<span>class <span class="ident">SvSolidTopology</span></span>
+<span>(</span><span>solid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvSolidTopology(object):
+    class Item(object):
+        def __init__(self, item):
+            self.item = item
+
+        def __hash__(self):
+            return self.item.hashCode()
+
+        def __eq__(self, other):
+            return self.item.isSame(other.item)
+
+        def __repr__(self):
+            return f&#34;&lt;Item: {type(self.item).__name__} #{self.item.hashCode()}&gt;&#34;
+
+    def __init__(self, solid):
+        self.solid = solid
+        self._init()
+
+    def __repr__(self):
+        v = len(self.solid.Vertexes)
+        e = len(self.solid.Edges)
+        f = len(self.solid.Faces)
+        return f&#34;&lt;Solid topology: {v} vertices, {e} edges, {f} faces&gt;&#34;
+
+    def _init(self):
+        self._faces_by_vertex = defaultdict(set)
+        self._faces_by_edge = defaultdict(set)
+        self._edges_by_vertex = defaultdict(set)
+
+        for face in self.solid.Faces:
+            for vertex in face.Vertexes:
+                self._faces_by_vertex[SvSolidTopology.Item(vertex)].add(SvSolidTopology.Item(face))
+            for edge in face.Edges:
+                self._faces_by_edge[SvSolidTopology.Item(edge)].add(SvSolidTopology.Item(face))
+        
+        for edge in self.solid.Edges:
+            for vertex in edge.Vertexes:
+                self._edges_by_vertex[SvSolidTopology.Item(vertex)].add(SvSolidTopology.Item(edge))
+
+        self._tree = KDTree(len(self.solid.Vertexes))
+        for i, vertex in enumerate(self.solid.Vertexes):
+            co = (vertex.X, vertex.Y, vertex.Z)
+            self._tree.insert(co, i)
+        self._tree.balance()
+
+    def tessellate(self, precision):
+        self._points_by_edge = defaultdict(list)
+        self._points_by_face = defaultdict(list)
+
+        for edge in self.solid.Edges:
+            points = edge.discretize(Deflection=precision)
+            i_edge = SvSolidTopology.Item(edge)
+            for pt in points:
+                self._points_by_edge[i_edge].append((pt.x, pt.y, pt.z))
+
+        for face in self.solid.Faces:
+            data = face.tessellate(precision)
+            i_face = SvSolidTopology.Item(face)
+            for pt in data[0]:
+                self._points_by_face[i_face].append((pt.x, pt.y, pt.z))
+
+    def calc_normals(self):
+        self._normals_by_face = dict()
+        for face in self.solid.Faces:
+            #face.tessellate(precision)
+            #u_min, u_max, v_min, v_max = face.ParameterRange
+            sum_normal = Base.Vector(0,0,0)
+            for u, v in face.getUVNodes():
+                normal = face.normalAt(u,v)
+                sum_normal = sum_normal + normal
+            sum_normal = np.array([sum_normal.x, sum_normal.y, sum_normal.z])
+            sum_normal = sum_normal / np.linalg.norm(sum_normal)
+            self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal
+
+    def calc_face_centers(self):
+        self._centers_by_face = dict()
+        for face in self.solid.Faces:
+            sum_points = np.array([0.0,0.0,0.0])
+            for u,v in face.getUVNodes():
+                p = face.valueAt(u,v)
+                sum_points += np.array([p.x, p.y, p.z])
+            mean = sum_points / len(sum_points)
+            self._centers_by_face[SvSolidTopology.Item(face)] = mean
+
+    def get_normal_by_face(self, face):
+        return self._normals_by_face[SvSolidTopology.Item(face)]
+
+    def get_center_by_face(self, face):
+        return self._centers_by_face[SvSolidTopology.Item(face)]
+
+    def get_vertices_by_location(self, condition):
+        to_tuple = lambda v : (v.X, v.Y, v.Z)
+        return [to_tuple(v) for v in self.solid.Vertexes if condition(to_tuple(v))]
+
+    def get_vertices_by_location_mask(self, condition):
+        to_tuple = lambda v : (v.X, v.Y, v.Z)
+        return [condition(to_tuple(v)) for v in self.solid.Vertexes]
+
+    def get_points_by_edge(self, edge):
+        return self._points_by_edge[SvSolidTopology.Item(edge)]
+
+    def get_points_by_face(self, face):
+        return self._points_by_face[SvSolidTopology.Item(face)]
+
+    def get_edges_by_location_mask(self, condition, include_partial):
+        # condition is vectorized
+        check = any if include_partial else all
+        mask = []
+        for edge in self.solid.Edges:
+            test = condition(np.array(self._points_by_edge[SvSolidTopology.Item(edge)]))
+            mask.append(check(test))
+        return mask
+
+    def get_faces_by_location_mask(self, condition, include_partial):
+        # condition is vectorized
+        check = any if include_partial else all
+        mask = []
+        for face in self.solid.Faces:
+            test = condition(np.array(self._points_by_face[SvSolidTopology.Item(face)]))
+            mask.append(check(test))
+        return mask
+
+    def get_faces_by_vertex(self, vertex):
+        return [i.item for i in self._faces_by_vertex[SvSolidTopology.Item(vertex)]]
+
+    def get_faces_by_vertices_mask(self, vertices, include_partial=True):
+        if include_partial:
+            good = set()
+            for vertex in vertices:
+                new = self._faces_by_vertex[SvSolidTopology.Item(vertex)]
+                good.update(new)
+            return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+        else:
+            vertices = set([SvSolidTopology.Item(v) for v in vertices])
+            mask = []
+            for face in self.solid.Faces:
+                ok = all(SvSolidTopology.Item(v) in vertices for v in face.Vertexes)
+                mask.append(ok)
+            return mask
+
+    def get_faces_by_edge(self, edge):
+        return [i.item for i in self._faces_by_edge[SvSolidTopology.Item(edge)]]
+
+    def get_faces_by_edges_mask(self, edges, include_partial=True):
+        if include_partial:
+            good = set()
+            for edge in edges:
+                new = self._faces_by_edge[SvSolidTopology.Item(edge)]
+                good.update(new)
+            return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+        else:
+            edges = set([SvSolidTopology.Item(e) for e in edges])
+            mask = []
+            for face in self.solid.Faces:
+                ok = all(SvSolidTopology.Item(e) in edges for e in face.Edges)
+                mask.append(ok)
+            return mask
+
+    def get_edges_by_vertex(self, vertex):
+        return [i.item for i in self._edges_by_vertex[SvSolidTopology.Item(vertex)]]
+
+    def get_edges_by_vertices_mask(self, vertices, include_partial=True):
+        if include_partial:
+            good = set()
+            for vertex in vertices:
+                new = self._edges_by_vertex[SvSolidTopology.Item(vertex)]
+                good.update(new)
+            return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+        else:
+            vertices = set([SvSolidTopology.Item(v) for v in vertices])
+            mask = []
+            for edge in self.solid.Edges:
+                ok = all(SvSolidTopology.Item(v) in vertices for v in edge.Vertexes)
+                mask.append(ok)
+            return mask
+
+    def get_edges_by_faces_mask(self, faces):
+        good = set()
+        for face in faces:
+            new = set([SvSolidTopology.Item(e) for e in face.Edges])
+            good.update(new)
+        return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+
+    def get_vertices_by_faces_mask(self, faces):
+        good = set()
+        for face in faces:
+            new = set([SvSolidTopology.Item(v) for v in face.Vertexes])
+            good.update(new)
+        return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]
+
+    def get_vertices_by_edges_mask(self, edges):
+        good = set()
+        for edge in edges:
+            new = set([SvSolidTopology.Item(v) for v in edge.Vertexes])
+            good.update(new)
+        return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]
+
+    def get_vertices_within_range(self, origin, distance):
+        found = self._tree.find_range(tuple(origin), distance)
+        idxs = [item[1] for item in found]
+        vertices = [self.solid.Vertexes[i] for i in idxs]
+        return vertices
+
+    def get_vertices_within_range_mask(self, origin, distance):
+        found = self._tree.find_range(tuple(origin), distance)
+        idxs = set([item[1] for item in found])
+        return [i in idxs for i in range(len(self.solid.Vertexes))]</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.solid.SvSolidTopology.Item"><code class="name">var <span class="ident">Item</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.solid.SvSolidTopology.calc_face_centers"><code class="name flex">
+<span>def <span class="ident">calc_face_centers</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_face_centers(self):
+    self._centers_by_face = dict()
+    for face in self.solid.Faces:
+        sum_points = np.array([0.0,0.0,0.0])
+        for u,v in face.getUVNodes():
+            p = face.valueAt(u,v)
+            sum_points += np.array([p.x, p.y, p.z])
+        mean = sum_points / len(sum_points)
+        self._centers_by_face[SvSolidTopology.Item(face)] = mean</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.calc_normals"><code class="name flex">
+<span>def <span class="ident">calc_normals</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_normals(self):
+    self._normals_by_face = dict()
+    for face in self.solid.Faces:
+        #face.tessellate(precision)
+        #u_min, u_max, v_min, v_max = face.ParameterRange
+        sum_normal = Base.Vector(0,0,0)
+        for u, v in face.getUVNodes():
+            normal = face.normalAt(u,v)
+            sum_normal = sum_normal + normal
+        sum_normal = np.array([sum_normal.x, sum_normal.y, sum_normal.z])
+        sum_normal = sum_normal / np.linalg.norm(sum_normal)
+        self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_center_by_face"><code class="name flex">
+<span>def <span class="ident">get_center_by_face</span></span>(<span>self, face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_center_by_face(self, face):
+    return self._centers_by_face[SvSolidTopology.Item(face)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_edges_by_faces_mask"><code class="name flex">
+<span>def <span class="ident">get_edges_by_faces_mask</span></span>(<span>self, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edges_by_faces_mask(self, faces):
+    good = set()
+    for face in faces:
+        new = set([SvSolidTopology.Item(e) for e in face.Edges])
+        good.update(new)
+    return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_edges_by_location_mask"><code class="name flex">
+<span>def <span class="ident">get_edges_by_location_mask</span></span>(<span>self, condition, include_partial)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edges_by_location_mask(self, condition, include_partial):
+    # condition is vectorized
+    check = any if include_partial else all
+    mask = []
+    for edge in self.solid.Edges:
+        test = condition(np.array(self._points_by_edge[SvSolidTopology.Item(edge)]))
+        mask.append(check(test))
+    return mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_edges_by_vertex"><code class="name flex">
+<span>def <span class="ident">get_edges_by_vertex</span></span>(<span>self, vertex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edges_by_vertex(self, vertex):
+    return [i.item for i in self._edges_by_vertex[SvSolidTopology.Item(vertex)]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_edges_by_vertices_mask"><code class="name flex">
+<span>def <span class="ident">get_edges_by_vertices_mask</span></span>(<span>self, vertices, include_partial=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edges_by_vertices_mask(self, vertices, include_partial=True):
+    if include_partial:
+        good = set()
+        for vertex in vertices:
+            new = self._edges_by_vertex[SvSolidTopology.Item(vertex)]
+            good.update(new)
+        return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+    else:
+        vertices = set([SvSolidTopology.Item(v) for v in vertices])
+        mask = []
+        for edge in self.solid.Edges:
+            ok = all(SvSolidTopology.Item(v) in vertices for v in edge.Vertexes)
+            mask.append(ok)
+        return mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_faces_by_edge"><code class="name flex">
+<span>def <span class="ident">get_faces_by_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_faces_by_edge(self, edge):
+    return [i.item for i in self._faces_by_edge[SvSolidTopology.Item(edge)]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_faces_by_edges_mask"><code class="name flex">
+<span>def <span class="ident">get_faces_by_edges_mask</span></span>(<span>self, edges, include_partial=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_faces_by_edges_mask(self, edges, include_partial=True):
+    if include_partial:
+        good = set()
+        for edge in edges:
+            new = self._faces_by_edge[SvSolidTopology.Item(edge)]
+            good.update(new)
+        return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+    else:
+        edges = set([SvSolidTopology.Item(e) for e in edges])
+        mask = []
+        for face in self.solid.Faces:
+            ok = all(SvSolidTopology.Item(e) in edges for e in face.Edges)
+            mask.append(ok)
+        return mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_faces_by_location_mask"><code class="name flex">
+<span>def <span class="ident">get_faces_by_location_mask</span></span>(<span>self, condition, include_partial)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_faces_by_location_mask(self, condition, include_partial):
+    # condition is vectorized
+    check = any if include_partial else all
+    mask = []
+    for face in self.solid.Faces:
+        test = condition(np.array(self._points_by_face[SvSolidTopology.Item(face)]))
+        mask.append(check(test))
+    return mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_faces_by_vertex"><code class="name flex">
+<span>def <span class="ident">get_faces_by_vertex</span></span>(<span>self, vertex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_faces_by_vertex(self, vertex):
+    return [i.item for i in self._faces_by_vertex[SvSolidTopology.Item(vertex)]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_faces_by_vertices_mask"><code class="name flex">
+<span>def <span class="ident">get_faces_by_vertices_mask</span></span>(<span>self, vertices, include_partial=True)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_faces_by_vertices_mask(self, vertices, include_partial=True):
+    if include_partial:
+        good = set()
+        for vertex in vertices:
+            new = self._faces_by_vertex[SvSolidTopology.Item(vertex)]
+            good.update(new)
+        return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+    else:
+        vertices = set([SvSolidTopology.Item(v) for v in vertices])
+        mask = []
+        for face in self.solid.Faces:
+            ok = all(SvSolidTopology.Item(v) in vertices for v in face.Vertexes)
+            mask.append(ok)
+        return mask</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_normal_by_face"><code class="name flex">
+<span>def <span class="ident">get_normal_by_face</span></span>(<span>self, face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_normal_by_face(self, face):
+    return self._normals_by_face[SvSolidTopology.Item(face)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_points_by_edge"><code class="name flex">
+<span>def <span class="ident">get_points_by_edge</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_points_by_edge(self, edge):
+    return self._points_by_edge[SvSolidTopology.Item(edge)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_points_by_face"><code class="name flex">
+<span>def <span class="ident">get_points_by_face</span></span>(<span>self, face)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_points_by_face(self, face):
+    return self._points_by_face[SvSolidTopology.Item(face)]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_by_edges_mask"><code class="name flex">
+<span>def <span class="ident">get_vertices_by_edges_mask</span></span>(<span>self, edges)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_by_edges_mask(self, edges):
+    good = set()
+    for edge in edges:
+        new = set([SvSolidTopology.Item(v) for v in edge.Vertexes])
+        good.update(new)
+    return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_by_faces_mask"><code class="name flex">
+<span>def <span class="ident">get_vertices_by_faces_mask</span></span>(<span>self, faces)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_by_faces_mask(self, faces):
+    good = set()
+    for face in faces:
+        new = set([SvSolidTopology.Item(v) for v in face.Vertexes])
+        good.update(new)
+    return [SvSolidTopology.Item(vertex) in good for vertex in self.solid.Vertexes]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_by_location"><code class="name flex">
+<span>def <span class="ident">get_vertices_by_location</span></span>(<span>self, condition)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_by_location(self, condition):
+    to_tuple = lambda v : (v.X, v.Y, v.Z)
+    return [to_tuple(v) for v in self.solid.Vertexes if condition(to_tuple(v))]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_by_location_mask"><code class="name flex">
+<span>def <span class="ident">get_vertices_by_location_mask</span></span>(<span>self, condition)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_by_location_mask(self, condition):
+    to_tuple = lambda v : (v.X, v.Y, v.Z)
+    return [condition(to_tuple(v)) for v in self.solid.Vertexes]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_within_range"><code class="name flex">
+<span>def <span class="ident">get_vertices_within_range</span></span>(<span>self, origin, distance)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_within_range(self, origin, distance):
+    found = self._tree.find_range(tuple(origin), distance)
+    idxs = [item[1] for item in found]
+    vertices = [self.solid.Vertexes[i] for i in idxs]
+    return vertices</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.get_vertices_within_range_mask"><code class="name flex">
+<span>def <span class="ident">get_vertices_within_range_mask</span></span>(<span>self, origin, distance)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vertices_within_range_mask(self, origin, distance):
+    found = self._tree.find_range(tuple(origin), distance)
+    idxs = set([item[1] for item in found])
+    return [i in idxs for i in range(len(self.solid.Vertexes))]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.solid.SvSolidTopology.tessellate"><code class="name flex">
+<span>def <span class="ident">tessellate</span></span>(<span>self, precision)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tessellate(self, precision):
+    self._points_by_edge = defaultdict(list)
+    self._points_by_face = defaultdict(list)
+
+    for edge in self.solid.Edges:
+        points = edge.discretize(Deflection=precision)
+        i_edge = SvSolidTopology.Item(edge)
+        for pt in points:
+            self._points_by_edge[i_edge].append((pt.x, pt.y, pt.z))
+
+    for face in self.solid.Faces:
+        data = face.tessellate(precision)
+        i_face = SvSolidTopology.Item(face)
+        for pt in data[0]:
+            self._points_by_face[i_face].append((pt.x, pt.y, pt.z))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.solid.basic_mesher" href="#sverchok.utils.solid.basic_mesher">basic_mesher</a></code></li>
+<li><code><a title="sverchok.utils.solid.drop_existing_faces" href="#sverchok.utils.solid.drop_existing_faces">drop_existing_faces</a></code></li>
+<li><code><a title="sverchok.utils.solid.hascurves" href="#sverchok.utils.solid.hascurves">hascurves</a></code></li>
+<li><code><a title="sverchok.utils.solid.mefisto_mesher" href="#sverchok.utils.solid.mefisto_mesher">mefisto_mesher</a></code></li>
+<li><code><a title="sverchok.utils.solid.mesh_from_solid_faces" href="#sverchok.utils.solid.mesh_from_solid_faces">mesh_from_solid_faces</a></code></li>
+<li><code><a title="sverchok.utils.solid.mesh_from_solid_faces_MOD" href="#sverchok.utils.solid.mesh_from_solid_faces_MOD">mesh_from_solid_faces_MOD</a></code></li>
+<li><code><a title="sverchok.utils.solid.standard_mesher" href="#sverchok.utils.solid.standard_mesher">standard_mesher</a></code></li>
+<li><code><a title="sverchok.utils.solid.svmesh_to_solid" href="#sverchok.utils.solid.svmesh_to_solid">svmesh_to_solid</a></code></li>
+<li><code><a title="sverchok.utils.solid.transform_solid" href="#sverchok.utils.solid.transform_solid">transform_solid</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.solid.SvBoolResult" href="#sverchok.utils.solid.SvBoolResult">SvBoolResult</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.solid.SvGeneralFuse" href="#sverchok.utils.solid.SvGeneralFuse">SvGeneralFuse</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_all_parts" href="#sverchok.utils.solid.SvGeneralFuse.get_all_parts">get_all_parts</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_by_source" href="#sverchok.utils.solid.SvGeneralFuse.get_by_source">get_by_source</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_by_source_idx" href="#sverchok.utils.solid.SvGeneralFuse.get_by_source_idx">get_by_source_idx</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_clean_part" href="#sverchok.utils.solid.SvGeneralFuse.get_clean_part">get_clean_part</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_clean_part_by_idx" href="#sverchok.utils.solid.SvGeneralFuse.get_clean_part_by_idx">get_clean_part_by_idx</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_difference" href="#sverchok.utils.solid.SvGeneralFuse.get_difference">get_difference</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_edge_source_idxs" href="#sverchok.utils.solid.SvGeneralFuse.get_edge_source_idxs">get_edge_source_idxs</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_edge_sources" href="#sverchok.utils.solid.SvGeneralFuse.get_edge_sources">get_edge_sources</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_face_source_idxs" href="#sverchok.utils.solid.SvGeneralFuse.get_face_source_idxs">get_face_source_idxs</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_face_sources" href="#sverchok.utils.solid.SvGeneralFuse.get_face_sources">get_face_sources</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_intersect_all" href="#sverchok.utils.solid.SvGeneralFuse.get_intersect_all">get_intersect_all</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_intersection" href="#sverchok.utils.solid.SvGeneralFuse.get_intersection">get_intersection</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_intersection_by_idx" href="#sverchok.utils.solid.SvGeneralFuse.get_intersection_by_idx">get_intersection_by_idx</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_part_source_idxs" href="#sverchok.utils.solid.SvGeneralFuse.get_part_source_idxs">get_part_source_idxs</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_part_sources" href="#sverchok.utils.solid.SvGeneralFuse.get_part_sources">get_part_sources</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvGeneralFuse.get_union_all" href="#sverchok.utils.solid.SvGeneralFuse.get_union_all">get_union_all</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.solid.SvSolidTopology" href="#sverchok.utils.solid.SvSolidTopology">SvSolidTopology</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.Item" href="#sverchok.utils.solid.SvSolidTopology.Item">Item</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.calc_face_centers" href="#sverchok.utils.solid.SvSolidTopology.calc_face_centers">calc_face_centers</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.calc_normals" href="#sverchok.utils.solid.SvSolidTopology.calc_normals">calc_normals</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_center_by_face" href="#sverchok.utils.solid.SvSolidTopology.get_center_by_face">get_center_by_face</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_edges_by_faces_mask" href="#sverchok.utils.solid.SvSolidTopology.get_edges_by_faces_mask">get_edges_by_faces_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_edges_by_location_mask" href="#sverchok.utils.solid.SvSolidTopology.get_edges_by_location_mask">get_edges_by_location_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_edges_by_vertex" href="#sverchok.utils.solid.SvSolidTopology.get_edges_by_vertex">get_edges_by_vertex</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_edges_by_vertices_mask" href="#sverchok.utils.solid.SvSolidTopology.get_edges_by_vertices_mask">get_edges_by_vertices_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_faces_by_edge" href="#sverchok.utils.solid.SvSolidTopology.get_faces_by_edge">get_faces_by_edge</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_faces_by_edges_mask" href="#sverchok.utils.solid.SvSolidTopology.get_faces_by_edges_mask">get_faces_by_edges_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_faces_by_location_mask" href="#sverchok.utils.solid.SvSolidTopology.get_faces_by_location_mask">get_faces_by_location_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_faces_by_vertex" href="#sverchok.utils.solid.SvSolidTopology.get_faces_by_vertex">get_faces_by_vertex</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_faces_by_vertices_mask" href="#sverchok.utils.solid.SvSolidTopology.get_faces_by_vertices_mask">get_faces_by_vertices_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_normal_by_face" href="#sverchok.utils.solid.SvSolidTopology.get_normal_by_face">get_normal_by_face</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_points_by_edge" href="#sverchok.utils.solid.SvSolidTopology.get_points_by_edge">get_points_by_edge</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_points_by_face" href="#sverchok.utils.solid.SvSolidTopology.get_points_by_face">get_points_by_face</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_by_edges_mask" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_by_edges_mask">get_vertices_by_edges_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_by_faces_mask" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_by_faces_mask">get_vertices_by_faces_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_by_location" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_by_location">get_vertices_by_location</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_by_location_mask" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_by_location_mask">get_vertices_by_location_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_within_range" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_within_range">get_vertices_within_range</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.get_vertices_within_range_mask" href="#sverchok.utils.solid.SvSolidTopology.get_vertices_within_range_mask">get_vertices_within_range_mask</a></code></li>
+<li><code><a title="sverchok.utils.solid.SvSolidTopology.tessellate" href="#sverchok.utils.solid.SvSolidTopology.tessellate">tessellate</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

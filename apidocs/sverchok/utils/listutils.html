@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.listutils API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.listutils</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+
+from functools import reduce
+from numpy import ndarray
+#####################################################
+#################### lists magic ####################
+#####################################################
+
+
+def create_list(x, y):
+    if type(y) in [list, tuple]:
+        return reduce(create_list, y, x)
+    else:
+        return x.append(y) or x
+
+
+
+
+
+def preobrazovatel(list_a, levels, level2=1):
+    # level increase or decrease
+    list_tmp = []
+    level = levels[0]
+
+    if level &gt; level2:
+        if type(list_a)in [list, tuple]:
+            for l in list_a:
+                if type(l) in [list, tuple]:
+                    tmp = preobrazovatel(l, levels, level2+1)
+                    if type(tmp) in [list, tuple]:
+                        list_tmp.extend(tmp)
+                    else:
+                        list_tmp.append(tmp)
+                else:
+                    list_tmp.append(l)
+
+    elif level == level2:
+        if type(list_a) in [list, tuple]:
+            for l in list_a:
+                if len(levels) == 1:
+                    tmp = preobrazovatel(l, levels, level2+1)
+                else:
+                    tmp = preobrazovatel(l, levels[1:], level2+1)
+                list_tmp.append(tmp if tmp else l)
+
+    else:
+        if type(list_a) in [list, tuple]:
+            list_tmp = reduce(create_list, list_a, [])
+
+    return list_tmp
+
+
+def myZip(list_all, level, level2=0):
+    if level == level2:
+        if type(list_all) in [list, tuple]:
+            list_lens = []
+            list_res = []
+            for l in list_all:
+                if type(l) in [list, tuple]:
+                    list_lens.append(len(l))
+                else:
+                    list_lens.append(0)
+            if list_lens == []:
+                return False
+            min_len = min(list_lens)
+            for value in range(min_len):
+                lt = []
+                for l in list_all:
+                    lt.append(l[value])
+                t = list(lt)
+                list_res.append(t)
+            return list_res
+        else:
+            return False
+    elif level &gt; level2:
+        if type(list_all) in [list, tuple]:
+            list_res = []
+            list_tr = myZip(list_all, level, level2+1)
+            if list_tr is False:
+                list_tr = list_all
+            t = []
+            for tr in list_tr:
+                if type(list_tr) in [list, tuple]:
+                    list_tl = myZip(tr, level, level2+1)
+                    if list_tl is False:
+                        list_tl = list_tr
+                    t.extend(list_tl)
+            list_res.append(list(t))
+            return list_res
+        else:
+            return False
+
+
+#####################################################
+################### update List join magic ##########
+#####################################################
+
+
+def myZip_2(list_all, level, level2=1):
+    def create_listDown(list_all, level):
+        def subDown(list_a, level):
+            list_b = []
+            for l2 in list_a:
+                if type(l2) in [list, tuple, ndarray]:
+                    list_b.extend(l2)
+                else:
+                    list_b.append(l2)
+            if level &gt; 1:
+                list_b = subDown(list_b, level-1)
+            return list_b
+
+        list_tmp = []
+        if type(list_all) in [list, tuple, ndarray]:
+            for l in list_all:
+                list_b = subDown(l, level-1)
+                list_tmp.append(list_b)
+        else:
+            list_tmp = list_all
+        return list_tmp
+
+    list_tmp = list_all.copy()
+    for x in range(level-1):
+        list_tmp = create_listDown(list_tmp, level)
+
+    list_r = []
+    l_min = []
+
+    for el in list_tmp:
+        if type(el) not in [list, tuple, ndarray]:
+            break
+
+        l_min.append(len(el))
+
+    if l_min == []:
+        l_min = [0]
+    lm = min(l_min)
+    for elm in range(lm):
+        for el in list_tmp:
+            list_r.append(el[elm])
+
+    list_tmp = list_r
+
+    for lev in range(level-1):
+        list_tmp = [list_tmp]
+
+    return list_tmp
+
+
+def joiner(list_all, level, level2=1):
+    list_tmp = []
+
+    if level &gt; level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            for list_a in list_all:
+                if type(list_a) in [list, tuple, ndarray]:
+                    list_tmp.extend(list_a)
+                else:
+                    list_tmp.append(list_a)
+        else:
+            list_tmp = list_all
+
+        list_res = joiner(list_tmp, level, level2=level2+1)
+        list_tmp = [list_res]
+
+    if level == level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            if isinstance(list_all[0], str):
+                list_tmp = &#39;&#39;.join(list_all)
+            else:
+                for list_a in list_all:
+                    if type(list_a) in [list, tuple, ndarray]:
+                        list_tmp.extend(list_a)
+                    else:
+                        list_tmp.append(list_a)
+        else:
+            list_tmp.append(list_all)
+
+    if level &lt; level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            for l in list_all:
+                list_tmp.append(l)
+        else:
+            list_tmp.append(l)
+
+    return list_tmp
+
+
+def wrapper_2(l_etalon, list_a, level):
+    def subWrap(list_a, level, count):
+        list_b = []
+        if level == 1:
+            if len(list_a) == count:
+                for l in list_a:
+                    list_b.append([l])
+            else:
+                dc = len(list_a)//count
+                for l in range(count):
+                    list_c = []
+                    for j in range(dc):
+                        list_c.append(list_a[l*dc+j])
+                    list_b.append(list_c)
+        else:
+            for l in list_a:
+                list_b = subWrap(l, level-1, count)
+        return list_b
+
+    def subWrap_2(l_etalon, len_l, level):
+        len_r = len_l
+        if type(l_etalon) in [list, tuple, ndarray]:
+            len_r = len(l_etalon) * len_l
+            if level &gt; 1:
+                len_r = subWrap_2(l_etalon[0], len_r, level-1)
+
+        return len_r
+
+    len_l = len(l_etalon)
+    lens_l = subWrap_2(l_etalon, 1, level)
+    list_tmp = subWrap(list_a, level, lens_l)
+
+    for l in range(level-1):
+        list_tmp = [list_tmp]
+    return list_tmp
+
+def lists_flat(lists):
+    list_temp = [[] for list in lists]
+    for l_t, l in zip(list_temp, lists):
+        for item in l:
+            l_t += item
+
+    return list_temp
+
+# here defs for list input node to operate IntVectorProperty
+# which limited to 32 items
+def listinput_getI(node,num_length):
+    #all slots
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out
+
+def listinput_getF(node,num_length):
+    #all slots
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out
+
+def listinput_getI_needed(node):
+    #only needed slots
+    data = []
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]
+
+def listinput_getF_needed(node):
+    #only needed slots
+    data = []
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]
+
+def listinput_setI(node, agent_gene, gen_data):
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.values[agent_gene[i]]
+
+def listinput_setF(node, agent_gene, gen_data):
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.values[agent_gene[i]]
+
+def listinput_set_rangeI(node,data):
+    #to set plain list from data length
+    #and esteblish int_ length
+    ln = len(data)
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    node.int_ = ln
+    data = []
+    k = 0
+    for i in range(node.int_//32+1):
+        for t in range(32):
+            lists[i][t] = k
+            k += 1
+
+def listinput_drawI(node,col):
+    k = 0
+    lists = &#39;int_list&#39;, &#39;int_list1&#39;, &#39;int_list2&#39;, &#39;int_list3&#39;
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1
+
+def listinput_drawF(node,col):
+    k = 0
+    lists = &#39;float_list&#39;, &#39;float_list1&#39;, &#39;float_list2&#39;, &#39;float_list3&#39;
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.listutils.create_list"><code class="name flex">
+<span>def <span class="ident">create_list</span></span>(<span>x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_list(x, y):
+    if type(y) in [list, tuple]:
+        return reduce(create_list, y, x)
+    else:
+        return x.append(y) or x</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.joiner"><code class="name flex">
+<span>def <span class="ident">joiner</span></span>(<span>list_all, level, level2=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def joiner(list_all, level, level2=1):
+    list_tmp = []
+
+    if level &gt; level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            for list_a in list_all:
+                if type(list_a) in [list, tuple, ndarray]:
+                    list_tmp.extend(list_a)
+                else:
+                    list_tmp.append(list_a)
+        else:
+            list_tmp = list_all
+
+        list_res = joiner(list_tmp, level, level2=level2+1)
+        list_tmp = [list_res]
+
+    if level == level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            if isinstance(list_all[0], str):
+                list_tmp = &#39;&#39;.join(list_all)
+            else:
+                for list_a in list_all:
+                    if type(list_a) in [list, tuple, ndarray]:
+                        list_tmp.extend(list_a)
+                    else:
+                        list_tmp.append(list_a)
+        else:
+            list_tmp.append(list_all)
+
+    if level &lt; level2:
+        if type(list_all) in [list, tuple, ndarray]:
+            for l in list_all:
+                list_tmp.append(l)
+        else:
+            list_tmp.append(l)
+
+    return list_tmp</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_drawF"><code class="name flex">
+<span>def <span class="ident">listinput_drawF</span></span>(<span>node, col)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_drawF(node,col):
+    k = 0
+    lists = &#39;float_list&#39;, &#39;float_list1&#39;, &#39;float_list2&#39;, &#39;float_list3&#39;
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_drawI"><code class="name flex">
+<span>def <span class="ident">listinput_drawI</span></span>(<span>node, col)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_drawI(node,col):
+    k = 0
+    lists = &#39;int_list&#39;, &#39;int_list1&#39;, &#39;int_list2&#39;, &#39;int_list3&#39;
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_getF"><code class="name flex">
+<span>def <span class="ident">listinput_getF</span></span>(<span>node, num_length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_getF(node,num_length):
+    #all slots
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_getF_needed"><code class="name flex">
+<span>def <span class="ident">listinput_getF_needed</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_getF_needed(node):
+    #only needed slots
+    data = []
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_getI"><code class="name flex">
+<span>def <span class="ident">listinput_getI</span></span>(<span>node, num_length)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_getI(node,num_length):
+    #all slots
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_getI_needed"><code class="name flex">
+<span>def <span class="ident">listinput_getI_needed</span></span>(<span>node)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_getI_needed(node):
+    #only needed slots
+    data = []
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_setF"><code class="name flex">
+<span>def <span class="ident">listinput_setF</span></span>(<span>node, agent_gene, gen_data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_setF(node, agent_gene, gen_data):
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.values[agent_gene[i]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_setI"><code class="name flex">
+<span>def <span class="ident">listinput_setI</span></span>(<span>node, agent_gene, gen_data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_setI(node, agent_gene, gen_data):
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.values[agent_gene[i]]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.listinput_set_rangeI"><code class="name flex">
+<span>def <span class="ident">listinput_set_rangeI</span></span>(<span>node, data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listinput_set_rangeI(node,data):
+    #to set plain list from data length
+    #and esteblish int_ length
+    ln = len(data)
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    node.int_ = ln
+    data = []
+    k = 0
+    for i in range(node.int_//32+1):
+        for t in range(32):
+            lists[i][t] = k
+            k += 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.lists_flat"><code class="name flex">
+<span>def <span class="ident">lists_flat</span></span>(<span>lists)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lists_flat(lists):
+    list_temp = [[] for list in lists]
+    for l_t, l in zip(list_temp, lists):
+        for item in l:
+            l_t += item
+
+    return list_temp</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.myZip"><code class="name flex">
+<span>def <span class="ident">myZip</span></span>(<span>list_all, level, level2=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def myZip(list_all, level, level2=0):
+    if level == level2:
+        if type(list_all) in [list, tuple]:
+            list_lens = []
+            list_res = []
+            for l in list_all:
+                if type(l) in [list, tuple]:
+                    list_lens.append(len(l))
+                else:
+                    list_lens.append(0)
+            if list_lens == []:
+                return False
+            min_len = min(list_lens)
+            for value in range(min_len):
+                lt = []
+                for l in list_all:
+                    lt.append(l[value])
+                t = list(lt)
+                list_res.append(t)
+            return list_res
+        else:
+            return False
+    elif level &gt; level2:
+        if type(list_all) in [list, tuple]:
+            list_res = []
+            list_tr = myZip(list_all, level, level2+1)
+            if list_tr is False:
+                list_tr = list_all
+            t = []
+            for tr in list_tr:
+                if type(list_tr) in [list, tuple]:
+                    list_tl = myZip(tr, level, level2+1)
+                    if list_tl is False:
+                        list_tl = list_tr
+                    t.extend(list_tl)
+            list_res.append(list(t))
+            return list_res
+        else:
+            return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.myZip_2"><code class="name flex">
+<span>def <span class="ident">myZip_2</span></span>(<span>list_all, level, level2=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def myZip_2(list_all, level, level2=1):
+    def create_listDown(list_all, level):
+        def subDown(list_a, level):
+            list_b = []
+            for l2 in list_a:
+                if type(l2) in [list, tuple, ndarray]:
+                    list_b.extend(l2)
+                else:
+                    list_b.append(l2)
+            if level &gt; 1:
+                list_b = subDown(list_b, level-1)
+            return list_b
+
+        list_tmp = []
+        if type(list_all) in [list, tuple, ndarray]:
+            for l in list_all:
+                list_b = subDown(l, level-1)
+                list_tmp.append(list_b)
+        else:
+            list_tmp = list_all
+        return list_tmp
+
+    list_tmp = list_all.copy()
+    for x in range(level-1):
+        list_tmp = create_listDown(list_tmp, level)
+
+    list_r = []
+    l_min = []
+
+    for el in list_tmp:
+        if type(el) not in [list, tuple, ndarray]:
+            break
+
+        l_min.append(len(el))
+
+    if l_min == []:
+        l_min = [0]
+    lm = min(l_min)
+    for elm in range(lm):
+        for el in list_tmp:
+            list_r.append(el[elm])
+
+    list_tmp = list_r
+
+    for lev in range(level-1):
+        list_tmp = [list_tmp]
+
+    return list_tmp</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.preobrazovatel"><code class="name flex">
+<span>def <span class="ident">preobrazovatel</span></span>(<span>list_a, levels, level2=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preobrazovatel(list_a, levels, level2=1):
+    # level increase or decrease
+    list_tmp = []
+    level = levels[0]
+
+    if level &gt; level2:
+        if type(list_a)in [list, tuple]:
+            for l in list_a:
+                if type(l) in [list, tuple]:
+                    tmp = preobrazovatel(l, levels, level2+1)
+                    if type(tmp) in [list, tuple]:
+                        list_tmp.extend(tmp)
+                    else:
+                        list_tmp.append(tmp)
+                else:
+                    list_tmp.append(l)
+
+    elif level == level2:
+        if type(list_a) in [list, tuple]:
+            for l in list_a:
+                if len(levels) == 1:
+                    tmp = preobrazovatel(l, levels, level2+1)
+                else:
+                    tmp = preobrazovatel(l, levels[1:], level2+1)
+                list_tmp.append(tmp if tmp else l)
+
+    else:
+        if type(list_a) in [list, tuple]:
+            list_tmp = reduce(create_list, list_a, [])
+
+    return list_tmp</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.listutils.wrapper_2"><code class="name flex">
+<span>def <span class="ident">wrapper_2</span></span>(<span>l_etalon, list_a, level)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrapper_2(l_etalon, list_a, level):
+    def subWrap(list_a, level, count):
+        list_b = []
+        if level == 1:
+            if len(list_a) == count:
+                for l in list_a:
+                    list_b.append([l])
+            else:
+                dc = len(list_a)//count
+                for l in range(count):
+                    list_c = []
+                    for j in range(dc):
+                        list_c.append(list_a[l*dc+j])
+                    list_b.append(list_c)
+        else:
+            for l in list_a:
+                list_b = subWrap(l, level-1, count)
+        return list_b
+
+    def subWrap_2(l_etalon, len_l, level):
+        len_r = len_l
+        if type(l_etalon) in [list, tuple, ndarray]:
+            len_r = len(l_etalon) * len_l
+            if level &gt; 1:
+                len_r = subWrap_2(l_etalon[0], len_r, level-1)
+
+        return len_r
+
+    len_l = len(l_etalon)
+    lens_l = subWrap_2(l_etalon, 1, level)
+    list_tmp = subWrap(list_a, level, lens_l)
+
+    for l in range(level-1):
+        list_tmp = [list_tmp]
+    return list_tmp</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.listutils.create_list" href="#sverchok.utils.listutils.create_list">create_list</a></code></li>
+<li><code><a title="sverchok.utils.listutils.joiner" href="#sverchok.utils.listutils.joiner">joiner</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_drawF" href="#sverchok.utils.listutils.listinput_drawF">listinput_drawF</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_drawI" href="#sverchok.utils.listutils.listinput_drawI">listinput_drawI</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_getF" href="#sverchok.utils.listutils.listinput_getF">listinput_getF</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_getF_needed" href="#sverchok.utils.listutils.listinput_getF_needed">listinput_getF_needed</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_getI" href="#sverchok.utils.listutils.listinput_getI">listinput_getI</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_getI_needed" href="#sverchok.utils.listutils.listinput_getI_needed">listinput_getI_needed</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_setF" href="#sverchok.utils.listutils.listinput_setF">listinput_setF</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_setI" href="#sverchok.utils.listutils.listinput_setI">listinput_setI</a></code></li>
+<li><code><a title="sverchok.utils.listutils.listinput_set_rangeI" href="#sverchok.utils.listutils.listinput_set_rangeI">listinput_set_rangeI</a></code></li>
+<li><code><a title="sverchok.utils.listutils.lists_flat" href="#sverchok.utils.listutils.lists_flat">lists_flat</a></code></li>
+<li><code><a title="sverchok.utils.listutils.myZip" href="#sverchok.utils.listutils.myZip">myZip</a></code></li>
+<li><code><a title="sverchok.utils.listutils.myZip_2" href="#sverchok.utils.listutils.myZip_2">myZip_2</a></code></li>
+<li><code><a title="sverchok.utils.listutils.preobrazovatel" href="#sverchok.utils.listutils.preobrazovatel">preobrazovatel</a></code></li>
+<li><code><a title="sverchok.utils.listutils.wrapper_2" href="#sverchok.utils.listutils.wrapper_2">wrapper_2</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

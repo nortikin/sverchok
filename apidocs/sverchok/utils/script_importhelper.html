@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>sverchok.utils.script_importhelper API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.script_importhelper</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import inspect
+from math import *
+import numpy as np
+import bpy
+from mathutils import Vector, Matrix
+
+from sverchok.utils.sv_script import SvScript
+from sverchok.utils.math import sign
+
+def load_script(source, file_name):
+    from_file = &#39;&lt;{}&gt;&#39;.format(file_name)
+    code = compile(source, from_file, &#39;exec&#39;, optimize=0)
+    # insert classes that we can inherit from
+    local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
+    base_classes = set(cls.__name__ for cls in SvScript.__subclasses__())
+    local_space[&#34;SvScript&#34;] = SvScript
+
+    exec(code, globals(),local_space)
+
+    script = None
+
+    for name in code.co_names:
+        # filter out inherited
+        if not name in local_space:
+            continue
+        # skip base classes
+        if name in base_classes:
+            continue
+
+        try:
+            script_class = local_space.get(name)
+            if inspect.isclass(script_class):
+                script = script_class()
+                if isinstance(script, SvScript):
+                    print(&#34;Script Node found script {}&#34;.format(name))
+                    script = script
+                    globals().update(local_space)
+
+        except Exception as Err:
+            print(&#34;Script Node couldn&#39;t load {0}&#34;.format(name))
+            print(Err)
+
+    if not script:
+        raise ImportWarning(&#34;Couldn&#39;t find script in {}&#34;.format(name))
+    return script
+
+def make_functions_dict(*functions):
+    return dict([(function.__name__, function) for function in functions])
+
+# Functions
+safe_names = make_functions_dict(
+        # From math module
+        acos, acosh, asin, asinh, atan, atan2,
+        atanh, ceil, copysign, cos, cosh, degrees,
+        erf, erfc, exp, expm1, fabs, factorial, floor,
+        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+        pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
+        # Additional functions
+        abs, sign, max, min, len, sum, zip,
+        # From mathutlis module
+        Vector, Matrix,
+        # Python type conversions
+        tuple, list, str, dict, set, int, float,
+        any, all, dir
+    )
+# Constants
+safe_names[&#39;e&#39;] = e
+safe_names[&#39;pi&#39;] = pi
+safe_names[&#39;np&#39;] = np
+
+# Blender modules
+# Consider this not safe for now
+safe_names[&#34;bpy&#34;] = bpy
+
+def _add_numpy_exact(r, names):
+    for name in names:
+        r[name] = getattr(np, name)
+
+safe_names_np = safe_names.copy()
+_add_numpy_exact(safe_names_np, [
+        &#39;ceil&#39;, &#39;copysign&#39;, &#39;cos&#39;, &#39;sin&#39;,
+        &#39;cosh&#39;, &#39;sinh&#39;, &#39;degrees&#39;, &#39;radians&#39;,
+        &#39;exp&#39;, &#39;expm1&#39;, &#39;fabs&#39;, &#39;floor&#39;, &#39;fmod&#39;,
+        &#39;frexp&#39;, &#39;hypot&#39;, &#39;isfinite&#39;, &#39;isinf&#39;,
+        &#39;isnan&#39;, &#39;ldexp&#39;, &#39;log&#39;, &#39;log10&#39;, &#39;log1p&#39;, &#39;log2&#39;,
+        &#39;modf&#39;, &#39;sqrt&#39;, &#39;tan&#39;, &#39;tanh&#39;, &#39;trunc&#39;
+    ])
+
+def _numpy_wrapper(f):
+    return lambda a: np.array([f(x) for x in a])
+
+def np_pow(x, p, mod=None):
+    if mod is None:
+        return x ** p
+    else:
+        return (x ** p) % mod
+
+safe_names_np.update({
+        &#39;acos&#39;: np.arccos,
+        &#39;acosh&#39;: np.arccosh,
+        &#39;asin&#39;: np.arcsin,
+        &#39;asinh&#39;: np.arcsinh,
+        &#39;atan2&#39;: np.arctan2,
+        &#39;atanh&#39;: np.arctanh,
+        &#39;pow&#39;: np_pow,
+        &#39;erf&#39;: _numpy_wrapper(erf),
+        &#39;erfc&#39;: _numpy_wrapper(erfc),
+        &#39;gamma&#39;: _numpy_wrapper(gamma),
+        &#39;lgamma&#39;: _numpy_wrapper(lgamma),
+        &#39;factorial&#39;: _numpy_wrapper(factorial)
+    })</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.script_importhelper.load_script"><code class="name flex">
+<span>def <span class="ident">load_script</span></span>(<span>source, file_name)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_script(source, file_name):
+    from_file = &#39;&lt;{}&gt;&#39;.format(file_name)
+    code = compile(source, from_file, &#39;exec&#39;, optimize=0)
+    # insert classes that we can inherit from
+    local_space = {cls.__name__:cls for cls in SvScript.__subclasses__()}
+    base_classes = set(cls.__name__ for cls in SvScript.__subclasses__())
+    local_space[&#34;SvScript&#34;] = SvScript
+
+    exec(code, globals(),local_space)
+
+    script = None
+
+    for name in code.co_names:
+        # filter out inherited
+        if not name in local_space:
+            continue
+        # skip base classes
+        if name in base_classes:
+            continue
+
+        try:
+            script_class = local_space.get(name)
+            if inspect.isclass(script_class):
+                script = script_class()
+                if isinstance(script, SvScript):
+                    print(&#34;Script Node found script {}&#34;.format(name))
+                    script = script
+                    globals().update(local_space)
+
+        except Exception as Err:
+            print(&#34;Script Node couldn&#39;t load {0}&#34;.format(name))
+            print(Err)
+
+    if not script:
+        raise ImportWarning(&#34;Couldn&#39;t find script in {}&#34;.format(name))
+    return script</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.script_importhelper.make_functions_dict"><code class="name flex">
+<span>def <span class="ident">make_functions_dict</span></span>(<span>*functions)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_functions_dict(*functions):
+    return dict([(function.__name__, function) for function in functions])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.script_importhelper.np_pow"><code class="name flex">
+<span>def <span class="ident">np_pow</span></span>(<span>x, p, mod=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_pow(x, p, mod=None):
+    if mod is None:
+        return x ** p
+    else:
+        return (x ** p) % mod</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.script_importhelper.load_script" href="#sverchok.utils.script_importhelper.load_script">load_script</a></code></li>
+<li><code><a title="sverchok.utils.script_importhelper.make_functions_dict" href="#sverchok.utils.script_importhelper.make_functions_dict">make_functions_dict</a></code></li>
+<li><code><a title="sverchok.utils.script_importhelper.np_pow" href="#sverchok.utils.script_importhelper.np_pow">np_pow</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
