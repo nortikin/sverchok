@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import sys
 from os.path import join, dirname
 from os import makedirs
 
@@ -16,21 +15,28 @@ try:
 except ImportError:
     pdoc = None
 
-ROOT_MODULES = ['sverchok.data_structure', 'sverchok.node_tree', 'sverchok.core', 'sverchok.utils', 'sverchok.ui']
+DEFAULT_MODULES = [
+        'sverchok.data_structure',
+        'sverchok.node_tree',
+        'sverchok.dependencies',
+        'sverchok.core',
+        'sverchok.utils']
 
 def recursive_htmls(mod, parent=None):
     yield mod, mod.url(relative_to=None), mod.html()
     for submod in mod.submodules():
         yield from recursive_htmls(submod, parent=mod)
 
-def generate_api_documentation(root_directory, logger=None):
+def generate_api_documentation(root_directory, root_modules=None, logger=None):
     if pdoc is None:
         raise Exception("pdoc3 package is required in order to generate documentation")
     if logger is None:
         logger = getLogger()
-    logger.info("Start generating API documentation")
+    if not root_modules:
+        root_modules = DEFAULT_MODULES
+    logger.info(f"Start generating API documentation in {root_directory}")
     context = pdoc.Context()
-    modules = [pdoc.Module(mod, context=context) for mod in ROOT_MODULES]
+    modules = [pdoc.Module(mod, context=context) for mod in root_modules]
     pdoc.link_inheritance(context)
     for mod in modules:
         for mod, mod_url, mod_html in recursive_htmls(mod):
@@ -41,14 +47,18 @@ def generate_api_documentation(root_directory, logger=None):
     logger.info("API documentation generation done.")
 
 if __name__ == "__main__":
+    import sys
+    import argparse
     try:
+        parser = argparse.ArgumentParser(description = "Generate Sverchok API documentation in HTML format")
+        parser.add_argument('-o', '--output', metavar='DIRECTORY', default='./api_documentation', help="Path to output directory")
+        parser.add_argument('-m', '--modules', nargs='*', metavar='SVERCHOK.MODULE', help="Module(s) or package(s) to be documented")
+
         argv = sys.argv
         argv = argv[argv.index("--")+1:]
-        if argv:
-            output_directory = argv[0]
-        else:
-            output_directory = "./api_documentation"
-        generate_api_documentation(output_directory)
+
+        args = parser.parse_args(argv)
+        generate_api_documentation(args.output, args.modules)
         sys.exit(0)
     except Exception as e:
         print(e)
