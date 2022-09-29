@@ -31,8 +31,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ./installation
-        #key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/apidocs_builder.yml') }}
-        key: "blender-${{ env.blender_version }}-"
+        key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/apidocs_builder.yml') }}
     - name: Install Blender
       run: |
         # echo "starting run"
@@ -73,16 +72,16 @@ jobs:
         mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
         
-      - name: Checkout master
-        uses: actions/checkout@master
-        with:
-          path: 'master'
+    - name: Checkout master
+      uses: actions/checkout@master
+      with:
+        path: 'master'
 
-      - name: Checkout gh-pages
-        uses: actions/checkout@master
-        with:
-          path: 'gh_pages'
-          ref: 'gh-pages'
+    - name: Checkout gh-pages
+      uses: actions/checkout@master
+      with:
+        path: 'gh_pages'
+        ref: 'gh-pages'
 
     - name: Generate API documentation
       run: |
