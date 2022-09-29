@@ -1,7 +1,7 @@
 # This action is triggered whenever push to the docs folder of the master branch is made.
 # It generates HTML pages from the docs folder of the master branch and push them to the gh-pages branch.
 
-name: Build documentation pages
+name: Build user documentation pages
 on:
   push:
     branches: 'master'
@@ -28,7 +28,7 @@ jobs:
           path: 'gh_pages'
           ref: 'gh-pages'
         
-      - name: Build docs
+      - name: Build user documentation
         run: sphinx-build -b html "${GITHUB_WORKSPACE}/master/docs" "${GITHUB_WORKSPACE}/gh_pages/docs"
       
       - name: Push changes in gh-pages
