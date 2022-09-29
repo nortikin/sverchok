@@ -62,6 +62,7 @@ jobs:
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
+            $PYTHON -m pip install --upgrade pdoc3
             popd
 
             cd ..
