@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>sverchok.utils.curve.splprep API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="An interface to `splprep` method from scipy." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,7 @@
 <h1 class="title">Module <code>sverchok.utils.curve.splprep</code></h1>
 </header>
 <section id="section-intro">
+<p>An interface to <code>splprep</code> method from scipy.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -33,6 +34,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+&#34;&#34;&#34;
+An interface to `splprep` method from scipy.
+&#34;&#34;&#34;
+
 import numpy as np
 
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -43,6 +48,24 @@ if scipy is not None:
     from scipy import interpolate
 
 def scipy_nurbs_approximate(points, weights=None, metric=&#39;DISTANCE&#39;, degree=3, filter_doubles = None, smoothing=None, is_cyclic=False):
+    &#34;&#34;&#34;
+    Approximate points by a NURBS curve by use of `splprep` method from scipy.
+
+    Args:
+        points: data points to be approximated. np.ndarray of shape (n, 3).
+        weights: point weights. np.ndarray of shape (n,) or None.
+        metric: metric to be used. See the list of supported metrics in `sverchok.utils.math.supported_metrics`.
+        degree: curve degree.
+        filter_doubles: if not None, this is the threshold for distance between
+            points, which are to be considered too close to one another; duplicates
+            are removed before approximation procedure. If None, duplicates
+            elimination is not performed.
+        smoothing: smoothing parameter to `splprep` method. None means scipy will decide on it&#39;s own.
+        is_cyclic: set to True if the curve must be closed.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
     points = np.asarray(points)
     if weights is not None and len(points) != len(weights):
         raise Exception(&#34;Number of weights must be equal to number of points&#34;)
@@ -98,12 +121,52 @@ def scipy_nurbs_approximate(points, weights=None, metric=&#39;DISTANCE&#39;, deg
 <span>def <span class="ident">scipy_nurbs_approximate</span></span>(<span>points, weights=None, metric='DISTANCE', degree=3, filter_doubles=None, smoothing=None, is_cyclic=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Approximate points by a NURBS curve by use of <code>splprep</code> method from scipy.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong></dt>
+<dd>data points to be approximated. np.ndarray of shape (n, 3).</dd>
+<dt><strong><code>weights</code></strong></dt>
+<dd>point weights. np.ndarray of shape (n,) or None.</dd>
+<dt><strong><code>metric</code></strong></dt>
+<dd>metric to be used. See the list of supported metrics in <code>sverchok.utils.math.supported_metrics</code>.</dd>
+<dt><strong><code>degree</code></strong></dt>
+<dd>curve degree.</dd>
+<dt><strong><code>filter_doubles</code></strong></dt>
+<dd>if not None, this is the threshold for distance between
+points, which are to be considered too close to one another; duplicates
+are removed before approximation procedure. If None, duplicates
+elimination is not performed.</dd>
+<dt><strong><code>smoothing</code></strong></dt>
+<dd>smoothing parameter to <code>splprep</code> method. None means scipy will decide on it's own.</dd>
+<dt><strong><code>is_cyclic</code></strong></dt>
+<dd>set to True if the curve must be closed.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def scipy_nurbs_approximate(points, weights=None, metric=&#39;DISTANCE&#39;, degree=3, filter_doubles = None, smoothing=None, is_cyclic=False):
+    &#34;&#34;&#34;
+    Approximate points by a NURBS curve by use of `splprep` method from scipy.
+
+    Args:
+        points: data points to be approximated. np.ndarray of shape (n, 3).
+        weights: point weights. np.ndarray of shape (n,) or None.
+        metric: metric to be used. See the list of supported metrics in `sverchok.utils.math.supported_metrics`.
+        degree: curve degree.
+        filter_doubles: if not None, this is the threshold for distance between
+            points, which are to be considered too close to one another; duplicates
+            are removed before approximation procedure. If None, duplicates
+            elimination is not performed.
+        smoothing: smoothing parameter to `splprep` method. None means scipy will decide on it&#39;s own.
+        is_cyclic: set to True if the curve must be closed.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
     points = np.asarray(points)
     if weights is not None and len(points) != len(weights):
         raise Exception(&#34;Number of weights must be equal to number of points&#34;)
