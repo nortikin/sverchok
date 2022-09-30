@@ -14,10 +14,5 @@ Disclaimer: although this API is more or less documented, we do not provide any 
 
 At the moment, documentation strings are rare and in many cases not detailed enough. But even so, we gather even the list of modules, classes and methods can be useful for developers.
 
-There is documentation for the following modules:
-
-* [sverchok.data_structure - basic data structures (lists and tuples) manipulation](apidocs/sverchok/data_structure.html)
-* [sverchok.node_tree - basic node and node tree classes and tools](apidocs/sverchok/node_tree.html)
-* [sverchok.core - Sverchok core](apidocs/sverchok/core/index.html)
-* [sverchok.utils - meshes, geometry manipulation tools and other utilities](apidocs/sverchok/utils/index.html)
+Please refer to **[API documentation](docs/contributing/api_documentation.html)** section of User Manual.
 
