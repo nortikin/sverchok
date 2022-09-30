@@ -1295,34 +1295,6 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
     return SvBezierCurve(points)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    coeffs = [SvBezierCurve.coefficient(self.degree, k, ts) for k in range(len(self.points))]
-    coeffs = np.array(coeffs)
-    return np.dot(coeffs.T, self.points)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -1360,32 +1332,6 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
 </summary>
 <pre><code class="python">def get_bounding_box(self):
     return bounding_box(self.get_control_points())</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.get_degree"><code class="name flex">
-<span>def <span class="ident">get_degree</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_degree(self):
-    return self.degree</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return (0.0, 1.0)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierCurve.is_rational"><code class="name flex">
@@ -1511,35 +1457,6 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
     return self.to_nurbs().split_at(t)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.tangent"><code class="name flex">
-<span>def <span class="ident">tangent</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent(self, t, tangent_delta=None):
-    return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvBezierCurve.tangent_array"><code class="name flex">
-<span>def <span class="ident">tangent_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent_array(self, ts, tangent_delta=None):
-    coeffs = [self.coeff_deriv1(k, ts) for k in range(len(self.points))]
-    coeffs = np.array(coeffs)
-    #print(&#34;C1&#34;, coeffs)
-    return np.dot(coeffs.T, self.points)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
@@ -1603,8 +1520,16 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -1896,39 +1821,6 @@ def from_four_points(cls, v0, v1, v2, v3):
     return SvBezierCurve(points)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    c0 = (1 - ts)**3
-    c1 = 3*ts*(1-ts)**2
-    c2 = 3*ts**2*(1-ts)
-    c3 = ts**3
-    c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
-    p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
-
-    return c0*p0 + c1*p1 + c2*p2 + c3*p3</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -1966,32 +1858,6 @@ def from_four_points(cls, v0, v1, v2, v3):
 </summary>
 <pre><code class="python">def get_bounding_box(self):
     return bounding_box(self.get_control_points())</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_degree"><code class="name flex">
-<span>def <span class="ident">get_degree</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_degree(self):
-    return 3</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return (0.0, 1.0)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.is_rational"><code class="name flex">
@@ -2124,40 +1990,6 @@ def from_four_points(cls, v0, v1, v2, v3):
     return self.to_nurbs().split_at(t)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent"><code class="name flex">
-<span>def <span class="ident">tangent</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent(self, t, tangent_delta=None):
-    return self.tangent_array(np.array([t]), tangent_delta=tangent_delta)[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent_array"><code class="name flex">
-<span>def <span class="ident">tangent_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent_array(self, ts, tangent_delta=None):
-    c0 = -3*(1 - ts)**2
-    c1 = 3*(1-ts)**2 - 6*(1-ts)*ts
-    c2 = 6*(1-ts)*ts - 3*ts**2
-    c3 = 3*ts**2
-    #print(&#34;C/C1&#34;, np.array([c0, c1, c2, c3]))
-    c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
-    p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
-
-    return c0*p0 + c1*p1 + c2*p2 + c3*p3</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
@@ -2224,8 +2056,16 @@ def from_four_points(cls, v0, v1, v2, v3):
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2262,14 +2102,10 @@ def from_four_points(cls, v0, v1, v2, v3):
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.cut_segment" href="#sverchok.utils.curve.bezier.SvBezierCurve.cut_segment">cut_segment</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.derivatives_array" href="#sverchok.utils.curve.bezier.SvBezierCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.elevate_degree" href="#sverchok.utils.curve.bezier.SvBezierCurve.elevate_degree">elevate_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.evaluate" href="#sverchok.utils.curve.bezier.SvBezierCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.evaluate_array" href="#sverchok.utils.curve.bezier.SvBezierCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.extrude_along_vector" href="#sverchok.utils.curve.bezier.SvBezierCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.extrude_to_point" href="#sverchok.utils.curve.bezier.SvBezierCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.from_points_and_tangents" href="#sverchok.utils.curve.bezier.SvBezierCurve.from_points_and_tangents">from_points_and_tangents</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.get_bounding_box" href="#sverchok.utils.curve.bezier.SvBezierCurve.get_bounding_box">get_bounding_box</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.get_degree" href="#sverchok.utils.curve.bezier.SvBezierCurve.get_degree">get_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.get_u_bounds" href="#sverchok.utils.curve.bezier.SvBezierCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.interpolate" href="#sverchok.utils.curve.bezier.SvBezierCurve.interpolate">interpolate</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.is_rational" href="#sverchok.utils.curve.bezier.SvBezierCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.lerp_to" href="#sverchok.utils.curve.bezier.SvBezierCurve.lerp_to">lerp_to</a></code></li>
@@ -2280,8 +2116,6 @@ def from_four_points(cls, v0, v1, v2, v3):
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.second_derivative" href="#sverchok.utils.curve.bezier.SvBezierCurve.second_derivative">second_derivative</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.second_derivative_array" href="#sverchok.utils.curve.bezier.SvBezierCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.split_at" href="#sverchok.utils.curve.bezier.SvBezierCurve.split_at">split_at</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.tangent" href="#sverchok.utils.curve.bezier.SvBezierCurve.tangent">tangent</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.tangent_array" href="#sverchok.utils.curve.bezier.SvBezierCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.third_derivative_array" href="#sverchok.utils.curve.bezier.SvBezierCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.to_bezier" href="#sverchok.utils.curve.bezier.SvBezierCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.to_bezier_segments" href="#sverchok.utils.curve.bezier.SvBezierCurve.to_bezier_segments">to_bezier_segments</a></code></li>
@@ -2295,14 +2129,10 @@ def from_four_points(cls, v0, v1, v2, v3):
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.cut_segment" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.cut_segment">cut_segment</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.derivatives_array" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.elevate_degree" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.elevate_degree">elevate_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate_array" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.extrude_along_vector" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.extrude_to_point" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.from_four_points" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.from_four_points">from_four_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_bounding_box" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_bounding_box">get_bounding_box</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_degree" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_degree">get_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.get_u_bounds" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.is_rational" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.lerp_to" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.make_revolution_surface" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.make_revolution_surface">make_revolution_surface</a></code></li>
@@ -2312,8 +2142,6 @@ def from_four_points(cls, v0, v1, v2, v3):
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.second_derivative" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.second_derivative">second_derivative</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.second_derivative_array" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.split_at" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.split_at">split_at</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent">tangent</a></code></li>
-<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent_array" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.third_derivative_array" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier_segments" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier_segments">to_bezier_segments</a></code></li>

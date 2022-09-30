@@ -1923,58 +1923,6 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
     return solver</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.to_nurbs().evaluate(t)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    return self.to_nurbs().evaluate_array(ts)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_degree"><code class="name flex">
-<span>def <span class="ident">get_degree</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_degree(self):
-    return self.degree</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.to_nurbs().get_u_bounds()</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params"><code class="name flex">
 <span>def <span class="ident">guess_curve_params</span></span>(<span>self)</span>
 </code></dt>
@@ -2100,8 +2048,16 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2327,10 +2283,6 @@ def single(u, tangent, weight=None, relative=False):
 <ul class="two-column">
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal">add_goal</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy">copy</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate_array" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_degree" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_degree">get_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_u_bounds" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params">guess_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params">set_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_weights" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_weights">set_curve_weights</a></code></li>

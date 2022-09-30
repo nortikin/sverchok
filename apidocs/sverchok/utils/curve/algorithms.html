@@ -1670,67 +1670,20 @@ def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#3
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    point = self.curve.evaluate(t)
-    projection_to_line = self.line.projection_of_point(point)
-    projection_to_line = np.array(projection_to_line)
-    radial = point - projection_to_line
-    radius = self.radius * radial / np.linalg.norm(radial)
-    projection = projection_to_line + radius
-    k = self.coefficient
-    return (1 - k) * point + k * projection</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    points = self.curve.evaluate_array(ts)
-    projection_to_line = self.line.projection_of_points(points)
-    radial = points - projection_to_line
-    radius = self.radius * radial / np.linalg.norm(radial, axis=1, keepdims=True)
-    projections = projection_to_line + radius
-    k = self.coefficient
-    return (1 - k) * points + k * projections</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -1775,60 +1728,20 @@ def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#3
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    point = self.curve.evaluate(t)
-    target = np.array(self.plane.projection_of_point(point))
-    k = self.coefficient
-    return (1 - k) * point + k * target</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    points = self.curve.evaluate_array(ts)
-    targets = self.plane.projection_of_points(points)
-    k = self.coefficient
-    return (1 - k) * points + k * targets</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -1872,60 +1785,20 @@ def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#3
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    points = self.curve.evaluate_array(ts)
-    centered_points = points - self.center
-    norms = np.linalg.norm(centered_points, axis=1)[np.newaxis].T
-    normalized = centered_points / norms
-    targets = self.radius * normalized + self.center
-    k = self.coefficient
-    return (1 - k) * points + k * targets</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2289,59 +2162,20 @@ def build(curve1, curve2, coefficient):
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    us1 = (self.c1_max - self.c1_min) * ts + self.c1_min
-    us2 = (self.c2_max - self.c2_min) * ts + self.c2_min
-    c1_points = self.curve1.evaluate_array(us1)
-    c2_points = self.curve2.evaluate_array(us2)
-    k = self.coefficient
-    return (1.0 - k) * c1_points + k * c2_points</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.u_bounds</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2485,100 +2319,6 @@ def build(curve1, curve2, coefficient):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    if self.z_axis == 2:
-        U, V = 0, 1
-    elif self.z_axis == 1:
-        U, V = 0, 2
-    else:
-        U, V = 1, 2
-
-    uv_points = self.curve.evaluate_array(ts)
-    us, vs = uv_points[:,U], uv_points[:,V]
-    # Tangents of the curve in surface&#39;s UV space
-    uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
-    tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
-    derivs = self.surface.derivatives_data_array(us, vs)
-    su, sv = derivs.du, derivs.dv
-
-    # Take surface&#39;s normals as N = [su, sv];
-    # Take curve&#39;s tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
-    # Take a vector in surface&#39;s tangent plane, which is perpendicular to curve&#39;s
-    # tangent, as Nc = [N, T] (call it &#34;curve&#39;s normal on a surface&#34;);
-    # Calculate Nc&#39;s decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
-    # Interpret Ncu and Ncv as coordinates of Nc in surface&#39;s UV space.
-
-    # If you write down all above in formulas, you will have
-    #
-    # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
-
-    # We could&#39;ve calculate the offset as (Curve on a surface) + (offset*Nc),
-    # but there is no guarantee that these points will lie on the surface again
-    # (especially with not-so-small values of offset).
-    # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
-    # map all that into 3D space.
-
-    su2 = (su*su).sum(axis=1) # (n,)
-    sv2 = (sv*sv).sum(axis=1) # (n,)
-    suv = (su*sv).sum(axis=1) # (n,)
-
-    su_norm, sv_norm = derivs.tangent_lens()
-    su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
-
-    delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
-    delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
-
-    delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
-    delta_s = np.linalg.norm(delta_s, axis=1)
-
-    if self.offset_curve is None:
-        offset = self.offset
-    else:
-        offset = self.get_offset(ts)
-
-    res_us = us + delta_u * offset / delta_s
-    res_vs = vs + delta_v * offset / delta_s
-
-    if self.uv_space:
-        zs = np.zeros_like(us)
-        if self.z_axis == 2:
-            result = np.stack((res_us, res_vs, zs)).T
-        elif self.z_axis == 1:
-            result = np.stack((res_us, zs, res_vs)).T
-        else:
-            result = np.stack((zs, res_us, res_vs)).T
-        return result
-    else:
-        result = self.surface.evaluate_array(res_us, res_vs)
-        # Just for testing
-        # on_curve = self.surface.evaluate_array(us, vs)
-        # dvs = result - on_curve
-        # print(np.linalg.norm(dvs, axis=1))
-        return result</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset"><code class="name flex">
 <span>def <span class="ident">get_offset</span></span>(<span>self, ts)</span>
 </code></dt>
@@ -2603,26 +2343,21 @@ def build(curve1, curve2, coefficient):
         return ps[:,1]</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2674,69 +2409,20 @@ def build(curve1, curve2, coefficient):
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    points = self.curve.evaluate_array(ts)
-    xs = points[:,0]
-    ys = points[:,1]
-    zs = points[:,2]
-    if self.axis == 0:
-        us = ys
-        vs = zs
-    elif self.axis == 1:
-        us = xs
-        vs = zs
-    elif self.axis == 2:
-        us = xs
-        vs = ys
-    else:
-        raise Exception(&#34;Unsupported orientation axis&#34;)
-    return self.surface.evaluate_array(us, vs)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2796,60 +2482,20 @@ def build(curve1, curve2, coefficient):
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    v = self.curve.evaluate(t)
-    vec = self.field.evaluate(*tuple(v))
-    return v + self.coefficient * vec</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    vs = self.curve.evaluate_array(ts)
-    xs, ys, zs = vs[:,0], vs[:,1], vs[:,2]
-    vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
-    vecs = np.stack((vxs, vys, vzs)).T
-    return vs + self.coefficient * vecs</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -2935,71 +2581,20 @@ def take(surface, fixed_axis, value, flip=False):
 </details>
 </dd>
 </dl>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    if self.fixed_axis == &#39;U&#39;:
-        if self.flip:
-            t = self.surface.get_v_max() - t + self.surface.get_v_min()
-        return self.surface.evaluate(self.value, t)
-    else:
-        if self.flip:
-            t = self.surface.get_u_max() - t + self.surface.get_u_min()
-        return self.surface.evaluate(t, self.value)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    if self.fixed_axis == &#39;U&#39;:
-        if self.flip:
-            ts = self.surface.get_v_max() - ts + self.surface.get_v_min()
-        return self.surface.evaluate_array(np.repeat(self.value, len(ts)), ts)
-    else:
-        if self.flip:
-            ts = self.surface.get_u_max() - ts + self.surface.get_u_min()
-        return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    if self.fixed_axis == &#39;U&#39;:
-        return self.surface.get_v_min(), self.surface.get_v_max()
-    else:
-        return self.surface.get_u_min(), self.surface.get_u_max()</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -3044,56 +2639,20 @@ def take(surface, fixed_axis, value, flip=False):
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
 </ul>
-<h3>Methods</h3>
-<dl>
-<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    c_ts = self.solver.solve(np.array([t]))
-    return self.curve.evaluate(c_ts[0])</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    c_ts = self.solver.solve(ts)
-    return self.curve.evaluate_array(c_ts)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.u_bounds</code></pre>
-</details>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -3344,52 +2903,6 @@ output: np.array of shape (n, 3, 3)</p></div>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    return self.evaluate_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    n = len(ts)
-    t_min, t_max = self.curve.get_u_bounds()
-    extrusion_start = self.curve.evaluate(t_min)
-    extrusion_points = self.curve.evaluate_array(ts)
-    extrusion_vectors = extrusion_points - extrusion_start
-    offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
-    if self.algorithm == NORMAL_DIR:
-        offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
-        tangents = self.curve.tangent_array(ts)
-        offset_vectors = np.cross(tangents, offset_vectors)
-        offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
-        offset_amounts = self.get_offset(ts)
-        offset_vectors = offset_amounts * offset_vectors / offset_norm
-    else:
-        offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
-        matrices = self.get_matrices(ts)
-        offset_amounts = self.get_offset(ts)
-        offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
-    result = extrusion_vectors + offset_vectors
-    result = result + extrusion_start
-    return result</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices"><code class="name flex">
 <span>def <span class="ident">get_matrices</span></span>(<span>self, ts)</span>
 </code></dt>
@@ -3455,26 +2968,21 @@ output: np.array of shape (n, 3, 3)</p></div>
         return ps[:,1][np.newaxis].T</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.curve.get_u_bounds()</code></pre>
-</details>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -3523,27 +3031,12 @@ output: np.array of shape (n, 3, 3)</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder">SvCastCurveToCylinder</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToCylinder.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane">SvCastCurveToPlane</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToPlane.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere">SvCastCurveToSphere</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCastCurveToSphere.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurveFrameCalculator" href="#sverchok.utils.curve.algorithms.SvCurveFrameCalculator">SvCurveFrameCalculator</a></code></h4>
@@ -3567,57 +3060,33 @@ output: np.array of shape (n, 3, 3)</p></div>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve">SvCurveLerpCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.build" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.build">build</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveLerpCurve.get_u_bounds">get_u_bounds</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface">SvCurveOffsetOnSurface</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_LENGTH" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_LENGTH">BY_LENGTH</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_PARAMETER" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.BY_PARAMETER">BY_PARAMETER</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_offset">get_offset</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveOffsetOnSurface.get_u_bounds">get_u_bounds</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface">SvCurveOnSurface</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurvesSortResult" href="#sverchok.utils.curve.algorithms.SvCurvesSortResult">SvCurvesSortResult</a></code></h4>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve">SvDeformedByFieldCurve</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvDeformedByFieldCurve.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve">SvIsoUvCurve</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvIsoUvCurve.take" href="#sverchok.utils.curve.algorithms.SvIsoUvCurve.take">take</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve">SvLengthRebuiltCurve</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvLengthRebuiltCurve.get_u_bounds">get_u_bounds</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvNormalTrack" href="#sverchok.utils.curve.algorithms.SvNormalTrack">SvNormalTrack</a></code></h4>
@@ -3627,15 +3096,12 @@ output: np.array of shape (n, 3, 3)</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve" href="#sverchok.utils.curve.algorithms.SvOffsetCurve">SvOffsetCurve</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_LENGTH" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.BY_LENGTH">BY_LENGTH</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.BY_PARAMETER" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.BY_PARAMETER">BY_PARAMETER</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrices">get_matrices</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrix" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_matrix">get_matrix</a></code></li>
 <li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_offset" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_offset">get_offset</a></code></li>
-<li><code><a title="sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds" href="#sverchok.utils.curve.algorithms.SvOffsetCurve.get_u_bounds">get_u_bounds</a></code></li>
 </ul>
 </li>
 </ul>

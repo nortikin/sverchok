@@ -267,34 +267,6 @@ def from_points(cls, points, metric=None, is_cyclic=False):
     return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    v = self.spline.eval_at_point(t)
-    return np.array(v)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    vs = self.spline.eval(ts)
-    return np.array(vs)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -319,32 +291,6 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 </summary>
 <pre><code class="python">def extrude_to_point(self, point):
     return self.to_nurbs().extrude_to_point(point)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.get_degree"><code class="name flex">
-<span>def <span class="ident">get_degree</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_degree(self):
-    return self.spline.get_degree()</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return self.u_bounds</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.lerp_to"><code class="name flex">
@@ -399,35 +345,6 @@ def from_points(cls, points, metric=None, is_cyclic=False):
     return self.to_nurbs().split_at(t)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.tangent"><code class="name flex">
-<span>def <span class="ident">tangent</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent(self, t, tangent_delta=None):
-    h = self.get_tangent_delta(tangent_delta)
-    vs = self.spline.tangent(np.array([t]), h=h)
-    return vs[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.splines.SvSplineCurve.tangent_array"><code class="name flex">
-<span>def <span class="ident">tangent_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent_array(self, ts, tangent_delta=None):
-    h = self.get_tangent_delta(tangent_delta)
-    return self.spline.tangent(ts, h=h)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.to_bezier_segments"><code class="name flex">
 <span>def <span class="ident">to_bezier_segments</span></span>(<span>self)</span>
 </code></dt>
@@ -474,8 +391,16 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -501,19 +426,13 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 <h4><code><a title="sverchok.utils.curve.splines.SvSplineCurve" href="#sverchok.utils.curve.splines.SvSplineCurve">SvSplineCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.cut_segment" href="#sverchok.utils.curve.splines.SvSplineCurve.cut_segment">cut_segment</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.evaluate" href="#sverchok.utils.curve.splines.SvSplineCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.evaluate_array" href="#sverchok.utils.curve.splines.SvSplineCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.from_points" href="#sverchok.utils.curve.splines.SvSplineCurve.from_points">from_points</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.get_degree" href="#sverchok.utils.curve.splines.SvSplineCurve.get_degree">get_degree</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.get_u_bounds" href="#sverchok.utils.curve.splines.SvSplineCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.lerp_to" href="#sverchok.utils.curve.splines.SvSplineCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface">make_ruled_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.split_at" href="#sverchok.utils.curve.splines.SvSplineCurve.split_at">split_at</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.tangent" href="#sverchok.utils.curve.splines.SvSplineCurve.tangent">tangent</a></code></li>
-<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.tangent_array" href="#sverchok.utils.curve.splines.SvSplineCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.to_bezier_segments" href="#sverchok.utils.curve.splines.SvSplineCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.to_nurbs" href="#sverchok.utils.curve.splines.SvSplineCurve.to_nurbs">to_nurbs</a></code></li>
 </ul>

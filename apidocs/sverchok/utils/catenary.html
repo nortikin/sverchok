@@ -442,55 +442,6 @@ class CatenarySolver(object):
     return self.A * cosh((x - self.x0) / self.A)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.catenary.SvCatenaryCurve.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, t):
-    t = t * self.x_range
-    dx = t * self.x_direction#[np.newaxis].T
-    y = self.A * np.cosh((t - self.x0) / self.A)
-    y1 = self.A * np.cosh((- self.x0) / self.A)
-    dy = - (y-y1) * self.force#[np.newaxis].T
-    return self.point1 + dx + dy</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.catenary.SvCatenaryCurve.evaluate_array"><code class="name flex">
-<span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate_array(self, ts):
-    ts = ts * self.x_range
-    dxs = ts * self.x_direction[np.newaxis].T
-    ys = self.A * np.cosh((ts - self.x0) / self.A)
-    y1 = self.A * np.cosh((- self.x0) / self.A)
-    dys = - (ys - y1) * self.force[np.newaxis].T
-    return self.point1 + (dxs + dys).T</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.catenary.SvCatenaryCurve.get_u_bounds"><code class="name flex">
-<span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_u_bounds(self):
-    return (0.0, 1.0)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.catenary.SvCatenaryCurve.second_derivative"><code class="name flex">
 <span>def <span class="ident">second_derivative</span></span>(<span>self, t)</span>
 </code></dt>
@@ -520,36 +471,6 @@ class CatenarySolver(object):
     return dys.T</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.catenary.SvCatenaryCurve.tangent"><code class="name flex">
-<span>def <span class="ident">tangent</span></span>(<span>self, t)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent(self, t):
-    return self.tangent_array(np.array([t]))[0]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.catenary.SvCatenaryCurve.tangent_array"><code class="name flex">
-<span>def <span class="ident">tangent_array</span></span>(<span>self, ts)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tangent_array(self, ts):
-    ts = ts * self.x_range
-    dxs = self.x_direction[np.newaxis].T
-    ys = np.sinh((ts - self.x0) / self.A)
-    dys = - ys * self.force[np.newaxis].T
-    return (dxs + dys).T</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.catenary.SvCatenaryCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts)</span>
 </code></dt>
@@ -571,8 +492,16 @@ class CatenarySolver(object):
 <ul class="hlist">
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="curve/core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="curve/core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="curve/core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="curve/core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="curve/core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="curve/core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="curve/core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="curve/core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="curve/core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="curve/core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="curve/core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="curve/core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -604,13 +533,8 @@ class CatenarySolver(object):
 <h4><code><a title="sverchok.utils.catenary.SvCatenaryCurve" href="#sverchok.utils.catenary.SvCatenaryCurve">SvCatenaryCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.eval_y" href="#sverchok.utils.catenary.SvCatenaryCurve.eval_y">eval_y</a></code></li>
-<li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.evaluate" href="#sverchok.utils.catenary.SvCatenaryCurve.evaluate">evaluate</a></code></li>
-<li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.evaluate_array" href="#sverchok.utils.catenary.SvCatenaryCurve.evaluate_array">evaluate_array</a></code></li>
-<li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.get_u_bounds" href="#sverchok.utils.catenary.SvCatenaryCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.second_derivative" href="#sverchok.utils.catenary.SvCatenaryCurve.second_derivative">second_derivative</a></code></li>
 <li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.second_derivative_array" href="#sverchok.utils.catenary.SvCatenaryCurve.second_derivative_array">second_derivative_array</a></code></li>
-<li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.tangent" href="#sverchok.utils.catenary.SvCatenaryCurve.tangent">tangent</a></code></li>
-<li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.tangent_array" href="#sverchok.utils.catenary.SvCatenaryCurve.tangent_array">tangent_array</a></code></li>
 <li><code><a title="sverchok.utils.catenary.SvCatenaryCurve.third_derivative_array" href="#sverchok.utils.catenary.SvCatenaryCurve.third_derivative_array">third_derivative_array</a></code></li>
 </ul>
 </li>
