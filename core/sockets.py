@@ -22,7 +22,8 @@ from typing import Set
 
 from mathutils import Matrix, Quaternion
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty, \
+    PointerProperty
 from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.socket_conversions import ConversionPolicies
@@ -37,7 +38,7 @@ from sverchok.data_structure import (
 
 from sverchok.settings import get_param
 
-from sverchok.utils.handle_blender_data import get_func_and_args
+from sverchok.utils.handle_blender_data import get_func_and_args, BlDomains
 from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.vector import SvVectorField
@@ -314,6 +315,15 @@ class SvSocketProcessing():
                 setattr(self, identifier, getattr(other, identifier))
 
 
+class SocketDomain:
+    """Socket mix-in class to define domain options
+    The option is shown when socket is connected
+    and can be used for transferring data to certain elements of an object."""
+    domain: EnumProperty(items=[(d.name, d.value, '') for d in BlDomains],
+                         update=process_from_socket)
+    show_domain: BoolProperty()
+
+
 class SvSocketCommon(SvSocketProcessing):
     """
     Base class for all Sockets
@@ -504,7 +514,12 @@ class SvSocketCommon(SvSocketProcessing):
             if self.description:
                 layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
             else:
-                layout.label(text=text)
+                if hasattr(self, 'show_domain') and self.show_domain:
+                    row = layout.row()
+                    row.label(text=text)
+                    row.prop(self, 'domain', text='')
+                else:
+                    layout.label(text=text)
 
         menu_option = get_param('show_input_menus', 'QUICKLINK')
 
@@ -665,7 +680,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(Matrix,))
 
-class SvVerticesSocket(NodeSocket, SvSocketCommon):
+class SvVerticesSocket(SocketDomain, NodeSocket, SvSocketCommon):
     '''For vertex data'''
     bl_idname = "SvVerticesSocket"
     bl_label ="Vertices Socket"
@@ -796,7 +811,8 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             layout.label(text=text)
 
-class SvColorSocket(NodeSocket, SvSocketCommon):
+
+class SvColorSocket(SocketDomain, NodeSocket, SvSocketCommon):
     '''For color data'''
     bl_idname = "SvColorSocket"
     bl_label = "Color Socket"
@@ -857,7 +873,7 @@ class SvSeparatorSocket(NodeSocket, SvSocketCommon):
         layout.label(text="——————")
 
 
-class SvStringsSocket(NodeSocket, SvSocketCommon):
+class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
     '''Generic, mostly numbers, socket type'''
     bl_idname = "SvStringsSocket"
     bl_label = "Strings Socket"
@@ -1233,6 +1249,19 @@ class SvSolidSocket(NodeSocket, SvSocketCommon):
         import Part
         return graft_data(data, item_level=0, data_types=(Part.Shape,))
 
+
+class SvCollectionSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvCollectionSocket"
+    bl_label = "Collection Socket"
+
+    color = (0.96, 0.96, 0.96, 1.0)
+
+    default_property: PointerProperty(
+        name="Collection",
+        type=bpy.types.Collection,
+        update=process_from_socket)
+
+
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
     bl_idname = "node.sv_quicklink_new_node_input"
@@ -1475,6 +1504,7 @@ classes = [
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
     SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
+    SvCollectionSocket,
     SvSocketHelpOp, SvInputLinkMenuOp,
     SvSwitchDefaultOp,
 ]

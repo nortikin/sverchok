@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-from operator import attrgetter
+
 from typing import Optional
 
 import bpy
@@ -56,9 +56,14 @@ class SvGeometryNodeModifierNode(SverchCustomTreeNode, bpy.types.Node):
             if sv_s.bl_idname != (s_type := gn_s.sverchok_type):
                 sv_s = sv_s.replace_socket(s_type)
             gn_s.copy_properties(sv_s)
+            if hasattr(sv_s, 'show_domain'):
+                sv_s.show_domain = True
         for gn_s in self.modifier.inputs[len(self.inputs):]:
             gn_s = BlSocket(gn_s)
-            gn_s.copy_properties(self.inputs.new(gn_s.sverchok_type, ''))
+            sv_s = self.inputs.new(gn_s.sverchok_type, '')
+            gn_s.copy_properties(sv_s)
+            if hasattr(sv_s, 'show_domain'):
+                sv_s.show_domain = True
         self.process_node(context)
 
     modifier: bpy.props.PointerProperty(
@@ -81,6 +86,7 @@ class SvGeometryNodeModifierNode(SverchCustomTreeNode, bpy.types.Node):
         objs = self.inputs['Object'].sv_get(deepcopy=False, default=[])
         props = [s.sv_get(deepcopy=False, default=[]) for s in self.inputs[1:]]
         props = [fixed_iter(sock_data, len(objs), None) for sock_data in props]
+        props = zip(*props) if props else fixed_iter([], len(objs), [])
         self.outputs[0].sv_set(objs)
 
         if self.modifier is None:
@@ -89,11 +95,15 @@ class SvGeometryNodeModifierNode(SverchCustomTreeNode, bpy.types.Node):
                 if mod is not None:
                     mod.remove()
         else:
-            for obj, prop in zip(objs, zip(*props)):
+            for obj, prop in zip(objs, props):
+                if obj.type != 'MESH':
+                    raise TypeError(f'Only mesh objects are supported, {obj.type} is given')
                 mod = self.get_modifier(obj)
-                for gn_s, s_data in zip(self.modifier.inputs[1:], prop):
-                    mod.set_tree_data(gn_s.identifier, s_data)
-                obj.data.update()
+                for sv_s, gn_s, s_data in zip(self.inputs[1:], self.modifier.inputs[1:], prop):
+                    domain = sv_s.domain if hasattr(sv_s, 'domain') else 'POINT'
+                    mod.set_tree_data(gn_s.identifier, s_data, domain)
+                if hasattr(obj.data, 'update'):
+                    obj.data.update()
 
     def get_modifier(self, obj, create=True) -> Optional[BlModifier]:
         """Each node should work with its own modifier

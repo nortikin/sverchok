@@ -110,6 +110,19 @@ def get_sv_trees():
 # But here the functions are combine with data which they handle
 
 
+class BlDomains(Enum):
+    # don't change the order - new items add to the end
+    POINT = 'Point'
+    EDGE = 'Edge'
+    FACE = 'Face'
+    CORNER = 'Face Corner'
+
+    # It does not have sense to include these attributes because there is no API
+    # for generating instances and applying attributes to a curve.
+    # CURVE = 'Spline'
+    # INSTANCE = 'Instance'
+
+
 class BlObject:
     def __init__(self, obj):
         self._obj: bpy.types.Object = obj
@@ -170,7 +183,7 @@ class BlModifier:
         """Good for coping properties from one modifier to another"""
         self._mod[name] = value
 
-    def set_tree_data(self, name, data):
+    def set_tree_data(self, name, data, domain='POINT'):
         """Transfer py data to node modifier tree"""
 
         # transfer single value
@@ -192,7 +205,7 @@ class BlModifier:
             self._mod[f"{name}_attribute_name"] = name
             obj = BlObject(self._mod.id_data)
             sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
-            obj.set_attribute(data, name, value_type=sock.attribute_type)
+            obj.set_attribute(data, name, domain, value_type=sock.attribute_type)
 
     def remove(self):
         obj = self._mod.id_data
@@ -314,7 +327,7 @@ class BlSocket:
         'STRING': 'SvTextSocket',
         'BOOLEAN': 'SvStringsSocket',
         'OBJECT': 'SvObjectSocket',
-        'COLLECTION': 'SvObjectSocket',
+        'COLLECTION': 'SvCollectionSocket',
     }
 
     def __init__(self, socket):
@@ -323,16 +336,28 @@ class BlSocket:
     def copy_properties(self, sv_sock):
         sv_sock.name = self._sock.name
 
-        if self._sock.type == 'VALUE':
-            sv_sock.default_property_type = 'float'
-        elif self._sock.type in {'INT', 'BOOLEAN'}:
-            sv_sock.default_property_type = 'int'
+        if sv_sock.bl_idname == 'SvStringsSocket':
+            if self._sock.type == 'VALUE':
+                sv_sock.default_property_type = 'float'
+            elif self._sock.type in {'INT', 'BOOLEAN'}:
+                sv_sock.default_property_type = 'int'
+            else:
+                return  # There is no default property for such type
+            if sv_sock.default_property == 0:  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
 
-        try:
+        elif sv_sock.bl_idname == 'SvVerticesSocket':
+            if sv_sock.default_property[:] == (0, 0, 0):  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif hasattr(sv_sock, 'default_property'):
+            sv_default = BPYProperty(sv_sock, 'default_property').default_value
+            if sv_default != sv_sock.default_property:
+                return  # the value was already changed by user
             sv_sock.default_property = self._sock.default_value
             sv_sock.use_prop = True
-        except AttributeError:
-            pass
 
     @classmethod
     def from_identifier(cls, sockets, identifier):
@@ -348,7 +373,7 @@ class BlSocket:
     @property
     def sverchok_type(self):
         if (sv_type := self._sv_types.get(self._sock.type)) is None:
-            raise LookupError(f"Sverchok does not support {self._sock.type} scoket type")
+            return 'SvStringsSocket'
         return sv_type
 
 
