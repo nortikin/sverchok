@@ -120,3 +120,13 @@ class GeometryTests(SverchokTestCase):
         uv = tuple(plane.point_uv_projection(point))
         self.assertEquals(uv, (1,1))
 
+    def test_intersect_planes_1(self):
+        plane1 = PlaneEquation.from_coordinate_plane('XY')
+        plane2 = PlaneEquation.from_coordinate_plane('YZ')
+        line = plane1.intersect_with_plane(plane2)
+
+        pt1 = (0, 0, 0)
+        pt2 = (0, 1, 0)
+        
+        self.assertTrue(line.check(pt1))
+        self.assertTrue(line.check(pt2))
