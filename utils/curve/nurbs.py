@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Definition of Sverchok NURBS curve abstract class and some implementations.
+"""
+
 from copy import deepcopy
 import numpy as np
 from math import pi, sqrt
@@ -57,8 +61,10 @@ class SvNurbsCurve(SvCurve):
     def to_nurbs(cls, curve, implementation = NATIVE):
         """
         Try to convert arbitrary curve into NURBS.
-        Returns: an instance of SvNurbsCurve, or None,
-                 if this curve can not be converted to NURBS.
+
+        Returns:
+            an instance of SvNurbsCurve, or None,
+            if this curve can not be converted to NURBS.
         """
         if isinstance(curve, SvNurbsCurve):
             return curve
@@ -289,23 +295,29 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def get_nurbs_implementation(cls):
+        """
+        Return a string identifying the implementation of NURBS mathematics used by this curve.
+        """
         raise Exception("NURBS implementation is not defined")
 
     def get_control_points(self):
-        """
-        returns: np.array of shape (k, 3)
-        """
         raise Exception("Not implemented!")
 
     def get_weights(self):
         """
-        returns: np.array of shape (k,)
+        Get NURBS curve weights.
+
+        Returns:
+            np.array of shape (k,)
         """
         raise Exception("Not implemented!")
 
     def get_homogenous_control_points(self):
         """
-        returns: np.array of shape (k, 4)
+        Get NURBS curve control points and weights, unified in homogenous coordinates.
+
+        Returns:
+            np.array of shape (k, 4)
         """
         points = self.get_control_points()
         weights = self.get_weights()[np.newaxis].T
@@ -324,7 +336,10 @@ class SvNurbsCurve(SvCurve):
 
     def get_knotvector(self):
         """
-        returns: np.array of shape (X,)
+        Get NURBS curve knotvector.
+
+        Returns:
+            np.array of shape (X,)
         """
         raise Exception("Not implemented!")
 
@@ -534,6 +549,12 @@ class SvNurbsCurve(SvCurve):
         return curve1, curve2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        """
+        Return a new curve which is the segment of original curve between specified parameter values.
+
+        Returns:
+            a new instance of the same class.
+        """
         t_min, t_max = self.get_u_bounds()
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
@@ -618,6 +639,15 @@ class SvNurbsCurve(SvCurve):
         return knots
 
     def to_bezier(self):
+        """
+        Try to convert this cure to Bezier curve.
+
+        Returns:
+            an instance of SvBezierCurve.
+
+        Raises:
+            UnsupportedCurveTypeException: when this curve can not be represented as Bezier curve.
+        """
         points = self.get_control_points()
         if not self.is_bezier():
             n = len(points)
@@ -626,6 +656,12 @@ class SvNurbsCurve(SvCurve):
         return SvBezierCurve(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
+        """
+        Split the curve into a list of Bezier curves.
+
+        Returns:
+            If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
+        """
         if to_bezier_class and self.is_rational():
             raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
@@ -697,9 +733,9 @@ class SvNurbsCurve(SvCurve):
     def get_min_continuity(self):
         """
         Return minimum continuity degree of the curve (guaranteed by curve's knotvector):
-        0 - point-wise continuity only (C0),
-        1 - tangent continuity (C1),
-        2 - 2nd derivative continuity (C2), and so on.
+        * 0 - point-wise continuity only (C0),
+        * 1 - tangent continuity (C1),
+        * 2 - 2nd derivative continuity (C2), and so on.
         """
         kv = self.get_knotvector()
         degree = self.get_degree()
@@ -708,10 +744,13 @@ class SvNurbsCurve(SvCurve):
     def transform(self, frame, vector):
         """
         Apply transformation matrix to the curve.
-        Inputs:
-        * frame: np.array of shape (3,3) - transformation matrix
-        * vector: np.array of shape (3,) - translation vector
-        Output: new NURBS curve of the same implementation.
+
+        Args:
+            frame: np.array of shape (3,3) - transformation matrix
+            vector: np.array of shape (3,) - translation vector
+        
+        Returns:
+            new NURBS curve of the same implementation.
         """
         if frame is None and vector is None:
             return self
@@ -775,6 +814,7 @@ class SvNurbsCurve(SvCurve):
         """
         If this method returns True, then the whole curve lies outside the
         specified sphere.
+
         If this method returns False, then the curve may partially or wholly
         lie inside the sphere, or may not touch it at all.
         """

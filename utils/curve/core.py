@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+General definition of Sverchok curve classes and basic utilities.
+"""
+
 import numpy as np
 from math import sin, cos, pi, radians, sqrt
 
@@ -46,12 +50,33 @@ class SvCurve(object):
         return "<{} curve>".format(description)
 
     def evaluate(self, t):
+        """
+        Evaluate the curve at one point.
+
+        Args:
+            t: curve parameter value.
+
+        Returns:
+            Curve point - np.array of shape (3,).
+        """
         raise Exception("not implemented!")
 
     def evaluate_array(self, ts):
+        """
+        Evaluate the curve at a series of points.
+
+        Args:
+            ts: curve parameter values. np.array of shape (n,).
+
+        Returns:
+            Curve points - np.array of shape (n,3).
+        """
         raise Exception("not implemented!")
 
     def get_tangent_delta(self, tangent_delta=None):
+        """
+        Utility method to define delta for curve derivatives calculation.
+        """
         if tangent_delta is None:
             if hasattr(self, 'tangent_delta'):
                 h = self.tangent_delta
@@ -62,6 +87,10 @@ class SvCurve(object):
         return h
 
     def calc_length(self, t_min, t_max, resolution = 50):
+        """
+        Calculate the length of curve segment by interpolating that segment
+        with polyline.
+        """
         ts = np.linspace(t_min, t_max, num=resolution)
         vectors = self.evaluate_array(ts)
         dvs = vectors[1:] - vectors[:-1]
@@ -69,12 +98,32 @@ class SvCurve(object):
         return np.sum(lengths)
 
     def tangent(self, t, tangent_delta=None):
+        """
+        Calculate curve tangent vector at one point.
+
+        Args:
+            t: curve parameter value.
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            tangent vector - np.array of shape (3,).
+        """
         v = self.evaluate(t)
         h = self.get_tangent_delta(tangent_delta)
         v_h = self.evaluate(t+h)
         return (v_h - v) / h
 
     def tangent_array(self, ts, tangent_delta=None):
+        """
+        Calculate curve tangent vectors at a series of points.
+
+        Args:
+            ts: curve parameter values - np.array of shape (n,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            tangent vectors - np.array of shape (n,3).
+        """
         vs = self.evaluate_array(ts)
         h = self.get_tangent_delta(tangent_delta)
         u_max = self.get_u_bounds()[1]
@@ -271,19 +320,22 @@ class SvCurve(object):
 
     def frame_array(self, ts, on_zero_curvature=ASIS, tangent_delta=None):
         """
-        input:
-            * ts - np.array of shape (n,)
-            * on_zero_curvature - what to do if the curve has zero curvature at one of T values.
+        Calculate curve frames at a series of points.
+
+        Args:
+            ts: np.array of shape (n,)
+            on_zero_curvature: what to do if the curve has zero curvature at one of T values.
               The supported options are:
               * SvCurve.FAIL: raise ZeroCurvatureException
               * SvCurve.RETURN_NONE: return None
               * SvCurve.ASIS: do not perform special check for this case, the
                 algorithm will raise a general LinAlgError exception if it can't calculate the matrix.
 
-        output: tuple:
-            * matrices: np.array of shape (n, 3, 3)
-            * normals: np.array of shape (n, 3)
-            * binormals: np.array of shape (n, 3)
+        Returns:
+            tuple:
+                * matrices: np.array of shape (n, 3, 3)
+                * normals: np.array of shape (n, 3)
+                * binormals: np.array of shape (n, 3)
         """
         h = self.get_tangent_delta(tangent_delta)
         tangents, normals, binormals = self.tangent_normal_binormal_array(ts, tangent_delta=h)
@@ -311,10 +363,15 @@ class SvCurve(object):
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):
         """
-        input: ts - np.array of shape (n,)
-        output: tuple:
-            * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
-            * matrices - np.array of shape (n, 3, 3)
+        Calculate curve frames with zero integral torsion, at a series of points.
+
+        Args:
+            ts: np.array of shape (n,)
+
+        Returns:
+            tuple:
+                * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
+                * matrices - np.array of shape (n, 3, 3)
         """
         if not hasattr(self, '_torsion_integral'):
             raise Exception("pre_calc_torsion_integral() has to be called first")
@@ -368,14 +425,26 @@ class SvCurve(object):
         return self._torsion_integral.evaluate_cubic(ts)
 
     def get_u_bounds(self):
+        """
+        Obtain curve domain.
+
+        Returns:
+            Tuple: minimum and maximum value of curve's parameter.
+        """
         raise Exception("not implemented!")
 
     def get_degree(self):
+        """
+        Get curve degree, if applicable.
+        """
         raise Exception("`Get Degree' method is not applicable to curve of type `{}'".format(type(self)))
 
     def get_control_points(self):
         """
-        Returns: np.array of shape (n, 3)
+        Get curve control points, if applicable.
+
+        Returns:
+            np.array of shape (n, 3)
         """
         return np.array([])
         #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
