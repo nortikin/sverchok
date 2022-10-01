@@ -832,6 +832,11 @@ class PlaneEquation(object):
         value = a*x + b*y + c*z + d
         return abs(value) < eps
 
+    def eval_point(self, point):
+        a, b, c, d = self.a, self.b, self.c, self.d
+        x, y, z = point[0], point[1], point[2]
+        return a*x + b*y + c*z + d
+
     def second_vector(self):
         eps = 1e-6
         if abs(self.c) > eps:
@@ -917,8 +922,14 @@ class PlaneEquation(object):
         input: Vector or 3-tuple
         output: float.
         """
-        point_on_plane = self.nearest_point_to_origin()
-        return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
+        p = self.normalized()
+        a, b, c, d = p.a, p.b, p.c, p.d
+        x, y, z = point
+        numerator = abs(a*x + b*y + c*z + d)
+        #denominator = sqrt(a*a + b*b* + c*c)
+        return numerator
+        #point_on_plane = self.nearest_point_to_origin()
+        #return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
 
     def distance_to_points(self, points):
         """
@@ -987,30 +998,30 @@ class PlaneEquation(object):
             matrix = np.array([
                         [b, -a, 0],
                         [c, 0, -a],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
             free = np.array([
                         b*x0 - a*y0,
                         c*x0 - a*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         elif abs(b) > epsilon:
             matrix = np.array([
                         [b, -a, 0],
                         [0, c, -b],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
 
             free = np.array([
                         b*x0 - a*y0,
                         c*y0 - b*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         elif abs(c) > epsilon:
             matrix = np.array([
                         [c, 0, -a],
                         [0, c, -b],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
             free = np.array([
                         c*x0 - a*z0,
                         c*y0 - b*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         else:
             raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
 
@@ -1142,42 +1153,23 @@ class PlaneEquation(object):
             debug("{} is parallel to {}".format(self, plane2))
             return None
 
+        direction = 10000*self.normal.cross(plane2.normal)
+
         # We need an arbitrary point on this plane and two vectors.
         # Draw two lines in this plane and see for theirs intersection
         # with another plane.
         p0 = self.nearest_point_to_origin()
-        v1, v2 = self.two_vectors()
         # it might be that p0 belongs to plane2; in that case we choose
         # another point in the same plane
         if plane2.check(p0):
-            # Since v1 and v2 are orthogonal, it may not be that they are
-            # both parallel to plane2.
-            if not plane2.is_parallel(v1):
-                p0 = p0 + v1
-            else:
-                p0 = p0 + v2
-        line1 = LineEquation.from_direction_and_point(v1, p0).normalized()
-        line2 = LineEquation.from_direction_and_point(v2, p0).normalized()
+            p1 = p0
+        else:
+            pn = p0 + 1000000 * plane2.normal
+            pn = self.projection_of_point(pn)
+            line = LineEquation.from_two_points(p0, pn)
+            p1 = plane2.intersect_with_line(line)
 
-        # it might be that one of vectors we chose is parallel to plane2
-        # (since we are choosing them arbitrarily); but from the way
-        # we are choosing v1 and v2, we know they are orthogonal.
-        # So if we just rotate them by pi/4, they will no longer be
-        # parallel to plane2.
-        if plane2.is_parallel(line1) or plane2.is_parallel(line2):
-            v1_new = v1 + v2
-            v2_new = v1 - v2
-            # debug("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
-            line1 = LineEquation.from_direction_and_point(v1_new, p0)
-            line2 = LineEquation.from_direction_and_point(v2_new, p0)
-
-        p1 = plane2.intersect_with_line(line1)
-        p2 = plane2.intersect_with_line(line2)
-        if p1 is None:
-            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line1}")
-        if p2 is None:
-            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line2}")
-        return LineEquation.from_two_points(p1, p2)
+        return LineEquation.from_direction_and_point(direction, p1)
 
     def is_parallel(self, other, eps=1e-8):
         """
@@ -1261,6 +1253,15 @@ class LineEquation(object):
         value2 = c * (y - y0) - b * (z - z0)
 
         return abs(value1) < eps and abs(value2) < eps
+
+    def eval_point(self, point):
+        a, b, c = self.a, self.b, self.c
+        x0, y0, z0 = self.x0, self.y0, self.z0
+        x, y, z = point[0], point[1], point[2]
+
+        value1 = b * (x - x0) - a * (y - y0)
+        value2 = c * (y - y0) - b * (z - z0)
+        return abs(value1) + abs(value2)
 
     @property
     def x0(self):
