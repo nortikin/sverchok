@@ -1153,21 +1153,13 @@ class PlaneEquation(object):
             debug("{} is parallel to {}".format(self, plane2))
             return None
 
-        direction = 10000*self.normal.cross(plane2.normal)
+        direction = self.normal.cross(plane2.normal)
 
-        # We need an arbitrary point on this plane and two vectors.
-        # Draw two lines in this plane and see for theirs intersection
-        # with another plane.
-        p0 = self.nearest_point_to_origin()
-        # it might be that p0 belongs to plane2; in that case we choose
-        # another point in the same plane
-        if plane2.check(p0):
-            p1 = p0
-        else:
-            pn = p0 + 1000000 * plane2.normal
-            pn = self.projection_of_point(pn)
-            line = LineEquation.from_two_points(p0, pn)
-            p1 = plane2.intersect_with_line(line)
+        A = np.array([[self.a, self.b, self.c], [plane2.a, plane2.b, plane2.c]])
+        B = np.array([[-self.d], [-plane2.d]])
+
+        A1 = np.linalg.pinv(A)
+        p1 = A1 @ B
 
         return LineEquation.from_direction_and_point(direction, p1)
 
