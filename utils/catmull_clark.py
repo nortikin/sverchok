@@ -5,6 +5,11 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Implementation of Catmull-Clark subdivision algorithm in pure Python, with use
+of NumPy and Blender's bmesh library.
+"""
+
 import numpy as np
 
 import bmesh
@@ -12,6 +17,19 @@ import bmesh
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 def calc_new_verts(bm):
+    """
+    Calculate coordinates of new vertices by Catmull-Clark algorithm.
+
+    Args:
+        bm: input mesh, as Blender's bmesh object.
+
+    Returns:
+        Lists of new vertices, all as np.ndarray of shape (x, 3):
+
+        * new vertices to replace vertices of original mesh
+        * new vertices to be placed in the middles of edges
+        * new vertices to be placed in the middles of faces
+    """
     verts, edges, faces = pydata_from_bmesh(bm)
     verts = np.asarray(verts)
     face_centers = np.array([tuple(f.calc_center_median()) for f in bm.faces])
@@ -45,6 +63,16 @@ def calc_new_verts(bm):
     return new_verts_from_verts, new_verts_from_edges, new_verts_from_faces
 
 def subdivide_once(bm, normal_update = False):
+    """
+    Subdivide mesh by use of Catmull-Clark algorithm, one time.
+
+    Args:
+        bm: input mesh - as bmesh object.
+        normal_update: if True, recalculate mesh normals in the end.
+
+    Returns:
+        new bmesh object.
+    """
     points_from_verts, points_from_edges, points_from_faces = calc_new_verts(bm)
 
     new_bm = bmesh.new()
@@ -79,6 +107,16 @@ def subdivide_once(bm, normal_update = False):
     return new_bm
 
 def subdivide(bm, iterations=1):
+    """
+    Subdivide mesh by use of Catmull-Clark algorithm, one or several times.
+
+    Args:
+        bm: input mesh - as bmesh object.
+        iterations: number of times the subdivision is to be applied.
+
+    Returns:
+        new bmesh object.
+    """
     for i in range(iterations):
         bm = subdivide_once(bm)
     bm.normal_update()

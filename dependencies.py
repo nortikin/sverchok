@@ -1,3 +1,26 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+"""
+This module contains some general code to support external dependencies in
+Sverchok, and declarations of specific dependencies.
+
+In most cases, one imports required dependency modules from this module.
+If the corresponding library is not installed, this will import None value
+instead of actual module, so that one can execute another version of code:
+
+    from sverchok.dependencies import scipy
+
+    if scipy is None:
+        print("SciPy is not available, will try to do without it")
+    else:
+        from scipy.optimize import minimize_scalar
+        ...
+"""
 
 import logging
 
@@ -14,22 +37,47 @@ logger.addHandler(ch)
 info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
+    """
+    Definition of external dependency package.
+    """
     def __init__(self, package, url, module=None, message=None):
+        """
+        Args:
+            package: name of package
+            url: home URL of the package
+            module: main package module object
+            message: message about this dependency, to be displayed in settings
+                dialog and in logs
+        """
         self.package = package
         self.module = module
         self.message = message
         self.url = url
         self.pip_installable = False
 
+"""
+Dictionary with Sverchok dependencies
+"""
 sv_dependencies = dict()
 
 def get_icon(package):
+    """
+    Return name of icon to be displayed in preferences dialog, depending on
+    whether the dependency is available or not.
+    """
     if package is None:
         return 'CANCEL'
     else:
         return 'CHECKMARK'
 
 def draw_message(box, package, dependencies=None):
+    """
+    Draw standard set of UI elements about dependency in preferences dialog:
+
+    * message about whether the dependency is installed
+    * visit package website
+    * install or upgrade with PIP, if possible
+    """
     if dependencies is None:
         dependencies = sv_dependencies
 

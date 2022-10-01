@@ -5,6 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Tools to generate Sverchok API documentation in HTML format.
+
+When this module is run from command line instead of being imported, it
+provides command-line interface to generate documentation. Please run it with
+`--help` command-line argument to see usage information.
+"""
+
 from os.path import join, dirname
 from os import makedirs
 
@@ -23,11 +31,25 @@ DEFAULT_MODULES = [
         'sverchok.utils']
 
 def recursive_htmls(mod, parent=None):
+    """
+    Recursively list python modules and their documentation in HTML format.
+
+    Yields:
+        tuples: (pdoc.Module object, HTML documentation)
+    """
     yield mod, mod.url(relative_to=None), mod.html()
     for submod in mod.submodules():
         yield from recursive_htmls(submod, parent=mod)
 
 def generate_api_documentation(root_directory, root_modules=None, logger=None):
+    """
+    Generate Python API documentation by use of pdoc3 package, in HTML format.
+
+    Args:
+        root_directory: root directory to write HTML files into - string.
+        root_modules: list of module names to be documented. All submodules of
+            these will be documented as well.
+    """
     if pdoc is None:
         raise Exception("pdoc3 package is required in order to generate documentation")
     if logger is None:
@@ -63,3 +85,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         sys.exit(1)
+

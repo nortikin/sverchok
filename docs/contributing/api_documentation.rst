@@ -22,6 +22,7 @@ There is documentation for the following modules:
 
 * `sverchok.data_structure <../../apidocs/sverchok/data_structure.html>`_ - basic data structures (lists and tuples) manipulation
 * `sverchok.node_tree <../../apidocs/sverchok/node_tree.html>`_ - basic node and node tree classes and tools
+* `sverchok.dependencies <../../apidocs/sverchok/dependencies.html>`_ - tools for handling external dependencies
 * `sverchok.core <../../apidocs/sverchok/core/index.html>`_ - Sverchok core
 * `sverchok.utils <../../apidocs/sverchok/utils/index.html>`_ - meshes, geometry manipulation tools and other utilities
 
