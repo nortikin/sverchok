@@ -1159,7 +1159,7 @@ class PlaneEquation(object):
         B = np.array([[-self.d], [-plane2.d]])
 
         A1 = np.linalg.pinv(A)
-        p1 = A1 @ B
+        p1 = (A1 @ B).T[0]
 
         return LineEquation.from_direction_and_point(direction, p1)
 
