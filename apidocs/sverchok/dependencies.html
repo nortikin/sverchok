@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>sverchok.dependencies API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This module contains some general code to support external dependencies in
+Sverchok, and declarations of specific dependencies …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +23,48 @@
 <h1 class="title">Module <code>sverchok.dependencies</code></h1>
 </header>
 <section id="section-intro">
+<p>This module contains some general code to support external dependencies in
+Sverchok, and declarations of specific dependencies.</p>
+<p>In most cases, one imports required dependency modules from this module.
+If the corresponding library is not installed, this will import None value
+instead of actual module, so that one can execute another version of code:</p>
+<pre><code>from sverchok.dependencies import scipy
+
+if scipy is None:
+    print("SciPy is not available, will try to do without it")
+else:
+    from scipy.optimize import minimize_scalar
+    ...
+</code></pre>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import logging
+<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+&#34;&#34;&#34;
+This module contains some general code to support external dependencies in
+Sverchok, and declarations of specific dependencies.
+
+In most cases, one imports required dependency modules from this module.
+If the corresponding library is not installed, this will import None value
+instead of actual module, so that one can execute another version of code:
+
+    from sverchok.dependencies import scipy
+
+    if scipy is None:
+        print(&#34;SciPy is not available, will try to do without it&#34;)
+    else:
+        from scipy.optimize import minimize_scalar
+        ...
+&#34;&#34;&#34;
+
+import logging
 
 # Logging setup
 # we have to set up logging here separately, because dependencies.py is loaded before settings.py,
@@ -41,22 +79,47 @@ logger.addHandler(ch)
 info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
+    &#34;&#34;&#34;
+    Definition of external dependency package.
+    &#34;&#34;&#34;
     def __init__(self, package, url, module=None, message=None):
+        &#34;&#34;&#34;
+        Args:
+            package: name of package
+            url: home URL of the package
+            module: main package module object
+            message: message about this dependency, to be displayed in settings
+                dialog and in logs
+        &#34;&#34;&#34;
         self.package = package
         self.module = module
         self.message = message
         self.url = url
         self.pip_installable = False
 
+&#34;&#34;&#34;
+Dictionary with Sverchok dependencies
+&#34;&#34;&#34;
 sv_dependencies = dict()
 
 def get_icon(package):
+    &#34;&#34;&#34;
+    Return name of icon to be displayed in preferences dialog, depending on
+    whether the dependency is available or not.
+    &#34;&#34;&#34;
     if package is None:
         return &#39;CANCEL&#39;
     else:
         return &#39;CHECKMARK&#39;
 
 def draw_message(box, package, dependencies=None):
+    &#34;&#34;&#34;
+    Draw standard set of UI elements about dependency in preferences dialog:
+
+    * message about whether the dependency is installed
+    * visit package website
+    * install or upgrade with PIP, if possible
+    &#34;&#34;&#34;
     if dependencies is None:
         dependencies = sv_dependencies
 
@@ -206,12 +269,24 @@ else:
 <span>def <span class="ident">draw_message</span></span>(<span>box, package, dependencies=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Draw standard set of UI elements about dependency in preferences dialog:</p>
+<ul>
+<li>message about whether the dependency is installed</li>
+<li>visit package website</li>
+<li>install or upgrade with PIP, if possible</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def draw_message(box, package, dependencies=None):
+    &#34;&#34;&#34;
+    Draw standard set of UI elements about dependency in preferences dialog:
+
+    * message about whether the dependency is installed
+    * visit package website
+    * install or upgrade with PIP, if possible
+    &#34;&#34;&#34;
     if dependencies is None:
         dependencies = sv_dependencies
 
@@ -231,12 +306,17 @@ else:
 <span>def <span class="ident">get_icon</span></span>(<span>package)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Return name of icon to be displayed in preferences dialog, depending on
+whether the dependency is available or not.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_icon(package):
+    &#34;&#34;&#34;
+    Return name of icon to be displayed in preferences dialog, depending on
+    whether the dependency is available or not.
+    &#34;&#34;&#34;
     if package is None:
         return &#39;CANCEL&#39;
     else:
@@ -253,13 +333,36 @@ else:
 <span>(</span><span>package, url, module=None, message=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Definition of external dependency package.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>package</code></strong></dt>
+<dd>name of package</dd>
+<dt><strong><code>url</code></strong></dt>
+<dd>home URL of the package</dd>
+<dt><strong><code>module</code></strong></dt>
+<dd>main package module object</dd>
+<dt><strong><code>message</code></strong></dt>
+<dd>message about this dependency, to be displayed in settings
+dialog and in logs</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvDependency():
+    &#34;&#34;&#34;
+    Definition of external dependency package.
+    &#34;&#34;&#34;
     def __init__(self, package, url, module=None, message=None):
+        &#34;&#34;&#34;
+        Args:
+            package: name of package
+            url: home URL of the package
+            module: main package module object
+            message: message about this dependency, to be displayed in settings
+                dialog and in logs
+        &#34;&#34;&#34;
         self.package = package
         self.module = module
         self.message = message

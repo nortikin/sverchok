@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>sverchok.utils.apidoc API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Tools to generate Sverchok API documentation in HTML format …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +22,10 @@
 <h1 class="title">Module <code>sverchok.utils.apidoc</code></h1>
 </header>
 <section id="section-intro">
+<p>Tools to generate Sverchok API documentation in HTML format.</p>
+<p>When this module is run from command line instead of being imported, it
+provides command-line interface to generate documentation. Please run it with
+<code>--help</code> command-line argument to see usage information.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -32,6 +36,14 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
+
+&#34;&#34;&#34;
+Tools to generate Sverchok API documentation in HTML format.
+
+When this module is run from command line instead of being imported, it
+provides command-line interface to generate documentation. Please run it with
+`--help` command-line argument to see usage information.
+&#34;&#34;&#34;
 
 from os.path import join, dirname
 from os import makedirs
@@ -51,11 +63,25 @@ DEFAULT_MODULES = [
         &#39;sverchok.utils&#39;]
 
 def recursive_htmls(mod, parent=None):
+    &#34;&#34;&#34;
+    Recursively list python modules and their documentation in HTML format.
+
+    Yields:
+        tuples: (pdoc.Module object, HTML documentation)
+    &#34;&#34;&#34;
     yield mod, mod.url(relative_to=None), mod.html()
     for submod in mod.submodules():
         yield from recursive_htmls(submod, parent=mod)
 
 def generate_api_documentation(root_directory, root_modules=None, logger=None):
+    &#34;&#34;&#34;
+    Generate Python API documentation by use of pdoc3 package, in HTML format.
+
+    Args:
+        root_directory: root directory to write HTML files into - string.
+        root_modules: list of module names to be documented. All submodules of
+            these will be documented as well.
+    &#34;&#34;&#34;
     if pdoc is None:
         raise Exception(&#34;pdoc3 package is required in order to generate documentation&#34;)
     if logger is None:
@@ -104,12 +130,28 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">generate_api_documentation</span></span>(<span>root_directory, root_modules=None, logger=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generate Python API documentation by use of pdoc3 package, in HTML format.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>root_directory</code></strong></dt>
+<dd>root directory to write HTML files into - string.</dd>
+<dt><strong><code>root_modules</code></strong></dt>
+<dd>list of module names to be documented. All submodules of
+these will be documented as well.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def generate_api_documentation(root_directory, root_modules=None, logger=None):
+    &#34;&#34;&#34;
+    Generate Python API documentation by use of pdoc3 package, in HTML format.
+
+    Args:
+        root_directory: root directory to write HTML files into - string.
+        root_modules: list of module names to be documented. All submodules of
+            these will be documented as well.
+    &#34;&#34;&#34;
     if pdoc is None:
         raise Exception(&#34;pdoc3 package is required in order to generate documentation&#34;)
     if logger is None:
@@ -133,12 +175,23 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">recursive_htmls</span></span>(<span>mod, parent=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Recursively list python modules and their documentation in HTML format.</p>
+<h2 id="yields">Yields</h2>
+<dl>
+<dt><code>tuples</code></dt>
+<dd>(pdoc.Module object, HTML documentation)</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def recursive_htmls(mod, parent=None):
+    &#34;&#34;&#34;
+    Recursively list python modules and their documentation in HTML format.
+
+    Yields:
+        tuples: (pdoc.Module object, HTML documentation)
+    &#34;&#34;&#34;
     yield mod, mod.url(relative_to=None), mod.html()
     for submod in mod.submodules():
         yield from recursive_htmls(submod, parent=mod)</code></pre>
