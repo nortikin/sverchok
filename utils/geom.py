@@ -675,8 +675,11 @@ def diameter(vertices, axis):
 
 def center(data):
     """
-    input: data - a list of 3-tuples or numpy array of same shape
-    output: 3-tuple - arithmetical average of input vertices (barycenter)
+    Args:
+        data: a list of 3-tuples or numpy array of same shape
+
+    Returns:
+        3-tuple - arithmetical average of input vertices (barycenter)
     """
     array = np.array(data)
     n = array.shape[0]
@@ -711,8 +714,11 @@ def calc_normal(vertices):
     Ngon will be triangulated, and then the average normal of
     all resulting tris will be returned.
 
-    input: list of 3-tuples or list of mathutils.Vector.
-    output: mathutils.Vector.
+    Args:
+        vertices: list of 3-tuples or list of mathutils.Vector.
+
+    Returns:
+        mathutils.Vector.
     """
     n = len(vertices)
     vertices = list(map(mathutils.Vector, vertices))
@@ -1852,6 +1858,9 @@ class Triangle(object):
         return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
 
 class BoundingBox(object):
+    """
+    Class representing bounding box, i.e. a box with all planes parallel to coordinate planes.
+    """
     def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
         self.min = np.array([min_x, min_y, min_z])
         self.max = np.array([max_x, max_y, max_z])
@@ -1980,6 +1989,15 @@ class BoundingBox(object):
         return f"<BBox: {self.min} .. {self.max}>"
 
 def bounding_box(vectors):
+    """
+    Calculate bounding box for a set of points.
+
+    Args:
+        vectors: list of 3-tuples or np.ndarray of shape (n,3).
+
+    Returns:
+        an instance of BoundingBox.
+    """
     vectors = np.asarray(vectors)
     r = BoundingBox()
     r.min = vectors.min(axis=0)
@@ -1987,6 +2005,16 @@ def bounding_box(vectors):
     return r
 
 def intersects_line_bbox(line, bbox):
+    """
+    Check if line intersects specified bounding box.
+
+    Args:
+        line: an instance of LineEquation
+        bbox: an instance of BoundingBox
+
+    Returns:
+        boolean.
+    """
     planes = [bbox.get_plane(axis, side) for axis in [0,1,2] for side in ['MIN', 'MAX']]
     intersections = [plane.intersect_with_line(line) is not None for plane in planes]
     good = [point for point in intersections if point in bbox]
@@ -2007,7 +2035,7 @@ class LinearApproximationData(object):
         Return coefficients of an equation of a plane, which
         is the best linear approximation for input vertices.
 
-        output: an instance of PlaneEquation class.
+        Returns: an instance of PlaneEquation class.
         """
 
         idx = np.argmin(self.eigenvalues)
@@ -2019,7 +2047,7 @@ class LinearApproximationData(object):
         Return coefficients of an equation of a plane, which
         is the best linear approximation for input vertices.
 
-        output: an instance of LineEquation class.
+        Returns: an instance of LineEquation class.
         """
 
         idx = np.argmax(self.eigenvalues)
@@ -2034,8 +2062,11 @@ def linear_approximation(data):
     Input vertices can be approximated by a plane or by a line,
     or both.
 
-    input: list of 3-tuples.
-    output: an instance of LinearApproximationData class.
+    Args:
+        data: list of 3-tuples.
+
+    Returns:
+        an instance of LinearApproximationData class.
     """
 
     data = np.asarray(data)
@@ -2133,6 +2164,7 @@ class SphericalApproximationData(object):
     """
     This class contains results of approximation of
     vertices by a sphere.
+
     It's instance is returned by spherical_approximation() method.
     """
     def __init__(self, center=None, radius=0.0):
@@ -2159,8 +2191,11 @@ def spherical_approximation(data):
     Calculate best approximation of the list of vertices
     by a sphere.
 
-    input: list of 3-tuples.
-    output. an instance of SphericalApproximationData class.
+    Args:
+        data: list of 3-tuples.
+
+    Returns:
+        an instance of SphericalApproximationData class.
     """
 
     data = np.array(data)
@@ -2200,8 +2235,10 @@ class CircleEquation3D(object):
     """
     This class contains results of approximation of set of vertices
     by a circle (lying in 2D or 3D).
+
     It's instances are returned form circle_approximation_2d() and
     circle_approximation() methods.
+
     The `normal` member is None for 2D approximation.
     """
     def __init__(self):
@@ -2278,8 +2315,11 @@ def circle_approximation_2d(data, mean_is_zero=False):
     Calculate best approximation of set of 2D vertices
     by a 2D circle.
 
-    input: list of 2-tuples or np.array of shape (n, 2). 
-    output: an instance of CircleEquation3D class.
+    Args:
+        data: list of 2-tuples or np.array of shape (n, 2). 
+
+    Returns:
+        an instance of CircleEquation3D class.
     """
     data = np.array(data)
     data_x = data[:,0]
@@ -2331,8 +2371,11 @@ def circle_approximation(data):
     Calculate best approximation of set of 3D vertices
     by a circle lying in 3D space.
 
-    input: list of 3-tuples
-    output: an instance of CircleEquation3D class.
+    Args:
+        data: list of 3-tuples
+
+    Returns:
+        an instance of CircleEquation3D class.
     """
     # Approximate vertices with a plane
     linear = linear_approximation(data)
@@ -2364,8 +2407,11 @@ def circle_by_three_points(p1, p2, p3):
     Calculate parameters of the circle (or circular arc)
     by three points on this circle.
 
-    input: p1, p2, p3 - 3-tuples or mathutils.Vectors
-    output: an CircleEquation3D instance.
+    Args:
+        p1, p2, p3: 3-tuples or mathutils.Vectors
+
+    Returns:
+        an CircleEquation3D instance.
 
     factored out from basic_3pt_arc.py.
     """
@@ -2409,8 +2455,11 @@ def circle_by_start_end_tangent(start, end, tangent):
     Build a circular arc from starting point, end point
     and the tangent vector at the start point.
 
-    input: mathutils.Vectors or 3-tuples or np.arrays of shape (3,).
-    output: instance of CircleEquation3D.
+    Args:
+        start, end, tangent: mathutils.Vectors or 3-tuples or np.arrays of shape (3,).
+
+    Returns:
+        instance of CircleEquation3D.
     """
     start = Vector(start)
     end = Vector(end)
@@ -2450,7 +2499,15 @@ def circle_by_two_derivatives(start, tangent, second):
     return circle
 
 class CylinderEquation(object):
+    """
+    A class representing (infinite) cylindrical surface.
+    """
     def __init__(self, axis, radius):
+        """
+        Args:
+            axis: an instance of LineEquation
+            radius: float
+        """
         self.axis = axis
         self.radius = radius
 
@@ -2600,6 +2657,17 @@ def bounding_sphere(vertices, algorithm=TRIVIAL):
     return c, radius
 
 def scale_relative(points, center, scale):
+    """
+    Scale points with relation to specified center.
+
+    Args:
+        points: points to be scaled - np.array of shape (n,3)
+        center: the center of scale - np.array of shape (3,)
+        scale: scale coefficient
+
+    Returns:
+        np.array of shape (n,3)
+    """
     points = np.asarray(points)
     center = np.asarray(center)
     points -= center

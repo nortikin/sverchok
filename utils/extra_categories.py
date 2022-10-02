@@ -22,6 +22,11 @@ from os.path import exists, isfile
 import inspect
 import webbrowser
 
+"""
+Extra categories are node categories that can be registered within Sverchok
+menu by addons which extend Sverchok functionality.
+"""
+
 extra_category_providers = []
 
 def register_extra_category_provider(provider):
