@@ -57,14 +57,14 @@ class Turtle(object):
     At each moment in time, a turtle stays on one of the mesh faces,
     and looks towards one of edges of the face:
 
-    +---+---+---+
-    |   |   |   |
-    +---+---+---+
-    |   | ^ |   |
-    |   | @ |   |
-    +---+---+---+
-    |   |   |   |
-    +---+---+---+
+        +---+---+---+
+        |   |   |   |
+        +---+---+---+
+        |   | ^ |   |
+        |   | @ |   |
+        +---+---+---+
+        |   |   |   |
+        +---+---+---+
 
     Walking primitives are turn_next(), turn_prev() and click().
     Other methods are build from these primitives.
@@ -135,6 +135,7 @@ class Turtle(object):
 
         NB 1: All painting layers must be declared BEFORE any commands to the turtle, i.e.
         right after constructor was called.
+
         NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
         other than painting by turtle, then you have to create them BEFORE calling the Turtle
         constructor.
@@ -163,10 +164,10 @@ class Turtle(object):
         If face normal is oriented &#34;as usual&#34;, then this
         means &#34;turn counterclockwise&#34;.
 
-        +----+      +----+
-        |  ^ |  --&gt; |    |
-        |  @ |      | &lt;@ |
-        +----+      +----+
+            +----+      +----+
+            |  ^ |  --&gt; |    |
+            |  @ |      | &lt;@ |
+            +----+      +----+
 
         If count is more than 1, then repeat this turn specified
         number of times.
@@ -180,10 +181,10 @@ class Turtle(object):
         If face normal is oriented &#34;as usual&#34;, then this
         means &#34;turn clockwise&#34;.
 
-        +----+      +----+
-        | ^  |  --&gt; |    |
-        | @  |      | @&gt; |
-        +----+      +----+
+            +----+      +----+
+            | ^  |  --&gt; |    |
+            | @  |      | @&gt; |
+            +----+      +----+
 
         If count is more than 1, then repeat this turn specified
         number of times.
@@ -199,9 +200,9 @@ class Turtle(object):
         turns around, to look at the same edge it was looking, but
         from another side:
 
-        +----+----+      +----+----+
-        | @&gt; |    |  --&gt; |    | &lt;@ |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            | @&gt; |    |  --&gt; |    | &lt;@ |
+            +----+----+      +----+----+
 
         This changes the selection state of the face where the turtle
         stepped, if it is in &#34;start_selecting()&#34; mode, according to selection
@@ -274,31 +275,31 @@ class Turtle(object):
         &#34;&#34;&#34;
         Turn the turtle around, to look at the opposite edge:
 
-        +----+       +----+
-        | @&gt; |  --&gt;  | &lt;@ |
-        +----+       +----+
+            +----+       +----+
+            | @&gt; |  --&gt;  | &lt;@ |
+            +----+       +----+
 
         If the current face has odd count of edges, then the term
         &#34;around&#34; is ambiguous:
 
-                    +----+      
-                    |   &gt; \
-                    |  @   *
-                    |     /
-                  &gt; +----+
-                 /
-        +----+  /   
-        |     \
-        | &lt;@   *   ? OR ?
-        |     / 
-        +----+  \
-                 \
-                  &gt; +----+      
-                    |     \
-                    |  @   *
-                    |   &gt; /
-                    +----+
-                
+                        +----+
+                        |   &gt; \
+                        |  @   *
+                        |     /
+                      &gt; +----+
+                     /
+            +----+  /
+            |     \
+            | &lt;@   *   ? OR ?
+            |     / 
+            +----+  \
+                     \
+                      &gt; +----+
+                        |     \
+                        |  @   *
+                        |   &gt; /
+                        +----+
+
         To decide in such cases, there is `bias` parameter; it can have
         one of two values: Turtle.PREVIOUS and Turtle.NEXT.
         The default value of `bias` parameter can be set as &#34;turtle.opposite_bias&#34;.
@@ -339,12 +340,14 @@ class Turtle(object):
         Find distance to some &#34;good&#34; edge, if the turtle will step forward
         each time.
 
-        check_loop: function taking BMLoop and returning boolean.
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            check_loop: function taking BMLoop and returning boolean.
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
+        Returns:
+            number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
         &#34;&#34;&#34;
         if maximum is None:
             maximum = len(self.bmesh.faces)
@@ -369,11 +372,13 @@ class Turtle(object):
         Find distance to a boundary edge, if the turtle will step forward
         each time.
 
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach a boundary edge, or None if such edge is too far.
+        Returns:
+            number of steps to reach a boundary edge, or None if such edge is too far.
         &#34;&#34;&#34;
         return self.get_direct_distance_to_edge(lambda loop: loop.edge.is_boundary, maximum, bias)
 
@@ -382,11 +387,13 @@ class Turtle(object):
         Find distance to an edge near an obstacle, if the turtle will step forward
         each time.
 
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach an edge of an obstacle, or None if such edge is too far.
+        Returns:
+            number of steps to reach an edge of an obstacle, or None if such edge is too far.
         &#34;&#34;&#34;
         if maximum is None:
             maximum = len(self.bmesh.faces)
@@ -412,9 +419,9 @@ class Turtle(object):
         at which the turtle is currently looking, without changing 
         turtle&#39;s orientation.
 
-        +----+----+      +----+----+
-        | @&gt; |    |  --&gt; |    | @&gt; |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            | @&gt; |    |  --&gt; |    | @&gt; |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -434,9 +441,9 @@ class Turtle(object):
         &#34;&#34;&#34;
         Similar to step(), but step backwards:
 
-        +----+----+      +----+----+
-        |    | @&gt; |  --&gt; | @&gt; |    |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |    | @&gt; |  --&gt; | @&gt; |    |
+            +----+----+      +----+----+
         &#34;&#34;&#34;
         for i in range(count):
             self.turn_opposite(bias=bias)
@@ -447,10 +454,10 @@ class Turtle(object):
         Step to the face which is in the &#34;next&#34; (i.e. usually counterclockwise)
         direction, without changing turtle&#39;s orientation:
 
-        +----+----+      +----+----+
-        |    |  ^ |      |  ^ |    |
-        |    |  @ |  --&gt; |  @ |    |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |    |  ^ |      |  ^ |    |
+            |    |  @ |  --&gt; |  @ |    |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -473,10 +480,10 @@ class Turtle(object):
         Step to the face which is in the &#34;prev&#34; (i.e. usually clockwise)
         direction, without changing turtle&#39;s orientation:
 
-        +----+----+      +----+----+
-        |  ^ |    |      |    |  ^ |
-        |  @ |    |  --&gt; |    |  @ |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |  ^ |    |      |    |  ^ |
+            |  @ |    |  --&gt; |    |  @ |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -529,15 +536,16 @@ class Turtle(object):
         Start selecting faces which the turtle passes.
         This mode can be stopped by calling stop_selecting().
 
-        mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
-        mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
-              infinite repetition. For example:
+        Args:
+            mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
+            mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
+                  infinite repetition. For example:
 
-              turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
-              turtle.step(6)
-              turtle.stop_selecting()
+                      turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
+                      turtle.step(6)
+                      turtle.stop_selecting()
 
-              This will select each other face: 0[1]2[3]4[5].
+                  This will select each other face: 0[1]2[3]4[5].
 
         If mask is not specified, then the mask used with the previous start_selecting() call
         will be used. If the mask was never provided, there will be an exception.
@@ -573,6 +581,7 @@ class Turtle(object):
         If value is not specified, then the value used with previous
         start_painting() call will be used. If the value was never provided,
         there will be an exception.
+
         A list of values can be specified instead of the single value. In this
         case, these values will be used in order, with repetition.
         The painting layer must be defined by calling declare_painting_layer()
@@ -608,7 +617,8 @@ class Turtle(object):
         &#34;Obstacle&#34; is just a boolean indicator, that can be
         checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.
 
-        is_obstacle : boolean or int, 1 or True for marking face as obstacle.
+        Args:
+            is_obstacle : boolean or int, 1 or True for marking face as obstacle.
         &#34;&#34;&#34;
         self.current_face[self.obstacle_layer] = int(is_obstacle)
 
@@ -627,8 +637,9 @@ class Turtle(object):
         &#34;&#34;&#34;
         Set obstacle indicators for all faces of the mesh.
 
-        face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
-        invert: boolean, default false: set to True to invert the meaning of face_mask.
+        Args:
+            face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
+            invert: boolean, default false: set to True to invert the meaning of face_mask.
         &#34;&#34;&#34;
         for is_obstacle, face in zip(face_mask, self.bmesh.faces):
             if invert:
@@ -698,8 +709,11 @@ class Turtle(object):
         &#34;&#34;&#34;
         Whether the turtle already has previously visited the given face.
 
-        face : BMFace
-        returns: boolean
+        Args:
+            face : BMFace
+
+        Returns:
+            boolean
         &#34;&#34;&#34;
         v = face[self.index_layer]
         return (v != 0)
@@ -744,24 +758,15 @@ class Turtle(object):
 <div class="desc"><p>Face walking turtle API.</p>
 <p>At each moment in time, a turtle stays on one of the mesh faces,
 and looks towards one of edges of the face:</p>
-<p>+&mdash;+&mdash;+&mdash;+
-|
-|
-|
-|
-+&mdash;+&mdash;+&mdash;+
-|
-| ^ |
-|
-|
-| @ |
-|
-+&mdash;+&mdash;+&mdash;+
-|
-|
-|
-|
-+&mdash;+&mdash;+&mdash;+</p>
+<pre><code>+---+---+---+
+|   |   |   |
++---+---+---+
+|   | ^ |   |
+|   | @ |   |
++---+---+---+
+|   |   |   |
++---+---+---+
+</code></pre>
 <p>Walking primitives are turn_next(), turn_prev() and click().
 Other methods are build from these primitives.
 One of the most used methods is step().</p>
@@ -798,14 +803,14 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
     At each moment in time, a turtle stays on one of the mesh faces,
     and looks towards one of edges of the face:
 
-    +---+---+---+
-    |   |   |   |
-    +---+---+---+
-    |   | ^ |   |
-    |   | @ |   |
-    +---+---+---+
-    |   |   |   |
-    +---+---+---+
+        +---+---+---+
+        |   |   |   |
+        +---+---+---+
+        |   | ^ |   |
+        |   | @ |   |
+        +---+---+---+
+        |   |   |   |
+        +---+---+---+
 
     Walking primitives are turn_next(), turn_prev() and click().
     Other methods are build from these primitives.
@@ -876,6 +881,7 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
 
         NB 1: All painting layers must be declared BEFORE any commands to the turtle, i.e.
         right after constructor was called.
+
         NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
         other than painting by turtle, then you have to create them BEFORE calling the Turtle
         constructor.
@@ -904,10 +910,10 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         If face normal is oriented &#34;as usual&#34;, then this
         means &#34;turn counterclockwise&#34;.
 
-        +----+      +----+
-        |  ^ |  --&gt; |    |
-        |  @ |      | &lt;@ |
-        +----+      +----+
+            +----+      +----+
+            |  ^ |  --&gt; |    |
+            |  @ |      | &lt;@ |
+            +----+      +----+
 
         If count is more than 1, then repeat this turn specified
         number of times.
@@ -921,10 +927,10 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         If face normal is oriented &#34;as usual&#34;, then this
         means &#34;turn clockwise&#34;.
 
-        +----+      +----+
-        | ^  |  --&gt; |    |
-        | @  |      | @&gt; |
-        +----+      +----+
+            +----+      +----+
+            | ^  |  --&gt; |    |
+            | @  |      | @&gt; |
+            +----+      +----+
 
         If count is more than 1, then repeat this turn specified
         number of times.
@@ -940,9 +946,9 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         turns around, to look at the same edge it was looking, but
         from another side:
 
-        +----+----+      +----+----+
-        | @&gt; |    |  --&gt; |    | &lt;@ |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            | @&gt; |    |  --&gt; |    | &lt;@ |
+            +----+----+      +----+----+
 
         This changes the selection state of the face where the turtle
         stepped, if it is in &#34;start_selecting()&#34; mode, according to selection
@@ -1015,31 +1021,31 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         &#34;&#34;&#34;
         Turn the turtle around, to look at the opposite edge:
 
-        +----+       +----+
-        | @&gt; |  --&gt;  | &lt;@ |
-        +----+       +----+
+            +----+       +----+
+            | @&gt; |  --&gt;  | &lt;@ |
+            +----+       +----+
 
         If the current face has odd count of edges, then the term
         &#34;around&#34; is ambiguous:
 
-                    +----+      
-                    |   &gt; \
-                    |  @   *
-                    |     /
-                  &gt; +----+
-                 /
-        +----+  /   
-        |     \
-        | &lt;@   *   ? OR ?
-        |     / 
-        +----+  \
-                 \
-                  &gt; +----+      
-                    |     \
-                    |  @   *
-                    |   &gt; /
-                    +----+
-                
+                        +----+
+                        |   &gt; \
+                        |  @   *
+                        |     /
+                      &gt; +----+
+                     /
+            +----+  /
+            |     \
+            | &lt;@   *   ? OR ?
+            |     / 
+            +----+  \
+                     \
+                      &gt; +----+
+                        |     \
+                        |  @   *
+                        |   &gt; /
+                        +----+
+
         To decide in such cases, there is `bias` parameter; it can have
         one of two values: Turtle.PREVIOUS and Turtle.NEXT.
         The default value of `bias` parameter can be set as &#34;turtle.opposite_bias&#34;.
@@ -1080,12 +1086,14 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Find distance to some &#34;good&#34; edge, if the turtle will step forward
         each time.
 
-        check_loop: function taking BMLoop and returning boolean.
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            check_loop: function taking BMLoop and returning boolean.
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
+        Returns:
+            number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
         &#34;&#34;&#34;
         if maximum is None:
             maximum = len(self.bmesh.faces)
@@ -1110,11 +1118,13 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Find distance to a boundary edge, if the turtle will step forward
         each time.
 
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach a boundary edge, or None if such edge is too far.
+        Returns:
+            number of steps to reach a boundary edge, or None if such edge is too far.
         &#34;&#34;&#34;
         return self.get_direct_distance_to_edge(lambda loop: loop.edge.is_boundary, maximum, bias)
 
@@ -1123,11 +1133,13 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Find distance to an edge near an obstacle, if the turtle will step forward
         each time.
 
-        maximum: maximum number of faces to check (to prevent possible infinite loop,
-                    or too long paths). None means the total number of faces in the mesh.
-        bias: bias for get_next_face().
+        Args:
+            maximum: maximum number of faces to check (to prevent possible infinite loop,
+                        or too long paths). None means the total number of faces in the mesh.
+            bias: bias for get_next_face().
 
-        returns: number of steps to reach an edge of an obstacle, or None if such edge is too far.
+        Returns:
+            number of steps to reach an edge of an obstacle, or None if such edge is too far.
         &#34;&#34;&#34;
         if maximum is None:
             maximum = len(self.bmesh.faces)
@@ -1153,9 +1165,9 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         at which the turtle is currently looking, without changing 
         turtle&#39;s orientation.
 
-        +----+----+      +----+----+
-        | @&gt; |    |  --&gt; |    | @&gt; |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            | @&gt; |    |  --&gt; |    | @&gt; |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -1175,9 +1187,9 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         &#34;&#34;&#34;
         Similar to step(), but step backwards:
 
-        +----+----+      +----+----+
-        |    | @&gt; |  --&gt; | @&gt; |    |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |    | @&gt; |  --&gt; | @&gt; |    |
+            +----+----+      +----+----+
         &#34;&#34;&#34;
         for i in range(count):
             self.turn_opposite(bias=bias)
@@ -1188,10 +1200,10 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Step to the face which is in the &#34;next&#34; (i.e. usually counterclockwise)
         direction, without changing turtle&#39;s orientation:
 
-        +----+----+      +----+----+
-        |    |  ^ |      |  ^ |    |
-        |    |  @ |  --&gt; |  @ |    |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |    |  ^ |      |  ^ |    |
+            |    |  @ |  --&gt; |  @ |    |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -1214,10 +1226,10 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Step to the face which is in the &#34;prev&#34; (i.e. usually clockwise)
         direction, without changing turtle&#39;s orientation:
 
-        +----+----+      +----+----+
-        |  ^ |    |      |    |  ^ |
-        |  @ |    |  --&gt; |    |  @ |
-        +----+----+      +----+----+
+            +----+----+      +----+----+
+            |  ^ |    |      |    |  ^ |
+            |  @ |    |  --&gt; |    |  @ |
+            +----+----+      +----+----+
 
         If count is greater than 1, then repeat this step the specified
         number of times.
@@ -1270,15 +1282,16 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Start selecting faces which the turtle passes.
         This mode can be stopped by calling stop_selecting().
 
-        mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
-        mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
-              infinite repetition. For example:
+        Args:
+            mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
+            mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
+                  infinite repetition. For example:
 
-              turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
-              turtle.step(6)
-              turtle.stop_selecting()
+                      turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
+                      turtle.step(6)
+                      turtle.stop_selecting()
 
-              This will select each other face: 0[1]2[3]4[5].
+                  This will select each other face: 0[1]2[3]4[5].
 
         If mask is not specified, then the mask used with the previous start_selecting() call
         will be used. If the mask was never provided, there will be an exception.
@@ -1314,6 +1327,7 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         If value is not specified, then the value used with previous
         start_painting() call will be used. If the value was never provided,
         there will be an exception.
+
         A list of values can be specified instead of the single value. In this
         case, these values will be used in order, with repetition.
         The painting layer must be defined by calling declare_painting_layer()
@@ -1349,7 +1363,8 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         &#34;Obstacle&#34; is just a boolean indicator, that can be
         checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.
 
-        is_obstacle : boolean or int, 1 or True for marking face as obstacle.
+        Args:
+            is_obstacle : boolean or int, 1 or True for marking face as obstacle.
         &#34;&#34;&#34;
         self.current_face[self.obstacle_layer] = int(is_obstacle)
 
@@ -1368,8 +1383,9 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         &#34;&#34;&#34;
         Set obstacle indicators for all faces of the mesh.
 
-        face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
-        invert: boolean, default false: set to True to invert the meaning of face_mask.
+        Args:
+            face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
+            invert: boolean, default false: set to True to invert the meaning of face_mask.
         &#34;&#34;&#34;
         for is_obstacle, face in zip(face_mask, self.bmesh.faces):
             if invert:
@@ -1439,8 +1455,11 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         &#34;&#34;&#34;
         Whether the turtle already has previously visited the given face.
 
-        face : BMFace
-        returns: boolean
+        Args:
+            face : BMFace
+
+        Returns:
+            boolean
         &#34;&#34;&#34;
         v = face[self.index_layer]
         return (v != 0)
@@ -1594,14 +1613,10 @@ at which the turtle is looking currently.
 This turtle is a bit strange, because when it jumps it
 turns around, to look at the same edge it was looking, but
 from another side:</p>
-<p>+----+----+
-+----+----+
-| @&gt; |
-|
-&ndash;&gt; |
-| &lt;@ |
-+----+----+
-+----+----+</p>
+<pre><code>+----+----+      +----+----+
+| @&gt; |    |  --&gt; |    | &lt;@ |
++----+----+      +----+----+
+</code></pre>
 <p>This changes the selection state of the face where the turtle
 stepped, if it is in "start_selecting()" mode, according to selection
 mask.</p>
@@ -1619,9 +1634,9 @@ if it is in "start_painting()" mode, according to painting masks.</p></div>
     turns around, to look at the same edge it was looking, but
     from another side:
 
-    +----+----+      +----+----+
-    | @&gt; |    |  --&gt; |    | &lt;@ |
-    +----+----+      +----+----+
+        +----+----+      +----+----+
+        | @&gt; |    |  --&gt; |    | &lt;@ |
+        +----+----+      +----+----+
 
     This changes the selection state of the face where the turtle
     stepped, if it is in &#34;start_selecting()&#34; mode, according to selection
@@ -1677,8 +1692,8 @@ if it is in "start_painting()" mode, according to painting masks.</p></div>
 <dd>
 <div class="desc"><p>Create a custom data layer for painting.</p>
 <p>NB 1: All painting layers must be declared BEFORE any commands to the turtle, i.e.
-right after constructor was called.
-NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
+right after constructor was called.</p>
+<p>NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
 other than painting by turtle, then you have to create them BEFORE calling the Turtle
 constructor.</p></div>
 <details class="source">
@@ -1691,6 +1706,7 @@ constructor.</p></div>
 
     NB 1: All painting layers must be declared BEFORE any commands to the turtle, i.e.
     right after constructor was called.
+
     NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
     other than painting by turtle, then you have to create them BEFORE calling the Turtle
     constructor.
@@ -1720,10 +1736,16 @@ constructor.</p></div>
 <dd>
 <div class="desc"><p>Find distance to a boundary edge, if the turtle will step forward
 each time.</p>
-<p>maximum: maximum number of faces to check (to prevent possible infinite loop,
-or too long paths). None means the total number of faces in the mesh.
-bias: bias for get_next_face().</p>
-<p>returns: number of steps to reach a boundary edge, or None if such edge is too far.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>maximum</code></strong></dt>
+<dd>maximum number of faces to check (to prevent possible infinite loop,
+or too long paths). None means the total number of faces in the mesh.</dd>
+<dt><strong><code>bias</code></strong></dt>
+<dd>bias for get_next_face().</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>number of steps to reach a boundary edge, or None if such edge is too far.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1733,11 +1755,13 @@ bias: bias for get_next_face().</p>
     Find distance to a boundary edge, if the turtle will step forward
     each time.
 
-    maximum: maximum number of faces to check (to prevent possible infinite loop,
-                or too long paths). None means the total number of faces in the mesh.
-    bias: bias for get_next_face().
+    Args:
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
 
-    returns: number of steps to reach a boundary edge, or None if such edge is too far.
+    Returns:
+        number of steps to reach a boundary edge, or None if such edge is too far.
     &#34;&#34;&#34;
     return self.get_direct_distance_to_edge(lambda loop: loop.edge.is_boundary, maximum, bias)</code></pre>
 </details>
@@ -1748,11 +1772,18 @@ bias: bias for get_next_face().</p>
 <dd>
 <div class="desc"><p>Find distance to some "good" edge, if the turtle will step forward
 each time.</p>
-<p>check_loop: function taking BMLoop and returning boolean.
-maximum: maximum number of faces to check (to prevent possible infinite loop,
-or too long paths). None means the total number of faces in the mesh.
-bias: bias for get_next_face().</p>
-<p>returns: number of steps to reach a "good" edge, or None if such edge is too far.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>check_loop</code></strong></dt>
+<dd>function taking BMLoop and returning boolean.</dd>
+<dt><strong><code>maximum</code></strong></dt>
+<dd>maximum number of faces to check (to prevent possible infinite loop,
+or too long paths). None means the total number of faces in the mesh.</dd>
+<dt><strong><code>bias</code></strong></dt>
+<dd>bias for get_next_face().</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>number of steps to reach a "good" edge, or None if such edge is too far.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1762,12 +1793,14 @@ bias: bias for get_next_face().</p>
     Find distance to some &#34;good&#34; edge, if the turtle will step forward
     each time.
 
-    check_loop: function taking BMLoop and returning boolean.
-    maximum: maximum number of faces to check (to prevent possible infinite loop,
-                or too long paths). None means the total number of faces in the mesh.
-    bias: bias for get_next_face().
+    Args:
+        check_loop: function taking BMLoop and returning boolean.
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
 
-    returns: number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
+    Returns:
+        number of steps to reach a &#34;good&#34; edge, or None if such edge is too far.
     &#34;&#34;&#34;
     if maximum is None:
         maximum = len(self.bmesh.faces)
@@ -1794,10 +1827,16 @@ bias: bias for get_next_face().</p>
 <dd>
 <div class="desc"><p>Find distance to an edge near an obstacle, if the turtle will step forward
 each time.</p>
-<p>maximum: maximum number of faces to check (to prevent possible infinite loop,
-or too long paths). None means the total number of faces in the mesh.
-bias: bias for get_next_face().</p>
-<p>returns: number of steps to reach an edge of an obstacle, or None if such edge is too far.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>maximum</code></strong></dt>
+<dd>maximum number of faces to check (to prevent possible infinite loop,
+or too long paths). None means the total number of faces in the mesh.</dd>
+<dt><strong><code>bias</code></strong></dt>
+<dd>bias for get_next_face().</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>number of steps to reach an edge of an obstacle, or None if such edge is too far.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1807,11 +1846,13 @@ bias: bias for get_next_face().</p>
     Find distance to an edge near an obstacle, if the turtle will step forward
     each time.
 
-    maximum: maximum number of faces to check (to prevent possible infinite loop,
-                or too long paths). None means the total number of faces in the mesh.
-    bias: bias for get_next_face().
+    Args:
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
 
-    returns: number of steps to reach an edge of an obstacle, or None if such edge is too far.
+    Returns:
+        number of steps to reach an edge of an obstacle, or None if such edge is too far.
     &#34;&#34;&#34;
     if maximum is None:
         maximum = len(self.bmesh.faces)
@@ -2122,6 +2163,7 @@ one painting layer, named Turtle.PAINT.</p></div>
 <div class="desc"><p>Mark current face as an obstacle.
 "Obstacle" is just a boolean indicator, that can be
 checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.</p>
+<h2 id="args">Args</h2>
 <p>is_obstacle : boolean or int, 1 or True for marking face as obstacle.</p></div>
 <details class="source">
 <summary>
@@ -2133,7 +2175,8 @@ checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.</p>
     &#34;Obstacle&#34; is just a boolean indicator, that can be
     checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.
 
-    is_obstacle : boolean or int, 1 or True for marking face as obstacle.
+    Args:
+        is_obstacle : boolean or int, 1 or True for marking face as obstacle.
     &#34;&#34;&#34;
     self.current_face[self.obstacle_layer] = int(is_obstacle)</code></pre>
 </details>
@@ -2143,8 +2186,13 @@ checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Set obstacle indicators for all faces of the mesh.</p>
-<p>face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
-invert: boolean, default false: set to True to invert the meaning of face_mask.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>face_mask</code></strong></dt>
+<dd>list of booleans or ints, True or 1 to mark face as an obstacle.</dd>
+<dt><strong><code>invert</code></strong></dt>
+<dd>boolean, default false: set to True to invert the meaning of face_mask.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2153,8 +2201,9 @@ invert: boolean, default false: set to True to invert the meaning of face_mask.<
     &#34;&#34;&#34;
     Set obstacle indicators for all faces of the mesh.
 
-    face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
-    invert: boolean, default false: set to True to invert the meaning of face_mask.
+    Args:
+        face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
+        invert: boolean, default false: set to True to invert the meaning of face_mask.
     &#34;&#34;&#34;
     for is_obstacle, face in zip(face_mask, self.bmesh.faces):
         if invert:
@@ -2170,8 +2219,8 @@ invert: boolean, default false: set to True to invert the meaning of face_mask.<
 <div class="desc"><p>Start painting faces which the turtle passes.
 If value is not specified, then the value used with previous
 start_painting() call will be used. If the value was never provided,
-there will be an exception.
-A list of values can be specified instead of the single value. In this
+there will be an exception.</p>
+<p>A list of values can be specified instead of the single value. In this
 case, these values will be used in order, with repetition.
 The painting layer must be defined by calling declare_painting_layer()
 right after calling the Turtle() constructor. By default, there is
@@ -2186,6 +2235,7 @@ one painting layer, named Turtle.PAINT.</p></div>
     If value is not specified, then the value used with previous
     start_painting() call will be used. If the value was never provided,
     there will be an exception.
+
     A list of values can be specified instead of the single value. In this
     case, these values will be used in order, with repetition.
     The painting layer must be defined by calling declare_painting_layer()
@@ -2210,15 +2260,21 @@ one painting layer, named Turtle.PAINT.</p></div>
 <dd>
 <div class="desc"><p>Start selecting faces which the turtle passes.
 This mode can be stopped by calling stop_selecting().</p>
-<p>mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
-mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>mode</code></strong></dt>
+<dd>selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.</dd>
+<dt><strong><code>mask</code></strong></dt>
+<dd>
+<p>selection mask. Used with mode == Turtle.MASK. The mask is used with
 infinite repetition. For example:</p>
 <pre><code>  turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
   turtle.step(6)
   turtle.stop_selecting()
-
-  This will select each other face: 0[1]2[3]4[5].
 </code></pre>
+<p>This will select each other face: 0[1]2[3]4[5].</p>
+</dd>
+</dl>
 <p>If mask is not specified, then the mask used with the previous start_selecting() call
 will be used. If the mask was never provided, there will be an exception.</p></div>
 <details class="source">
@@ -2230,15 +2286,16 @@ will be used. If the mask was never provided, there will be an exception.</p></d
     Start selecting faces which the turtle passes.
     This mode can be stopped by calling stop_selecting().
 
-    mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
-    mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
-          infinite repetition. For example:
+    Args:
+        mode: selection mode. Can be Turtle.SELECT, Turtle.UNSELECT, Turtle.TOGGLE or Turtle.MASK.
+        mask: selection mask. Used with mode == Turtle.MASK. The mask is used with
+              infinite repetition. For example:
 
-          turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
-          turtle.step(6)
-          turtle.stop_selecting()
+                  turtle.start_selecting(mode = Turtle.MASK, mask = [0, 1])
+                  turtle.step(6)
+                  turtle.stop_selecting()
 
-          This will select each other face: 0[1]2[3]4[5].
+              This will select each other face: 0[1]2[3]4[5].
 
     If mask is not specified, then the mask used with the previous start_selecting() call
     will be used. If the mask was never provided, there will be an exception.
@@ -2260,14 +2317,10 @@ will be used. If the mask was never provided, there will be an exception.</p></d
 <div class="desc"><p>Step to the next face, i.e. the face which is beyond the edge
 at which the turtle is currently looking, without changing
 turtle's orientation.</p>
-<p>+----+----+
-+----+----+
-| @&gt; |
-|
-&ndash;&gt; |
-| @&gt; |
-+----+----+
-+----+----+</p>
+<pre><code>+----+----+      +----+----+
+| @&gt; |    |  --&gt; |    | @&gt; |
++----+----+      +----+----+
+</code></pre>
 <p>If count is greater than 1, then repeat this step the specified
 number of times.
 Bias can be provided for cases of odd count of edges in the face.</p></div>
@@ -2281,9 +2334,9 @@ Bias can be provided for cases of odd count of edges in the face.</p></div>
     at which the turtle is currently looking, without changing 
     turtle&#39;s orientation.
 
-    +----+----+      +----+----+
-    | @&gt; |    |  --&gt; |    | @&gt; |
-    +----+----+      +----+----+
+        +----+----+      +----+----+
+        | @&gt; |    |  --&gt; |    | @&gt; |
+        +----+----+      +----+----+
 
     If count is greater than 1, then repeat this step the specified
     number of times.
@@ -2305,14 +2358,10 @@ Bias can be provided for cases of odd count of edges in the face.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Similar to step(), but step backwards:</p>
-<p>+----+----+
-+----+----+
-|
-| @&gt; |
-&ndash;&gt; | @&gt; |
-|
-+----+----+
-+----+----+</p></div>
+<pre><code>+----+----+      +----+----+
+|    | @&gt; |  --&gt; | @&gt; |    |
++----+----+      +----+----+
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2321,9 +2370,9 @@ Bias can be provided for cases of odd count of edges in the face.</p></div>
     &#34;&#34;&#34;
     Similar to step(), but step backwards:
 
-    +----+----+      +----+----+
-    |    | @&gt; |  --&gt; | @&gt; |    |
-    +----+----+      +----+----+
+        +----+----+      +----+----+
+        |    | @&gt; |  --&gt; | @&gt; |    |
+        +----+----+      +----+----+
     &#34;&#34;&#34;
     for i in range(count):
         self.turn_opposite(bias=bias)
@@ -2368,22 +2417,11 @@ Bias can be provided for cases of odd count of edges in the face.</p></div>
 <dd>
 <div class="desc"><p>Step to the face which is in the "next" (i.e. usually counterclockwise)
 direction, without changing turtle's orientation:</p>
-<p>+----+----+
-+----+----+
-|
-|
-^ |
-|
-^ |
-|
-|
-|
-@ |
-&ndash;&gt; |
-@ |
-|
-+----+----+
-+----+----+</p>
+<pre><code>+----+----+      +----+----+
+|    |  ^ |      |  ^ |    |
+|    |  @ |  --&gt; |  @ |    |
++----+----+      +----+----+
+</code></pre>
 <p>If count is greater than 1, then repeat this step the specified
 number of times.</p></div>
 <details class="source">
@@ -2395,10 +2433,10 @@ number of times.</p></div>
     Step to the face which is in the &#34;next&#34; (i.e. usually counterclockwise)
     direction, without changing turtle&#39;s orientation:
 
-    +----+----+      +----+----+
-    |    |  ^ |      |  ^ |    |
-    |    |  @ |  --&gt; |  @ |    |
-    +----+----+      +----+----+
+        +----+----+      +----+----+
+        |    |  ^ |      |  ^ |    |
+        |    |  @ |  --&gt; |  @ |    |
+        +----+----+      +----+----+
 
     If count is greater than 1, then repeat this step the specified
     number of times.
@@ -2423,22 +2461,11 @@ number of times.</p></div>
 <dd>
 <div class="desc"><p>Step to the face which is in the "prev" (i.e. usually clockwise)
 direction, without changing turtle's orientation:</p>
-<p>+----+----+
-+----+----+
-|
-^ |
-|
-|
-|
-^ |
-|
-@ |
-|
-&ndash;&gt; |
-|
-@ |
-+----+----+
-+----+----+</p>
+<pre><code>+----+----+      +----+----+
+|  ^ |    |      |    |  ^ |
+|  @ |    |  --&gt; |    |  @ |
++----+----+      +----+----+
+</code></pre>
 <p>If count is greater than 1, then repeat this step the specified
 number of times.</p></div>
 <details class="source">
@@ -2450,10 +2477,10 @@ number of times.</p></div>
     Step to the face which is in the &#34;prev&#34; (i.e. usually clockwise)
     direction, without changing turtle&#39;s orientation:
 
-    +----+----+      +----+----+
-    |  ^ |    |      |    |  ^ |
-    |  @ |    |  --&gt; |    |  @ |
-    +----+----+      +----+----+
+        +----+----+      +----+----+
+        |  ^ |    |      |    |  ^ |
+        |  @ |    |  --&gt; |    |  @ |
+        +----+----+      +----+----+
 
     If count is greater than 1, then repeat this step the specified
     number of times.
@@ -2496,17 +2523,11 @@ number of times.</p></div>
 <div class="desc"><p>Turn towards the next edge in the sequence.
 If face normal is oriented "as usual", then this
 means "turn counterclockwise".</p>
-<p>+----+
-+----+
-|
-^ |
-&ndash;&gt; |
-|
-|
-@ |
-| &lt;@ |
-+----+
-+----+</p>
+<pre><code>+----+      +----+
+|  ^ |  --&gt; |    |
+|  @ |      | &lt;@ |
++----+      +----+
+</code></pre>
 <p>If count is more than 1, then repeat this turn specified
 number of times.</p></div>
 <details class="source">
@@ -2519,10 +2540,10 @@ number of times.</p></div>
     If face normal is oriented &#34;as usual&#34;, then this
     means &#34;turn counterclockwise&#34;.
 
-    +----+      +----+
-    |  ^ |  --&gt; |    |
-    |  @ |      | &lt;@ |
-    +----+      +----+
+        +----+      +----+
+        |  ^ |  --&gt; |    |
+        |  @ |      | &lt;@ |
+        +----+      +----+
 
     If count is more than 1, then repeat this turn specified
     number of times.
@@ -2536,39 +2557,25 @@ number of times.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Turn the turtle around, to look at the opposite edge:</p>
-<p>+----+
-+----+
-| @&gt; |
-&ndash;&gt;
-| &lt;@ |
-+----+
-+----+</p>
+<pre><code>+----+       +----+
+| @&gt; |  --&gt;  | &lt;@ |
++----+       +----+
+</code></pre>
 <p>If the current face has odd count of edges, then the term
 "around" is ambiguous:</p>
-<pre><code>        +----+      
-        |   &gt;                     |  @   *
-        |     /
-      &gt; +----+
-     /
+<pre><code>            +----+
+            |   &gt;                         |  @   *
+            |     /
+          &gt; +----+
+         /
++----+  /
+|                 | &lt;@   *   ? OR ?
+|     / 
++----+                                             &gt; +----+
+            |                             |  @   *
+            |   &gt; /
+            +----+
 </code></pre>
-<p>+----+
-/ <br>
-|
-| &lt;@
-*
-? OR ?
-|
-/
-+----+
-&gt; +----+
-<br>
-|
-|
-@
-*
-|
-&gt; /
-+----+</p>
 <p>To decide in such cases, there is <code>bias</code> parameter; it can have
 one of two values: Turtle.PREVIOUS and Turtle.NEXT.
 The default value of <code>bias</code> parameter can be set as "turtle.opposite_bias".
@@ -2581,31 +2588,31 @@ By default it is set to Turtle.PREVIOUS.</p></div>
     &#34;&#34;&#34;
     Turn the turtle around, to look at the opposite edge:
 
-    +----+       +----+
-    | @&gt; |  --&gt;  | &lt;@ |
-    +----+       +----+
+        +----+       +----+
+        | @&gt; |  --&gt;  | &lt;@ |
+        +----+       +----+
 
     If the current face has odd count of edges, then the term
     &#34;around&#34; is ambiguous:
 
-                +----+      
-                |   &gt; \
-                |  @   *
-                |     /
-              &gt; +----+
-             /
-    +----+  /   
-    |     \
-    | &lt;@   *   ? OR ?
-    |     / 
-    +----+  \
-             \
-              &gt; +----+      
-                |     \
-                |  @   *
-                |   &gt; /
-                +----+
-            
+                    +----+
+                    |   &gt; \
+                    |  @   *
+                    |     /
+                  &gt; +----+
+                 /
+        +----+  /
+        |     \
+        | &lt;@   *   ? OR ?
+        |     / 
+        +----+  \
+                 \
+                  &gt; +----+
+                    |     \
+                    |  @   *
+                    |   &gt; /
+                    +----+
+
     To decide in such cases, there is `bias` parameter; it can have
     one of two values: Turtle.PREVIOUS and Turtle.NEXT.
     The default value of `bias` parameter can be set as &#34;turtle.opposite_bias&#34;.
@@ -2621,17 +2628,11 @@ By default it is set to Turtle.PREVIOUS.</p></div>
 <div class="desc"><p>Turn towards the previous edge in the sequence.
 If face normal is oriented "as usual", then this
 means "turn clockwise".</p>
-<p>+----+
-+----+
-| ^
-|
-&ndash;&gt; |
-|
-| @
-|
-| @&gt; |
-+----+
-+----+</p>
+<pre><code>+----+      +----+
+| ^  |  --&gt; |    |
+| @  |      | @&gt; |
++----+      +----+
+</code></pre>
 <p>If count is more than 1, then repeat this turn specified
 number of times.</p></div>
 <details class="source">
@@ -2644,10 +2645,10 @@ number of times.</p></div>
     If face normal is oriented &#34;as usual&#34;, then this
     means &#34;turn clockwise&#34;.
 
-    +----+      +----+
-    | ^  |  --&gt; |    |
-    | @  |      | @&gt; |
-    +----+      +----+
+        +----+      +----+
+        | ^  |  --&gt; |    |
+        | @  |      | @&gt; |
+        +----+      +----+
 
     If count is more than 1, then repeat this turn specified
     number of times.
@@ -2678,8 +2679,10 @@ number of times.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Whether the turtle already has previously visited the given face.</p>
-<p>face : BMFace
-returns: boolean</p></div>
+<h2 id="args">Args</h2>
+<p>face : BMFace</p>
+<h2 id="returns">Returns</h2>
+<p>boolean</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2688,8 +2691,11 @@ returns: boolean</p></div>
     &#34;&#34;&#34;
     Whether the turtle already has previously visited the given face.
 
-    face : BMFace
-    returns: boolean
+    Args:
+        face : BMFace
+
+    Returns:
+        boolean
     &#34;&#34;&#34;
     v = face[self.index_layer]
     return (v != 0)</code></pre>
