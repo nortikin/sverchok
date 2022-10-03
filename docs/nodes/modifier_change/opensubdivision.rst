@@ -12,7 +12,6 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**. Vertices of input mesh.
-- **Edges**. Edges of input mesh (**optional**). 
 - **Faces**. Faces of input mesh.
 
 Parameters
@@ -34,8 +33,6 @@ This node has the following outputs:
 **Note**: **Vertices** and **Faces** inputs **must** be compatible, in that the **Faces** input **may not refer to vertex indices that do not exist in the Vertices list** (e.g. **Faces** cannot refer to vertex 7, provided a list of **Vertices** with only 5 vertices). 
 
 Unexpected behavior may occur if using Faces from one mesh with Vertices from another. 
-
-Indices in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relate to vertices in **Vertices** output.
 
 Examples of usage
 -----------------
