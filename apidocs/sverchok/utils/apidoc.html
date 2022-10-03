@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>sverchok.utils.apidoc API documentation</title>
-<meta name="description" content="Tools to generate Sverchok API documentation in HTML format …" />
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,10 +22,6 @@
 <h1 class="title">Module <code>sverchok.utils.apidoc</code></h1>
 </header>
 <section id="section-intro">
-<p>Tools to generate Sverchok API documentation in HTML format.</p>
-<p>When this module is run from command line instead of being imported, it
-provides command-line interface to generate documentation. Please run it with
-<code>--help</code> command-line argument to see usage information.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -36,7 +32,7 @@ provides command-line interface to generate documentation. Please run it with
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
+import traceback
 &#34;&#34;&#34;
 Tools to generate Sverchok API documentation in HTML format.
 
@@ -116,6 +112,7 @@ if __name__ == &#34;__main__&#34;:
         sys.exit(0)
     except Exception as e:
         print(e)
+        traceback.print_exc()
         sys.exit(1)</code></pre>
 </details>
 </section>

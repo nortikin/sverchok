@@ -1942,13 +1942,14 @@ def node_id(self):
 </dd>
 <dt id="sverchok.core.node_group.BaseNode.sv_default_color"><code class="name">var <span class="ident">sv_default_color</span></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns default color of the node which can be changed in add-on settings.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def sv_default_color(self):
+    &#34;&#34;&#34;Returns default color of the node which can be changed in add-on settings.&#34;&#34;&#34;
     return color_def.get_color(self.bl_idname)</code></pre>
 </details>
 </dd>
@@ -2119,6 +2120,7 @@ class NodeFrame(BaseNode):
 <li><code><a title="sverchok.core.node_group.BaseNode.node_id" href="#sverchok.core.node_group.BaseNode.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.process_node" href="#sverchok.core.node_group.BaseNode.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.set_temp_color" href="#sverchok.core.node_group.BaseNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.core.node_group.BaseNode.sv_default_color" href="#sverchok.core.node_group.BaseNode.sv_default_color">sv_default_color</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2171,6 +2173,7 @@ class NodeGroupInput(BaseNode):
 <li><code><a title="sverchok.core.node_group.BaseNode.node_id" href="#sverchok.core.node_group.BaseNode.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.process_node" href="#sverchok.core.node_group.BaseNode.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.set_temp_color" href="#sverchok.core.node_group.BaseNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.core.node_group.BaseNode.sv_default_color" href="#sverchok.core.node_group.BaseNode.sv_default_color">sv_default_color</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2223,6 +2226,7 @@ class NodeGroupOutput(BaseNode):  # todo copy node id problem
 <li><code><a title="sverchok.core.node_group.BaseNode.node_id" href="#sverchok.core.node_group.BaseNode.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.process_node" href="#sverchok.core.node_group.BaseNode.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.set_temp_color" href="#sverchok.core.node_group.BaseNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.core.node_group.BaseNode.sv_default_color" href="#sverchok.core.node_group.BaseNode.sv_default_color">sv_default_color</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2259,6 +2263,7 @@ class NodeReroute(BaseNode):
 <li><code><a title="sverchok.core.node_group.BaseNode.node_id" href="#sverchok.core.node_group.BaseNode.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.process_node" href="#sverchok.core.node_group.BaseNode.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.core.node_group.BaseNode.set_temp_color" href="#sverchok.core.node_group.BaseNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.core.node_group.BaseNode.sv_default_color" href="#sverchok.core.node_group.BaseNode.sv_default_color">sv_default_color</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2428,7 +2433,7 @@ def store_mouse_cursor(context, event):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f56e5b853a0>, 'attr': 'tree_name'}></code></dt>
+<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7fc0dc27b4c0>, 'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3125,6 +3130,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <ul class="hlist">
 <li><code><a title="sverchok.node_tree.SvNodeTreeCommon.init_tree" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon.init_tree">init_tree</a></code></li>
 <li><code><a title="sverchok.node_tree.SvNodeTreeCommon.tree_id" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon.tree_id">tree_id</a></code></li>
+<li><code><a title="sverchok.node_tree.SvNodeTreeCommon.tree_id_memory" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon.tree_id_memory">tree_id_memory</a></code></li>
 <li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon.update_gl_scale_info">update_gl_scale_info</a></code></li>
 <li><code><a title="sverchok.node_tree.SvNodeTreeCommon.update_ui" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon.update_ui">update_ui</a></code></li>
 </ul>
@@ -3321,11 +3327,11 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f56e5b9af70>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f56e5b5c040>, 'attr': 'group_tree'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7fc0dc26f0d0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7fc0dc26f160>, 'attr': 'group_tree'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f56e5b5c160>, 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7fc0dc26f280>, 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3333,7 +3339,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f56e5b5c1f0>, 'attr': 'show'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7fc0dc26f310>, 'attr': 'show'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3369,43 +3375,6 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
     for node in reversed(self.node_tree.nodes):
         if node.bl_idname == &#39;NodeGroupOutput&#39;:
             return node</code></pre>
-</details>
-</dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.draw_buttons"><code class="name flex">
-<span>def <span class="ident">draw_buttons</span></span>(<span>self, context, layout)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def draw_buttons(self, context, layout):
-    if self.node_tree:
-        row_description = layout.row()
-
-        row = row_description.row(align=True)
-        row.prop(self, &#39;is_active&#39;, toggle=True)
-        row = row.row(align=True)
-        # row.prop(self, &#39;show&#39;, text=&#34;&#34;, icon=f&#39;RESTRICT_VIEW_{&#34;OFF&#34; if self.show else &#34;ON&#34;}&#39;)
-        row.prop(self.node_tree, &#39;use_fake_user&#39;, text=&#39;&#39;)
-
-        add_description = row_description.operator(&#39;node.add_tree_description&#39;, text=&#39;&#39;, icon=&#39;QUESTION&#39;)
-        add_description.tree_name = self.node_tree.name
-        add_description.description = self.node_tree.description
-
-    col = layout.column()
-    # col.template_ID(self, &#39;group_tree&#39;)
-    row_name = col.row()
-    row_ops = col.row()
-    row_search = row_ops.row(align=True)
-    row_search.operator(&#39;node.search_group_tree&#39;, text=&#39;&#39;, icon=&#39;VIEWZOOM&#39;)
-    if self.group_tree:
-        row_name.prop(self.group_tree, &#39;name&#39;, text=&#39;&#39;)
-        row_search.operator(&#39;node.edit_group_tree&#39;, text=&#39;Edit&#39;, icon=&#39;FILE_PARENT&#39;)
-        row_ops.operator(&#39;node.ungroup_group_tree&#39;, text=&#39;&#39;, icon=&#39;MOD_PHYSICS&#39;)
-    else:
-        row_search.operator(&#39;node.add_group_tree&#39;, text=&#39;New&#39;, icon=&#39;ADD&#39;)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter"><code class="name flex">
@@ -3556,25 +3525,45 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <ul class="hlist">
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.absolute_location" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.absolute_location">absolute_location</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.copy" href="../node_tree.html#sverchok.node_tree.UpdateNodes.copy">copy</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.draw_buttons" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.draw_buttons">draw_buttons</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.draw_buttons_ext" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.draw_buttons_ext">draw_buttons_ext</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.free" href="../node_tree.html#sverchok.node_tree.UpdateNodes.free">free</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.get_bpy_data_from_name" href="../node_tree.html#sverchok.node_tree.NodeUtils.get_bpy_data_from_name">get_bpy_data_from_name</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.init" href="../node_tree.html#sverchok.node_tree.UpdateNodes.init">init</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.insert_link" href="../node_tree.html#sverchok.node_tree.UpdateNodes.insert_link">insert_link</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_animation_dependent" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_animation_dependent">is_animation_dependent</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_scene_dependent" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_scene_dependent">is_scene_dependent</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_from" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.migrate_from">migrate_from</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_links_from" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.migrate_links_from">migrate_links_from</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.node_id" href="../node_tree.html#sverchok.node_tree.UpdateNodes.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu">node_replacement_menu</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.poll" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.poll">poll</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons">prefs_over_sized_buttons</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.process_node" href="../node_tree.html#sverchok.node_tree.UpdateNodes.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.rclick_menu" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.rclick_menu">rclick_menu</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.refresh_node" href="../node_tree.html#sverchok.node_tree.UpdateNodes.refresh_node">refresh_node</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.set_temp_color" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.set_temp_color">set_temp_color</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_copy" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_copy">sv_copy</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_default_color" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_default_color">sv_default_color</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">sv_draw_buttons</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext">sv_draw_buttons_ext</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_free" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_free">sv_free</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_init" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_init">sv_init</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_internal_links" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_internal_links">sv_internal_links</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_new_input" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_new_input">sv_new_input</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_update" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_update">sv_update</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update">update</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_interactive_mode" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_interactive_mode">update_interactive_mode</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_ui" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_ui">update_ui</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.wrapper_tracked_ui_draw_op" href="../node_tree.html#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
+</ul>
+</li>
+<li><code><b><a title="sverchok.node_tree.UpdateNodes" href="../node_tree.html#sverchok.node_tree.UpdateNodes">UpdateNodes</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_animatable">is_animatable</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.is_interactive" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_interactive">is_interactive</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.n_id" href="../node_tree.html#sverchok.node_tree.UpdateNodes.n_id">n_id</a></code></li>
+<li><code><a title="sverchok.node_tree.UpdateNodes.refresh" href="../node_tree.html#sverchok.node_tree.UpdateNodes.refresh">refresh</a></code></li>
 </ul>
 </li>
 </ul>
@@ -4016,7 +4005,6 @@ def poll(cls, context):
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.bl_idname" href="#sverchok.core.node_group.SvGroupTreeNode.bl_idname">bl_idname</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.bl_label" href="#sverchok.core.node_group.SvGroupTreeNode.bl_label">bl_label</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.bl_rna" href="#sverchok.core.node_group.SvGroupTreeNode.bl_rna">bl_rna</a></code></li>
-<li><code><a title="sverchok.core.node_group.SvGroupTreeNode.draw_buttons" href="#sverchok.core.node_group.SvGroupTreeNode.draw_buttons">draw_buttons</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.group_tree">group_tree</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.is_active" href="#sverchok.core.node_group.SvGroupTreeNode.is_active">is_active</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.is_registered_node_type" href="#sverchok.core.node_group.SvGroupTreeNode.is_registered_node_type">is_registered_node_type</a></code></li>
