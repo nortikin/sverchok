@@ -3,7 +3,9 @@ Node API
 ========
 
 This page claims to define all aspects of node creation. A brief introduction
-to node creation is represented :doc:`on this page <add_new_node>`.
+to node creation is represented :doc:`on this page <add_new_node>`. Api
+documentation of base class of all nodes can be found
+`here <http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html>`_
 
 The Code of a new node should be created in a separate file. The file should be placed in
 one of the available categories in the ``nodes`` folder.

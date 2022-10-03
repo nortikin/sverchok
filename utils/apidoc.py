@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
+import traceback
 """
 Tools to generate Sverchok API documentation in HTML format.
 
@@ -84,5 +84,6 @@ if __name__ == "__main__":
         sys.exit(0)
     except Exception as e:
         print(e)
+        traceback.print_exc()
         sys.exit(1)
 
