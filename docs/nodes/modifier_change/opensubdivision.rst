@@ -1,4 +1,4 @@
-OpenSubdivision Node
+Catmull-Clark Subdivision Node
 ====================
 
 Functionality
@@ -39,6 +39,17 @@ Indices in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relate
 
 Examples of usage
 -----------------
+(Old)
 .. image:: https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png
 
+(Old)
 .. image:: https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png
+
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_vector_test.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_many_bodies.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_level0_ngons.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_node_mute.png

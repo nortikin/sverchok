@@ -16,6 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Implements the Catmull-Clark Subdivision Node 
+# sverchok/nodes/modifier_change/opensubdivision.py
+
 import bpy
 from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
@@ -31,9 +34,9 @@ except ModuleNotFoundError:
 
 from itertools import chain 
 import traceback 
-class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
-    bl_idname = "SvOpenSubdivisionNode"
-    bl_label = "OpenSubdivision"
+class SvCatmullClarkSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
+    bl_idname = "SvCatmullClarkSubdivisionNode" # Use this for index.md reference 
+    bl_label = "Catmull-Clark Subdivision"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
 
@@ -106,8 +109,8 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
         self.outputs['Edges'].sv_set(new_meshes['edges'])
         self.outputs['Faces'].sv_set(new_meshes['faces'])
 
-def register():
-    bpy.utils.register_class(SvOpenSubdivisionNode)
+def register():    
+    bpy.utils.register_class(SvCatmullClarkSubdivisionNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvOpenSubdivisionNode)
+    bpy.utils.unregister_class(SvCatmullClarkSubdivisionNode)
