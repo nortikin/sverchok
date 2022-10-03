@@ -37,7 +37,7 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
 
-    maxSubdivision = 5 # creates a self.maxSubdivision attribute 
+    maxSubdivision = 6 # creates a self.maxSubdivision attribute 
 
     # Mute Node Implementation 
     @property
@@ -90,9 +90,15 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
                 faceVerts = list(chain.from_iterable(faces))
                 vertsPerFace = [len(face) for face in faces]
 
-                new_mesh = pysubdivide(subdivision_level,vertices,faceVerts,vertsPerFace)
+                new_mesh = pysubdivide(subdivision_level,
+                vertices,
+                faces,
+                faceVerts,
+                vertsPerFace,
+                verbose = False
+                )
                 
-                new_meshes['vertices'].append(new_mesh['vertices']) # ctypes implementation 
+                new_meshes['vertices'].append(new_mesh['vertices'])
                 new_meshes['edges'].append(new_mesh['edges'])
                 new_meshes['faces'].append(new_mesh['faces'])
 
