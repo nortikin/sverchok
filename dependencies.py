@@ -205,7 +205,7 @@ try:
     pyOpenSubdiv_d.message = "pyOpenSubdiv package is available"
     pyOpenSubdiv_d.module = pyOpenSubdiv
 except ImportError:
-    pyOpenSubdiv_d.message = "sv: pyOpenSubdiv package is not available, the Catmull-Clark Subdivision will not be available"
+    pyOpenSubdiv_d.message = "sv: pyOpenSubdiv package is not available, the Catmull-Clark Subdivision node will not be available"
     info(pyOpenSubdiv_d.message)
     pyOpenSubdiv = None 
 
