@@ -1,5 +1,5 @@
-Select Mesh Elements by Location
-================================
+Select Mesh Elements
+====================
 
 Functionality
 -------------
