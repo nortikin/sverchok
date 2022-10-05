@@ -42,6 +42,7 @@ from itertools import chain
 from typing import Any, List, Union, TYPE_CHECKING
 
 import bpy
+from sverchok.data_structure import fixed_iter
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree
@@ -136,6 +137,63 @@ def get_sv_trees():
 # In general it&#39;s still arbitrary set of functionality (like module which fully consists with functions)
 # But here the functions are combine with data which they handle
 
+
+class BlDomains(Enum):
+    # don&#39;t change the order - new items add to the end
+    POINT = &#39;Point&#39;
+    EDGE = &#39;Edge&#39;
+    FACE = &#39;Face&#39;
+    CORNER = &#39;Face Corner&#39;
+
+    # It does not have sense to include these attributes because there is no API
+    # for generating instances and applying attributes to a curve.
+    # CURVE = &#39;Spline&#39;
+    # INSTANCE = &#39;Instance&#39;
+
+
+class BlObject:
+    def __init__(self, obj):
+        self._obj: bpy.types.Object = obj
+
+    def set_attribute(self, values, attr_name, domain=&#39;POINT&#39;, value_type=&#39;FLOAT&#39;):
+        obj = self._obj
+        attr = obj.data.attributes.get(attr_name)
+        if attr is None:
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+        elif attr.data_type != value_type or attr.domain != domain:
+            obj.data.attributes.remove(attr)
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+
+        if domain == &#39;POINT&#39;:
+            amount = len(obj.data.vertices)
+        elif domain == &#39;EDGE&#39;:
+            amount = len(obj.data.edges)
+        elif domain == &#39;CORNER&#39;:
+            amount = len(obj.data.loops)
+        elif domain == &#39;FACE&#39;:
+            amount = len(obj.data.polygons)
+        else:
+            raise TypeError(f&#39;Unsupported domain {domain}&#39;)
+
+        if value_type in [&#39;FLOAT&#39;, &#39;INT&#39;, &#39;BOOLEAN&#39;]:
+            data = list(fixed_iter(values, amount))
+        elif value_type in [&#39;FLOAT_VECTOR&#39;, &#39;FLOAT_COLOR&#39;]:
+            data = [co for v in fixed_iter(values, amount) for co in v]
+        elif value_type == &#39;FLOAT2&#39;:
+            data = [co for v in fixed_iter(values, amount) for co in v[:2]]
+        else:
+            raise TypeError(f&#39;Unsupported type {value_type}&#39;)
+
+        if value_type in [&#34;FLOAT&#34;, &#34;INT&#34;, &#34;BOOLEAN&#34;]:
+            attr.data.foreach_set(&#34;value&#34;, data)
+        elif value_type in [&#34;FLOAT_VECTOR&#34;, &#34;FLOAT2&#34;]:
+            attr.data.foreach_set(&#34;vector&#34;, data)
+        else:
+            attr.data.foreach_set(&#34;color&#34;, data)
+
+        # attr.data.update()
+
+
 class BlModifier:
     def __init__(self, modifier):
         self._mod: bpy.types.Modifier = modifier
@@ -150,7 +208,46 @@ class BlModifier:
         return self._mod[name]
 
     def set_tree_prop(self, name, value):
+        &#34;&#34;&#34;Good for coping properties from one modifier to another&#34;&#34;&#34;
         self._mod[name] = value
+
+    def set_tree_data(self, name, data, domain=&#39;POINT&#39;):
+        &#34;&#34;&#34;Transfer py data to node modifier tree&#34;&#34;&#34;
+
+        # transfer single value
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+        if not BlTree(self._mod.node_group).is_field(name) and len(data) != 1:
+            data = data[:1]
+        if len(data) == 1:
+            value = data[0]
+            self._mod[f&#34;{name}_use_attribute&#34;] = 0
+            if isinstance(value, (list, tuple)):  # list of single vertex
+                # for some reason node modifier can&#39;t apply python sequences directly
+                for i, v in enumerate(value):
+                    self._mod[name][i] = v
+            else:
+                sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+                if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+                    value = int(value)
+                elif sock.type == &#39;VALUE&#39;:
+                    value = float(value)
+                self._mod[name] = value
+
+        # transfer field
+        else:
+            self._mod[f&#34;{name}_use_attribute&#34;] = 1
+            self._mod[f&#34;{name}_attribute_name&#34;] = name
+            obj = BlObject(self._mod.id_data)
+            sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+            if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;} and not isinstance(data[0], int):
+                data = [int(i) for i in data]
+            obj.set_attribute(data, name, domain, value_type=sock.attribute_type)
+
+    def remove(self):
+        obj = self._mod.id_data
+        obj.modifiers.remove(self._mod)
+        self._mod = None
 
     @property
     def type(self) -&gt; str:
@@ -224,9 +321,19 @@ class BlTree:
     def __init__(self, tree):
         self._tree = tree
 
-    @property
-    def is_group_tree(self) -&gt; bool:
-        return self._tree.bl_idname == BlTrees.GROUP_ID
+    def group_input(self):
+        for node in self._tree.nodes:
+            if node.bl_idname == &#39;NodeGroupInput&#39;:
+                return node
+        return None
+
+    def is_field(self, input_socket_identifier):
+        &#34;&#34;&#34;Check whether input tree socket expects field (dimond socket)&#34;&#34;&#34;
+        if (group := self.group_input()) is None:
+            raise LookupError(f&#39;Group input node is required &#39;
+                              f&#39;which is not found in &#34;{self._tree.name}&#34; tree&#39;)
+        sock = BlSocket.from_identifier(group.outputs, input_socket_identifier)
+        return sock.display_shape == &#39;DIAMOND&#39;
 
 
 class BlNode:
@@ -257,6 +364,86 @@ class BlNode:
         except ValueError:
             return self.data.bl_idname
         return id_name
+
+
+class BlSocket:
+    _attr_types = {
+        &#39;VECTOR&#39;: &#39;FLOAT_VECTOR&#39;,
+        &#39;VALUE&#39;: &#39;FLOAT&#39;,
+        &#39;RGBA&#39;: &#39;FLOAT_COLOR&#39;,
+        &#39;INT&#39;: &#39;INT&#39;,
+        &#39;BOOLEAN&#39;: &#39;BOOLEAN&#39;,
+    }
+
+    _sv_types = {
+        &#39;VECTOR&#39;: &#39;SvVerticesSocket&#39;,
+        &#39;VALUE&#39;: &#39;SvStringsSocket&#39;,
+        &#39;RGBA&#39;: &#39;SvColorSocket&#39;,
+        &#39;INT&#39;: &#39;SvStringsSocket&#39;,
+        &#39;STRING&#39;: &#39;SvTextSocket&#39;,
+        &#39;BOOLEAN&#39;: &#39;SvStringsSocket&#39;,
+        &#39;OBJECT&#39;: &#39;SvObjectSocket&#39;,
+        &#39;COLLECTION&#39;: &#39;SvCollectionSocket&#39;,
+    }
+
+    def __init__(self, socket):
+        self._sock: bpy.types.NodeSocket = socket
+
+    def copy_properties(self, sv_sock):
+        sv_sock.name = self._sock.name
+
+        if sv_sock.bl_idname == &#39;SvStringsSocket&#39;:
+            if self._sock.type == &#39;VALUE&#39;:
+                sv_sock.default_property_type = &#39;float&#39;
+            elif self._sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+                sv_sock.default_property_type = &#39;int&#39;
+            else:
+                return  # There is no default property for such type
+            if sv_sock.default_property == 0:  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == &#39;SvVerticesSocket&#39;:
+            if sv_sock.default_property[:] == (0, 0, 0):  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == &#39;SvObjectSocket&#39;:
+            if sv_sock.default_property is None:  # was unchanged by user
+                sv_sock.object_ref_pointer = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif hasattr(sv_sock, &#39;default_property&#39;):
+            sv_default = BPYProperty(sv_sock, &#39;default_property&#39;).default_value
+            if sv_default != sv_sock.default_property:
+                return  # the value was already changed by user
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+
+    @classmethod
+    def from_identifier(cls, sockets, identifier):
+        for s in sockets:
+            if s.identifier == identifier:
+                return cls(s)
+        raise LookupError(f&#34;Socket with {identifier=} was not found&#34;)
+
+    @property
+    def attribute_type(self):
+        return self._attr_types[self._sock.type]
+
+    @property
+    def sverchok_type(self):
+        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+            return &#39;SvStringsSocket&#39;
+        return sv_type
+
+    @property
+    def type(self):
+        return self._sock.type
+
+    @property
+    def display_shape(self):
+        return self._sock.display_shape
 
 
 class BPYProperty:
@@ -1356,6 +1543,52 @@ in this example the collection has two items, each item has 3 properties</p></di
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.handle_blender_data.BlDomains"><code class="flex name class">
+<span>class <span class="ident">BlDomains</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlDomains(Enum):
+    # don&#39;t change the order - new items add to the end
+    POINT = &#39;Point&#39;
+    EDGE = &#39;Edge&#39;
+    FACE = &#39;Face&#39;
+    CORNER = &#39;Face Corner&#39;
+
+    # It does not have sense to include these attributes because there is no API
+    # for generating instances and applying attributes to a curve.
+    # CURVE = &#39;Spline&#39;
+    # INSTANCE = &#39;Instance&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlDomains.CORNER"><code class="name">var <span class="ident">CORNER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlDomains.EDGE"><code class="name">var <span class="ident">EDGE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlDomains.FACE"><code class="name">var <span class="ident">FACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlDomains.POINT"><code class="name">var <span class="ident">POINT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.handle_blender_data.BlModifier"><code class="flex name class">
 <span>class <span class="ident">BlModifier</span></span>
 <span>(</span><span>modifier)</span>
@@ -1380,7 +1613,46 @@ in this example the collection has two items, each item has 3 properties</p></di
         return self._mod[name]
 
     def set_tree_prop(self, name, value):
+        &#34;&#34;&#34;Good for coping properties from one modifier to another&#34;&#34;&#34;
         self._mod[name] = value
+
+    def set_tree_data(self, name, data, domain=&#39;POINT&#39;):
+        &#34;&#34;&#34;Transfer py data to node modifier tree&#34;&#34;&#34;
+
+        # transfer single value
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+        if not BlTree(self._mod.node_group).is_field(name) and len(data) != 1:
+            data = data[:1]
+        if len(data) == 1:
+            value = data[0]
+            self._mod[f&#34;{name}_use_attribute&#34;] = 0
+            if isinstance(value, (list, tuple)):  # list of single vertex
+                # for some reason node modifier can&#39;t apply python sequences directly
+                for i, v in enumerate(value):
+                    self._mod[name][i] = v
+            else:
+                sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+                if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+                    value = int(value)
+                elif sock.type == &#39;VALUE&#39;:
+                    value = float(value)
+                self._mod[name] = value
+
+        # transfer field
+        else:
+            self._mod[f&#34;{name}_use_attribute&#34;] = 1
+            self._mod[f&#34;{name}_attribute_name&#34;] = name
+            obj = BlObject(self._mod.id_data)
+            sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+            if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;} and not isinstance(data[0], int):
+                data = [int(i) for i in data]
+            obj.set_attribute(data, name, domain, value_type=sock.attribute_type)
+
+    def remove(self):
+        obj = self._mod.id_data
+        obj.modifiers.remove(self._mod)
+        self._mod = None
 
     @property
     def type(self) -&gt; str:
@@ -1461,6 +1733,21 @@ def type(self) -&gt; str:
     return self._mod[name]</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove(self):
+    obj = self._mod.id_data
+    obj.modifiers.remove(self._mod)
+    self._mod = None</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.handle_blender_data.BlModifier.set_property"><code class="name flex">
 <span>def <span class="ident">set_property</span></span>(<span>self, name, value)</span>
 </code></dt>
@@ -1474,16 +1761,60 @@ def type(self) -&gt; str:
     setattr(self._mod, name, value)</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.handle_blender_data.BlModifier.set_tree_data"><code class="name flex">
+<span>def <span class="ident">set_tree_data</span></span>(<span>self, name, data, domain='POINT')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transfer py data to node modifier tree</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_tree_data(self, name, data, domain=&#39;POINT&#39;):
+    &#34;&#34;&#34;Transfer py data to node modifier tree&#34;&#34;&#34;
+
+    # transfer single value
+    if not isinstance(data, (list, tuple)):
+        data = [data]
+    if not BlTree(self._mod.node_group).is_field(name) and len(data) != 1:
+        data = data[:1]
+    if len(data) == 1:
+        value = data[0]
+        self._mod[f&#34;{name}_use_attribute&#34;] = 0
+        if isinstance(value, (list, tuple)):  # list of single vertex
+            # for some reason node modifier can&#39;t apply python sequences directly
+            for i, v in enumerate(value):
+                self._mod[name][i] = v
+        else:
+            sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+            if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+                value = int(value)
+            elif sock.type == &#39;VALUE&#39;:
+                value = float(value)
+            self._mod[name] = value
+
+    # transfer field
+    else:
+        self._mod[f&#34;{name}_use_attribute&#34;] = 1
+        self._mod[f&#34;{name}_attribute_name&#34;] = name
+        obj = BlObject(self._mod.id_data)
+        sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+        if sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;} and not isinstance(data[0], int):
+            data = [int(i) for i in data]
+        obj.set_attribute(data, name, domain, value_type=sock.attribute_type)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.handle_blender_data.BlModifier.set_tree_prop"><code class="name flex">
 <span>def <span class="ident">set_tree_prop</span></span>(<span>self, name, value)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Good for coping properties from one modifier to another</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def set_tree_prop(self, name, value):
+    &#34;&#34;&#34;Good for coping properties from one modifier to another&#34;&#34;&#34;
     self._mod[name] = value</code></pre>
 </details>
 </dd>
@@ -1586,6 +1917,317 @@ def properties(self) -&gt; List[BPYProperty]:
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.handle_blender_data.BlObject"><code class="flex name class">
+<span>class <span class="ident">BlObject</span></span>
+<span>(</span><span>obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlObject:
+    def __init__(self, obj):
+        self._obj: bpy.types.Object = obj
+
+    def set_attribute(self, values, attr_name, domain=&#39;POINT&#39;, value_type=&#39;FLOAT&#39;):
+        obj = self._obj
+        attr = obj.data.attributes.get(attr_name)
+        if attr is None:
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+        elif attr.data_type != value_type or attr.domain != domain:
+            obj.data.attributes.remove(attr)
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+
+        if domain == &#39;POINT&#39;:
+            amount = len(obj.data.vertices)
+        elif domain == &#39;EDGE&#39;:
+            amount = len(obj.data.edges)
+        elif domain == &#39;CORNER&#39;:
+            amount = len(obj.data.loops)
+        elif domain == &#39;FACE&#39;:
+            amount = len(obj.data.polygons)
+        else:
+            raise TypeError(f&#39;Unsupported domain {domain}&#39;)
+
+        if value_type in [&#39;FLOAT&#39;, &#39;INT&#39;, &#39;BOOLEAN&#39;]:
+            data = list(fixed_iter(values, amount))
+        elif value_type in [&#39;FLOAT_VECTOR&#39;, &#39;FLOAT_COLOR&#39;]:
+            data = [co for v in fixed_iter(values, amount) for co in v]
+        elif value_type == &#39;FLOAT2&#39;:
+            data = [co for v in fixed_iter(values, amount) for co in v[:2]]
+        else:
+            raise TypeError(f&#39;Unsupported type {value_type}&#39;)
+
+        if value_type in [&#34;FLOAT&#34;, &#34;INT&#34;, &#34;BOOLEAN&#34;]:
+            attr.data.foreach_set(&#34;value&#34;, data)
+        elif value_type in [&#34;FLOAT_VECTOR&#34;, &#34;FLOAT2&#34;]:
+            attr.data.foreach_set(&#34;vector&#34;, data)
+        else:
+            attr.data.foreach_set(&#34;color&#34;, data)
+
+        # attr.data.update()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlObject.set_attribute"><code class="name flex">
+<span>def <span class="ident">set_attribute</span></span>(<span>self, values, attr_name, domain='POINT', value_type='FLOAT')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_attribute(self, values, attr_name, domain=&#39;POINT&#39;, value_type=&#39;FLOAT&#39;):
+    obj = self._obj
+    attr = obj.data.attributes.get(attr_name)
+    if attr is None:
+        attr = obj.data.attributes.new(attr_name, value_type, domain)
+    elif attr.data_type != value_type or attr.domain != domain:
+        obj.data.attributes.remove(attr)
+        attr = obj.data.attributes.new(attr_name, value_type, domain)
+
+    if domain == &#39;POINT&#39;:
+        amount = len(obj.data.vertices)
+    elif domain == &#39;EDGE&#39;:
+        amount = len(obj.data.edges)
+    elif domain == &#39;CORNER&#39;:
+        amount = len(obj.data.loops)
+    elif domain == &#39;FACE&#39;:
+        amount = len(obj.data.polygons)
+    else:
+        raise TypeError(f&#39;Unsupported domain {domain}&#39;)
+
+    if value_type in [&#39;FLOAT&#39;, &#39;INT&#39;, &#39;BOOLEAN&#39;]:
+        data = list(fixed_iter(values, amount))
+    elif value_type in [&#39;FLOAT_VECTOR&#39;, &#39;FLOAT_COLOR&#39;]:
+        data = [co for v in fixed_iter(values, amount) for co in v]
+    elif value_type == &#39;FLOAT2&#39;:
+        data = [co for v in fixed_iter(values, amount) for co in v[:2]]
+    else:
+        raise TypeError(f&#39;Unsupported type {value_type}&#39;)
+
+    if value_type in [&#34;FLOAT&#34;, &#34;INT&#34;, &#34;BOOLEAN&#34;]:
+        attr.data.foreach_set(&#34;value&#34;, data)
+    elif value_type in [&#34;FLOAT_VECTOR&#34;, &#34;FLOAT2&#34;]:
+        attr.data.foreach_set(&#34;vector&#34;, data)
+    else:
+        attr.data.foreach_set(&#34;color&#34;, data)
+
+    # attr.data.update()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlSocket"><code class="flex name class">
+<span>class <span class="ident">BlSocket</span></span>
+<span>(</span><span>socket)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlSocket:
+    _attr_types = {
+        &#39;VECTOR&#39;: &#39;FLOAT_VECTOR&#39;,
+        &#39;VALUE&#39;: &#39;FLOAT&#39;,
+        &#39;RGBA&#39;: &#39;FLOAT_COLOR&#39;,
+        &#39;INT&#39;: &#39;INT&#39;,
+        &#39;BOOLEAN&#39;: &#39;BOOLEAN&#39;,
+    }
+
+    _sv_types = {
+        &#39;VECTOR&#39;: &#39;SvVerticesSocket&#39;,
+        &#39;VALUE&#39;: &#39;SvStringsSocket&#39;,
+        &#39;RGBA&#39;: &#39;SvColorSocket&#39;,
+        &#39;INT&#39;: &#39;SvStringsSocket&#39;,
+        &#39;STRING&#39;: &#39;SvTextSocket&#39;,
+        &#39;BOOLEAN&#39;: &#39;SvStringsSocket&#39;,
+        &#39;OBJECT&#39;: &#39;SvObjectSocket&#39;,
+        &#39;COLLECTION&#39;: &#39;SvCollectionSocket&#39;,
+    }
+
+    def __init__(self, socket):
+        self._sock: bpy.types.NodeSocket = socket
+
+    def copy_properties(self, sv_sock):
+        sv_sock.name = self._sock.name
+
+        if sv_sock.bl_idname == &#39;SvStringsSocket&#39;:
+            if self._sock.type == &#39;VALUE&#39;:
+                sv_sock.default_property_type = &#39;float&#39;
+            elif self._sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+                sv_sock.default_property_type = &#39;int&#39;
+            else:
+                return  # There is no default property for such type
+            if sv_sock.default_property == 0:  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == &#39;SvVerticesSocket&#39;:
+            if sv_sock.default_property[:] == (0, 0, 0):  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == &#39;SvObjectSocket&#39;:
+            if sv_sock.default_property is None:  # was unchanged by user
+                sv_sock.object_ref_pointer = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif hasattr(sv_sock, &#39;default_property&#39;):
+            sv_default = BPYProperty(sv_sock, &#39;default_property&#39;).default_value
+            if sv_default != sv_sock.default_property:
+                return  # the value was already changed by user
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+
+    @classmethod
+    def from_identifier(cls, sockets, identifier):
+        for s in sockets:
+            if s.identifier == identifier:
+                return cls(s)
+        raise LookupError(f&#34;Socket with {identifier=} was not found&#34;)
+
+    @property
+    def attribute_type(self):
+        return self._attr_types[self._sock.type]
+
+    @property
+    def sverchok_type(self):
+        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+            return &#39;SvStringsSocket&#39;
+        return sv_type
+
+    @property
+    def type(self):
+        return self._sock.type
+
+    @property
+    def display_shape(self):
+        return self._sock.display_shape</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.from_identifier"><code class="name flex">
+<span>def <span class="ident">from_identifier</span></span>(<span>sockets, identifier)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_identifier(cls, sockets, identifier):
+    for s in sockets:
+        if s.identifier == identifier:
+            return cls(s)
+    raise LookupError(f&#34;Socket with {identifier=} was not found&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.attribute_type"><code class="name">var <span class="ident">attribute_type</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def attribute_type(self):
+    return self._attr_types[self._sock.type]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.display_shape"><code class="name">var <span class="ident">display_shape</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def display_shape(self):
+    return self._sock.display_shape</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.sverchok_type"><code class="name">var <span class="ident">sverchok_type</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sverchok_type(self):
+    if (sv_type := self._sv_types.get(self._sock.type)) is None:
+        return &#39;SvStringsSocket&#39;
+    return sv_type</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def type(self):
+    return self._sock.type</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlSocket.copy_properties"><code class="name flex">
+<span>def <span class="ident">copy_properties</span></span>(<span>self, sv_sock)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_properties(self, sv_sock):
+    sv_sock.name = self._sock.name
+
+    if sv_sock.bl_idname == &#39;SvStringsSocket&#39;:
+        if self._sock.type == &#39;VALUE&#39;:
+            sv_sock.default_property_type = &#39;float&#39;
+        elif self._sock.type in {&#39;INT&#39;, &#39;BOOLEAN&#39;}:
+            sv_sock.default_property_type = &#39;int&#39;
+        else:
+            return  # There is no default property for such type
+        if sv_sock.default_property == 0:  # was unchanged by user
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+
+    elif sv_sock.bl_idname == &#39;SvVerticesSocket&#39;:
+        if sv_sock.default_property[:] == (0, 0, 0):  # was unchanged by user
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+
+    elif sv_sock.bl_idname == &#39;SvObjectSocket&#39;:
+        if sv_sock.default_property is None:  # was unchanged by user
+            sv_sock.object_ref_pointer = self._sock.default_value
+            sv_sock.use_prop = True
+
+    elif hasattr(sv_sock, &#39;default_property&#39;):
+        sv_default = BPYProperty(sv_sock, &#39;default_property&#39;).default_value
+        if sv_default != sv_sock.default_property:
+            return  # the value was already changed by user
+        sv_sock.default_property = self._sock.default_value
+        sv_sock.use_prop = True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.handle_blender_data.BlTree"><code class="flex name class">
 <span>class <span class="ident">BlTree</span></span>
 <span>(</span><span>tree)</span>
@@ -1600,22 +2242,54 @@ def properties(self) -&gt; List[BPYProperty]:
     def __init__(self, tree):
         self._tree = tree
 
-    @property
-    def is_group_tree(self) -&gt; bool:
-        return self._tree.bl_idname == BlTrees.GROUP_ID</code></pre>
+    def group_input(self):
+        for node in self._tree.nodes:
+            if node.bl_idname == &#39;NodeGroupInput&#39;:
+                return node
+        return None
+
+    def is_field(self, input_socket_identifier):
+        &#34;&#34;&#34;Check whether input tree socket expects field (dimond socket)&#34;&#34;&#34;
+        if (group := self.group_input()) is None:
+            raise LookupError(f&#39;Group input node is required &#39;
+                              f&#39;which is not found in &#34;{self._tree.name}&#34; tree&#39;)
+        sock = BlSocket.from_identifier(group.outputs, input_socket_identifier)
+        return sock.display_shape == &#39;DIAMOND&#39;</code></pre>
 </details>
-<h3>Instance variables</h3>
+<h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.handle_blender_data.BlTree.is_group_tree"><code class="name">var <span class="ident">is_group_tree</span> : bool</code></dt>
+<dt id="sverchok.utils.handle_blender_data.BlTree.group_input"><code class="name flex">
+<span>def <span class="ident">group_input</span></span>(<span>self)</span>
+</code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@property
-def is_group_tree(self) -&gt; bool:
-    return self._tree.bl_idname == BlTrees.GROUP_ID</code></pre>
+<pre><code class="python">def group_input(self):
+    for node in self._tree.nodes:
+        if node.bl_idname == &#39;NodeGroupInput&#39;:
+            return node
+    return None</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.handle_blender_data.BlTree.is_field"><code class="name flex">
+<span>def <span class="ident">is_field</span></span>(<span>self, input_socket_identifier)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check whether input tree socket expects field (dimond socket)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_field(self, input_socket_identifier):
+    &#34;&#34;&#34;Check whether input tree socket expects field (dimond socket)&#34;&#34;&#34;
+    if (group := self.group_input()) is None:
+        raise LookupError(f&#39;Group input node is required &#39;
+                          f&#39;which is not found in &#34;{self._tree.name}&#34; tree&#39;)
+    sock = BlSocket.from_identifier(group.outputs, input_socket_identifier)
+    return sock.display_shape == &#39;DIAMOND&#39;</code></pre>
 </details>
 </dd>
 </dl>
@@ -1784,11 +2458,22 @@ def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
 </ul>
 </li>
 <li>
-<h4><code><a title="sverchok.utils.handle_blender_data.BlModifier" href="#sverchok.utils.handle_blender_data.BlModifier">BlModifier</a></code></h4>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlDomains" href="#sverchok.utils.handle_blender_data.BlDomains">BlDomains</a></code></h4>
 <ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlDomains.CORNER" href="#sverchok.utils.handle_blender_data.BlDomains.CORNER">CORNER</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlDomains.EDGE" href="#sverchok.utils.handle_blender_data.BlDomains.EDGE">EDGE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlDomains.FACE" href="#sverchok.utils.handle_blender_data.BlDomains.FACE">FACE</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlDomains.POINT" href="#sverchok.utils.handle_blender_data.BlDomains.POINT">POINT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlModifier" href="#sverchok.utils.handle_blender_data.BlModifier">BlModifier</a></code></h4>
+<ul class="two-column">
 <li><code><a title="sverchok.utils.handle_blender_data.BlModifier.get_property" href="#sverchok.utils.handle_blender_data.BlModifier.get_property">get_property</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlModifier.get_tree_prop" href="#sverchok.utils.handle_blender_data.BlModifier.get_tree_prop">get_tree_prop</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.remove" href="#sverchok.utils.handle_blender_data.BlModifier.remove">remove</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlModifier.set_property" href="#sverchok.utils.handle_blender_data.BlModifier.set_property">set_property</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlModifier.set_tree_data" href="#sverchok.utils.handle_blender_data.BlModifier.set_tree_data">set_tree_data</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlModifier.set_tree_prop" href="#sverchok.utils.handle_blender_data.BlModifier.set_tree_prop">set_tree_prop</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlModifier.type" href="#sverchok.utils.handle_blender_data.BlModifier.type">type</a></code></li>
 </ul>
@@ -1803,9 +2488,27 @@ def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
 </ul>
 </li>
 <li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlObject" href="#sverchok.utils.handle_blender_data.BlObject">BlObject</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlObject.set_attribute" href="#sverchok.utils.handle_blender_data.BlObject.set_attribute">set_attribute</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlSocket" href="#sverchok.utils.handle_blender_data.BlSocket">BlSocket</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.attribute_type" href="#sverchok.utils.handle_blender_data.BlSocket.attribute_type">attribute_type</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.copy_properties" href="#sverchok.utils.handle_blender_data.BlSocket.copy_properties">copy_properties</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.display_shape" href="#sverchok.utils.handle_blender_data.BlSocket.display_shape">display_shape</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.from_identifier" href="#sverchok.utils.handle_blender_data.BlSocket.from_identifier">from_identifier</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.sverchok_type" href="#sverchok.utils.handle_blender_data.BlSocket.sverchok_type">sverchok_type</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlSocket.type" href="#sverchok.utils.handle_blender_data.BlSocket.type">type</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="sverchok.utils.handle_blender_data.BlTree" href="#sverchok.utils.handle_blender_data.BlTree">BlTree</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.utils.handle_blender_data.BlTree.is_group_tree" href="#sverchok.utils.handle_blender_data.BlTree.is_group_tree">is_group_tree</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTree.group_input" href="#sverchok.utils.handle_blender_data.BlTree.group_input">group_input</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTree.is_field" href="#sverchok.utils.handle_blender_data.BlTree.is_field">is_field</a></code></li>
 </ul>
 </li>
 <li>
