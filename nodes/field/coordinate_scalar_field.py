@@ -21,9 +21,9 @@ class SvCoordScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_POINT_DISTANCE_FIELD'
 
     coordinates = [
-            ('X', "X", "Carthesian X", 0),
-            ('Y', "Y", "Carthesian Y", 1),
-            ('Z', "Z", "Carthesian or cylindrical Z", 2),
+            ('X', "X", "Cartesian X", 0),
+            ('Y', "Y", "Cartesian Y", 1),
+            ('Z', "Z", "Cartesian or cylindrical Z", 2),
             ('CYL_RHO', "Rho - Cylindrical", "Cylindrical Rho", 3),
             ('PHI', "Phi", "Cylindrical or spherical Phi", 4),
             ('SPH_RHO', "Rho - Spherical", "Spherical Rho", 5),
