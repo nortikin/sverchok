@@ -13,6 +13,7 @@ from typing import List, Union
 import numpy as np
 
 import bpy
+from bpy.props import StringProperty
 from mathutils import Matrix
 
 from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
@@ -427,6 +428,101 @@ class SvViewerNode(BlenderObjects):
             return self.bl_label
 
 
+class SvViewerLightNode(BlenderObjects):
+    """
+    Mixin for all nodes which displays any objects in viewport
+    """
+
+    is_active: bpy.props.BoolProperty(
+        name='Live',
+        default=True,
+        update=updateNode,
+        description="When enabled this will process incoming data")
+
+    def show_objects_update(self, context, to_show: bool = None):
+        """Hide / show objects. It should be only place to hide objects"""
+        to_show = to_show if to_show is not None else self.show_objects
+        for prop in self.object_data:
+            prop.obj.hide_set(not to_show)
+
+    show_objects: bpy.props.BoolProperty(
+        default=True,
+        description="Show / hide objects in viewport",
+        update=update_with_kwargs(show_objects_update))
+
+    base_data_name: bpy.props.StringProperty(
+        default='Alpha',
+        description='stores the mesh name found in the object, this mesh is instanced',
+        update=updateNode)
+
+    def draw_viewer_properties(self, layout):
+        col = layout.column(align=True)
+        row = col.row()
+
+        row_show = row.row(align=True)
+        row_show.prop(self, 'is_active', toggle=True)
+        row_show.prop(self, 'show_objects', toggle=True, text='',
+                      icon=f'HIDE_{"OFF" if self.show_objects else "ON"}')
+
+        row.operator(SvShowFlyPanelOpeartor.bl_idname, text="Options")
+
+    def draw_buttons_fly(self, layout):
+        col = layout.column()
+        row = col.row()
+
+        row_show = row.row(align=True)
+
+        row_show.prop(self, 'is_active', toggle=True)
+        row_show.prop(self, 'show_objects', toggle=True, text='',
+                      icon=f'HIDE_{"OFF" if self.show_objects else "ON"}')
+        row = row.row(align=True)
+        row.prop(self, 'selectable_objects', toggle=True, text='',
+                    icon=f"RESTRICT_SELECT_{'OFF' if self.selectable_objects else 'ON'}")
+        row.prop(self, 'render_objects', toggle=True, text='',
+                    icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
+
+        row = col.row(align=True)
+        row.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        op = row.operator(SvGenerateRandomObjectName.bl_idname, text='', icon='FILE_REFRESH')
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        row = col.row(align=True)
+        row.scale_y = 2
+        op = row.operator('node.sv_select_objects', text="Select")
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+
+    def init_viewer(self):
+        """Should be called from descendant class"""
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        self.use_custom_color = True
+
+        self.outputs.new('SvObjectSocket', "Objects")
+
+    def sv_copy(self, other):
+        """
+        Regenerate object names, and clean data
+        Use super().sv_copy(other) to override this method
+        """
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        # object and mesh lists should be clear other wise two nodes would have links to the same objects
+        self.object_data.clear()
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.show_objects:
+            # just ignore request
+            pass
+        else:
+            self.show_objects_update(None, is_show)
+
+    def draw_label(self):
+        if self.hide:
+            return f"{self.bl_label[:2]}V {self.base_data_name}"
+        else:
+            return self.bl_label
+
+
 class SvObjectNames(bpy.types.PropertyGroup):
     available_name_number: bpy.props.IntProperty(default=0, min=0, max=24)
     greek_alphabet = [
@@ -453,7 +549,41 @@ class SvObjectNames(bpy.types.PropertyGroup):
         return ''.join(random.sample(set(string.ascii_uppercase), 6))
 
 
-class SvSelectObjects(bpy.types.Operator):
+class SearchNode:
+    node_name: StringProperty()
+    tree_name: StringProperty()
+
+    @property
+    def node(self):
+        if not hasattr(self, '_node'):
+            self._node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+        return self._node
+
+    def invoke(self, context, event):
+        if hasattr(context, 'node'):
+            self._node = context.node
+        return self.execute(context)
+
+
+class SvShowFlyPanelOpeartor(bpy.types.Operator):
+    """Shows extra node options"""
+    bl_idname = 'node.sv_show_fly_panel'
+    bl_label = "Node Options"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.node = context.node
+        wm = context.window_manager
+        return wm.invoke_popup(self, width=200)
+
+    def draw(self, context):
+        self.node.draw_buttons_fly(self.layout)
+
+
+class SvSelectObjects(SearchNode, bpy.types.Operator):
     """It calls `select` method of every item in `object_data` collection of node"""
     bl_idname = 'node.sv_select_objects'
     bl_label = "Select objects"
@@ -465,16 +595,12 @@ class SvSelectObjects(bpy.types.Operator):
 
     def execute(self, context):
         prop: SvObjectData
-        for prop in context.node.object_data:
+        for prop in self.node.object_data:
             prop.select()
         return {'FINISHED'}
 
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context.node, 'object_data')
 
-
-class SvGenerateRandomObjectName(bpy.types.Operator):
+class SvGenerateRandomObjectName(SearchNode, bpy.types.Operator):
     """
     It calls get_random_name fo sv_object_names property in scene
     and assign it to base_data_name property of node
@@ -488,12 +614,8 @@ class SvGenerateRandomObjectName(bpy.types.Operator):
         return "Generate random name"
 
     def execute(self, context):
-        context.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
+        self.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
         return {'FINISHED'}
-
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context.node, 'base_data_name')
 
 
 class SvCreateMaterial(bpy.types.Operator):
@@ -518,7 +640,7 @@ class SvCreateMaterial(bpy.types.Operator):
 
 
 module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData,
-                  SvCurveData, SvCreateMaterial]
+                  SvCurveData, SvCreateMaterial, SvShowFlyPanelOpeartor]
 
 
 def register():

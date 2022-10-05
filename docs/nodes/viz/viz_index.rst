@@ -13,6 +13,7 @@ Viz
    viewer_draw_surface
 
    mesh_viewer
+   geo_nodes_viewer
    viewer_curves
    polyline_viewer
    viewer_typography

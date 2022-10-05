@@ -607,6 +607,7 @@
     SvSurfaceViewerDrawNode
     ---
     SvMeshViewer
+    SvGeoNodesViewerNode
     SvCurveViewerNodeV28
     SvPolylineViewerNode
     SvTypeViewerNodeV28
@@ -662,7 +663,6 @@
     SvSetLoopNormalsNode
     SvSetCollection
     SvCopyModifiersNode
-    SvGeometryNodeModifierNode
 
 ## Scene
     SvGetObjectsData

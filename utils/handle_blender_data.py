@@ -380,6 +380,11 @@ class BlSocket:
                 sv_sock.default_property = self._sock.default_value
                 sv_sock.use_prop = True
 
+        elif sv_sock.bl_idname == 'SvObjectSocket':
+            if sv_sock.default_property is None:  # was unchanged by user
+                sv_sock.object_ref_pointer = self._sock.default_value
+                sv_sock.use_prop = True
+
         elif hasattr(sv_sock, 'default_property'):
             sv_default = BPYProperty(sv_sock, 'default_property').default_value
             if sv_default != sv_sock.default_property:
