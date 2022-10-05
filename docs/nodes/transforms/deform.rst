@@ -1,6 +1,12 @@
 Simple Deformation
 ==================
 
+.. image:: https://user-images.githubusercontent.com/14288520/193680193-6a977d2f-cb3d-4cc1-8b00-92396da23b87.png
+  :target: https://user-images.githubusercontent.com/14288520/193680193-6a977d2f-cb3d-4cc1-8b00-92396da23b87.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/193679437-93e491be-fa8e-4854-87d7-279e7c4c3bc4.png
+  :target: https://user-images.githubusercontent.com/14288520/193679437-93e491be-fa8e-4854-87d7-279e7c4c3bc4.png
+
 Functionality
 -------------
 
@@ -41,15 +47,30 @@ This node has one output: **Vertices**.
 Examples of usage
 -----------------
 
-Bend deformation:
+**Bend deformation:**
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24372062/9cb51d1e-134e-11e7-8c23-bc7d12768606.png
+.. image:: https://user-images.githubusercontent.com/14288520/193681127-f44de94f-f8d0-4487-a02b-1a7e71ba344b.png
+  :target: https://user-images.githubusercontent.com/14288520/193681127-f44de94f-f8d0-4487-a02b-1a7e71ba344b.png
 
-Twist deformation:
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24372066/9ce9b2d6-134e-11e7-9652-4ce697498bfd.png
+---------
 
-Taper deformation:
+**Twist deformation:**
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24372065/9ce6e452-134e-11e7-9313-eba01bbc3542.png
+.. image:: https://user-images.githubusercontent.com/14288520/193681663-77127709-8762-4f78-8f4d-4c64c98411b4.png
+  :target: https://user-images.githubusercontent.com/14288520/193681663-77127709-8762-4f78-8f4d-4c64c98411b4.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+**Taper deformation:**
+
+.. image:: https://user-images.githubusercontent.com/14288520/193681680-e1970271-4283-4cf0-96ed-e2d066209fd8.png
+  :target: https://user-images.githubusercontent.com/14288520/193681680-e1970271-4283-4cf0-96ed-e2d066209fd8.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

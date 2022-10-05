@@ -49,9 +49,10 @@ Moving a circle:
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png
    :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png
 
-
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Moving vertices along Y direction with a random multiplier
 
@@ -62,6 +63,8 @@ Moving vertices along Y direction with a random multiplier
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 The node will match different data structures, in this example a surface is generated from one Ngon
 
@@ -77,6 +80,7 @@ The node will match different data structures, in this example a surface is gene
 * List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
 
 With the List Matching properties we can create different data matches, in this case with "Cycle" a complex rhythm is generated
 
@@ -87,6 +91,8 @@ With the List Matching properties we can create different data matches, in this 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Combine a Z-Line with a circle. Change a List Match Property of Move node.
 

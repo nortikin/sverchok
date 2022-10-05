@@ -51,6 +51,8 @@ Examples
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
+---------
+
 **It is possible to set different setting for different axis by using several nodes simultaneously:**
 
 .. image:: https://user-images.githubusercontent.com/28003269/59979527-21074d00-95fa-11e9-9d89-8542de922079.gif
@@ -63,6 +65,8 @@ Examples
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 **Also it is possible to align object only to part of mesh, for this just cut unnecessary part of mesh before align node.**
 

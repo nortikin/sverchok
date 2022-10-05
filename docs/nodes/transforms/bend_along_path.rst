@@ -1,6 +1,9 @@
 Bend Object Along Path
 ======================
 
+.. image:: https://user-images.githubusercontent.com/14288520/193755740-799d6be2-b30e-4b48-ad55-e23198dece66.png
+  :target: https://user-images.githubusercontent.com/14288520/193755740-799d6be2-b30e-4b48-ad55-e23198dece66.png
+
 Functionality
 -------------
 
@@ -84,9 +87,23 @@ Examples of usage
 
 Cylinder bent along curve made from NGon:
 
-.. image:: https://user-images.githubusercontent.com/284644/33626075-6a94d0e2-da1b-11e7-83bb-fc859eda2cdc.png
+.. image:: https://user-images.githubusercontent.com/14288520/193776542-3a324c97-7416-4849-ae1e-54643acf9c4c.png
+  :target: https://user-images.githubusercontent.com/14288520/193776542-3a324c97-7416-4849-ae1e-54643acf9c4c.png
+
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Hexagonal grid bent along similar curve (the curve itself is drawn in red):
 
-.. image:: https://user-images.githubusercontent.com/284644/33674756-3d0fa234-dad2-11e7-9e04-a043b94cb377.png
+.. image:: https://user-images.githubusercontent.com/14288520/193781863-d7c5b7ff-b77f-4e26-92d7-f9a236292a3f.png
+  :target: https://user-images.githubusercontent.com/14288520/193781863-d7c5b7ff-b77f-4e26-92d7-f9a236292a3f.png
 
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
