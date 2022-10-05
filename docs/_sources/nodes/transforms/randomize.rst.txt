@@ -1,7 +1,8 @@
 Randomize
 =========
 
-*destination after Beta: Modifier Change*
+.. image:: https://user-images.githubusercontent.com/14288520/194019958-bfb7326f-578e-4a59-8cbf-86a2be485312.png
+  :target: https://user-images.githubusercontent.com/14288520/194019958-bfb7326f-578e-4a59-8cbf-86a2be485312.png
 
 Functionality
 -------------
@@ -59,10 +60,10 @@ This node has one output: **Vertices**.
 Example of usage
 ----------------
 
-Given simplest nodes setup:
+Given simplest nodes setup you will have something like:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5693006/b7109768-992c-11e4-86ef-85cdba6b094d.png
+.. image:: https://user-images.githubusercontent.com/14288520/194020683-bff9d2e3-2a6d-4980-af95-775ad60023ce.png
+  :target: https://user-images.githubusercontent.com/14288520/194020683-bff9d2e3-2a6d-4980-af95-775ad60023ce.png
 
-you will have something like:
-
-.. image:: https://cloud.githubusercontent.com/assets/284644/5693007/b71402fe-992c-11e4-9e1a-da2ff3d20947.png
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

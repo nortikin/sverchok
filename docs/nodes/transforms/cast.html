@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Simple Deformation" href="deform.html" />
-    <link rel="prev" title="Bend Object Along Surface" href="bend_along_surface.html" /> 
+    <link rel="next" title="Deform by Formula" href="formula_deform_mk2.html" />
+    <link rel="prev" title="Randomize" href="randomize.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,28 +60,28 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Cast</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -143,6 +143,7 @@
              
   <section id="cast">
 <h1>Cast<a class="headerlink" href="#cast" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194025745-6f3f8e0c-ef8d-41b5-a648-a3002d498ab7.png"><img alt="https://user-images.githubusercontent.com/14288520/194025745-6f3f8e0c-ef8d-41b5-a648-a3002d498ab7.png" src="https://user-images.githubusercontent.com/14288520/194025745-6f3f8e0c-ef8d-41b5-a648-a3002d498ab7.png" /></a>
 <p>The Cast modifier shifts the shape of a mesh towards a predefined shape (sphere, cylinder, prism, UV Sphere).</p>
 <p>Mimics and expands the Blender Cast Modifier (<a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/cast.html">https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/cast.html</a>).</p>
 <p>The node accepts regular Python lists and Numpy Arrays. (Flat Arrays for scalars and two-axis arrays for vectors).</p>
@@ -150,8 +151,8 @@
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 18%" />
-<col style="width: 82%" />
+<col style="width: 16%" />
+<col style="width: 84%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameters</p></th>
@@ -165,17 +166,18 @@
 <tr class="row-odd"><td><p>Origin</p></td>
 <td><p>Determine where the origin of the shape should be:</p>
 <ul class="simple">
-<li><p>Average: The center of the mesh will be in the mean of the inputted
-vertices.</p></li>
-<li><p>External: The center of the mesh will be taken from the origin input.</p></li>
+<li><p>Average: The center of the mesh will be in the mean of the inputted vertices</p></li>
+<li><p>External: The center of the mesh will be taken from the origin input</p></li>
 </ul>
 </td>
 </tr>
 <tr class="row-even"><td><p>Size</p></td>
-<td><p>Determine where the origin of the shape should be:
-- Average: The size of the mesh will be in the mean of the inputted
-vertices.
-- External: The size of the mesh will be taken from the size input.</p></td>
+<td><p>Determine where the origin of the shape should be:</p>
+<ul class="simple">
+<li><p>Average: The size of the mesh will be in the mean of the inputted vertices</p></li>
+<li><p>External: The size of the mesh will be taken from the size input</p></li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -226,21 +228,80 @@ vertices.
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Basic example</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194028140-78483ea3-4234-46d6-ab79-a9f4aff06805.png"><img alt="https://user-images.githubusercontent.com/14288520/194028140-78483ea3-4234-46d6-ab79-a9f4aff06805.png" src="https://user-images.githubusercontent.com/14288520/194028140-78483ea3-4234-46d6-ab79-a9f4aff06805.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Cast a box to a octahedron:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_octahedron_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_octahedron_sverchok_blender_example_1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194028531-ae35beeb-0f6b-48e0-b9a4-93a7b29d0880.png"><img alt="https://user-images.githubusercontent.com/14288520/194028531-ae35beeb-0f6b-48e0-b9a4-93a7b29d0880.png" src="https://user-images.githubusercontent.com/14288520/194028531-ae35beeb-0f6b-48e0-b9a4-93a7b29d0880.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Cast a UV Sphere to a pentagonal prism:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_prism_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_prism_sverchok_blender_example_1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194029392-364622a0-a19f-4c52-9c1b-4fd521068c6a.png"><img alt="https://user-images.githubusercontent.com/14288520/194029392-364622a0-a19f-4c52-9c1b-4fd521068c6a.png" src="https://user-images.githubusercontent.com/14288520/194029392-364622a0-a19f-4c52-9c1b-4fd521068c6a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Casting Suzzane to different height prisms</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_prism_sverchok_blender_example_shape_scale.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_prism_sverchok_blender_example_shape_scale.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194030634-d5a01d83-d901-461a-9d88-5814b56f1797.png"><img alt="https://user-images.githubusercontent.com/14288520/194030634-d5a01d83-d901-461a-9d88-5814b56f1797.png" src="https://user-images.githubusercontent.com/14288520/194030634-d5a01d83-d901-461a-9d88-5814b56f1797.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Casting a plane to a scaled sphere using external origin</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_external_origin_shape_scale.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_external_origin_shape_scale.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194031922-fd4bf6a7-409f-49d8-a3e9-752612953297.png"><img alt="https://user-images.githubusercontent.com/14288520/194031922-fd4bf6a7-409f-49d8-a3e9-752612953297.png" src="https://user-images.githubusercontent.com/14288520/194031922-fd4bf6a7-409f-49d8-a3e9-752612953297.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Multiple concatenation of casts</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_external_origin_shape_scale_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_external_origin_shape_scale_2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194033124-372627cb-c8c2-4163-80a2-7948c4003b87.png"><img alt="https://user-images.githubusercontent.com/14288520/194033124-372627cb-c8c2-4163-80a2-7948c4003b87.png" src="https://user-images.githubusercontent.com/14288520/194033124-372627cb-c8c2-4163-80a2-7948c4003b87.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>All parameters are vectorized. In this example multiple origins are passed to the same shape</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_multiple_origin_shape_scale.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_sphere_sverchok_blender_example_multiple_origin_shape_scale.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194034637-fd59829d-4e9a-4354-abb8-6fdc9e9199cc.png"><img alt="https://user-images.githubusercontent.com/14288520/194034637-fd59829d-4e9a-4354-abb8-6fdc9e9199cc.png" src="https://user-images.githubusercontent.com/14288520/194034637-fd59829d-4e9a-4354-abb8-6fdc9e9199cc.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/kd_tree_MK2.html"><span class="doc">KDT Closest Verts</span></a></p></li>
+<li><p>ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>To get a tetrahedron Meridians:3 Parallels: 1.5 Shape scale: (1.08888, 1.08888, 0.8889)</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_tetrahedron_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/cast/cast_to_tetrahedron_sverchok_blender_example_1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194036065-57076049-4f34-4237-a0aa-d165b78bebb6.png"><img alt="https://user-images.githubusercontent.com/14288520/194036065-57076049-4f34-4237-a0aa-d165b78bebb6.png" src="https://user-images.githubusercontent.com/14288520/194036065-57076049-4f34-4237-a0aa-d165b78bebb6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -248,8 +309,8 @@ vertices.
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="bend_along_surface.html" class="btn btn-neutral float-left" title="Bend Object Along Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="deform.html" class="btn btn-neutral float-right" title="Simple Deformation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="randomize.html" class="btn btn-neutral float-left" title="Randomize" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="formula_deform_mk2.html" class="btn btn-neutral float-right" title="Deform by Formula" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

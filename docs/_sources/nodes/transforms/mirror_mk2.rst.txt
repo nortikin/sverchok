@@ -1,6 +1,12 @@
 Mirror
 ======
 
+.. image:: https://user-images.githubusercontent.com/14288520/191343334-b6108385-6369-4e3d-9736-74194ee4764e.png
+  :target: https://user-images.githubusercontent.com/14288520/191343334-b6108385-6369-4e3d-9736-74194ee4764e.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/191353735-e1de0be9-091b-489e-9524-c6484d59a935.png
+  :target: https://user-images.githubusercontent.com/14288520/191353735-e1de0be9-091b-489e-9524-c6484d59a935.png
+
 Functionality
 -------------
 
@@ -78,8 +84,20 @@ Example of usage
 Suzanne mirrored around some random plane:
 
 .. image:: https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png
+  :target: https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png
+
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Matrix View </nodes/viz/vd_matrix>`
+
+---------
 
 Suzanne mirrored around an axis which goes through the `(1, 1, 0)` point parallel to the Z axis:
 
 .. image:: https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png
+  :target: https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png
 
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

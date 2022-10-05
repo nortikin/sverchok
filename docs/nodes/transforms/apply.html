@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Barycentric Transform" href="barycentric_transform.html" />
-    <link rel="prev" title="Rotate" href="rotate_mk3.html" /> 
+    <link rel="prev" title="Mirror" href="mirror_mk2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,8 +60,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Matrix Apply (verts)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -71,19 +73,17 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,7 @@
              
   <section id="matrix-apply-verts">
 <h1>Matrix Apply (verts)<a class="headerlink" href="#matrix-apply-verts" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191355240-fce681b0-6b16-42bd-977c-65a7b2c0403d.png"><img alt="https://user-images.githubusercontent.com/14288520/191355240-fce681b0-6b16-42bd-977c-65a7b2c0403d.png" src="https://user-images.githubusercontent.com/14288520/191355240-fce681b0-6b16-42bd-977c-65a7b2c0403d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Applies a Transform Matrix to a list or nested lists of vectors (and therefore vertices)</p>
@@ -182,8 +183,26 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="MatrixApplyDemo1.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186410/a3e00666-3760-11e4-9d67-b32345329e9d.PNG" />
-<img alt="MatrixApplyDemo5.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186411/a3e1c14a-3760-11e4-84fe-2acaf1858ad7.PNG" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191473968-81b859bb-707f-42b9-90d4-272dce5ddfab.png"><img alt="https://user-images.githubusercontent.com/14288520/191473968-81b859bb-707f-42b9-90d4-272dce5ddfab.png" src="https://user-images.githubusercontent.com/14288520/191473968-81b859bb-707f-42b9-90d4-272dce5ddfab.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191473995-62d2c0fc-8793-4a9a-8b2e-790cc2d261d8.png"><img alt="https://user-images.githubusercontent.com/14288520/191473995-62d2c0fc-8793-4a9a-8b2e-790cc2d261d8.png" src="https://user-images.githubusercontent.com/14288520/191473995-62d2c0fc-8793-4a9a-8b2e-790cc2d261d8.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random.html"><span class="doc">Random</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -191,7 +210,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="rotate_mk3.html" class="btn btn-neutral float-left" title="Rotate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mirror_mk2.html" class="btn btn-neutral float-left" title="Mirror" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="barycentric_transform.html" class="btn btn-neutral float-right" title="Barycentric Transform" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

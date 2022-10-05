@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Bend Object Along Surface" href="bend_along_surface.html" />
-    <link rel="prev" title="Barycentric Transform" href="barycentric_transform.html" /> 
+    <link rel="prev" title="Simple Deformation" href="deform.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,10 +60,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Bend Object Along Path</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -73,17 +79,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,7 @@
              
   <section id="bend-object-along-path">
 <h1>Bend Object Along Path<a class="headerlink" href="#bend-object-along-path" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193755740-799d6be2-b30e-4b48-ad55-e23198dece66.png"><img alt="https://user-images.githubusercontent.com/14288520/193755740-799d6be2-b30e-4b48-ad55-e23198dece66.png" src="https://user-images.githubusercontent.com/14288520/193755740-799d6be2-b30e-4b48-ad55-e23198dece66.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node “bends” an object in such a way, that one of it’s axes (Z by default)
@@ -220,9 +221,23 @@ have to change the default value. This parameter is available only in the N pane
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Cylinder bent along curve made from NGon:</p>
-<img alt="https://user-images.githubusercontent.com/284644/33626075-6a94d0e2-da1b-11e7-83bb-fc859eda2cdc.png" src="https://user-images.githubusercontent.com/284644/33626075-6a94d0e2-da1b-11e7-83bb-fc859eda2cdc.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193776542-3a324c97-7416-4849-ae1e-54643acf9c4c.png"><img alt="https://user-images.githubusercontent.com/14288520/193776542-3a324c97-7416-4849-ae1e-54643acf9c4c.png" src="https://user-images.githubusercontent.com/14288520/193776542-3a324c97-7416-4849-ae1e-54643acf9c4c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Hexagonal grid bent along similar curve (the curve itself is drawn in red):</p>
-<img alt="https://user-images.githubusercontent.com/284644/33674756-3d0fa234-dad2-11e7-9e04-a043b94cb377.png" src="https://user-images.githubusercontent.com/284644/33674756-3d0fa234-dad2-11e7-9e04-a043b94cb377.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193781863-d7c5b7ff-b77f-4e26-92d7-f9a236292a3f.png"><img alt="https://user-images.githubusercontent.com/14288520/193781863-d7c5b7ff-b77f-4e26-92d7-f9a236292a3f.png" src="https://user-images.githubusercontent.com/14288520/193781863-d7c5b7ff-b77f-4e26-92d7-f9a236292a3f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -230,7 +245,7 @@ have to change the default value. This parameter is available only in the N pane
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="barycentric_transform.html" class="btn btn-neutral float-left" title="Barycentric Transform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deform.html" class="btn btn-neutral float-left" title="Simple Deformation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="bend_along_surface.html" class="btn btn-neutral float-right" title="Bend Object Along Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

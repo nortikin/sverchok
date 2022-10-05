@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Symmetrize" href="symmetrize.html" />
-    <link rel="prev" title="Deform by Formula" href="formula_deform_mk2.html" /> 
+    <link rel="next" title="Matrix Apply (verts)" href="apply.html" />
+    <link rel="prev" title="Symmetrize Mesh" href="symmetrize.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,15 +60,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mirror</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -77,13 +71,19 @@
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
 <li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
 <li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,8 @@
              
   <section id="mirror">
 <h1>Mirror<a class="headerlink" href="#mirror" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191343334-b6108385-6369-4e3d-9736-74194ee4764e.png"><img alt="https://user-images.githubusercontent.com/14288520/191343334-b6108385-6369-4e3d-9736-74194ee4764e.png" src="https://user-images.githubusercontent.com/14288520/191343334-b6108385-6369-4e3d-9736-74194ee4764e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191353735-e1de0be9-091b-489e-9524-c6484d59a935.png"><img alt="https://user-images.githubusercontent.com/14288520/191353735-e1de0be9-091b-489e-9524-c6484d59a935.png" src="https://user-images.githubusercontent.com/14288520/191353735-e1de0be9-091b-489e-9524-c6484d59a935.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node mirrors vertices relative to a specified point, axis or plane.
@@ -225,9 +227,21 @@ value is XZ.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Suzanne mirrored around some random plane:</p>
-<img alt="https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png" src="https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png"><img alt="https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png" src="https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Suzanne mirrored around an axis which goes through the <cite>(1, 1, 0)</cite> point parallel to the Z axis:</p>
-<img alt="https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png" src="https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png"><img alt="https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png" src="https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -235,8 +249,8 @@ value is XZ.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="formula_deform_mk2.html" class="btn btn-neutral float-left" title="Deform by Formula" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="symmetrize.html" class="btn btn-neutral float-right" title="Symmetrize" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="symmetrize.html" class="btn btn-neutral float-left" title="Symmetrize Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apply.html" class="btn btn-neutral float-right" title="Matrix Apply (verts)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

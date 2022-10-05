@@ -21,7 +21,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Scale" href="scale_mk3.html" />
+    <link rel="next" title="Rotate" href="rotate_mk3.html" />
     <link rel="prev" title="Transforms" href="transforms_index.html" /> 
 </head>
 
@@ -67,23 +67,23 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,7 @@
              
   <section id="move">
 <h1>Move<a class="headerlink" href="#move" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191294374-44c0cc8f-c01f-4c65-a7c4-28b9643ce6ad.png"><img alt="https://user-images.githubusercontent.com/14288520/191294374-44c0cc8f-c01f-4c65-a7c4-28b9643ce6ad.png" src="https://user-images.githubusercontent.com/14288520/191294374-44c0cc8f-c01f-4c65-a7c4-28b9643ce6ad.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p><strong>equivalent to a Translate Transform</strong></p>
@@ -166,10 +167,12 @@
 <tr class="row-even"><td><p>Vertices</p></td>
 <td><p>Vertex or Vertex Lists representing one or more objects</p></td>
 </tr>
-<tr class="row-odd"><td><p>Movement
-Vectors</p></td>
-<td><p>Vector to use for Translation, this is simple element wise addition to the Vector
-of the incoming vertices.</p></td>
+<tr class="row-odd"><td><p>Movement</p>
+<p>Vectors</p>
+</td>
+<td><p>Vector to use for Translation, this is simple element wise addition to the Vector</p>
+<p>of the incoming vertices.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>Strength</p></td>
 <td><p>Straightforward <code class="docutils literal notranslate"><span class="pre">Vector</span> <span class="pre">*</span> <span class="pre">Scalar</span></code>, amplifies each movement vector</p></td>
@@ -190,13 +193,50 @@ of the incoming vertices.</p></td>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Moving a circle:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Moving vertices along Y direction with a random multiplier</p>
-<img alt="VectorMoveDemo2.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_2.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_2.png"><img alt="VectorMoveDemo2.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The node will match different data structures, in this example a surface is generated from one Ngon</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_3.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_3.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>MUL X, ADD X,Y: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>With the List Matching properties we can create different data matches, in this case with “Cycle” a complex rhythm is generated</p>
-<img alt="VectorMoveDemo4.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_4.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_4.png"><img alt="VectorMoveDemo4.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/move/move_vectors_blender_sverchok_example_4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Combine a Z-Line with a circle. Change a List Match Property of Move node.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191324067-681349b7-44c0-428c-a65e-a34790e672e4.png"><img alt="https://user-images.githubusercontent.com/14288520/191324067-681349b7-44c0-428c-a65e-a34790e672e4.png" src="https://user-images.githubusercontent.com/14288520/191324067-681349b7-44c0-428c-a65e-a34790e672e4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -205,7 +245,7 @@ of the incoming vertices.</p></td>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="transforms_index.html" class="btn btn-neutral float-left" title="Transforms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="scale_mk3.html" class="btn btn-neutral float-right" title="Scale" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rotate_mk3.html" class="btn btn-neutral float-right" title="Rotate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

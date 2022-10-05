@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Noise Displace" href="noise_displace.html" />
-    <link rel="prev" title="Symmetrize" href="symmetrize.html" /> 
+    <link rel="next" title="Transform mesh" href="transform_mesh.html" />
+    <link rel="prev" title="Align Mesh by Mesh" href="align_mesh_by_mesh.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,17 +60,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Transform Select</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -79,11 +75,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,7 @@
              
   <section id="transform-select">
 <h1>Transform Select<a class="headerlink" href="#transform-select" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png"><img alt="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png" src="https://user-images.githubusercontent.com/14288520/191537927-f7fd8f0e-600f-4b4f-93c5-e4341bde9dee.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits the vertex data in two groups, applies one different matrix to each group and joins it again.
@@ -183,10 +184,44 @@ It would work as a standard transformation of the selected geometry when working
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png"><img alt="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png" src="https://user-images.githubusercontent.com/14288520/191612450-9969c85e-a42e-4687-adc2-01c31a39b8d2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/switch_MK2.html"><span class="doc">Switch</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/simple_text.html"><span class="doc">Simple Text</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/string_tools.html"><span class="doc">String Tools</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Showing the different edges groups:</p>
-<img alt="Transform_Select_edges groups_node.png" src="https://user-images.githubusercontent.com/10011941/56385208-c975eb00-621e-11e9-9b6f-6578ac91b704.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png"><img alt="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png" src="https://user-images.githubusercontent.com/14288520/191610452-cc661362-17f3-4b1d-91bb-3e1df0e332d6.png" /></a>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>You can input multiple matrices and they will be paired with the verts:</p>
-<img alt="Transform_Select_procedural_node.png" src="https://user-images.githubusercontent.com/10011941/56385210-cda20880-621e-11e9-855f-dd387794873c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png"><img alt="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png" src="https://user-images.githubusercontent.com/14288520/191610875-d24c4088-f8f7-47b0-a5ef-f9b53117ed79.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>SINE X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -194,8 +229,8 @@ It would work as a standard transformation of the selected geometry when working
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="symmetrize.html" class="btn btn-neutral float-left" title="Symmetrize" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="noise_displace.html" class="btn btn-neutral float-right" title="Noise Displace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="align_mesh_by_mesh.html" class="btn btn-neutral float-left" title="Align Mesh by Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="transform_mesh.html" class="btn btn-neutral float-right" title="Transform mesh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

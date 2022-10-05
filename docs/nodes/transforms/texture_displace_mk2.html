@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Randomize" href="randomize.html" />
-    <link rel="prev" title="Noise Displace" href="noise_displace.html" /> 
+    <link rel="next" title="Noise Displace" href="noise_displace.html" />
+    <link rel="prev" title="Bend Object Along Surface" href="bend_along_surface.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,27 +60,27 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotate_mk3.html">Rotate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Texture Displace</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs &amp; Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -142,6 +142,7 @@
              
   <section id="texture-displace">
 <h1>Texture Displace<a class="headerlink" href="#texture-displace" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193805385-06b3f08e-e70f-45b3-ad19-fd1b0cf5c899.png"><img alt="https://user-images.githubusercontent.com/14288520/193805385-06b3f08e-e70f-45b3-ad19-fd1b0cf5c899.png" src="https://user-images.githubusercontent.com/14288520/193805385-06b3f08e-e70f-45b3-ad19-fd1b0cf5c899.png" /></a>
 <p>This node displaces a list of Vectors using a texture.</p>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
@@ -158,25 +159,45 @@
 <tbody>
 <tr class="row-even"><td><p>Direction</p></td>
 <td><p>Displacement direction.
-Available modes: Normal, X, Y, Z, Custom Axis, RGB to XYZ, HSV to XYZ
-and HLV to XYZ.</p></td>
+Available modes:</p>
+<ul class="simple">
+<li><p>Normal</p></li>
+<li><p>X, Y, Z</p></li>
+<li><p>Custom Axis</p></li>
+<li><p>RGB to XYZ</p></li>
+<li><p>HSV to XYZ</p></li>
+<li><p>HLV to XYZ</p></li>
+</ul>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Texture Coord.</p></td>
 <td><p>Modes to match vertices and texture:</p>
-<ul class="simple">
+<ul>
 <li><p>UV: Input a second set of verts to be the UV coordinates of
 the mesh.</p></li>
 <li><p>Mesh Matrix: Matrix to multiply the verts to get their UV coord.</p></li>
-<li><p>Texture Matrix: Matrix of external object to set where in global
-space is the origin location and rotation of texture.</p></li>
+<li><p>Texture Matrix: Matrix of external object to set where in global</p>
+<p>space is the origin location and rotation of texture.</p>
+</li>
 </ul>
 </td>
 </tr>
 <tr class="row-even"><td><p>Channel</p></td>
 <td><p>Color channel to use as base of the displacement
-Offers: Red, Green, Blue, Hue, Saturation, Value, Alpha, RGB Average
-and Luminosity.
-Only in Normal, X, Y, Z, Custom Axis.</p></td>
+Offers:</p>
+<ul class="simple">
+<li><p>Red</p></li>
+<li><p>Green</p></li>
+<li><p>Blue</p></li>
+<li><p>Hue</p></li>
+<li><p>Saturation</p></li>
+<li><p>Value</p></li>
+<li><p>Alpha</p></li>
+<li><p>RGB Average</p></li>
+<li><p>Luminosity</p></li>
+</ul>
+<p>Only in Normal, X, Y, Z, Custom Axis.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Vertices</p></td>
 <td><p>Vertices of the mesh to displace</p></td>
@@ -197,8 +218,9 @@ Only in Normal, X, Y, Z, Custom Axis.</p></td>
 <td><p>Matrix to multiply the vertices to get their UV coordinates</p></td>
 </tr>
 <tr class="row-odd"><td><p>Texture Matrix</p></td>
-<td><p>Matrix of external object to set where in global space is the origin
-location and rotation of texture</p></td>
+<td><p>Matrix of external object to set where in global space is the origin</p>
+<p>location and rotation of texture</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>Middle Level</p></td>
 <td><p>Texture Evaluation - Middle Level = displacement</p></td>
@@ -212,23 +234,90 @@ location and rotation of texture</p></td>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Basic example</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_1.png" />
-<p>Multiple textures can be used with the hep of the Object ID selector:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193816365-4fa5d5f3-ec0d-4158-ac79-202c3f08c6e1.png"><img alt="https://user-images.githubusercontent.com/14288520/193816365-4fa5d5f3-ec0d-4158-ac79-202c3f08c6e1.png" src="https://user-images.githubusercontent.com/14288520/193816365-4fa5d5f3-ec0d-4158-ac79-202c3f08c6e1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Multiple textures can be used with the help of the Object ID selector:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193823844-5a8de042-ed06-4217-bfdb-2891c5022279.png"><img alt="https://user-images.githubusercontent.com/14288520/193823844-5a8de042-ed06-4217-bfdb-2891c5022279.png" src="https://user-images.githubusercontent.com/14288520/193823844-5a8de042-ed06-4217-bfdb-2891c5022279.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>BPY Data-&gt; <a class="reference internal" href="../object_nodes/get_asset_properties_mk2.html"><span class="doc">Object ID Selector+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>When joining the texture list (to be [[texture, texture,…],[texture,…],…]) multiple textures can be used with a single mesh. (The node will match one texture per vertex)</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_3.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_3.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193836932-9fd9a05c-7810-4f20-bd98-24fb6cb4de2c.png"><img alt="https://user-images.githubusercontent.com/14288520/193836932-9fd9a05c-7810-4f20-bd98-24fb6cb4de2c.png" src="https://user-images.githubusercontent.com/14288520/193836932-9fd9a05c-7810-4f20-bd98-24fb6cb4de2c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/kd_tree_MK2.html"><span class="doc">KDT Closest Verts</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>BPY Data-&gt; <a class="reference internal" href="../object_nodes/get_asset_properties_mk2.html"><span class="doc">Object ID Selector+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>“Axis Scale out” with multiply the effect multiplying each displace vector component-wise</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_4.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_4.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193890604-03357422-b94e-4679-ab34-95914b470ec6.png"><img alt="https://user-images.githubusercontent.com/14288520/193890604-03357422-b94e-4679-ab34-95914b470ec6.png" src="https://user-images.githubusercontent.com/14288520/193890604-03357422-b94e-4679-ab34-95914b470ec6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The Texture Matrix mode of “Texture Coordinates” will work as the Displace Modifier with the texture Coordinates set to Object</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_5.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193892042-a9010802-1f28-46e5-97c9-48a8b6138e98.png"><img alt="https://user-images.githubusercontent.com/14288520/193892042-a9010802-1f28-46e5-97c9-48a8b6138e98.png" src="https://user-images.githubusercontent.com/14288520/193892042-a9010802-1f28-46e5-97c9-48a8b6138e98.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The Mesh Matrix mode of “Texture Coordinates” will work as the Displace Modifier with the texture Coordinates set to Global in which the Matrix is treated as the mesh matrix</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_6.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_6.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193893063-866e3aac-60b0-4ec4-95f9-fd5e14ddb596.png"><img alt="https://user-images.githubusercontent.com/14288520/193893063-866e3aac-60b0-4ec4-95f9-fd5e14ddb596.png" src="https://user-images.githubusercontent.com/14288520/193893063-866e3aac-60b0-4ec4-95f9-fd5e14ddb596.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The “UV” mode of “Texture Coordinates” will work as the Displace Modifier with the texture Coordinates set to UV in which the new set of vertices is used as the UV Coordinates of the first mesh</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_7.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193893888-3b819d8a-2dad-4396-9c05-98d76134f63d.png"><img alt="https://user-images.githubusercontent.com/14288520/193893888-3b819d8a-2dad-4396-9c05-98d76134f63d.png" src="https://user-images.githubusercontent.com/14288520/193893888-3b819d8a-2dad-4396-9c05-98d76134f63d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The node can use also “Image or Movie” textures</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_8.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_displace_sverchok_blender_example_8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193895318-2a1abba8-fa27-4cda-8901-8c69297012d1.png"><img alt="https://user-images.githubusercontent.com/14288520/193895318-2a1abba8-fa27-4cda-8901-8c69297012d1.png" src="https://user-images.githubusercontent.com/14288520/193895318-2a1abba8-fa27-4cda-8901-8c69297012d1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/vd_matrix.html"><span class="doc">Matrix View</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>One matrix per point can be passed if the matrix list is wrapped, note that the “Flat Output” checkbox of the matrix in is un-checked</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_evaluate_sverchok_blender_example_9.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/texture_displace/texture_evaluate_sverchok_blender_example_9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193901787-26d0aefe-e3c5-45a7-8df7-dee8ec8094da.png"><img alt="https://user-images.githubusercontent.com/14288520/193901787-26d0aefe-e3c5-45a7-8df7-dee8ec8094da.png" src="https://user-images.githubusercontent.com/14288520/193901787-26d0aefe-e3c5-45a7-8df7-dee8ec8094da.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>LEN: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
@@ -236,8 +325,8 @@ location and rotation of texture</p></td>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="noise_displace.html" class="btn btn-neutral float-left" title="Noise Displace" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="randomize.html" class="btn btn-neutral float-right" title="Randomize" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="bend_along_surface.html" class="btn btn-neutral float-left" title="Bend Object Along Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="noise_displace.html" class="btn btn-neutral float-right" title="Noise Displace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

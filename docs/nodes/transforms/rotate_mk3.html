@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Matrix Apply (verts)" href="apply.html" />
-    <link rel="prev" title="Scale" href="scale_mk3.html" /> 
+    <link rel="next" title="Scale" href="scale_mk3.html" />
+    <link rel="prev" title="Move" href="move_mk3.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,7 +60,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="transforms_index.html">Transforms</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="move_mk3.html">Move</a></li>
-<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Rotate</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#axis-rotation">Axis Rotation</a></li>
@@ -69,21 +68,22 @@
 <li class="toctree-l4"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="scale_mk3.html">Scale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply.html">Matrix Apply (verts)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="barycentric_transform.html">Barycentric Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_path.html">Bend Object Along Path</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deform.html">Simple Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l3"><a class="reference internal" href="symmetrize.html">Symmetrize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_select.html">Transform Select</a></li>
-<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="texture_displace_mk2.html">Texture Displace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="noise_displace.html">Noise Displace</a></li>
 <li class="toctree-l3"><a class="reference internal" href="randomize.html">Randomize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_mesh.html">Transform mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cast.html">Cast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formula_deform_mk2.html">Deform by Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
@@ -145,6 +145,7 @@
              
   <section id="rotate">
 <h1>Rotate<a class="headerlink" href="#rotate" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png"><img alt="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png" src="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node is used to make general rotation over geometry. It works directly over vertices, not with matrixes. Just like Blender, it offers 3 different types of rotation:</p>
@@ -244,7 +245,11 @@ There is four inputs:</p>
 </section>
 <section id="example-of-usage">
 <h3>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h3>
-<img alt="AxisRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png"><img alt="AxisRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>In this example we use axis rotation to rotate a torus around the X axis 45 degrees .</p>
 </section>
 </section>
@@ -314,7 +319,21 @@ There is four inputs:</p>
 </section>
 <section id="id4">
 <h3>Example of usage<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
-<img alt="EulerRotationDemo2.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png"><img alt="EulerRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png"><img alt="EulerRotationDemo2.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>In the first example we use Euler rotation rotate the vertices of a line to create a 3d spiral
 The second is more complex, with multiple inputs in Y and Z to create a complex geometry from just one line.</p>
 </section>
@@ -387,15 +406,23 @@ There is five inputs:</p>
 </section>
 <section id="id8">
 <h3>Example of usage<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
-<img alt="QuatRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png"><img alt="QuatRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>As we can see in this example, we try to rotate the plan 45 degrees and then set W with multiple values, each higher than before, but the plane is never get to rotate 180 degrees.</p>
 </section>
 </section>
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Output NumPy</strong>: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)</p>
-<p><strong>List Match</strong>: Define how list with different lengths should be matched</p>
+<ul class="simple">
+<li><p><strong>Output NumPy</strong>: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)</p></li>
+<li><p><strong>List Match</strong>: Define how list with different lengths should be matched</p></li>
+</ul>
 </section>
 </section>
 
@@ -403,8 +430,8 @@ There is five inputs:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="scale_mk3.html" class="btn btn-neutral float-left" title="Scale" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="apply.html" class="btn btn-neutral float-right" title="Matrix Apply (verts)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="move_mk3.html" class="btn btn-neutral float-left" title="Move" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="scale_mk3.html" class="btn btn-neutral float-right" title="Scale" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
