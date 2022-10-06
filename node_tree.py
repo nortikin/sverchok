@@ -607,6 +607,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     bl_label = 'Name shown in menu'
     bl_icon = 'GREASEPENCIL'
     ```
+
+    It's possible to apply Alpha/Beta icons to sv_icon class attribute of the
+    node to mark a node as in development state and that it can change its
+    behaviour or even be removed. Usually new nodes should be marked in this way
+    until new release.
+
+        class Node:
+            sv_icon = 'SV_ALPHA'  # or 'SV_BETA'
+
+    ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     """
     _docstring = None  # A cache for docstring property
 

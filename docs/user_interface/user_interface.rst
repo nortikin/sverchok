@@ -21,6 +21,7 @@ If you are new to Blender node tree interface it is worth to have a look at
     All panels <panels>
     Input socket menus <input_menus>
     Output socket menus <socket_menus>
+    node_shields
     shortcuts
 
 
