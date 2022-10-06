@@ -126,10 +126,6 @@ def juggle_and_join(node_cats):
     '''
     node_cats = node_cats.copy()
 
-    # join beta and alpha node cats
-    alpha = node_cats.pop('Alpha Nodes')
-    node_cats['Beta Nodes'].extend(alpha)
-
     # put masks into list main
     for ltype in ["List Masks", "List Mutators"]:
         node_refs = node_cats.pop(ltype)

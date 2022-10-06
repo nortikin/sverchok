@@ -27,6 +27,7 @@
     svBasicArcNode
     RandomVectorNodeMK3
     ImageNode
+    SvFormulaShapeNode
 
 ## Generators Extended
     SvBoxRoundedNode
@@ -386,10 +387,12 @@
     SvSeparatePartsToIndexes
     SvEdgenetToPathsNode
     SvLimitedDissolve
+    SvLimitedDissolveMK2
     SvPlanarFacesNode
     SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
+    SvJoinTrianglesNode
     SvMakeMonotone
     ---
     SvSplitMeshElements
@@ -405,6 +408,8 @@
     ---
     SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
+    SvExtrudeSeparateLiteNode
+    SvMultiExtrudeAlt
     SvExtrudeRegionNode
     SvPokeFacesNode
     SvVertMaskNode
@@ -419,7 +424,9 @@
     ---
     SvOpenSubdivisionNode
     SvSubdivideNodeMK2
+    SvSubdivideLiteNode
     SvSubdivideToQuadsNode
+    SvUnsubdivideNode
     SvOffsetLineNode
     SvContourNode
     ---
@@ -428,6 +435,7 @@
     SvClipVertsNode
     ---
     SvBevelCurveNode
+    SvSweepModulator
     SvAdaptiveEdgeNode
     SvAdaptivePolygonsNodeMk3
     SvDuplicateAlongEdgeNode
@@ -437,6 +445,12 @@
     SvWireframeNode
     SvPipeNode
     SvMatrixTubeNode
+    ---
+    SvBManalyzinNode
+    SvBMObjinputNode
+    SvBMoutputNode
+    SvBMtoElementNode
+    SvBMOpsNodeMK2
 
 ## List Masks
     MaskListNode
@@ -454,7 +468,9 @@
     SvVDAttrsNodeMk2
     SvPolygonSortNode
     SvFindClosestValue
+    SvCacheNode
     SvMultiCacheNode
+    SvCombinatoricsNode
 
 ## List Main
     ListJoinNode
@@ -473,6 +489,7 @@
     ShiftNodeMK2
     ListRepeaterNode
     ListSliceNode
+    SvListSliceLiteNode
     SvListSplitNode
     ListFLNode
     SvListItemNode
@@ -482,6 +499,7 @@
     SvListSortNode
     ListFlipNode
     SvListLevelsNodeMK2
+    SvNumpyArrayNode
 
 ## Dictionary
     SvDictionaryIn
@@ -502,9 +520,11 @@
     SvBisectNode
     SvCutObjBySurfaceNode
     SvEdgesToFaces2D
+    SvPlanarEdgenetToPolygons
     SvMergeMesh2D
     SvMergeMesh2DLite
     SvCropMesh2D
+    SvCSGBooleanNodeMK2
     SvWafelNode
 
 ## Number
@@ -658,8 +678,16 @@
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
+    SvSetCustomMeshNormals
     SvSetCollection
     SvCopyModifiersNode
+    SvMeshUVColorNode
+    SvUVPointonMeshNode
+    SvSampleUVColorNode
+    SvArmaturePropsNode
+    SvLatticePropsNode
+    SvSculptMaskNode
+    SvSelectMeshVerts
 
 ## Scene
     SvGetObjectsData
@@ -669,6 +697,7 @@
     SvCollectionPicker
     SvBezierInNode
     SvExNurbsInNode
+    SvParticlesMK2Node
     ---
     SvSelectionGrabberLite
     SvObjEdit
@@ -682,6 +711,7 @@
     SvAssignMaterialListNode
     SvMaterialIndexNode
     SvSetCustomUVMap
+    SvUVtextureNode
 
 ## Exchange
     SvExNurbsToJsonNode
@@ -703,10 +733,13 @@
     SvExecNodeMod
     SvProfileNodeMK3
     SvMeshEvalNode
+    SvSNFunctorB
     SvGenerativeArtNode
     SvTopologySimple
     ---
     SvScriptNodeLite
+    SvGetPropNodeMK2
+    SvSetPropNodeMK2
 
 ## Network
     UdpClientNode
@@ -748,45 +781,3 @@
     SvSvgGroupNode
     SvSvgFillStrokeNodeMk2
     SvSvgPatternNode
-
-## Beta Nodes
-    SvFormulaShapeNode
-    SvHeavyTriangulateNode
-    SvMeshUVColorNode
-    SvUVPointonMeshNode
-    SvSampleUVColorNode
-    SvSubdivideLiteNode
-    SvExtrudeSeparateLiteNode
-    SvUnsubdivideNode
-    SvLimitedDissolveMK2
-    SvArmaturePropsNode
-    SvLatticePropsNode
-    ---
-    SvSculptMaskNode
-    SvSelectMeshVerts
-    SvSetCustomMeshNormals
-    ---
-    SvCombinatoricsNode
-
-## Alpha Nodes
-    SvBManalyzinNode
-    SvBMObjinputNode
-    SvBMoutputNode
-    SvBMtoElementNode
-    SvBMOpsNodeMK2
-    ---
-    SvCSGBooleanNodeMK2
-    SvNumpyArrayNode
-    SvSNFunctorB
-    SvParticlesMK2Node
-    SvJoinTrianglesNode
-    SvListSliceLiteNode
-    SvCacheNode
-    SvUVtextureNode
-    SvSeparateMeshNodeMK2
-    SvMultiExtrudeAlt
-    SvPlanarEdgenetToPolygons
-    SvSweepModulator
-    ---
-    SvGetPropNodeMK2
-    SvSetPropNodeMK2

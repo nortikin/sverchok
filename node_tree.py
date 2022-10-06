@@ -370,12 +370,22 @@ class UpdateNodes:
         This function is triggered upon node creation, functionality:
 
           - sets default colors of the node
+          - show alpha/beta state of the node
           - logs further  errors
           - delegates further initialization information to `UpdateNodes.sv_init`
         """
         if self.sv_default_color:
             self.use_custom_color = True
             self.color = self.sv_default_color
+
+        if hasattr(self, 'sv_icon') and self.sv_icon in {'SV_ALPHA', 'SV_BETA'}:
+            frame = self.id_data.nodes.new("NodeFrame")
+            self.parent = frame
+            frame.label = f'{"Alpha" if self.sv_icon == "SV_ALPHA" else "Beta"} Node'
+            frame.use_custom_color = True
+            frame.color = (0.3, 0, 0.7)
+            frame.shrink = True
+            frame['in_development'] = True  # can be used to distinguish the frame
 
         with catch_log_error():
             self.sv_init(context)

@@ -8,9 +8,7 @@ Modifier Change
    bevel
    opensubdivision
    subdivide_mk2
-   subdivide_lite
    subdivide_to_quads
-   unsubdivide
    smooth
    relax_mesh
    delete_loose
@@ -32,7 +30,6 @@ Modifier Change
    polygons_to_edges_mk2
    recalc_normals
    triangulate
-   triangulate_heavy
    planar_faces
    edge_split
    split_faces

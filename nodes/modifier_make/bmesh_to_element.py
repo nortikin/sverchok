@@ -18,44 +18,36 @@
 
 import bpy
 import bmesh
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvBMoutputNode(SverchCustomTreeNode, bpy.types.Node):
-    ''' BMesh Out '''
-    bl_idname = 'SvBMoutputNode'
-    bl_label = 'BMesh Out'
+class SvBMtoElementNode(SverchCustomTreeNode, bpy.types.Node):
+    ''' BMesh Decompose '''
+    bl_idname = 'SvBMtoElementNode'
+    bl_label = 'BMesh Elements'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_BMESH_OBJECT_OUT'
+    sv_icon = 'SV_ALPHA'  # 'SV_BMESH_ELEMENTS'
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'bmesh_list')
-        self.outputs.new('SvVerticesSocket', 'Vert')
-        self.outputs.new('SvStringsSocket', 'Edge')
-        self.outputs.new('SvStringsSocket', 'Poly')
+        self.outputs.new('SvStringsSocket', 'BM_verts')
+        self.outputs.new('SvStringsSocket', 'BM_edges')
+        self.outputs.new('SvStringsSocket', 'BM_faces')
 
     def process(self):
-        v, e, p = self.outputs
-        vlist = []
-        elist = []
-        plist = []
-        if v.is_linked:
-            bml = self.inputs['bmesh_list'].sv_get()
-            for i in bml:
-                V,E,P = pydata_from_bmesh(i)
-                vlist.append(V)
-                elist.append(E)
-                plist.append(P)
-        v.sv_set(vlist)
-        e.sv_set(elist)
-        p.sv_set(plist)
+        bmlist = self.inputs[0]
+        if bmlist.is_linked:
+            v, e, p = self.outputs
+            bml = bmlist.sv_get()
+            v.sv_set([i.verts[:] for i in bml])
+            e.sv_set([i.edges[:] for i in bml])
+            p.sv_set([i.faces[:] for i in bml])
 
 
 def register():
-    bpy.utils.register_class(SvBMoutputNode)
+    bpy.utils.register_class(SvBMtoElementNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBMoutputNode)
+    bpy.utils.unregister_class(SvBMtoElementNode)

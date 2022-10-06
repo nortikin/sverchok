@@ -88,8 +88,6 @@ menu_structure = [
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
     ["NODEVIEW_MT_AddPulgaPhysics", "MOD_PHYSICS"],
     ["NODEVIEW_MT_AddSVG", "SV_SVG"],
-    ["NODEVIEW_MT_AddBetas", "SV_BETA"],
-    ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
     ["NODE_MT_category_SVERCHOK_GROUP", "NODETREE"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
@@ -372,8 +370,6 @@ classes = [
     make_class('Exchange', "Exchange"),
     make_class('PulgaPhysics', "Pulga Physics"),
     make_class('SVG', "SVG"),
-    make_class('Betas', "Beta Nodes"),
-    make_class('Alphas', "Alpha Nodes"),
 
     # make | NODEVIEW_MT_ + class name +_Partial_Menu , menu name, menu items
     make_partial_menu_class('Basic_Data', 'Basic Data Types (1)', range(12, 20)),

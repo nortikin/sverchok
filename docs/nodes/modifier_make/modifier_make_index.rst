@@ -28,3 +28,5 @@ Modifier Make
    clip_verts
    sweep_modulator
    csg_booleanMK2
+   subdivide_lite
+   unsubdivide
