@@ -757,12 +757,8 @@ Without it, in most cases, users will hardly able to use the node and also
 it can be difficult to distinguish a bug because the desired behaviour was not
 proclaimed.
 
-To add documentation to a node two things should be done:
-
-- file with documentation (name_of_the_node.rst) should be added to the
-  ``docs.nodes.node_category`` folder
-- Name of the file should be add to list inside
-  ``docs.nodes.node_category.node_category_index.rst`` file
+To add documentation to a node file with documentation (name_of_the_node.rst)
+should be added to the ``docs.nodes.node_category`` folder.
 
 For generating documentation `Sphinx library`_ is used. Also
 `Read the Docs`_ Sphinx theme is used. So both libraries should be available
