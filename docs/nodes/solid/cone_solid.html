@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Cylinder (Solid)" href="cylinder_solid.html" />
-    <link rel="prev" title="Box (Solid)" href="box_solid.html" /> 
+    <link rel="prev" title="Chamfer Solid" href="chamfer_solid.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,7 +57,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="solid_index.html">Solids</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="area.html">Solid Area</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bound_box.html">Solid Bounding Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_solid.html">Box (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="center_of_mass.html">Center of Mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chamfer_solid.html">Chamfer Solid</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Cone (Solid)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -66,47 +70,43 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cylinder_solid.html">Cylinder (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sphere_solid.html">Sphere (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torus_solid.html">Torus (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygon_face.html">Polygon Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wire_face.html">Face from Curves (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="projection_trim_face.html">Face from Surface (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="transform_solid.html">Transform Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="chamfer_solid.html">Chamfer Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="export_solid.html">Export Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_face.html">Extrude Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="face_area.html">Solid Face Area</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fillet_solid.html">Fillet Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_boolean.html">Solid Boolean</a></li>
 <li class="toctree-l3"><a class="reference internal" href="general_fuse.html">Solid General Fuse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hollow_solid.html">Hollow Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="import_solid.html">Import Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="is_closed.html">Is Solid Closed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="make_compound.html">Compound Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_to_solid.html">Mesh to Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mirror_solid.html">Mirror Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_solid.html">Offset Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_from_faces.html">Solid from Faces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ruled_solid.html">Solid from two Faces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_face.html">Extrude Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solidify_face.html">Solidify Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="revolve_face.html">Revolve Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sweep_face.html">Sweep Face (Solid)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="split_solid.html">Split Solid by Face</a></li>
 <li class="toctree-l3"><a class="reference internal" href="points_inside_solid.html">Points Inside Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_distance.html">Solid Distance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="slice_solid.html">Slice Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hollow_solid.html">Hollow Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_to_solid.html">Mesh to Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_to_mesh_mk2.html">Solid to Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_faces.html">Solid Faces (Surfaces)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_edges.html">Solid Edges (Curves)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_vertices.html">Solid Vertices</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solid_select.html">Select Solid Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="import_solid.html">Import Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="export_solid.html">Export Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="face_area.html">Solid Face Area</a></li>
-<li class="toctree-l3"><a class="reference internal" href="area.html">Solid Area</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume.html">Solid Volume</a></li>
-<li class="toctree-l3"><a class="reference internal" href="center_of_mass.html">Center of Mass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="is_closed.html">Is Solid Closed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygon_face.html">Polygon Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="projection_trim_face.html">Face from Surface (Solid)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="refine.html">Refine Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="validate.html">Validate &amp; Fix Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bound_box.html">Solid Bounding Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="make_compound.html">Compound Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="revolve_face.html">Revolve Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ruled_solid.html">Solid from two Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slice_solid.html">Slice Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_boolean.html">Solid Boolean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_distance.html">Solid Distance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_edges.html">Solid Edges (Curves)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_faces.html">Solid Faces (Surfaces)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_from_faces.html">Solid from Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_select.html">Select Solid Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_to_mesh_mk2.html">Solid to Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solid_vertices.html">Solid Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="solid_viewer.html">Solid Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solidify_face.html">Solidify Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere_solid.html">Sphere (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split_solid.html">Split Solid by Face</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sweep_face.html">Sweep Face (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="torus_solid.html">Torus (Solid)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="transform_solid.html">Transform Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="validate.html">Validate &amp; Fix Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="volume.html">Solid Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wire_face.html">Face from Curves (Solid)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
@@ -201,7 +201,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="box_solid.html" class="btn btn-neutral float-left" title="Box (Solid)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="chamfer_solid.html" class="btn btn-neutral float-left" title="Chamfer Solid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="cylinder_solid.html" class="btn btn-neutral float-right" title="Cylinder (Solid)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Diamond Mesh" href="diamond_mesh.html" />
-    <link rel="prev" title="Fractal Curve" href="fractal_curve.html" /> 
+    <link rel="next" title="Adaptative Edges" href="edges_adaptative.html" />
+    <link rel="prev" title="Diamond Mesh" href="diamond_mesh.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -62,24 +62,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="modifier_make_index.html">Modifier Make</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="bisect.html">Bisect</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cross_section.html">Cross Section</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cut_object_by_surface.html">Cut Object by Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lathe.html">Lathe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matrix_tube.html">Matrix Tube</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="adaptive_polygons_mk3.html">Adaptive Polygons Mk2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
-<li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="join_tris.html">Join Triangles</a></li>
-<li class="toctree-l3"><a class="reference internal" href="framework.html">Framework</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Mesh)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bisect.html">Bisect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clip_verts.html">Clip Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="contour2D.html">Contour 2D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fractal_curve.html">Fractal Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cross_section.html">Cross Section</a></li>
+<li class="toctree-l3"><a class="reference internal" href="csg_booleanMK2.html">CSG Boolean MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cut_object_by_surface.html">Cut Object by Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="diamond_mesh.html">Diamond Mesh</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Dual Mesh</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -87,10 +78,19 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="diamond_mesh.html">Diamond Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="clip_verts.html">Clip Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fractal_curve.html">Fractal Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="framework.html">Framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="join_tris.html">Join Triangles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lathe.html">Lathe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matrix_tube.html">Matrix Tube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="csg_booleanMK2.html">CSG Boolean MK2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
@@ -189,8 +189,8 @@ consisting to NGons, or backwards.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="fractal_curve.html" class="btn btn-neutral float-left" title="Fractal Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="diamond_mesh.html" class="btn btn-neutral float-right" title="Diamond Mesh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="diamond_mesh.html" class="btn btn-neutral float-left" title="Diamond Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="edges_adaptative.html" class="btn btn-neutral float-right" title="Adaptative Edges" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

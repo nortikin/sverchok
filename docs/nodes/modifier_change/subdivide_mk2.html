@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Subdivide Lite Node" href="subdivide_lite.html" />
-    <link rel="prev" title="OpenSubdivision Node" href="opensubdivision.html" /> 
+    <link rel="next" title="Subdivide to Quads" href="subdivide_to_quads.html" />
+    <link rel="prev" title="Subdivide Lite Node" href="subdivide_lite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -62,7 +62,42 @@
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="modifier_change_index.html">Modifier Change</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="bevel.html">Bevel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delete_loose.html">Delete Loose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dissolve_mesh_elements.html">Dissolve Mesh Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edge_boom.html">Edge Boom</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edge_split.html">Split Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edgenet_to_paths.html">Edgenet to Paths</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_edges_mk2.html">Extrude Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_multi_alt.html">extrude multi alt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_region.html">Extrude Region</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_separate.html">Extrude Separate Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_separate_lite.html">Extrude Separate Faces Lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flat_geometry.html">Flat Geometry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip_normals.html">Flip Normals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="follow_active_quads.html">Follow Active Quads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="holes_fill.html">Fill Holes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inset_faces.html">Inset Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="make_monotone.html">Make Monotone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_by_distance.html">Merge by Distance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_clean.html">Mesh Clean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_join_mk2.html">Mesh Join</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="objects_along_edge.html">Duplicate Objects Along Edge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="offset.html">Offset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="opensubdivision.html">OpenSubdivision Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planar_edgenet_to_polygons.html">Planar Edgenet to Polygons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="planar_faces.html">Make Faces Planar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="poke.html">Poke Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygons_boom.html">Polygon Boom</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polygons_to_edges_mk2.html">Polygons to Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recalc_normals.html">Recalculate Normals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="relax_mesh.html">Relax Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rigid_origami.html">Rigid Origami</a></li>
+<li class="toctree-l3"><a class="reference internal" href="separate_parts_to_indexes.html">Separate Parts To Indexes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Subdivide</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -72,46 +107,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
-<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
-<li class="toctree-l3"><a class="reference internal" href="relax_mesh.html">Relax Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="delete_loose.html">Delete Loose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_clean.html">Mesh Clean</a></li>
-<li class="toctree-l3"><a class="reference internal" href="poke.html">Poke Faces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_edges_mk2.html">Extrude Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_separate.html">Extrude Separate Faces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_separate_lite.html">Extrude Separate Faces Lite</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_region.html">Extrude Region</a></li>
-<li class="toctree-l3"><a class="reference internal" href="holes_fill.html">Fill Holes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="flip_normals.html">Flip Normals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="merge_by_distance.html">Merge by Distance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_join_mk2.html">Mesh Join</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="objects_along_edge.html">Duplicate Objects Along Edge</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset.html">Offset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygons_boom.html">Polygon Boom</a></li>
-<li class="toctree-l3"><a class="reference internal" href="edge_boom.html">Edge Boom</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polygons_to_edges_mk2.html">Polygons to Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="recalc_normals.html">Recalculate Normals</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate_heavy.html">Triangulate Mesh (Heavy)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="planar_faces.html">Make Faces Planar</a></li>
-<li class="toctree-l3"><a class="reference internal" href="edge_split.html">Split Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
-<li class="toctree-l3"><a class="reference internal" href="make_monotone.html">Make Monotone</a></li>
-<li class="toctree-l3"><a class="reference internal" href="planar_edgenet_to_polygons.html">Planar Edgenet to Polygons</a></li>
-<li class="toctree-l3"><a class="reference internal" href="inset_faces.html">Inset Faces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="follow_active_quads.html">Follow Active Quads</a></li>
-<li class="toctree-l3"><a class="reference internal" href="separate_parts_to_indexes.html">Separate Parts To Indexes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_multi_alt.html">extrude multi alt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dissolve_mesh_elements.html">Dissolve Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="rigid_origami.html">Rigid Origami</a></li>
-<li class="toctree-l3"><a class="reference internal" href="flat_geometry.html">Flat Geometry</a></li>
-<li class="toctree-l3"><a class="reference internal" href="edgenet_to_paths.html">Edgenet to Paths</a></li>
-<li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
@@ -260,8 +260,8 @@ contains one item for each output mesh face.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="opensubdivision.html" class="btn btn-neutral float-left" title="OpenSubdivision Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="subdivide_lite.html" class="btn btn-neutral float-right" title="Subdivide Lite Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="subdivide_lite.html" class="btn btn-neutral float-left" title="Subdivide Lite Node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="subdivide_to_quads.html" class="btn btn-neutral float-right" title="Subdivide to Quads" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

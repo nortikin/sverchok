@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Sphere (Surface)" href="sphere.html" />
-    <link rel="prev" title="Surface" href="surface_index.html" /> 
+    <link rel="next" title="Raycast on Surface" href="raycast.html" />
+    <link rel="prev" title="Pipe Surface Along Curve" href="pipe.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,6 +55,40 @@
 <li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="surface_index.html">Surfaces</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coons_patch.html">Surface from Four Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_lerp.html">Ruled Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deconstruct_surface.html">Deconstruct Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluate_surface.html">Evaluate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extremes.html">Surface Extremes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">Flip Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gordon_surface.html">NURBS Surface from Curves Net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implicit_surface_raycast.html">Implicit Surface Raycast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_surface.html">Intersect Curve with Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marching_cubes.html">Marching Cubes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="min_surface_from_curve.html">Minimal Surface from Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minimal_surface.html">Minimal Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="normals.html">Surface Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Orthogonal Project on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Plane (Surface)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
@@ -63,54 +97,20 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere (Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="surface_formula.html">Surface Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_lerp.html">Ruled Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="surface_lerp.html">Surface Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="coons_patch.html">Surface from Four Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="minimal_surface.html">Minimal Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="min_surface_from_curve.html">Minimal Surface from Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deconstruct_surface.html">Deconstruct Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="flip.html">Flip Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="swap.html">Swap Surface U/V</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reparametrize.html">Reparametrize Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="normals.html">Surface Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
-<li class="toctree-l3"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
-<li class="toctree-l3"><a class="reference internal" href="gordon_surface.html">NURBS Surface from Curves Net</a></li>
-<li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_curve_surface.html">Intersect Curve with Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Orthogonal Project on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="raycast.html">Raycast on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="implicit_surface_raycast.html">Implicit Surface Raycast</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extremes.html">Surface Extremes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="marching_cubes.html">Marching Cubes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reparametrize.html">Reparametrize Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sphere.html">Sphere (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_formula.html">Surface Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_lerp.html">Surface Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="swap.html">Swap Surface U/V</a></li>
+<li class="toctree-l3"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tessellate_trim.html">Tessellate &amp; Trim Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="evaluate_surface.html">Evaluate Surface</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
@@ -234,8 +234,8 @@ Default values are 0 and 1.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="surface_index.html" class="btn btn-neutral float-left" title="Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sphere.html" class="btn btn-neutral float-right" title="Sphere (Surface)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pipe.html" class="btn btn-neutral float-left" title="Pipe Surface Along Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="raycast.html" class="btn btn-neutral float-right" title="Raycast on Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

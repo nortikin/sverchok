@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Lloyd on Solid Face" href="lloyd_solid_face.html" />
-    <link rel="prev" title="Lloyd on Mesh" href="lloyd_on_mesh.html" /> 
+    <link rel="prev" title="Lloyd on Sphere" href="lloyd_on_sphere.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -58,24 +58,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="spatial_index.html">Spatial</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="random_points_on_mesh.html">Populate Mesh (Random points on mesh)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a></li>
-<li class="toctree-l3"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="concave_hull.html">Concave Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delaunay3d.html">Delaunay 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delaunay_2d_cdt.html">Delaunay 2D Cdt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="voronoi_on_solid.html">Voronoi on Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd2d.html">Lloyd 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd3d.html">Lloyd 3D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_on_mesh.html">Lloyd on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Lloyd in Solid</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -85,8 +78,15 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a></li>
-<li class="toctree-l3"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a></li>
-<li class="toctree-l3"><a class="reference internal" href="concave_hull.html">Concave Hull</a></li>
+<li class="toctree-l3"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="random_points_on_mesh.html">Populate Mesh (Random points on mesh)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi3d.html">Voronoi 3D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_mesh.html">Voronoi on Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_solid.html">Voronoi on Solid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_on_surface.html">Voronoi on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voronoi_sphere.html">Voronoi Sphere</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
@@ -212,7 +212,7 @@ The higher the value, the more precise this process is. The default value is
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="lloyd_on_mesh.html" class="btn btn-neutral float-left" title="Lloyd on Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lloyd_on_sphere.html" class="btn btn-neutral float-left" title="Lloyd on Sphere" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="lloyd_solid_face.html" class="btn btn-neutral float-right" title="Lloyd on Solid Face" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
