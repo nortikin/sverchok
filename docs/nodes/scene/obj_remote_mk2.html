@@ -80,15 +80,16 @@
 <li class="toctree-l2 current"><a class="reference internal" href="scene_index.html">Scene</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="3dview_props.html">3D View Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="FCurve_in.html">FCurve Input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="FCurve_in.html#none-of-that-made-sense">None of that made sense?</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cache.html">Cache</a></li>
 <li class="toctree-l3"><a class="reference internal" href="collection_picker_mk1.html">Collection Picker mk1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="curve_in.html">Curve Input</a></li>
 <li class="toctree-l3"><a class="reference internal" href="frame_info_mk2.html">Frame Info</a></li>
 <li class="toctree-l3"><a class="reference internal" href="get_objects_data.html">Get Objects Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="node_remote_mk2.html">Node Remote</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Object Remote (Control)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#implementation-details">Implementation details</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Object Remote (Control)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#implementation-details">Implementation details</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="objects_in_lite.html">Objects in Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="particles_MK2.html">Particles MK2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="selection_grabber_lite.html">Selection Grabber Lite</a></li>
@@ -145,10 +146,10 @@
 <li><p>add vector sockets to control Location / Scale / Rotation (Euler in Rads)</p></li>
 </ul>
 <p>That’s it.</p>
-</section>
 <section id="implementation-details">
-<h1>Implementation details<a class="headerlink" href="#implementation-details" title="Permalink to this heading">¶</a></h1>
+<h2>Implementation details<a class="headerlink" href="#implementation-details" title="Permalink to this heading">¶</a></h2>
 <p>It’s a nice short node, one thing it does to avoid setting your Object’s scale to 0,0,0 is to detect if 0,0,0 is passed. If 0,0,0 is passed it turns it into 0.00001, 0.00001, 0.00001. The reason for this is that an Object’s scale can not be set to 0,0,0 in Blender, it seems to wreck the internal transform matrix.</p>
+</section>
 </section>
 
 

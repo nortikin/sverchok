@@ -27,7 +27,7 @@ you picked for the other property index on the node will be invalidated. ( i thi
 
 
 None of that made sense?
-========================
+------------------------
 
 OK, best you can do is look at the issue tracker examples associated with the first pullrequest for this node:
 
