@@ -73,7 +73,7 @@ Sorting faces based on theirs center Z coordinate:
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/list_struct/sort/list_sort_sverchok_blender_example_02.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* CA: Faces Center: Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
 * Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

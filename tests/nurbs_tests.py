@@ -418,7 +418,7 @@ class OtherNurbsTests(SverchokTestCase):
         result = inserted.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, expected, precision=8)
 
-    @unittest.skip
+    #@unittest.skip
     def test_remove_1(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
         degree = 3
