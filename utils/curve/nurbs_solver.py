@@ -12,7 +12,6 @@ from sverchok.utils.logging import getLogger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvNurbsCurveGoal(object):
     def copy(self):
@@ -38,7 +37,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
             self.weights = np.asarray(weights)
 
     def __repr__(self):
-        return f"<Points at {self.us} = {self.vectors}, relative={self.relative}>"
+        if self.relative:
+            return f"<Relative Points, cnt={len(self.us)}>"
+        else:
+            return f"<Points, cnt={len(self.us)}>"
 
     @staticmethod
     def single(u, point, weight=None, relative=False):
@@ -84,7 +86,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         return len(self.us)
 
     def get_equations(self, solver):
-        ndim = 3
+        ndim = solver.ndim
         us = self.us
         vectors = self.vectors
 
@@ -120,7 +122,7 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
         for pt_idx, point in enumerate(vectors):
             if src_points is not None:
                 point = point - src_points[pt_idx]
-            B[pt_idx*3:pt_idx*3+3,0] = weights[pt_idx] * point[np.newaxis]
+            B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * point[np.newaxis]
 
         return A, B
 
@@ -135,7 +137,10 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
             self.weights = np.asarray(weights)
 
     def __repr__(self):
-        return f"<Tangents at {self.us} = {self.vectors}, relative={self.relative}>"
+        if self.relative:
+            return f"<Relative Tangents, cnt={len(self.us)}>"
+        else:
+            return f"<Tangents, cnt={len(self.us)}>"
 
     @staticmethod
     def single(u, tangent, weight=None, relative=False):
@@ -180,7 +185,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
             self.weights = np.asarray(weights)
 
     def __repr__(self):
-        return f"<Self-intersections at {self.us1} x {self.us2}>"
+        return f"<Self-intersections, cnt={len(self.us1)}>"
 
     @staticmethod
     def single(u1, u2, weight=None, relative_u=False, relative=False):
@@ -234,7 +239,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
         return len(self.us1)
 
     def get_equations(self, solver):
-        ndim = 3
+        ndim = solver.ndim
         us1 = self.us1
         us2 = self.us2
         p = solver.degree
@@ -264,7 +269,7 @@ class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
                     for dim_idx in range(ndim):
-                        B[pt_idx*3:pt_idx*3+3,0] = weights[pt_idx] * (pt2 - pt1)[np.newaxis]
+                        B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * (pt2 - pt1)[np.newaxis]
 
         return A, B
 
@@ -282,7 +287,7 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
             self.weights = np.asarray(weights)
 
     def __repr__(self):
-        return f"<Equal tangents at {self.us1} x {self.us2}>"
+        return f"<Equal tangents, cnt={len(self.us1)}>"
 
     @staticmethod
     def single(u1, u2, weight=None, relative_u=False, relative=False):
@@ -310,7 +315,7 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
         return alphas, betas
     
     def get_equations(self, solver):
-        ndim = 3
+        ndim = solver.ndim
         us1 = self.us1
         us2 = self.us2
         p = solver.degree
@@ -342,7 +347,7 @@ class SvNurbsCurveCotangents(SvNurbsCurveSelfIntersections):
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
                     for dim_idx in range(ndim):
-                        B[pt_idx*3:pt_idx*3+3,0] = weight * (pt2 - pt1)[np.newaxis]
+                        B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weight * (pt2 - pt1)[np.newaxis]
 
         print("A", A)
         print("B", B)
@@ -395,7 +400,7 @@ class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
         return len(self.cpt_idxs)
 
     def get_equations(self, solver):
-        ndim = 3
+        ndim = solver.ndim
 
         n_points = len(self.cpt_vectors)
         n_equations = ndim * n_points
@@ -424,12 +429,12 @@ class SvNurbsCurveControlPoints(SvNurbsCurveGoal):
         for pt_idx, (cpt_idx, point) in enumerate(zip(self.cpt_idxs, self.cpt_vectors)):
             if src_points is not None:
                 point = point - src_points[cpt_idx]
-            B[pt_idx*3:pt_idx*3+3,0] = weights[pt_idx] * point[np.newaxis]
+            B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * point[np.newaxis]
 
         return A, B
 
 class SvNurbsCurveSolver(SvCurve):
-    def __init__(self, degree=None, src_curve=None):
+    def __init__(self, degree=None, src_curve=None, ndim=3):
         if degree is None and src_curve is None:
             raise Exception("Either degree or src_curve must be provided")
         elif degree is not None and src_curve is not None and src_curve.get_degree() != degree:
@@ -439,6 +444,7 @@ class SvNurbsCurveSolver(SvCurve):
             self.degree = src_curve.get_degree()
         else:
             self.degree = degree
+        self.ndim = ndim
         self.n_cpts = None
         self.curve_weights = None
         self.knotvector = None
@@ -491,6 +497,13 @@ class SvNurbsCurveSolver(SvCurve):
         self.n_cpts = n_equations
         self.knotvector = sv_knotvector.generate(self.degree, self.n_cpts)
 
+    def guess_n_control_points(self):
+        n_equations = sum(g.get_n_defined_control_points() for g in self.goals)
+        return n_equations
+
+    def set_knotvector(self, knotvector):
+        self.knotvector = np.asarray(knotvector)
+
     def add_goal(self, goal):
         self.goals.append(goal)
 
@@ -524,7 +537,7 @@ class SvNurbsCurveSolver(SvCurve):
             raise Exception("Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
         if self.knotvector is None:
             raise Exception("Knotvector is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()")
-        ndim = 3
+        ndim = self.ndim
         n = self.n_cpts
         p = self.degree
         if self.curve_weights is None:
@@ -544,7 +557,7 @@ class SvNurbsCurveSolver(SvCurve):
     def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
         self._init()
 
-        ndim = 3
+        ndim = self.ndim
         n = self.n_cpts
         n_equations, n_unknowns = self.A.shape
         #print(f"A: {self.A.shape}")
@@ -567,10 +580,10 @@ class SvNurbsCurveSolver(SvCurve):
             
         d_cpts = X.reshape((n, ndim))
         if self.src_curve is None:
-            return SvNurbsCurve.build(implementation, self.degree, self.knotvector, d_cpts, self.curve_weights)
+            return SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, self.curve_weights)
         else:
             cpts = self.src_curve.get_control_points() + d_cpts
-            return SvNurbsCurve.build(implementation, self.degree, self.knotvector, cpts, self.curve_weights)
+            return SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, self.curve_weights)
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         solver = self.copy()

@@ -10,9 +10,9 @@ import numpy as np
 from sverchok.utils.math import falloff_array
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
 
 def adjust_curve_points(curve, us_bar, points):
     """
@@ -70,7 +70,7 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', implementation=SvNurbsCurve.NATIVE):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTANCE', implementation=SvNurbsMaths.NATIVE):
     points = np.asarray(points)
     tknots = Spline.create_knots(points, metric=metric)
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts)
@@ -78,5 +78,43 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
     solver.add_goal(goal)
+    return solver.solve(implementation=implementation)
+
+def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cyclic=False, implementation=SvNurbsMaths.NATIVE):
+    n_points = len(points)
+    points = np.asarray(points)
+    if points.ndim != 2:
+        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
+    ndim = points.shape[1] # 3 or 4
+    if ndim not in {3,4}:
+        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
+    if cyclic:
+        points = np.concatenate((points, points[0][np.newaxis]))
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    points_goal = SvNurbsCurvePoints(tknots, points, relative=False)
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
+    solver.add_goal(points_goal)
+    if cyclic:
+        k = 1.0/float(degree)
+        tangent = k*(points[1] - points[-2])
+        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
+        #solver.add_goal(SvNurbsCurveCotangents.single(0.0, 1.0, relative_u=True))
+        n_cpts = solver.guess_n_control_points()
+        #pts1 = np.append(points, points[1][np.newaxis], axis=0)
+        #tknots = Spline.create_knots(pts1, metric=metric)
+        t1 = k*tknots[0] + (1-k)*tknots[1]
+        t2 = k*tknots[-1] + (1-k)*tknots[-2]
+        tknots = np.insert(tknots, [1,-1], [t1,t2])
+        #tknots = np.append(tknots, tknots[-1] + (tknots[-1] - tknots[-2]))
+        #tknots = np.insert(tknots, 0, tknots[0] - (tknots[1] - tknots[0]))
+        #tknots = sv_knotvector.normalize(tknots)
+        knotvector = sv_knotvector.from_tknots(degree, tknots)#, n_cpts)
+        solver.set_curve_params(n_cpts, knotvector)
+    else:
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        solver.set_curve_params(n_points, knotvector)
+
     return solver.solve(implementation=implementation)
 

@@ -9,8 +9,7 @@ from sverchok.utils.geom import circle_by_three_points
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve
-from sverchok.utils.nurbs_common import elevate_bezier_degree, from_homogenous
+from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 from sverchok.dependencies import geomdl
@@ -814,7 +813,7 @@ class InterpolateTests(SverchokTestCase):
         "NURBS interpolation in 3D"
         points = np.array([[0,0,0], [1,0,0], [1,1,0]], dtype=np.float64)
         degree = 2
-        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree, points)
         ts = np.array([0, 0.5, 1])
         result = curve.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, points, precision=6)
@@ -827,7 +826,7 @@ class InterpolateTests(SverchokTestCase):
         "NURBS Interpolation in homogenous coordinates"
         points = np.array([[0,0,0,1], [1,0,0,2], [1,1,0,1]], dtype=np.float64)
         degree = 2
-        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree, points)
         ts = np.array([0, 0.5, 1])
         result = curve.evaluate_array(ts)
         expected = np.array([[0,0,0], [0.5,0,0], [1,1,0]])

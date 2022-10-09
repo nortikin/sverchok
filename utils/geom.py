@@ -194,6 +194,17 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        raise Exception("Unsupported spline type")
+
+    @classmethod
+    def resample(cls, old_ts, old_values, new_ts):
+        verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+        spline = cls.create(verts, tknots=old_ts)
+        new_verts = spline.eval(new_ts)
+        return new_verts[:,1]
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
@@ -287,6 +298,10 @@ class CubicSpline(Spline):
             return splines
         
         self.splines = calc_cubic_splines(tknots, n, locs)
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def eval(self, t_in, tknots = None):
         """
@@ -405,6 +420,10 @@ class LinearSpline(Spline):
         self.pts = pts
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))

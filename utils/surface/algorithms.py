@@ -29,11 +29,10 @@ from sverchok.utils.curve.algorithms import (
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve
         )
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
 from sverchok.utils.logging import info, debug
 
 class SvInterpolatingSurface(SvSurface):
@@ -1572,6 +1571,7 @@ def nurbs_surface_from_curve(curve, samples, degree_u, degree_v, num_cpts_u, num
     t_min, t_max = curve.get_u_bounds()
     ts = np.linspace(t_min, t_max, num=samples)
     points = curve.evaluate_array(ts)
-    trim_curve = interpolate_nurbs_curve(implementation, curve.get_degree(), uv_points)
+    surface = nurbs_surface_from_points(points, degree_u, degere_v, num_cpts_u, num_cpts_v, implementation = implementation)
+    trim_curve = SvNurbsMaths.interpolate_curve(implementation, curve.get_degree(), uv_points)
     return surface, trim_curve
 

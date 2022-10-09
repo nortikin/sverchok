@@ -8,6 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvNurbsCurve, SvNativeNurbsCurve, SvGeomdlCurve
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
 
@@ -37,6 +38,11 @@ class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
         default="DISTANCE", items=supported_metrics,
         update=updateNode)
 
+    cyclic : BoolProperty(
+            name = "Cyclic",
+            default = False,
+            update = updateNode)
+
     implementations = []
     if geomdl is not None:
         implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
@@ -52,6 +58,7 @@ class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
         if self.nurbs_implementation == SvNurbsCurve.GEOMDL:
             layout.prop(self, 'centripetal', toggle=True)
         else:
+            layout.prop(self, 'cyclic')
             layout.prop(self, 'metric')
 
     def sv_init(self, context):
@@ -77,13 +84,13 @@ class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
             vertices = np.array(vertices)
             if self.nurbs_implementation == SvNurbsCurve.GEOMDL:
-                nurbs_class = SvGeomdlCurve
+                implementation = SvNurbsCurve.GEOMDL
                 metric = 'CENTRIPETAL' if self.centripetal else 'DISTANCE'
             else:
-                nurbs_class = SvNativeNurbsCurve
+                implementation = SvNurbsCurve.NATIVE
                 metric = self.metric
 
-            curve = nurbs_class.interpolate(degree, vertices, metric=metric)
+            curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic)
 
             points_out.append(curve.get_control_points().tolist())
             knots_out.append(curve.get_knotvector().tolist())
