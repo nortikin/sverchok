@@ -809,7 +809,7 @@ class KnotvectorTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(knotvector, expected, precision=6)
 
 class InterpolateTests(SverchokTestCase):
-    def test_interpolate_1(self):
+    def test_interpolate_3d(self):
         "NURBS interpolation in 3D"
         points = np.array([[0,0,0], [1,0,0], [1,1,0]], dtype=np.float64)
         degree = 2
@@ -822,8 +822,7 @@ class InterpolateTests(SverchokTestCase):
         expected_ctrlpts = np.array([[ 0.0, 0.0,   0.0 ], [ 1.5, -0.5,  0.0 ], [ 1.0,   1.0,   0.0 ]])
         self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
 
-    @unittest.skip("Not quite clear how this should work")
-    def test_interpolate_2(self):
+    def test_interpolate_4d(self):
         "NURBS Interpolation in homogenous coordinates"
         points = np.array([[0,0,0,1], [1,0,0,2], [1,1,0,1]], dtype=np.float64)
         degree = 2
