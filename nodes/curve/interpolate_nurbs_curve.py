@@ -90,7 +90,7 @@ class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
                 implementation = SvNurbsCurve.NATIVE
                 metric = self.metric
 
-            curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic)
+            curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.get_logger())
 
             points_out.append(curve.get_control_points().tolist())
             knots_out.append(curve.get_knotvector().tolist())

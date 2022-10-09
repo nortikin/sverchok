@@ -834,7 +834,7 @@ class SvGeomdlCurve(SvNurbsCurve):
         return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
-    def interpolate(cls, degree, points, metric='DISTANCE'):
+    def interpolate(cls, degree, points, metric='DISTANCE', **kwargs):
         if metric not in {'DISTANCE', 'CENTRIPETAL'}:
             raise Exception("Unsupported metric")
         centripetal = metric == 'CENTRIPETAL'
@@ -997,8 +997,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
-    def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False):
-        return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic)
+    def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
+        return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
 
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
