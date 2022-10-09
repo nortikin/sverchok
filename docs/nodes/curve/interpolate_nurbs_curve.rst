@@ -47,6 +47,9 @@ This node has the following parameters:
 * **Centripetal**. This parameter is available only when **Implementation**
   parameter is set to **Geomdl**. This defines whether the node will use
   centripetal interpolation method. Unchecked by default.
+* **Cyclic**. This parameter is available only when **Implementation**
+  parameter is set to **Sverchok**. If checked, then the node will generate
+  cyclic (closed) curve. Unchecked by default.
 * **Metric**. This parameter is available only when **Implementation**
   parameter is set to **Sverchok**. This defines the metric used to calculate
   curve's T parameter values corresponding to specified curve points. The
