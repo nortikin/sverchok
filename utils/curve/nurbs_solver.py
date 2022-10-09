@@ -672,11 +672,16 @@ class SvNurbsCurveSolver(SvCurve):
             residue = residues.sum()
             
         d_cpts = X.reshape((n, ndim))
+        if ndim == 4:
+            d_cpts, d_weights = from_homogenous(d_cpts)
+        else:
+            d_weights = np.zeros_like(self.curve_weights)
         if self.src_curve is None:
             curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, self.curve_weights)
         else:
             cpts = self.src_curve.get_control_points() + d_cpts
-            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, self.curve_weights)
+            weights = self.curve_weights + d_weights
+            curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
         return problem_type, residue, curve
 
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
