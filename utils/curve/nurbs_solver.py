@@ -67,7 +67,13 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
     """
     def __init__(self, us, points, weights = None, relative=False):
         self.us = np.asarray(us)
+        if self.us.ndim != 1:
+            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
         self.vectors = np.asarray(points)
+        if self.vectors.ndim != 2:
+            raise Exception(f"Points must be 2-dimensional, but got {self.vectors.shape}")
+        if len(us) != len(self.vectors):
+            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -171,7 +177,13 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
     """
     def __init__(self, us, tangents, weights = None, relative=False):
         self.us = np.asarray(us)
+        if self.us.ndim != 1:
+            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
         self.vectors = np.asarray(tangents)
+        if self.vectors.ndim != 2:
+            raise Exception(f"Points must be 2-dimensional, but got {self.vectors.shape}")
+        if len(us) != len(self.vectors):
+            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
         self.relative = relative
         if weights is None:
             self.weights = None

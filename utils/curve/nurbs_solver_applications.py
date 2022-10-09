@@ -152,7 +152,8 @@ def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cycl
         solver.set_curve_params(n_cpts, knotvector)
     else:
         knotvector = sv_knotvector.from_tknots(degree, tknots)
-        solver.set_curve_params(n_points, knotvector)
+        n_cpts = solver.guess_n_control_points()
+        solver.set_curve_params(n_cpts, knotvector)
 
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
                                     implementation = implementation,
