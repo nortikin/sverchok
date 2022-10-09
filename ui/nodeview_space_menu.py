@@ -33,69 +33,125 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
 from sverchok.ui.sv_icons import node_icon, icon, custom_icon
 from sverchok.ui import presets
-from sverchok.utils.index_md_parser import NodeMenuList, MainNodeMenu
 from sverchok.ui.presets import apply_default_preset
+from sverchok.utils import yaml_parser
 
 
-class AddNodeMenu:
-    def __init__(self, raw_menus):
-        self.top_menu_elements: list[NodeMenuList] = raw_menus
-        self.menus: dict[str, type] = dict()
-        self._generate_menu_classes()
-
-    def _generate_menu_classes(self):
-        stack = self.top_menu_elements.copy()
-        while stack:
-            elem = stack.pop()
-
-            if hasattr(elem, 'data'):  # menu
-                # search sub menu lists
-                for _elem in elem.data:
-                    if hasattr(_elem, 'data'):
-                        stack.append(_elem)
-
-                # generate menu of current list
-                name = 'NODEVIEW_MT_Add_' + elem.name
-                cls = type(name,
-                           (NodeMenuTemplate, bpy.types.Menu),
-                           {'bl_label': elem.name, 'draw_data': elem.data})
-                self.menus[elem.name] = cls
+class MenuItem:  # todo ABC
+    def draw(self, layout):
+        pass
 
 
-class NodeMenuTemplate:
+class Separator(MenuItem):
+    def draw(self, layout):
+        layout.separator()
+
+
+class AddNode(MenuItem):
+    def __init__(self, id_name):
+        self.id_name = id_name
+        # bpy.types.Node.bl_rna_get_subclass_py(self.id_name) - does not work during registration
+
+    def draw(self, layout):
+        node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.id_name)
+        if node_cls is not None:
+            label = node_cls.bl_label  # todo node_cls.bl_rna.name ?
+            icon_prop = node_icon(node_cls)
+        elif self.id_name == 'NodeReroute':
+            label = "Reroute"
+            icon_prop = icon('SV_REROUTE')
+        else:  # todo log missing nodes?
+            label = f'{self.id_name} (not found)'
+            icon_prop = {'icon': 'ERROR'}
+
+        if node_cls is None:
+            layout.label(text=label, **icon_prop)
+            return
+        default_context = bpy.app.translations.contexts.default
+        add = layout.operator(SvNodeAddOperator.bl_idname,
+                              text=label,
+                              text_ctxt=default_context,
+                              **icon_prop)
+        add.type = self.id_name
+        add.use_transform = True
+
+
+class Category(MenuItem):
+    def __init__(self, name, menu_cls, icon_name):
+        self.name = name
+        self.icon = icon_name
+        self.menu_cls: CategoryMenuTemplate = menu_cls
+
+    def draw(self, layout):
+        layout.menu(self.menu_cls.__name__, **icon(self.icon))  # text=submenu_title)
+
+    def draw_contents(self, layout):
+        layout.menu_contents(self.menu_cls.__name__)
+
+    def register(self):
+        """Register itself and all its elements"""
+        bpy.utils.register_class(self.menu_cls)
+        for elem in self.menu_cls.draw_data:
+            if hasattr(elem, 'register'):
+                elem.register()
+
+    def unregister(self):
+        """Register itself and all its elements"""
+        bpy.utils.unregister_class(self.menu_cls)
+        for elem in self.menu_cls.draw_data:
+            if hasattr(elem, 'unregister'):
+                elem.unregister()
+
+
+def pars_config(conf: list, menu_name='AllCategories', icon_name='RNA'):
+    menu_name = menu_name.title().replace(' ', '')
+    parsed_items = []
+
+    # parsing menu elements
+    for elem in conf:
+        if isinstance(elem, dict):
+            name = list(elem.keys())[0]
+            value = list(elem.values())[0]
+            props = dict()
+            if isinstance(value, list):  # sub menu
+
+                # pars sub menu properties
+                for prop in value:
+                    if not isinstance(prop, dict):  # some node or separator
+                        continue
+                    prop_value = list(prop.values())[0]
+                    if isinstance(prop_value, list):  # some sub menu
+                        continue
+                    props.update(prop)
+
+            elif value is None:  # empty category
+                value = []
+            else:  # menu property
+                continue  # was already handled
+            parsed_items.append(pars_config(value, name, **props))
+
+        else:  # some value, separator?
+            if all('-' == ch for ch in elem):  # separator
+                parsed_items.append(Separator())
+            else:
+                parsed_items.append(AddNode(elem))
+
+    # generate menu of current list
+    cls_name = 'NODEVIEW_MT_SvCategory' + menu_name
+    cls = type(cls_name,
+               (CategoryMenuTemplate, bpy.types.Menu),
+               {'bl_label': menu_name, 'draw_data': parsed_items})
+
+    return Category(menu_name, cls, icon_name)
+
+
+class CategoryMenuTemplate:
     bl_label = ''
-    draw_data = []  # items to draw
+    draw_data: list[MenuItem] = []  # items to draw
 
     def draw(self, context):
-        layout = self.layout
         for elem in self.draw_data:
-
-            if elem == '---':
-                layout.separator()
-                continue
-
-            if hasattr(elem, 'name'):  # submenu
-                layout.menu(add_node_menu.menus[elem.name].__name__, **icon(elem.icon_name))  # text=submenu_title)
-                continue
-
-            node_cls = bpy.types.Node.bl_rna_get_subclass_py(elem)
-
-            if node_cls is not None:
-                label = node_cls.bl_label  # todo node_cls.bl_rna.name ?
-                icon_prop = node_icon(node_cls)
-            elif elem == 'NodeReroute':
-                label = "Reroute"
-                icon_prop = icon('SV_REROUTE')
-            else:
-                continue  # todo log missing nodes?
-
-            default_context = bpy.app.translations.contexts.default
-            add = layout.operator(SvNodeAddOperator.bl_idname,
-                                  text=label,
-                                  text_ctxt=default_context,
-                                  **icon_prop)
-            add.type = elem
-            add.use_transform = True
+            elem.draw(self.layout)
 
     @classmethod
     def poll(cls, context):
@@ -104,8 +160,8 @@ class NodeMenuTemplate:
             return True
 
 
-menu_file = Path(__file__).parents[1] / 'index_test.md'
-add_node_menu = AddNodeMenu(MainNodeMenu(menu_file)._struct)
+menu_file = Path(__file__).parents[1] / 'index.yaml'
+add_node_menu = pars_config(yaml_parser.load(menu_file))
 
 
 class SvNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
@@ -253,10 +309,9 @@ def make_class(name, bl_label):
     return clazz
 
 
-class NODEVIEW_MT_Dynamic_Menu(NodeMenuTemplate, bpy.types.Menu):
+class NODEVIEW_MT_Dynamic_Menu(CategoryMenuTemplate, bpy.types.Menu):
     """Shift+A menu"""
     bl_label = "Sverchok Nodes"
-    draw_data = add_node_menu.top_menu_elements
 
     def draw(self, context):
         layout = self.layout
@@ -264,7 +319,7 @@ class NODEVIEW_MT_Dynamic_Menu(NodeMenuTemplate, bpy.types.Menu):
 
         layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
-        super().draw(context)
+        add_node_menu.draw_contents(self.layout)
 
         if extra_category_providers:
             for provider in extra_category_providers:
@@ -478,13 +533,13 @@ def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
     bpy.types.NODE_MT_add.append(sv_draw_menu)
-    for cls in add_node_menu.menus.values():
-        bpy.utils.register_class(cls)
+    add_node_menu.register()
 
 
 def unregister():
     global menu_class_by_title
 
+    add_node_menu.unregister()
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
