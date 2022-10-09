@@ -63,7 +63,8 @@ class KnotvectorDict(object):
                         found_knot = k
                         break
         if found_idx is not None:
-            self.multiplicities[found_idx] = (curve_idx, knot, multiplicity)
+            m = self.multiplicities[found_idx][2]
+            self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
             self.skip_insertions[curve_idx].append(found_knot)
         else:
             self.multiplicities.append((curve_idx, knot, multiplicity))
@@ -106,6 +107,7 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
             #print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
                 dst_knots.update(i, u, count)
+        #print("Dst", dst_knots)
 
         result = []
 #     for i, curve1 in enumerate(curves):
