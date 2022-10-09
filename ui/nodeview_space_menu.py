@@ -16,14 +16,9 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from pathlib import Path
 
-'''
-zeffii 2014.
-
-borrows heavily from insights provided by Dynamic Space Bar!
-but massively condensed for sanity.
-'''
-
+import bl_operators
 import bpy
 
 from sverchok.menu import (
@@ -38,6 +33,103 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
 from sverchok.ui.sv_icons import node_icon, icon, custom_icon
 from sverchok.ui import presets
+from sverchok.utils.index_md_parser import NodeMenuList, MainNodeMenu
+from sverchok.ui.presets import apply_default_preset
+
+
+class AddNodeMenu:
+    def __init__(self, raw_menus):
+        self.top_menu_elements: list[NodeMenuList] = raw_menus
+        self.menus: dict[str, type] = dict()
+        self._generate_menu_classes()
+
+    def _generate_menu_classes(self):
+        stack = self.top_menu_elements.copy()
+        while stack:
+            elem = stack.pop()
+
+            if hasattr(elem, 'data'):  # menu
+                # search sub menu lists
+                for _elem in elem.data:
+                    if hasattr(_elem, 'data'):
+                        stack.append(_elem)
+
+                # generate menu of current list
+                name = 'NODEVIEW_MT_Add_' + elem.name
+                cls = type(name,
+                           (NodeMenuTemplate, bpy.types.Menu),
+                           {'bl_label': elem.name, 'draw_data': elem.data})
+                self.menus[elem.name] = cls
+
+
+class NodeMenuTemplate:
+    bl_label = ''
+    draw_data = []  # items to draw
+
+    def draw(self, context):
+        layout = self.layout
+        for elem in self.draw_data:
+
+            if elem == '---':
+                layout.separator()
+                continue
+
+            if hasattr(elem, 'name'):  # submenu
+                layout.menu(add_node_menu.menus[elem.name].__name__, **icon(elem.icon_name))  # text=submenu_title)
+                continue
+
+            node_cls = bpy.types.Node.bl_rna_get_subclass_py(elem)
+
+            if node_cls is not None:
+                label = node_cls.bl_label  # todo node_cls.bl_rna.name ?
+                icon_prop = node_icon(node_cls)
+            elif elem == 'NodeReroute':
+                label = "Reroute"
+                icon_prop = icon('SV_REROUTE')
+            else:
+                continue  # todo log missing nodes?
+
+            default_context = bpy.app.translations.contexts.default
+            add = layout.operator(SvNodeAddOperator.bl_idname,
+                                  text=label,
+                                  text_ctxt=default_context,
+                                  **icon_prop)
+            add.type = elem
+            add.use_transform = True
+
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            return True
+
+
+menu_file = Path(__file__).parents[1] / 'index_test.md'
+add_node_menu = AddNodeMenu(MainNodeMenu(menu_file)._struct)
+
+
+class SvNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
+    """Wrapper for node.add_node operator to add specific node"""
+
+    bl_idname = "node.sv_add_node"
+    bl_label = "Add SV node"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        node = self.create_node(context)
+        apply_default_preset(node)
+        return {'FINISHED'}
+
+    @classmethod
+    def description(cls, _context, properties):
+        nodetype = properties["type"]
+        node_cls = bpy.types.Node.bl_rna_get_subclass_py(nodetype)
+        if node_cls is not None:
+            return node_cls.docstring.get_tooltip()
+        else:
+            return ""
+
+    # todo add poll method
 
 
 sv_tree_types = {'SverchCustomTreeType', }
@@ -161,37 +253,18 @@ def make_class(name, bl_label):
     return clazz
 
 
-class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu, SV_NodeTree_Poll):
+class NODEVIEW_MT_Dynamic_Menu(NodeMenuTemplate, bpy.types.Menu):
+    """Shift+A menu"""
     bl_label = "Sverchok Nodes"
+    draw_data = add_node_menu.top_menu_elements
 
     def draw(self, context):
-
-        # dont show up in other tree menu (needed because we bypassed poll by appending manually)
-        tree_type = context.space_data.tree_type
-        if not tree_type in sv_tree_types:
-            return
-
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        # if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
         layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
-        for item in menu_structure:
-            if item[0] == 'separator':
-                layout.separator()
-            else:
-                if "Add" in item[0]:
-                    name = item[0].split("Add")[1]
-                    if name in node_cats:
-                        if category_has_nodes(name):
-                            layout.menu(item[0], **icon(item[1]))
-
-                    else:
-                        layout.menu(item[0], **icon(item[1]))
-                else:
-                # print('AA', globals()[item[0]].bl_label)
-                    layout.menu(item[0], **icon(item[1]))
+        super().draw(context)
 
         if extra_category_providers:
             for provider in extra_category_providers:
@@ -335,6 +408,7 @@ classes = [
     NODEVIEW_MT_AddBPYData,
     NODEVIEW_MT_AddPresetOps,
     NODE_MT_category_SVERCHOK_GROUP,
+    SvNodeAddOperator,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
@@ -384,7 +458,7 @@ classes = [
 
 ]
 def sv_draw_menu(self, context):
-
+    """This is drawn in ADD menu of the header of a tree editor"""
     tree_type = context.space_data.tree_type
     if not tree_type in sv_tree_types:
         return
@@ -395,7 +469,7 @@ def sv_draw_menu(self, context):
         layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
         return
 
-    NODEVIEW_MT_Dynamic_Menu.draw(self, context)
+    layout.menu_contents(NODEVIEW_MT_Dynamic_Menu.__name__)
 
 def register():
 
@@ -404,6 +478,9 @@ def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
     bpy.types.NODE_MT_add.append(sv_draw_menu)
+    for cls in add_node_menu.menus.values():
+        bpy.utils.register_class(cls)
+
 
 def unregister():
     global menu_class_by_title
