@@ -538,6 +538,9 @@ class SvCircle(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def elevate_degree(self, delta=None, target=None):
+        return self.to_nurbs().elevate_degree(delta=delta, target=target)
+
 #     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 #         t_min, t_max = self.get_u_bounds()
 #         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
@@ -1085,7 +1088,10 @@ class SvEllipse(SvCurve):
         return self.to_nurbs().extrude_to_point(point)
 
     def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def elevate_degree(self, delta=None, target=None):
+        return self.to_nurbs().elevate_degree(delta=delta, target=target)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1205,6 +1211,19 @@ def from_equation(cls, eq):
                 vectorx=self.vectorx)
     circle.u_bounds = self.u_bounds
     return circle</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvCircle.elevate_degree"><code class="name flex">
+<span>def <span class="ident">elevate_degree</span></span>(<span>self, delta=None, target=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def elevate_degree(self, delta=None, target=None):
+    return self.to_nurbs().elevate_degree(delta=delta, target=target)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.extrude_along_vector"><code class="name flex">
@@ -2225,6 +2244,7 @@ def from_two_points(cls, point1, point2):
 <ul class="">
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.calc_matrix" href="#sverchok.utils.curve.primitives.SvCircle.calc_matrix">calc_matrix</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.copy" href="#sverchok.utils.curve.primitives.SvCircle.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvCircle.elevate_degree" href="#sverchok.utils.curve.primitives.SvCircle.elevate_degree">elevate_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.extrude_along_vector" href="#sverchok.utils.curve.primitives.SvCircle.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.extrude_to_point" href="#sverchok.utils.curve.primitives.SvCircle.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.from_arc" href="#sverchok.utils.curve.primitives.SvCircle.from_arc">from_arc</a></code></li>
