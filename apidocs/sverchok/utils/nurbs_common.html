@@ -62,6 +62,8 @@ class SvNurbsMaths(object):
         if kv_error is not None:
             raise Exception(kv_error)
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
         if nurbs_class is None:
             raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
         else:
@@ -81,6 +83,13 @@ class SvNurbsMaths(object):
             raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
         else:
             return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def interpolate_curve(implementation, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
@@ -931,6 +940,8 @@ other curves.<em> and surfaces.</em> modules.</p></div>
         if kv_error is not None:
             raise Exception(kv_error)
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
         if nurbs_class is None:
             raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
         else:
@@ -950,6 +961,13 @@ other curves.<em> and surfaces.</em> modules.</p></div>
             raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
         else:
             return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def interpolate_curve(implementation, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
@@ -1007,6 +1025,8 @@ def build_curve(implementation, degree, knotvector, control_points, weights=None
     if kv_error is not None:
         raise Exception(kv_error)
     nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+    if nurbs_class is None and isinstance(implementation, type):
+        nurbs_class = implementation
     if nurbs_class is None:
         raise Exception(f&#34;Unsupported NURBS Curve implementation: {implementation}&#34;)
     else:
@@ -1036,6 +1056,23 @@ def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v
         raise Exception(f&#34;Unsupported NURBS Surface implementation: {implementation}&#34;)
     else:
         return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_curve"><code class="name flex">
+<span>def <span class="ident">interpolate_curve</span></span>(<span>implementation, degree, points, metric='DISTANCE', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def interpolate_curve(implementation, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
+    nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+    if nurbs_class is None and isinstance(implementation, type):
+        nurbs_class = implementation
+    return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve"><code class="name flex">
@@ -1130,6 +1167,7 @@ def to_nurbs_surface(surface, implementation = NATIVE):
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.build_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.build_curve">build_curve</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.build_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.build_surface">build_surface</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.curve_classes">curve_classes</a></code></li>
+<li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.interpolate_curve">interpolate_curve</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes" href="#sverchok.utils.nurbs_common.SvNurbsMaths.surface_classes">surface_classes</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_curve">to_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface" href="#sverchok.utils.nurbs_common.SvNurbsMaths.to_nurbs_surface">to_nurbs_surface</a></code></li>

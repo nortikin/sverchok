@@ -48,7 +48,8 @@ from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTy
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
+from sverchok.utils.curve.nurbs_algorithms import unify_two_curves
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
         nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
@@ -119,52 +120,6 @@ class SvNurbsCurve(SvCurve):
                     self.get_degree(), knotvector,
                     control_points, weights,
                     normalize_knots = normalize_knots)
-
-    @classmethod
-    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        return interpolate_nurbs_curve(cls, degree, points, metric)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        n_curves, n_points, _ = points.shape
-        tknots = [Spline.create_knots(points[i], metric=metric) for i in range(n_curves)]
-        knotvectors = [sv_knotvector.from_tknots(degree, tknots[i]) for i in range(n_curves)]
-        functions = [SvNurbsBasisFunctions(knotvectors[i]) for i in range(n_curves)]
-        coeffs_by_row = [[functions[curve_idx].function(idx, degree)(tknots[curve_idx]) for idx in range(n_points)] for curve_idx in range(n_curves)]
-        coeffs_by_row = np.array(coeffs_by_row)
-        A = np.zeros((n_curves, 3*n_points, 3*n_points))
-        for curve_idx in range(n_curves):
-            for equation_idx, t in enumerate(tknots[curve_idx]):
-                for unknown_idx in range(n_points):
-                    coeff = coeffs_by_row[curve_idx][unknown_idx][equation_idx]
-                    row = 3*equation_idx
-                    col = 3*unknown_idx
-                    A[curve_idx,row,col] = A[curve_idx,row+1,col+1] = A[curve_idx,row+2,col+2] = coeff
-
-        B = np.zeros((n_curves, 3*n_points,1))
-        for curve_idx in range(n_curves):
-            for point_idx, point in enumerate(points[curve_idx]):
-                row = 3*point_idx
-                B[curve_idx, row:row+3] = point[:,np.newaxis]
-
-        x = np.linalg.solve(A, B)
-
-        curves = []
-        weights = np.ones((n_points,))
-        for curve_idx in range(n_curves):
-            control_points = []
-            for i in range(n_points):
-                row = i*3
-                control = x[curve_idx][row:row+3,0].T
-                control_points.append(control)
-            control_points = np.array(control_points)
-
-            curve = SvNurbsCurve.build(cls.get_nurbs_implementation(),
-                    degree, knotvectors[curve_idx],
-                    control_points, weights)
-            curves.append(curve)
-
-        return curves
 
     def get_bounding_box(self):
         if not hasattr(self, &#39;_bounding_box&#39;) or self._bounding_box is None:
@@ -908,24 +863,12 @@ class SvGeomdlCurve(SvNurbsCurve):
         return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
-    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
             raise Exception(&#34;Unsupported metric&#34;)
         centripetal = metric == &#39;CENTRIPETAL&#39;
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
-            raise Exception(&#34;Unsupported metric&#34;)
-        centripetal = metric == &#39;CENTRIPETAL&#39;
-        curves = []
-        for curve_points in points:
-            curve = fitting.interpolate_curve(curve_points.tolist(), degree, centripetal=centripetal)
-            curve = SvGeomdlCurve(curve)
-            curves.append(curve)
-        return curves
 
     @classmethod
     def from_any_nurbs(cls, curve):
@@ -1081,6 +1024,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
+
+    @classmethod
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None):
+        return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
 
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
@@ -1498,24 +1445,12 @@ if geomdl is not None:
         return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
-    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
             raise Exception(&#34;Unsupported metric&#34;)
         centripetal = metric == &#39;CENTRIPETAL&#39;
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
-            raise Exception(&#34;Unsupported metric&#34;)
-        centripetal = metric == &#39;CENTRIPETAL&#39;
-        curves = []
-        for curve_points in points:
-            curve = fitting.interpolate_curve(curve_points.tolist(), degree, centripetal=centripetal)
-            curve = SvGeomdlCurve(curve)
-            curves.append(curve)
-        return curves
 
     @classmethod
     def from_any_nurbs(cls, curve):
@@ -1727,7 +1662,7 @@ def from_any_nurbs(cls, curve):
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate"><code class="name flex">
-<span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE')</span>
+<span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE', **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1736,34 +1671,12 @@ def from_any_nurbs(cls, curve):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
+def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
     if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
         raise Exception(&#34;Unsupported metric&#34;)
     centripetal = metric == &#39;CENTRIPETAL&#39;
     curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
     return SvGeomdlCurve(curve)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate_list"><code class="name flex">
-<span>def <span class="ident">interpolate_list</span></span>(<span>degree, points, metric='DISTANCE')</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-    if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
-        raise Exception(&#34;Unsupported metric&#34;)
-    centripetal = metric == &#39;CENTRIPETAL&#39;
-    curves = []
-    for curve_points in points:
-        curve = fitting.interpolate_curve(curve_points.tolist(), degree, centripetal=centripetal)
-        curve = SvGeomdlCurve(curve)
-        curves.append(curve)
-    return curves</code></pre>
 </details>
 </dd>
 </dl>
@@ -2000,6 +1913,10 @@ def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
+
+    @classmethod
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None):
+        return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
 
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
@@ -2373,6 +2290,20 @@ def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
 <pre><code class="python">@classmethod
 def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
     return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate"><code class="name flex">
+<span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None):
+    return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)</code></pre>
 </details>
 </dd>
 </dl>
@@ -2865,52 +2796,6 @@ def build(cls, implementation, degree, knotvector, control_points, weights=None,
                     self.get_degree(), knotvector,
                     control_points, weights,
                     normalize_knots = normalize_knots)
-
-    @classmethod
-    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        return interpolate_nurbs_curve(cls, degree, points, metric)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-        n_curves, n_points, _ = points.shape
-        tknots = [Spline.create_knots(points[i], metric=metric) for i in range(n_curves)]
-        knotvectors = [sv_knotvector.from_tknots(degree, tknots[i]) for i in range(n_curves)]
-        functions = [SvNurbsBasisFunctions(knotvectors[i]) for i in range(n_curves)]
-        coeffs_by_row = [[functions[curve_idx].function(idx, degree)(tknots[curve_idx]) for idx in range(n_points)] for curve_idx in range(n_curves)]
-        coeffs_by_row = np.array(coeffs_by_row)
-        A = np.zeros((n_curves, 3*n_points, 3*n_points))
-        for curve_idx in range(n_curves):
-            for equation_idx, t in enumerate(tknots[curve_idx]):
-                for unknown_idx in range(n_points):
-                    coeff = coeffs_by_row[curve_idx][unknown_idx][equation_idx]
-                    row = 3*equation_idx
-                    col = 3*unknown_idx
-                    A[curve_idx,row,col] = A[curve_idx,row+1,col+1] = A[curve_idx,row+2,col+2] = coeff
-
-        B = np.zeros((n_curves, 3*n_points,1))
-        for curve_idx in range(n_curves):
-            for point_idx, point in enumerate(points[curve_idx]):
-                row = 3*point_idx
-                B[curve_idx, row:row+3] = point[:,np.newaxis]
-
-        x = np.linalg.solve(A, B)
-
-        curves = []
-        weights = np.ones((n_points,))
-        for curve_idx in range(n_curves):
-            control_points = []
-            for i in range(n_points):
-                row = i*3
-                control = x[curve_idx][row:row+3,0].T
-                control_points.append(control)
-            control_points = np.array(control_points)
-
-            curve = SvNurbsCurve.build(cls.get_nurbs_implementation(),
-                    degree, knotvectors[curve_idx],
-                    control_points, weights)
-            curves.append(curve)
-
-        return curves
 
     def get_bounding_box(self):
         if not hasattr(self, &#39;_bounding_box&#39;) or self._bounding_box is None:
@@ -3676,72 +3561,6 @@ def get_nurbs_implementation(cls):
     Return a string identifying the implementation of NURBS mathematics used by this curve.
     &#34;&#34;&#34;
     raise Exception(&#34;NURBS implementation is not defined&#34;)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate"><code class="name flex">
-<span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE')</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;):
-    return interpolate_nurbs_curve(cls, degree, points, metric)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate_list"><code class="name flex">
-<span>def <span class="ident">interpolate_list</span></span>(<span>degree, points, metric='DISTANCE')</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def interpolate_list(cls, degree, points, metric=&#39;DISTANCE&#39;):
-    n_curves, n_points, _ = points.shape
-    tknots = [Spline.create_knots(points[i], metric=metric) for i in range(n_curves)]
-    knotvectors = [sv_knotvector.from_tknots(degree, tknots[i]) for i in range(n_curves)]
-    functions = [SvNurbsBasisFunctions(knotvectors[i]) for i in range(n_curves)]
-    coeffs_by_row = [[functions[curve_idx].function(idx, degree)(tknots[curve_idx]) for idx in range(n_points)] for curve_idx in range(n_curves)]
-    coeffs_by_row = np.array(coeffs_by_row)
-    A = np.zeros((n_curves, 3*n_points, 3*n_points))
-    for curve_idx in range(n_curves):
-        for equation_idx, t in enumerate(tknots[curve_idx]):
-            for unknown_idx in range(n_points):
-                coeff = coeffs_by_row[curve_idx][unknown_idx][equation_idx]
-                row = 3*equation_idx
-                col = 3*unknown_idx
-                A[curve_idx,row,col] = A[curve_idx,row+1,col+1] = A[curve_idx,row+2,col+2] = coeff
-
-    B = np.zeros((n_curves, 3*n_points,1))
-    for curve_idx in range(n_curves):
-        for point_idx, point in enumerate(points[curve_idx]):
-            row = 3*point_idx
-            B[curve_idx, row:row+3] = point[:,np.newaxis]
-
-    x = np.linalg.solve(A, B)
-
-    curves = []
-    weights = np.ones((n_points,))
-    for curve_idx in range(n_curves):
-        control_points = []
-        for i in range(n_points):
-            row = i*3
-            control = x[curve_idx][row:row+3,0].T
-            control_points.append(control)
-        control_points = np.array(control_points)
-
-        curve = SvNurbsCurve.build(cls.get_nurbs_implementation(),
-                degree, knotvectors[curve_idx],
-                control_points, weights)
-        curves.append(curve)
-
-    return curves</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs"><code class="name flex">
@@ -4924,7 +4743,6 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.from_any_nurbs" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.from_any_nurbs">from_any_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate">interpolate</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate_list" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate_list">interpolate_list</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.remove_knot">remove_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative">second_derivative</a></code></li>
@@ -4942,6 +4760,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction">fraction</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single">fraction_single</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.insert_knot">insert_knot</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate">interpolate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot">remove_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative">second_derivative</a></code></li>
@@ -4979,8 +4798,6 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point">has_exactly_one_nearest_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot">insert_knot</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate">interpolate</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate_list" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.interpolate_list">interpolate_list</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier">is_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>

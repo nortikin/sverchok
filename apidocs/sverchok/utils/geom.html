@@ -228,6 +228,17 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        raise Exception(&#34;Unsupported spline type&#34;)
+
+    @classmethod
+    def resample(cls, old_ts, old_values, new_ts):
+        verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+        spline = cls.create(verts, tknots=old_ts)
+        new_verts = spline.eval(new_ts)
+        return new_verts[:,1]
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         &#34;&#34;&#34;
@@ -321,6 +332,10 @@ class CubicSpline(Spline):
             return splines
         
         self.splines = calc_cubic_splines(tknots, n, locs)
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def eval(self, t_in, tknots = None):
         &#34;&#34;&#34;
@@ -439,6 +454,10 @@ class LinearSpline(Spline):
         self.pts = pts
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
@@ -5061,6 +5080,10 @@ is_cyclic: whether the spline is cyclic</p>
         
         self.splines = calc_cubic_splines(tknots, n, locs)
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
+
     def eval(self, t_in, tknots = None):
         &#34;&#34;&#34;
         Evaluate the spline at the points in t_in, which must be an array
@@ -5155,6 +5178,23 @@ is_cyclic: whether the spline is cyclic</p>
 <ul class="hlist">
 <li><a title="sverchok.utils.geom.Spline" href="#sverchok.utils.geom.Spline">Spline</a></li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.geom.CubicSpline.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>vertices, tknots=None, metric=None, is_cyclic=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+    return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.geom.CubicSpline.eval"><code class="name flex">
@@ -6786,6 +6826,10 @@ is_cyclic: whether the spline is cyclic</p>
         self.tknots = tknots
         self.is_cyclic = is_cyclic
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
+
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
 
@@ -6823,6 +6867,23 @@ is_cyclic: whether the spline is cyclic</p>
 <ul class="hlist">
 <li><a title="sverchok.utils.geom.Spline" href="#sverchok.utils.geom.Spline">Spline</a></li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.geom.LinearSpline.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>vertices, tknots=None, metric=None, is_cyclic=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+    return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.geom.LinearSpline.eval"><code class="name flex">
@@ -8365,7 +8426,18 @@ vertices by a sphere.</p>
             result = self.eval(np.array([t]))
             result = tuple(result[0])
             self._single_eval_cache[t] = result
-            return result</code></pre>
+            return result
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        raise Exception(&#34;Unsupported spline type&#34;)
+
+    @classmethod
+    def resample(cls, old_ts, old_values, new_ts):
+        verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+        spline = cls.create(verts, tknots=old_ts)
+        new_verts = spline.eval(new_ts)
+        return new_verts[:,1]</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -8374,6 +8446,20 @@ vertices by a sphere.</p>
 </ul>
 <h3>Static methods</h3>
 <dl>
+<dt id="sverchok.utils.geom.Spline.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>vertices, tknots=None, metric=None, is_cyclic=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+    raise Exception(&#34;Unsupported spline type&#34;)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.geom.Spline.create_knots"><code class="name flex">
 <span>def <span class="ident">create_knots</span></span>(<span>pts, metric='DISTANCE')</span>
 </code></dt>
@@ -8427,6 +8513,23 @@ def create_knots(cls, pts, metric=&#34;DISTANCE&#34;):
             tknots = tknots / tknots[-1]
 
     return tknots</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom.Spline.resample"><code class="name flex">
+<span>def <span class="ident">resample</span></span>(<span>old_ts, old_values, new_ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def resample(cls, old_ts, old_values, new_ts):
+    verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+    spline = cls.create(verts, tknots=old_ts)
+    new_verts = spline.eval(new_ts)
+    return new_verts[:,1]</code></pre>
 </details>
 </dd>
 </dl>
@@ -9198,7 +9301,8 @@ returns: an instance of Ellipse3D.</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.geom.CubicSpline" href="#sverchok.utils.geom.CubicSpline">CubicSpline</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="sverchok.utils.geom.CubicSpline.create" href="#sverchok.utils.geom.CubicSpline.create">create</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.eval" href="#sverchok.utils.geom.CubicSpline.eval">eval</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.get_control_points" href="#sverchok.utils.geom.CubicSpline.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.get_degree" href="#sverchok.utils.geom.CubicSpline.get_degree">get_degree</a></code></li>
@@ -9284,7 +9388,8 @@ returns: an instance of Ellipse3D.</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.geom.LinearSpline" href="#sverchok.utils.geom.LinearSpline">LinearSpline</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="sverchok.utils.geom.LinearSpline.create" href="#sverchok.utils.geom.LinearSpline.create">create</a></code></li>
 <li><code><a title="sverchok.utils.geom.LinearSpline.eval" href="#sverchok.utils.geom.LinearSpline.eval">eval</a></code></li>
 <li><code><a title="sverchok.utils.geom.LinearSpline.get_control_points" href="#sverchok.utils.geom.LinearSpline.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.geom.LinearSpline.get_degree" href="#sverchok.utils.geom.LinearSpline.get_degree">get_degree</a></code></li>
@@ -9341,9 +9446,11 @@ returns: an instance of Ellipse3D.</p></div>
 <li>
 <h4><code><a title="sverchok.utils.geom.Spline" href="#sverchok.utils.geom.Spline">Spline</a></code></h4>
 <ul class="">
+<li><code><a title="sverchok.utils.geom.Spline.create" href="#sverchok.utils.geom.Spline.create">create</a></code></li>
 <li><code><a title="sverchok.utils.geom.Spline.create_knots" href="#sverchok.utils.geom.Spline.create_knots">create_knots</a></code></li>
 <li><code><a title="sverchok.utils.geom.Spline.eval_at_point" href="#sverchok.utils.geom.Spline.eval_at_point">eval_at_point</a></code></li>
 <li><code><a title="sverchok.utils.geom.Spline.length" href="#sverchok.utils.geom.Spline.length">length</a></code></li>
+<li><code><a title="sverchok.utils.geom.Spline.resample" href="#sverchok.utils.geom.Spline.resample">resample</a></code></li>
 </ul>
 </li>
 <li>

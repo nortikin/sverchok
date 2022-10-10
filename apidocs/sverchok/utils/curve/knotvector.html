@@ -57,6 +57,11 @@
 from collections import defaultdict
 import numpy as np
 
+from sverchok.utils.geom import CubicSpline, LinearSpline
+
+def knotvector_length(degree, num_ctrlpts):
+    return degree + num_ctrlpts + 1
+
 def generate(degree, num_ctrlpts, clamped=True):
     &#34;&#34;&#34; Generates an equally spaced knot vector.
 
@@ -100,6 +105,20 @@ def find_span(knot_vector, num_ctrlpts, knot):
 
     return span - 1
 
+def cubic_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = CubicSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots
+
+def linear_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = LinearSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots
+
 def from_tknots(degree, tknots, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
@@ -110,15 +129,8 @@ def from_tknots(degree, tknots, n_cpts=None):
         result.extend([1.0] * (degree+1))
         return np.array(result)
     else:
-        d = float(n + 1) / (n_cpts - degree)
-        result = [0] * (degree+1)
-        for j in range(1, n_cpts - degree ):
-            i = int(j*d)
-            alpha = j*d - i
-            u = (1 - alpha)*tknots[i-1] + alpha*tknots[i]
-            result.append(u)
-        result.extend([1.0] * (degree+1))
-        return np.array(result)
+        resampled_tknots = linear_resample(tknots, n_cpts)
+        return from_tknots(degree, resampled_tknots)
 
 def normalize(knot_vector):
     &#34;&#34;&#34; Normalizes the input knot vector to [0, 1] domain.
@@ -497,6 +509,23 @@ None, if the knotvector is valid.</p></div>
     return np.concatenate((kv1, kv2 + M))</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.knotvector.cubic_resample"><code class="name flex">
+<span>def <span class="ident">cubic_resample</span></span>(<span>tknots, new_count)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cubic_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = CubicSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.knotvector.difference"><code class="name flex">
 <span>def <span class="ident">difference</span></span>(<span>src_kv, dst_kv, tolerance=1e-06)</span>
 </code></dt>
@@ -621,15 +650,8 @@ None, if the knotvector is valid.</p></div>
         result.extend([1.0] * (degree+1))
         return np.array(result)
     else:
-        d = float(n + 1) / (n_cpts - degree)
-        result = [0] * (degree+1)
-        for j in range(1, n_cpts - degree ):
-            i = int(j*d)
-            alpha = j*d - i
-            u = (1 - alpha)*tknots[i-1] + alpha*tknots[i]
-            result.append(u)
-        result.extend([1.0] * (degree+1))
-        return np.array(result)</code></pre>
+        resampled_tknots = linear_resample(tknots, n_cpts)
+        return from_tknots(degree, resampled_tknots)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.knotvector.generate"><code class="name flex">
@@ -764,6 +786,36 @@ None, if the knotvector is valid.</p></div>
     start_ok = not check_start or m1 == degree+1
     end_ok = not check_end or m2 == degree+1
     return start_ok and end_ok</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.knotvector_length"><code class="name flex">
+<span>def <span class="ident">knotvector_length</span></span>(<span>degree, num_ctrlpts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def knotvector_length(degree, num_ctrlpts):
+    return degree + num_ctrlpts + 1</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.knotvector.linear_resample"><code class="name flex">
+<span>def <span class="ident">linear_resample</span></span>(<span>tknots, new_count)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = LinearSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.knotvector.merge"><code class="name flex">
@@ -927,6 +979,7 @@ None, if the knotvector is valid.</p></div>
 <li><code><a title="sverchok.utils.curve.knotvector.check_multiplicity" href="#sverchok.utils.curve.knotvector.check_multiplicity">check_multiplicity</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.concatenate" href="#sverchok.utils.curve.knotvector.concatenate">concatenate</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.concatenate_plain" href="#sverchok.utils.curve.knotvector.concatenate_plain">concatenate_plain</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.cubic_resample" href="#sverchok.utils.curve.knotvector.cubic_resample">cubic_resample</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.difference" href="#sverchok.utils.curve.knotvector.difference">difference</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.elevate_degree" href="#sverchok.utils.curve.knotvector.elevate_degree">elevate_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.equal" href="#sverchok.utils.curve.knotvector.equal">equal</a></code></li>
@@ -939,6 +992,8 @@ None, if the knotvector is valid.</p></div>
 <li><code><a title="sverchok.utils.curve.knotvector.get_min_continuity" href="#sverchok.utils.curve.knotvector.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.insert" href="#sverchok.utils.curve.knotvector.insert">insert</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.is_clamped" href="#sverchok.utils.curve.knotvector.is_clamped">is_clamped</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.knotvector_length" href="#sverchok.utils.curve.knotvector.knotvector_length">knotvector_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.knotvector.linear_resample" href="#sverchok.utils.curve.knotvector.linear_resample">linear_resample</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.merge" href="#sverchok.utils.curve.knotvector.merge">merge</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.normalize" href="#sverchok.utils.curve.knotvector.normalize">normalize</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.reduce_degree" href="#sverchok.utils.curve.knotvector.reduce_degree">reduce_degree</a></code></li>

@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>sverchok.utils.curve.nurbs_solver_applications API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="This module contains several algorithms which are based on the NURBS curve
+solver (`sverchok.utils.curve.nurbs_solver` module)." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,6 +23,8 @@
 <h1 class="title">Module <code>sverchok.utils.curve.nurbs_solver_applications</code></h1>
 </header>
 <section id="section-intro">
+<p>This module contains several algorithms which are based on the NURBS curve
+solver (<code><a title="sverchok.utils.curve.nurbs_solver" href="nurbs_solver.html">sverchok.utils.curve.nurbs_solver</a></code> module).</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -33,19 +36,32 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+&#34;&#34;&#34;
+This module contains several algorithms which are based on the NURBS curve
+solver (`sverchok.utils.curve.nurbs_solver` module).
+&#34;&#34;&#34;
+
 import numpy as np
 
 from sverchok.utils.math import falloff_array
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots
-from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveSolver
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
 
 def adjust_curve_points(curve, us_bar, points):
     &#34;&#34;&#34;
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
+
+    Args:
+        curve: an instance of SvNurbsCurve
+        us_bar: values of curve parameter, np.array of shape (n,)
+        points: new positions of curve points at specified parameter values, np.array of shape (n,3).
+
+    Returns:
+        an instance of SvNurbsCurve.
     &#34;&#34;&#34;
     n_target_points = len(us_bar)
     if len(points) != n_target_points:
@@ -60,32 +76,31 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     &#34;&#34;&#34;
     Modify NURBS curve by moving it&#39;s point at parameter value at u_bar by specified vector,
     and moving nearby points within specified falloff_delta according to provided falloff function.
-    Parameters:
-    * curve - an instance of SvNurbsCurve
-    * length_solver - a prepared instance of SvCurveLengthSolver
-    * u_bar - float: parameter value, the point at which is to be moved
-    * falloff_delta - half of length of curve segment, which is to be modified
-    * falloff_type - falloff function type, see sverchok.utils.math.proportional_falloff_types
-    * vector - np.array of shape (3,): the movement vector
-    * refine_samples - number of additional knots to be inserted. More knots mean more precise
-        transformation.
-    * tolerance - tolerance for removing excessive knots at the end of procedure.
-    Return value: an instance of SvNurbsCurve.
+
+    Args:
+        curve: an instance of SvNurbsCurve
+        length_solver: a prepared instance of SvCurveLengthSolver
+        u_bar: float: parameter value, the point at which is to be moved
+        falloff_delta: half of length of curve segment, which is to be modified
+        falloff_type: falloff function type, see sverchok.utils.math.proportional_falloff_types
+        vector: np.array of shape (3,): the movement vector
+        refine_samples: number of additional knots to be inserted. More knots mean more precise
+            transformation.
+        tolerance: tolerance for removing excessive knots at the end of procedure.
+
+    Returns:
+        an instance of SvNurbsCurve.
     &#34;&#34;&#34;
     l_bar = length_solver.calc_length_params(np.array([u_bar]))[0]
     u_min, u_max = length_solver.solve(np.array([l_bar - falloff_delta, l_bar + falloff_delta]))
-    #print(f&#34;U {u_min} - {u_max}&#34;)
     curve = refine_curve(curve, refine_samples)
                 #t_min = u_min, t_max = u_max)
     us = curve.calc_greville_ts()
     ls = length_solver.calc_length_params(us)
-    #print(f&#34;Ls {ls}, l_bar {l_bar}&#34;)
     weights = falloff_array(falloff_type, 1.0, falloff_delta)(abs(ls - l_bar))
     nonzero = np.where(weights &gt; 0)
     us_nonzero = us[nonzero]
     weights_nonzero = weights[nonzero]
-    #print(&#34;us&#34;, us_nonzero)
-    #print(&#34;ws&#34;, weights_nonzero)
     points = curve.evaluate_array(us_nonzero)
     new_points = weights_nonzero[np.newaxis].T * vector
     points_goal = SvNurbsCurvePoints(us_nonzero, new_points, relative=True)
@@ -98,7 +113,24 @@ def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, fallof
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)
 
-def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DISTANCE&#39;, implementation=SvNurbsCurve.NATIVE):
+def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DISTANCE&#39;, implementation=SvNurbsMaths.NATIVE):
+    &#34;&#34;&#34;
+    Approximate points by a NURBS curve.
+
+    Args:
+        degree: curve degree (usually 3 or 5).
+        n_cpts: number of curve control points. If this is equal to number of
+            points being approximated, then this method will do interpolation.
+        points: points to be approximated. np.array of shape (n, 3).
+        weights: points weights. Bigger weight means that the curve should be
+            attracted to corresponding point more than to points with smaller
+            weights. None means all weights are equal.
+        metric: metric to be used.
+        implementation: NURBS mathematics implementation.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
     points = np.asarray(points)
     tknots = Spline.create_knots(points, metric=metric)
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts)
@@ -106,7 +138,58 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DI
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
     solver.add_goal(goal)
-    return solver.solve(implementation=implementation)</code></pre>
+    return solver.solve(implementation=implementation)
+
+def interpolate_nurbs_curve(degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
+    &#34;&#34;&#34;
+    Interpolate points by a NURBS curve.
+
+    Args:
+        degree: curve degree (usually 3 or 5).
+        points: points to be approximated. np.array of shape (n,3).
+        metric: metric to be used.
+        tknots: curve parameter values corresponding to points. np.array of
+            shape (n,). If None, these values will be calculated based on metric.
+        cyclic: if True, this will generate cyclic (closed) curve.
+        implementation: NURBS mathematics implementation.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
+    n_points = len(points)
+    points = np.asarray(points)
+    if points.ndim != 2:
+        raise Exception(f&#34;Array of points was expected, but got {points.shape}: {points}&#34;)
+    ndim = points.shape[1] # 3 or 4
+    if ndim not in {3,4}:
+        raise Exception(f&#34;Only 3D and 4D points are supported, but ndim={ndim}&#34;)
+    if cyclic:
+        points = np.concatenate((points, points[0][np.newaxis]))
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    points_goal = SvNurbsCurvePoints(tknots, points, relative=False)
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
+    solver.add_goal(points_goal)
+    if cyclic:
+        k = 1.0/float(degree)
+        tangent = k*(points[1] - points[-2])
+        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
+        n_cpts = solver.guess_n_control_points()
+        t1 = k*tknots[0] + (1-k)*tknots[1]
+        t2 = k*tknots[-1] + (1-k)*tknots[-2]
+        tknots = np.insert(tknots, [1,-1], [t1,t2])
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        solver.set_curve_params(n_cpts, knotvector)
+    else:
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        n_cpts = solver.guess_n_control_points()
+        solver.set_curve_params(n_cpts, knotvector)
+
+    problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation,
+                                    logger = logger)
+    return curve</code></pre>
 </details>
 </section>
 <section>
@@ -121,7 +204,18 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DI
 </code></dt>
 <dd>
 <div class="desc"><p>Modify NURBS curve so that it would pass through specified points
-at specified parameter values.</p></div>
+at specified parameter values.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curve</code></strong></dt>
+<dd>an instance of SvNurbsCurve</dd>
+<dt><strong><code>us_bar</code></strong></dt>
+<dd>values of curve parameter, np.array of shape (n,)</dd>
+<dt><strong><code>points</code></strong></dt>
+<dd>new positions of curve points at specified parameter values, np.array of shape (n,3).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -130,6 +224,14 @@ at specified parameter values.</p></div>
     &#34;&#34;&#34;
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
+
+    Args:
+        curve: an instance of SvNurbsCurve
+        us_bar: values of curve parameter, np.array of shape (n,)
+        points: new positions of curve points at specified parameter values, np.array of shape (n,3).
+
+    Returns:
+        an instance of SvNurbsCurve.
     &#34;&#34;&#34;
     n_target_points = len(us_bar)
     if len(points) != n_target_points:
@@ -145,12 +247,49 @@ at specified parameter values.</p></div>
 <span>def <span class="ident">approximate_nurbs_curve</span></span>(<span>degree, n_cpts, points, weights=None, metric='DISTANCE', implementation='NATIVE')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Approximate points by a NURBS curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>degree</code></strong></dt>
+<dd>curve degree (usually 3 or 5).</dd>
+<dt><strong><code>n_cpts</code></strong></dt>
+<dd>number of curve control points. If this is equal to number of
+points being approximated, then this method will do interpolation.</dd>
+<dt><strong><code>points</code></strong></dt>
+<dd>points to be approximated. np.array of shape (n, 3).</dd>
+<dt><strong><code>weights</code></strong></dt>
+<dd>points weights. Bigger weight means that the curve should be
+attracted to corresponding point more than to points with smaller
+weights. None means all weights are equal.</dd>
+<dt><strong><code>metric</code></strong></dt>
+<dd>metric to be used.</dd>
+<dt><strong><code>implementation</code></strong></dt>
+<dd>NURBS mathematics implementation.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DISTANCE&#39;, implementation=SvNurbsCurve.NATIVE):
+<pre><code class="python">def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric=&#39;DISTANCE&#39;, implementation=SvNurbsMaths.NATIVE):
+    &#34;&#34;&#34;
+    Approximate points by a NURBS curve.
+
+    Args:
+        degree: curve degree (usually 3 or 5).
+        n_cpts: number of curve control points. If this is equal to number of
+            points being approximated, then this method will do interpolation.
+        points: points to be approximated. np.array of shape (n, 3).
+        weights: points weights. Bigger weight means that the curve should be
+            attracted to corresponding point more than to points with smaller
+            weights. None means all weights are equal.
+        metric: metric to be used.
+        implementation: NURBS mathematics implementation.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
     points = np.asarray(points)
     tknots = Spline.create_knots(points, metric=metric)
     knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts)
@@ -166,18 +305,29 @@ at specified parameter values.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Modify NURBS curve by moving it's point at parameter value at u_bar by specified vector,
-and moving nearby points within specified falloff_delta according to provided falloff function.
-Parameters:
-* curve - an instance of SvNurbsCurve
-* length_solver - a prepared instance of SvCurveLengthSolver
-* u_bar - float: parameter value, the point at which is to be moved
-* falloff_delta - half of length of curve segment, which is to be modified
-* falloff_type - falloff function type, see sverchok.utils.math.proportional_falloff_types
-* vector - np.array of shape (3,): the movement vector
-* refine_samples - number of additional knots to be inserted. More knots mean more precise
-transformation.
-* tolerance - tolerance for removing excessive knots at the end of procedure.
-Return value: an instance of SvNurbsCurve.</p></div>
+and moving nearby points within specified falloff_delta according to provided falloff function.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curve</code></strong></dt>
+<dd>an instance of SvNurbsCurve</dd>
+<dt><strong><code>length_solver</code></strong></dt>
+<dd>a prepared instance of SvCurveLengthSolver</dd>
+<dt><strong><code>u_bar</code></strong></dt>
+<dd>float: parameter value, the point at which is to be moved</dd>
+<dt><strong><code>falloff_delta</code></strong></dt>
+<dd>half of length of curve segment, which is to be modified</dd>
+<dt><strong><code>falloff_type</code></strong></dt>
+<dd>falloff function type, see sverchok.utils.math.proportional_falloff_types</dd>
+<dt><strong><code>vector</code></strong></dt>
+<dd>np.array of shape (3,): the movement vector</dd>
+<dt><strong><code>refine_samples</code></strong></dt>
+<dd>number of additional knots to be inserted. More knots mean more precise
+transformation.</dd>
+<dt><strong><code>tolerance</code></strong></dt>
+<dd>tolerance for removing excessive knots at the end of procedure.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -186,32 +336,31 @@ Return value: an instance of SvNurbsCurve.</p></div>
     &#34;&#34;&#34;
     Modify NURBS curve by moving it&#39;s point at parameter value at u_bar by specified vector,
     and moving nearby points within specified falloff_delta according to provided falloff function.
-    Parameters:
-    * curve - an instance of SvNurbsCurve
-    * length_solver - a prepared instance of SvCurveLengthSolver
-    * u_bar - float: parameter value, the point at which is to be moved
-    * falloff_delta - half of length of curve segment, which is to be modified
-    * falloff_type - falloff function type, see sverchok.utils.math.proportional_falloff_types
-    * vector - np.array of shape (3,): the movement vector
-    * refine_samples - number of additional knots to be inserted. More knots mean more precise
-        transformation.
-    * tolerance - tolerance for removing excessive knots at the end of procedure.
-    Return value: an instance of SvNurbsCurve.
+
+    Args:
+        curve: an instance of SvNurbsCurve
+        length_solver: a prepared instance of SvCurveLengthSolver
+        u_bar: float: parameter value, the point at which is to be moved
+        falloff_delta: half of length of curve segment, which is to be modified
+        falloff_type: falloff function type, see sverchok.utils.math.proportional_falloff_types
+        vector: np.array of shape (3,): the movement vector
+        refine_samples: number of additional knots to be inserted. More knots mean more precise
+            transformation.
+        tolerance: tolerance for removing excessive knots at the end of procedure.
+
+    Returns:
+        an instance of SvNurbsCurve.
     &#34;&#34;&#34;
     l_bar = length_solver.calc_length_params(np.array([u_bar]))[0]
     u_min, u_max = length_solver.solve(np.array([l_bar - falloff_delta, l_bar + falloff_delta]))
-    #print(f&#34;U {u_min} - {u_max}&#34;)
     curve = refine_curve(curve, refine_samples)
                 #t_min = u_min, t_max = u_max)
     us = curve.calc_greville_ts()
     ls = length_solver.calc_length_params(us)
-    #print(f&#34;Ls {ls}, l_bar {l_bar}&#34;)
     weights = falloff_array(falloff_type, 1.0, falloff_delta)(abs(ls - l_bar))
     nonzero = np.where(weights &gt; 0)
     us_nonzero = us[nonzero]
     weights_nonzero = weights[nonzero]
-    #print(&#34;us&#34;, us_nonzero)
-    #print(&#34;ws&#34;, weights_nonzero)
     points = curve.evaluate_array(us_nonzero)
     new_points = weights_nonzero[np.newaxis].T * vector
     points_goal = SvNurbsCurvePoints(us_nonzero, new_points, relative=True)
@@ -223,6 +372,85 @@ Return value: an instance of SvNurbsCurve.</p></div>
     solver.set_curve_params(len(curve.get_control_points()))
     result = solver.solve()
     return remove_excessive_knots(result, tolerance)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve"><code class="name flex">
+<span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False, implementation='NATIVE', logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpolate points by a NURBS curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>degree</code></strong></dt>
+<dd>curve degree (usually 3 or 5).</dd>
+<dt><strong><code>points</code></strong></dt>
+<dd>points to be approximated. np.array of shape (n,3).</dd>
+<dt><strong><code>metric</code></strong></dt>
+<dd>metric to be used.</dd>
+<dt><strong><code>tknots</code></strong></dt>
+<dd>curve parameter values corresponding to points. np.array of
+shape (n,). If None, these values will be calculated based on metric.</dd>
+<dt><strong><code>cyclic</code></strong></dt>
+<dd>if True, this will generate cyclic (closed) curve.</dd>
+<dt><strong><code>implementation</code></strong></dt>
+<dd>NURBS mathematics implementation.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpolate_nurbs_curve(degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
+    &#34;&#34;&#34;
+    Interpolate points by a NURBS curve.
+
+    Args:
+        degree: curve degree (usually 3 or 5).
+        points: points to be approximated. np.array of shape (n,3).
+        metric: metric to be used.
+        tknots: curve parameter values corresponding to points. np.array of
+            shape (n,). If None, these values will be calculated based on metric.
+        cyclic: if True, this will generate cyclic (closed) curve.
+        implementation: NURBS mathematics implementation.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
+    n_points = len(points)
+    points = np.asarray(points)
+    if points.ndim != 2:
+        raise Exception(f&#34;Array of points was expected, but got {points.shape}: {points}&#34;)
+    ndim = points.shape[1] # 3 or 4
+    if ndim not in {3,4}:
+        raise Exception(f&#34;Only 3D and 4D points are supported, but ndim={ndim}&#34;)
+    if cyclic:
+        points = np.concatenate((points, points[0][np.newaxis]))
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    points_goal = SvNurbsCurvePoints(tknots, points, relative=False)
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
+    solver.add_goal(points_goal)
+    if cyclic:
+        k = 1.0/float(degree)
+        tangent = k*(points[1] - points[-2])
+        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
+        n_cpts = solver.guess_n_control_points()
+        t1 = k*tknots[0] + (1-k)*tknots[1]
+        t2 = k*tknots[-1] + (1-k)*tknots[-2]
+        tknots = np.insert(tknots, [1,-1], [t1,t2])
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        solver.set_curve_params(n_cpts, knotvector)
+    else:
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        n_cpts = solver.guess_n_control_points()
+        solver.set_curve_params(n_cpts, knotvector)
+
+    problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation,
+                                    logger = logger)
+    return curve</code></pre>
 </details>
 </dd>
 </dl>
@@ -246,6 +474,7 @@ Return value: an instance of SvNurbsCurve.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.adjust_curve_points" href="#sverchok.utils.curve.nurbs_solver_applications.adjust_curve_points">adjust_curve_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.approximate_nurbs_curve" href="#sverchok.utils.curve.nurbs_solver_applications.approximate_nurbs_curve">approximate_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff" href="#sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff">deform_curve_with_falloff</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve" href="#sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve">interpolate_nurbs_curve</a></code></li>
 </ul>
 </li>
 </ul>
