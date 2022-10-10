@@ -16,19 +16,23 @@ def load(file):
             current = stack[-1] if stack else ...
 
             if line.is_list_value:
+
+                # init root list
                 if not stack:
                     data = []
                     stack.append(data)
                     current = data
 
+                # replace None dict value with a list
+                if current is None:  # all dicts can keep only dicts for now
+                    new_list = []
+                    for key in stack[-2].keys():  # should have only one key
+                        stack[-2][key] = new_list
+                        break
+                    stack[-1] = new_list
+                    current = new_list
+
                 if line.is_dict_value:  # it is list item and new dictionary
-                    if current is None:  # new list value of a dictionary
-                        new_list = []
-                        for key in stack[-2].keys():  # should have only one key
-                            stack[-2][key] = new_list
-                            break
-                        stack[-1] = new_list
-                        current = new_list
                     if not isinstance(current, list):
                         raise TypeError("A list was expected here")
                     new_dict = {line.key: line.dict_value}
@@ -40,7 +44,7 @@ def load(file):
                     stack[-1].append(line.list_value)
 
             elif line.is_dict_value:
-                raise TypeError('Dictionary values are excepted only as part of some list')
+                raise TypeError(f'Dictionary values are excepted only as part of some list - "{raw_line}"')
             else:
                 raise TypeError(f'Any value should be either list of dictionary key - "{raw_line}"')
     return data

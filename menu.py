@@ -22,8 +22,7 @@ from os.path import dirname
 from collections import OrderedDict, defaultdict
 
 import bpy
-from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
-import nodeitems_utils
+from nodeitems_utils import NodeCategory
 import bl_operators
 
 import sverchok
@@ -34,12 +33,7 @@ from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.presets import apply_default_preset
-from sverchok.utils.sv_json_import import JSONImporter
-
-temp_details = {
-    'not_enabled_nodes': {},
-    'node_count': 0
-}
+from sverchok.ui.nodeview_space_menu import add_node_menu, Category
 
 
 class SverchNodeCategory(NodeCategory):
@@ -425,23 +419,6 @@ def strformated_tree(nodes):
 
     return "".join(lstr)
 
-def log_non_enabled_nodes():
-    """ 
-    this function will output a formatted log of the nodes that are not currently enabled 
-    """
-    msg = "The following nodes are not enabled (probably due to missing dependencies)"
-    logger.info(f"sv: {msg}\n{strformated_tree(temp_details['not_enabled_nodes'])}")    
-
-def log_node_count():
-    """
-    this will log the node count at startup, but can also be a place to log the current node count - if we want.
-    """
-    logger.info(f"sv: {temp_details['node_count']} nodes at startup.")
-
-def log_details():
-    log_non_enabled_nodes()
-    log_node_count()
-
 
 def make_categories():
     original_categories = make_node_cats()
@@ -476,9 +453,22 @@ def make_categories():
             node_count += len(nodes)
 
     # logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
-    temp_details['not_enabled_nodes'] = nodes_not_enabled
 
     return node_categories, node_count, original_categories
+
+
+def convert_to_old_format(cat: Category):
+    node_items = []
+    for elem in cat:
+        if not hasattr(elem, 'bl_idname'):
+            continue
+        rna = get_node_class_reference(elem.bl_idname)
+        if rna is not None:
+            node_item = SverchNodeItem.new(elem.bl_idname)
+            node_items.append(node_item)
+
+    return SverchNodeCategory(cat.menu_cls.__name__, cat.name, items=node_items)
+
 
 def register_node_panels(identifier, std_menu):
     global node_panels
@@ -583,17 +573,21 @@ def unregister_node_panels():
         bpy.utils.unregister_class(panel_type)
     node_panels = []
 
+
 def reload_menu():
-    menu, node_count, original_categories = make_categories()
+
+    # the order is important here, for some reason add operators should be re-registered
+    old_format = [convert_to_old_format(c) for c in add_node_menu.walk_categories()]
+
     if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
         unregister_node_add_operators()
 
-    register_node_panels("SVERCHOK", menu)
+    register_node_panels("SVERCHOK", old_format)
     register_node_add_operators()
 
-    build_help_remap(original_categories)
-    print("Reload complete, press update")
+    build_help_remap(add_node_menu.walk_categories())
+
 
 def register_node_add_operators():
     """Register all our custom node adding operators"""
@@ -621,13 +615,12 @@ def get_all_categories(std_categories):
 def register():
     global logger
     logger = getLogger("menu")
-    menu, node_count, original_categories = make_categories()
-    temp_details['node_count'] = node_count
 
     if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
 
-    categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
+    categories = [(category.menu_cls.__name__, category.name, category.name, i)
+                  for i, category in enumerate(add_node_menu.walk_categories())]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
                         name = "Category",
                         description = "Select nodes category",
@@ -639,9 +632,11 @@ def register():
                     )
 
     bpy.utils.register_class(SvResetNodeSearchOperator)
-    register_node_panels("SVERCHOK", menu)
+    old_format = [convert_to_old_format(c) for c in add_node_menu.walk_categories()]
+    register_node_panels("SVERCHOK", old_format)
 
-    build_help_remap(original_categories)
+    build_help_remap(add_node_menu.walk_categories())
+
 
 def unregister():
     unregister_node_panels()

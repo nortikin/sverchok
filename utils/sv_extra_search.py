@@ -21,17 +21,14 @@ import importlib.util as getutil
 import bpy
 
 import sverchok
-from sverchok.menu import make_node_cats
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
-from nodeitems_utils import _node_categories
 from sverchok.utils.extra_categories import get_extra_categories
-# pylint: disable=c0326
+from sverchok.ui.nodeview_space_menu import add_node_menu
 
 
-node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
 loop = {}
@@ -113,12 +110,16 @@ def gather_extra_nodes(idx, datastorage, context):
 def gather_items(context):
     fx = []
     idx = 0
-    for _, node_list in node_cats.items():
-        for item in node_list:
-            if item[0] in {'separator', 'NodeReroute'}:
+
+    for cat in add_node_menu.walk_categories():
+        for item in cat:
+            if not hasattr(item, 'bl_idname'):
                 continue
 
-            nodetype = get_node_class_reference(item[0])
+            if item.bl_idname == 'NodeReroute':
+                continue
+
+            nodetype = get_node_class_reference(item.bl_idname)
             if not nodetype:
                 continue
 

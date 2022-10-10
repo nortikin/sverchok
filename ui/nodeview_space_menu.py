@@ -21,14 +21,6 @@ from pathlib import Path
 import bl_operators
 import bpy
 
-from sverchok.menu import (
-    make_node_cats,
-    draw_add_node_operator,
-    is_submenu_call,
-    get_submenu_call_name,
-    compose_submenu_name,
-)
-
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
 from sverchok.ui.sv_icons import node_icon, icon, custom_icon
@@ -49,19 +41,19 @@ class Separator(MenuItem):
 
 class AddNode(MenuItem):
     def __init__(self, id_name):
-        self.id_name = id_name
+        self.bl_idname = id_name
         # bpy.types.Node.bl_rna_get_subclass_py(self.id_name) - does not work during registration
 
     def draw(self, layout):
-        node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.id_name)
+        node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
         if node_cls is not None:
             label = node_cls.bl_label  # todo node_cls.bl_rna.name ?
             icon_prop = node_icon(node_cls)
-        elif self.id_name == 'NodeReroute':
+        elif self.bl_idname == 'NodeReroute':
             label = "Reroute"
             icon_prop = icon('SV_REROUTE')
         else:  # todo log missing nodes?
-            label = f'{self.id_name} (not found)'
+            label = f'{self.bl_idname} (not found)'
             icon_prop = {'icon': 'ERROR'}
 
         if node_cls is None:
@@ -72,7 +64,7 @@ class AddNode(MenuItem):
                               text=label,
                               text_ctxt=default_context,
                               **icon_prop)
-        add.type = self.id_name
+        add.type = self.bl_idname
         add.use_transform = True
 
 
@@ -88,6 +80,15 @@ class Category(MenuItem):
     def draw_contents(self, layout):
         layout.menu_contents(self.menu_cls.__name__)
 
+    def __iter__(self):
+        return iter(e for e in self.menu_cls.draw_data)
+
+    def walk_categories(self) -> 'Category':
+        yield self
+        for elem in self.menu_cls.draw_data:
+            if hasattr(elem, 'walk_categories'):
+                yield from elem.walk_categories()
+
     def register(self):
         """Register itself and all its elements"""
         bpy.utils.register_class(self.menu_cls)
@@ -102,8 +103,11 @@ class Category(MenuItem):
             if hasattr(elem, 'unregister'):
                 elem.unregister()
 
+    def __repr__(self):
+        return f'<NodeCategory "{self.name}">'
 
-def pars_config(conf: list, menu_name='AllCategories', icon_name='RNA'):
+
+def pars_config(conf: list, menu_name, icon_name='BLANK1'):
     menu_name = menu_name.title().replace(' ', '')
     parsed_items = []
 
@@ -161,7 +165,7 @@ class CategoryMenuTemplate:
 
 
 menu_file = Path(__file__).parents[1] / 'index.yaml'
-add_node_menu = pars_config(yaml_parser.load(menu_file))
+add_node_menu = pars_config(yaml_parser.load(menu_file), 'AllCategories', 'RNA')
 
 
 class SvNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
@@ -189,18 +193,10 @@ class SvNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
 
 
 sv_tree_types = {'SverchCustomTreeType', }
-node_cats = make_node_cats()
+node_cats = dict()  # make_node_cats()
 
 menu_class_by_title = dict()
 
-def category_has_nodes(cat_name):
-    cat = node_cats[cat_name]
-    for item in cat:
-        rna = get_node_class_reference(item[0])
-        if rna and not item[0] == 'separator':
-            return True
-    return False
-#menu_prefs = {}
 
 # _items_to_remove = {}
 menu_structure = [
@@ -320,6 +316,9 @@ class NODEVIEW_MT_Dynamic_Menu(CategoryMenuTemplate, bpy.types.Menu):
         layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
         add_node_menu.draw_contents(self.layout)
+
+        layout.menu('NODE_MT_category_SVERCHOK_GROUP', icon='NODETREE')
+        layout.menu('NODEVIEW_MT_AddPresetOps', icon='SETTINGS')
 
         if extra_category_providers:
             for provider in extra_category_providers:

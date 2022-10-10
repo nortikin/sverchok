@@ -16,10 +16,15 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from typing import Iterable
+
+from sverchok.ui.nodeview_space_menu import Category
 
 remapper = {}
 
-def build_help_remap(fdict):
-    for k, v in fdict.items():
-        for bl_idname in v:
-            remapper[bl_idname[0]] = k.lower().replace('_', ' ')
+
+def build_help_remap(categories: Iterable[Category]):
+    for cat in categories:
+        for elem in cat:
+            if hasattr(elem, 'bl_idname'):
+                remapper[elem.bl_idname] = cat.name.lower().replace('_', ' ')
