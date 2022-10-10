@@ -658,7 +658,7 @@ class SvNurbsCurveSolver(SvCurve):
         n = self.n_cpts
         n_equations, n_unknowns = self.A.shape
         if n_equations == n_unknowns:
-            logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+            #logger.debug(f"Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
                 raise Exception("The problem is well-determined")
@@ -669,14 +669,14 @@ class SvNurbsCurveSolver(SvCurve):
                 logger.error(f"Matrix: {self.A}")
                 raise Exception(f"Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}") from e
         elif n_equations < n_unknowns:
-            logger.debug(f"Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+            #logger.debug(f"Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
             if problem_type not in problem_types:
                 raise Exception("The problem is underdetermined")
             A1 = np.linalg.pinv(self.A)
             X = (A1 @ self.B).T
         else: # n_equations > n_unknowns
-            logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
+            #logger.debug(f"Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}")
             problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
             if problem_type not in problem_types:
                 raise Exception("The system is overdetermined")
