@@ -65,10 +65,7 @@ class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
         for params in zip_long_repeat(points_s, tangents_s):
             curves_i = []
             controls_i = []
-            i = 0
             for points, tangents in zip_long_repeat(*params):
-                print("P", i, points)
-                i += 1
                 new_controls, new_curve = SvBezierCurve.build_tangent_curve(points, tangents,
                                                 cyclic = self.cyclic, concat = self.concat,
                                                 as_nurbs = self.make_nurbs)
