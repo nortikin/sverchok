@@ -17,15 +17,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
-from os.path import dirname
-from collections import OrderedDict, defaultdict
-
 import bpy
 from nodeitems_utils import NodeCategory
 import bl_operators
 
-import sverchok
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.logging import getLogger
 from sverchok.utils.sv_help import build_help_remap
@@ -44,99 +39,6 @@ class SverchNodeCategory(NodeCategory):
     def __repr__(self):
         return f"<SverchNodeCategory {self.identifier}>"
 
-def make_node_cats():
-    '''
-    this loads the index.md file and converts it to an OrderedDict of node categories.
-
-    '''
-
-    index_path = os.path.join(dirname(__file__), 'index.md')
-
-    node_cats = OrderedDict()
-    with open(index_path) as md:
-        category = None
-        temp_list = []
-        for line in md:
-            if not line.strip():
-                continue
-            if line.strip().startswith('>'):
-                continue
-            elif line.startswith('##'):
-                if category:
-                    node_cats[category] = temp_list
-                category = line[2:].strip()
-                temp_list = []
-
-            elif line.strip() == '---':
-                temp_list.append(['separator'])
-            else:
-                bl_idname = line.strip()
-                temp_list.append([bl_idname])
-
-        # final append
-        node_cats[category] = temp_list
-
-    return node_cats
-
-def is_submenu_name(name):
-    return '@' in name
-
-def is_submenu_call(name):
-    return name.startswith('@')
-
-def get_submenu_call_name(name):
-    return name[1:].strip()
-
-def compose_submenu_name(category, name):
-    return category + ' @ ' + get_submenu_call_name(name)
-
-def include_submenus(node_cats):
-    result = defaultdict(list)
-    for category in node_cats:
-        if is_submenu_name(category):
-            continue
-        for item in node_cats[category]:
-            name = item[0]
-            if is_submenu_call(name):
-                submenu_name = compose_submenu_name(category, name)
-                result[category].append(['separator'])
-                result[category].extend(node_cats[submenu_name])
-                result[category].append(['separator'])
-            else:
-                result[category].append(item)
-    return result
-
-def juggle_and_join(node_cats):
-    '''
-    this step post processes the extended categorization used
-    by ctrl+space dynamic menu, and attempts to merge previously
-    joined categories. Why? Because the default menu gets very
-    long if there are too many categories.
-
-    The only real alternative to this approach is to write a
-    replacement for nodeitems_utils which respects categories
-    and submenus.
-
-    '''
-    node_cats = node_cats.copy()
-
-    # join beta and alpha node cats
-    alpha = node_cats.pop('Alpha Nodes')
-    node_cats['Beta Nodes'].extend(alpha)
-
-    # put masks into list main
-    for ltype in ["List Masks", "List Mutators"]:
-        node_refs = node_cats.pop(ltype)
-        node_cats["List Main"].extend(node_refs)
-
-    objects_cat = node_cats.pop('Objects')
-    node_cats['BPY Data'].extend(objects_cat)
-
-    # add extended gens to Gens menu
-    gen_ext = node_cats.pop("Generators Extended")
-    node_cats["Generator"].extend(gen_ext)
-
-    return node_cats
 
 class SvResetNodeSearchOperator(bpy.types.Operator):
     """
@@ -402,59 +304,6 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     add.use_transform = True
 
     return add
-
-
-def strformated_tree(nodes):
-
-    lookup = sverchok.utils.dummy_nodes.dummy_nodes_dict
-    
-    lstr = []
-    for category, nodes_in_category in nodes.items():
-        lstr.append(category + "\n")
-        for node_bl_idname in sorted(nodes_in_category):
-            item = lookup.get(node_bl_idname)
-            if item:
-                node_bl_label, dependencies_listed = item
-                lstr.append(f"   {node_bl_label} ({dependencies_listed})\n")
-
-    return "".join(lstr)
-
-
-def make_categories():
-    original_categories = make_node_cats()
-
-    node_cats = juggle_and_join(original_categories)
-    node_cats = include_submenus(node_cats)
-    node_categories = []
-    node_count = 0
-
-    nodes_not_enabled = defaultdict(list)
-
-    for category, nodes in node_cats.items():
-        name_big = "SVERCHOK_" + category.replace(' ', '_')
-        node_items = []
-        for item in nodes:
-            nodetype = item[0]
-            if is_submenu_call(nodetype):
-                continue
-            rna = get_node_class_reference(nodetype)
-            if not rna and not nodetype == 'separator':
-                nodes_not_enabled[category].append(nodetype)
-            else:
-                node_item = SverchNodeItem.new(nodetype)
-                node_items.append(node_item)
-
-        if node_items:
-            node_categories.append(
-                SverchNodeCategory(
-                    name_big,
-                    category,
-                    items=node_items))
-            node_count += len(nodes)
-
-    # logger.info(f"The following nodes are not enabled (probably due to missing dependencies)\n{strformated_tree(nodes_not_enabled)}")
-
-    return node_categories, node_count, original_categories
 
 
 def convert_to_old_format(cat: Category):

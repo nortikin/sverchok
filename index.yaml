@@ -6,6 +6,7 @@
 
 - Generator:
     - icon_name: OBJECT_DATAMODE
+    - extra_menu: MeshPartialMenu
     - SvLineNodeMK4
     - SvSegmentGenerator
     - SvPlaneNodeMk3
@@ -48,6 +49,7 @@
 
 - Curves:
     - icon_name: OUTLINER_OB_CURVE
+    - extra_menu: AdvancedObjectsPartialMenu
     - Curve Primitives:
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
@@ -135,6 +137,7 @@
 
 - Surfaces:
     - icon_name: SURFACE_DATA
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvExPlaneSurfaceNode
     - SvExSphereNode
     - SvExSurfaceFormulaNode
@@ -195,6 +198,7 @@
 
 - Fields:
     - icon_name: OUTLINER_OB_FORCE_FIELD
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvCoordScalarFieldNode
     - SvExScalarFieldFormulaNode
     - SvExVectorFieldFormulaNode
@@ -231,6 +235,7 @@
 
 - Solids:
     - icon_name: MESH_CUBE
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvBoxSolidNode
     - SvCylinderSolidNode
     - SvConeSolidNode
@@ -280,6 +285,7 @@
 
 - Spatial:
     - icon_name: POINTCLOUD_DATA
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvHomogenousVectorField
     - SvRandomPointsOnMesh
     - SvPopulateSurfaceMk2Node
@@ -309,6 +315,7 @@
 
 - Transforms:
     - icon_name: ORIENTATION_LOCAL
+    - extra_menu: MeshPartialMenu
     - SvMoveNodeMk3
     - SvRotationNodeMk3
     - SvScaleNodeMk3
@@ -331,6 +338,7 @@
 
 - Analyzers:
     - icon_name: VIEWZOOM
+    - extra_menu: MeshPartialMenu
     - SvBBoxNodeMk3
     - SvComponentAnalyzerNode
     - SvDiameterNode
@@ -374,6 +382,7 @@
 
 - Modifiers:
     - icon_name: MODIFIER
+    - extra_menu: MeshPartialMenu
     - Modifier Change:
         - SvDeleteLooseNode
         - SvMergeByDistanceNode
@@ -436,6 +445,7 @@
 
 - CAD:
     - icon_name: TOOL_SETTINGS
+    - extra_menu: MeshPartialMenu
     - SvBevelNode
     - SvIntersectEdgesNodeMK3
     - SvOffsetNode
@@ -459,6 +469,7 @@
 
 - Number:
     - icon_name: SV_NUMBER
+    - extra_menu: BasicDataPartialMenu
     - SvNumberNode
     - SvScalarMathNodeMK4
     - SvGenNumberRange
@@ -481,6 +492,7 @@
 
 - Vector:
     - icon_name: SV_VECTOR
+    - extra_menu: BasicDataPartialMenu
     - GenVectorsNode
     - VectorsOutNode
     - SvAxisInputNodeMK2
@@ -507,6 +519,7 @@
 
 - Matrix:
     - icon_name: EMPTY_AXIS
+    - extra_menu: BasicDataPartialMenu
     - SvMatrixInNodeMK4
     - SvMatrixOutNodeMK2
     - SvMatrixApplyJoinNode
@@ -522,6 +535,7 @@
 
 - Quaternion:
     - icon_name: SV_QUATERNION
+    - extra_menu: BasicDataPartialMenu
     - SvQuaternionInNodeMK2
     - SvQuaternionOutNodeMK2
     - SvQuaternionMathNode
@@ -529,6 +543,7 @@
 
 - Color:
     - icon_name: COLOR
+    - extra_menu: BasicDataPartialMenu
     - SvColorInputNode
     - SvColorsInNodeMK1
     - SvColorsOutNodeMK1
@@ -540,6 +555,7 @@
 
 - Logic:
     - icon_name: SV_LOGIC
+    - extra_menu: BasicDataPartialMenu
     - SvLogicNodeMK2
     - SvSwitchNodeMK2
     - SvInputSwitchNodeMOD
@@ -555,6 +571,7 @@
 
 - List:
     - icon_name: NLA
+    - extra_menu: BasicDataPartialMenu
     - List Main:
         - ListJoinNode
         - SvConstantListNode
@@ -598,6 +615,7 @@
 
 - Dictionary:
     - icon_name: OUTLINER_OB_FONT
+    - extra_menu: BasicDataPartialMenu
     - SvDictionaryIn
     - SvDictionaryOut
 
@@ -605,6 +623,7 @@
 
 - Viz:
     - icon_name: RESTRICT_VIEW_OFF
+    - extra_menu: ConnectionPartialMenu
     - Sv3DviewPropsNode
     - ---
     - SvViewerDrawMk4
@@ -640,6 +659,7 @@
 
 - Text:
     - icon_name: TEXT
+    - extra_menu: ConnectionPartialMenu
     - ViewerNodeTextMK3
     - SvDataShapeNode
     - SvStethoscopeNodeMK2
@@ -656,6 +676,7 @@
 
 - Scene:
     - icon_name: SCENE_DATA
+    - extra_menu: ConnectionPartialMenu
     - SvGetObjectsData
     - SvObjInLite
     - SvCurveInputNode
@@ -672,6 +693,7 @@
 
 - Exchange:
     - icon_name: ARROW_LEFTRIGHT
+    - extra_menu: ConnectionPartialMenu
     - SvExNurbsToJsonNode
     - SvExJsonToNurbsNode
     - SvImportSolidNode
@@ -687,6 +709,7 @@
 
 - Layout:
     - icon_name: NODETREE
+    - extra_menu: UiToolsPartialMenu
     - WifiInNode
     - WifiOutNode
     - NodeReroute
@@ -694,6 +717,7 @@
 
 - BPY Data:
     - icon_name: BLENDER
+    - extra_menu: ConnectionPartialMenu
     - SvObjRemoteNodeMK2
     - SvNodeRemoteNodeMK2
     - SvGetAssetPropertiesMK2
@@ -718,6 +742,7 @@
 
 - Script:
     - icon_name: WORDWRAP_ON
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvFormulaNodeMk5
     - SvFormulaInterpolateNode
     - SvExecNodeMod
@@ -730,11 +755,13 @@
 
 - Network:
     - icon_name: SYSTEM
+    - extra_menu: ConnectionPartialMenu
     - UdpClientNode
     - SvFilePathNode
 
 - Pulga Physics:
     - icon_name: MOD_PHYSICS
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvPulgaPhysicsSolverNode
     - SvPulgaVectorForceNode
     - SvPulgaSpringsForceNode
@@ -756,6 +783,7 @@
 
 - SVG:
     - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
     - SvSvgDocumentNode
     - SvSvgCircleNode
     - SvSvgPathNodeMk2
@@ -768,6 +796,7 @@
 
 - Beta Nodes:
     - icon_name: SV_BETA
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvFormulaShapeNode
     - SvHeavyTriangulateNode
     - SvMeshUVColorNode
@@ -788,6 +817,7 @@
 
 - Alpha Nodes:
     - icon_name: SV_ALPHA
+    - extra_menu: AdvancedObjectsPartialMenu
     - SvBManalyzinNode
     - SvBMObjinputNode
     - SvBMoutputNode
