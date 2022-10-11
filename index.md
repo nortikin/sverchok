@@ -9,7 +9,7 @@
 > Failing to follow these points will break the node category parser.
 
 ## Generator
-    SvLineNodeMK4SvOpenSubdivisionNode
+    SvLineNodeMK4
     SvSegmentGenerator
     SvPlaneNodeMk3
     SvNGonNode
