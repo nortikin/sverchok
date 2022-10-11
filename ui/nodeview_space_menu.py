@@ -18,6 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 from collections import defaultdict
 from pathlib import Path
+from typing import Iterator, Union
 
 import bl_operators
 import bpy
@@ -25,7 +26,7 @@ from bpy.props import StringProperty
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
-from sverchok.ui.sv_icons import node_icon, icon, custom_icon
+from sverchok.ui.sv_icons import node_icon, icon, custom_icon, get_icon_switch
 from sverchok.ui import presets
 from sverchok.ui.presets import apply_default_preset
 from sverchok.utils import yaml_parser
@@ -83,22 +84,36 @@ class AddNode(MenuItem):
         _, dep = dummy_nodes_dict.get(self.bl_idname, (None, ''))
         return dep
 
-    def draw(self, layout):
+    def draw(self, layout, only_icon=False):
         node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
+        icon_prop = self.icon_prop if only_icon or get_icon_switch() else {}
 
         if not self.dependency and node_cls is None:
-            layout.label(text=self.label, **self.icon_prop)
+            layout.label(text=self.label, **icon_prop)
             return
 
         op = ShowMissingDependsOperator if self.dependency else SvNodeAddOperator
         default_context = bpy.app.translations.contexts.default
         add = layout.operator(op.bl_idname,
-                              text=self.label,
+                              text=self.label if not only_icon else '',
                               text_ctxt=default_context,
-                              **self.icon_prop)
+                              **icon_prop)
         add.type = self.bl_idname
         add.use_transform = True
         add.dependency = self.dependency
+
+    def search_match(self, request):
+        request = request.upper()
+        if request in self.label.upper():
+            return True
+        node_class = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
+        if not node_class or not hasattr(node_class, 'docstring'):
+            return False
+        if request in node_class.docstring.get_shorthand():
+            return True
+        if request in node_class.docstring.get_tooltip():
+            return True
+        return False
 
 
 class Category(MenuItem):
@@ -109,12 +124,13 @@ class Category(MenuItem):
         self.menu_cls: CategoryMenuTemplate = menu_cls
 
     def draw(self, layout):
-        layout.menu(self.menu_cls.__name__, **icon(self.icon))  # text=submenu_title)
+        icon_prop = icon(self.icon) if get_icon_switch() else {}
+        layout.menu(self.menu_cls.__name__, **icon_prop)  # text=submenu_title)
 
     def draw_contents(self, layout):
         layout.menu_contents(self.menu_cls.__name__)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Union[Separator, AddNode, 'Category']]:
         return iter(e for e in self.menu_cls.draw_data)
 
     def walk_categories(self) -> 'Category':
@@ -193,7 +209,7 @@ class SverchokContext:
 
 class CategoryMenuTemplate(SverchokContext):
     bl_label = ''
-    draw_data: list[MenuItem] = []  # items to draw
+    draw_data = []  # items to draw
 
     def draw(self, context):
         for elem in self.draw_data:

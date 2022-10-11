@@ -16,28 +16,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from collections import defaultdict
 
 import bpy
-from nodeitems_utils import NodeCategory
-import bl_operators
 
-from sverchok.utils import get_node_class_reference
-from sverchok.utils.logging import getLogger
+import sverchok
 from sverchok.utils.sv_help import build_help_remap
-from sverchok.ui.sv_icons import node_icon, icon
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.extra_categories import get_extra_categories
-from sverchok.ui.presets import apply_default_preset
-from sverchok.ui.nodeview_space_menu import add_node_menu, Category
-
-
-class SverchNodeCategory(NodeCategory):
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type == 'SverchCustomTreeType'
-
-    def __repr__(self):
-        return f"<SverchNodeCategory {self.identifier}>"
+import sverchok.ui.nodeview_space_menu as sm  # import other way breaks showing custom icons
 
 
 class SvResetNodeSearchOperator(bpy.types.Operator):
@@ -52,401 +38,95 @@ class SvResetNodeSearchOperator(bpy.types.Operator):
         context.scene.sv_node_search = ""
         return {'FINISHED'}
 
-# We are creating and registering node adding operators dynamically.
-# So, we have to remember them in order to unregister them when needed.
-node_add_operators = {}
 
-node_panels = []
+class SV_PT_NodesTPanel(bpy.types.Panel):
+    """Nodes panel under the T panel"""
 
-class SverchNodeItem(object):
-    """
-    A local replacement of nodeitems_utils.NodeItem.
-    This calls our custom operator (see make_add_operator) instead of
-    standard node.add_node. Having this replacement item class allows us to:
-    * Have icons in the T panel
-    * Have arbitrary tooltips in the T panel.
-    """
-    def __init__(self, nodetype, label=None, settings=None, poll=None):
-        self.nodetype = nodetype
-        self._label = label
-        if settings is None:
-            self.settings = {}
-        else:
-            self.settings = settings
-        self.poll = poll
+    bl_space_type = "NODE_EDITOR"
+    bl_region_type = "TOOLS"
+    bl_label = "Sverchok Nodes"
 
-        self.make_add_operator()
+    _items: list[sm.AddNode] = []
+    _categories: dict[sm.Category, sm.AddNode] = dict()
 
-    @staticmethod
-    def new(name):
-        if name == 'separator':
-            return SverchSeparator()
-        else:
-            return SverchNodeItem(name)
-
-    @property
-    def label(self):
-        if self._label:
-            return self._label
-        else:
-            return self.get_node_class().bl_rna.name
-
-    def get_node_class(self):
-        return get_node_class_reference(self.nodetype)
-
-    def get_node_strings(self):
-        node_class = self.get_node_class()
-        if hasattr(node_class, 'docstring'):
-            shorthand = node_class.docstring.get_shorthand()
-        else:
-            shorthand = ""
-
-        if hasattr(node_class, 'docstring'):
-            tooltip = node_class.docstring.get_tooltip()
-        else:
-            tooltip = ""
-
-        if hasattr(node_class, "bl_label"):
-            label = node_class.bl_label
-        else:
-            label = ""
-
-        return label, shorthand, tooltip
-
-    def search_match(self, needle):
-        needle = needle.upper()
-        label, shorthand, tooltip = self.get_node_strings()
-        #logger.info("shorthand: %s, tooltip: %s, label: %s, needle: %s", shorthand, tooltip, label, needle)
-        return (needle in label.upper()) or (needle in shorthand.upper()) or (needle in tooltip.upper())
-
-    def get_idname(self):
-        return get_node_idname_for_operator(self.nodetype)
-
-    def make_add_operator(self):
-        """
-        Create operator class which adds specific type of node.
-        Tooltip (docstring) for that operator is copied from
-        node class docstring.
-        """
-
-        global node_add_operators
-
-        class SverchNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
-            """Wrapper for node.add_node operator to add specific node"""
-
-            bl_idname = "node.sv_add_" + self.get_idname()
-            bl_label = "Add {} node".format(self.label)
-            bl_options = {'REGISTER', 'UNDO'}
-
-            def execute(operator, context):
-                # please not be confused: "operator" here references to
-                # SverchNodeAddOperator instance, and "self" references to
-                # SverchNodeItem instance.
-                operator.use_transform = True
-                operator.type = self.nodetype
-                node = operator.create_node(context)
-                apply_default_preset(node)
-                return {'FINISHED'}
-
-        node_class = self.get_node_class()
-        SverchNodeAddOperator.__name__ = node_class.__name__
-
-        if hasattr(node_class, "docstring"):
-            SverchNodeAddOperator.__doc__ = node_class.docstring.get_tooltip()
-        else:
-            SverchNodeAddOperator.__doc__ = node_class.__doc__
-
-        node_add_operators[self.get_idname()] = SverchNodeAddOperator
-        bpy.utils.register_class(SverchNodeAddOperator)
-
-    def get_icon(self):
-        rna = self.get_node_class().bl_rna
-        if hasattr(rna, "bl_icon"):
-            return rna.bl_icon
-        else:
-            return "RNA"
-
-    @staticmethod
-    def draw(self, layout, context):
-        add = draw_add_node_operator(layout, self.nodetype, label=self._label)
-        if add is None:
+    def node_search_update(self, context):
+        request = context.scene.sv_node_search
+        if not request:
+            SV_PT_NodesTPanel._categories = dict()
             return
 
-        for setting in self.settings.items():
-            ops = add.settings.add()
-            ops.name = setting[0]
-            ops.value = setting[1]
+        categories = defaultdict(list)
+        for cat in sm.add_node_menu.walk_categories():
+            for add_node in cat:
+                if not hasattr(add_node, 'bl_idname'):
+                    continue
+                if add_node.search_match(request):
+                    categories[cat].append(add_node)
 
-class SverchSeparator(object):
-    nodetype = 'separator'
-    @staticmethod
-    def draw(self, layout, context):
-        layout.separator()
+        SV_PT_NodesTPanel._categories = categories
+
+    def select_category_update(self, context):
+        cat_name = context.scene.sv_selected_category
+        for cat in sm.add_node_menu.walk_categories():
+            if cat.menu_cls.__name__ == cat_name:
+                items = [n for n in cat if hasattr(n, 'bl_idname')]
+                SV_PT_NodesTPanel._items = items
+                return
+
+    @property
+    def categories(self):
+        if not self._categories:
+            self.node_search_update(bpy.context)
+        return self._categories
+
+    @property
+    def items(self):
+        """After reloading the items will be none. They can't be updated from
+        registration function. So do this on demand"""
+        if not self._items:
+            self.select_category_update(bpy.context)
+        return self._items
 
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'SverchCustomTreeType'
 
-    def search_match(self, needle):
-        return True
-
-class SvOperatorLayout(object):
-    """
-    Abstract layout class for operator buttons.
-    Wraps standard Blender's UILayout.
-    """
-    def __init__(self, parent):
-        self.parent = parent
-        self._prev_is_separator = False
-
-    def label(self, text):
-        self.parent.label(text=text)
-
-    def separator(self):
-        if not self._prev_is_separator:
-            self.parent.separator()
-        self._prev_is_separator = True
-
-    @staticmethod
-    def get(icons_only, parent, columns):
-        if icons_only:
-            return SvIconsLayout(parent, columns)
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row(align=True)
+        row.prop(context.scene, "sv_node_search", text="")
+        row.operator("node.sv_reset_node_search", icon="X", text="")
+        addon = bpy.context.preferences.addons.get(sverchok.__name__)
+        prefs = addon.preferences
+        if context.scene.sv_node_search:
+            for cat, add_nodes in self.categories.items():
+                icon_prop = sm.icon(cat.icon) if cat.icon else {}
+                layout.label(text=cat.name, **icon_prop)
+                if prefs.node_panels_icons_only:
+                    grid = layout.grid_flow(row_major=True, align=True, columns=prefs.node_panels_columns)
+                    grid.scale_x = 1.5
+                    for add_node in add_nodes:
+                        add_node.draw(grid, only_icon=True)
+                else:
+                    col = layout.column(align=True)
+                    for add_node in add_nodes:
+                        add_node.draw(col)
         else:
-            return SvNamedButtonsLayout(parent)
-
-class SvIconsLayout(SvOperatorLayout):
-    """
-    Layout class that shows operator buttons
-    with icons only (or with text if the operator does not have icon),
-    in the specified number of columns.
-    """
-    def __init__(self, parent, columns=4):
-        super().__init__(parent)
-        self.columns = columns
-        self._column = 0
-        self._flow = None
-
-    def separator(self):
-        if not self._prev_is_separator:
-            self._flow = None
-            self._column = 0
-            self.parent.separator()
-        self._prev_is_separator = True
-
-    def operator(self, operator_name, **params):
-        self._prev_is_separator = False
-        if 'icon_value' in params or 'icon' in params:
-            if self._flow is None:
-                #self._flow = self.parent.column_flow(columns=self.columns, align=True)
-                self._flow = self.parent.grid_flow(row_major=True, align=True, columns=self.columns)
-                self._flow.scale_x = self._flow.scale_y = 1.5
-            params['text'] = ""
-            op = self._flow.operator(operator_name, **params)
-            return op
-        else:
-            self._flow = None
-            self._column = 0
-            return self.parent.operator(operator_name, **params)
-
-class SvNamedButtonsLayout(SvOperatorLayout):
-    """
-    Layout class that shows operator buttons in a standard way
-    (icon and text).
-    """
-    def operator(self, operator_name, **params):
-        self._prev_is_separator = False
-        return self.parent.operator(operator_name, **params)
-
-def get_node_idname_for_operator(nodetype):
-    """Select valid bl_idname for node to create node adding operator bl_idname."""
-    rna = get_node_class_reference(nodetype)
-    if not rna:
-        raise Exception("Can't find registered node {}".format(nodetype))
-    if hasattr(rna, 'bl_idname'):
-        return rna.bl_idname.lower()
-    elif nodetype == "NodeReroute":
-        return "node_reroute"
-    else:
-        return rna.name.lower()
-
-def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=None):
-    """
-    Draw node adding operator button.
-    This is to be used both in Shift-A menu and in T panel.
-    """
-
-    default_context = bpy.app.translations.contexts.default
-    node_class = get_node_class_reference(nodetype)
-    if node_class is None:
-        logger.info("cannot locate node class: %s", nodetype)
-        return
-    node_rna = node_class.bl_rna
-
-    if label is None:
-        if hasattr(node_rna, 'bl_label'):
-            label = node_rna.bl_label
-        elif nodetype == "NodeReroute":
-            label = "Reroute"
-        else:
-            label = node_rna.name
-
-    if params is None:
-        params = dict(text=label)
-    params['text_ctxt'] = default_context
-    if icon_name is not None:
-        params.update(**icon(icon_name))
-    else:
-        params.update(**node_icon(node_rna))
-
-    add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
-
-    add.type = nodetype
-    add.use_transform = True
-
-    return add
-
-
-def convert_to_old_format(cat: Category):
-    node_items = []
-    for elem in cat:
-        if not hasattr(elem, 'bl_idname'):
-            continue
-        rna = get_node_class_reference(elem.bl_idname)
-        if rna is not None:
-            node_item = SverchNodeItem.new(elem.bl_idname)
-            node_items.append(node_item)
-
-    return SverchNodeCategory(cat.menu_cls.__name__, cat.name, items=node_items)
-
-
-def register_node_panels(identifier, std_menu):
-    global node_panels
-
-    def get_cat_list():
-        extra_categories = get_extra_categories()
-        cat_list = std_menu[:]
-        cat_list.extend(extra_categories)
-        return cat_list
-
-    with sv_preferences() as prefs:
-        if prefs.node_panels == "N":
-
-            def draw_node_item(self, context):
-                layout = self.layout
-                col = SvOperatorLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
-                for item in self.category.items(context):
-                    item.draw(item, col, context)
-
-            for category in get_cat_list():
-                panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
-                        "bl_space_type": "NODE_EDITOR",
-                        "bl_region_type": "UI",
-                        "bl_label": category.name,
-                        "bl_category": category.name,
-                        "category": category,
-                        "poll": category.poll,
-                        "draw": draw_node_item,
-                    })
-                node_panels.append(panel_type)
-                bpy.utils.register_class(panel_type)
-
-        elif prefs.node_panels == "T":
-
-            class SV_PT_NodesTPanel(bpy.types.Panel):
-                """Nodes panel under the T panel"""
-
-                bl_space_type = "NODE_EDITOR"
-                bl_region_type = "TOOLS"
-                bl_label = "Sverchok Nodes"
-
-                @classmethod
-                def poll(cls, context):
-                    return context.space_data.tree_type == 'SverchCustomTreeType'
-
-                def draw(self, context):
-                    layout = self.layout
-                    row = layout.row(align=True)
-                    row.prop(context.scene, "sv_node_search", text="")
-                    row.operator("node.sv_reset_node_search", icon="X", text="")
-                    if not context.scene.sv_node_search:
-                        layout.prop(context.scene, "sv_selected_category", text="")
-
-                    col = SvOperatorLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
-
-                    needle = context.scene.sv_node_search
-                    # We will search either by category selected in the popup menu,
-                    # or by search term.
-                    check_search = needle != ""
-                    check_category = not check_search
-                    category_is_first = True
-
-                    for category in get_cat_list():
-                        category_ok = category.identifier == context.scene.sv_selected_category
-                        if check_category:
-                            if not category_ok:
-                                continue
-
-                        items_to_draw = []
-                        has_nodes = False
-                        for item in category.items(context):
-                            if check_search:
-                                if not hasattr(item, 'search_match'):
-                                    continue
-                                if not item.search_match(needle):
-                                    continue
-                            if not isinstance(item, SverchSeparator):
-                                has_nodes = True
-                            # Do not show separators if we are searching by text -
-                            # otherwise search results would take too much vertical space.
-                            if not (check_search and isinstance(item, SverchSeparator)):
-                                items_to_draw.append(item)
-
-                        # Show category only if it has some nodes to display
-                        # according to search terms.
-                        if has_nodes:
-                            if check_search:
-                                if not category_is_first:
-                                    col.separator()
-                                col.label(category.name + ":")
-                            for item in items_to_draw:
-                                item.draw(item, col, context)
-
-                        category_is_first = False
-
-            node_panels.append(SV_PT_NodesTPanel)
-            bpy.utils.register_class(SV_PT_NodesTPanel)
-
-def unregister_node_panels():
-    global node_panels
-    for panel_type in reversed(node_panels):
-        bpy.utils.unregister_class(panel_type)
-    node_panels = []
+            layout.prop(context.scene, "sv_selected_category", text="")
+            if prefs.node_panels_icons_only:
+                grid = layout.grid_flow(row_major=True, align=True, columns=prefs.node_panels_columns)
+                grid.scale_x = 1.5
+                for add_node in self.items:
+                    add_node.draw(grid, only_icon=True)
+            else:
+                col = layout.column(align=True)
+                for add_node in self.items:
+                    add_node.draw(col)
 
 
 def reload_menu():
+    build_help_remap(sm.add_node_menu.walk_categories())
 
-    # the order is important here, for some reason add operators should be re-registered
-    old_format = [convert_to_old_format(c) for c in add_node_menu.walk_categories()]
-
-    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
-        unregister_node_panels()
-        unregister_node_add_operators()
-
-    register_node_panels("SVERCHOK", old_format)
-    register_node_add_operators()
-
-    build_help_remap(add_node_menu.walk_categories())
-
-
-def register_node_add_operators():
-    """Register all our custom node adding operators"""
-    for idname in node_add_operators:
-        bpy.utils.register_class(node_add_operators[idname])
-
-def unregister_node_add_operators():
-    """Unregister all our custom node adding operators"""
-    for idname in node_add_operators:
-        bpy.utils.unregister_class(node_add_operators[idname])
 
 def get_all_categories(std_categories):
 
@@ -461,35 +141,48 @@ def get_all_categories(std_categories):
         return all_categories
     return generate
 
+
+classes = [SvResetNodeSearchOperator, SV_PT_NodesTPanel]
+
+
 def register():
-    global logger
-    logger = getLogger("menu")
+    def search_tooltip(self, context, edit_text):
+        for cat in sm.add_node_menu.walk_categories():
+            for add_node in cat:
+                if not hasattr(add_node, 'search_match'):
+                    continue
+                if add_node.search_match(edit_text):
+                    yield add_node.label, "Some editional text"
 
-    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
-        unregister_node_panels()
-
-    categories = [(category.menu_cls.__name__, category.name, category.name, i)
-                  for i, category in enumerate(add_node_menu.walk_categories())]
+    categories = []
+    for i, category in enumerate(sm.add_node_menu.walk_categories()):
+        if any(hasattr(add_node, 'bl_idname') for add_node in category):
+            identifier = category.menu_cls.__name__
+            categories.append((identifier, category.name, category.name, i))
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
-                        name = "Category",
-                        description = "Select nodes category",
-                        items = get_all_categories(categories)
-                    )
+        name="Category",
+        description="Select nodes category",
+        items=get_all_categories(categories),
+        update=SV_PT_NodesTPanel.select_category_update,
+    )
+
+    search_prop = dict(search=search_tooltip) if bpy.app.version >= (3, 3) else {}
     bpy.types.Scene.sv_node_search = bpy.props.StringProperty(
-                        name = "Search",
-                        description = "Enter search term and press Enter to search; clear the field to return to selection of node category."
-                    )
+        name="Search",
+        description="Enter search term and press Enter to search; clear the"
+                    " field to return to selection of node category.",
+        update=SV_PT_NodesTPanel.node_search_update,
+        **search_prop
+    )
 
-    bpy.utils.register_class(SvResetNodeSearchOperator)
-    old_format = [convert_to_old_format(c) for c in add_node_menu.walk_categories()]
-    register_node_panels("SVERCHOK", old_format)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    build_help_remap(add_node_menu.walk_categories())
+    build_help_remap(sm.add_node_menu.walk_categories())
 
 
 def unregister():
-    unregister_node_panels()
-    unregister_node_add_operators()
-    bpy.utils.unregister_class(SvResetNodeSearchOperator)
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)
     del bpy.types.Scene.sv_selected_category
     del bpy.types.Scene.sv_node_search

@@ -84,30 +84,28 @@ def get_icon_switch():
     if addon and hasattr(addon, "preferences"):
         return addon.preferences.show_icons
 
+
 def icon(display_icon):
     '''returns empty dict if show_icons is False, else the icon passed'''
     kws = {}
-    if get_icon_switch():
-        if display_icon.startswith('SV_'):
-            kws = {'icon_value': custom_icon(display_icon)}
-        elif display_icon != 'OUTLINER_OB_EMPTY':
-            kws = {'icon': display_icon}
+    if display_icon.startswith('SV_'):
+        kws = {'icon_value': custom_icon(display_icon)}
+    elif display_icon != 'OUTLINER_OB_EMPTY':
+        kws = {'icon': display_icon}
     return kws
 
 
 def node_icon(node_ref):
     '''returns empty dict if show_icons is False, else the icon passed'''
-    if not get_icon_switch():
-        return {}
+    if hasattr(node_ref, 'sv_icon'):
+        iconID = custom_icon(node_ref.sv_icon)
+        return {'icon_value': iconID} if iconID else {}
+    elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
+        iconID = node_ref.bl_icon
+        return {'icon': iconID} if iconID else {}
     else:
-        if hasattr(node_ref, 'sv_icon'):
-            iconID = custom_icon(node_ref.sv_icon)
-            return {'icon_value': iconID} if iconID else {}
-        elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
-            iconID = node_ref.bl_icon
-            return {'icon': iconID} if iconID else {}
-        else:
-            return {}
+        return {}
+
 
 def register():
     load_custom_icons()
