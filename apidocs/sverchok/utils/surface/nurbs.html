@@ -1213,7 +1213,7 @@ def simple_loft(curves, degree_v = None, knots_u = &#39;UNIFY&#39;, knotvector_a
         raise Exception(f&#34;V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1&#34;)
 
     src_points = [curve.get_homogenous_control_points() for curve in curves]
-    print(&#34;P&#34;, [p.shape for p in src_points])
+    #print(&#34;P&#34;, [p.shape for p in src_points])
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
 #     if max_len != min_len:
@@ -2175,7 +2175,7 @@ returns np.array((n, 3, 3)) of curve frames.
         raise Exception(f&#34;V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1&#34;)
 
     src_points = [curve.get_homogenous_control_points() for curve in curves]
-    print(&#34;P&#34;, [p.shape for p in src_points])
+    #print(&#34;P&#34;, [p.shape for p in src_points])
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
 #     if max_len != min_len:
