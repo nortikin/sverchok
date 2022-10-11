@@ -9,7 +9,7 @@ from sverchok.utils.nurbs_common import (
         CantRemoveKnotException, CantReduceDegreeException
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
+from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -1192,11 +1192,11 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
 #     if max_len != min_len:
 #         raise Exception(f"Unify error: curves have different number of control points: {lens}")
 
-    src_points = np.array(src_points)
     #print("Src:", src_points)
+    src_points = np.array(src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric=metric, tknots=tknots) for points in src_points]
+    v_curves = [SvNurbsMaths.interpolate_curve(curve_class, degree_v, points, metric=metric, tknots=tknots) for points in src_points]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     #weights = [curve.get_weights() for curve in v_curves]
@@ -1281,9 +1281,9 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
     knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
     knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
 
-    u_curves = [interpolate_nurbs_curve(implementation, degree_u, points[i,:], tknots=uknots) for i in range(n)]
+    u_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_u, points[i,:], tknots=uknots) for i in range(n)]
     u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])
-    v_curves = [interpolate_nurbs_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots) for j in range(m)]
+    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots) for j in range(m)]
 
     control_points = np.array([curve.get_control_points() for curve in v_curves])
 

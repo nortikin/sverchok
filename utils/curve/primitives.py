@@ -510,6 +510,9 @@ class SvCircle(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def elevate_degree(self, delta=None, target=None):
+        return self.to_nurbs().elevate_degree(delta=delta, target=target)
+
 #     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 #         t_min, t_max = self.get_u_bounds()
 #         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
