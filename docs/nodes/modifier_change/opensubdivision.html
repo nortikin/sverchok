@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OpenSubdivision Node &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Catmull-Clark Subdivision Node &mdash; Sverchok 1, 1, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -84,7 +84,7 @@
 <li class="toctree-l3"><a class="reference internal" href="mesh_separate.html">Separate Loose Parts</a></li>
 <li class="toctree-l3"><a class="reference internal" href="objects_along_edge.html">Duplicate Objects Along Edge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset.html">Offset</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">OpenSubdivision Node</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Catmull-Clark Subdivision Node</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -158,7 +158,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
           <li><a href="modifier_change_index.html">Modifier Change</a> &raquo;</li>
-      <li>OpenSubdivision Node</li>
+      <li>Catmull-Clark Subdivision Node</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/modifier_change/opensubdivision.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -168,8 +168,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="opensubdivision-node">
-<h1>OpenSubdivision Node<a class="headerlink" href="#opensubdivision-node" title="Permalink to this heading">¶</a></h1>
+  <section id="catmull-clark-subdivision-node">
+<h1>Catmull-Clark Subdivision Node<a class="headerlink" href="#catmull-clark-subdivision-node" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node applies [Catmull-Clark subdivision](<a class="reference external" href="https://en.wikipedia.org/wiki/Catmull%E2%80%93Clark_subdivision_surface">https://en.wikipedia.org/wiki/Catmull%E2%80%93Clark_subdivision_surface</a>) (as implemented by the [OpenSubdiv](<a class="reference external" href="https://github.com/PixarAnimationStudios/OpenSubdiv">https://github.com/PixarAnimationStudios/OpenSubdiv</a>)) to the input mesh at the specified number of levels.</p>
@@ -179,7 +179,6 @@
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of input mesh.</p></li>
-<li><p><strong>Edges</strong>. Edges of input mesh (<strong>optional</strong>).</p></li>
 <li><p><strong>Faces</strong>. Faces of input mesh.</p></li>
 </ul>
 </section>
@@ -200,12 +199,17 @@
 </ul>
 <p><strong>Note</strong>: <strong>Vertices</strong> and <strong>Faces</strong> inputs <strong>must</strong> be compatible, in that the <strong>Faces</strong> input <strong>may not refer to vertex indices that do not exist in the Vertices list</strong> (e.g. <strong>Faces</strong> cannot refer to vertex 7, provided a list of <strong>Vertices</strong> with only 5 vertices).</p>
 <p>Unexpected behavior may occur if using Faces from one mesh with Vertices from another.</p>
-<p>Indices in <strong>NewEdges</strong>, <strong>NewFaces</strong>, <strong>OldEdges</strong>, <strong>OldFaces</strong> outputs relate to vertices in <strong>Vertices</strong> output.</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png" src="https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png" />
-<img alt="https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png" src="https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png" />
+<p>(Old)
+.. image:: <a class="reference external" href="https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png">https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png</a></p>
+<p>(Old)
+.. image:: <a class="reference external" href="https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png">https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png</a></p>
+<img alt="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_vector_test.png" src="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_vector_test.png" />
+<img alt="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_many_bodies.png" src="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_many_bodies.png" />
+<img alt="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_level0_ngons.png" src="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_level0_ngons.png" />
+<img alt="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_node_mute.png" src="https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_node_mute.png" />
 </section>
 </section>
 
