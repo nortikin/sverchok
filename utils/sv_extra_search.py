@@ -25,7 +25,6 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
-from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.nodeview_space_menu import add_node_menu
 
 
@@ -95,17 +94,6 @@ def fx_extend(idx, datastorage):
         datastorage.append((func_name, format_macro_item(func_name, func_descriptor), '', idx))
         idx +=1
 
-def gather_extra_nodes(idx, datastorage, context):
-    extra_categories = get_extra_categories()
-    for cat in extra_categories:
-        for node in cat.items(context):
-            if node.nodetype == 'separator':
-                continue
-            description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
-            showstring = node.label + ensure_short_description(description)
-            datastorage.append((str(idx), showstring,'',idx))
-            loop_reverse[node.label] = node.nodetype
-            idx +=1
 
 def gather_items(context):
     fx = []
@@ -134,7 +122,6 @@ def gather_items(context):
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
 
-    gather_extra_nodes(idx, fx, context)
     fx_extend(idx, fx)
 
     return fx

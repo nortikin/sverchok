@@ -22,7 +22,6 @@ import bpy
 
 import sverchok
 from sverchok.utils.sv_help import build_help_remap
-from sverchok.utils.extra_categories import get_extra_categories
 import sverchok.ui.nodeview_space_menu as sm  # import other way breaks showing custom icons
 
 
@@ -128,20 +127,6 @@ def reload_menu():
     build_help_remap(sm.add_node_menu.walk_categories())
 
 
-def get_all_categories(std_categories):
-
-    def generate(self, context):
-        nonlocal std_categories
-        extra_categories = get_extra_categories()
-        n = len(std_categories)
-        all_categories = std_categories[:]
-        for category in extra_categories:
-            n += 1
-            all_categories.append((category.identifier, category.name, category.name, n))
-        return all_categories
-    return generate
-
-
 classes = [SvResetNodeSearchOperator, SV_PT_NodesTPanel]
 
 
@@ -162,7 +147,7 @@ def register():
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
         name="Category",
         description="Select nodes category",
-        items=get_all_categories(categories),
+        items=categories,
         update=SV_PT_NodesTPanel.select_category_update,
     )
 
