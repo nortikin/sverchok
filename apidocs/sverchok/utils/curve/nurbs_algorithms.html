@@ -385,10 +385,11 @@ def intersect_nurbs_curves(curve1, curve2, method=&#39;SLSQP&#39;, numeric_preci
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-        #logger.debug(f&#34;check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]&#34;)
 
         bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
+
+        #logger.debug(f&#34;check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}&#34;)
         if not bbox1.intersects(bbox2):
             return []
 
@@ -1038,10 +1039,11 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-        #logger.debug(f&#34;check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]&#34;)
 
         bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
+
+        #logger.debug(f&#34;check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}&#34;)
         if not bbox1.intersects(bbox2):
             return []
 
