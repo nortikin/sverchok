@@ -1,5 +1,5 @@
-OpenSubdivision Node
-====================
+Catmull-Clark Subdivision Node
+==============================
 
 Functionality
 -------------
@@ -12,7 +12,6 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**. Vertices of input mesh.
-- **Edges**. Edges of input mesh (**optional**). 
 - **Faces**. Faces of input mesh.
 
 Parameters
@@ -35,10 +34,19 @@ This node has the following outputs:
 
 Unexpected behavior may occur if using Faces from one mesh with Vertices from another. 
 
-Indices in **NewEdges**, **NewFaces**, **OldEdges**, **OldFaces** outputs relate to vertices in **Vertices** output.
-
 Examples of usage
 -----------------
+(Old)
 .. image:: https://user-images.githubusercontent.com/79929629/180858417-dc585075-486a-443b-a618-ae04e281cd90.png
 
+(Old)
 .. image:: https://user-images.githubusercontent.com/79929629/180858569-40b684c8-bdc7-4690-9e74-f0733dd21210.png
+
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_vector_test.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_many_bodies.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_level0_ngons.png
+
+.. image:: https://raw.githubusercontent.com/GeneralPancakeMSTR/pyOpenSubdivision/main/attachments/README/sverchok_OSD_node_mute.png

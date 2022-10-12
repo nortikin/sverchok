@@ -16,6 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Implements the Catmull-Clark Subdivision Node 
+# sverchok/nodes/modifier_change/opensubdivision.py
+
 import bpy
 from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
@@ -32,12 +35,12 @@ except ModuleNotFoundError:
 from itertools import chain 
 import traceback 
 class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
-    bl_idname = "SvOpenSubdivisionNode"
-    bl_label = "OpenSubdivision"
+    bl_idname = "SvOpenSubdivisionNode" # Use this for index.md reference 
+    bl_label = "Catmull-Clark Subdivision"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = None 
 
-    maxSubdivision = 5 # creates a self.maxSubdivision attribute 
+    maxSubdivision = 6 # creates a self.maxSubdivision attribute 
 
     # Mute Node Implementation 
     @property
@@ -90,9 +93,15 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
                 faceVerts = list(chain.from_iterable(faces))
                 vertsPerFace = [len(face) for face in faces]
 
-                new_mesh = pysubdivide(subdivision_level,vertices,faceVerts,vertsPerFace)
+                new_mesh = pysubdivide(subdivision_level,
+                vertices,
+                faces,
+                faceVerts,
+                vertsPerFace,
+                verbose = False
+                )
                 
-                new_meshes['vertices'].append(new_mesh['vertices']) # ctypes implementation 
+                new_meshes['vertices'].append(new_mesh['vertices'])
                 new_meshes['edges'].append(new_mesh['edges'])
                 new_meshes['faces'].append(new_mesh['faces'])
 
@@ -100,7 +109,7 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
         self.outputs['Edges'].sv_set(new_meshes['edges'])
         self.outputs['Faces'].sv_set(new_meshes['faces'])
 
-def register():
+def register():    
     bpy.utils.register_class(SvOpenSubdivisionNode)
 
 def unregister():
