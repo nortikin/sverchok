@@ -13,6 +13,7 @@ from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
+from sverchok.utils.logging import getLogger
 from sverchok.data_structure import repeat_last_for_length
 
 def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
@@ -54,7 +55,7 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     
     return result
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2):
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
@@ -82,6 +83,9 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     if any(c.is_rational() for c in v_curves):
         raise Exception("Some of V-curves are rational. Rational curves are not supported for Gordon surface.")
 
+    if logger is None:
+        logger = getLogger()
+
     intersections = np.array(intersections)
 
     if u_knots is not None:
@@ -94,6 +98,7 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
 
     else:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': metric}
+    interpolate_kwargs['logger'] = logger
 
     u_curves = unify_curves_degree(u_curves)
     u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')

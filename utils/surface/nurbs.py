@@ -1149,7 +1149,7 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=6, metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=6, metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE, logger = None):
     """
     Loft between given NURBS curves (a.k.a skinning).
 
@@ -1168,6 +1168,8 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     """
     if knots_u not in {'UNIFY', 'AVERAGE'}:
         raise Exception(f"Unsupported knots_u option: {knots_u}")
+    if logger is None:
+        logger = getLogger()
     curve_class = type(curves[0])
     curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
@@ -1196,7 +1198,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     src_points = np.array(src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    v_curves = [SvNurbsMaths.interpolate_curve(curve_class, degree_v, points, metric=metric, tknots=tknots) for points in src_points]
+    v_curves = [SvNurbsMaths.interpolate_curve(curve_class, degree_v, points, metric=metric, tknots=tknots, logger=logger) for points in src_points]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     #weights = [curve.get_weights() for curve in v_curves]
@@ -1263,13 +1265,16 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
-def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', uknots=None, vknots=None, implementation = SvNurbsSurface.NATIVE):
+def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', uknots=None, vknots=None, implementation = SvNurbsSurface.NATIVE, logger=None):
     points = np.asarray(points)
     n = len(points)
     m = len(points[0])
 
     if (uknots is None) != (vknots is None):
         raise Exception("uknots and vknots must be either both provided or both omitted")
+
+    if logger is None:
+        logger = getLogger()
 
     if uknots is None:
         knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n)])
@@ -1281,9 +1286,9 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
     knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
     knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
 
-    u_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_u, points[i,:], tknots=uknots) for i in range(n)]
+    u_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_u, points[i,:], tknots=uknots, logger=logger) for i in range(n)]
     u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])
-    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots) for j in range(m)]
+    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots, logger=logger) for j in range(m)]
 
     control_points = np.array([curve.get_control_points() for curve in v_curves])
 

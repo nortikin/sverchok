@@ -357,10 +357,11 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
 
         bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
+
+        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}")
         if not bbox1.intersects(bbox2):
             return []
 

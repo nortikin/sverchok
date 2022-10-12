@@ -562,6 +562,8 @@ class SvNurbsCurve(SvCurve):
         cpts = self.get_control_points()
         # direction from first to last point of the curve
         direction = cpts[-1] - cpts[0]
+        if np.linalg.norm(direction) < tolerance:
+            return True
         line = LineEquation.from_direction_and_point(direction, begin)
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
