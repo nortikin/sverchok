@@ -1,92 +1,88 @@
 
 import bpy,bmesh
+from bpy.props import BoolProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 if FreeCAD is None:
-    add_dummy('SvReadFCStdNode', 'SvReadFCStdNode', 'FreeCAD')
+    add_dummy('SvApproxSubdtoNurbsNode', 'SvReadFCStdNode', 'FreeCAD')
 
 else:
     F = FreeCAD
-    import bpy
-    from bpy.props import StringProperty, BoolProperty, EnumProperty
-    from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
-    from sverchok.utils.logging import info
-
-    class SvApproxSubdtoNurbsOperator(bpy.types.Operator, SvGenericNodeLocator):
-
-        bl_idname = "node.approx_subd_nurbs_operator"
-        bl_label = "Approx Subd-Nurbs"
-        bl_options = {'INTERNAL', 'REGISTER'}
-
-        def execute(self, context):
-            node = self.get_node(context)
-           
-            if not node:
-                return {'CANCELLED'}
-
-            if not any(socket.is_linked for socket in node.outputs):
-                return {'CANCELLED'}
-
-            try:
-                node.inputs['Subd Obj'].sv_get()[0]
-            except:
-                return {'CANCELLED'}      
-
-            node.Approximate(node)
-            updateNode(node,context)
-
-            return {'FINISHED'}
 
 
-    class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
-        """
-        Triggers: Approximate Subd to Nurbs
-        Tooltip: Approximate Subd to Nurbs
-        """
-        bl_idname = 'SvApproxSubdtoNurbsNode'
-        bl_label = 'Approximate Subd to Nurb'
-        bl_icon = 'IMPORT'
-        solid_catergory = "Outputs"
+class SvApproxSubdtoNurbsOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-        auto_update : BoolProperty(name="auto_update", default=True)
+    bl_idname = "node.approx_subd_nurbs_operator"
+    bl_label = "Approx Subd-Nurbs"
+    bl_options = {'INTERNAL', 'REGISTER'}
 
+    def execute(self, context):
+        node = self.get_node(context)
 
-    
-        def draw_buttons(self, context, layout):
+        if not node:
+            return {'CANCELLED'}
 
-            col = layout.column(align=True)
-            col.prop(self, 'auto_update', text = 'global update') 
+        if not any(socket.is_linked for socket in node.outputs):
+            return {'CANCELLED'}
 
-            self.wrapper_tracked_ui_draw_op(layout, SvApproxSubdtoNurbsOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
+        try:
+            node.inputs['Subd Obj'].sv_get()[0]
+        except:
+            return {'CANCELLED'}
 
-        def sv_init(self, context):
+        node.Approximate(node)
+        updateNode(node,context)
 
-            self.inputs.new('SvObjectSocket', "Subd Obj")
-            self.outputs.new('SvSolidSocket', "Solid")
-
-
-        def Approximate(self,node):
-
-            S = ApproxSubdToNurbs( node.inputs['Subd Obj'].sv_get()[0] )
-            
-            node.outputs['Solid'].sv_set(S)
+        return {'FINISHED'}
 
 
-        def process(self):
-            if not any(socket.is_linked for socket in self.outputs):
-                return
-            try:
-                self.inputs['Subd Obj'].sv_get()[0]
-            except:
-                return
+class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    Triggers: Approximate Subd to Nurbs
+    Tooltip: Approximate Subd to Nurbs
+    """
+    bl_idname = 'SvApproxSubdtoNurbsNode'
+    bl_label = 'Approximate Subd to Nurb'
+    bl_icon = 'IMPORT'
+    solid_catergory = "Outputs"
 
-            if self.auto_update:
-                self.Approximate(self)   
-            else:
-                return
+    auto_update : BoolProperty(name="auto_update", default=True)
+
+    def draw_buttons(self, context, layout):
+
+        col = layout.column(align=True)
+        col.prop(self, 'auto_update', text = 'global update')
+
+        self.wrapper_tracked_ui_draw_op(layout, SvApproxSubdtoNurbsOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")
+
+    def sv_init(self, context):
+
+        self.inputs.new('SvObjectSocket', "Subd Obj")
+        self.outputs.new('SvSolidSocket', "Solid")
+
+    def Approximate(self,node):
+
+        S = ApproxSubdToNurbs( node.inputs['Subd Obj'].sv_get()[0] )
+
+        node.outputs['Solid'].sv_set(S)
+
+    def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        try:
+            self.inputs['Subd Obj'].sv_get()[0]
+        except:
+            return
+
+        if self.auto_update:
+            self.Approximate(self)
+        else:
+            return
 
 
 def ApproxSubdToNurbs(Object):

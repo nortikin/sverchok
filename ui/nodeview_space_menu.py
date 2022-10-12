@@ -37,6 +37,16 @@ sv_tree_types = {'SverchCustomTreeType', }
 
 
 class MenuItem:  # todo ABC
+    _node_classes = dict()
+
+    @property
+    def node_classes(self) -> dict[str, type]:
+        if not self._node_classes:
+            import sverchok  # not available during initialization of the module
+            for cls_ in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
+                self._node_classes[cls_.bl_idname] = cls_
+        return self._node_classes
+
     def draw(self, layout):
         pass
 
@@ -74,7 +84,10 @@ class AddNode(MenuItem):
             if self.bl_idname == 'NodeReroute':
                 self._icon_prop = icon('SV_REROUTE')
             elif self.dependency:
-                self._icon_prop = {'icon': 'ERROR'}
+                if cls := self.node_classes.get(self.bl_idname):
+                    self._icon_prop = node_icon(cls)
+                else:
+                    self._icon_prop = {'icon': 'ERROR'}
             elif node_cls is not None:  # can be dummy class here
                 self._icon_prop = node_icon(node_cls)
             else:  # todo log missing nodes?
