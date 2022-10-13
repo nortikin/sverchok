@@ -34,6 +34,8 @@ class SvNurbsMaths(object):
         if kv_error is not None:
             raise Exception(kv_error)
         nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
         if nurbs_class is None:
             raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
         else:
@@ -53,6 +55,13 @@ class SvNurbsMaths(object):
             raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
         else:
             return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def interpolate_curve(implementation, degree, points, metric='DISTANCE', **kwargs):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None and isinstance(implementation, type):
+            nurbs_class = implementation
+        return nurbs_class.interpolate(degree, points, metric=metric, **kwargs)
 
     @staticmethod
     def to_nurbs_curve(curve, implementation = NATIVE):
