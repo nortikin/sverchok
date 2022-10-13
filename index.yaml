@@ -2,6 +2,11 @@
 # It's quite limited representation of yaml syntax, stick to existing lexical
 # constructions
 
+
+- Search:
+    - icon_name: OUTLINER_DATA_FONT
+    - operator: node.sv_extra_search
+
 - ---
 
 - Generator:
@@ -841,3 +846,11 @@
     - SvSetPropNodeMK2
 
 - ---
+
+- Group:
+    - custom_menu: NODE_MT_SverchokGroupMenu
+    - icon_name: NODETREE
+
+- Presets:
+    - custom_menu: NODEVIEW_MT_AddPresetMenu
+    - icon_name: SETTINGS

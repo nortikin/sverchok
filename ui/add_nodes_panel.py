@@ -25,19 +25,6 @@ from sverchok.utils.sv_help import build_help_remap
 import sverchok.ui.nodeview_space_menu as sm  # import other way breaks showing custom icons
 
 
-class SvResetNodeSearchOperator(bpy.types.Operator):
-    """
-    Reset node search string and return to selection of node by category
-    """
-    bl_idname = "node.sv_reset_node_search"
-    bl_label = "Reset search"
-    bl_options = {'REGISTER', 'INTERNAL'}
-
-    def execute(self, context):
-        context.scene.sv_node_search = ""
-        return {'FINISHED'}
-
-
 class SV_PT_NodesTPanel(bpy.types.Panel):
     """Nodes panel under the T panel"""
 
@@ -57,7 +44,7 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
         categories = defaultdict(list)
         for cat in sm.add_node_menu.walk_categories():
             for add_node in cat:
-                if not hasattr(add_node, 'bl_idname'):
+                if not isinstance(add_node, sm.AddNode):
                     continue
                 if add_node.search_match(request):
                     categories[cat].append(add_node)
@@ -68,7 +55,7 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
         cat_name = context.scene.sv_selected_category
         for cat in sm.add_node_menu.walk_categories():
             if cat.menu_cls.__name__ == cat_name:
-                items = [n for n in cat if hasattr(n, 'bl_idname')]
+                items = [n for n in cat if isinstance(n, sm.AddNode)]
                 SV_PT_NodesTPanel._items = items
                 return
 
@@ -94,7 +81,6 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
         layout = self.layout
         row = layout.row(align=True)
         row.prop(context.scene, "sv_node_search", text="")
-        row.operator("node.sv_reset_node_search", icon="X", text="")
         addon = bpy.context.preferences.addons.get(sverchok.__name__)
         prefs = addon.preferences
         if context.scene.sv_node_search:
@@ -123,7 +109,7 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
                     add_node.draw(col)
 
 
-classes = [SvResetNodeSearchOperator, SV_PT_NodesTPanel]
+classes = [SV_PT_NodesTPanel]
 
 
 def register():
@@ -137,7 +123,7 @@ def register():
 
     categories = []
     for i, category in enumerate(sm.add_node_menu.walk_categories()):
-        if any(hasattr(add_node, 'bl_idname') for add_node in category):
+        if any(isinstance(add_node, sm.AddNode) for add_node in category):
             identifier = category.menu_cls.__name__
             categories.append((identifier, category.name, category.name, i))
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(

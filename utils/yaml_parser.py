@@ -11,7 +11,7 @@ def load(file):
             line = YamlLine(raw_line)
             if line.is_blank or line.is_comment:
                 continue
-            while len(stack) > line.indention_level:
+            while len(stack) > line.indent_level:
                 stack.pop()
             current = stack[-1] if stack else ...
 
@@ -72,7 +72,7 @@ class YamlLine:
         return ': ' in line or ':' == line[-1]
 
     @property
-    def indention_level(self):
+    def indent_level(self):
         # https://docs.python.org/3/reference/lexical_analysis.html#indentation
         first_letter, *_ = self._line.strip()
         indention = self._line.expandtabs(4).index(first_letter)

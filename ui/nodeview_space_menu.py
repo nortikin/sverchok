@@ -16,6 +16,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from pathlib import Path
 from typing import Iterator, Union, TypeVar
@@ -36,7 +37,7 @@ CutSelf = TypeVar("CutSelf", bound="Category")
 sv_tree_types = {'SverchCustomTreeType', }
 
 
-class MenuItem:  # todo ABC
+class MenuItem(ABC):
     _node_classes = dict()
 
     @property
@@ -47,6 +48,13 @@ class MenuItem:  # todo ABC
                 self._node_classes[cls_.bl_idname] = cls_
         return self._node_classes
 
+    @property
+    def icon_prop(self):
+        if hasattr(self, 'icon'):
+            return icon(self.icon)
+        return {}
+
+    @abstractmethod
     def draw(self, layout):
         pass
 
@@ -54,6 +62,67 @@ class MenuItem:  # todo ABC
 class Separator(MenuItem):
     def draw(self, layout):
         layout.separator()
+
+
+class Operator(MenuItem):
+    def __init__(self, name, operator, icon_name=''):  # it's possible to add extra options for operator call
+        self.name = name
+        self.bl_idname = operator
+        self.icon = icon_name
+
+    def draw(self, layout):
+        layout.operator_context = 'INVOKE_REGION_WIN'  # I'm not sure that all operators need this
+        layout.operator(self.bl_idname, text=self.name, **self.icon_prop)
+
+    @classmethod
+    def from_config(cls, config: dict):
+        name = list(config.keys())[0]
+        values = list(config.values())[0]
+        props = dict()
+        for prop in values:
+            key = list(prop.keys())[0]
+            value = list(prop.values())[0]
+            props[key] = value
+        return cls(name, **props)
+
+    @classmethod
+    def is_operator_config(cls, config: dict):
+        for prop in list(config.values())[0]:
+            if isinstance(prop, dict):
+                prop_name = list(prop.keys())[0]
+                if prop_name.lower() == 'operator':
+                    return True
+        return False
+
+
+class CustomMenu(MenuItem):
+    def __init__(self, name, custom_menu, icon_name=''):
+        self.name = name
+        self.bl_idname = custom_menu
+        self.icon = icon_name
+
+    def draw(self, layout):
+        layout.menu(self.bl_idname, text=self.name, **self.icon_prop)
+
+    @classmethod
+    def from_config(cls, config: dict):
+        name = list(config.keys())[0]
+        values = list(config.values())[0]
+        props = dict()
+        for prop in values:
+            key = list(prop.keys())[0]
+            value = list(prop.values())[0]
+            props[key] = value
+        return cls(name, **props)
+
+    @classmethod
+    def is_custom_menu_config(cls, config: dict):
+        for prop in list(config.values())[0]:
+            if isinstance(prop, dict):
+                prop_name = list(prop.keys())[0]
+                if prop_name.lower() == 'custom_menu':
+                    return True
+        return False
 
 
 class AddNode(MenuItem):
@@ -185,6 +254,13 @@ class Category(MenuItem):
         # parsing menu elements
         for elem in conf:
             if isinstance(elem, dict):
+                if Operator.is_operator_config(elem):
+                    parsed_items.append(Operator.from_config(elem))
+                    continue
+                if CustomMenu.is_custom_menu_config(elem):
+                    parsed_items.append(CustomMenu.from_config(elem))
+                    continue
+
                 name = list(elem.keys())[0]
                 value = list(elem.values())[0]
                 props = dict()
@@ -242,12 +318,19 @@ class CategoryMenuTemplate(SverchokContext):
     draw_data = []  # items to draw
 
     def draw(self, context):
+        # it would be better to have the condition only for the root menu
+        if not getattr(context.space_data, 'edit_tree', None):
+            # todo also it's possible to give choice of picking one of existing node trees
+            self.layout.operator("node.new_node_tree",
+                                 text="New Sverchok Node Tree",
+                                 icon="RNA_ADD")
+            return
         for elem in self.draw_data:
             elem.draw(self.layout)
 
 
 menu_file = Path(__file__).parents[1] / 'index.yaml'
-add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'AllCategories', icon_name='RNA')
+add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
 
 
 class AddNodeOp(bl_operators.node.NodeAddOperator):
@@ -303,22 +386,6 @@ class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):
         # the message can be customized if to generate separate class for each node
         cls.poll_message_set('The library is not installed')
         return False
-
-
-class NODEVIEW_MT_Dynamic_Menu(CategoryMenuTemplate, bpy.types.Menu):
-    """Shift+A menu"""
-    bl_label = "Sverchok Nodes"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
-
-        add_node_menu.draw_contents(self.layout)
-
-        layout.menu('NODE_MT_category_SVERCHOK_GROUP', icon='NODETREE')  # todo add these two lines to UiToolsPartialMenu
-        layout.menu('NODEVIEW_MT_AddPresetOps', icon='SETTINGS')
 
 
 class CallPartialMenu(SverchokContext, bpy.types.Operator):
@@ -381,6 +448,7 @@ class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
 
 preset_category_menus = dict()
 
+
 def make_preset_category_menu(category):
     global preset_category_menus
     if category in preset_category_menus:
@@ -402,7 +470,9 @@ def make_preset_category_menu(category):
     preset_category_menus[category] = SvPresetCategorySubmenu
     return SvPresetCategorySubmenu
 
-class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
+
+class AddPresetMenu(bpy.types.Menu):
+    bl_idname = 'NODEVIEW_MT_AddPresetMenu'
     bl_label = "Presets"
 
     def draw(self, context):
@@ -415,7 +485,8 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
                     layout.menu(class_name)
 
 
-class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
+class SverchokGroupMenu(bpy.types.Menu):
+    bl_idname = 'NODE_MT_SverchokGroupMenu'
     bl_label = "Group"
 
     def draw(self, context):
@@ -427,9 +498,8 @@ class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
 
 
 classes = [
-    NODEVIEW_MT_Dynamic_Menu,
-    NODEVIEW_MT_AddPresetOps,
-    NODE_MT_category_SVERCHOK_GROUP,
+    AddPresetMenu,
+    SverchokGroupMenu,
     SvNodeAddOperator,
     ShowMissingDependsOperator,
     CallPartialMenu,
@@ -442,14 +512,8 @@ def sv_draw_menu(self, context):
     tree_type = context.space_data.tree_type
     if not tree_type in sv_tree_types:
         return
-    layout = self.layout
-    layout.operator_context = "INVOKE_DEFAULT"
 
-    if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
-        layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
-        return
-
-    layout.menu_contents(NODEVIEW_MT_Dynamic_Menu.__name__)
+    self.layout.menu_contents(add_node_menu.menu_cls.__name__)
 
 
 def register():

@@ -137,7 +137,7 @@ def add_keymap():
 
         # Shift + A     | show custom menu
         kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
-        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
+        kmi.properties.name = "NODEVIEW_MT_SvCategoryAllCategories"  # ui/nodeview_space_menu.py:add_node_menu
         nodeview_keymaps.append((km, kmi))
 
         # numbers 1 to 5 for partial menus
