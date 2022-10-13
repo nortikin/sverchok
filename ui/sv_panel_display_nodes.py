@@ -118,15 +118,12 @@ def cache_node_categories():
 
     categories = [c.name for c in add_node_menu.walk_categories()]
 
-    debug("categories = %s" % list(categories))
-
     _node_category_cache["categories"] = {}
     _node_category_cache["categories"]["names"] = list(categories)
     _node_category_cache["categories"]["names"].append("All")
     _node_category_cache["categories"]["All"] = {}
     _node_category_cache["categories"]["All"]["nodes"] = []
     for cat in add_node_menu.walk_categories():
-        debug("ADDING category: %s" % cat.name)
         nodes = [n.bl_idname for n in cat if hasattr(n, 'bl_idname')]
         nodes = list(filter(lambda node: should_display_node(node), nodes))
         _node_category_cache["categories"][cat.name] = {}
