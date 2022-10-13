@@ -1,4 +1,4 @@
-# This file is parsed by sverchok.ui.nodeview_space_menu menu.py
+# This file is parsed by sverchok.ui.nodeview_space_menu
 # It's quite limited representation of yaml syntax, stick to existing lexical
 # constructions
 

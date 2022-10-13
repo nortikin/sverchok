@@ -8,4 +8,5 @@ ui_modules = [
     # show git info
     "development",
     "nodeview_keymaps",
+    "add_nodes_panel",
 ]

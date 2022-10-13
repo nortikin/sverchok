@@ -123,10 +123,6 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
                     add_node.draw(col)
 
 
-def reload_menu():
-    build_help_remap(sm.add_node_menu.walk_categories())
-
-
 classes = [SvResetNodeSearchOperator, SV_PT_NodesTPanel]
 
 

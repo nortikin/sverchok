@@ -93,10 +93,8 @@ def register():
         sv_registration_utils.register_all(imported_modules + node_list)
         sverchok.core.init_bookkeeping(__name__)
 
-        menu.register()
         if reload_event:
             data_structure.RELOAD_EVENT = True
-            menu.reload_menu()
 
 
 def unregister():
