@@ -2592,8 +2592,8 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
     if inter_p:
         dist = (inter_p[0] - inter_p[1]).length
         intersect = dist < tolerance
-        is_a_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
-        is_b_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_a_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_b_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
 
         local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
     else:
