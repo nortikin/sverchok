@@ -146,7 +146,7 @@ class AddNode(MenuItem):
                 self._label = "Reroute"
             # todo check labels of dependent classes after their refactoring
             elif node_cls is not None:
-                self._label = node_cls.bl_label  # todo node_cls.bl_rna.name ?
+                self._label = node_cls.bl_label
             else:  # todo log missing nodes?
                 self._label = f'{self.bl_idname} (not found)'
         return self._label
@@ -164,7 +164,7 @@ class AddNode(MenuItem):
                     self._icon_prop = {'icon': 'ERROR'}
             elif node_cls is not None:  # can be dummy class here
                 self._icon_prop = node_icon(node_cls)
-            else:  # todo log missing nodes?
+            else:
                 self._icon_prop = {'icon': 'ERROR'}
         return self._icon_prop
 
@@ -423,8 +423,9 @@ class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
         if not self._categories:
             import sverchok
             cats = defaultdict(list)
+            # todo replace with `bpy.types.Node.bl_rna_get_subclass_py` after dummy nodes refactoring
             for cls in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-                if name := getattr(cls, 'solid_catergory', None):
+                if name := getattr(cls, 'sv_category', None):
                     cats[name].append(AddNode(cls.bl_idname))
             self._categories = cats
         return self._categories

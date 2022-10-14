@@ -21,7 +21,7 @@ class SvSolidEdgesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSolidEdgesNode'
     bl_label = 'Solid Edges (Curves)'
     bl_icon = 'EDGESEL'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
 
     flat_output: BoolProperty(

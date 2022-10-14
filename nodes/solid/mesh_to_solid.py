@@ -63,7 +63,7 @@ class SvMeshToSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Mesh to Solid'
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_MESH_TO_SOLID'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     precision: FloatProperty(
         name="Precision",

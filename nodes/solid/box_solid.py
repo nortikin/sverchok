@@ -22,7 +22,7 @@ class SvBoxSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvBoxSolidNode'
     bl_label = 'Box (Solid)'
     bl_icon = 'META_CUBE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
     box_length: FloatProperty(
         name="Length",
         default=1,

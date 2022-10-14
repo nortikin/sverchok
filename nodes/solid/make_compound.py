@@ -30,7 +30,7 @@ class SvCompoundSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCompoundSolidNode'
     bl_label = 'Compound Solid'
     bl_icon = 'STICKY_UVS_LOC'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solids")

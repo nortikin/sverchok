@@ -25,7 +25,7 @@ class SvSolidValidateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvSolidValidateNode'
     bl_label = 'Validate & Fix Solid'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     precision : FloatProperty(
         name = "Precision",

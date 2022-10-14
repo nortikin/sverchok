@@ -40,7 +40,7 @@ class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvFCStdSpreadsheetNode'
     bl_label = 'Read/write Spreadsheets'
     bl_icon = 'IMPORT'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     auto_update : BoolProperty(name="auto_update", default=True)
     write_update : BoolProperty(name="read_update", default=True)

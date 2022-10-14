@@ -21,7 +21,7 @@ class SvSphereSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSphereSolidNode'
     bl_label = 'Sphere (Solid)'
     bl_icon = 'META_BALL'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     sphere_radius: FloatProperty(
         name="Radius",

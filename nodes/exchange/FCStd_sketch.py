@@ -42,7 +42,7 @@ class SvReadFCStdSketchNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvReadFCStdSketchNode'
     bl_label = 'Read FCStd Sketches'
     bl_icon = 'IMPORT'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     max_points : IntProperty(name="max_points", default=50, update = updateNode)
     read_update : BoolProperty(name="read_update", default=True)

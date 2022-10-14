@@ -33,7 +33,7 @@ class SvHollowSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Hollow Solid'
     bl_icon = 'MOD_THICKNESS'
     sv_icon = 'SV_HOLLOW_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     thickness : FloatProperty(
             name = "Thickness",

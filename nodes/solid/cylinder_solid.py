@@ -23,7 +23,7 @@ class SvCylinderSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCylinderSolidNode'
     bl_label = 'Cylinder (Solid)'
     bl_icon = 'META_CAPSULE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     cylinder_radius: FloatProperty(
         name="Radius",

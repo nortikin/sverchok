@@ -21,7 +21,7 @@ class SvOffsetSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Offset Solid'
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_OFFSET_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     offset: FloatProperty(
         name="Offset",

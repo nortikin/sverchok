@@ -20,7 +20,7 @@ class SvTransformSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Transform Solid'
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_TRANSFORM_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     precision: FloatProperty(
         name="Precision",

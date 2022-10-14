@@ -49,7 +49,7 @@ class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvApproxSubdtoNurbsNode'
     bl_label = 'Approximate Subd to Nurb'
     bl_icon = 'IMPORT'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     auto_update : BoolProperty(name="auto_update", default=True)
 

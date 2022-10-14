@@ -29,7 +29,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid to Mesh'
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_SOLID_TO_MESH'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
     modes = [
         ('Basic',    'Basic',    '', 0),
         ('Standard', 'Standard', '', 1),

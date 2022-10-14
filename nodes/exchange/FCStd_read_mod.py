@@ -100,7 +100,7 @@ class SvReadFCStdModNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvReadFCStdModNode'
     bl_label = 'Read FCStd MOD'
     bl_icon = 'IMPORT'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     read_update : BoolProperty(name="read_update", default=True)
     read_body : BoolProperty(name="read_body", default=True, update=updateNode)

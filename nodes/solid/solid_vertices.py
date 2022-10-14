@@ -16,7 +16,7 @@ class SvSolidVerticesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSolidVerticesNode'
     bl_label = 'Solid Vertices'
     bl_icon = 'VERTEXSEL'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")

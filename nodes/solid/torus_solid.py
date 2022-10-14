@@ -21,7 +21,7 @@ class SvToursSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvToursSolidNode'
     bl_label = 'Torus (Solid)'
     bl_icon = 'MESH_TORUS'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     cylinder_radius: FloatProperty(
         name="Radius R",

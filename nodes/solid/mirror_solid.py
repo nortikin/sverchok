@@ -22,7 +22,7 @@ class SvMirrorSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Mirror Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MIRROR_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     precision: FloatProperty(
         name="Precision",

@@ -25,7 +25,7 @@ class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvRefineSolidNode'
     bl_label = 'Refine Solid'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")

@@ -25,7 +25,7 @@ class SvSliceSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Slice Solid'
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_SLICE_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     flat_output: BoolProperty(
         name="Flat Output",

@@ -21,7 +21,7 @@ class SvConeSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvConeSolidNode'
     bl_label = 'Cone (Solid)'
     bl_icon = 'MESH_CONE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     cylinder_radius: FloatProperty(
         name="Radius Bottom",

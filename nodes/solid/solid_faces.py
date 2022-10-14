@@ -26,7 +26,7 @@ class SvSolidFacesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSolidFacesNode'
     bl_label = 'Solid Faces (Surfaces)'
     bl_icon = 'FACESEL'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
 
 
     flat_output: BoolProperty(

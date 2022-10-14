@@ -33,7 +33,7 @@ class SvSolidFaceExtrudeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Extrude Face (Solid)'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_EXTRUDE_FACE'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     refine_solid: BoolProperty(
             name="Refine Solid",

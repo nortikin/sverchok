@@ -36,7 +36,7 @@ class SvSolidDistanceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Distance'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SOLID_DISTANCE'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     modes = [
         ('Solid', 'Solid', '', 0),

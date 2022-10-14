@@ -41,7 +41,7 @@ class SvWriteFCStdNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvWriteFCStdNode'
     bl_label = 'Write FCStd'
     bl_icon = 'IMPORT'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     write_update : BoolProperty(
         name="write_update",

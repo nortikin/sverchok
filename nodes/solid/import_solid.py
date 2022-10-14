@@ -18,7 +18,7 @@ class SvImportSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvImportSolidNode'
     bl_label = 'Import Solid'
     bl_icon = 'IMPORT'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     def sv_init(self, context):
         self.inputs.new('SvFilePathSocket', "File Path")

@@ -83,7 +83,7 @@ class SvExportSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvExportSolidNode'
     bl_label = 'Export Solid'
     bl_icon = 'EXPORT'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
     # sv_icon = 'SV_VORONOI'
 
     file_types = [

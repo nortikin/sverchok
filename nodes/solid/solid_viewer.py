@@ -260,7 +260,7 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Viewer'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
-    solid_catergory = "Outputs"
+    sv_category = "Solid Outputs"
     node_dict = {}
 
     def wrapped_update(self, context=None):

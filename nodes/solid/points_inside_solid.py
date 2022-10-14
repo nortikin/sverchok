@@ -22,7 +22,7 @@ class SvIsInsideSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Points Inside Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINTS_INSIDE_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     tolerance: FloatProperty(
         name="Tolerance",

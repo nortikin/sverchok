@@ -293,7 +293,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             col.prop(node, 'shrink')
 
         layout.separator()
-        layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
+        layout.menu("NODEVIEW_MT_SvCategoryAllCategories", text='node menu')
         # layout.operator("node.duplicate_move")
         self.draw_conveniences(context, node)
 

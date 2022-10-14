@@ -21,7 +21,7 @@ class SvChamferSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Chamfer Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CHAMFER_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     replacement_nodes = [('SvFilletSolidNode', None, None)]
 

@@ -33,7 +33,7 @@ class SvSolidFaceSolidifyNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solidify Face (Solid)'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_SOLIDIFY_FACE'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     refine_solid: BoolProperty(
             name="Refine Solid",
