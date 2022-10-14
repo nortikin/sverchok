@@ -24,7 +24,6 @@ class SvExScalarFieldGraphNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvExScalarFieldGraphNode'
     bl_label = 'Scalar Field Graph'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
     samples_xy : IntProperty(
         name = "Samples X/Y",

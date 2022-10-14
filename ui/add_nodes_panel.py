@@ -75,7 +75,10 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'SverchCustomTreeType'
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except:
+            return False
 
     def draw(self, context):
         layout = self.layout
@@ -121,15 +124,19 @@ def register():
                 if add_node.search_match(edit_text):
                     yield add_node.label, "Some editional text"
 
-    categories = []
-    for i, category in enumerate(sm.add_node_menu.walk_categories()):
-        if any(isinstance(add_node, sm.AddNode) for add_node in category):
-            identifier = category.menu_cls.__name__
-            categories.append((identifier, category.name, category.name, i))
+    def categories(self, context):
+        # this should be a function because new categories can be added
+        # by Sverchok's extensions after the registration
+        for i, category in enumerate(sm.add_node_menu.walk_categories()):
+            if any(isinstance(add_node, sm.AddNode) for add_node in category):
+                identifier = category.menu_cls.__name__
+                yield identifier, category.name, category.name, i
+
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
         name="Category",
         description="Select nodes category",
         items=categories,
+        default=1,  # it through errors in console without this option
         update=SV_PT_NodesTPanel.select_category_update,
     )
 

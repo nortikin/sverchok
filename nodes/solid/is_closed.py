@@ -25,7 +25,6 @@ class SvIsSolidClosedNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvIsSolidClosedNode'
     bl_label = 'Is Solid Closed'
-    bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 
     def sv_init(self, context):

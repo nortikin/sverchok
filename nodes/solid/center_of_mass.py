@@ -25,7 +25,6 @@ class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvSolidCenterOfMassNode'
     bl_label = 'Center of Mass'
-    bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 
     def sv_init(self, context):

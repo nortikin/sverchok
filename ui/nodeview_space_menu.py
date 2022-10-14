@@ -58,6 +58,11 @@ class MenuItem(ABC):
     def draw(self, layout):
         pass
 
+    def __repr__(self):
+        name = getattr(self, 'name', '')
+        name = f' "{name}"' if name else ''
+        return f"<{type(self).__name__}{name}>"
+
 
 class Separator(MenuItem):
     def draw(self, layout):
@@ -170,7 +175,10 @@ class AddNode(MenuItem):
 
     def draw(self, layout, only_icon=False):
         node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
-        icon_prop = self.icon_prop if only_icon or get_icon_switch() else {}
+        if only_icon:
+            icon_prop = self.icon_prop or {'icon': 'OUTLINER_OB_EMPTY'}
+        else:
+            icon_prop = self.icon_prop if get_icon_switch() else {}
 
         if not self.dependency and node_cls is None:
             layout.label(text=self.label, **icon_prop)
@@ -210,9 +218,6 @@ class Category(MenuItem):
     def draw(self, layout):
         icon_prop = icon(self.icon) if get_icon_switch() else {}
         layout.menu(self.menu_cls.__name__, **icon_prop)  # text=submenu_title)
-
-    def draw_contents(self, layout):
-        layout.menu_contents(self.menu_cls.__name__)
 
     def __iter__(self) -> Iterator[Union[Separator, AddNode, 'Category']]:
         return iter(e for e in self.menu_cls.draw_data)
@@ -384,7 +389,8 @@ class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         # the message can be customized if to generate separate class for each node
-        cls.poll_message_set('The library is not installed')
+        if hasattr(cls, 'poll_message_set'):  # Bl 2.93 does not have the method
+            cls.poll_message_set('The library is not installed')
         return False
 
 

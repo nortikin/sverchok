@@ -884,6 +884,7 @@ def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=
 class SV_PT_UserPresetsPanel(bpy.types.Panel):
     bl_idname = "SV_PT_UserPresetsPanel"
     bl_label = "Presets"
+    bl_options = {'DEFAULT_CLOSED'}  # to improve performance
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     # bl_category = 'Presets'

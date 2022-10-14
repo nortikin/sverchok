@@ -2,17 +2,19 @@
 # It's quite limited representation of yaml syntax, stick to existing lexical
 # constructions
 
+# Shift+A / Add(Node) Menu
 
-- Search:
-    - icon_name: OUTLINER_DATA_FONT
-    - operator: node.sv_extra_search
+- Search:  # Label of an operator
+    - icon_name: OUTLINER_DATA_FONT  # icon name to show
+    - operator: node.sv_extra_search  # name of on an operator to call
+    # custom properties for operators are not supported currently
 
-- ---
+- ---  # Separator
 
-- Generator:
-    - icon_name: OBJECT_DATAMODE
-    - extra_menu: MeshPartialMenu
-    - SvLineNodeMK4
+- Generator:  # Name of a node category
+    - icon_name: OBJECT_DATAMODE  # icon name to show
+    - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
+    - SvLineNodeMK4  # bl_idname of a node
     - SvSegmentGenerator
     - SvPlaneNodeMk3
     - SvNGonNode
@@ -31,6 +33,7 @@
     - RandomVectorNodeMK3
     - ImageNode
 
+    # this is a nested category
     - Generators Extended:
         - icon_name: PLUGIN
         - SvBoxRoundedNode
@@ -847,8 +850,8 @@
 
 - ---
 
-- Group:
-    - custom_menu: NODE_MT_SverchokGroupMenu
+- Group:  # label of custom menu to show
+    - custom_menu: NODE_MT_SverchokGroupMenu  # bl_idname of the custom menu
     - icon_name: NODETREE
 
 - Presets:
