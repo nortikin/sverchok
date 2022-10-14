@@ -546,10 +546,6 @@ class SvNurbsCurve(SvCurve):
             end = self.evaluate(u_max)
             return begin, end
 
-    def is_closed(self, tolerance=1e-6):
-        begin, end = self.get_end_points()
-        return np.linalg.norm(begin - end) < tolerance
-
     def is_line(self, tolerance=0.001):
         """
         Check that the curve is nearly a straight line segment.
