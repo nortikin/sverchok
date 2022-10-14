@@ -101,11 +101,11 @@ Example of usage
   :target: https://user-images.githubusercontent.com/14288520/190919106-e3ffb167-1f95-4909-a602-74c454f88571.png
 
 * Vector-> :doc:`Vector Attraction </nodes/vector/attractor>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * Modifiers->Modifier Make-> :doc:`Wireframe </nodes/modifier_make/wireframe>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
-* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * List->List Struct-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`

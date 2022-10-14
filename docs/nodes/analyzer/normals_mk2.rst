@@ -1,6 +1,9 @@
 Calculate Normals
 =================
 
+.. image:: https://user-images.githubusercontent.com/14288520/195733730-3cbd75a3-e545-4377-bc8f-7dd510e1875d.png
+  :target: https://user-images.githubusercontent.com/14288520/195733730-3cbd75a3-e545-4377-bc8f-7dd510e1875d.png
+
 Functionality
 -------------
 

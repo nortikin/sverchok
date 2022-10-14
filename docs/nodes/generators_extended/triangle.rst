@@ -109,10 +109,10 @@ Advanced example using the node to generate structural ribbons
   :target: https://user-images.githubusercontent.com/14288520/191064494-53646309-446e-46bc-94f3-178cd4419ed6.png
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * SIN, MUL, ADD: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
-* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
