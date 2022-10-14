@@ -20,13 +20,13 @@ from collections import defaultdict
 
 import bpy
 
-import sverchok
 import sverchok.ui.nodeview_space_menu as sm  # import other way breaks showing custom icons
+from bpy.props import PointerProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 
 
-class SV_PT_NodesTPanel(bpy.types.Panel):
+class AddNodeToolPanel(bpy.types.Panel):
     """Nodes panel under the T panel"""
-
+    bl_idname = 'SV_PT_AddNodeToolPanel'
     bl_space_type = "NODE_EDITOR"
     bl_region_type = "TOOLS"
     bl_label = "Sverchok Nodes"
@@ -35,9 +35,9 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
     _categories: dict[sm.Category, sm.AddNode] = dict()
 
     def node_search_update(self, context):
-        request = context.scene.sv_node_search
+        request = context.scene.sv_add_node_panel_settings.node_search
         if not request:
-            SV_PT_NodesTPanel._categories = dict()
+            AddNodeToolPanel._categories = dict()
             return
 
         categories = defaultdict(list)
@@ -48,14 +48,14 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
                 if add_node.search_match(request):
                     categories[cat].append(add_node)
 
-        SV_PT_NodesTPanel._categories = categories
+        AddNodeToolPanel._categories = categories
 
     def select_category_update(self, context):
-        cat_name = context.scene.sv_selected_category
+        cat_name = context.scene.sv_add_node_panel_settings.selected_category
         for cat in sm.add_node_menu.walk_categories():
             if cat.menu_cls.__name__ == cat_name:
                 items = [n for n in cat if isinstance(n, sm.AddNode)]
-                SV_PT_NodesTPanel._items = items
+                AddNodeToolPanel._items = items
                 return
 
     @property
@@ -82,15 +82,14 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row = layout.row(align=True)
-        row.prop(context.scene, "sv_node_search", text="")
-        addon = bpy.context.preferences.addons.get(sverchok.__name__)
-        prefs = addon.preferences
-        if context.scene.sv_node_search:
+        row.prop(context.scene.sv_add_node_panel_settings, "node_search", text="")
+        if context.scene.sv_add_node_panel_settings.node_search:
             for cat, add_nodes in self.categories.items():
                 icon_prop = sm.icon(cat.icon) if cat.icon else {}
                 layout.label(text=cat.name, **icon_prop)
-                if prefs.node_panels_icons_only:
-                    grid = layout.grid_flow(row_major=True, align=True, columns=prefs.node_panels_columns)
+                if context.scene.sv_add_node_panel_settings.icons_only:
+                    num = context.scene.sv_add_node_panel_settings.columns_number
+                    grid = layout.grid_flow(row_major=True, align=True, columns=num)
                     grid.scale_x = 1.5
                     for add_node in add_nodes:
                         add_node.draw(grid, only_icon=True)
@@ -99,9 +98,10 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
                     for add_node in add_nodes:
                         add_node.draw(col)
         else:
-            layout.prop(context.scene, "sv_selected_category", text="")
-            if prefs.node_panels_icons_only:
-                grid = layout.grid_flow(row_major=True, align=True, columns=prefs.node_panels_columns)
+            layout.prop(context.scene.sv_add_node_panel_settings, "selected_category", text="")
+            if context.scene.sv_add_node_panel_settings.icons_only:
+                num = context.scene.sv_add_node_panel_settings.columns_number
+                grid = layout.grid_flow(row_major=True, align=True, columns=num)
                 grid.scale_x = 1.5
                 for add_node in self.items:
                     add_node.draw(grid, only_icon=True)
@@ -110,11 +110,15 @@ class SV_PT_NodesTPanel(bpy.types.Panel):
                 for add_node in self.items:
                     add_node.draw(col)
 
+        col = layout.column()
+        col.use_property_split = True
+        col.use_property_decorate = False
+        col.prop(context.scene.sv_add_node_panel_settings, 'icons_only')
+        if context.scene.sv_add_node_panel_settings.icons_only:
+            col.prop(context.scene.sv_add_node_panel_settings, 'columns_number')
 
-classes = [SV_PT_NodesTPanel]
 
-
-def register():
+class AddNodePanelSettings(bpy.types.PropertyGroup):
     def search_tooltip(self, context, edit_text):
         for cat in sm.add_node_menu.walk_categories():
             for add_node in cat:
@@ -131,29 +135,49 @@ def register():
                 identifier = category.menu_cls.__name__
                 yield identifier, category.name, category.name, i
 
-    bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
+    selected_category: EnumProperty(
         name="Category",
         description="Select nodes category",
         items=categories,
         default=1,  # it through errors in console without this option
-        update=SV_PT_NodesTPanel.select_category_update,
+        update=AddNodeToolPanel.select_category_update,
     )
 
     search_prop = dict(search=search_tooltip) if bpy.app.version >= (3, 3) else {}
-    bpy.types.Scene.sv_node_search = bpy.props.StringProperty(
+    node_search: StringProperty(
         name="Search",
         description="Enter search term and press Enter to search; clear the"
                     " field to return to selection of node category.",
-        update=SV_PT_NodesTPanel.node_search_update,
+        update=AddNodeToolPanel.node_search_update,
         **search_prop
     )
 
+    icons_only: BoolProperty(
+        name="Icons only",
+        description="Show node icon only when icon has an icon, otherwise show it's name",
+        default=True,
+    )
+
+    columns_number: IntProperty(
+        name="Columns",
+        description="Number of icon panels per row; Set to 0 for automatic selection",
+        default=5,
+        min=1,
+        max=12,
+    )
+
+
+classes = [AddNodeToolPanel, AddNodePanelSettings]
+
+
+def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+    bpy.types.Scene.sv_add_node_panel_settings = PointerProperty(
+        type=AddNodePanelSettings)
 
 
 def unregister():
+    del bpy.types.Scene.sv_add_node_panel_settings
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.sv_selected_category
-    del bpy.types.Scene.sv_node_search

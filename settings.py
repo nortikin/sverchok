@@ -301,19 +301,6 @@ class SverchokPreferences(AddonPreferences):
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
 
-    node_panels_icons_only : BoolProperty(
-            name = "Display icons only",
-            description = "Show node icon only when icon has an icon, otherwise show it's name",
-            default = True
-        )
-
-    node_panels_columns : IntProperty(
-            name = "Columns",
-            description = "Number of icon panels per row; Set to 0 for automatic selection",
-            default = 0,
-            min = 0, max = 12
-        )
-
     input_links_options = [
             ('NONE', "Do not show", "Do not show", 0),
             ('QUICKLINK', "Show single option only",
@@ -413,12 +400,6 @@ class SverchokPreferences(AddonPreferences):
         col = layout.row().column()
         col_split = col.split(factor=0.5)
         col1 = col_split.column()
-
-        toolbar_box = col1.box()
-        toolbar_box.label(text="Node toolbars")
-        toolbar_box.prop(self, "node_panels_icons_only")
-        if self.node_panels_icons_only:
-            toolbar_box.prop(self, "node_panels_columns")
 
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
