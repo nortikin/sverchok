@@ -21,7 +21,6 @@ from collections import defaultdict
 import bpy
 
 import sverchok
-from sverchok.utils.sv_help import build_help_remap
 import sverchok.ui.nodeview_space_menu as sm  # import other way breaks showing custom icons
 
 
@@ -151,8 +150,6 @@ def register():
 
     for cls in classes:
         bpy.utils.register_class(cls)
-
-    build_help_remap(sm.add_node_menu.walk_categories())
 
 
 def unregister():

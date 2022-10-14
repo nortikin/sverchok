@@ -19,7 +19,7 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterator, Union, TypeVar
+from typing import Iterator, Union, TypeVar, Optional
 
 import bl_operators
 import bpy
@@ -227,6 +227,14 @@ class Category(MenuItem):
         for elem in self.menu_cls.draw_data:
             if hasattr(elem, 'walk_categories'):
                 yield from elem.walk_categories()
+
+    def get_category(self, node_idname) -> Optional['Category']:
+        """The search is O(len(sverchok_nodes))"""
+        for cat in self.walk_categories():
+            for elem in cat:
+                if isinstance(elem, AddNode):
+                    if elem.bl_idname == node_idname:
+                        return cat
 
     def register(self):
         """Register itself and all its elements.
