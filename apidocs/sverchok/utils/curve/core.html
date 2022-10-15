@@ -462,6 +462,16 @@ class SvCurve(object):
         &#34;&#34;&#34;
         raise Exception(&#34;not implemented!&#34;)
 
+    def get_end_points(self):
+        u_min, u_max = self.get_u_bounds()
+        begin = self.evaluate(u_min)
+        end = self.evaluate(u_max)
+        return begin, end
+
+    def is_closed(self, tolerance=1e-6):
+        begin, end = self.get_end_points()
+        return np.linalg.norm(begin - end) &lt; tolerance
+
     def get_degree(self):
         &#34;&#34;&#34;
         Get curve degree, if applicable.
@@ -1676,6 +1686,16 @@ def calc_taylor_nurbs_matrices(degree, u_bounds):
         &#34;&#34;&#34;
         raise Exception(&#34;not implemented!&#34;)
 
+    def get_end_points(self):
+        u_min, u_max = self.get_u_bounds()
+        begin = self.evaluate(u_min)
+        end = self.evaluate(u_max)
+        return begin, end
+
+    def is_closed(self, tolerance=1e-6):
+        begin, end = self.get_end_points()
+        return np.linalg.norm(begin - end) &lt; tolerance
+
     def get_degree(self):
         &#34;&#34;&#34;
         Get curve degree, if applicable.
@@ -2108,6 +2128,22 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     raise Exception(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.core.SvCurve.get_end_points"><code class="name flex">
+<span>def <span class="ident">get_end_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_end_points(self):
+    u_min, u_max = self.get_u_bounds()
+    begin = self.evaluate(u_min)
+    end = self.evaluate(u_max)
+    return begin, end</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_tangent_delta"><code class="name flex">
 <span>def <span class="ident">get_tangent_delta</span></span>(<span>self, tangent_delta=None)</span>
 </code></dt>
@@ -2153,6 +2189,20 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
         Tuple: minimum and maximum value of curve&#39;s parameter.
     &#34;&#34;&#34;
     raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.core.SvCurve.is_closed"><code class="name flex">
+<span>def <span class="ident">is_closed</span></span>(<span>self, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_closed(self, tolerance=1e-6):
+    begin, end = self.get_end_points()
+    return np.linalg.norm(begin - end) &lt; tolerance</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.main_normal"><code class="name flex">
@@ -3749,8 +3799,10 @@ def from_coefficients(cls, coefficients):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.main_normal" href="#sverchok.utils.curve.core.SvCurve.main_normal">main_normal</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.main_normal_array" href="#sverchok.utils.curve.core.SvCurve.main_normal_array">main_normal_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral" href="#sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral">pre_calc_torsion_integral</a></code></li>

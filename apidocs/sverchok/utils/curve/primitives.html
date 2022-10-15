@@ -513,8 +513,128 @@ class SvCircle(SvCurve):
                     control_points, weights)
         return curve
 
-    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-        return self.to_nurbs_arc(n=n, implementation=implementation)
+    def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = &#39;C2&#39;, implementation = SvNurbsMaths.NATIVE):
+        &#34;&#34;&#34;
+        Convert the circle to NURBS curve with 4-degree parametrization.
+
+        This implements the algorithm described in the paper:
+        Carole Blanc, Christophe Schlick.
+        More Accurate Representation of Conics by NURBS.
+        Technical Report, LaBRI, 1995.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            t_min, t_max: indicate the arc to be converted.
+            parametrization: &#39;C2&#39; for parametrization with continuous 2nd
+                derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+                parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        &#34;&#34;&#34;
+        if parametrization not in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+            raise Exception(&#34;Unsupported parametrization type&#34;)
+
+        if t_min is None:
+            t_min = 0.0
+        if t_max is None:
+            t_max = 2*pi
+
+        if t_max &lt; t_min:
+            return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+        def make_quad_arc(t1, t2):
+            p1 = [cos(t1), sin(t1), 0.0]
+            alpha = (t2 - t1)/2.0
+            r_mid = 1.0 / cos(alpha)
+            t_mid = (t1 + t2)/2.0
+            p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
+            p2 = [cos(t2), sin(t2), 0.0]
+            points = np.array([p1, p_mid, p2])
+
+            w = cos(alpha)
+            return points, w
+
+        def make_quadric_arc(t1, t2):
+            ps, w = make_quad_arc(t1, t2)
+
+            if parametrization == &#39;C2&#39;:
+                p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
+            else:
+                phi = (t2 - t1) / 2.0
+                cosphi = cos(phi / 5.0)
+                p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
+
+            q0 = ps[0]
+            q1 = (ps[0] + w*ps[1])/(1.0 + w)
+            q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
+            q3 = (ps[2] + w*ps[1]) / (1.0 + w)
+            q4 = ps[2]
+
+            w0 = 1.0
+            w1 = p*(1.0 + w)/2.0
+            w2 = (p*p + p*p*w + w)/3.0
+            w3 = w1
+            w4 = w0
+
+            degree = 4
+            knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
+            control_points = np.array([q0, q1, q2, q3, q4])
+            weights = np.array([w0, w1, w2, w3, w4])
+            return SvNurbsMaths.build_curve(implementation,
+                        degree, knots,
+                        control_points, weights)
+
+        omega = t_max - t_min
+        alpha = pi / n
+        full_arc_angle = 2*alpha
+        n_full_arcs = round(omega // full_arc_angle)
+        small_arc_angle = omega % full_arc_angle
+        ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
+        full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
+        if small_arc_angle &gt; 1e-6:
+            small_arc = make_quadric_arc(ts_full[-1], t_max)
+            small_arcs = [small_arc]
+        else:
+            small_arcs = []
+
+        all_arcs = full_arcs + small_arcs
+        unit_arc = all_arcs[0]
+        for arc in all_arcs[1:]:
+            unit_arc = unit_arc.concatenate(arc)
+
+        control_points = unit_arc.get_control_points()
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        curve = unit_arc.copy(control_points = control_points)
+        return curve
+
+    def to_nurbs_full(self, n=4, parametrization = &#39;SIMPLE&#39;, implementation = SvNurbsMaths.NATIVE):
+        &#34;&#34;&#34;
+        Convert fulll circle to a NURBS curve.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            paramerization: &#39;SIMPLE&#39; for traditional (2-degree) circle
+                parametrization; &#39;C2&#39; for 4-degree parametrization with continuous
+                2nd derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+                4-degree parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        &#34;&#34;&#34;
+        if parametrization == &#39;SIMPLE&#39;:
+            return self.to_nurbs_arc(n=n, implementation=implementation)
+        elif parametrization in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+            return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
+        else:
+            raise Exception(&#34;Unsupported parametrization type&#34;)
 
     def reverse(self):
         circle = self.copy()
@@ -1065,8 +1185,128 @@ class SvEllipse(SvCurve):
                     control_points, weights)
         return curve
 
-    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-        return self.to_nurbs_arc(n=n, implementation=implementation)
+    def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = &#39;C2&#39;, implementation = SvNurbsMaths.NATIVE):
+        &#34;&#34;&#34;
+        Convert the circle to NURBS curve with 4-degree parametrization.
+
+        This implements the algorithm described in the paper:
+        Carole Blanc, Christophe Schlick.
+        More Accurate Representation of Conics by NURBS.
+        Technical Report, LaBRI, 1995.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            t_min, t_max: indicate the arc to be converted.
+            parametrization: &#39;C2&#39; for parametrization with continuous 2nd
+                derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+                parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        &#34;&#34;&#34;
+        if parametrization not in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+            raise Exception(&#34;Unsupported parametrization type&#34;)
+
+        if t_min is None:
+            t_min = 0.0
+        if t_max is None:
+            t_max = 2*pi
+
+        if t_max &lt; t_min:
+            return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+        def make_quad_arc(t1, t2):
+            p1 = [cos(t1), sin(t1), 0.0]
+            alpha = (t2 - t1)/2.0
+            r_mid = 1.0 / cos(alpha)
+            t_mid = (t1 + t2)/2.0
+            p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
+            p2 = [cos(t2), sin(t2), 0.0]
+            points = np.array([p1, p_mid, p2])
+
+            w = cos(alpha)
+            return points, w
+
+        def make_quadric_arc(t1, t2):
+            ps, w = make_quad_arc(t1, t2)
+
+            if parametrization == &#39;C2&#39;:
+                p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
+            else:
+                phi = (t2 - t1) / 2.0
+                cosphi = cos(phi / 5.0)
+                p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
+
+            q0 = ps[0]
+            q1 = (ps[0] + w*ps[1])/(1.0 + w)
+            q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
+            q3 = (ps[2] + w*ps[1]) / (1.0 + w)
+            q4 = ps[2]
+
+            w0 = 1.0
+            w1 = p*(1.0 + w)/2.0
+            w2 = (p*p + p*p*w + w)/3.0
+            w3 = w1
+            w4 = w0
+
+            degree = 4
+            knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
+            control_points = np.array([q0, q1, q2, q3, q4])
+            weights = np.array([w0, w1, w2, w3, w4])
+            return SvNurbsMaths.build_curve(implementation,
+                        degree, knots,
+                        control_points, weights)
+
+        omega = t_max - t_min
+        alpha = pi / n
+        full_arc_angle = 2*alpha
+        n_full_arcs = round(omega // full_arc_angle)
+        small_arc_angle = omega % full_arc_angle
+        ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
+        full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
+        if small_arc_angle &gt; 1e-6:
+            small_arc = make_quadric_arc(ts_full[-1], t_max)
+            small_arcs = [small_arc]
+        else:
+            small_arcs = []
+
+        all_arcs = full_arcs + small_arcs
+        unit_arc = all_arcs[0]
+        for arc in all_arcs[1:]:
+            unit_arc = unit_arc.concatenate(arc)
+
+        control_points = unit_arc.get_control_points()
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        curve = unit_arc.copy(control_points = control_points)
+        return curve
+
+    def to_nurbs_full(self, n=4, parametrization = &#39;SIMPLE&#39;, implementation = SvNurbsMaths.NATIVE):
+        &#34;&#34;&#34;
+        Convert fulll circle to a NURBS curve.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            paramerization: &#39;SIMPLE&#39; for traditional (2-degree) circle
+                parametrization; &#39;C2&#39; for 4-degree parametrization with continuous
+                2nd derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+                4-degree parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        &#34;&#34;&#34;
+        if parametrization == &#39;SIMPLE&#39;:
+            return self.to_nurbs_arc(n=n, implementation=implementation)
+        elif parametrization in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+            return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
+        else:
+            raise Exception(&#34;Unsupported parametrization type&#34;)
 
     def reverse(self):
         circle = self.copy()
@@ -1492,16 +1732,180 @@ def from_equation(cls, eq):
 </details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs_full"><code class="name flex">
-<span>def <span class="ident">to_nurbs_full</span></span>(<span>self, n=4, implementation='NATIVE')</span>
+<span>def <span class="ident">to_nurbs_full</span></span>(<span>self, n=4, parametrization='SIMPLE', implementation='NATIVE')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Convert fulll circle to a NURBS curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>n</code></strong></dt>
+<dd>number of subdivisions, usually 3, 4 or 6.</dd>
+<dt><strong><code>paramerization</code></strong></dt>
+<dd>'SIMPLE' for traditional (2-degree) circle
+parametrization; 'C2' for 4-degree parametrization with continuous
+2nd derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+4-degree parametrization which is almost identical to trigonometric
+parametrization.</dd>
+<dt><strong><code>implementation</code></strong></dt>
+<dd>implementation of Nurbs mathematics.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-    return self.to_nurbs_arc(n=n, implementation=implementation)</code></pre>
+<pre><code class="python">def to_nurbs_full(self, n=4, parametrization = &#39;SIMPLE&#39;, implementation = SvNurbsMaths.NATIVE):
+    &#34;&#34;&#34;
+    Convert fulll circle to a NURBS curve.
+
+    Args:
+        n: number of subdivisions, usually 3, 4 or 6.
+        paramerization: &#39;SIMPLE&#39; for traditional (2-degree) circle
+            parametrization; &#39;C2&#39; for 4-degree parametrization with continuous
+            2nd derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+            4-degree parametrization which is almost identical to trigonometric
+            parametrization.
+        implementation: implementation of Nurbs mathematics.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
+    if parametrization == &#39;SIMPLE&#39;:
+        return self.to_nurbs_arc(n=n, implementation=implementation)
+    elif parametrization in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+        return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
+    else:
+        raise Exception(&#34;Unsupported parametrization type&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric"><code class="name flex">
+<span>def <span class="ident">to_nurbs_quadric</span></span>(<span>self, n=3, t_min=None, t_max=None, parametrization='C2', implementation='NATIVE')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert the circle to NURBS curve with 4-degree parametrization.</p>
+<p>This implements the algorithm described in the paper:
+Carole Blanc, Christophe Schlick.
+More Accurate Representation of Conics by NURBS.
+Technical Report, LaBRI, 1995.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>n</code></strong></dt>
+<dd>number of subdivisions, usually 3, 4 or 6.</dd>
+<dt>t_min, t_max: indicate the arc to be converted.</dt>
+<dt><strong><code>parametrization</code></strong></dt>
+<dd>'C2' for parametrization with continuous 2nd
+derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+parametrization which is almost identical to trigonometric
+parametrization.</dd>
+<dt><strong><code>implementation</code></strong></dt>
+<dd>implementation of Nurbs mathematics.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvNurbsCurve.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = &#39;C2&#39;, implementation = SvNurbsMaths.NATIVE):
+    &#34;&#34;&#34;
+    Convert the circle to NURBS curve with 4-degree parametrization.
+
+    This implements the algorithm described in the paper:
+    Carole Blanc, Christophe Schlick.
+    More Accurate Representation of Conics by NURBS.
+    Technical Report, LaBRI, 1995.
+
+    Args:
+        n: number of subdivisions, usually 3, 4 or 6.
+        t_min, t_max: indicate the arc to be converted.
+        parametrization: &#39;C2&#39; for parametrization with continuous 2nd
+            derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
+            parametrization which is almost identical to trigonometric
+            parametrization.
+        implementation: implementation of Nurbs mathematics.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    &#34;&#34;&#34;
+    if parametrization not in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
+        raise Exception(&#34;Unsupported parametrization type&#34;)
+
+    if t_min is None:
+        t_min = 0.0
+    if t_max is None:
+        t_max = 2*pi
+
+    if t_max &lt; t_min:
+        return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+    def make_quad_arc(t1, t2):
+        p1 = [cos(t1), sin(t1), 0.0]
+        alpha = (t2 - t1)/2.0
+        r_mid = 1.0 / cos(alpha)
+        t_mid = (t1 + t2)/2.0
+        p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
+        p2 = [cos(t2), sin(t2), 0.0]
+        points = np.array([p1, p_mid, p2])
+
+        w = cos(alpha)
+        return points, w
+
+    def make_quadric_arc(t1, t2):
+        ps, w = make_quad_arc(t1, t2)
+
+        if parametrization == &#39;C2&#39;:
+            p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
+        else:
+            phi = (t2 - t1) / 2.0
+            cosphi = cos(phi / 5.0)
+            p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
+
+        q0 = ps[0]
+        q1 = (ps[0] + w*ps[1])/(1.0 + w)
+        q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
+        q3 = (ps[2] + w*ps[1]) / (1.0 + w)
+        q4 = ps[2]
+
+        w0 = 1.0
+        w1 = p*(1.0 + w)/2.0
+        w2 = (p*p + p*p*w + w)/3.0
+        w3 = w1
+        w4 = w0
+
+        degree = 4
+        knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
+        control_points = np.array([q0, q1, q2, q3, q4])
+        weights = np.array([w0, w1, w2, w3, w4])
+        return SvNurbsMaths.build_curve(implementation,
+                    degree, knots,
+                    control_points, weights)
+
+    omega = t_max - t_min
+    alpha = pi / n
+    full_arc_angle = 2*alpha
+    n_full_arcs = round(omega // full_arc_angle)
+    small_arc_angle = omega % full_arc_angle
+    ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
+    full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
+    if small_arc_angle &gt; 1e-6:
+        small_arc = make_quadric_arc(ts_full[-1], t_max)
+        small_arcs = [small_arc]
+    else:
+        small_arcs = []
+
+    all_arcs = full_arcs + small_arcs
+    unit_arc = all_arcs[0]
+    for arc in all_arcs[1:]:
+        unit_arc = unit_arc.concatenate(arc)
+
+    control_points = unit_arc.get_control_points()
+    control_points = self.radius * control_points
+    control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+    control_points = self.center + control_points
+
+    curve = unit_arc.copy(control_points = control_points)
+    return curve</code></pre>
 </details>
 </dd>
 </dl>
@@ -2258,6 +2662,7 @@ def from_two_points(cls, point1, point2):
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs">to_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_arc" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_arc">to_nurbs_arc</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_full" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_full">to_nurbs_full</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric">to_nurbs_quadric</a></code></li>
 </ul>
 </li>
 <li>

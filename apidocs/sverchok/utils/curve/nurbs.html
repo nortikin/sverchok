@@ -575,10 +575,6 @@ class SvNurbsCurve(SvCurve):
             end = self.evaluate(u_max)
             return begin, end
 
-    def is_closed(self, tolerance=1e-6):
-        begin, end = self.get_end_points()
-        return np.linalg.norm(begin - end) &lt; tolerance
-
     def is_line(self, tolerance=0.001):
         &#34;&#34;&#34;
         Check that the curve is nearly a straight line segment.
@@ -3253,10 +3249,6 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
             end = self.evaluate(u_max)
             return begin, end
 
-    def is_closed(self, tolerance=1e-6):
-        begin, end = self.get_end_points()
-        return np.linalg.norm(begin - end) &lt; tolerance
-
     def is_line(self, tolerance=0.001):
         &#34;&#34;&#34;
         Check that the curve is nearly a straight line segment.
@@ -4169,20 +4161,6 @@ such a way that each segment is nearly a straight line segment.</p></div>
     return p+1 == k</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed"><code class="name flex">
-<span>def <span class="ident">is_closed</span></span>(<span>self, tolerance=1e-06)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_closed(self, tolerance=1e-6):
-    begin, end = self.get_end_points()
-    return np.linalg.norm(begin - end) &lt; tolerance</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere"><code class="name flex">
 <span>def <span class="ident">is_inside_sphere</span></span>(<span>self, sphere_center, sphere_radius)</span>
 </code></dt>
@@ -4805,7 +4783,6 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point">has_exactly_one_nearest_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier">is_bezier</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational">is_rational</a></code></li>
