@@ -486,6 +486,26 @@ class SvCircle(SvCurve):
         return curve
 
     def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = 'C2', implementation = SvNurbsMaths.NATIVE):
+        """
+        Convert the circle to NURBS curve with 4-degree parametrization.
+
+        This implements the algorithm described in the paper:
+        Carole Blanc, Christophe Schlick.
+        More Accurate Representation of Conics by NURBS.
+        Technical Report, LaBRI, 1995.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            t_min, t_max: indicate the arc to be converted.
+            parametrization: 'C2' for parametrization with continuous 2nd
+                derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+                parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        """
         if parametrization not in {'C2', 'QIDEAL'}:
             raise Exception("Unsupported parametrization type")
 
@@ -518,7 +538,6 @@ class SvCircle(SvCurve):
                 phi = (t2 - t1) / 2.0
                 cosphi = cos(phi / 5.0)
                 p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
-            print("P", p)
 
             q0 = ps[0]
             q1 = (ps[0] + w*ps[1])/(1.0 + w)
@@ -567,6 +586,21 @@ class SvCircle(SvCurve):
         return curve
 
     def to_nurbs_full(self, n=4, parametrization = 'SIMPLE', implementation = SvNurbsMaths.NATIVE):
+        """
+        Convert fulll circle to a NURBS curve.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            paramerization: 'SIMPLE' for traditional (2-degree) circle
+                parametrization; 'C2' for 4-degree parametrization with continuous
+                2nd derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+                4-degree parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        """
         if parametrization == 'SIMPLE':
             return self.to_nurbs_arc(n=n, implementation=implementation)
         elif parametrization in {'C2', 'QIDEAL'}:
