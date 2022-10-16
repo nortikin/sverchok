@@ -5,12 +5,15 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Module containing primitive curve types: straight lines, circles, ellipses.
+"""
+
 import numpy as np
 from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D, rotate_vector_around_vector_np, rotate_vector_around_vector
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
@@ -20,8 +23,16 @@ from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
+    """
+    Straight line segment curve.
+    """
 
     def __init__(self, point, direction, u_bounds=None):
+        """
+        Args:
+            point: a point on a line.
+            direction: directing vector of a line.
+        """
         self.point = np.array(point)
         self.direction = np.array(direction)
         if u_bounds is None:
@@ -33,6 +44,9 @@ class SvLine(SvCurve):
 
     @classmethod
     def from_two_points(cls, point1, point2):
+        """
+        Generate straight line segment from two points.
+        """
         direction = np.array(point2) - np.array(point1)
         return SvLine(point1, direction)
     
@@ -123,6 +137,7 @@ class SvLine(SvCurve):
         return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
 
 def rotate_radius(radius, normal, thetas):
+    """Internal method"""
     ct = np.cos(thetas)[np.newaxis].T
     st = np.sin(thetas)[np.newaxis].T
 
@@ -135,6 +150,9 @@ def rotate_radius(radius, normal, thetas):
     return vx + vy
 
 class SvCircle(SvCurve):
+    """
+    Circle (or circular arc) curve.
+    """
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
         if matrix is not None:
@@ -638,6 +656,9 @@ class SvCircle(SvCurve):
 #         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
 class SvEllipse(SvCurve):
+    """
+    Ellipse curve.
+    """
     __description__ = "Ellipse"
 
     CENTER = 'center'
@@ -659,14 +680,13 @@ class SvEllipse(SvCurve):
     @classmethod
     def from_equation(cls, eq):
         """
-        input: an instance of sverchok.utils.geom.Ellipse3D
-        output: an instance of SvEllipse
+        Build an instance of SvEllipse from `sverchok.utils.geom.Ellipse3D`.
         """
         return SvEllipse(eq.get_matrix(), eq.a, eq.b)
 
     def to_equation(self):
         """
-        output: an instance of sverchok.utils.geom.Ellipse3D
+        Convert an instance of SvEllipse to `sverchok.utils.geom.Ellipse3D`.
         """
         major_radius = self.matrix @ np.array([self.a, 0, 0])
         minor_radius = self.matrix @ np.array([0, self.b, 0])
@@ -679,12 +699,21 @@ class SvEllipse(SvCurve):
         return sqrt(a*a - b*b)
 
     def focal_points(self):
+        """
+        Calculate ellipse focal points.
+
+        Returns:
+            list of two points.
+        """
         df = self.matrix @ np.array([self.c, 0, 0])
         f1 = self.center + df
         f2 = self.center - df
         return [f1, f2]
 
     def get_center(self):
+        """
+        Calculate ellipse center.
+        """
         if self.center_type == SvEllipse.CENTER:
             return self.center
         elif self.center_type == SvEllipse.F1:
@@ -735,6 +764,9 @@ class SvEllipse(SvCurve):
         return vs
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        """
+        Convert the ellipse to SvNurbsCurve.
+        """
         if self.a == 0 and self.b == 0:
             coef_x = 0
             coef_y = 0
