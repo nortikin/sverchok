@@ -1106,7 +1106,7 @@ class PlaneEquation(object):
         normal = self.normal.normalized()
         distance = abs(self.distance_to_point(point))
         sign = self.side_of_point(point)
-        result = Vector(point) - sign * distance * normal
+        result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info("P(%s): %s - %s * [%s] * %s = %s", point, point, sign, distance, normal, result)
         return result
     
