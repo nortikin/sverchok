@@ -1108,7 +1108,7 @@ class PlaneEquation(object):
         sign = self.side_of_point(point)
         result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info("P(%s): %s - %s * [%s] * %s = %s", point, point, sign, distance, normal, result)
-        return result
+        return Vector(result)
     
     def projection_of_points(self, points):
         """
