@@ -44,8 +44,6 @@ from sverchok.utils.curve.core import (
         UnsupportedCurveTypeException
     )
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
-from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
@@ -190,8 +188,11 @@ class SvNormalTrack(object):
 
     def evaluate_array(self, ts):
         &#34;&#34;&#34;
-        input: ts - np.array of snape (n,) or list of floats
-        output: np.array of shape (n, 3, 3)
+        Args:
+            ts: np.array of snape (n,) or list of floats
+        
+        Returns:
+            np.array of shape (n, 3, 3)
         &#34;&#34;&#34;
         ts = np.array(ts)
         tknots, quats = self.tknots, self.quats
@@ -223,14 +224,16 @@ class MathutilsRotationCalculator(object):
     def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
         &#34;&#34;&#34;
         Calculate matrix required to rotate object according to `tangent` vector.
-        inputs:
-            * tangent - np.array of shape (3,)
-            * scale - float
-            * axis - int, 0 - X, 1 - Y, 2 - Z
-            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
-            * scale_all - True to scale along all axes, False to scale along tangent only
-            * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
-        output:
+
+        Args:
+            tangent: np.array of shape (3,)
+            scale: float
+            axis: int, 0 - X, 1 - Y, 2 - Z
+            algorithm: one of HOUSEHOLDER, TRACK, DIFF
+            scale_all: True to scale along all axes, False to scale along tangent only
+            up_axis: string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+
+        Returns:
             np.array of shape (3,3).
         &#34;&#34;&#34;
         x = Vector((1.0, 0.0, 0.0))
@@ -776,19 +779,20 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
         * Z is pointing along curve tangent
         * Y is perpendicular to both X and Z.
 
-    input:
-        * surface
-        * uv_curve - uv_curve in the surface&#39;s UV space
-        * us - values of curve&#39;s T parameter; type: np.array of shape (n,)
-        * w_axis - defines which axis of the curve is surface&#39;s normal (two
+    Args:
+        surface: source surface
+        uv_curve: uv_curve in the surface&#39;s UV space
+        us: values of curve&#39;s T parameter; type: np.array of shape (n,)
+        w_axis: defines which axis of the curve is surface&#39;s normal (two
           other axes are surface&#39;s U and V). Default of 2 means X is U and Y is V.
 
-    output: tuple:
-        * matrices: np.array of shape (n, 3, 3)
-        * points: np.array of shape (n, 3) - points on the surface
-        * tangents: np.array of shape (n, 3)
-        * normals: np.array of shape (n, 3)
-        * binormals: np.array of shape (n, 3)
+    Returns:
+        tuple:
+            * matrices: np.array of shape (n, 3, 3)
+            * points: np.array of shape (n, 3) - points on the surface
+            * tangents: np.array of shape (n, 3)
+            * normals: np.array of shape (n, 3)
+            * binormals: np.array of shape (n, 3)
     &#34;&#34;&#34;
 
     if w_axis == 2:
@@ -829,8 +833,11 @@ def unify_curves_degree(curves):
     Assumes all curves have get_degree() and elevate_degree() methods.
     Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
 
-    input: list of SvCurve
-    output: list of SvCurve
+    Args:
+        curves: list of SvCurve
+
+    Returns:
+        list of SvCurve
     &#34;&#34;&#34;
 
     max_degree = max(curve.get_degree() for curve in curves)
@@ -843,14 +850,15 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
     several Nurbs.
 
-    inputs:
-    * curves: list of SvCurve
-    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
-    * allow_generic: what to do if it is not possible to concatenate curves natively:
-        True - use generic SvConcatCurve
-        False - raise an Exception.
+    Args:
+        curves: list of SvCurve
+        scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+        allow_generic: what to do if it is not possible to concatenate curves natively:
+            * True - use generic SvConcatCurve
+            * False - raise an Exception.
 
-    output: SvCurve.
+    Returns:
+        an instance of SvCurve.
     &#34;&#34;&#34;
     if not curves:
         raise Exception(&#34;List of curves must be not empty&#34;)
@@ -899,6 +907,9 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             raise Exception(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)
 
 class SvCurvesSortResult(object):
+    &#34;&#34;&#34;
+    Result of `sort_curves_for_concat` method.
+    &#34;&#34;&#34;
     def __init__(self):
         self.curves = []
         self.indexes = []
@@ -906,6 +917,17 @@ class SvCurvesSortResult(object):
         self.sum_error = 0
 
 def sort_curves_for_concat(curves, allow_flip=False):
+    &#34;&#34;&#34;
+    Sort list of curves so that they could be concatenated into one curve.
+
+    Args:
+        curves: list of SvCurve to be sorted.
+        allow_flip: if True, then the method will be allowed to flip (reverse)
+            some of the curves.
+    
+    Returns:
+        an instance of `SvCurvesSortResult`.
+    &#34;&#34;&#34;
     if not curves:
         return curves
 
@@ -974,6 +996,9 @@ def sort_curves_for_concat(curves, allow_flip=False):
     return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    &#34;&#34;&#34;
+    Reparametrize the curve to new domain.
+    &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
     if t_min == new_t_min and t_max == new_t_max:
         return curve
@@ -983,12 +1008,27 @@ def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
         return SvReparametrizedCurve(curve, new_t_min, new_t_max)
 
 def reverse_curve(curve):
+    &#34;&#34;&#34;
+    Reverse the curve, i.e. reverse the direction of it&#39;s parametrization.
+    &#34;&#34;&#34;
     if hasattr(curve, &#39;reverse&#39;):
         return curve.reverse()
     else:
         return SvFlipCurve(curve)
 
 def split_curve(curve, splits, rescale=False):
+    &#34;&#34;&#34;
+    Split one curve into several segments.
+
+    Args:
+        curve: SvCurve to be split.
+        splits: number of segments you want to receive.
+        rescale: if True, then each of segments will be reparametrized to
+            [0; 1] domain.
+
+    Returns:
+        a list of SvCurve.
+    &#34;&#34;&#34;
     if hasattr(curve, &#39;split_at&#39;):
         result = []
         for split in splits:
@@ -1015,6 +1055,9 @@ def split_curve(curve, splits, rescale=False):
         return result
 
 def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    &#34;&#34;&#34;
+    Cut a segment out of the curve.
+    &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
     if hasattr(curve, &#39;cut_segment&#39;):
         return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
@@ -1044,13 +1087,19 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
 <div class="desc"><p>Concatenate a list of curves. When possible, use <code>concatenate</code> method of
 curves to make a "native" concatenation - for example, make one Nurbs out of
 several Nurbs.</p>
-<p>inputs:
-* curves: list of SvCurve
-* scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
-* allow_generic: what to do if it is not possible to concatenate curves natively:
-True - use generic SvConcatCurve
-False - raise an Exception.</p>
-<p>output: SvCurve.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curves</code></strong></dt>
+<dd>list of SvCurve</dd>
+<dt><strong><code>scale_to_unit</code></strong></dt>
+<dd>if specified, reparametrize each curve to [0; 1] before concatenation.</dd>
+<dt><strong><code>allow_generic</code></strong></dt>
+<dd>what to do if it is not possible to concatenate curves natively:
+* True - use generic SvConcatCurve
+* False - raise an Exception.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of SvCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1061,14 +1110,15 @@ False - raise an Exception.</p>
     curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
     several Nurbs.
 
-    inputs:
-    * curves: list of SvCurve
-    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
-    * allow_generic: what to do if it is not possible to concatenate curves natively:
-        True - use generic SvConcatCurve
-        False - raise an Exception.
+    Args:
+        curves: list of SvCurve
+        scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+        allow_generic: what to do if it is not possible to concatenate curves natively:
+            * True - use generic SvConcatCurve
+            * False - raise an Exception.
 
-    output: SvCurve.
+    Returns:
+        an instance of SvCurve.
     &#34;&#34;&#34;
     if not curves:
         raise Exception(&#34;List of curves must be not empty&#34;)
@@ -1126,13 +1176,20 @@ False - raise an Exception.</p>
 * X is pointing along surface normal
 * Z is pointing along curve tangent
 * Y is perpendicular to both X and Z.</p>
-<p>input:
-* surface
-* uv_curve - uv_curve in the surface's UV space
-* us - values of curve's T parameter; type: np.array of shape (n,)
-* w_axis - defines which axis of the curve is surface's normal (two
-other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
-<p>output: tuple:
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>surface</code></strong></dt>
+<dd>source surface</dd>
+<dt><strong><code>uv_curve</code></strong></dt>
+<dd>uv_curve in the surface's UV space</dd>
+<dt><strong><code>us</code></strong></dt>
+<dd>values of curve's T parameter; type: np.array of shape (n,)</dd>
+<dt><strong><code>w_axis</code></strong></dt>
+<dd>defines which axis of the curve is surface's normal (two
+other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>tuple:
 * matrices: np.array of shape (n, 3, 3)
 * points: np.array of shape (n, 3) - points on the surface
 * tangents: np.array of shape (n, 3)
@@ -1151,19 +1208,20 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
         * Z is pointing along curve tangent
         * Y is perpendicular to both X and Z.
 
-    input:
-        * surface
-        * uv_curve - uv_curve in the surface&#39;s UV space
-        * us - values of curve&#39;s T parameter; type: np.array of shape (n,)
-        * w_axis - defines which axis of the curve is surface&#39;s normal (two
+    Args:
+        surface: source surface
+        uv_curve: uv_curve in the surface&#39;s UV space
+        us: values of curve&#39;s T parameter; type: np.array of shape (n,)
+        w_axis: defines which axis of the curve is surface&#39;s normal (two
           other axes are surface&#39;s U and V). Default of 2 means X is U and Y is V.
 
-    output: tuple:
-        * matrices: np.array of shape (n, 3, 3)
-        * points: np.array of shape (n, 3) - points on the surface
-        * tangents: np.array of shape (n, 3)
-        * normals: np.array of shape (n, 3)
-        * binormals: np.array of shape (n, 3)
+    Returns:
+        tuple:
+            * matrices: np.array of shape (n, 3, 3)
+            * points: np.array of shape (n, 3) - points on the surface
+            * tangents: np.array of shape (n, 3)
+            * normals: np.array of shape (n, 3)
+            * binormals: np.array of shape (n, 3)
     &#34;&#34;&#34;
 
     if w_axis == 2:
@@ -1202,12 +1260,15 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 <span>def <span class="ident">curve_segment</span></span>(<span>curve, new_t_min, new_t_max, rescale=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Cut a segment out of the curve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    &#34;&#34;&#34;
+    Cut a segment out of the curve.
+    &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
     if hasattr(curve, &#39;cut_segment&#39;):
         return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
@@ -1243,12 +1304,15 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 <span>def <span class="ident">reparametrize_curve</span></span>(<span>curve, new_t_min=0.0, new_t_max=1.0)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Reparametrize the curve to new domain.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    &#34;&#34;&#34;
+    Reparametrize the curve to new domain.
+    &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
     if t_min == new_t_min and t_max == new_t_max:
         return curve
@@ -1262,12 +1326,15 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 <span>def <span class="ident">reverse_curve</span></span>(<span>curve)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Reverse the curve, i.e. reverse the direction of it's parametrization.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse_curve(curve):
+    &#34;&#34;&#34;
+    Reverse the curve, i.e. reverse the direction of it&#39;s parametrization.
+    &#34;&#34;&#34;
     if hasattr(curve, &#39;reverse&#39;):
         return curve.reverse()
     else:
@@ -1278,12 +1345,33 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 <span>def <span class="ident">sort_curves_for_concat</span></span>(<span>curves, allow_flip=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Sort list of curves so that they could be concatenated into one curve.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curves</code></strong></dt>
+<dd>list of SvCurve to be sorted.</dd>
+<dt><strong><code>allow_flip</code></strong></dt>
+<dd>if True, then the method will be allowed to flip (reverse)
+some of the curves.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>an instance of <code><a title="sverchok.utils.curve.algorithms.SvCurvesSortResult" href="#sverchok.utils.curve.algorithms.SvCurvesSortResult">SvCurvesSortResult</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sort_curves_for_concat(curves, allow_flip=False):
+    &#34;&#34;&#34;
+    Sort list of curves so that they could be concatenated into one curve.
+
+    Args:
+        curves: list of SvCurve to be sorted.
+        allow_flip: if True, then the method will be allowed to flip (reverse)
+            some of the curves.
+    
+    Returns:
+        an instance of `SvCurvesSortResult`.
+    &#34;&#34;&#34;
     if not curves:
         return curves
 
@@ -1356,12 +1444,36 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 <span>def <span class="ident">split_curve</span></span>(<span>curve, splits, rescale=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Split one curve into several segments.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curve</code></strong></dt>
+<dd>SvCurve to be split.</dd>
+<dt><strong><code>splits</code></strong></dt>
+<dd>number of segments you want to receive.</dd>
+<dt><strong><code>rescale</code></strong></dt>
+<dd>if True, then each of segments will be reparametrized to
+[0; 1] domain.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>a list of SvCurve.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def split_curve(curve, splits, rescale=False):
+    &#34;&#34;&#34;
+    Split one curve into several segments.
+
+    Args:
+        curve: SvCurve to be split.
+        splits: number of segments you want to receive.
+        rescale: if True, then each of segments will be reparametrized to
+            [0; 1] domain.
+
+    Returns:
+        a list of SvCurve.
+    &#34;&#34;&#34;
     if hasattr(curve, &#39;split_at&#39;):
         result = []
         for split in splits:
@@ -1396,8 +1508,13 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</p>
 elevating degree where necessary.
 Assumes all curves have get_degree() and elevate_degree() methods.
 Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
-<p>input: list of SvCurve
-output: list of SvCurve</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>curves</code></strong></dt>
+<dd>list of SvCurve</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>list of SvCurve</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1409,8 +1526,11 @@ output: list of SvCurve</p></div>
     Assumes all curves have get_degree() and elevate_degree() methods.
     Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
 
-    input: list of SvCurve
-    output: list of SvCurve
+    Args:
+        curves: list of SvCurve
+
+    Returns:
+        list of SvCurve
     &#34;&#34;&#34;
 
     max_degree = max(curve.get_degree() for curve in curves)
@@ -1514,14 +1634,16 @@ output: list of SvCurve</p></div>
     def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
         &#34;&#34;&#34;
         Calculate matrix required to rotate object according to `tangent` vector.
-        inputs:
-            * tangent - np.array of shape (3,)
-            * scale - float
-            * axis - int, 0 - X, 1 - Y, 2 - Z
-            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
-            * scale_all - True to scale along all axes, False to scale along tangent only
-            * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
-        output:
+
+        Args:
+            tangent: np.array of shape (3,)
+            scale: float
+            axis: int, 0 - X, 1 - Y, 2 - Z
+            algorithm: one of HOUSEHOLDER, TRACK, DIFF
+            scale_all: True to scale along all axes, False to scale along tangent only
+            up_axis: string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+
+        Returns:
             np.array of shape (3,3).
         &#34;&#34;&#34;
         x = Vector((1.0, 0.0, 0.0))
@@ -1561,16 +1683,24 @@ output: list of SvCurve</p></div>
 <span>def <span class="ident">get_matrix</span></span>(<span>tangent, scale, axis, algorithm, scale_all=True, up_axis='X')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculate matrix required to rotate object according to <code>tangent</code> vector.
-inputs:
-* tangent - np.array of shape (3,)
-* scale - float
-* axis - int, 0 - X, 1 - Y, 2 - Z
-* algorithm - one of HOUSEHOLDER, TRACK, DIFF
-* scale_all - True to scale along all axes, False to scale along tangent only
-* up_axis - string, "X", "Y" or "Z", for algorithm == TRACK only.
-output:
-np.array of shape (3,3).</p></div>
+<div class="desc"><p>Calculate matrix required to rotate object according to <code>tangent</code> vector.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tangent</code></strong></dt>
+<dd>np.array of shape (3,)</dd>
+<dt><strong><code>scale</code></strong></dt>
+<dd>float</dd>
+<dt><strong><code>axis</code></strong></dt>
+<dd>int, 0 - X, 1 - Y, 2 - Z</dd>
+<dt><strong><code>algorithm</code></strong></dt>
+<dd>one of HOUSEHOLDER, TRACK, DIFF</dd>
+<dt><strong><code>scale_all</code></strong></dt>
+<dd>True to scale along all axes, False to scale along tangent only</dd>
+<dt><strong><code>up_axis</code></strong></dt>
+<dd>string, "X", "Y" or "Z", for algorithm == TRACK only.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>np.array of shape (3,3).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1579,14 +1709,16 @@ np.array of shape (3,3).</p></div>
 def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis=&#39;X&#39;):
     &#34;&#34;&#34;
     Calculate matrix required to rotate object according to `tangent` vector.
-    inputs:
-        * tangent - np.array of shape (3,)
-        * scale - float
-        * axis - int, 0 - X, 1 - Y, 2 - Z
-        * algorithm - one of HOUSEHOLDER, TRACK, DIFF
-        * scale_all - True to scale along all axes, False to scale along tangent only
-        * up_axis - string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
-    output:
+
+    Args:
+        tangent: np.array of shape (3,)
+        scale: float
+        axis: int, 0 - X, 1 - Y, 2 - Z
+        algorithm: one of HOUSEHOLDER, TRACK, DIFF
+        scale_all: True to scale along all axes, False to scale along tangent only
+        up_axis: string, &#34;X&#34;, &#34;Y&#34; or &#34;Z&#34;, for algorithm == TRACK only.
+
+    Returns:
         np.array of shape (3,3).
     &#34;&#34;&#34;
     x = Vector((1.0, 0.0, 0.0))
@@ -2432,12 +2564,15 @@ def build(curve1, curve2, coefficient):
 <span>class <span class="ident">SvCurvesSortResult</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Result of <code><a title="sverchok.utils.curve.algorithms.sort_curves_for_concat" href="#sverchok.utils.curve.algorithms.sort_curves_for_concat">sort_curves_for_concat()</a></code> method.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvCurvesSortResult(object):
+    &#34;&#34;&#34;
+    Result of `sort_curves_for_concat` method.
+    &#34;&#34;&#34;
     def __init__(self):
         self.curves = []
         self.indexes = []
@@ -2717,8 +2852,11 @@ def take(surface, fixed_axis, value, flip=False):
 
     def evaluate_array(self, ts):
         &#34;&#34;&#34;
-        input: ts - np.array of snape (n,) or list of floats
-        output: np.array of shape (n, 3, 3)
+        Args:
+            ts: np.array of snape (n,) or list of floats
+        
+        Returns:
+            np.array of shape (n, 3, 3)
         &#34;&#34;&#34;
         ts = np.array(ts)
         tknots, quats = self.tknots, self.quats
@@ -2750,16 +2888,24 @@ def take(surface, fixed_axis, value, flip=False):
 <span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>input: ts - np.array of snape (n,) or list of floats
-output: np.array of shape (n, 3, 3)</p></div>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>ts</code></strong></dt>
+<dd>np.array of snape (n,) or list of floats</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>np.array of shape (n, 3, 3)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def evaluate_array(self, ts):
     &#34;&#34;&#34;
-    input: ts - np.array of snape (n,) or list of floats
-    output: np.array of shape (n, 3, 3)
+    Args:
+        ts: np.array of snape (n,) or list of floats
+    
+    Returns:
+        np.array of shape (n, 3, 3)
     &#34;&#34;&#34;
     ts = np.array(ts)
     tknots, quats = self.tknots, self.quats
