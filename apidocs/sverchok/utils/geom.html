@@ -1142,7 +1142,7 @@ class PlaneEquation(object):
         sign = self.side_of_point(point)
         result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info(&#34;P(%s): %s - %s * [%s] * %s = %s&#34;, point, point, sign, distance, normal, result)
-        return result
+        return Vector(result)
     
     def projection_of_points(self, points):
         &#34;&#34;&#34;
@@ -7352,7 +7352,7 @@ plane:</p>
         sign = self.side_of_point(point)
         result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info(&#34;P(%s): %s - %s * [%s] * %s = %s&#34;, point, point, sign, distance, normal, result)
-        return result
+        return Vector(result)
     
     def projection_of_points(self, points):
         &#34;&#34;&#34;
@@ -8029,7 +8029,7 @@ output: Vector.</p></div>
     sign = self.side_of_point(point)
     result = np.asarray(point) - sign * distance * np.asarray(normal)
     #info(&#34;P(%s): %s - %s * [%s] * %s = %s&#34;, point, point, sign, distance, normal, result)
-    return result</code></pre>
+    return Vector(result)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.geom.PlaneEquation.projection_of_points"><code class="name flex">
