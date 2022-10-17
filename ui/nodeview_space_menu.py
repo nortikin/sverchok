@@ -33,6 +33,38 @@ from sverchok.utils.modules_inspection import iter_classes_from_module
 from sverchok.utils.dummy_nodes import dummy_nodes_dict
 
 
+"""
+The module is used for generating Shift+A / Add(Node) menu.
+The structure of the menu also used for searching nodes and Add Node Tool panel.
+`add_node_menu` is instance of the panel which can be used to access its data.
+
+Sverchok's extensions can use this module to add their nodes to the menu.
+For this two steps should be done:
+
+- Pass config file to `Category.append_from_config` method of `add_node_menu`
+  object.
+- Call `Category.register` method during registration of an extension.
+
+Registration is needed because menus which were added in Sverchok are already
+registered. And un-registration is not needed because they will be reloaded
+during reloading Sverchok add-on (extensions can't be reloaded without reloading
+Sverchok)
+
+The module parses `index.yaml` file and creates tre like data structure `Category`
+which is used for adding nodes in different areas of user interface. Also it
+contains `CallPartialMenu` which shows alternative menus by pressing 1, 2, 3, 4, 5.
+It's possible to add categories to the menus by adding `- extra_menu: menu_name`
+attribute to a category in `index.yaml` file where menu_name is one of possible
+menu names:
+
+- BasicDataPartialMenu
+- MeshPartialMenu
+- AdvancedObjectsPartialMenu
+- ConnectionPartialMenu
+- UiToolsPartialMenu
+"""
+
+
 CutSelf = TypeVar("CutSelf", bound="Category")
 sv_tree_types = {'SverchCustomTreeType', }
 
@@ -41,7 +73,7 @@ class MenuItem(ABC):
     _node_classes = dict()
 
     @property
-    def node_classes(self) -> dict[str, type]:
+    def node_classes(self) -> dict[str, type]:  # todo can be removed after removing dummy nodes
         if not self._node_classes:
             import sverchok  # not available during initialization of the module
             for cls_ in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
@@ -194,7 +226,8 @@ class AddNode(MenuItem):
         add.use_transform = True
         add.dependency = self.dependency
 
-    def search_match(self, request):
+    def search_match(self, request: str) -> bool:
+        """Return True if the request satisfies to node search tags"""
         request = request.upper()
         if request in self.label.upper():
             return True
@@ -209,6 +242,10 @@ class AddNode(MenuItem):
 
 
 class Category(MenuItem):
+    """It keeps the whole structure of Add Node menu. Instancing the class with
+    `Category.from_config` method generates menu classes. They should be
+     registered by calling `Category.register`
+     """
     def __init__(self, name, menu_cls, icon_name='BLANK1', extra_menu=''):
         self.name = name
         self.icon = icon_name
@@ -223,6 +260,7 @@ class Category(MenuItem):
         return iter(e for e in self.menu_cls.draw_data)
 
     def walk_categories(self) -> 'Category':
+        """Iterate over all nested categories. The current category is also included."""
         yield self
         for elem in self.menu_cls.draw_data:
             if hasattr(elem, 'walk_categories'):
@@ -250,7 +288,8 @@ class Category(MenuItem):
         return hasattr(bpy.types, self.menu_cls.__name__)
 
     def unregister(self):
-        """Register itself and all its elements"""
+        """Register itself and all its elements. Should be called only once by
+        Sverchok's unregister function."""
         bpy.utils.unregister_class(self.menu_cls)
         for elem in self.menu_cls.draw_data:
             if hasattr(elem, 'unregister'):
@@ -261,7 +300,53 @@ class Category(MenuItem):
 
     @classmethod
     def from_config(cls, conf: list, menu_name, **extra_props) -> CutSelf:
-        """Extra_props should have keys oly from the __init__ method"""
+        """
+        It creates category from given config of category items. The format
+        of config is next:
+
+            [option, option, ..., menu item, menu item, ...]
+
+        Menu item can be one of next elements:
+
+        - `'---'` - String of a dotted line to define separator.
+        - `'SomeNode'` - String of node `bl_idname` to define Add Node operator.
+        - `{'Sub category name': [option, menu_item, ...]}` - Dictionary of
+          a subcategory.
+        - `{'Operator name': [option, ...]}` - Dictionary of a custom opeartor
+          to call. Options for operator call are not supported currently.
+        - `{'Menu name': [option, ...]}` - Custom menu to show.
+
+        Options have such format - `{'option_name': value}`. They can be added
+        to sub categories, operators and custom menus.
+
+        Categories can have next options:
+
+        - `{'icon_name': 'SOME_ICON'}` - Value can be a string of standard Blender
+          icons or Sverchok icon.
+        - `{'extra_menu': 'menu_name'}`  - Values is a name of one of extra menus.
+          Possible values:
+
+          - "BasicDataPartialMenu"
+          - "MeshPartialMenu"
+          - "AdvancedObjectsPartialMenu"
+          - "ConnectionPartialMenu"
+          - "UiToolsPartialMenu"
+
+        Operators options:
+
+        - `{"icon_name": "SOME_ICON"}` - Icon to show in the menu.
+        - `{"operator": "operator id name"}` - `bl_idname` of operator to call.
+
+        Custom menus options:
+
+        - `{"icon_name": "SOME_CION"}` - Icon to show in menu.
+        - `{"custom_menu": "menu id name"}` - `bl_idname` of menu to show.
+
+        The example of format can be found in the `sverchok/index.yaml` file.
+
+        Extra_props should have keys oly from the __init__ method of `MenuItem`
+        subclasses.
+        """
         parsed_items = []
 
         # parsing menu elements
@@ -309,7 +394,19 @@ class Category(MenuItem):
         return cls(menu_name, menu_cls, **extra_props)
 
     def append_from_config(self, config: list):
-        """It should be called before registration functions"""
+        """
+        This method is expected to be used by Sverchok's extensions to add
+        extra items to the Add Node menu. See the format of config in
+        `Category.from_config` documentation. Example:
+
+            import sverchok.ui.nodeview_space_menu as sm
+            sm.add_node_menu.append_from_config(config)
+
+            def register():
+                sm.add_node_menu.register()
+
+        It should be called before registration functions
+        """
         new_categories = []
         for cat in config:
             cat_name = list(cat.keys())[0]
@@ -375,21 +472,21 @@ class AddNodeOp(bl_operators.node.NodeAddOperator):
 
 
 class SvNodeAddOperator(AddNodeOp, bpy.types.Operator):
-    """Wrapper for node.add_node operator to add specific node"""
-
+    """Operator to show as menu item to add available node"""
     bl_idname = "node.sv_add_node"
     bl_label = "Add SV node"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     def execute(self, context):
         node = self.create_node(context)
         apply_default_preset(node)
         return {'FINISHED'}
 
-    # todo add poll method
+    # if node is not available the operator is noe used - there is no need in poll
 
 
 class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):
+    """Operator as menu item to show that a node is not available"""
     bl_idname = 'node.show_missing_dependencies'
     bl_label = 'Show missing dependencies'
     bl_options = {'REGISTER', 'UNDO'}
@@ -403,6 +500,7 @@ class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):
 
 
 class CallPartialMenu(SverchokContext, bpy.types.Operator):
+    """It calls dynamic menus to show alternative set of node categories."""
     bl_idname = "node.call_partial_menu"
     bl_label = "Call partial menu"
     bl_options = {'REGISTER', 'UNDO'}
@@ -422,7 +520,10 @@ class CallPartialMenu(SverchokContext, bpy.types.Operator):
 
 
 class NodeCategoryMenu(SverchokContext, bpy.types.Menu):
-    """https://blender.stackexchange.com/a/269716"""
+    """ It's a dynamic menu with submenus - https://blender.stackexchange.com/a/269716
+    It scans `sv_category` attribute of all nodes and builds categories according
+    the collected data.
+    """
     bl_label = "Node Categories"
     bl_idname = "NODEVIEW_MT_node_category_menu"
 
