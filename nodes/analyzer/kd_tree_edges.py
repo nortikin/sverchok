@@ -74,8 +74,6 @@ class SvKDTreeEdgesNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'maxdist').prop_name = 'maxdist'
         self.inputs.new('SvStringsSocket', 'maxNum').prop_name = 'maxNum'
         self.inputs.new('SvStringsSocket', 'skip').prop_name = 'skip'
-        self.inputs['maxNum'].hide_safe = True
-        self.inputs['skip'].hide_safe = True
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def draw_buttons(self, context, layout):
