@@ -34,7 +34,9 @@ Outputs
 | Mean     | Vectors   | Arithmetic averages of the incoming sets of vertices.                      |
 +----------+-----------+----------------------------------------------------------------------------+
 | Center   | Matrix    | Represents the *Center* of the bounding box; the average of its vertices.  |
+|          |           |                                                                            |
 |          |           | The scale of the matrix would make a box with size of 1 unit to match the  |
+|          |           |                                                                            |
 |          |           | size the desired bounding box.                                             |
 +----------+-----------+----------------------------------------------------------------------------+
 | Min X    | Scalar    | Minimum value on the X axis.                                               |
@@ -56,6 +58,11 @@ Outputs
 | Size Z   | Scalar    | Size on the Z axis.                                                        |
 +----------+-----------+----------------------------------------------------------------------------+
 
+
+See also
+--------
+
+* Analyzers-> :doc:`Diameter </nodes/analyzer/diameter>`
 
 
 Examples

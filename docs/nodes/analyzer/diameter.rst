@@ -32,6 +32,11 @@ This node has one output:
 
 * **Diameter** - calculated diameter of vertices set.
 
+See also
+--------
+
+* Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
+
 Examples of usage
 -----------------
 
@@ -55,9 +60,13 @@ Front View:
 .. image:: https://user-images.githubusercontent.com/14288520/195311232-5db18b7b-7723-4f2e-abaa-753030d3cb83.gif
   :target: https://user-images.githubusercontent.com/14288520/195311232-5db18b7b-7723-4f2e-abaa-753030d3cb83.gif
 
+---------
+
 Suzanne has "general diameter" of 2.73:
 
 .. image:: https://user-images.githubusercontent.com/284644/58649984-03aad000-8327-11e9-90b8-0c39f328402a.png
+
+---------
 
 Diameter of Suzanne along some diagonal direction is 2.44. Here the direction
 is drawn as green line, and the projection of Suzanne to that direction is
