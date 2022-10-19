@@ -73,7 +73,7 @@ else:
             self.wrapper_tracked_ui_draw_op(layout, SvFCStdSpreadsheetOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE") 
 
         def sv_init(self, context):
-            self.inputs.new('SvFilePathSocket', "File Path")
+            self.sv_new_input('SvFilePathSocket', "File Path", filepath_node_mode="FreeCAD")
             self.inputs.new('SvStringsSocket', "cell_in").prop_name = 'cell_in'
 
             self.outputs.new('SvStringsSocket', "cell_out")   

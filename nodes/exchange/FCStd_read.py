@@ -76,7 +76,7 @@ else:
 
         def sv_init(self, context):
 
-            self.inputs.new('SvFilePathSocket', "File Path")
+            self.sv_new_input('SvFilePathSocket', "File Path", filepath_node_mode="FreeCAD")
             self.inputs.new('SvStringsSocket', "Part Filter")   
             self.outputs.new('SvSolidSocket', "Solid")
             self.outputs.new('SvTextSocket', "Names")

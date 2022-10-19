@@ -1067,6 +1067,9 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
 
     color = (0.9, 0.9, 0.3, 1.0)
     quick_link_to_node = 'SvFilePathNode'
+    filepath_node_mode: StringProperty(
+        name="filepath node mode",
+        description="use this property to configure the behaviour of a quicklinked filepath node")
 
 
 class SvSvgSocket(NodeSocket, SvSocketCommon):

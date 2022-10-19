@@ -89,7 +89,7 @@ else:
 
 
         def sv_init(self, context):
-            self.inputs.new('SvFilePathSocket', "File Path")
+            self.sv_new_input('SvFilePathSocket', "File Path", filepath_node_mode="FreeCAD")
 
             if self.obj_format == 'mesh':
                 self.inputs.new('SvVerticesSocket', "Verts")

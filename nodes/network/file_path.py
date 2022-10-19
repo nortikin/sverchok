@@ -13,7 +13,7 @@ import bmesh
 from bpy.props import (
         StringProperty,
         CollectionProperty,
-        IntProperty,
+        IntProperty, EnumProperty
         )
 from bpy.types import (
         Operator,
@@ -34,14 +34,38 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH')
 
-    filepath: bpy.props.StringProperty(
-        name="File Path", description="Filepath used for writing waveform files",
+    filepath: StringProperty(
+        name="File Path", description="Filepath used for writing files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
+    filename_ext: StringProperty(default="")
+    filter_glob: StringProperty(default="")    
+
+    def custom_config(self, context):
+        if self.mode == "FreeCAD":
+            self.filename_ext = ".FCStd"  #  ".tif"
+            self.filter_glob = "*.FCStd;*.FCStd1"  # #*.tif;*.png;"  (if more than one, separate by ;)
+        elif self.mode == "None":
+            self.filename_ext = ''
+            self.filter_glob = ''
+
+    # mode: StringProperty(default='')
+    behaviours = ["FreeCAD", "None"]
+    mode: EnumProperty(items=[(i, i, '') for i in behaviours], update=custom_config, default='None')
+
     def sv_execute(self, context, node):
+        if self.mode == "FreeCAD":
+            # This is triggered after the file is selected or typed in by the user in the Text Field of path
+            if self.directory and len(self.files) == 1:
+                if self.files[0].name and not self.files[0].name.endswith((".FCStd", ".FCStd1")):
+                    self.files[0].name = self.files[0].name + ".FCStd" 
+
         node.set_data(self.directory, self.files)
 
     def invoke(self, context, event):
+        
+        self.custom_config(context)
+
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
@@ -60,6 +84,7 @@ class SvFilePathNode(SverchCustomTreeNode, bpy.types.Node):
     files_num: IntProperty(name='files number ', default=0)
     files: CollectionProperty(name="File Path", type=OperatorFileListElement)
     directory: StringProperty(subtype='DIR_PATH', update=updateNode)
+    mode: StringProperty(default='None', description="mode determines behaviour of the File Open Dialogue and Operator")
 
     def sv_init(self, context):
 
@@ -68,7 +93,9 @@ class SvFilePathNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
 
         op = 'node.sv_file_path'
-        self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
+        file_path_operator = self.wrapper_tracked_ui_draw_op(layout, op, icon='FILE', text='')
+        file_path_operator.mode = self.mode
+
         if self.files_num == 0:
             layout.label(text=self.directory)
         elif self.files_num == 1:
@@ -90,10 +117,24 @@ class SvFilePathNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             self.files_num = len(files)
 
+    def get_linked_socket_mode_and_set_operator(self):
+        """
+        only call this mode if the output(s) .is_linked returns true
+        """
+        socket = self.outputs[0]
+        self.mode = "None"
+        if socket.is_linked:
+            other_socket = socket.other
+            if hasattr(other_socket, "filepath_node_mode"):
+                self.mode = other_socket.filepath_node_mode
+
     def process(self):
         # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
+
+        self.get_linked_socket_mode_and_set_operator()
+
         directory = self.directory
         if self.files:
             files = []
