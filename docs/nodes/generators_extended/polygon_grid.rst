@@ -116,7 +116,7 @@ Example of usage
   :target: https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png
 
 * Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
-* Modifier->Modifier Change-> :doc:`Bevel </nodes/modifier_change/bevel>`
+* CAD-> :doc:`Bevel </nodes/modifier_change/bevel>`
 * Modifier->Modifier Change-> :doc:`Polygon to Edges </nodes/modifier_change/polygons_to_edges_mk2>`
 * Beta Nodes-> :doc:`Extrude Separate Faces Light </nodes/modifier_change/extrude_separate_lite>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`

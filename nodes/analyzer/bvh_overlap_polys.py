@@ -32,11 +32,11 @@ class SvBvhOverlapNodeNew(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_OVERLAP_POLYGONS'
 
     triangles: BoolProperty(name="all triangles",
-                             description="all triangles", default=False,
+                             description="Boolean to work with triangles makes it faster to calculate", default=False,
                              update=updateNode)
 
     epsilon: FloatProperty(name="epsilon",
-                            default=0.0, min=0.0, max=10.0,
+                            description="Float threshold for cut weak results", default=0.0, min=0.0, max=10.0,
                             update=updateNode)
 
     def draw_buttons_ext(self, context, layout):

@@ -1,6 +1,9 @@
 Proportional Edit Falloff
 =========================
 
+.. image:: https://user-images.githubusercontent.com/14288520/196805236-0dccf99d-1e35-467d-b5e4-4a108ce8f9be.png
+  :target: https://user-images.githubusercontent.com/14288520/196805236-0dccf99d-1e35-467d-b5e4-4a108ce8f9be.png
+
 Functionality
 -------------
 
@@ -46,13 +49,39 @@ Examples of usage
 
 Drag a circle on one side of the box, with Smooth falloff:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24107714/ae5db56a-0db5-11e7-860e-0156b8b10283.png
+.. image:: https://user-images.githubusercontent.com/14288520/196816008-bd51201d-ef3d-45c3-b15f-c99e7ec68c10.png
+  :target: https://user-images.githubusercontent.com/14288520/196816008-bd51201d-ef3d-45c3-b15f-c99e7ec68c10.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 All the same, but with Const falloff:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24107713/ae5d8892-0db5-11e7-882e-15922c4a41de.png
+.. image:: https://user-images.githubusercontent.com/14288520/196816329-e4b606cc-d73e-42e7-b30a-5b632f6c50d0.png
+  :target: https://user-images.githubusercontent.com/14288520/196816329-e4b606cc-d73e-42e7-b30a-5b632f6c50d0.png
+
+---------
 
 Example of usage with Extrude Separate node:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24107716/ae923dbc-0db5-11e7-8954-11a552c12ecc.png
+.. image:: https://user-images.githubusercontent.com/14288520/196819804-6d71e779-fc66-48f9-a4e1-f31f75263057.png
+  :target: https://user-images.githubusercontent.com/14288520/196819804-6d71e779-fc66-48f9-a4e1-f31f75263057.png
 
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
+* Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
+* Analyzers-> :doc:`Points Inside Mesh </nodes/analyzer/points_inside_mesh>`
+* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* SCALAR: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix Multiply: Matrix-> :doc:`Matrix Math </nodes/matrix/matrix_math>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

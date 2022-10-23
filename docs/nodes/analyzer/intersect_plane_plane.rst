@@ -58,7 +58,7 @@ Example of usage
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
-* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 

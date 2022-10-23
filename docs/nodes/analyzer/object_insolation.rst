@@ -1,6 +1,9 @@
 Insolation
 ==========
 
+.. image:: https://user-images.githubusercontent.com/14288520/197247826-85afb39b-2c12-4a2e-b32f-d7c016bde612.png
+  :target: https://user-images.githubusercontent.com/14288520/197247826-85afb39b-2c12-4a2e-b32f-d7c016bde612.png
+
 Functionality
 -------------
 
@@ -19,12 +22,9 @@ see docs:
 Input sockets
 -------------
 
-**Predator** - your predator external buildings (polygons takes)
-
-**Victim** -  your victim projecting building
-
-**SunRays** -  your sun positions direction from zero to find intersection 
-    (list of vertices)
+* **Predator** - your predator external buildings (polygons takes)
+* **Victim** -  your victim projecting building
+* **SunRays** -  your sun positions direction from zero to find intersection (list of vertices)
 
 Parameters
 ----------
@@ -54,7 +54,9 @@ Usage
 Open templates - insolation example
 
 .. image:: https://user-images.githubusercontent.com/5783432/37124037-b1b6e7cc-2277-11e8-9a3a-922ca613579c.png
+    :target: https://user-images.githubusercontent.com/5783432/37124037-b1b6e7cc-2277-11e8-9a3a-922ca613579c.png
 
 Use objects (materials should be with cycles nodes active for victim)
 
 .. image:: https://user-images.githubusercontent.com/5783432/37124038-b1f1f484-2277-11e8-8682-9f5e9059672f.png
+    :target: https://user-images.githubusercontent.com/5783432/37124038-b1f1f484-2277-11e8-8682-9f5e9059672f.png

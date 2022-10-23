@@ -47,6 +47,7 @@ class SvProportionalEditNode(SverchCustomTreeNode, bpy.types.Node):
             update=updateNode)
 
     radius: FloatProperty(name="Radius", 
+            description="Proportional edit radius",
             default=1.0, min=0.0001,
             update=updateNode)
 
