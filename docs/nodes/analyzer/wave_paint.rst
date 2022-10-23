@@ -1,6 +1,9 @@
 Wave Painter
 ============
 
+.. image:: https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png
+  :target: https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png
+
 Functionality
 -------------
 
@@ -81,7 +84,18 @@ Examples of usage
 
 Start a wave from some small area on the hexagonal grid; mark some vertices as obstacles. Note how the wave can not pass through the obstacle and has to go the long way around:
 
-.. image:: https://user-images.githubusercontent.com/284644/71737930-e9197600-2e76-11ea-9382-02f07d6fe0e2.png
+.. image:: https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png
+  :target: https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png
+
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
+* Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* List->List Main-> :doc:`List Math </nodes/list_main/func>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+
+---------
 
 Similar setup with a rectangular grid; use wave front number to select faces to be extruded:
 

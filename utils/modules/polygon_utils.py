@@ -462,7 +462,7 @@ pols_origin_modes_dict = {
     'Median Center':          (31, pols_center_median, 'Mean of vertices of each face'),
     'Median Weighted Center': (32, pols_center_median_weighted, 'Mean of vertices of each face weighted by edges length'),
     'First Vertex':           (33, pols_first_vert, 'First Vertex of Face'),
-    'Last Vertex':            (34, pols_last_vert, 'First Vertex of Face'),
+    'Last Vertex':            (34, pols_last_vert, 'Last Vertex of Face'),
     }
 
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)

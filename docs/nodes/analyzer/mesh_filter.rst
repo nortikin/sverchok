@@ -1,12 +1,28 @@
 Mesh Filter
 ===========
 
-*destination after Beta: Analyzers*
+.. image:: https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png
+  :target: https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png
 
 Functionality
 -------------
 
 This node sorts vertices, edges or faces of input mesh by several available criteria: boundary vs interior, convex vs concave and so on. For each criteria, it puts "good" and "bad" mesh elements to different outputs. Also mask output is available for each criteria.
+
+.. image:: https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png
+  :target: https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png
+  :target: https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png
+  :target: https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png
+
+*destination after Beta: Analyzers*
 
 Inputs
 ------
@@ -97,13 +113,49 @@ Examples of usage
 
 Move only boundary vertices of plane grid:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/6081558/53b7ea70-ae3c-11e4-9c32-b147be11af5b.png
+.. image:: https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png
+  :target: https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* List->List Struct-> :doc:`List Item Insert </nodes/list_struct/item_insert>`
+* List-> :doc:`Mask To Index </nodes/list_masks/mask_to_index>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+
+---------
 
 Bevel only concave edges:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/6081559/53ed9486-ae3c-11e4-8fbc-82f7e8029434.png
+.. image:: https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png
+  :target: https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Transform-> :doc:`Scale </nodes/transforms/scale_mk3>`
+* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* CAD-> :doc:`Bevel </nodes/modifier_change/bevel>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* List->List Struct-> :doc:`List Item Insert </nodes/list_struct/item_insert>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 Extrude only boundary faces:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/6081560/53eea0f6-ae3c-11e4-889c-f60441accc1d.png
+.. image:: https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png
+  :target: https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png
 
+* Generator->Generators Extended-> :doc:`Bricks Grid </nodes/generator/bricks>`
+* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Color-> :doc:`Color Input </nodes/color/color_input>`
+* Logic-> :doc:`Switch </nodes/logic/switch_MK2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

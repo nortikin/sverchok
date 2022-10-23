@@ -1,6 +1,9 @@
 Distance Line Line
 ==================
 
+.. image:: https://user-images.githubusercontent.com/14288520/195664123-56bcb680-c101-4250-bc1e-bbb6b1c55bc0.png
+  :target: https://user-images.githubusercontent.com/14288520/195664123-56bcb680-c101-4250-bc1e-bbb6b1c55bc0.png
+
 Functionality
 -------------
 
@@ -24,25 +27,18 @@ Advanced Parameters
 
 In the N-Panel you can use the toggle:
  
-**Tolerance**: Minimal distance to accept is intersecting.
-
-**Match List**: Define how list with different lengths should be matched. 
+* **Tolerance**: Minimal distance to accept is intersecting.
+* **Match List**: Define how list with different lengths should be matched. 
 
 Outputs
 -------
 
-**Distance**: Distance between the lines.
-
-**Intersect**: Returns true if the lines intersect. (Distance < Tolerance)
-
-**Closest Point A**: Returns the closest point to the line B in the line A
-
-**Closest Point B**: Returns the closest point to the line A in the line B
-
-**A in segment**: Returns true if the closest point A is in the provided segment
-
-**B in segment**: Returns true if the closest point B is in the provided segment
-
+* **Distance**: Distance between the lines.
+* **Intersect**: Returns true if the lines intersect. (Distance < Tolerance)
+* **Closest Point A**: Returns the closest point to the line B in the line A
+* **Closest Point B**: Returns the closest point to the line A in the line B
+* **A in segment**: Returns true if the closest point A is in the provided segment
+* **B in segment**: Returns true if the closest point B is in the provided segment
 
 Example of usage
 ----------------

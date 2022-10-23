@@ -81,7 +81,7 @@ The "Wave" mode allows you to use a custom wave shape:
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
-* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Vector-> :doc:`Vector Out </nodes/vector/vector_out>`
 * Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
