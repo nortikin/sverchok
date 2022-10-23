@@ -166,6 +166,7 @@
              
   <section id="steiner-ellipse">
 <h1>Steiner Ellipse<a class="headerlink" href="#steiner-ellipse" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197339759-0adedfc5-3ff4-48c3-b1bc-0611f58d2547.png"><img alt="https://user-images.githubusercontent.com/14288520/197339759-0adedfc5-3ff4-48c3-b1bc-0611f58d2547.png" src="https://user-images.githubusercontent.com/14288520/197339759-0adedfc5-3ff4-48c3-b1bc-0611f58d2547.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node can generate either Steiner <a class="reference external" href="https://en.wikipedia.org/wiki/Steiner_inellipse">inellipse</a> (inscribed ellipse) or Steiner
@@ -181,6 +182,7 @@ faces, the node will either skip them or give an error, depending on a setting.<
 <li><p>It touches the triangle in it’s vertices;</p></li>
 <li><p>The center of the ellipse is the centroid (barycenter) of the triangle.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197340422-1ef4281c-720b-425c-83a3-f19839266f08.png"><img alt="https://user-images.githubusercontent.com/14288520/197340422-1ef4281c-720b-425c-83a3-f19839266f08.png" src="https://user-images.githubusercontent.com/14288520/197340422-1ef4281c-720b-425c-83a3-f19839266f08.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -211,6 +213,7 @@ non-triangular face. There are following options available:</p>
 </div></blockquote>
 </li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197340131-e740e76f-1123-4c49-9a57-afe51d68b8ec.png"><img alt="https://user-images.githubusercontent.com/14288520/197340131-e740e76f-1123-4c49-9a57-afe51d68b8ec.png" src="https://user-images.githubusercontent.com/14288520/197340131-e740e76f-1123-4c49-9a57-afe51d68b8ec.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -227,15 +230,52 @@ non-triangular face. There are following options available:</p>
 along face normal, and the translation component equals to the center of the
 ellipse. This output can be used to actually place ellipses at their places.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197339778-127d8e76-31b7-4106-82af-effedf52ffcb.png"><img alt="https://user-images.githubusercontent.com/14288520/197339778-127d8e76-31b7-4106-82af-effedf52ffcb.png" src="https://user-images.githubusercontent.com/14288520/197339778-127d8e76-31b7-4106-82af-effedf52ffcb.png" /></a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197340888-f7efbd04-87d6-4c01-a894-5678ce6eb7ec.png"><img alt="https://user-images.githubusercontent.com/14288520/197340888-f7efbd04-87d6-4c01-a894-5678ce6eb7ec.png" src="https://user-images.githubusercontent.com/14288520/197340888-f7efbd04-87d6-4c01-a894-5678ce6eb7ec.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/ellipse_mk3.html"><span class="doc">Ellipse</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197341070-e2a795e9-5b68-419f-ba88-48d245836409.gif"><img alt="https://user-images.githubusercontent.com/14288520/197341070-e2a795e9-5b68-419f-ba88-48d245836409.gif" src="https://user-images.githubusercontent.com/14288520/197341070-e2a795e9-5b68-419f-ba88-48d245836409.gif" /></a>
+<hr class="docutils" />
 <p>Inscribed ellipses for Delaunay triangulation of some random points:</p>
-<img alt="https://user-images.githubusercontent.com/284644/75094441-ea306f00-55ac-11ea-919d-0d2851037c1e.png" src="https://user-images.githubusercontent.com/284644/75094441-ea306f00-55ac-11ea-919d-0d2851037c1e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197341404-3bc0e71f-6eac-4548-a772-ab56943483f2.png"><img alt="https://user-images.githubusercontent.com/14288520/197341404-3bc0e71f-6eac-4548-a772-ab56943483f2.png" src="https://user-images.githubusercontent.com/14288520/197341404-3bc0e71f-6eac-4548-a772-ab56943483f2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/ellipse_mk3.html"><span class="doc">Ellipse</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/delaunay_2d.html"><span class="doc">Delaunay 2D</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Inscribed ellipses for triangulated Suzanne:</p>
-<img alt="https://user-images.githubusercontent.com/284644/75094444-eb619c00-55ac-11ea-82da-056a0232a89f.png" src="https://user-images.githubusercontent.com/284644/75094444-eb619c00-55ac-11ea-82da-056a0232a89f.png" />
-<p>Circumellipse of some random triangle, with it’s center and focal points indicated:</p>
-<img alt="https://user-images.githubusercontent.com/284644/75094701-9d9a6300-55af-11ea-899f-11b5060286c7.png" src="https://user-images.githubusercontent.com/284644/75094701-9d9a6300-55af-11ea-899f-11b5060286c7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197342060-9ccf446e-4632-4956-9077-1656942e9177.png"><img alt="https://user-images.githubusercontent.com/14288520/197342060-9ccf446e-4632-4956-9077-1656942e9177.png" src="https://user-images.githubusercontent.com/14288520/197342060-9ccf446e-4632-4956-9077-1656942e9177.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/ellipse_mk3.html"><span class="doc">Ellipse</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/triangulate.html"><span class="doc">Triangulate Mesh</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Circumellipse of some random triangle:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197342491-5d2ebc54-a92a-43c5-82bc-48f2553d843f.png"><img alt="https://user-images.githubusercontent.com/14288520/197342491-5d2ebc54-a92a-43c5-82bc-48f2553d843f.png" src="https://user-images.githubusercontent.com/14288520/197342491-5d2ebc54-a92a-43c5-82bc-48f2553d843f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/ellipse_mk3.html"><span class="doc">Ellipse</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended-&gt; <a class="reference internal" href="../generators_extended/triangle.html"><span class="doc">Triangle</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/decompose.html"><span class="doc">List Decompose</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197342709-7520d927-0830-41b3-84d5-6c6f955427b4.gif"><img alt="https://user-images.githubusercontent.com/14288520/197342709-7520d927-0830-41b3-84d5-6c6f955427b4.gif" src="https://user-images.githubusercontent.com/14288520/197342709-7520d927-0830-41b3-84d5-6c6f955427b4.gif" /></a>
 </section>
 </section>
 

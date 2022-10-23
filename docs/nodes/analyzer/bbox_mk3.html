@@ -66,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
 </ul>
@@ -167,6 +168,7 @@
              
   <section id="bounding-box">
 <h1>Bounding Box<a class="headerlink" href="#bounding-box" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194720618-63fa358e-1532-4afd-aaeb-8d51afc4b40b.png"><img alt="https://user-images.githubusercontent.com/14288520/194720618-63fa358e-1532-4afd-aaeb-8d51afc4b40b.png" src="https://user-images.githubusercontent.com/14288520/194720618-63fa358e-1532-4afd-aaeb-8d51afc4b40b.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Generates a special ordered <em>bounding box</em> from incoming Vertices.</p>
@@ -209,9 +211,10 @@
 </tr>
 <tr class="row-odd"><td><p>Center</p></td>
 <td><p>Matrix</p></td>
-<td><p>Represents the <em>Center</em> of the bounding box; the average of its vertices.
-The scale of the matrix would make a box with size of 1 unit to match the
-size the desired bounding box.</p></td>
+<td><p>Represents the <em>Center</em> of the bounding box; the average of its vertices.</p>
+<p>The scale of the matrix would make a box with size of 1 unit to match the</p>
+<p>size the desired bounding box.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>Min X</p></td>
 <td><p>Scalar</p></td>
@@ -252,18 +255,74 @@ size the desired bounding box.</p></td>
 </tbody>
 </table>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="diameter.html"><span class="doc">Diameter</span></a></p></li>
+</ul>
+</section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<p><em>Mean: Average of incoming set of Vertices</em></p>
-<img alt="BBox_Mean1.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186539/def83614-3761-11e4-9cb4-4f7d8a8608bb.PNG" />
-<p><em>Center: Average of the Bounding Box</em></p>
-<img alt="BBox_Center3.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186538/def29d62-3761-11e4-8069-b9544e2ad62a.PNG" />
-<p><em>2D Mode: produces rectangles at z = 0</em></p>
-<img alt="Bounding_Box_2D_Sverchok_Procedural_Blender.PNG" src="https://user-images.githubusercontent.com/10011941/66115789-d1a9c300-e5d1-11e9-96d7-27b01db9a78d.png" />
+<p><strong>Bounding Box:</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194720834-1842e08d-50e8-4152-b987-4233e3541e8a.png"><img alt="https://user-images.githubusercontent.com/14288520/194720834-1842e08d-50e8-4152-b987-4233e3541e8a.png" src="https://user-images.githubusercontent.com/14288520/194720834-1842e08d-50e8-4152-b987-4233e3541e8a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Bounding Box with several objects:</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194721530-8ceca99a-eae9-436e-b069-ad0961894c86.png"><img alt="https://user-images.githubusercontent.com/14288520/194721530-8ceca99a-eae9-436e-b069-ad0961894c86.png" src="https://user-images.githubusercontent.com/14288520/194721530-8ceca99a-eae9-436e-b069-ad0961894c86.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Mean: Average of incoming set of Vertices</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194722095-b9f90455-cd8f-487e-a259-a511b65f95d1.png"><img alt="https://user-images.githubusercontent.com/14288520/194722095-b9f90455-cd8f-487e-a259-a511b65f95d1.png" src="https://user-images.githubusercontent.com/14288520/194722095-b9f90455-cd8f-487e-a259-a511b65f95d1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194722181-e30fb712-a2ac-4161-aac9-581a23f6faac.png"><img alt="https://user-images.githubusercontent.com/14288520/194722181-e30fb712-a2ac-4161-aac9-581a23f6faac.png" src="https://user-images.githubusercontent.com/14288520/194722181-e30fb712-a2ac-4161-aac9-581a23f6faac.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Center: Average of the Bounding Box</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194722001-00255d7d-09d6-40e5-969b-bb75f22e3015.png"><img alt="https://user-images.githubusercontent.com/14288520/194722001-00255d7d-09d6-40e5-969b-bb75f22e3015.png" src="https://user-images.githubusercontent.com/14288520/194722001-00255d7d-09d6-40e5-969b-bb75f22e3015.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194722439-61630150-5cb0-439a-83d8-44fb79e8f957.png"><img alt="https://user-images.githubusercontent.com/14288520/194722439-61630150-5cb0-439a-83d8-44fb79e8f957.png" src="https://user-images.githubusercontent.com/14288520/194722439-61630150-5cb0-439a-83d8-44fb79e8f957.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>2D Mode: produces rectangles at z = 0</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/194723335-d1a6dd58-fc50-4b0d-a08d-a264a88daf64.png"><img alt="https://user-images.githubusercontent.com/14288520/194723335-d1a6dd58-fc50-4b0d-a08d-a264a88daf64.png" src="https://user-images.githubusercontent.com/14288520/194723335-d1a6dd58-fc50-4b0d-a08d-a264a88daf64.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
-<p>GitHub issue tracker discussion about this node <a class="reference external" href="https://github.com/nortikin/sverchok/issues/161">here</a> and  <cite>here &lt;https://github.com/nortikin/sverchok/pull/2575&gt;</cite></p>
+<p>GitHub issue tracker discussion about this node <a class="reference external" href="https://github.com/nortikin/sverchok/issues/161">here1</a>
+and <a class="reference external" href="https://github.com/nortikin/sverchok/pull/2575">here2</a></p>
 </section>
 </section>
 

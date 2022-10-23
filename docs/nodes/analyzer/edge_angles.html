@@ -166,6 +166,7 @@
              
   <section id="angles-at-the-edges">
 <h1>Angles at the Edges<a class="headerlink" href="#angles-at-the-edges" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196689431-6904db77-898c-4d02-8dfb-04ff75533048.png"><img alt="https://user-images.githubusercontent.com/14288520/196689431-6904db77-898c-4d02-8dfb-04ff75533048.png" src="https://user-images.githubusercontent.com/14288520/196689431-6904db77-898c-4d02-8dfb-04ff75533048.png" /></a>
 <p><em>This node testing is in progress, so it can be found under Beta menu</em></p>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
@@ -201,25 +202,31 @@
 <tr class="row-even"><td><p><strong>Signed</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>If checked, then the node will output negative values for
-concave edges. By default, it always outputs positive angles.</p></td>
+<td><p>If checked, then the node will output negative values</p>
+<p>for concave edges. By default, it always outputs</p>
+<p>positive angles.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Complement</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Output complementary angle to one calculated by BMesh. BMesh
-assumes that angle between two complanar faces is zero. With
-this flag checked, the node will output PI (or 180) for angle
-between complanar faces.</p></td>
+<td><p>Output complementary angle to one calculated by BMesh.</p>
+<p>BMesh assumes that angle between two complanar faces</p>
+<p>is zero. With this flag checked, the node will output</p>
+<p>PI (or 180) for angle between complanar faces.</p>
+</td>
 </tr>
-<tr class="row-even"><td><p><strong>Wire/Boundary
-value</strong></p></td>
+<tr class="row-even"><td><p><strong>Wire/</strong></p>
+<p><strong>Boundary</strong></p>
+<p><strong>value</strong></p>
+</td>
 <td><p>Enum</p></td>
 <td><p>Default</p></td>
-<td><p>What to return as angle for wire or boundary edges. BMesh
-returns some angle by default for such edges, but in some cases
-these values do not make sense.
-This parameter is displayed only in N panel.</p>
+<td><p>What to return as angle for wire or boundary edges.</p>
+<p>BMesh returns some angle by default for such</p>
+<p>edges, but in some cases these values do not make</p>
+<p>sense.</p>
+<p>This parameter is displayed only in N panel.</p>
 <dl class="simple">
 <dt>Default.</dt><dd><p>Use value returned by BMesh.</p>
 </dd>
@@ -249,7 +256,16 @@ This parameter is displayed only in N panel.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Bevel only acute angles:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/6328298/c00b10be-bb87-11e4-9ae8-75deb3aed81e.png" src="https://cloud.githubusercontent.com/assets/284644/6328298/c00b10be-bb87-11e4-9ae8-75deb3aed81e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196697786-3233852c-99ff-4c52-b5c4-525a8953278d.png"><img alt="https://user-images.githubusercontent.com/14288520/196697786-3233852c-99ff-4c52-b5c4-525a8953278d.png" src="https://user-images.githubusercontent.com/14288520/196697786-3233852c-99ff-4c52-b5c4-525a8953278d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../modifier_change/bevel.html"><span class="doc">Bevel</span></a></p></li>
+<li><p>LESS: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -166,6 +166,7 @@
              
   <section id="wave-painter">
 <h1>Wave Painter<a class="headerlink" href="#wave-painter" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png"><img alt="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" src="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node “paints” a wave pattern on either faces or vertices of the given mesh.</p>
@@ -249,7 +250,17 @@ face / vertex, in terms of the shortest path described above.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Start a wave from some small area on the hexagonal grid; mark some vertices as obstacles. Note how the wave can not pass through the obstacle and has to go the long way around:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71737930-e9197600-2e76-11ea-9382-02f07d6fe0e2.png" src="https://user-images.githubusercontent.com/284644/71737930-e9197600-2e76-11ea-9382-02f07d6fe0e2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png"><img alt="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" src="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="mesh_select_mk2.html"><span class="doc">Select Mesh Elements</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Similar setup with a rectangular grid; use wave front number to select faces to be extruded:</p>
 <img alt="https://user-images.githubusercontent.com/284644/71738492-917c0a00-2e78-11ea-8f82-c4b7307f1434.png" src="https://user-images.githubusercontent.com/284644/71738492-917c0a00-2e78-11ea-8f82-c4b7307f1434.png" />
 <p>Select some random vertices on a dual mesh of the icosphere, and push the wave from them; use sine of wave distance to deform the mesh:</p>

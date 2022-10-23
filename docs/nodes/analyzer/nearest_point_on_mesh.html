@@ -166,6 +166,9 @@
              
   <section id="nearest-point-on-mesh">
 <h1>Nearest Point on Mesh<a class="headerlink" href="#nearest-point-on-mesh" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196508801-a7149ece-35a9-4f46-93fd-b3e4449fc2f2.png"><img alt="https://user-images.githubusercontent.com/14288520/196508801-a7149ece-35a9-4f46-93fd-b3e4449fc2f2.png" src="https://user-images.githubusercontent.com/14288520/196508801-a7149ece-35a9-4f46-93fd-b3e4449fc2f2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196511961-63df5e7c-443a-43d3-a200-c29464f4334f.png"><img alt="https://user-images.githubusercontent.com/14288520/196511961-63df5e7c-443a-43d3-a200-c29464f4334f.png" src="https://user-images.githubusercontent.com/14288520/196511961-63df5e7c-443a-43d3-a200-c29464f4334f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196512405-888ef444-d7e7-4741-a3c6-b85672d83bee.gif"><img alt="https://user-images.githubusercontent.com/14288520/196512405-888ef444-d7e7-4741-a3c6-b85672d83bee.gif" src="https://user-images.githubusercontent.com/14288520/196512405-888ef444-d7e7-4741-a3c6-b85672d83bee.gif" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Finds the closest point in a specified mesh.</p>
@@ -178,31 +181,71 @@ Distance: Maximum query distance (only for Nearest in Range mode)</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<dl class="simple">
-<dt><em>Mode</em>:</dt><dd><ul class="simple">
-<li><p>Nearest: Nearest point on the mesh surface</p></li>
-<li><p>Nearest in range: Nearest points on the mesh within a range (one per face)</p></li>
+<ul class="simple">
+<li><p><strong>Mode</strong>:</p>
+<ul>
+<li><p><strong>Nearest</strong>: Nearest point on the mesh surface</p></li>
+<li><p><strong>Nearest in range</strong>: Nearest points on the mesh within a range (one per face)</p></li>
 </ul>
-</dd>
-</dl>
-<p><em>Flat Output</em>: (only in Nearest in Range) Flattens the list of every vertex to have only a list for every inputted list.</p>
-<p><em>Safe Check</em>: (in N-Panel) When disabled polygon indices referring to unexisting points will crash Blender. Not performing this check makes node faster</p>
+</li>
+<li><p><strong>Flat Output</strong>: (only in Nearest in Range) Flattens the list of every vertex to have only a list for every inputted list.</p></li>
+<li><p><strong>Safe Check</strong>: (in N-Panel) When disabled polygon indices referring to unexisting points will crash Blender. Not performing this check makes node faster</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><em>Location</em>: Position of the closest point in the mesh</p>
-<p><em>Normal</em>: mesh normal at closets point</p>
-<p><em>Index</em>: Face index of the closest point</p>
-<p><em>Distance</em>: Distance from the queried point to the closest point</p>
+<ul class="simple">
+<li><p><strong>Location</strong>: Position of the closest point in the mesh</p></li>
+<li><p><strong>Normal</strong>: mesh normal at closets point</p></li>
+<li><p><strong>Index</strong>: Face index of the closest point</p></li>
+<li><p><strong>Distance</strong>: Distance from the queried point to the closest point</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Used as skin-wrap modifier:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/111774583-f3733480-88af-11eb-9559-78392166b00c.png" src="https://user-images.githubusercontent.com/10011941/111774583-f3733480-88af-11eb-9559-78392166b00c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196513979-581eaac9-02d5-4390-b0f4-93c27b3e5906.png"><img alt="https://user-images.githubusercontent.com/14288520/196513979-581eaac9-02d5-4390-b0f4-93c27b3e5906.png" src="https://user-images.githubusercontent.com/14288520/196513979-581eaac9-02d5-4390-b0f4-93c27b3e5906.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196535057-49414fd8-f59f-4943-81a4-b9e2f5a6d78a.png"><img alt="https://user-images.githubusercontent.com/14288520/196535057-49414fd8-f59f-4943-81a4-b9e2f5a6d78a.png" src="https://user-images.githubusercontent.com/14288520/196535057-49414fd8-f59f-4943-81a4-b9e2f5a6d78a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/lerp.html"><span class="doc">Vector Lerp</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196535560-ef622a57-ecdb-4741-9410-3df82ee13348.gif"><img alt="https://user-images.githubusercontent.com/14288520/196535560-ef622a57-ecdb-4741-9410-3df82ee13348.gif" src="https://user-images.githubusercontent.com/14288520/196535560-ef622a57-ecdb-4741-9410-3df82ee13348.gif" /></a>
+<hr class="docutils" />
 <p>Determine which polygons are nearer than a distance:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/111812010-f255fd80-88d7-11eb-8f48-de67716dd93a.png" src="https://user-images.githubusercontent.com/10011941/111812010-f255fd80-88d7-11eb-8f48-de67716dd93a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196544827-ba6f069d-3d8b-4786-80ae-468add944239.png"><img alt="https://user-images.githubusercontent.com/14288520/196544827-ba6f069d-3d8b-4786-80ae-468add944239.png" src="https://user-images.githubusercontent.com/14288520/196544827-ba6f069d-3d8b-4786-80ae-468add944239.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196545316-1acd076d-37d6-4b90-a182-7235c8eef2ce.gif"><img alt="https://user-images.githubusercontent.com/14288520/196545316-1acd076d-37d6-4b90-a182-7235c8eef2ce.gif" src="https://user-images.githubusercontent.com/14288520/196545316-1acd076d-37d6-4b90-a182-7235c8eef2ce.gif" /></a>
+<hr class="docutils" />
 <p>Placing objects on mesh:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/111810852-bf5f3a00-88d6-11eb-9cff-eb2a6c18a01a.png" src="https://user-images.githubusercontent.com/10011941/111810852-bf5f3a00-88d6-11eb-9cff-eb2a6c18a01a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196542962-9ae63126-3ce8-4bc9-8c9b-662e3ef05b84.png"><img alt="https://user-images.githubusercontent.com/14288520/196542962-9ae63126-3ce8-4bc9-8c9b-662e3ef05b84.png" src="https://user-images.githubusercontent.com/14288520/196542962-9ae63126-3ce8-4bc9-8c9b-662e3ef05b84.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cricket.html"><span class="doc">Cricket</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_normal.html"><span class="doc">Matrix Normal</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196543406-38217fb4-6f65-4740-88cb-56dc268af55b.gif"><img alt="https://user-images.githubusercontent.com/14288520/196543406-38217fb4-6f65-4740-88cb-56dc268af55b.gif" src="https://user-images.githubusercontent.com/14288520/196543406-38217fb4-6f65-4740-88cb-56dc268af55b.gif" /></a>
 </section>
 </section>
 

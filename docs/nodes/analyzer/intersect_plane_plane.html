@@ -166,6 +166,9 @@
              
   <section id="plane-intersection">
 <h1>Plane Intersection<a class="headerlink" href="#plane-intersection" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196056532-de22a881-5d36-4a6d-bc19-e80b5ae4173e.png"><img alt="https://user-images.githubusercontent.com/14288520/196056532-de22a881-5d36-4a6d-bc19-e80b5ae4173e.png" src="https://user-images.githubusercontent.com/14288520/196056532-de22a881-5d36-4a6d-bc19-e80b5ae4173e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196057909-2604f799-3136-448f-9db8-457a9f554b4d.png"><img alt="https://user-images.githubusercontent.com/14288520/196057909-2604f799-3136-448f-9db8-457a9f554b4d.png" src="https://user-images.githubusercontent.com/14288520/196057909-2604f799-3136-448f-9db8-457a9f554b4d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196058228-3507e0fa-e8c0-4cc2-af67-ac96a71df9ce.png"><img alt="https://user-images.githubusercontent.com/14288520/196058228-3507e0fa-e8c0-4cc2-af67-ac96a71df9ce.png" src="https://user-images.githubusercontent.com/14288520/196058228-3507e0fa-e8c0-4cc2-af67-ac96a71df9ce.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed to get the intersection line between two theoretical planes.</p>
@@ -208,19 +211,31 @@
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups (level 1)</p>
-<p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching inside groups (level 2)</p>
+<ul class="simple">
+<li><p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups (level 1)</p></li>
+<li><p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching inside groups (level 2)</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Intersect</strong>: Returns True if the planes are not parallel.</p>
-<p><strong>Origin</strong>: Origin of the line. If planes are parallel returns the origin of plane A</p>
-<p><strong>Direction</strong>: Direction of the line. If planes are parallel returns the normal of both planes</p>
+<ul class="simple">
+<li><p><strong>Intersect</strong>: Returns True if the planes are not parallel.</p></li>
+<li><p><strong>Origin</strong>: Origin of the line. If planes are parallel returns the origin of plane A</p></li>
+<li><p><strong>Direction</strong>: Direction of the line. If planes are parallel returns the normal of both planes</p></li>
+</ul>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="sverchok_intersect_plane_plane_example1.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example1.png" />
-<img alt="sverchok_intersect_plane_plane_example1.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196059332-d1fffc72-e144-4c96-b220-6ea9fca75b89.png"><img alt="https://user-images.githubusercontent.com/14288520/196059332-d1fffc72-e144-4c96-b220-6ea9fca75b89.png" src="https://user-images.githubusercontent.com/14288520/196059332-d1fffc72-e144-4c96-b220-6ea9fca75b89.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="origins.html"><span class="doc">Origins</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example.png"><img alt="sverchok_intersect_plane_plane_example1.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example.png" /></a>
 </section>
 </section>
 

@@ -1,6 +1,9 @@
 Circle Fit
 ==========
 
+.. image:: https://user-images.githubusercontent.com/14288520/197307332-2aaaa061-fe0b-4a35-b688-0f3896c7790e.png
+  :target: https://user-images.githubusercontent.com/14288520/197307332-2aaaa061-fe0b-4a35-b688-0f3896c7790e.png
+
 Functionality
 -------------
 
@@ -35,10 +38,23 @@ This node has the following outputs:
   to their projections to the circle.
 * **Distances** - distances from the original vertices to the circle.
 
+.. image:: https://user-images.githubusercontent.com/14288520/197329926-ad9e3c06-1832-4f66-a5c6-ca8cd38c24c5.png
+  :target: https://user-images.githubusercontent.com/14288520/197329926-ad9e3c06-1832-4f66-a5c6-ca8cd38c24c5.png
+
 Examples of usage
 -----------------
 
 Fit a circle for vertices from arbitrary mesh object:
 
-.. image:: https://user-images.githubusercontent.com/284644/74602398-daef8400-50c9-11ea-8670-657ffa8e1735.png
+.. image:: https://user-images.githubusercontent.com/14288520/197330263-3f960a21-daa0-4c87-a3b5-5eb66b95e7d9.png
+  :target: https://user-images.githubusercontent.com/14288520/197330263-3f960a21-daa0-4c87-a3b5-5eb66b95e7d9.png
 
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/197330493-8f7d7422-2213-46bc-9d41-6fdd109f8524.gif
+  :target: https://user-images.githubusercontent.com/14288520/197330493-8f7d7422-2213-46bc-9d41-6fdd109f8524.gif

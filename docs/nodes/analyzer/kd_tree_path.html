@@ -166,6 +166,15 @@
              
   <section id="kdt-closest-path">
 <h1>KDT Closest Path<a class="headerlink" href="#kdt-closest-path" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196288317-b722f118-7e59-4013-9e1e-6208b5aa587f.png"><img alt="https://user-images.githubusercontent.com/14288520/196288317-b722f118-7e59-4013-9e1e-6208b5aa587f.png" src="https://user-images.githubusercontent.com/14288520/196288317-b722f118-7e59-4013-9e1e-6208b5aa587f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196291396-d6aab023-7dc5-410e-8563-bb0ab74123a6.png"><img alt="https://user-images.githubusercontent.com/14288520/196291396-d6aab023-7dc5-410e-8563-bb0ab74123a6.png" src="https://user-images.githubusercontent.com/14288520/196291396-d6aab023-7dc5-410e-8563-bb0ab74123a6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Using a K-dimensional Tree it will create a path starting at the desired index joining each vertex to the closest free vertex. If no vertex is found in the desired range the path will break and will start a new path at the next unused vertex.</p>
@@ -207,8 +216,10 @@
 <section id="advanced-parameters">
 <h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
-<p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups</p>
-<p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching of max distances and vertices</p>
+<ul class="simple">
+<li><p><strong>Match List Global</strong>: Define how list with different lengths should be matched. Refers to the matching of groups</p></li>
+<li><p><strong>Match List Local</strong>: Define how list with different lengths should be matched. Refers to the matching of max distances and vertices</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -219,11 +230,39 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Creating paths in a random vector field.</p>
-<img alt="Blender_sverchok_KDT_closest_path_examples.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196292568-b402cab3-db88-4c0c-9126-54034366266e.png"><img alt="https://user-images.githubusercontent.com/14288520/196292568-b402cab3-db88-4c0c-9126-54034366266e.png" src="https://user-images.githubusercontent.com/14288520/196292568-b402cab3-db88-4c0c-9126-54034366266e.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Find the best starting index to make the minimum path by starting at every vertex and comparing the path lengths and taking the shortest one.</p>
-<img alt="procedural_sverchok_KDT_closest_path_examples1.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196377705-41e926f3-87c6-41d7-ace0-53436f6c642b.png"><img alt="https://user-images.githubusercontent.com/14288520/196377705-41e926f3-87c6-41d7-ace0-53436f6c642b.png" src="https://user-images.githubusercontent.com/14288520/196377705-41e926f3-87c6-41d7-ace0-53436f6c642b.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>EQUAL: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="path_length_2.html"><span class="doc">Path Length</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/levels.html"><span class="doc">List Levels</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Find a coherent short path among shuffled vertices.</p>
-<img alt="parametric_sverchok_KDT_closest_path_examples2.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples2.png" />
+<a class="reference external image-reference" href="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples2.png"><img alt="parametric_sverchok_KDT_closest_path_examples2.png" src="https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples2.png" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
 </section>
 </section>
 

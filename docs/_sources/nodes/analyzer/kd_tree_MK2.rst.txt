@@ -1,6 +1,12 @@
 KDT Closest Verts
 =================
 
+.. image:: https://user-images.githubusercontent.com/14288520/196113100-d9d9325b-d9e8-4f5e-902f-01deb94e4ed4.png
+  :target: https://user-images.githubusercontent.com/14288520/196113100-d9d9325b-d9e8-4f5e-902f-01deb94e4ed4.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/196104413-3d997890-3199-46af-b3e5-394a46f46bef.png
+  :target: https://user-images.githubusercontent.com/14288520/196104413-3d997890-3199-46af-b3e5-394a46f46bef.png
+
 Functionality
 -------------
 
@@ -58,7 +64,38 @@ Examples
 All kinds of crazy things are possible, see some examples here in 
 `the development thread <https://github.com/nortikin/sverchok/issues/99>`_
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/2808767/9be1483e-cd44-11e3-8c90-ff43a6daa2af.gif
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/196110903-4ccd8d4a-dd5e-4f68-a88d-781be497101c.png
+  :target: https://user-images.githubusercontent.com/14288520/196110903-4ccd8d4a-dd5e-4f68-a88d-781be497101c.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/196110859-a2e4795e-0973-403f-aaa3-5262ae2db495.gif
+  :target: https://user-images.githubusercontent.com/14288520/196110859-a2e4795e-0973-403f-aaa3-5262ae2db495.gif
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/196107686-69b611f0-826c-4291-9769-041fb2602468.png
+  :target: https://user-images.githubusercontent.com/14288520/196107686-69b611f0-826c-4291-9769-041fb2602468.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/196108334-be4e2fbe-1e47-4473-bce6-295ff491c126.gif
+  :target: https://user-images.githubusercontent.com/14288520/196108334-be4e2fbe-1e47-4473-bce6-295ff491c126.gif
+
+---------
 
 Notes
 -----
@@ -91,14 +128,14 @@ Notes
             2) [cVert(s)] to check against (size don't have to match)
             3) n, max n nearest
             optional?
-            4) mask, [0, 0, 1, 0, 1]  (return 3rd and 5th closest)
-            4) range clamp, [2:] (don't return first 2 closest)
+            1) mask, [0, 0, 1, 0, 1]  (return 3rd and 5th closest)
+            2) range clamp, [2:] (don't return first 2 closest)
         : outputs:
             for v in cVerts:
             1) ([Verts.co],..) from Main Verts closest to v.co
             2) ([Verts.idx],..) from Main Verts closest to v.co
             optional!
-            3) could generate edges directly (Saves node noodle)
+            1) could generate edges directly (Saves node noodle)
 
 
     find_range(co, radius)

@@ -65,6 +65,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
@@ -166,6 +167,7 @@
              
   <section id="area">
 <h1>Area<a class="headerlink" href="#area" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195365832-e25b9df7-6038-4a04-9489-ff75dea36c7a.png"><img alt="https://user-images.githubusercontent.com/14288520/195365832-e25b9df7-6038-4a04-9489-ff75dea36c7a.png" src="https://user-images.githubusercontent.com/14288520/195365832-e25b9df7-6038-4a04-9489-ff75dea36c7a.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Area node is one of the analyzer type. It is used to get the area of any polygon, no matter the number of its vertices or its world position.</p>
@@ -215,10 +217,25 @@ Both inputs need to be of the kind Vertices and Strings, respectively</p>
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p><strong>Area</strong> will be calculated only if both <strong>Vertices</strong> and <strong>Polygons</strong> inputs are linked.</p>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#faces-area"><span class="std std-ref">Component Analyzer/Faces/Area</span></a></p></li>
+</ul>
+</section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="AreaDemo1.PNG" src="https://cloud.githubusercontent.com/assets/5990821/4188452/8f9cbf66-3772-11e4-8735-34462b7da54b.png" />
-<p>In the example we have the inputs from a plane with 15 faces. We can use <strong>Area</strong> node to get the sum of all of them or the area of every face individually.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png"><img alt="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" src="https://user-images.githubusercontent.com/14288520/195367229-67a81667-6b71-46f6-abce-cbc4bfc8e74f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/string_tools.html"><span class="doc">String Tools</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<p>In the example we have the inputs from a plane with 16 faces. You can use <strong>Area</strong> node to get the sum of all of them or the area of every face individually.</p>
 </section>
 </section>
 

@@ -166,6 +166,7 @@
              
   <section id="raycaster">
 <h1>Raycaster<a class="headerlink" href="#raycaster" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png"><img alt="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png" src="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Functionality is almost completely analogous to the two built-in blender operators
@@ -177,10 +178,13 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 </section>
 <section id="input-sockets">
 <h2>Input sockets<a class="headerlink" href="#input-sockets" title="Permalink to this heading">¶</a></h2>
-<p><strong>Verts</strong> - Vectors of objects receiving rays</p>
-<p><strong>Faces</strong> - Faces of objects receiving rays</p>
-<p><strong>Start</strong> - Start position of raytracing</p>
-<p><strong>Direction</strong> - Direction of raytracing</p>
+<ul class="simple">
+<li><p><strong>Verts</strong> - Vectors of objects receiving rays</p></li>
+<li><p><strong>Faces</strong> - Faces of objects receiving rays</p></li>
+<li><p><strong>Start</strong> - Start position of raytracing</p></li>
+<li><p><strong>Direction</strong> - Direction of raytracing</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png"><img alt="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png" src="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png" /></a>
 </section>
 <section id="output-sockets">
 <h2>Output sockets<a class="headerlink" href="#output-sockets" title="Permalink to this heading">¶</a></h2>
@@ -202,7 +206,7 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 <td><p>Normal of hit polygon</p></td>
 </tr>
 <tr class="row-even"><td><p>Index</p></td>
-<td><p>index of hit polygon</p></td>
+<td><p>index of hit <em>polygon</em></p></td>
 </tr>
 <tr class="row-odd"><td><p>Distance</p></td>
 <td><p>Distance between start point and hit location</p></td>
@@ -212,18 +216,49 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 </tr>
 </tbody>
 </table>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png"><img alt="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png" src="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png" /></a>
 </section>
 <section id="advanced-parameters-n-panel">
 <h2>Advanced parameters (N-Panel)<a class="headerlink" href="#advanced-parameters-n-panel" title="Permalink to this heading">¶</a></h2>
-<p><strong>Safe Check</strong>: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)</p>
-<p><strong>All Triangles</strong>: Enable if all the incoming faces are triangles to improve the performance of the algorithm</p>
+<ul class="simple">
+<li><p><strong>All Triangles</strong>: Enable if all the incoming faces are triangles to improve the performance of the algorithm</p></li>
+<li><p><strong>Safe Check</strong>: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)</p></li>
+</ul>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/28003269/38853137-5a0b6e50-422d-11e8-97bc-8d5046387e25.png" src="https://user-images.githubusercontent.com/28003269/38853137-5a0b6e50-422d-11e8-97bc-8d5046387e25.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png"><img alt="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png" src="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>SUB: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <img alt="https://user-images.githubusercontent.com/28003269/38853349-08514386-422e-11e8-8444-72101d9b0ade.png" src="https://user-images.githubusercontent.com/28003269/38853349-08514386-422e-11e8-8444-72101d9b0ade.png" />
 <img alt="https://user-images.githubusercontent.com/28003269/38853243-b2dc87a8-422d-11e8-96df-7d27735a5b67.gif" src="https://user-images.githubusercontent.com/28003269/38853243-b2dc87a8-422d-11e8-96df-7d27735a5b67.gif" />
 <p><a class="reference external" href="https://github.com/nortikin/sverchok/files/1918431/calculation.of.shadows_2018_04_17_06_58.zip">calculating shadow.blend.zip</a></p>
+<p><strong>Replay with new nodes</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197069114-b458a783-a921-4d34-a4db-8b49b8d6c76e.gif"><img alt="https://user-images.githubusercontent.com/14288520/197069114-b458a783-a921-4d34-a4db-8b49b8d6c76e.gif" src="https://user-images.githubusercontent.com/14288520/197069114-b458a783-a921-4d34-a4db-8b49b8d6c76e.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197073636-3331852c-150d-4883-8c0d-303562d5066b.png"><img alt="https://user-images.githubusercontent.com/14288520/197073636-3331852c-150d-4883-8c0d-303562d5066b.png" src="https://user-images.githubusercontent.com/14288520/197073636-3331852c-150d-4883-8c0d-303562d5066b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="distance_point_plane.html"><span class="doc">Distance Point Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="origins.html"><span class="doc">Origins</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../CAD/edges_intersect_mk3.html"><span class="doc">Intersect Edges</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../modifier_change/planar_edgenet_to_polygons.html"><span class="doc">Planar Edgenet to Faces</span></a></p></li>
+<li><p>Analyzer-&gt; <a class="reference internal" href="mesh_filter.html"><span class="doc">Mesh Filter</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/delete_loose.html"><span class="doc">Delete Loose</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="distance_point_plane.html"><span class="doc">Distance Point Plane</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>SUB, NEG: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_out_mk2.html"><span class="doc">Matrix Out</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -49,4 +49,21 @@ Examples
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
+
+Spy camera for Sphere fit center output:
+
+.. image:: https://user-images.githubusercontent.com/14288520/197333285-3dceffda-ddc1-47ba-88cf-447267ce8459.png
+  :target: https://user-images.githubusercontent.com/14288520/197333285-3dceffda-ddc1-47ba-88cf-447267ce8459.png
+
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
+* Analyzers-> :doc:`Sphere fit </nodes/analyzer/sphere_approx>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/197333322-816f3841-e55b-4952-a426-9a0511538c24.gif
+  :target: https://user-images.githubusercontent.com/14288520/197333322-816f3841-e55b-4952-a426-9a0511538c24.gif
+
 See limitations.

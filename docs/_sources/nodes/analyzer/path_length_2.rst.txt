@@ -1,6 +1,9 @@
 Path Length
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/195679077-a19d806d-1b6f-4400-a690-4ab116be8e88.png
+  :target: https://user-images.githubusercontent.com/14288520/195679077-a19d806d-1b6f-4400-a690-4ab116be8e88.png
+
 Functionality
 -------------
 
@@ -51,18 +54,47 @@ This node has the following outputs:
 
 This node calculates values only for those outputs which are connected to somewhere.
 
+.. image:: https://user-images.githubusercontent.com/14288520/195711286-8a23553c-a479-4a60-bc97-f5d639d0efa7.png
+  :target: https://user-images.githubusercontent.com/14288520/195711286-8a23553c-a479-4a60-bc97-f5d639d0efa7.png
+
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
 Examples of usage
 -----------------
 
 Calculating all values for a curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/75791140-f3c88c80-5d8d-11ea-8d43-5a53965f0fe0.png
+  :target: https://user-images.githubusercontent.com/284644/75791140-f3c88c80-5d8d-11ea-8d43-5a53965f0fe0.png
+
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 Measuring an icosphere:
 
-.. image:: https://user-images.githubusercontent.com/284644/75791456-69ccf380-5d8e-11ea-98b4-9332ec743be7.png
+.. image:: https://user-images.githubusercontent.com/14288520/195712427-28089fe6-1cb9-4501-af86-a10a4ec2fd6f.png
+  :target: https://user-images.githubusercontent.com/14288520/195712427-28089fe6-1cb9-4501-af86-a10a4ec2fd6f.png
+
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 Using the Path Length node to place circles of one meter of diameter along a given curve:
 
-.. image:: https://user-images.githubusercontent.com/284644/75792097-4bb3c300-5d8f-11ea-8d88-5e6f75a427de.png
+.. image:: https://user-images.githubusercontent.com/14288520/195715465-d75df019-e40e-43b0-8572-f1601d668a1f.png
+  :target: https://user-images.githubusercontent.com/14288520/195715465-d75df019-e40e-43b0-8572-f1601d668a1f.png
 
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* FLOOR: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`

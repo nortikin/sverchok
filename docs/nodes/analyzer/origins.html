@@ -94,6 +94,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
@@ -167,7 +168,7 @@
              
   <section id="origins">
 <h1>Origins<a class="headerlink" href="#origins" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/72983385-96d6cf80-3dfa-11ea-900d-fe1448dff5f7.png" src="https://user-images.githubusercontent.com/28003269/72983385-96d6cf80-3dfa-11ea-900d-fe1448dff5f7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195716748-2e4392e9-433e-465e-bb59-6c4e67ed305f.png"><img alt="https://user-images.githubusercontent.com/14288520/195716748-2e4392e9-433e-465e-bb59-6c4e67ed305f.png" src="https://user-images.githubusercontent.com/14288520/195716748-2e4392e9-433e-465e-bb59-6c4e67ed305f.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node produces centers, normals, tangents for any element of given mesh. Also it can combine the data into matrix.
@@ -193,6 +194,7 @@ The output is close how blender is placing moving axis of selected mesh element 
 <li><p><strong>Tangent</strong> - tangent to current element</p></li>
 <li><p><strong>Matrix</strong> - built from origin, normal and tangent data matrix</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195724734-737f4fea-dfc0-4c2b-955a-3c2fe7bd3343.png"><img alt="https://user-images.githubusercontent.com/14288520/195724734-737f4fea-dfc0-4c2b-955a-3c2fe7bd3343.png" src="https://user-images.githubusercontent.com/14288520/195724734-737f4fea-dfc0-4c2b-955a-3c2fe7bd3343.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -220,14 +222,55 @@ The output is close how blender is placing moving axis of selected mesh element 
 </tbody>
 </table>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#vertices-normal"><span class="std std-ref">Component Analyzer/Vertices/Normal</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#vertices-matrix"><span class="std std-ref">Component Analyzer/Vertices/Matrix</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#edges-center"><span class="std std-ref">Component Analyzer/Edges/Center</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#edges-matrix"><span class="std std-ref">Component Analyzer/Edges/Matrix</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#faces-center"><span class="std std-ref">Component Analyzer/Faces/Center</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#faces-normal"><span class="std std-ref">Component Analyzer/Faces/Normal</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#faces-matrix"><span class="std std-ref">Component Analyzer/Faces/Matrix</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="component_analyzer.html#faces-tangent"><span class="std std-ref">Component Analyzer/Faces/Tangent</span></a></p></li>
+</ul>
+</section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>displaying Face normals, for debugging normal directions.</p>
-<img alt="https://user-images.githubusercontent.com/619340/80953696-570d8400-8dfc-11ea-905b-641c8a308af0.png" src="https://user-images.githubusercontent.com/619340/80953696-570d8400-8dfc-11ea-905b-641c8a308af0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195725890-3878085e-81d9-4aea-936f-be9bf7435d4d.png"><img alt="https://user-images.githubusercontent.com/14288520/195725890-3878085e-81d9-4aea-936f-be9bf7435d4d.png" src="https://user-images.githubusercontent.com/14288520/195725890-3878085e-81d9-4aea-936f-be9bf7435d4d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>A*SCALAR: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Using of corner case of tangent for vertices connected only with one face:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/72985862-5bd79a80-3e00-11ea-9b55-1bf9ff814b6a.png" src="https://user-images.githubusercontent.com/28003269/72985862-5bd79a80-3e00-11ea-9b55-1bf9ff814b6a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195728391-ee791480-2e5b-4439-a4d9-1020869e4698.png"><img alt="https://user-images.githubusercontent.com/14288520/195728391-ee791480-2e5b-4439-a4d9-1020869e4698.png" src="https://user-images.githubusercontent.com/14288520/195728391-ee791480-2e5b-4439-a4d9-1020869e4698.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>CROSS: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Using matrix output for mesh instancing, looks like work of adaptive polygon node:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/72985868-5ed28b00-3e00-11ea-8c9f-dfda491712c9.png" src="https://user-images.githubusercontent.com/28003269/72985868-5ed28b00-3e00-11ea-8c9f-dfda491712c9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195731114-76294da1-c266-427d-a378-51cdf2b586b1.png"><img alt="https://user-images.githubusercontent.com/14288520/195731114-76294da1-c266-427d-a378-51cdf2b586b1.png" src="https://user-images.githubusercontent.com/14288520/195731114-76294da1-c266-427d-a378-51cdf2b586b1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="area.html"><span class="doc">Area</span></a></p></li>
+<li><p>MUL: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/easing.html"><span class="doc">Easing 0..1</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/deform.html"><span class="doc">Matrix Deform</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/slice.html"><span class="doc">List Slice</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 

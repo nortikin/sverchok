@@ -165,7 +165,8 @@
              
   <section id="project-points-to-line">
 <h1>Project Points to Line<a class="headerlink" href="#project-points-to-line" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/57965425-316e3d00-7955-11e9-9d2b-016f9ebce9aa.png" src="https://user-images.githubusercontent.com/28003269/57965425-316e3d00-7955-11e9-9d2b-016f9ebce9aa.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197271181-5446ca60-34fe-4656-af7d-0abc91b20e76.png"><img alt="https://user-images.githubusercontent.com/14288520/197271181-5446ca60-34fe-4656-af7d-0abc91b20e76.png" src="https://user-images.githubusercontent.com/14288520/197271181-5446ca60-34fe-4656-af7d-0abc91b20e76.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197294695-bef7b402-e6db-4152-aabc-7cd218b3f479.png"><img alt="https://user-images.githubusercontent.com/14288520/197294695-bef7b402-e6db-4152-aabc-7cd218b3f479.png" src="https://user-images.githubusercontent.com/14288520/197294695-bef7b402-e6db-4152-aabc-7cd218b3f479.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node allows to find closest point, that belongs to line, to input point. Also the node gives information where the
@@ -208,12 +209,16 @@ point located on line. If there are several projected points it possible to sort
 <li></li>
 </ul>
 </td>
-<td><p>This parameter located on N panel makes resolution parameter available</p></td>
+<td><p>This parameter located on N panel makes resolution parameter</p>
+<p>available</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>resolution</p></td>
 <td><p>float</p></td>
 <td><p>0.01</p></td>
-<td><p>It is expected in most cases this can remain with default value. Details below</p></td>
+<td><p>It is expected in most cases this can remain with default</p>
+<p>value. Details below</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -235,24 +240,62 @@ try to decreasing value.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p><strong>Project random points to sine:</strong></p>
-<img alt="https://user-images.githubusercontent.com/28003269/57971033-c7c45200-7999-11e9-85df-d271412cc0f1.png" src="https://user-images.githubusercontent.com/28003269/57971033-c7c45200-7999-11e9-85df-d271412cc0f1.png" />
-<img alt="https://user-images.githubusercontent.com/28003269/57971035-c8f57f00-7999-11e9-8d86-2ed2ea6d64aa.png" src="https://user-images.githubusercontent.com/28003269/57971035-c8f57f00-7999-11e9-8d86-2ed2ea6d64aa.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197289353-8cef324b-f18a-4398-956f-5695da8e0b88.png"><img alt="https://user-images.githubusercontent.com/14288520/197289353-8cef324b-f18a-4398-956f-5695da8e0b88.png" src="https://user-images.githubusercontent.com/14288520/197289353-8cef324b-f18a-4398-956f-5695da8e0b88.png" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197291322-1395abdc-e27d-44cf-9b31-4ef3323abdcb.png"><img alt="https://user-images.githubusercontent.com/14288520/197291322-1395abdc-e27d-44cf-9b31-4ef3323abdcb.png" src="https://user-images.githubusercontent.com/14288520/197291322-1395abdc-e27d-44cf-9b31-4ef3323abdcb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197291760-2bd35059-b300-430c-9724-0128224b31be.gif"><img alt="https://user-images.githubusercontent.com/14288520/197291760-2bd35059-b300-430c-9724-0128224b31be.gif" src="https://user-images.githubusercontent.com/14288520/197291760-2bd35059-b300-430c-9724-0128224b31be.gif" /></a>
 <p><strong>Sort projected points according direction of input line:</strong></p>
 <ul class="simple">
 <li><p>green - indexes of points of input line</p></li>
 <li><p>redish - indexes of input points from which projection should be done</p></li>
 <li><p>blue - indexes of projected points</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/28003269/57965469-b35e6600-7955-11e9-9325-29362c86eb09.png" src="https://user-images.githubusercontent.com/28003269/57965469-b35e6600-7955-11e9-9325-29362c86eb09.png" />
-<img alt="https://user-images.githubusercontent.com/28003269/57965472-b8bbb080-7955-11e9-8975-0635c9d77230.png" src="https://user-images.githubusercontent.com/28003269/57965472-b8bbb080-7955-11e9-8975-0635c9d77230.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197293892-8c6d8801-7b01-4338-bf33-dc20413ca645.png"><img alt="https://user-images.githubusercontent.com/14288520/197293892-8c6d8801-7b01-4338-bf33-dc20413ca645.png" src="https://user-images.githubusercontent.com/14288520/197293892-8c6d8801-7b01-4338-bf33-dc20413ca645.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>COMPONENT-WISE: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197293903-5d6da8b2-96f9-4588-a5ae-93254e62ac74.png"><img alt="https://user-images.githubusercontent.com/14288520/197293903-5d6da8b2-96f9-4588-a5ae-93254e62ac74.png" src="https://user-images.githubusercontent.com/14288520/197293903-5d6da8b2-96f9-4588-a5ae-93254e62ac74.png" /></a>
 <p><strong>Similar to previous example but input points for projection are sorted:</strong></p>
-<img alt="https://user-images.githubusercontent.com/28003269/57952374-0b697e00-78fe-11e9-942a-69800a947943.png" src="https://user-images.githubusercontent.com/28003269/57952374-0b697e00-78fe-11e9-942a-69800a947943.png" />
-<img alt="https://user-images.githubusercontent.com/28003269/57952406-2c31d380-78fe-11e9-8f49-31ae0a40c9ba.png" src="https://user-images.githubusercontent.com/28003269/57952406-2c31d380-78fe-11e9-8f49-31ae0a40c9ba.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57952374-0b697e00-78fe-11e9-942a-69800a947943.png"><img alt="https://user-images.githubusercontent.com/28003269/57952374-0b697e00-78fe-11e9-942a-69800a947943.png" src="https://user-images.githubusercontent.com/28003269/57952374-0b697e00-78fe-11e9-942a-69800a947943.png" /></a>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57952406-2c31d380-78fe-11e9-8f49-31ae0a40c9ba.png"><img alt="https://user-images.githubusercontent.com/28003269/57952406-2c31d380-78fe-11e9-8f49-31ae0a40c9ba.png" src="https://user-images.githubusercontent.com/28003269/57952406-2c31d380-78fe-11e9-8f49-31ae0a40c9ba.png" /></a>
 <p><strong>Projection one line to another:</strong></p>
-<img alt="https://user-images.githubusercontent.com/28003269/57965586-464bd000-7957-11e9-9298-5c004bd16442.png" src="https://user-images.githubusercontent.com/28003269/57965586-464bd000-7957-11e9-9298-5c004bd16442.png" />
-<img alt="https://user-images.githubusercontent.com/28003269/57965649-15b86600-7958-11e9-97ec-cee8d105ba3d.gif" src="https://user-images.githubusercontent.com/28003269/57965649-15b86600-7958-11e9-97ec-cee8d105ba3d.gif" />
-<img alt="https://user-images.githubusercontent.com/28003269/57971245-77022880-799c-11e9-8711-bb6a0bf959fb.png" src="https://user-images.githubusercontent.com/28003269/57971245-77022880-799c-11e9-8711-bb6a0bf959fb.png" />
-<img alt="https://user-images.githubusercontent.com/28003269/57965688-924b4480-7958-11e9-9340-95ccec11de3d.png" src="https://user-images.githubusercontent.com/28003269/57965688-924b4480-7958-11e9-9340-95ccec11de3d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57965586-464bd000-7957-11e9-9298-5c004bd16442.png"><img alt="https://user-images.githubusercontent.com/28003269/57965586-464bd000-7957-11e9-9298-5c004bd16442.png" src="https://user-images.githubusercontent.com/28003269/57965586-464bd000-7957-11e9-9298-5c004bd16442.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57965649-15b86600-7958-11e9-97ec-cee8d105ba3d.gif"><img alt="https://user-images.githubusercontent.com/28003269/57965649-15b86600-7958-11e9-97ec-cee8d105ba3d.gif" src="https://user-images.githubusercontent.com/28003269/57965649-15b86600-7958-11e9-97ec-cee8d105ba3d.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57971245-77022880-799c-11e9-8711-bb6a0bf959fb.png"><img alt="https://user-images.githubusercontent.com/28003269/57971245-77022880-799c-11e9-8711-bb6a0bf959fb.png" src="https://user-images.githubusercontent.com/28003269/57971245-77022880-799c-11e9-8711-bb6a0bf959fb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/rotate_mk3.html"><span class="doc">Rotate</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../../old/nodes/remove_doubles.html"><span class="doc">Rotate</span></a></p></li>
+<li><p>Remove Doubles (OLD Node). Use: Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/merge_by_distance.html"><span class="doc">Merge by Distance</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/57965688-924b4480-7958-11e9-9340-95ccec11de3d.png"><img alt="https://user-images.githubusercontent.com/28003269/57965688-924b4480-7958-11e9-9340-95ccec11de3d.png" src="https://user-images.githubusercontent.com/28003269/57965688-924b4480-7958-11e9-9340-95ccec11de3d.png" /></a>
 </section>
 </section>
 

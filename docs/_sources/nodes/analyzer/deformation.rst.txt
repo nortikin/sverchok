@@ -1,6 +1,9 @@
 Deformation
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/197248573-07d3d5be-fd37-4122-b50a-a9bf15e67ca1.png
+  :target: https://user-images.githubusercontent.com/14288520/197248573-07d3d5be-fd37-4122-b50a-a9bf15e67ca1.png
+
 Functionality
 -------------
 
