@@ -17,11 +17,11 @@ This is useful for quickly generating renderable lightweight geometry for scaffo
 .. image:: https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png
     :target: https://user-images.githubusercontent.com/619340/127735005-6eeafb79-a8df-4037-9594-8e651c0d3d01.png
 
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * MUL X, YSINX X, ADD X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* Generator-> :doc:`Segment </nodes/generator/segment>`
-* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 
 ---------
 
@@ -30,8 +30,8 @@ The node has a 2d and 3d mode, in 2D mode you can make interesting 2d booleans o
 .. image:: https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png
     :target: https://user-images.githubusercontent.com/619340/127735158-0f4a8341-dc04-4dac-a7b6-6546a2c5ceea.png
 
-* Number-> :doc:`Number Range </nodes/number/number_range>`
 * Generator-> :doc:`Circle </nodes/generator/circle>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
 
 inputs
 ------

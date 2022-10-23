@@ -38,9 +38,9 @@ class Vertices(object):
         ]
 
     submodes = [
-            ("Wire", "Wire", "Wire", 1),
-            ("Boundary", "Boundary", "Boundary", 2),
-            ("Interior", "Interior", "Interior", 3)
+            ("Wire",     "Wire",     "Vertices that are not connected to any faces",    1),
+            ("Boundary", "Boundary", "Vertices that are connected to boundary edges",   2),
+            ("Interior", "Interior", "Vertices that are not wire and are not boundary", 3)
         ]
 
     default_submode = "Interior"
@@ -109,12 +109,12 @@ class Edges(object):
         ]
     
     submodes = [
-            ("Wire", "Wire", "Wire", 1),
-            ("Boundary", "Boundary", "Boundary", 2),
-            ("Interior", "Interior", "Interior", 3),
-            ("Convex", "Convex", "Convex", 4),
-            ("Concave", "Concave", "Concave", 5),
-            ("Contiguous", "Contiguous", "Contiguous", 6),
+            ("Wire",       "Wire",       "Edges that are not connected to any faces",               1),
+            ("Boundary",   "Boundary",   "Edges that are at the boundary of manifold part of mesh", 2),
+            ("Interior",   "Interior",   "Edges that are manifold and are not boundary",            3),
+            ("Convex",     "Convex",     "Edges that joins two convex faces",                       4),
+            ("Concave",    "Concave",    "Edges that joins two concave faces",                      5),
+            ("Contiguous", "Contiguous", "Manifold edges between two faces with the same winding",  6),
         ]
 
     default_submode = "Interior"

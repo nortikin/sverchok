@@ -1,6 +1,9 @@
 Circle Intersection
 ===================
 
+.. image:: https://user-images.githubusercontent.com/14288520/195981467-95a10035-f76d-450a-bbf3-c40486a027a9.png
+  :target: https://user-images.githubusercontent.com/14288520/195981467-95a10035-f76d-450a-bbf3-c40486a027a9.png
+
 Functionality
 -------------
 
@@ -35,19 +38,24 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can use the toggle:
  
-**Match List Global**: Define how list with different lengths should be matched. Refers to the matching of level 1 
-
-**Match List Local**: Define how list with different lengths should be matched. Refers to the matching of level 2
+* **Match List Global**: Define how list with different lengths should be matched. Refers to the matching of level 1 
+* **Match List Local**: Define how list with different lengths should be matched. Refers to the matching of level 2
 
 Outputs
 -------
 
-**Intersect**: Returns True if the circles intersect.
+* **Intersect**: Returns True if the circles intersect.
+* **Intersection A**: Returns first intersection between the circles (Starting at left or top)
+* **Intersection B**: Returns second intersection between the circles (Starting at left or top)
 
-**Intersection A**: Returns first intersection between the circles (Starting at left or top)
+Plane by Normal:
 
-**Intersection B**: Returns second intersection between the circles (Starting at left or top)
+.. image:: https://user-images.githubusercontent.com/14288520/195987169-e2c27a83-2f38-43ef-9f50-58c5b03f027f.png
+  :target: https://user-images.githubusercontent.com/14288520/195987169-e2c27a83-2f38-43ef-9f50-58c5b03f027f.png
 
+Plane by Point:
+
+TODO:
 
 Example of usage
 ----------------
