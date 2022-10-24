@@ -32,6 +32,7 @@
     - svBasicArcNode
     - RandomVectorNodeMK3
     - ImageNode
+    - SvFormulaShapeNode
 
     # this is a nested category
     - Generators Extended:
@@ -399,10 +400,12 @@
         - SvSeparatePartsToIndexes
         - SvEdgenetToPathsNode
         - SvLimitedDissolve
+        - SvLimitedDissolveMK2
         - SvPlanarFacesNode
         - SvSplitFacesNode
         - SvMeshBeautify
         - SvTriangulateNode
+        - SvJoinTrianglesNode
         - SvMakeMonotone
         - ---
         - SvSplitMeshElements
@@ -418,6 +421,8 @@
         - ---
         - SvExtrudeEdgesNodeMk2
         - SvExtrudeSeparateNode
+        - SvExtrudeSeparateLiteNode
+        - SvMultiExtrudeAlt
         - SvExtrudeRegionNode
         - SvPokeFacesNode
         - SvVertMaskNode
@@ -432,7 +437,9 @@
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
+        - SvSubdivideLiteNode
         - SvSubdivideToQuadsNode
+        - SvUnsubdivideNode
         - SvOffsetLineNode
         - SvContourNode
         - ---
@@ -441,6 +448,7 @@
         - SvClipVertsNode
         - ---
         - SvBevelCurveNode
+        - SvSweepModulator
         - SvAdaptiveEdgeNode
         - SvAdaptivePolygonsNodeMk3
         - SvDuplicateAlongEdgeNode
@@ -450,6 +458,12 @@
         - SvWireframeNode
         - SvPipeNode
         - SvMatrixTubeNode
+        - ---
+        - SvBManalyzinNode
+        - SvBMObjinputNode
+        - SvBMoutputNode
+        - SvBMtoElementNode
+        - SvBMOpsNodeMK2
 
 - CAD:
     - icon_name: TOOL_SETTINGS
@@ -468,9 +482,11 @@
     - SvBisectNode
     - SvCutObjBySurfaceNode
     - SvEdgesToFaces2D
+    - SvPlanarEdgenetToPolygons
     - SvMergeMesh2D
     - SvMergeMesh2DLite
     - SvCropMesh2D
+    - SvCSGBooleanNodeMK2
     - SvWafelNode
 
 - ---
@@ -596,6 +612,7 @@
         - ShiftNodeMK2
         - ListRepeaterNode
         - ListSliceNode
+        - SvListSliceLiteNode
         - SvListSplitNode
         - ListFLNode
         - SvListItemNode
@@ -605,6 +622,7 @@
         - SvListSortNode
         - ListFlipNode
         - SvListLevelsNodeMK2
+        - SvNumpyArrayNode
     - MaskListNode
     - SvMaskJoinNodeMK2
     - SvMaskConvertNode
@@ -619,7 +637,9 @@
     - SvVDAttrsNodeMk2
     - SvPolygonSortNode
     - SvFindClosestValue
+    - SvCacheNode
     - SvMultiCacheNode
+    - SvCombinatoricsNode
 
 - Dictionary:
     - icon_name: OUTLINER_OB_FONT
@@ -692,6 +712,7 @@
     - SvCollectionPicker
     - SvBezierInNode
     - SvExNurbsInNode
+    - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
     - SvObjEdit
@@ -738,6 +759,7 @@
     - SvOBJRayCastNodeMK2
     - SvSCNRayCastNodeMK2
     - SvSetLoopNormalsNode
+    - SvSetCustomMeshNormals
     - SvSetCollection
     - SvCopyModifiersNode
     - SvVertexGroupNodeMK2
@@ -745,6 +767,14 @@
     - SvAssignMaterialListNode
     - SvMaterialIndexNode
     - SvSetCustomUVMap
+    - SvUVtextureNode
+    - SvMeshUVColorNode
+    - SvUVPointonMeshNode
+    - SvSampleUVColorNode
+    - SvArmaturePropsNode
+    - SvLatticePropsNode
+    - SvSculptMaskNode
+    - SvSelectMeshVerts
 
 - ---
 
@@ -756,10 +786,13 @@
     - SvExecNodeMod
     - SvProfileNodeMK3
     - SvMeshEvalNode
+    - SvSNFunctorB
     - SvGenerativeArtNode
     - SvTopologySimple
     - ---
     - SvScriptNodeLite
+    - SvGetPropNodeMK2
+    - SvSetPropNodeMK2
 
 - Network:
     - icon_name: SYSTEM
@@ -801,52 +834,6 @@
     - SvSvgGroupNode
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
-
-- Beta Nodes:
-    - icon_name: SV_BETA
-    - extra_menu: AdvancedObjectsPartialMenu
-    - SvFormulaShapeNode
-    - SvHeavyTriangulateNode
-    - SvMeshUVColorNode
-    - SvUVPointonMeshNode
-    - SvSampleUVColorNode
-    - SvSubdivideLiteNode
-    - SvExtrudeSeparateLiteNode
-    - SvUnsubdivideNode
-    - SvLimitedDissolveMK2
-    - SvArmaturePropsNode
-    - SvLatticePropsNode
-    - ---
-    - SvSculptMaskNode
-    - SvSelectMeshVerts
-    - SvSetCustomMeshNormals
-    - ---
-    - SvCombinatoricsNode
-
-- Alpha Nodes:
-    - icon_name: SV_ALPHA
-    - extra_menu: AdvancedObjectsPartialMenu
-    - SvBManalyzinNode
-    - SvBMObjinputNode
-    - SvBMoutputNode
-    - SvBMtoElementNode
-    - SvBMOpsNodeMK2
-    - ---
-    - SvCSGBooleanNodeMK2
-    - SvNumpyArrayNode
-    - SvSNFunctorB
-    - SvParticlesMK2Node
-    - SvJoinTrianglesNode
-    - SvListSliceLiteNode
-    - SvCacheNode
-    - SvUVtextureNode
-    - SvSeparateMeshNodeMK2
-    - SvMultiExtrudeAlt
-    - SvPlanarEdgenetToPolygons
-    - SvSweepModulator
-    - ---
-    - SvGetPropNodeMK2
-    - SvSetPropNodeMK2
 
 - ---
 
