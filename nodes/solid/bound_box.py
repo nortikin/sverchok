@@ -28,7 +28,7 @@ class SvSolidBoundBoxNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Bounding Box'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BOUNDING_BOX'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     def _get_socket(self, axis, key):
         return self.outputs[axis + key]

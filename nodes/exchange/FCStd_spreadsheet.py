@@ -1,3 +1,9 @@
+import bpy
+from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
+from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
@@ -7,216 +13,213 @@ if FreeCAD is None:
 
 else:
     F = FreeCAD
-    import bpy
-    from bpy.props import StringProperty, IntProperty, BoolProperty, EnumProperty, FloatProperty
-    from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
-    from sverchok.utils.logging import info
-
-    class SvFCStdSpreadsheetOperator(bpy.types.Operator, SvGenericNodeLocator):
-
-        bl_idname = "node.sv_fcstd_spreadsheet_operator"
-        bl_label = "read/write freecad spreadsheet"
-        bl_options = {'INTERNAL', 'REGISTER'}
-
-        def execute(self, context):
-            node = self.get_node(context)
-
-            if not node: return {'CANCELLED'}     
-
-            node.edit_spreadsheet(node)
-            updateNode(node,context)
-
-            return {'FINISHED'}
 
 
-    class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
-        """
-        Triggers: Read FreeCAD file
-        Tooltip: Read/write FCStd Spreadsheets from a .FCStd file 
-        """
-        bl_idname = 'SvFCStdSpreadsheetNode'
-        bl_label = 'Read/write Spreadsheets'
-        bl_icon = 'IMPORT'
-        solid_catergory = "Outputs"
-        
-        auto_update : BoolProperty(name="auto_update", default=True)
-        write_update : BoolProperty(name="read_update", default=True)
-        write_parameter : BoolProperty(name="write_parameter", default=False)
-  
-        selected_label : StringProperty(default='Spreadsheet')
-        selected_sheet : StringProperty(default='',update = updateNode)
+class SvFCStdSpreadsheetOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-        selected_par_label : StringProperty(default='Parameter')
-        selected_par : StringProperty(default='',update = updateNode)
+    bl_idname = "node.sv_fcstd_spreadsheet_operator"
+    bl_label = "read/write freecad spreadsheet"
+    bl_options = {'INTERNAL', 'REGISTER'}
 
-        cell_in : FloatProperty( name="cell_in", description='cell_in', default=0.0 )
+    def execute(self, context):
+        node = self.get_node(context)
 
-        def draw_buttons(self, context, layout):
+        if not node: return {'CANCELLED'}
 
-            col = layout.column(align=True)
-            if self.inputs['File Path'].is_linked:
-                self.wrapper_tracked_ui_draw_op(
-                    col, SvShowFcstdSpreadsheetsOp.bl_idname, 
-                    icon= 'TRIA_DOWN',
-                    text= self.selected_label )
+        node.edit_spreadsheet(node)
+        updateNode(node,context)
+
+        return {'FINISHED'}
 
 
-            if self.inputs['File Path'].is_linked:
-                self.wrapper_tracked_ui_draw_op(
-                    col, SvShowFcstdParNamesOp.bl_idname, 
-                    icon= 'TRIA_DOWN',
-                    text= self.selected_par_label )
+class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    Triggers: Read FreeCAD file
+    Tooltip: Read/write FCStd Spreadsheets from a .FCStd file
+    """
+    bl_idname = 'SvFCStdSpreadsheetNode'
+    bl_label = 'Read/write Spreadsheets'
+    bl_icon = 'IMPORT'
+    sv_category = "Solid Outputs"
 
-            col.prop(self, 'auto_update') 
-            col.prop(self, 'write_parameter')   
-            self.wrapper_tracked_ui_draw_op(layout, SvFCStdSpreadsheetOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE") 
+    auto_update : BoolProperty(name="auto_update", default=True)
+    write_update : BoolProperty(name="read_update", default=True)
+    write_parameter : BoolProperty(name="write_parameter", default=False)
 
-        def sv_init(self, context):
-            self.inputs.new('SvFilePathSocket', "File Path")
-            self.inputs.new('SvStringsSocket', "cell_in").prop_name = 'cell_in'
+    selected_label : StringProperty(default='Spreadsheet')
+    selected_sheet : StringProperty(default='',update = updateNode)
 
-            self.outputs.new('SvStringsSocket', "cell_out")   
+    selected_par_label : StringProperty(default='Parameter')
+    selected_par : StringProperty(default='',update = updateNode)
 
+    cell_in : FloatProperty( name="cell_in", description='cell_in', default=0.0 )
 
-        def edit_spreadsheet(self,node):
+    def draw_buttons(self, context, layout):
 
-            if not node.inputs['File Path'].is_linked:
-                return 
-
-            if node.selected_par != '' :
-
-                files = node.inputs['File Path'].sv_get()[0]
-
-                cell_out=None
-
-                for f in files:
-                    cell_out = WriteParameter( 
-                        f, 
-                        node.selected_sheet, 
-                        node.selected_par, 
-                        node.inputs['cell_in'].sv_get()[0][0], 
-                        node.write_parameter)
-
-                if cell_out != None:
-                    
-                    node.outputs['cell_out'].sv_set( [[cell_out]] )
-
-            else:
-                node.outputs['cell_out'].sv_set( [ ] )
-                return
-
-        def process(self):
-            if self.auto_update:
-                self.edit_spreadsheet(self)
+        col = layout.column(align=True)
+        if self.inputs['File Path'].is_linked:
+            self.wrapper_tracked_ui_draw_op(
+                col, SvShowFcstdSpreadsheetsOp.bl_idname,
+                icon= 'TRIA_DOWN',
+                text= self.selected_label )
 
 
-    class SvShowFcstdSpreadsheetsOp(bpy.types.Operator, SvGenericNodeLocator):
-        bl_idname = "node.sv_show_fcstd_spreadsheets"
-        bl_label = "Show spreadsheet list"
-        bl_options = {'INTERNAL', 'REGISTER'}
-        bl_property = "option"
+        if self.inputs['File Path'].is_linked:
+            self.wrapper_tracked_ui_draw_op(
+                col, SvShowFcstdParNamesOp.bl_idname,
+                icon= 'TRIA_DOWN',
+                text= self.selected_par_label )
 
-        def LabelReader(self,context):
-            labels=[('','','')]
+        col.prop(self, 'auto_update')
+        col.prop(self, 'write_parameter')
+        self.wrapper_tracked_ui_draw_op(layout, SvFCStdSpreadsheetOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            fc_file_list = node.inputs['File Path'].sv_get()[0]
+    def sv_init(self, context):
+        self.inputs.new('SvFilePathSocket', "File Path")
+        self.inputs.new('SvStringsSocket', "cell_in").prop_name = 'cell_in'
 
-            try:
-                for f in fc_file_list:
-                    F.open(f) 
-                    Fname = bpy.path.display_name_from_filepath(f)
-                    F.setActiveDocument(Fname)
+        self.outputs.new('SvStringsSocket', "cell_out")
 
-                    for obj in F.ActiveDocument.Objects:
-                        if obj.Module == 'Spreadsheet':
-                            labels.append( (obj.Label, obj.Label, obj.Label) )
+    def edit_spreadsheet(self,node):
 
-            except:
-                info('LabelReader Spreadsheet error') 
-            finally:
-                F.closeDocument(Fname)
-            
-            return labels
-              
-        option : EnumProperty(items=LabelReader)
-        tree_name : StringProperty()
-        node_name : StringProperty() 
+        if not node.inputs['File Path'].is_linked:
+            return
 
-        def execute(self, context):
+        if node.selected_par != '' :
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            node.name_filter = self.option
-            node.selected_label = self.option
-            node.selected_sheet = self.option
-            bpy.context.area.tag_redraw()
-            return {'FINISHED'}
+            files = node.inputs['File Path'].sv_get()[0]
 
-        def invoke(self, context, event):
-            context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-            wm = context.window_manager
-            wm.invoke_search_popup(self)
-            return {'FINISHED'}
-   
-    class SvShowFcstdParNamesOp(bpy.types.Operator, SvGenericNodeLocator):
-        bl_idname = "node.sv_show_fcstd_par_names"
-        bl_label = "Show parameter list"
-        bl_options = {'INTERNAL', 'REGISTER'}
-        bl_property = "option"
+            cell_out=None
 
-        def LabelReader(self,context):
-            labels=[('','','')]
+            for f in files:
+                cell_out = WriteParameter(
+                    f,
+                    node.selected_sheet,
+                    node.selected_par,
+                    node.inputs['cell_in'].sv_get()[0][0],
+                    node.write_parameter)
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            fc_file_list = node.inputs['File Path'].sv_get()[0]
+            if cell_out != None:
 
-            try:
+                node.outputs['cell_out'].sv_set( [[cell_out]] )
 
-                for f in fc_file_list:
-                    F.open(f) 
-                    Fname = bpy.path.display_name_from_filepath(f)
-                    F.setActiveDocument(Fname)
+        else:
+            node.outputs['cell_out'].sv_set( [ ] )
+            return
 
-                    for obj in F.ActiveDocument.Objects:
+    def process(self):
+        if self.auto_update:
+            self.edit_spreadsheet(self)
 
-                        if obj.Label == node.selected_sheet:
-                            props = obj.PropertiesList
-                            for label in props:
-                                alias = obj.getCellFromAlias(label)
-                                if alias:
-                                    labels.append( (label, label, label) )
-            
-            except:
-                info('Label reader read cell error')  
-            
-            finally:
-                F.closeDocument(Fname)
-            
-            return labels
 
-        option : EnumProperty(items=LabelReader)
-        tree_name : StringProperty()
-        node_name : StringProperty() 
+class SvShowFcstdSpreadsheetsOp(bpy.types.Operator, SvGenericNodeLocator):
+    bl_idname = "node.sv_show_fcstd_spreadsheets"
+    bl_label = "Show spreadsheet list"
+    bl_options = {'INTERNAL', 'REGISTER'}
+    bl_property = "option"
 
-        def execute(self, context):
+    def LabelReader(self,context):
+        labels=[('','','')]
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            node.name_filter = self.option
-            node.selected_par_label = self.option
-            node.selected_par = self.option
-            bpy.context.area.tag_redraw()
-            return {'FINISHED'}
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        fc_file_list = node.inputs['File Path'].sv_get()[0]
 
-        def invoke(self, context, event):
-            context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-            wm = context.window_manager
-            wm.invoke_search_popup(self)
-            return {'FINISHED'}
+        try:
+            for f in fc_file_list:
+                F.open(f)
+                Fname = bpy.path.display_name_from_filepath(f)
+                F.setActiveDocument(Fname)
+
+                for obj in F.ActiveDocument.Objects:
+                    if obj.Module == 'Spreadsheet':
+                        labels.append( (obj.Label, obj.Label, obj.Label) )
+
+        except:
+            info('LabelReader Spreadsheet error')
+        finally:
+            F.closeDocument(Fname)
+
+        return labels
+
+    option : EnumProperty(items=LabelReader)
+    tree_name : StringProperty()
+    node_name : StringProperty()
+
+    def execute(self, context):
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        node.name_filter = self.option
+        node.selected_label = self.option
+        node.selected_sheet = self.option
+        bpy.context.area.tag_redraw()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
+
+
+class SvShowFcstdParNamesOp(bpy.types.Operator, SvGenericNodeLocator):
+    bl_idname = "node.sv_show_fcstd_par_names"
+    bl_label = "Show parameter list"
+    bl_options = {'INTERNAL', 'REGISTER'}
+    bl_property = "option"
+
+    def LabelReader(self,context):
+        labels=[('','','')]
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        fc_file_list = node.inputs['File Path'].sv_get()[0]
+
+        try:
+
+            for f in fc_file_list:
+                F.open(f)
+                Fname = bpy.path.display_name_from_filepath(f)
+                F.setActiveDocument(Fname)
+
+                for obj in F.ActiveDocument.Objects:
+
+                    if obj.Label == node.selected_sheet:
+                        props = obj.PropertiesList
+                        for label in props:
+                            alias = obj.getCellFromAlias(label)
+                            if alias:
+                                labels.append( (label, label, label) )
+
+        except:
+            info('Label reader read cell error')
+
+        finally:
+            F.closeDocument(Fname)
+
+        return labels
+
+    option : EnumProperty(items=LabelReader)
+    tree_name : StringProperty()
+    node_name : StringProperty()
+
+    def execute(self, context):
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        node.name_filter = self.option
+        node.selected_par_label = self.option
+        node.selected_par = self.option
+        bpy.context.area.tag_redraw()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
+
 
 def WriteParameter(fc_file,spreadsheet,alias,par_write,write):
 

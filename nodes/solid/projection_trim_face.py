@@ -39,7 +39,7 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = "Face from Surface (Solid)"
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_PROJECT_CUT_FACE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'

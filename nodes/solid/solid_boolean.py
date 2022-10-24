@@ -30,7 +30,7 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Boolean'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SOLID_BOOLEAN'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     mode_options = [
         ("ITX", "Intersect", "", 0),

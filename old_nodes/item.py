@@ -34,7 +34,6 @@ class ListItem2Node(SverchCustomTreeNode, bpy.types.Node):
     ''' List item '''
     bl_idname = 'ListItem2Node'
     bl_label = 'List Item'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
     replacement_nodes = [('SvListItemNode', {"Item":"Index"}, None)]
 

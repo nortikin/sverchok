@@ -32,7 +32,7 @@ class SvSolidPolygonFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = "Polygon Face (Solid)"
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_POLYGON_FACE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")

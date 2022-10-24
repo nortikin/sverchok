@@ -43,12 +43,6 @@ def unregister_extra_category_provider(identifier):
         raise Exception(f"Provider {identifier} was not registered")
     del extra_category_providers[idx]
 
-def get_extra_categories():
-    global extra_category_providers
-    result = []
-    for provider in extra_category_providers:
-        result.extend(provider.get_categories())
-    return result
 
 def external_node_docs(operator, node, kind):
 
