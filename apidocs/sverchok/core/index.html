@@ -33,7 +33,7 @@ from sverchok.core.socket_data import clear_all_socket_cache
 reload_event = False
 
 root_modules = [
-    &#34;menu&#34;, &#34;node_tree&#34;, &#34;data_structure&#34;, &#34;core&#34;,
+    &#34;node_tree&#34;, &#34;data_structure&#34;, &#34;core&#34;,
     &#34;utils&#34;, &#34;ui&#34;, &#34;nodes&#34;, &#34;old_nodes&#34;
 ]
 
@@ -50,10 +50,10 @@ core_modules = [
 
 def sv_register_modules(modules):
     for m in modules:
-        if m.__name__ != &#34;sverchok.menu&#34;:
-            if hasattr(m, &#34;register&#34;):
-                # print(&#34;Registering module: {}&#34;.format(m.__name__))
-                m.register()
+        if hasattr(m, &#34;register&#34;):
+            # print(&#34;Registering module: {}&#34;.format(m.__name__))
+            m.register()
+
 
 def sv_unregister_modules(modules):
     clear_all_socket_cache()
@@ -372,10 +372,9 @@ context</p></div>
 </summary>
 <pre><code class="python">def sv_register_modules(modules):
     for m in modules:
-        if m.__name__ != &#34;sverchok.menu&#34;:
-            if hasattr(m, &#34;register&#34;):
-                # print(&#34;Registering module: {}&#34;.format(m.__name__))
-                m.register()</code></pre>
+        if hasattr(m, &#34;register&#34;):
+            # print(&#34;Registering module: {}&#34;.format(m.__name__))
+            m.register()</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.sv_registration_utils"><code class="name flex">

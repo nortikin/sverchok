@@ -71,12 +71,6 @@ def unregister_extra_category_provider(identifier):
         raise Exception(f&#34;Provider {identifier} was not registered&#34;)
     del extra_category_providers[idx]
 
-def get_extra_categories():
-    global extra_category_providers
-    result = []
-    for provider in extra_category_providers:
-        result.extend(provider.get_categories())
-    return result
 
 def external_node_docs(operator, node, kind):
 
@@ -150,23 +144,6 @@ def external_node_docs(operator, node, kind):
     return {&#39;CANCELLED&#39;}</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.extra_categories.get_extra_categories"><code class="name flex">
-<span>def <span class="ident">get_extra_categories</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_extra_categories():
-    global extra_category_providers
-    result = []
-    for provider in extra_category_providers:
-        result.extend(provider.get_categories())
-    return result</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.extra_categories.register_extra_category_provider"><code class="name flex">
 <span>def <span class="ident">register_extra_category_provider</span></span>(<span>provider)</span>
 </code></dt>
@@ -220,7 +197,6 @@ def external_node_docs(operator, node, kind):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.extra_categories.external_node_docs" href="#sverchok.utils.extra_categories.external_node_docs">external_node_docs</a></code></li>
-<li><code><a title="sverchok.utils.extra_categories.get_extra_categories" href="#sverchok.utils.extra_categories.get_extra_categories">get_extra_categories</a></code></li>
 <li><code><a title="sverchok.utils.extra_categories.register_extra_category_provider" href="#sverchok.utils.extra_categories.register_extra_category_provider">register_extra_category_provider</a></code></li>
 <li><code><a title="sverchok.utils.extra_categories.unregister_extra_category_provider" href="#sverchok.utils.extra_categories.unregister_extra_category_provider">unregister_extra_category_provider</a></code></li>
 </ul>

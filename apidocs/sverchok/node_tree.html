@@ -639,6 +639,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     ```
     &#34;&#34;&#34;
     _docstring = None  # A cache for docstring property
+    sv_category = &#39;&#39;  #: Add node to a category by its name to display with Shift+S
 
     @final
     def draw_buttons(self, context, layout):
@@ -1304,11 +1305,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f9bbc75f280>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4c4f2e6790>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f9bbc738940>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4c4f2a4af0>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1592,11 +1593,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f9bbc75f670>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f4c4f2e6b80>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f9bbc75f700>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f4c4f2e6c10>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1617,7 +1618,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f9bbc75f5e0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f4c4f2e6af0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -1820,6 +1821,7 @@ bl_icon = 'GREASEPENCIL'
     ```
     &#34;&#34;&#34;
     _docstring = None  # A cache for docstring property
+    sv_category = &#39;&#39;  #: Add node to a category by its name to display with Shift+S
 
     @final
     def draw_buttons(self, context, layout):
@@ -2098,6 +2100,7 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.curve.cast_curve.SvCastCurveNode</li>
 <li>sverchok.nodes.curve.catenary_curve.SvExCatenaryCurveNode</li>
 <li>sverchok.nodes.curve.circle.SvCircleCurveMk2Node</li>
+<li>sverchok.nodes.curve.circlify.SvExCirclifyNode</li>
 <li>sverchok.nodes.curve.concat_curves.SvConcatCurvesNode</li>
 <li>sverchok.nodes.curve.cubic_spline.SvCubicSplineNode</li>
 <li>sverchok.nodes.curve.curvature.SvCurveCurvatureNode</li>
@@ -2156,6 +2159,12 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.curve.zero_twist_frame.SvCurveZeroTwistFrameNode</li>
 <li>sverchok.nodes.dictionary.dictionary_in.SvDictionaryIn</li>
 <li>sverchok.nodes.dictionary.dictionary_out.SvDictionaryOut</li>
+<li>sverchok.nodes.exchange.FCStd_read.SvReadFCStdNode</li>
+<li>sverchok.nodes.exchange.FCStd_read_mod.SvReadFCStdModNode</li>
+<li>sverchok.nodes.exchange.FCStd_sketch.SvReadFCStdSketchNode</li>
+<li>sverchok.nodes.exchange.FCStd_spreadsheet.SvFCStdSpreadsheetNode</li>
+<li>sverchok.nodes.exchange.FCStd_write.SvWriteFCStdNode</li>
+<li>sverchok.nodes.exchange.approx_subd_to_nurbs.SvApproxSubdtoNurbsNode</li>
 <li>sverchok.nodes.exchange.bezier_in.SvBezierInNode</li>
 <li>sverchok.nodes.exchange.export_rw3dm_json.SvExNurbsToJsonNode</li>
 <li>sverchok.nodes.exchange.gcode_exporter.SvExportGcodeNode</li>
@@ -2454,23 +2463,45 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.script.topology_simple.SvTopologySimple</li>
 <li>sverchok.nodes.solid.area.SvSolidAreaNode</li>
 <li>sverchok.nodes.solid.bound_box.SvSolidBoundBoxNode</li>
+<li>sverchok.nodes.solid.box_solid.SvBoxSolidNode</li>
 <li>sverchok.nodes.solid.center_of_mass.SvSolidCenterOfMassNode</li>
+<li>sverchok.nodes.solid.chamfer_solid.SvChamferSolidNode</li>
+<li>sverchok.nodes.solid.cone_solid.SvConeSolidNode</li>
+<li>sverchok.nodes.solid.cylinder_solid.SvCylinderSolidNode</li>
+<li>sverchok.nodes.solid.export_solid.SvExportSolidNode</li>
 <li>sverchok.nodes.solid.extrude_face.SvSolidFaceExtrudeNode</li>
 <li>sverchok.nodes.solid.face_area.SvSolidFaceAreaNode</li>
+<li>sverchok.nodes.solid.fillet_solid.SvFilletSolidNode</li>
 <li>sverchok.nodes.solid.general_fuse.SvSolidGeneralFuseNode</li>
 <li>sverchok.nodes.solid.hollow_solid.SvHollowSolidNode</li>
+<li>sverchok.nodes.solid.import_solid.SvImportSolidNode</li>
 <li>sverchok.nodes.solid.is_closed.SvIsSolidClosedNode</li>
+<li>sverchok.nodes.solid.make_compound.SvCompoundSolidNode</li>
+<li>sverchok.nodes.solid.mesh_to_solid.SvMeshToSolidNode</li>
+<li>sverchok.nodes.solid.mirror_solid.SvMirrorSolidNode</li>
+<li>sverchok.nodes.solid.offset_solid.SvOffsetSolidNode</li>
+<li>sverchok.nodes.solid.points_inside_solid.SvIsInsideSolidNode</li>
 <li>sverchok.nodes.solid.polygon_face.SvSolidPolygonFaceNode</li>
 <li>sverchok.nodes.solid.projection_trim_face.SvProjectTrimFaceNode</li>
 <li>sverchok.nodes.solid.refine.SvRefineSolidNode</li>
 <li>sverchok.nodes.solid.revolve_face.SvSolidFaceRevolveNode</li>
 <li>sverchok.nodes.solid.ruled_solid.SvRuledSolidNode</li>
+<li>sverchok.nodes.solid.slice_solid.SvSliceSolidNode</li>
 <li>sverchok.nodes.solid.solid_boolean.SvSolidBooleanNode</li>
+<li>sverchok.nodes.solid.solid_distance.SvSolidDistanceNode</li>
+<li>sverchok.nodes.solid.solid_edges.SvSolidEdgesNode</li>
+<li>sverchok.nodes.solid.solid_faces.SvSolidFacesNode</li>
 <li>sverchok.nodes.solid.solid_from_faces.SvSolidFromFacesNode</li>
 <li>sverchok.nodes.solid.solid_select.SvSelectSolidNode</li>
+<li>sverchok.nodes.solid.solid_to_mesh_mk2.SvSolidToMeshNodeMk2</li>
+<li>sverchok.nodes.solid.solid_vertices.SvSolidVerticesNode</li>
+<li>sverchok.nodes.solid.solid_viewer.SvSolidViewerNode</li>
 <li>sverchok.nodes.solid.solidify_face.SvSolidFaceSolidifyNode</li>
+<li>sverchok.nodes.solid.sphere_solid.SvSphereSolidNode</li>
 <li>sverchok.nodes.solid.split_solid.SvSplitSolidNode</li>
 <li>sverchok.nodes.solid.sweep_face.SvSweepSolidFaceNode</li>
+<li>sverchok.nodes.solid.torus_solid.SvToursSolidNode</li>
+<li>sverchok.nodes.solid.transform_solid.SvTransformSolidNode</li>
 <li>sverchok.nodes.solid.validate.SvSolidValidateNode</li>
 <li>sverchok.nodes.solid.volume.SvSolidVolumeNode</li>
 <li>sverchok.nodes.solid.wire_face.SvSolidWireFaceNode</li>
@@ -2637,6 +2668,10 @@ bl_icon = 'GREASEPENCIL'
 <dt id="sverchok.node_tree.SverchCustomTreeNode.docstring"><code class="name">var <span class="ident">docstring</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.SverchCustomTreeNode.sv_category"><code class="name">var <span class="ident">sv_category</span></code></dt>
+<dd>
+<div class="desc"><p>Add node to a category by its name to display with Shift+S</p></div>
 </dd>
 </dl>
 <h3>Static methods</h3>
@@ -3283,7 +3318,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f9bbc75fc10>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f4c4f2e7160>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -3294,7 +3329,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f9bbc75faf0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f4c4f2e7040>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -3324,7 +3359,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f9bbc75fb80>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f4c4f2e70d0>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
@@ -3762,6 +3797,7 @@ in the tree editors space and to show execution time</p></div>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons">prefs_over_sized_buttons</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.rclick_menu" href="#sverchok.node_tree.SverchCustomTreeNode.rclick_menu">rclick_menu</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.set_temp_color" href="#sverchok.node_tree.SverchCustomTreeNode.set_temp_color">set_temp_color</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_category" href="#sverchok.node_tree.SverchCustomTreeNode.sv_category">sv_category</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_default_color" href="#sverchok.node_tree.SverchCustomTreeNode.sv_default_color">sv_default_color</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">sv_draw_buttons</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons_ext">sv_draw_buttons_ext</a></code></li>

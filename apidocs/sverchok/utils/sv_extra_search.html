@@ -49,17 +49,13 @@ import importlib.util as getutil
 import bpy
 
 import sverchok
-from sverchok.menu import make_node_cats
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
-from nodeitems_utils import _node_categories
-from sverchok.utils.extra_categories import get_extra_categories
-# pylint: disable=c0326
+from sverchok.ui.nodeview_space_menu import add_node_menu
 
 
-node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
 loop = {}
@@ -126,27 +122,20 @@ def fx_extend(idx, datastorage):
         datastorage.append((func_name, format_macro_item(func_name, func_descriptor), &#39;&#39;, idx))
         idx +=1
 
-def gather_extra_nodes(idx, datastorage, context):
-    extra_categories = get_extra_categories()
-    for cat in extra_categories:
-        for node in cat.items(context):
-            if node.nodetype == &#39;separator&#39;:
-                continue
-            description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
-            showstring = node.label + ensure_short_description(description)
-            datastorage.append((str(idx), showstring,&#39;&#39;,idx))
-            loop_reverse[node.label] = node.nodetype
-            idx +=1
 
 def gather_items(context):
     fx = []
     idx = 0
-    for _, node_list in node_cats.items():
-        for item in node_list:
-            if item[0] in {&#39;separator&#39;, &#39;NodeReroute&#39;}:
+
+    for cat in add_node_menu.walk_categories():
+        for item in cat:
+            if not hasattr(item, &#39;bl_idname&#39;):
                 continue
 
-            nodetype = get_node_class_reference(item[0])
+            if item.bl_idname == &#39;NodeReroute&#39;:
+                continue
+
+            nodetype = get_node_class_reference(item.bl_idname)
             if not nodetype:
                 continue
 
@@ -161,7 +150,6 @@ def gather_items(context):
         fx.append((k, format_item(k, v), &#39;&#39;, idx))
         idx += 1
 
-    gather_extra_nodes(idx, fx, context)
     fx_extend(idx, fx)
 
     return fx
@@ -358,28 +346,6 @@ def unregister():
         idx +=1</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.sv_extra_search.gather_extra_nodes"><code class="name flex">
-<span>def <span class="ident">gather_extra_nodes</span></span>(<span>idx, datastorage, context)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def gather_extra_nodes(idx, datastorage, context):
-    extra_categories = get_extra_categories()
-    for cat in extra_categories:
-        for node in cat.items(context):
-            if node.nodetype == &#39;separator&#39;:
-                continue
-            description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
-            showstring = node.label + ensure_short_description(description)
-            datastorage.append((str(idx), showstring,&#39;&#39;,idx))
-            loop_reverse[node.label] = node.nodetype
-            idx +=1</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.sv_extra_search.gather_items"><code class="name flex">
 <span>def <span class="ident">gather_items</span></span>(<span>context)</span>
 </code></dt>
@@ -392,12 +358,16 @@ def unregister():
 <pre><code class="python">def gather_items(context):
     fx = []
     idx = 0
-    for _, node_list in node_cats.items():
-        for item in node_list:
-            if item[0] in {&#39;separator&#39;, &#39;NodeReroute&#39;}:
+
+    for cat in add_node_menu.walk_categories():
+        for item in cat:
+            if not hasattr(item, &#39;bl_idname&#39;):
                 continue
 
-            nodetype = get_node_class_reference(item[0])
+            if item.bl_idname == &#39;NodeReroute&#39;:
+                continue
+
+            nodetype = get_node_class_reference(item.bl_idname)
             if not nodetype:
                 continue
 
@@ -412,7 +382,6 @@ def unregister():
         fx.append((k, format_item(k, v), &#39;&#39;, idx))
         idx += 1
 
-    gather_extra_nodes(idx, fx, context)
     fx_extend(idx, fx)
 
     return fx</code></pre>
@@ -578,7 +547,7 @@ def unregister():
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_extra_search.SvExtraSearch.my_enum"><code class="name">var <span class="ident">my_enum</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.utils.sv_extra_search.item_cb" href="#sverchok.utils.sv_extra_search.item_cb">item_cb()</a> at 0x7f9bbc3e50d0>, 'attr': 'my_enum'}></code></dt>
+<dt id="sverchok.utils.sv_extra_search.SvExtraSearch.my_enum"><code class="name">var <span class="ident">my_enum</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.utils.sv_extra_search.item_cb" href="#sverchok.utils.sv_extra_search.item_cb">item_cb()</a> at 0x7f4c4e113f70>, 'attr': 'my_enum'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -694,7 +663,6 @@ def poll(cls, context):
 <li><code><a title="sverchok.utils.sv_extra_search.format_macro_item" href="#sverchok.utils.sv_extra_search.format_macro_item">format_macro_item</a></code></li>
 <li><code><a title="sverchok.utils.sv_extra_search.function_iterator" href="#sverchok.utils.sv_extra_search.function_iterator">function_iterator</a></code></li>
 <li><code><a title="sverchok.utils.sv_extra_search.fx_extend" href="#sverchok.utils.sv_extra_search.fx_extend">fx_extend</a></code></li>
-<li><code><a title="sverchok.utils.sv_extra_search.gather_extra_nodes" href="#sverchok.utils.sv_extra_search.gather_extra_nodes">gather_extra_nodes</a></code></li>
 <li><code><a title="sverchok.utils.sv_extra_search.gather_items" href="#sverchok.utils.sv_extra_search.gather_items">gather_items</a></code></li>
 <li><code><a title="sverchok.utils.sv_extra_search.get_main_macro_module" href="#sverchok.utils.sv_extra_search.get_main_macro_module">get_main_macro_module</a></code></li>
 <li><code><a title="sverchok.utils.sv_extra_search.item_cb" href="#sverchok.utils.sv_extra_search.item_cb">item_cb</a></code></li>
