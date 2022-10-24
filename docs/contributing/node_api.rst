@@ -5,7 +5,8 @@ Node API
 This page claims to define all aspects of node creation. A brief introduction
 to node creation is represented :doc:`on this page <add_new_node>`. Api
 documentation of base class of all nodes can be found
-`here <http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html>`_
+`here <http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html>`_.
+Also read the `Alpha/Beta Node State`_ section before creating new ndoe.
 
 The Code of a new node should be created in a separate file. The file should be placed in
 one of the available categories in the ``nodes`` folder.
@@ -966,3 +967,24 @@ impossible it's possible to copy properties manually by adding
 work should be done with sockets it's possible to implement in
 ``migrate_props_pre_relink(self, old_node)`` method which will be called before
 links creation.
+
+Alpha/Beta Node State
+^^^^^^^^^^^^^^^^^^^^^
+
+When new node is created or existing version of a node is improved we usually
+would like to have some time to catch and fix bugs. It can be done the better
+the more people will test the node. Thus we have to merge changes into master.
+But when node is in master users can save them in their layout and farther fixes
+of the node can break them. To avoid this it's possible to mark a node to show
+to users that the node is in development state and that backwards incompatible
+changes can be introduced. In order to do this Alpa or Beta icon should be
+assigned to ``sv_icon`` attribute of the node class.
+
+.. code-block:: python
+
+    class Node:
+        sv_icon = 'SV_ALPHA`  # or 'SV_BETA'
+
+It's recommended to mark new nodes and new version of existing node with
+*in development* state if there are doubts in robustness of the nodes. A node
+should loos the state when new Sverchok's release is introduced.

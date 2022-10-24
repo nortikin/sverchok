@@ -32,8 +32,7 @@ class SvCacheNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CACHE'
 
-
-    n_id: StringProperty()
+    is_animation_dependent = True
     
     cache_amount: IntProperty(default=1, min=0)
     cache_offset: IntProperty(default=1, min=0)
@@ -42,15 +41,16 @@ class SvCacheNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "Data")
         self.outputs.new("SvStringsSocket", "Data")
+        self.is_animatable = True
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, "cache_offset")
 
     def sv_update(self):
         changable_sockets(self, "Data", ["Data"])
         
     def process(self):
-        n_id = node_id(self)
+        n_id = self.node_id
         data = self.node_dict.get(n_id)
         if not data:
             self.node_dict[n_id] = {}

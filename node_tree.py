@@ -370,12 +370,22 @@ class UpdateNodes:
         This function is triggered upon node creation, functionality:
 
           - sets default colors of the node
+          - show alpha/beta state of the node
           - logs further  errors
           - delegates further initialization information to `UpdateNodes.sv_init`
         """
         if self.sv_default_color:
             self.use_custom_color = True
             self.color = self.sv_default_color
+
+        if hasattr(self, 'sv_icon') and self.sv_icon in {'SV_ALPHA', 'SV_BETA'}:
+            frame = self.id_data.nodes.new("NodeFrame")
+            self.parent = frame
+            frame.label = f'{"Alpha" if self.sv_icon == "SV_ALPHA" else "Beta"} Node'
+            frame.use_custom_color = True
+            frame.color = (0.3, 0, 0.7)
+            frame.shrink = True
+            frame['in_development'] = True  # can be used to distinguish the frame
 
         with catch_log_error():
             self.sv_init(context)
@@ -597,6 +607,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     bl_label = 'Name shown in menu'
     bl_icon = 'GREASEPENCIL'
     ```
+
+    It's possible to apply Alpha/Beta icons to sv_icon class attribute of the
+    node to mark a node as in development state and that it can change its
+    behaviour or even be removed. Usually new nodes should be marked in this way
+    until new release.
+
+        class Node:
+            sv_icon = 'SV_ALPHA'  # or 'SV_BETA'
+
+    ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     """
     _docstring = None  # A cache for docstring property
     sv_category = ''  #: Add node to a category by its name to display with Shift+S
