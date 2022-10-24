@@ -433,6 +433,16 @@ class SvCurve(object):
         """
         raise Exception("not implemented!")
 
+    def get_end_points(self):
+        u_min, u_max = self.get_u_bounds()
+        begin = self.evaluate(u_min)
+        end = self.evaluate(u_max)
+        return begin, end
+
+    def is_closed(self, tolerance=1e-6):
+        begin, end = self.get_end_points()
+        return np.linalg.norm(begin - end) < tolerance
+
     def get_degree(self):
         """
         Get curve degree, if applicable.

@@ -34,7 +34,7 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSelectSolidNode'
     bl_label = 'Select Solid Elements'
     bl_icon = 'UV_SYNC_SELECT'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     element_types = [
             ('VERTS', "Vertices", "Select vertices first, and then select adjacent edges and faces", 'VERTEXSEL', 0),

@@ -619,6 +619,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     """
     _docstring = None  # A cache for docstring property
+    sv_category = ''  #: Add node to a category by its name to display with Shift+S
 
     @final
     def draw_buttons(self, context, layout):

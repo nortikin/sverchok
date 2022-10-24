@@ -263,7 +263,7 @@ class SvRotationNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
         if self.mode == 'EULER':
-            layout.prop(self, "order", text="Order:")
+            layout.prop(self, "order", text="Order")
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

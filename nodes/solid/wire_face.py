@@ -34,7 +34,7 @@ class SvSolidWireFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = "Face from Curves (Solid)"
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_CURVES_FACE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
 
     planar : BoolProperty(
             name = "Planar",

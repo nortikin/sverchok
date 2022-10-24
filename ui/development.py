@@ -27,7 +27,7 @@ from bpy.props import StringProperty
 
 # global variables in tools
 import sverchok
-from sverchok.utils.sv_help import remapper
+import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
@@ -108,10 +108,12 @@ class SvViewHelpForNode(bpy.types.Operator):
     def execute(self, context):
         n = context.active_node
 
-        string_dir = remapper.get(n.bl_idname)
-        if not string_dir: #external node
+        cat = sm.add_node_menu.get_category(n.bl_idname)
+        if not cat:  # external node
             print('external_node')
             return external_node_docs(self, n, self.kind)
+
+        string_dir = cat.name.lower().replace('_', ' ')
 
         filename = n.__module__.split('.')[-1]
         if filename in ('mask','mask_convert','mask_join'):
@@ -189,7 +191,6 @@ class SvViewSourceForNode(bpy.types.Operator):
     def execute(self, context):
         n = context.active_node
         fpath = self.get_filepath_from_node(n)
-        string_dir = remapper.get(n.bl_idname)
 
         with sv_preferences() as prefs:
 

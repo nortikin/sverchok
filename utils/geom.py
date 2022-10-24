@@ -194,6 +194,17 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        raise Exception("Unsupported spline type")
+
+    @classmethod
+    def resample(cls, old_ts, old_values, new_ts):
+        verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+        spline = cls.create(verts, tknots=old_ts)
+        new_verts = spline.eval(new_ts)
+        return new_verts[:,1]
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
@@ -287,6 +298,10 @@ class CubicSpline(Spline):
             return splines
         
         self.splines = calc_cubic_splines(tknots, n, locs)
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def eval(self, t_in, tknots = None):
         """
@@ -405,6 +420,10 @@ class LinearSpline(Spline):
         self.pts = pts
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
@@ -1087,9 +1106,9 @@ class PlaneEquation(object):
         normal = self.normal.normalized()
         distance = abs(self.distance_to_point(point))
         sign = self.side_of_point(point)
-        result = Vector(point) - sign * distance * normal
+        result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info("P(%s): %s - %s * [%s] * %s = %s", point, point, sign, distance, normal, result)
-        return result
+        return Vector(result)
     
     def projection_of_points(self, points):
         """
@@ -2573,8 +2592,8 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
     if inter_p:
         dist = (inter_p[0] - inter_p[1]).length
         intersect = dist < tolerance
-        is_a_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
-        is_b_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_a_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_b_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
 
         local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
     else:

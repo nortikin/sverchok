@@ -28,7 +28,6 @@ class SvMeshSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvMeshSurfaceFieldNode'
     bl_label = 'Mesh Smoothed Surface Field'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
     function : EnumProperty(
             name = "Function",

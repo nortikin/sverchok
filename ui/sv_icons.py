@@ -63,7 +63,14 @@ def load_custom_icons():
         iconName = os.path.splitext(iconFile)[0]
         iconID = iconName.upper()
         preview = custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
-        #debug(f"{iconID} => {tuple(preview.image_size)}")
+
+        # there is a problem of loading images (at least in Blender 3.3.1 on Windows)
+        # some images for some reason are not displayed in UI, though ImagePreviews
+        # return some icon_id. Such problem can be detected by checking the
+        # icon_pixels, but iterating over them right after registration of a preview
+        # demolish the problem
+        any(preview.icon_pixels)
+        # print(f"{iconID} => {any(preview.icon_pixels)}")
 
     for provider in _icon_providers.values():
         provider.init(custom_icons)
@@ -84,30 +91,28 @@ def get_icon_switch():
     if addon and hasattr(addon, "preferences"):
         return addon.preferences.show_icons
 
+
 def icon(display_icon):
     '''returns empty dict if show_icons is False, else the icon passed'''
     kws = {}
-    if get_icon_switch():
-        if display_icon.startswith('SV_'):
-            kws = {'icon_value': custom_icon(display_icon)}
-        elif display_icon != 'OUTLINER_OB_EMPTY':
-            kws = {'icon': display_icon}
+    if display_icon.startswith('SV_'):
+        kws = {'icon_value': custom_icon(display_icon)}
+    else:
+        kws = {'icon': display_icon}
     return kws
 
 
 def node_icon(node_ref):
-    '''returns empty dict if show_icons is False, else the icon passed'''
-    if not get_icon_switch():
-        return {}
+    """Returns empty dict if show_icons is False, else the icon passed."""
+    if ic := getattr(node_ref, 'sv_icon', None):
+        iconID = custom_icon(ic)
+        return {'icon_value': iconID} if iconID else {}
+    elif hasattr(node_ref, 'bl_icon'):
+        iconID = node_ref.bl_icon
+        return {'icon': iconID} if iconID else {}
     else:
-        if hasattr(node_ref, 'sv_icon'):
-            iconID = custom_icon(node_ref.sv_icon)
-            return {'icon_value': iconID} if iconID else {}
-        elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
-            iconID = node_ref.bl_icon
-            return {'icon': iconID} if iconID else {}
-        else:
-            return {}
+        return {}
+
 
 def register():
     load_custom_icons()

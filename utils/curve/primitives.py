@@ -5,12 +5,15 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Module containing primitive curve types: straight lines, circles, ellipses.
+"""
+
 import numpy as np
 from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D, rotate_vector_around_vector_np, rotate_vector_around_vector
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
@@ -20,8 +23,16 @@ from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
+    """
+    Straight line segment curve.
+    """
 
     def __init__(self, point, direction, u_bounds=None):
+        """
+        Args:
+            point: a point on a line.
+            direction: directing vector of a line.
+        """
         self.point = np.array(point)
         self.direction = np.array(direction)
         if u_bounds is None:
@@ -33,6 +44,9 @@ class SvLine(SvCurve):
 
     @classmethod
     def from_two_points(cls, point1, point2):
+        """
+        Generate straight line segment from two points.
+        """
         direction = np.array(point2) - np.array(point1)
         return SvLine(point1, direction)
     
@@ -123,6 +137,7 @@ class SvLine(SvCurve):
         return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
 
 def rotate_radius(radius, normal, thetas):
+    """Internal method"""
     ct = np.cos(thetas)[np.newaxis].T
     st = np.sin(thetas)[np.newaxis].T
 
@@ -135,6 +150,9 @@ def rotate_radius(radius, normal, thetas):
     return vx + vy
 
 class SvCircle(SvCurve):
+    """
+    Circle (or circular arc) curve.
+    """
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
         if matrix is not None:
@@ -485,8 +503,128 @@ class SvCircle(SvCurve):
                     control_points, weights)
         return curve
 
-    def to_nurbs_full(self, n=4, implementation = SvNurbsMaths.NATIVE):
-        return self.to_nurbs_arc(n=n, implementation=implementation)
+    def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = 'C2', implementation = SvNurbsMaths.NATIVE):
+        """
+        Convert the circle to NURBS curve with 4-degree parametrization.
+
+        This implements the algorithm described in the paper:
+        Carole Blanc, Christophe Schlick.
+        More Accurate Representation of Conics by NURBS.
+        Technical Report, LaBRI, 1995.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            t_min, t_max: indicate the arc to be converted.
+            parametrization: 'C2' for parametrization with continuous 2nd
+                derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+                parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        """
+        if parametrization not in {'C2', 'QIDEAL'}:
+            raise Exception("Unsupported parametrization type")
+
+        if t_min is None:
+            t_min = 0.0
+        if t_max is None:
+            t_max = 2*pi
+
+        if t_max < t_min:
+            return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
+
+        def make_quad_arc(t1, t2):
+            p1 = [cos(t1), sin(t1), 0.0]
+            alpha = (t2 - t1)/2.0
+            r_mid = 1.0 / cos(alpha)
+            t_mid = (t1 + t2)/2.0
+            p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
+            p2 = [cos(t2), sin(t2), 0.0]
+            points = np.array([p1, p_mid, p2])
+
+            w = cos(alpha)
+            return points, w
+
+        def make_quadric_arc(t1, t2):
+            ps, w = make_quad_arc(t1, t2)
+
+            if parametrization == 'C2':
+                p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
+            else:
+                phi = (t2 - t1) / 2.0
+                cosphi = cos(phi / 5.0)
+                p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
+
+            q0 = ps[0]
+            q1 = (ps[0] + w*ps[1])/(1.0 + w)
+            q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
+            q3 = (ps[2] + w*ps[1]) / (1.0 + w)
+            q4 = ps[2]
+
+            w0 = 1.0
+            w1 = p*(1.0 + w)/2.0
+            w2 = (p*p + p*p*w + w)/3.0
+            w3 = w1
+            w4 = w0
+
+            degree = 4
+            knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
+            control_points = np.array([q0, q1, q2, q3, q4])
+            weights = np.array([w0, w1, w2, w3, w4])
+            return SvNurbsMaths.build_curve(implementation,
+                        degree, knots,
+                        control_points, weights)
+
+        omega = t_max - t_min
+        alpha = pi / n
+        full_arc_angle = 2*alpha
+        n_full_arcs = round(omega // full_arc_angle)
+        small_arc_angle = omega % full_arc_angle
+        ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
+        full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
+        if small_arc_angle > 1e-6:
+            small_arc = make_quadric_arc(ts_full[-1], t_max)
+            small_arcs = [small_arc]
+        else:
+            small_arcs = []
+
+        all_arcs = full_arcs + small_arcs
+        unit_arc = all_arcs[0]
+        for arc in all_arcs[1:]:
+            unit_arc = unit_arc.concatenate(arc)
+
+        control_points = unit_arc.get_control_points()
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        curve = unit_arc.copy(control_points = control_points)
+        return curve
+
+    def to_nurbs_full(self, n=4, parametrization = 'SIMPLE', implementation = SvNurbsMaths.NATIVE):
+        """
+        Convert fulll circle to a NURBS curve.
+
+        Args:
+            n: number of subdivisions, usually 3, 4 or 6.
+            paramerization: 'SIMPLE' for traditional (2-degree) circle
+                parametrization; 'C2' for 4-degree parametrization with continuous
+                2nd derivative; 'QIDEAL' for quasi-ideal parametrization, i.e. for
+                4-degree parametrization which is almost identical to trigonometric
+                parametrization.
+            implementation: implementation of Nurbs mathematics.
+
+        Returns:
+            an instance of SvNurbsCurve.
+        """
+        if parametrization == 'SIMPLE':
+            return self.to_nurbs_arc(n=n, implementation=implementation)
+        elif parametrization in {'C2', 'QIDEAL'}:
+            return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
+        else:
+            raise Exception("Unsupported parametrization type")
 
     def reverse(self):
         circle = self.copy()
@@ -510,11 +648,17 @@ class SvCircle(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def elevate_degree(self, delta=None, target=None):
+        return self.to_nurbs().elevate_degree(delta=delta, target=target)
+
 #     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 #         t_min, t_max = self.get_u_bounds()
 #         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
 class SvEllipse(SvCurve):
+    """
+    Ellipse curve.
+    """
     __description__ = "Ellipse"
 
     CENTER = 'center'
@@ -536,14 +680,13 @@ class SvEllipse(SvCurve):
     @classmethod
     def from_equation(cls, eq):
         """
-        input: an instance of sverchok.utils.geom.Ellipse3D
-        output: an instance of SvEllipse
+        Build an instance of SvEllipse from `sverchok.utils.geom.Ellipse3D`.
         """
         return SvEllipse(eq.get_matrix(), eq.a, eq.b)
 
     def to_equation(self):
         """
-        output: an instance of sverchok.utils.geom.Ellipse3D
+        Convert an instance of SvEllipse to `sverchok.utils.geom.Ellipse3D`.
         """
         major_radius = self.matrix @ np.array([self.a, 0, 0])
         minor_radius = self.matrix @ np.array([0, self.b, 0])
@@ -556,12 +699,21 @@ class SvEllipse(SvCurve):
         return sqrt(a*a - b*b)
 
     def focal_points(self):
+        """
+        Calculate ellipse focal points.
+
+        Returns:
+            list of two points.
+        """
         df = self.matrix @ np.array([self.c, 0, 0])
         f1 = self.center + df
         f2 = self.center - df
         return [f1, f2]
 
     def get_center(self):
+        """
+        Calculate ellipse center.
+        """
         if self.center_type == SvEllipse.CENTER:
             return self.center
         elif self.center_type == SvEllipse.F1:
@@ -612,6 +764,9 @@ class SvEllipse(SvCurve):
         return vs
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        """
+        Convert the ellipse to SvNurbsCurve.
+        """
         if self.a == 0 and self.b == 0:
             coef_x = 0
             coef_y = 0

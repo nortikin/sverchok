@@ -49,7 +49,7 @@ class SvSplitSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Split Solid by Face'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_SPLIT_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")

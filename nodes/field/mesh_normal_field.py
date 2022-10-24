@@ -31,7 +31,6 @@ class SvExMeshNormalFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvExMeshNormalFieldNode'
     bl_label = 'Mesh Nearest Normal'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
     interpolate : BoolProperty(
         name = "Interpolate",

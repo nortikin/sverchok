@@ -1,6 +1,9 @@
 Rotate
 ======
 
+.. image:: https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png
+  :target: https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png
+
 Functionality
 -------------
 
@@ -64,7 +67,11 @@ Example of usage
 ^^^^^^^^^^^^^^^^
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png
   :alt: AxisRotationDemo1.PNG
+
+* Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 In this example we use axis rotation to rotate a torus around the X axis 45 degrees .
 
@@ -113,10 +120,25 @@ Outputs
 Example of usage
 ^^^^^^^^^^^^^^^^
 
-.. image::https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png
   :alt: EulerRotationDemo1.PNG
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png
   :alt: EulerRotationDemo2.PNG
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 In the first example we use Euler rotation rotate the vertices of a line to create a 3d spiral
 The second is more complex, with multiple inputs in Y and Z to create a complex geometry from just one line.
@@ -169,7 +191,13 @@ Example of usage
 ^^^^^^^^^^^^^^^^
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png
+  :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png
   :alt: QuatRotationDemo1.PNG
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 As we can see in this example, we try to rotate the plan 45 degrees and then set W with multiple values, each higher than before, but the plane is never get to rotate 180 degrees.
 
@@ -178,6 +206,5 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)
-
-**List Match**: Define how list with different lengths should be matched
+* **Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)
+* **List Match**: Define how list with different lengths should be matched

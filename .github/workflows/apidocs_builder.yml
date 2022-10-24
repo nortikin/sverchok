@@ -7,13 +7,13 @@ on:
       - 'core/**'
       - '*.py'
       - '.github/workflows/apidocs_builder.yml'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - 'utils/**'
-      - 'core/**'
-      - '*.py'
-      - '.github/workflows/apidocs_builder.yml'
+#   pull_request:
+#     branches: [ master ]
+#     paths:
+#       - 'utils/**'
+#       - 'core/**'
+#       - '*.py'
+#       - '.github/workflows/apidocs_builder.yml'
 
 jobs:
   build:

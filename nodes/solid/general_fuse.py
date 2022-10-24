@@ -30,7 +30,7 @@ class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid General Fuse'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_GENERAL_FUSE'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
 
     def update_sockets(self, context):
         hide_masks = self.merge_result and self.refine_solid

@@ -110,7 +110,7 @@ On the picture below it can be expected that switch should add first matrix and 
   :target: https://user-images.githubusercontent.com/14288520/189740102-41008bb1-8b2e-4abf-bc82-2d5bdef8de97.png
 
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
@@ -119,8 +119,8 @@ but for this states input should have values on first object level not on second
 .. image:: https://user-images.githubusercontent.com/14288520/189740124-1ab19668-bf50-4f62-926a-7900cb8dbea1.png
   :target: https://user-images.githubusercontent.com/14288520/189740124-1ab19668-bf50-4f62-926a-7900cb8dbea1.png
 
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * List->List Struct-> :doc:`List Sort </nodes/list_struct/sort>`

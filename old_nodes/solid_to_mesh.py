@@ -25,7 +25,7 @@ else:
         bl_label = 'Solid to Mesh'
         bl_icon = 'MESH_CUBE'
         sv_icon = 'SV_SOLID_TO_MESH'
-        solid_catergory = "Outputs"
+        sv_category = "Solid Outputs"
 
         replacement_nodes = [('SvSolidToMeshNodeMk2', None, None)]
 

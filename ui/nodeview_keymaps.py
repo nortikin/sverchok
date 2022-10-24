@@ -137,29 +137,29 @@ def add_keymap():
 
         # Shift + A     | show custom menu
         kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
-        kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
+        kmi.properties.name = "NODEVIEW_MT_SvCategoryAllCategories"  # ui/nodeview_space_menu.py:add_node_menu
         nodeview_keymaps.append((km, kmi))
 
         # numbers 1 to 5 for partial menus
-        kmi = km.keymap_items.new('wm.call_menu', 'ONE', 'PRESS')
-        kmi.properties.name = "NODEVIEW_MT_Basic_Data_Partial_Menu"
+        kmi = km.keymap_items.new('node.call_partial_menu', 'ONE', 'PRESS')
+        kmi.properties.menu_name = 'BasicDataPartialMenu'
         nodeview_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new('wm.call_menu', 'TWO', 'PRESS')
-        kmi.properties.name = "NODEVIEW_MT_Mesh_Partial_Menu"
+        kmi = km.keymap_items.new('node.call_partial_menu', 'TWO', 'PRESS')
+        kmi.properties.menu_name = "MeshPartialMenu"
         nodeview_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new('wm.call_menu', 'THREE', 'PRESS')
-        kmi.properties.name = "NODEVIEW_MT_Advanced_Objects_Partial_Menu"
+        kmi = km.keymap_items.new('node.call_partial_menu', 'THREE', 'PRESS')
+        kmi.properties.menu_name = "AdvancedObjectsPartialMenu"
         nodeview_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new('wm.call_menu', 'FOUR', 'PRESS')
-        kmi.properties.name = "NODEVIEW_MT_Connection_Partial_Menu"
+        kmi = km.keymap_items.new('node.call_partial_menu', 'FOUR', 'PRESS')
+        kmi.properties.menu_name = "ConnectionPartialMenu"
         nodeview_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new('wm.call_menu', 'FIVE', 'PRESS')
-        kmi.properties.name = "NODEVIEW_MT_UI_tools_Partial_Menu"
+        kmi = km.keymap_items.new('node.call_partial_menu', 'FIVE', 'PRESS')
+        kmi.properties.menu_name = "UiToolsPartialMenu"
         nodeview_keymaps.append((km, kmi))
 
         # Shift + S     | show custom menu
         kmi = km.keymap_items.new('wm.call_menu', 'S', 'PRESS', shift=True)
-        kmi.properties.name = "NODEVIEW_MT_Solids_Special_Menu"
+        kmi.properties.name = "NODEVIEW_MT_node_category_menu"
         nodeview_keymaps.append((km, kmi))
 
         # alt + Space  | enter extra search operator

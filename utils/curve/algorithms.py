@@ -16,8 +16,6 @@ from sverchok.utils.curve.core import (
         UnsupportedCurveTypeException
     )
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
-from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
@@ -162,8 +160,11 @@ class SvNormalTrack(object):
 
     def evaluate_array(self, ts):
         """
-        input: ts - np.array of snape (n,) or list of floats
-        output: np.array of shape (n, 3, 3)
+        Args:
+            ts: np.array of snape (n,) or list of floats
+        
+        Returns:
+            np.array of shape (n, 3, 3)
         """
         ts = np.array(ts)
         tknots, quats = self.tknots, self.quats
@@ -195,14 +196,16 @@ class MathutilsRotationCalculator(object):
     def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis='X'):
         """
         Calculate matrix required to rotate object according to `tangent` vector.
-        inputs:
-            * tangent - np.array of shape (3,)
-            * scale - float
-            * axis - int, 0 - X, 1 - Y, 2 - Z
-            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
-            * scale_all - True to scale along all axes, False to scale along tangent only
-            * up_axis - string, "X", "Y" or "Z", for algorithm == TRACK only.
-        output:
+
+        Args:
+            tangent: np.array of shape (3,)
+            scale: float
+            axis: int, 0 - X, 1 - Y, 2 - Z
+            algorithm: one of HOUSEHOLDER, TRACK, DIFF
+            scale_all: True to scale along all axes, False to scale along tangent only
+            up_axis: string, "X", "Y" or "Z", for algorithm == TRACK only.
+
+        Returns:
             np.array of shape (3,3).
         """
         x = Vector((1.0, 0.0, 0.0))
@@ -748,19 +751,20 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
         * Z is pointing along curve tangent
         * Y is perpendicular to both X and Z.
 
-    input:
-        * surface
-        * uv_curve - uv_curve in the surface's UV space
-        * us - values of curve's T parameter; type: np.array of shape (n,)
-        * w_axis - defines which axis of the curve is surface's normal (two
+    Args:
+        surface: source surface
+        uv_curve: uv_curve in the surface's UV space
+        us: values of curve's T parameter; type: np.array of shape (n,)
+        w_axis: defines which axis of the curve is surface's normal (two
           other axes are surface's U and V). Default of 2 means X is U and Y is V.
 
-    output: tuple:
-        * matrices: np.array of shape (n, 3, 3)
-        * points: np.array of shape (n, 3) - points on the surface
-        * tangents: np.array of shape (n, 3)
-        * normals: np.array of shape (n, 3)
-        * binormals: np.array of shape (n, 3)
+    Returns:
+        tuple:
+            * matrices: np.array of shape (n, 3, 3)
+            * points: np.array of shape (n, 3) - points on the surface
+            * tangents: np.array of shape (n, 3)
+            * normals: np.array of shape (n, 3)
+            * binormals: np.array of shape (n, 3)
     """
 
     if w_axis == 2:
@@ -801,8 +805,11 @@ def unify_curves_degree(curves):
     Assumes all curves have get_degree() and elevate_degree() methods.
     Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
 
-    input: list of SvCurve
-    output: list of SvCurve
+    Args:
+        curves: list of SvCurve
+
+    Returns:
+        list of SvCurve
     """
 
     max_degree = max(curve.get_degree() for curve in curves)
@@ -815,14 +822,15 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     curves to make a "native" concatenation - for example, make one Nurbs out of
     several Nurbs.
 
-    inputs:
-    * curves: list of SvCurve
-    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
-    * allow_generic: what to do if it is not possible to concatenate curves natively:
-        True - use generic SvConcatCurve
-        False - raise an Exception.
+    Args:
+        curves: list of SvCurve
+        scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+        allow_generic: what to do if it is not possible to concatenate curves natively:
+            * True - use generic SvConcatCurve
+            * False - raise an Exception.
 
-    output: SvCurve.
+    Returns:
+        an instance of SvCurve.
     """
     if not curves:
         raise Exception("List of curves must be not empty")
@@ -871,6 +879,9 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
 class SvCurvesSortResult(object):
+    """
+    Result of `sort_curves_for_concat` method.
+    """
     def __init__(self):
         self.curves = []
         self.indexes = []
@@ -878,6 +889,17 @@ class SvCurvesSortResult(object):
         self.sum_error = 0
 
 def sort_curves_for_concat(curves, allow_flip=False):
+    """
+    Sort list of curves so that they could be concatenated into one curve.
+
+    Args:
+        curves: list of SvCurve to be sorted.
+        allow_flip: if True, then the method will be allowed to flip (reverse)
+            some of the curves.
+    
+    Returns:
+        an instance of `SvCurvesSortResult`.
+    """
     if not curves:
         return curves
 
@@ -946,6 +968,9 @@ def sort_curves_for_concat(curves, allow_flip=False):
     return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    """
+    Reparametrize the curve to new domain.
+    """
     t_min, t_max = curve.get_u_bounds()
     if t_min == new_t_min and t_max == new_t_max:
         return curve
@@ -955,12 +980,27 @@ def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
         return SvReparametrizedCurve(curve, new_t_min, new_t_max)
 
 def reverse_curve(curve):
+    """
+    Reverse the curve, i.e. reverse the direction of it's parametrization.
+    """
     if hasattr(curve, 'reverse'):
         return curve.reverse()
     else:
         return SvFlipCurve(curve)
 
 def split_curve(curve, splits, rescale=False):
+    """
+    Split one curve into several segments.
+
+    Args:
+        curve: SvCurve to be split.
+        splits: number of segments you want to receive.
+        rescale: if True, then each of segments will be reparametrized to
+            [0; 1] domain.
+
+    Returns:
+        a list of SvCurve.
+    """
     if hasattr(curve, 'split_at'):
         result = []
         for split in splits:
@@ -987,6 +1027,9 @@ def split_curve(curve, splits, rescale=False):
         return result
 
 def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    """
+    Cut a segment out of the curve.
+    """
     t_min, t_max = curve.get_u_bounds()
     if hasattr(curve, 'cut_segment'):
         return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
