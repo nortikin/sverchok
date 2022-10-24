@@ -226,6 +226,25 @@ class AddNode(MenuItem):
         add.use_transform = True
         add.dependency = self.dependency
 
+    def draw_icon(self, layout):
+        node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
+        icon_prop = self.icon_prop or {'icon': 'OUTLINER_OB_EMPTY'}
+
+        if not self.dependency and node_cls is None:
+            layout.label(text=self.label, **icon_prop)
+            return
+
+        op = ShowMissingDependsOperator if self.dependency else SvNodeAddOperator
+        default_context = bpy.app.translations.contexts.default
+        add = layout.operator(op.bl_idname,
+                              text='',
+                              text_ctxt=default_context,
+                              **icon_prop)
+        add.type = self.bl_idname
+        add.use_transform = True
+        add.dependency = self.dependency
+        add.extra_description = f'Add {self.label} node'
+
     def search_match(self, request: str) -> bool:
         """Return True if the request satisfies to node search tags"""
         request = request.upper()
@@ -447,6 +466,7 @@ class AddNodeOp(bl_operators.node.NodeAddOperator):
     dependency: StringProperty()
 
     _node_classes = dict()
+    extra_description: StringProperty()
 
     @classmethod
     def node_classes(cls) -> dict[str, type]:
@@ -459,7 +479,8 @@ class AddNodeOp(bl_operators.node.NodeAddOperator):
     @classmethod
     def description(cls, _context, properties):
         node_type = properties["type"]
-        tooltip = ''
+        extra = properties.get("extra_description", "")
+        tooltip = extra + ("\n" if extra else "")
         if node_type in dummy_nodes_dict:
             if node_cls := cls.node_classes().get(node_type):
                 tooltip = node_cls.docstring.get_tooltip()
@@ -467,14 +488,14 @@ class AddNodeOp(bl_operators.node.NodeAddOperator):
             tooltip = tooltip + f"{gap}Dependency: {properties.dependency}"
         else:
             if node_cls := bpy.types.Node.bl_rna_get_subclass_py(node_type):
-                tooltip = node_cls.docstring.get_tooltip()
+                tooltip += node_cls.docstring.get_tooltip()
         return tooltip
 
 
 class SvNodeAddOperator(AddNodeOp, bpy.types.Operator):
     """Operator to show as menu item to add available node"""
     bl_idname = "node.sv_add_node"
-    bl_label = "Add SV node"
+    bl_label = ""
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     def execute(self, context):
@@ -488,7 +509,7 @@ class SvNodeAddOperator(AddNodeOp, bpy.types.Operator):
 class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):
     """Operator as menu item to show that a node is not available"""
     bl_idname = 'node.show_missing_dependencies'
-    bl_label = 'Show missing dependencies'
+    bl_label = 'Missing dependencies'
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

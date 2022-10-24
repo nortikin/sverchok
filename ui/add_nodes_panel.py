@@ -54,7 +54,7 @@ class AddNodeToolPanel(bpy.types.Panel):
         cat_name = context.scene.sv_add_node_panel_settings.selected_category
         for cat in sm.add_node_menu.walk_categories():
             if cat.menu_cls.__name__ == cat_name:
-                items = [n for n in cat if isinstance(n, sm.AddNode)]
+                items = [n for n in cat if isinstance(n, (sm.AddNode, sm.Separator))]
                 AddNodeToolPanel._items = items
                 return
 
@@ -87,28 +87,10 @@ class AddNodeToolPanel(bpy.types.Panel):
             for cat, add_nodes in self.categories.items():
                 icon_prop = sm.icon(cat.icon) if cat.icon else {}
                 layout.label(text=cat.name, **icon_prop)
-                if context.scene.sv_add_node_panel_settings.icons_only:
-                    num = context.scene.sv_add_node_panel_settings.columns_number
-                    grid = layout.grid_flow(row_major=True, align=True, columns=num)
-                    grid.scale_x = 1.5
-                    for add_node in add_nodes:
-                        add_node.draw(grid, only_icon=True)
-                else:
-                    col = layout.column(align=True)
-                    for add_node in add_nodes:
-                        add_node.draw(col)
+                self.draw_add_node(context, add_nodes)
         else:
             layout.prop(context.scene.sv_add_node_panel_settings, "selected_category", text="")
-            if context.scene.sv_add_node_panel_settings.icons_only:
-                num = context.scene.sv_add_node_panel_settings.columns_number
-                grid = layout.grid_flow(row_major=True, align=True, columns=num)
-                grid.scale_x = 1.5
-                for add_node in self.items:
-                    add_node.draw(grid, only_icon=True)
-            else:
-                col = layout.column(align=True)
-                for add_node in self.items:
-                    add_node.draw(col)
+            self.draw_add_node(context, self.items)
 
         col = layout.column()
         col.use_property_split = True
@@ -116,6 +98,23 @@ class AddNodeToolPanel(bpy.types.Panel):
         col.prop(context.scene.sv_add_node_panel_settings, 'icons_only')
         if context.scene.sv_add_node_panel_settings.icons_only:
             col.prop(context.scene.sv_add_node_panel_settings, 'columns_number')
+
+    def draw_add_node(self, context, items):
+        layout = self.layout
+        if context.scene.sv_add_node_panel_settings.icons_only:
+            num = context.scene.sv_add_node_panel_settings.columns_number
+            grid = layout.grid_flow(row_major=True, align=True, columns=num)
+            grid.scale_x = 1.5
+            for add_node in items:
+                if hasattr(add_node, 'draw_icon'):
+                    add_node.draw_icon(grid)
+                else:  # <- separator
+                    grid = layout.grid_flow(row_major=True, align=True, columns=num)
+                    grid.scale_x = 1.5
+        else:
+            col = layout.column(align=True)
+            for add_node in items:
+                add_node.draw(col)
 
 
 class AddNodePanelSettings(bpy.types.PropertyGroup):
