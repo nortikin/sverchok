@@ -410,12 +410,22 @@ class UpdateNodes:
         This function is triggered upon node creation, functionality:
 
           - sets default colors of the node
+          - show alpha/beta state of the node
           - logs further  errors
           - delegates further initialization information to `UpdateNodes.sv_init`
         &#34;&#34;&#34;
         if self.sv_default_color:
             self.use_custom_color = True
             self.color = self.sv_default_color
+
+        if hasattr(self, &#39;sv_icon&#39;) and self.sv_icon in {&#39;SV_ALPHA&#39;, &#39;SV_BETA&#39;}:
+            frame = self.id_data.nodes.new(&#34;NodeFrame&#34;)
+            self.parent = frame
+            frame.label = f&#39;{&#34;Alpha&#34; if self.sv_icon == &#34;SV_ALPHA&#34; else &#34;Beta&#34;} Node&#39;
+            frame.use_custom_color = True
+            frame.color = (0.3, 0, 0.7)
+            frame.shrink = True
+            frame[&#39;in_development&#39;] = True  # can be used to distinguish the frame
 
         with catch_log_error():
             self.sv_init(context)
@@ -637,6 +647,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     bl_label = &#39;Name shown in menu&#39;
     bl_icon = &#39;GREASEPENCIL&#39;
     ```
+
+    It&#39;s possible to apply Alpha/Beta icons to sv_icon class attribute of the
+    node to mark a node as in development state and that it can change its
+    behaviour or even be removed. Usually new nodes should be marked in this way
+    until new release.
+
+        class Node:
+            sv_icon = &#39;SV_ALPHA&#39;  # or &#39;SV_BETA&#39;
+
+    ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     &#34;&#34;&#34;
     _docstring = None  # A cache for docstring property
     sv_category = &#39;&#39;  #: Add node to a category by its name to display with Shift+S
@@ -1305,11 +1325,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4c4f2e6790>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f3a8e6369d0>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f4c4f2a4af0>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f3a8e689af0>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1593,11 +1613,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f4c4f2e6b80>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f3a8e636dc0>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f4c4f2e6c10>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f3a8e636e50>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1618,7 +1638,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f4c4f2e6af0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f3a8e636d30>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -1798,7 +1818,15 @@ Merely for illustration of node creation workflow  # Description
 bl_idname = 'SvSomeOperationNode'  # should be added to `sverchok/index.md` file
 bl_label = 'Name shown in menu'
 bl_icon = 'GREASEPENCIL'
-</code></pre></div>
+</code></pre>
+<p>It's possible to apply Alpha/Beta icons to sv_icon class attribute of the
+node to mark a node as in development state and that it can change its
+behaviour or even be removed. Usually new nodes should be marked in this way
+until new release.</p>
+<pre><code>class Node:
+    sv_icon = 'SV_ALPHA'  # or 'SV_BETA'
+</code></pre>
+<p><img alt="image" src="https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png"></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1819,6 +1847,16 @@ bl_icon = 'GREASEPENCIL'
     bl_label = &#39;Name shown in menu&#39;
     bl_icon = &#39;GREASEPENCIL&#39;
     ```
+
+    It&#39;s possible to apply Alpha/Beta icons to sv_icon class attribute of the
+    node to mark a node as in development state and that it can change its
+    behaviour or even be removed. Usually new nodes should be marked in this way
+    until new release.
+
+        class Node:
+            sv_icon = &#39;SV_ALPHA&#39;  # or &#39;SV_BETA&#39;
+
+    ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     &#34;&#34;&#34;
     _docstring = None  # A cache for docstring property
     sv_category = &#39;&#39;  #: Add node to a category by its name to display with Shift+S
@@ -2076,10 +2114,6 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.analyzer.steiner_ellipse.SvSteinerEllipseNode</li>
 <li>sverchok.nodes.analyzer.volume.SvVolumeNodeMK2</li>
 <li>sverchok.nodes.analyzer.wave_paint.SvWavePainterNode</li>
-<li>sverchok.nodes.bmesh_nodes.bmesh_analyzer_big.SvBManalyzinNode</li>
-<li>sverchok.nodes.bmesh_nodes.bmesh_obj_in.SvBMObjinputNode</li>
-<li>sverchok.nodes.bmesh_nodes.bmesh_out.SvBMoutputNode</li>
-<li>sverchok.nodes.bmesh_nodes.bmesh_to_element.SvBMtoElementNode</li>
 <li>sverchok.nodes.color.color_in_mk1.SvColorsInNodeMK1</li>
 <li>sverchok.nodes.color.color_input.SvColorInputNode</li>
 <li>sverchok.nodes.color.color_mix.SvColorMixNode</li>
@@ -2323,7 +2357,6 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.modifier_change.mesh_clean.SvMeshCleanNode</li>
 <li>sverchok.nodes.modifier_change.mesh_join_mk2.SvMeshJoinNodeMk2</li>
 <li>sverchok.nodes.modifier_change.mesh_separate.SvSeparateMeshNode</li>
-<li>sverchok.nodes.modifier_change.mesh_separate_mk2.SvSeparateMeshNodeMK2</li>
 <li>sverchok.nodes.modifier_change.objects_along_edge.SvDuplicateAlongEdgeNode</li>
 <li>sverchok.nodes.modifier_change.offset.SvOffsetNode</li>
 <li>sverchok.nodes.modifier_change.opensubdivision.SvOpenSubdivisionNode</li>
@@ -2339,16 +2372,18 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.modifier_change.smooth.SvSmoothNode</li>
 <li>sverchok.nodes.modifier_change.split_faces.SvSplitFacesNode</li>
 <li>sverchok.nodes.modifier_change.split_mesh_elements.SvSplitMeshElements</li>
-<li>sverchok.nodes.modifier_change.subdivide_lite.SvSubdivideLiteNode</li>
 <li>sverchok.nodes.modifier_change.subdivide_mk2.SvSubdivideNodeMK2</li>
 <li>sverchok.nodes.modifier_change.subdivide_to_quads.SvSubdivideToQuadsNode</li>
 <li>sverchok.nodes.modifier_change.triangulate.SvTriangulateNode</li>
-<li>sverchok.nodes.modifier_change.triangulate_heavy.SvHeavyTriangulateNode</li>
-<li>sverchok.nodes.modifier_change.unsubdivide.SvUnsubdivideNode</li>
 <li>sverchok.nodes.modifier_change.vertices_mask.SvVertMaskNode</li>
+<li>sverchok.nodes.modifier_make.BMOperatorsMK2.SvBMOpsNodeMK2</li>
 <li>sverchok.nodes.modifier_make.adaptive_polygons_mk3.SvAdaptivePolygonsNodeMk3</li>
 <li>sverchok.nodes.modifier_make.bevel_curve.SvBevelCurveNode</li>
 <li>sverchok.nodes.modifier_make.bisect.SvBisectNode</li>
+<li>sverchok.nodes.modifier_make.bmesh_analyzer_big.SvBManalyzinNode</li>
+<li>sverchok.nodes.modifier_make.bmesh_obj_in.SvBMObjinputNode</li>
+<li>sverchok.nodes.modifier_make.bmesh_out.SvBMoutputNode</li>
+<li>sverchok.nodes.modifier_make.bmesh_to_element.SvBMtoElementNode</li>
 <li>sverchok.nodes.modifier_make.clip_verts.SvClipVertsNode</li>
 <li>sverchok.nodes.modifier_make.contour2D.SvContourNode</li>
 <li>sverchok.nodes.modifier_make.cross_section.CrossSectionNode</li>
@@ -2365,7 +2400,9 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.modifier_make.offset_line.SvOffsetLineNode</li>
 <li>sverchok.nodes.modifier_make.pipe_tubes.SvPipeNode</li>
 <li>sverchok.nodes.modifier_make.solidify_mk2.SvSolidifyNodeMk2</li>
+<li>sverchok.nodes.modifier_make.subdivide_lite.SvSubdivideLiteNode</li>
 <li>sverchok.nodes.modifier_make.sweep_modulator.SvSweepModulator</li>
+<li>sverchok.nodes.modifier_make.unsubdivide.SvUnsubdivideNode</li>
 <li>sverchok.nodes.modifier_make.uv_connect.LineConnectNodeMK2</li>
 <li>sverchok.nodes.modifier_make.wafel.SvWafelNode</li>
 <li>sverchok.nodes.modifier_make.wireframe.SvWireframeNode</li>
@@ -2437,7 +2474,6 @@ bl_icon = 'GREASEPENCIL'
 <li>sverchok.nodes.quaternion.quaternion_out_mk2.SvQuaternionOutNodeMK2</li>
 <li>sverchok.nodes.quaternion.rotation_difference.SvRotationDifference</li>
 <li>sverchok.nodes.scene.3dview_props.Sv3DviewPropsNode</li>
-<li>sverchok.nodes.scene.BMOperatorsMK2.SvBMOpsNodeMK2</li>
 <li>sverchok.nodes.scene.FCurve_in.SvFCurveInNodeMK1</li>
 <li>sverchok.nodes.scene.cache.SvCacheNode</li>
 <li>sverchok.nodes.scene.collection_picker_mk1.SvCollectionPicker</li>
@@ -3211,12 +3247,22 @@ This UI is displayed on a property panel of the tree editor.</p></div>
         This function is triggered upon node creation, functionality:
 
           - sets default colors of the node
+          - show alpha/beta state of the node
           - logs further  errors
           - delegates further initialization information to `UpdateNodes.sv_init`
         &#34;&#34;&#34;
         if self.sv_default_color:
             self.use_custom_color = True
             self.color = self.sv_default_color
+
+        if hasattr(self, &#39;sv_icon&#39;) and self.sv_icon in {&#39;SV_ALPHA&#39;, &#39;SV_BETA&#39;}:
+            frame = self.id_data.nodes.new(&#34;NodeFrame&#34;)
+            self.parent = frame
+            frame.label = f&#39;{&#34;Alpha&#34; if self.sv_icon == &#34;SV_ALPHA&#34; else &#34;Beta&#34;} Node&#39;
+            frame.use_custom_color = True
+            frame.color = (0.3, 0, 0.7)
+            frame.shrink = True
+            frame[&#39;in_development&#39;] = True  # can be used to distinguish the frame
 
         with catch_log_error():
             self.sv_init(context)
@@ -3318,7 +3364,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f4c4f2e7160>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f3a8e6c73a0>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -3329,7 +3375,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f4c4f2e7040>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f3a8e6c7280>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -3359,7 +3405,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f4c4f2e70d0>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f3a8e6c7310>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
@@ -3449,6 +3495,7 @@ def free(self):
 <div class="desc"><p>This function is triggered upon node creation, functionality:</p>
 <ul>
 <li>sets default colors of the node</li>
+<li>show alpha/beta state of the node</li>
 <li>logs further
 errors</li>
 <li>delegates further initialization information to <code><a title="sverchok.node_tree.UpdateNodes.sv_init" href="#sverchok.node_tree.UpdateNodes.sv_init">UpdateNodes.sv_init()</a></code></li>
@@ -3463,12 +3510,22 @@ def init(self, context):
     This function is triggered upon node creation, functionality:
 
       - sets default colors of the node
+      - show alpha/beta state of the node
       - logs further  errors
       - delegates further initialization information to `UpdateNodes.sv_init`
     &#34;&#34;&#34;
     if self.sv_default_color:
         self.use_custom_color = True
         self.color = self.sv_default_color
+
+    if hasattr(self, &#39;sv_icon&#39;) and self.sv_icon in {&#39;SV_ALPHA&#39;, &#39;SV_BETA&#39;}:
+        frame = self.id_data.nodes.new(&#34;NodeFrame&#34;)
+        self.parent = frame
+        frame.label = f&#39;{&#34;Alpha&#34; if self.sv_icon == &#34;SV_ALPHA&#34; else &#34;Beta&#34;} Node&#39;
+        frame.use_custom_color = True
+        frame.color = (0.3, 0, 0.7)
+        frame.shrink = True
+        frame[&#39;in_development&#39;] = True  # can be used to distinguish the frame
 
     with catch_log_error():
         self.sv_init(context)</code></pre>
