@@ -958,13 +958,12 @@ class SvTaylorCurve(SvCurve):
         p = self.get_degree()
         coeffs = self.get_coefficients()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
-        M1 = np.linalg.inv(M)
-        R1 = np.linalg.inv(R)
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
 
         control_points = np.zeros((p+1, self.ndim))
         for axis in range(self.ndim):
-            control_points[:,axis] = M1 @ R1 @ coeffs[:,axis]
+            control_points[:,axis] = np.linalg.solve(R @ M, coeffs[:,axis])
 
         return control_points
 
@@ -1030,29 +1029,95 @@ class SvTaylorCurve(SvCurve):
         square.u_bounds = self.u_bounds
         return square
 
-def calc_taylor_nurbs_matrices(degree, u_bounds):
-    # Refer to The NURBS Book, 2nd ed., p. 6.6
+_taylor_nurbs_matrix_cache = dict()
+_taylor_nurbs_inverse_matrix_cache = dict()
+
+def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False):
+    &#34;&#34;&#34;
+    Calculate two matrices, M and R, such that coefficients
+    of polynomial representation of Bezier curve can be expressed
+    in terms of Bezier control points as
+
+        coeffs[:,axis] = R @ M @ control_points[:,axis]
+
+    Correspondingly, the same matrices can be used to convert
+    polynomial representation of curve into control points of Bezier
+    curve as
+
+        control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+
+    where M1 is inverse of M and R1 is inverse of R.
+
+    Note that M matrix depends only on degree, and R depends both on
+    degree and u_bounds. M matrix is always lower-triangular matrix.
+    R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+    R is diagonal matrix.
+
+    Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    Args:
+        degree: degree of Bezier curve
+        u_bounds: tuple of (u_min, u_max) - domain of the curve.
+        calc_M: whether to calculate M matrix
+        calc_R: whether to calculate R matrix
+
+    Returns:
+        dictionary with string keys:
+        * &#39;M&#39;: np.array of shape (degree+1, degree+1) - present only if calc_M == True
+        * &#39;R&#39;: np.array of shape (degree+1, degree+1) - present only if calc_R == True
+    &#34;&#34;&#34;
+
+    global _taylor_nurbs_matrix_cache
+    global _taylor_nurbs_inverse_matrix_cache
 
     p = degree
-    u1, u2 = u_bounds
-    binom = binomial_array(p+1)
 
-    M = np.zeros((p+1, p+1), dtype=np.float64)
-    for k in range(p+1):
-        sign = 1.0
-        for j in range(k, p+1):
-            M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
-            sign = - sign
+    if calc_M1:
+        calc_M = True
+    if calc_R1:
+        calc_R = True
 
-    c = 1.0 / (u2 - u1)
-    d = -u1 / (u2 - u1)
+    if calc_M or calc_R:
+        binom = binomial_array(p+1)
 
-    R = np.zeros((p+1, p+1), dtype=np.float64)
-    for i in range(p+1):
-        for j in range(i, p+1):
-            R[i,j] = binom[j, i] * c**i * d**(j-i)
+    result = dict()
+    if calc_M:
+        if p in _taylor_nurbs_matrix_cache:
+            result[&#39;M&#39;] = _taylor_nurbs_matrix_cache[p]
+        else:
+            M = np.zeros((p+1, p+1), dtype=np.float64)
+            for k in range(p+1):
+                sign = 1.0
+                for j in range(k, p+1):
+                    M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+                    sign = - sign
+            result[&#39;M&#39;] = M
+            _taylor_nurbs_matrix_cache[p] = M
+        if calc_M1:
+            if p in _taylor_nurbs_inverse_matrix_cache:
+                result[&#39;M1&#39;] = _taylor_nurbs_inverse_matrix_cache[p]
+            else:
+                M1 = np.linalg.inv(M)
+                result[&#39;M1&#39;] = M1
+                _taylor_nurbs_inverse_matrix_cache[p] = M1
 
-    return M, R</code></pre>
+    if calc_R:
+        u1, u2 = u_bounds
+        c = 1.0 / (u2 - u1)
+        d = -u1 / (u2 - u1)
+
+        R = np.zeros((p+1, p+1), dtype=np.float64)
+        c_i = 1.0
+        for i in range(p+1):
+            for j in range(i, p+1):
+                R[i,j] = binom[j, i] * c_i * d**(j-i)
+            c_i *= c
+        result[&#39;R&#39;] = R
+
+        if calc_R1:
+            result[&#39;R1&#39;] = np.linalg.inv(R)
+
+    return result</code></pre>
 </details>
 </section>
 <section>
@@ -1063,37 +1128,130 @@ def calc_taylor_nurbs_matrices(degree, u_bounds):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.curve.core.calc_taylor_nurbs_matrices"><code class="name flex">
-<span>def <span class="ident">calc_taylor_nurbs_matrices</span></span>(<span>degree, u_bounds)</span>
+<span>def <span class="ident">calc_taylor_nurbs_matrices</span></span>(<span>degree, u_bounds=(0.0, 1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Calculate two matrices, M and R, such that coefficients
+of polynomial representation of Bezier curve can be expressed
+in terms of Bezier control points as</p>
+<pre><code>coeffs[:,axis] = R @ M @ control_points[:,axis]
+</code></pre>
+<p>Correspondingly, the same matrices can be used to convert
+polynomial representation of curve into control points of Bezier
+curve as</p>
+<pre><code>control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+</code></pre>
+<p>where M1 is inverse of M and R1 is inverse of R.</p>
+<p>Note that M matrix depends only on degree, and R depends both on
+degree and u_bounds. M matrix is always lower-triangular matrix.
+R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+R is diagonal matrix.</p>
+<p>Refer to The NURBS Book, 2nd ed., p. 6.6</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>degree</code></strong></dt>
+<dd>degree of Bezier curve</dd>
+<dt><strong><code>u_bounds</code></strong></dt>
+<dd>tuple of (u_min, u_max) - domain of the curve.</dd>
+<dt><strong><code>calc_M</code></strong></dt>
+<dd>whether to calculate M matrix</dd>
+<dt><strong><code>calc_R</code></strong></dt>
+<dd>whether to calculate R matrix</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>dictionary with string keys:
+* 'M': np.array of shape (degree+1, degree+1) - present only if calc_M == True
+* 'R': np.array of shape (degree+1, degree+1) - present only if calc_R == True</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def calc_taylor_nurbs_matrices(degree, u_bounds):
-    # Refer to The NURBS Book, 2nd ed., p. 6.6
+<pre><code class="python">def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False):
+    &#34;&#34;&#34;
+    Calculate two matrices, M and R, such that coefficients
+    of polynomial representation of Bezier curve can be expressed
+    in terms of Bezier control points as
+
+        coeffs[:,axis] = R @ M @ control_points[:,axis]
+
+    Correspondingly, the same matrices can be used to convert
+    polynomial representation of curve into control points of Bezier
+    curve as
+
+        control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+
+    where M1 is inverse of M and R1 is inverse of R.
+
+    Note that M matrix depends only on degree, and R depends both on
+    degree and u_bounds. M matrix is always lower-triangular matrix.
+    R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+    R is diagonal matrix.
+
+    Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    Args:
+        degree: degree of Bezier curve
+        u_bounds: tuple of (u_min, u_max) - domain of the curve.
+        calc_M: whether to calculate M matrix
+        calc_R: whether to calculate R matrix
+
+    Returns:
+        dictionary with string keys:
+        * &#39;M&#39;: np.array of shape (degree+1, degree+1) - present only if calc_M == True
+        * &#39;R&#39;: np.array of shape (degree+1, degree+1) - present only if calc_R == True
+    &#34;&#34;&#34;
+
+    global _taylor_nurbs_matrix_cache
+    global _taylor_nurbs_inverse_matrix_cache
 
     p = degree
-    u1, u2 = u_bounds
-    binom = binomial_array(p+1)
 
-    M = np.zeros((p+1, p+1), dtype=np.float64)
-    for k in range(p+1):
-        sign = 1.0
-        for j in range(k, p+1):
-            M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
-            sign = - sign
+    if calc_M1:
+        calc_M = True
+    if calc_R1:
+        calc_R = True
 
-    c = 1.0 / (u2 - u1)
-    d = -u1 / (u2 - u1)
+    if calc_M or calc_R:
+        binom = binomial_array(p+1)
 
-    R = np.zeros((p+1, p+1), dtype=np.float64)
-    for i in range(p+1):
-        for j in range(i, p+1):
-            R[i,j] = binom[j, i] * c**i * d**(j-i)
+    result = dict()
+    if calc_M:
+        if p in _taylor_nurbs_matrix_cache:
+            result[&#39;M&#39;] = _taylor_nurbs_matrix_cache[p]
+        else:
+            M = np.zeros((p+1, p+1), dtype=np.float64)
+            for k in range(p+1):
+                sign = 1.0
+                for j in range(k, p+1):
+                    M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+                    sign = - sign
+            result[&#39;M&#39;] = M
+            _taylor_nurbs_matrix_cache[p] = M
+        if calc_M1:
+            if p in _taylor_nurbs_inverse_matrix_cache:
+                result[&#39;M1&#39;] = _taylor_nurbs_inverse_matrix_cache[p]
+            else:
+                M1 = np.linalg.inv(M)
+                result[&#39;M1&#39;] = M1
+                _taylor_nurbs_inverse_matrix_cache[p] = M1
 
-    return M, R</code></pre>
+    if calc_R:
+        u1, u2 = u_bounds
+        c = 1.0 / (u2 - u1)
+        d = -u1 / (u2 - u1)
+
+        R = np.zeros((p+1, p+1), dtype=np.float64)
+        c_i = 1.0
+        for i in range(p+1):
+            for j in range(i, p+1):
+                R[i,j] = binom[j, i] * c_i * d**(j-i)
+            c_i *= c
+        result[&#39;R&#39;] = R
+
+        if calc_R1:
+            result[&#39;R1&#39;] = np.linalg.inv(R)
+
+    return result</code></pre>
 </details>
 </dd>
 </dl>
@@ -3342,13 +3500,12 @@ def scale(self):
         p = self.get_degree()
         coeffs = self.get_coefficients()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
-        M1 = np.linalg.inv(M)
-        R1 = np.linalg.inv(R)
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
 
         control_points = np.zeros((p+1, self.ndim))
         for axis in range(self.ndim):
-            control_points[:,axis] = M1 @ R1 @ coeffs[:,axis]
+            control_points[:,axis] = np.linalg.solve(R @ M, coeffs[:,axis])
 
         return control_points
 

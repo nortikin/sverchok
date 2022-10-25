@@ -60,7 +60,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.math import binomial_array, cmp
-from sverchok.utils.geom import bounding_box, LineEquation
+from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
@@ -318,6 +318,14 @@ class SvNurbsCurve(SvCurve):
         w, W = weights.min(), weights.max()
         return (W - w) &gt; tolerance
 
+    def is_planar(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return are_points_coplanar(cpts, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return get_common_plane(cpts, tolerance)
+
     def get_knotvector(self):
         &#34;&#34;&#34;
         Get NURBS curve knotvector.
@@ -509,9 +517,23 @@ class SvNurbsCurve(SvCurve):
         return curve1, curve2
 
     def split_at(self, t):
-        c1, c2 = self._split_at(t)
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
+
+#         if self.is_bezier() and self.is_rational():
+#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
+#             kv = sv_knotvector.generate(degree, degree+1)
+#             u_min, u_max = kv[0], kv[-1]
+#             b1, b2 = bezier.split_at(t)
+#             c1 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, u_min, t),
+#                     b1.get_control_points())
+#             c2 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, t, u_max),
+#                     b2.get_control_points())
+#             return c1, c2
+
+        c1, c2 = self._split_at(t)
 
         if c1 is not None:
             knotvector1, control_points_1, weights_1 = c1
@@ -586,7 +608,7 @@ class SvNurbsCurve(SvCurve):
         begin, end = self.get_end_points()
         cpts = self.get_control_points()
         # direction from first to last point of the curve
-        direction = cpts[-1] - cpts[0]
+        direction = end - begin
         if np.linalg.norm(direction) &lt; tolerance:
             return True
         line = LineEquation.from_direction_and_point(direction, begin)
@@ -635,7 +657,7 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f&#34;Curve with {n} control points and {p}&#39;th degree can not be converted into Bezier curve&#34;)
-        return SvBezierCurve(points)
+        return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         &#34;&#34;&#34;
@@ -674,7 +696,8 @@ class SvNurbsCurve(SvCurve):
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
 
         coeffs = np.zeros((4, p+1))
         for k in range(4):
@@ -1044,7 +1067,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.degree
 
     def evaluate(self, t):
-        #return self.evaluate_array(np.array([t]))[0]
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
+
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
             return np.array([0,0,0])
@@ -1078,6 +1106,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return numerator, denominator
 
     def evaluate_array(self, ts):
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
+
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
 #             print(&#34;Num:&#34;, numerator)
@@ -1933,7 +1967,12 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         return self.degree
 
     def evaluate(self, t):
-        #return self.evaluate_array(np.array([t]))[0]
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
+
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
             return np.array([0,0,0])
@@ -1967,6 +2006,12 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         return numerator, denominator
 
     def evaluate_array(self, ts):
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
+
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
 #             print(&#34;Num:&#34;, numerator)
@@ -2992,6 +3037,14 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         w, W = weights.min(), weights.max()
         return (W - w) &gt; tolerance
 
+    def is_planar(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return are_points_coplanar(cpts, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return get_common_plane(cpts, tolerance)
+
     def get_knotvector(self):
         &#34;&#34;&#34;
         Get NURBS curve knotvector.
@@ -3183,9 +3236,23 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         return curve1, curve2
 
     def split_at(self, t):
-        c1, c2 = self._split_at(t)
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
+
+#         if self.is_bezier() and self.is_rational():
+#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
+#             kv = sv_knotvector.generate(degree, degree+1)
+#             u_min, u_max = kv[0], kv[-1]
+#             b1, b2 = bezier.split_at(t)
+#             c1 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, u_min, t),
+#                     b1.get_control_points())
+#             c2 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, t, u_max),
+#                     b2.get_control_points())
+#             return c1, c2
+
+        c1, c2 = self._split_at(t)
 
         if c1 is not None:
             knotvector1, control_points_1, weights_1 = c1
@@ -3260,7 +3327,7 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         begin, end = self.get_end_points()
         cpts = self.get_control_points()
         # direction from first to last point of the curve
-        direction = cpts[-1] - cpts[0]
+        direction = end - begin
         if np.linalg.norm(direction) &lt; tolerance:
             return True
         line = LineEquation.from_direction_and_point(direction, begin)
@@ -3309,7 +3376,7 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f&#34;Curve with {n} control points and {p}&#39;th degree can not be converted into Bezier curve&#34;)
-        return SvBezierCurve(points)
+        return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         &#34;&#34;&#34;
@@ -3348,7 +3415,8 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
 
         coeffs = np.zeros((4, p+1))
         for k in range(4):
@@ -3695,7 +3763,8 @@ def to_nurbs(cls, curve, implementation = NATIVE):
     p = self.get_degree()
     cpts = self.get_homogenous_control_points()
 
-    M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+    mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+    M, R = mr[&#39;M&#39;], mr[&#39;R&#39;]
 
     coeffs = np.zeros((4, p+1))
     for k in range(4):
@@ -4095,6 +4164,20 @@ such a way that each segment is nearly a straight line segment.</p></div>
     return sv_knotvector.get_min_continuity(kv, degree)</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane"><code class="name flex">
+<span>def <span class="ident">get_plane</span></span>(<span>self, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_plane(self, tolerance=1e-6):
+    cpts = self.get_control_points()
+    return get_common_plane(cpts, tolerance)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights"><code class="name flex">
 <span>def <span class="ident">get_weights</span></span>(<span>self)</span>
 </code></dt>
@@ -4206,7 +4289,7 @@ inside the convex hull of it's control points.</p></div>
     begin, end = self.get_end_points()
     cpts = self.get_control_points()
     # direction from first to last point of the curve
-    direction = cpts[-1] - cpts[0]
+    direction = end - begin
     if np.linalg.norm(direction) &lt; tolerance:
         return True
     line = LineEquation.from_direction_and_point(direction, begin)
@@ -4216,6 +4299,20 @@ inside the convex hull of it's control points.</p></div>
     # As a consequence, the convex hull of control points lie in the
     # same cylinder; and the curve lies in that convex hull.
     return (distances &lt; tolerance).all()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar"><code class="name flex">
+<span>def <span class="ident">is_planar</span></span>(<span>self, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_planar(self, tolerance=1e-6):
+    cpts = self.get_control_points()
+    return are_points_coplanar(cpts, tolerance)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational"><code class="name flex">
@@ -4499,29 +4596,43 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def split_at(self, t):
-    c1, c2 = self._split_at(t)
-    degree = self.get_degree()
-    implementation = self.get_nurbs_implementation()
+<pre><code class="python">    def split_at(self, t):
+        degree = self.get_degree()
+        implementation = self.get_nurbs_implementation()
 
-    if c1 is not None:
-        knotvector1, control_points_1, weights_1 = c1
-        curve1 = SvNurbsCurve.build(implementation,
-                    degree, knotvector1,
-                    control_points_1, weights_1)
-    else:
-        curve1 = None
+#         if self.is_bezier() and self.is_rational():
+#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
+#             kv = sv_knotvector.generate(degree, degree+1)
+#             u_min, u_max = kv[0], kv[-1]
+#             b1, b2 = bezier.split_at(t)
+#             c1 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, u_min, t),
+#                     b1.get_control_points())
+#             c2 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, t, u_max),
+#                     b2.get_control_points())
+#             return c1, c2
 
-    if c2 is not None:
-        knotvector2, control_points_2, weights_2 = c2
+        c1, c2 = self._split_at(t)
 
-        curve2 = SvNurbsCurve.build(implementation,
-                    degree, knotvector2,
-                    control_points_2, weights_2)
-    else:
-        curve2 = None
+        if c1 is not None:
+            knotvector1, control_points_1, weights_1 = c1
+            curve1 = SvNurbsCurve.build(implementation,
+                        degree, knotvector1,
+                        control_points_1, weights_1)
+        else:
+            curve1 = None
 
-    return curve1, curve2</code></pre>
+        if c2 is not None:
+            knotvector2, control_points_2, weights_2 = c2
+
+            curve2 = SvNurbsCurve.build(implementation,
+                        degree, knotvector2,
+                        control_points_2, weights_2)
+        else:
+            curve2 = None
+
+        return curve1, curve2</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier"><code class="name flex">
@@ -4555,7 +4666,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
         n = len(points)
         p = self.get_degree()
         raise UnsupportedCurveTypeException(f&#34;Curve with {n} control points and {p}&#39;th degree can not be converted into Bezier curve&#34;)
-    return SvBezierCurve(points)</code></pre>
+    return SvBezierCurve.from_control_points(points)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments"><code class="name flex">
@@ -4779,12 +4890,14 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane">get_plane</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point">has_exactly_one_nearest_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_bezier">is_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar">is_planar</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to">lerp_to</a></code></li>

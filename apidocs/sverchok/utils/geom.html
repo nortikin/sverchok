@@ -2162,6 +2162,40 @@ def linear_approximation(data):
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
     return result
 
+def are_points_coplanar(points, tolerance=1e-6):
+    &#34;&#34;&#34;
+    Check if points lie in the same plane.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        True if all points lie in the same plane.
+    &#34;&#34;&#34;
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    return max_distance &lt; tolerance
+
+def get_common_plane(points, tolerance=1e-6):
+    &#34;&#34;&#34;
+    Get a plane in which all points lie, or None.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        If all points line in the same plane, return that plane (an instance of
+        PlaneEquation class).  Otherwise, return None.
+    &#34;&#34;&#34;
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    if max_distance &lt; tolerance:
+        return plane
+    else:
+        return None
+
 def linear_approximation_array(data):
     data = np.asarray(data)
     n = data.shape[-2]
@@ -2737,6 +2771,40 @@ def scale_relative(points, center, scale):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.geom.are_points_coplanar"><code class="name flex">
+<span>def <span class="ident">are_points_coplanar</span></span>(<span>points, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if points lie in the same plane.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong></dt>
+<dd>list of 3-tuples or np.array of shape (n,3)</dd>
+<dt><strong><code>tolerance</code></strong></dt>
+<dd>maximum allowable distance from plane to the point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>True if all points lie in the same plane.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def are_points_coplanar(points, tolerance=1e-6):
+    &#34;&#34;&#34;
+    Check if points lie in the same plane.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        True if all points lie in the same plane.
+    &#34;&#34;&#34;
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    return max_distance &lt; tolerance</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.geom.autorotate_diff"><code class="name flex">
 <span>def <span class="ident">autorotate_diff</span></span>(<span>e1, xx)</span>
 </code></dt>
@@ -3339,6 +3407,46 @@ In case of parallel lines it will return the origin of the first line as the clo
     for i, res in enumerate(result):
         if gates[i]:
             res.append([local_result[i]])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.geom.get_common_plane"><code class="name flex">
+<span>def <span class="ident">get_common_plane</span></span>(<span>points, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a plane in which all points lie, or None.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>points</code></strong></dt>
+<dd>list of 3-tuples or np.array of shape (n,3)</dd>
+<dt><strong><code>tolerance</code></strong></dt>
+<dd>maximum allowable distance from plane to the point</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>If all points line in the same plane, return that plane (an instance of
+PlaneEquation class).
+Otherwise, return None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_common_plane(points, tolerance=1e-6):
+    &#34;&#34;&#34;
+    Get a plane in which all points lie, or None.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        If all points line in the same plane, return that plane (an instance of
+        PlaneEquation class).  Otherwise, return None.
+    &#34;&#34;&#34;
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    if max_distance &lt; tolerance:
+        return plane
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.geom.householder"><code class="name flex">
@@ -9209,6 +9317,7 @@ returns: an instance of Ellipse3D.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.utils.geom.are_points_coplanar" href="#sverchok.utils.geom.are_points_coplanar">are_points_coplanar</a></code></li>
 <li><code><a title="sverchok.utils.geom.autorotate_diff" href="#sverchok.utils.geom.autorotate_diff">autorotate_diff</a></code></li>
 <li><code><a title="sverchok.utils.geom.autorotate_householder" href="#sverchok.utils.geom.autorotate_householder">autorotate_householder</a></code></li>
 <li><code><a title="sverchok.utils.geom.autorotate_track" href="#sverchok.utils.geom.autorotate_track">autorotate_track</a></code></li>
@@ -9225,6 +9334,7 @@ returns: an instance of Ellipse3D.</p></div>
 <li><code><a title="sverchok.utils.geom.diameter" href="#sverchok.utils.geom.diameter">diameter</a></code></li>
 <li><code><a title="sverchok.utils.geom.distance" href="#sverchok.utils.geom.distance">distance</a></code></li>
 <li><code><a title="sverchok.utils.geom.distance_line_line" href="#sverchok.utils.geom.distance_line_line">distance_line_line</a></code></li>
+<li><code><a title="sverchok.utils.geom.get_common_plane" href="#sverchok.utils.geom.get_common_plane">get_common_plane</a></code></li>
 <li><code><a title="sverchok.utils.geom.householder" href="#sverchok.utils.geom.householder">householder</a></code></li>
 <li><code><a title="sverchok.utils.geom.interpolate_quadratic_bezier" href="#sverchok.utils.geom.interpolate_quadratic_bezier">interpolate_quadratic_bezier</a></code></li>
 <li><code><a title="sverchok.utils.geom.intersect_segment_segment" href="#sverchok.utils.geom.intersect_segment_segment">intersect_segment_segment</a></code></li>
