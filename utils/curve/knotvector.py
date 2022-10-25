@@ -84,11 +84,11 @@ def linear_resample(tknots, new_count):
 def from_tknots(degree, tknots, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
-        result = [0] * (degree+1)
+        result = [tknots[0]] * (degree+1)
         for j in range(1, n - degree):
             u = tknots[j:j+degree].sum() / degree
             result.append(u)
-        result.extend([1.0] * (degree+1))
+        result.extend([tknots[-1]] * (degree+1))
         return np.array(result)
     else:
         resampled_tknots = linear_resample(tknots, n_cpts)
