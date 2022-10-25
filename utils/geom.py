@@ -2128,6 +2128,40 @@ def linear_approximation(data):
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
     return result
 
+def are_points_coplanar(points, tolerance=1e-6):
+    """
+    Check if points lie in the same plane.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        True if all points lie in the same plane.
+    """
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    return max_distance < tolerance
+
+def get_common_plane(points, tolerance=1e-6):
+    """
+    Get a plane in which all points lie, or None.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        If all points line in the same plane, return that plane (an instance of
+        PlaneEquation class).  Otherwise, return None.
+    """
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    if max_distance < tolerance:
+        return plane
+    else:
+        return None
+
 def linear_approximation_array(data):
     data = np.asarray(data)
     n = data.shape[-2]
